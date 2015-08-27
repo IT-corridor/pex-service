@@ -1,0 +1,162 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>New Web Project</title>
+		{% load staticfiles %}
+		
+		<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+        <link rel="stylesheet" href="{% static 'flightsearch/css/bootstrap.min.css' %}">
+        <style>
+            body {
+                /*padding-top: 50px;*/
+                padding-bottom: 20px;
+            }
+        </style>
+        <link rel="stylesheet" href="{% static 'flightsearch/css/bootstrap-theme.min.css' %}">
+        <link rel="stylesheet" href="{% static 'flightsearch/css/datepicker.css' %}">
+        <link rel="stylesheet" href="{% static 'flightsearch/css/main.css' %}">
+        <link rel="stylesheet" href="{% static 'flightsearch/css/bootstrap.css' %}">
+        <link rel="stylesheet" href="{% static 'flightsearch/css/bootstrap.min.css' %}">
+		
+        <script src="{% static 'flightsearch/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js' %}"></script>
+        <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>/-->
+        <script src="{% static 'flightsearch/js/jquery-2.1.4.min.js' %}"></script>
+        <script src="{% static 'flightsearch/js/bootstrap-datepicker.js' %}"></script>
+		
+	</head>
+	<body itemscope itemtype="http://schema.org/WebPage">
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+<!-- NAVBAR SECTION/-->
+
+        <nav class="navbar navbar-default">
+          <div class="container-fluid">
+            <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#pexMainNavbar">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span> 
+            </button>
+
+            <a class="navbar-brand brandmedia" href="http://www.pexportal.com"><img src="{% static 'flightsearch/img/logoMain.jpg' %}" alt="" class="hidden-xs hidden-sm hidden-md"><img src="{% static 'flightsearch/img/logo.jpg' %}" alt="" class="hidden-lg hidden-xs"> <img src="{% static 'flightsearch/img/logo.jpg' %}" alt="" class="hidden-lg hidden-md hidden-sm"></a>
+          </div>
+
+          <div class="collapse navbar-collapse" id="pexMainNavbar">
+            <ul class="nav navbar-nav mainNav mvt30px">
+              <li class=""><a href="#">Flights</a></li>
+              <li class=""><a href="#">Hotels</a></li> 
+              <li class=""><a href="#">Cars</a></li>
+              <li class=""><a href="#">Cruises</a></li> 
+              <li class=""><a href="#">Restaurants</a></li>
+            </ul>   
+            <ul class="nav navbar-nav navbar-right">
+              <li class=""><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+              <li class=""><a href="login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+              <li class=""><a href="#"><span class="glyphicon glyphicon-info-sign"></span> Help</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+	<body>
+		<table class="table table-bordered datatable" id="datatable">
+			<thead>
+				<tr>
+					<td>Flight No.</td>
+					<td>Source Station</td>
+					<td>Departure Time</td>
+					<td>Choice</td>
+					<td>Choice Essential</td>
+					<td>Choice Plus</td>
+					<td>First</td>
+					<td>Arival Time</td>
+					<td>Destination Station</td>
+				</tr>
+			</thead>
+			<tbody>
+				{% if temp %}
+					{% for fno,stn,dept,price1,prc2,prc3,prc4,dsttime,dststn in temp %}
+						<tr>
+							<td>{{fno}} </td>
+							<td>{{stn}} </td>
+							<td>{{dept}} </td>
+							<td>${{price1}} </td>
+							<td>${{prc2}} </td>
+							<td>${{prc3}}</td>
+							<td>${{prc4}} </td>
+							<td>{{dsttime}}</td>
+							<td>{{dststn}} </td>
+						
+				
+						</tr>
+				{%endfor %}
+			{% endif %}
+		</tbody>
+		</table>
+	
+	<script>
+
+		jQuery(window).load(function()
+                {
+                        
+                        var $ = jQuery; 
+                        
+                       
+                        $("#datatable").dataTable({
+                                "columns": [
+						            { "data": "Flight No" },
+						            { "data": "Source Station" },
+						            { "data": "Departure Time" },
+						            { "data": "Choice" },
+						            { "data": "Choice Essential" },
+						            { "data": "Choice Plus" },
+						            { "data": "First" },
+						            { "data": "Arival Time" },
+						            { "data": "Destination Station" },
+						            
+						        ]
+                        });
+                        /*
+                        $("#datatable tbody input[type=checkbox]").each(function(i, el)
+                        {
+                                var $this = $(el),
+                                        $p = $this.closest('tr');
+                                
+                                $(el).on('change', function()
+                                {
+                                        var is_checked = $this.is(':checked');
+                                        
+                                        $p[is_checked ? 'addClass' : 'removeClass']('highlight');
+                                });
+                        });
+                        
+                        // Replace Checboxes
+                        $(".pagination a").click(function(ev)
+                        {
+                                replaceCheckboxes();
+                        });*/
+                        
+                });
+                        
+                // Sample Function to add new row
+                var giCount = 1; 
+	</script>
+		<link rel="stylesheet" href="{% static 'flightsearch/datatables/responsive/css/datatables.responsive.css' %}">
+		<script src="{% static 'flightsearch/js/vendor/jquery-1.11.2.min.js' %}"></script>
+		<script src="{% static 'flightsearch/js/jquery.dataTables.min.js' %}"></script>
+		<script src="{% static 'flightsearch/datatables/TableTools.min.js' %}"></script>
+		<script src="{% static 'flightsearch/datatables/jquery.dataTables.columnFilter.js' %}"></script>
+		<script src="{% static 'flightsearch/datatables/responsive/js/datatables.responsive.js' %}"></script>
+		<script src="{% static 'flightsearch/datatables/lodash.min.js' %}"></script>
+		<script src="{% static 'flightsearch/js/dataTables.bootstrap.js' %}"></script>
+		
+	
+	</body>
+</html>
+
+
+

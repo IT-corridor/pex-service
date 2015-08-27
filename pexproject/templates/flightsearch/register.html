@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'flightsearch/style.css' %}" />
+
+    <body>
+	
+	{% if registered %}
+        <strong>thank you for registering!</strong>
+        <a href="/rango/">Return to the homepage.</a><br />
+        {% else %}
+        <strong>Please register here</strong><br />
+	<form action="" method="post" enctype="multipart/form-data">
+        
+
+            {% csrf_token %}
+            
+            {{ RegisterForm.as_ul}}
+
+            <!-- Provide a button to click to submit the form. --><br><br><br><br>
+            <input type="submit" name="submit" value="Register" />
+        </form>
+        {% endif %}
+	
+    </body>
+</html>

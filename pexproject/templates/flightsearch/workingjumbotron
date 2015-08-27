@@ -1,0 +1,110 @@
+<!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
+      <br />
+      <br />
+      <br />
+      <div class="container">
+        <h1>GATEWAY TO TOP JOBS AND CAREERS</h1>
+
+        <div class="container">
+          <form class="form-inline no-margin center-block">
+            <div class="row col-lg-offset-2">
+              <fieldset>
+
+                <!-- Search input-->
+                <div class="form-group center-block">
+                  <div class="col-lg-5">
+                    <input id="keyword" name="keyword" type="search" placeholder="Keyword" class="form-control input-lg">
+                    
+                  </div>
+                </div>
+
+                <!-- Search input-->
+                <div class="form-group center-block">
+                  <div class="col-lg-5">
+                    <input id="location" name="location" type="search" placeholder=" City, State, or Zipcode" class="form-control input-lg">
+                    
+                  </div>
+                </div>
+
+                <!-- Button -->
+                <div class="form-group center-block">
+                  <div class="col-lg-2">
+                    <button id="btn-search" name="btn-search" class="btn btn-primary btn-lg btn-tusaj">Search</button>
+                  </div>
+                </div>
+
+              </fieldset>
+            </div>
+          </form>
+        </div>
+
+
+      </div>
+    </div>
+
+
+
+    <!-- New About Us Body -->
+
+    <div>
+      <div class="container-title">
+        <div class="">
+          <h2 class="htitle" style="margin-bottom: 0px; padding-top:10px;">About Us</h2>
+        </div>
+        <br />
+        <div class="col-md-10">
+          <div class="row col-lg-offset-2">
+            <p>
+              Founded in 2003, <b>TopUSAJobs.com</b> was the first performance-based, cost-per-click job board. All services for candidates are free to view and apply for positions from one of the largest job listings on the Internet. TopUSAJobs.com offers no-touch, automated job posting and guides candidates to apply directly on each company's own job board.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="container-aboutbody">
+        <div class="col-lg-10 list-inline" style="margin-top: 20px;">
+      <div class="row col-lg-offset-2">
+            <div class="container col-md-3 spacerhperc7" style="min-height:360px;background-color:#fff;margin-bottom:20px;">
+              <h3>TopUSAJobs.com for Job Seekers:</h3>
+              <p>
+                <ul>
+                  <li>
+                    Visit a single Job Board to review millions of jobs posted on hundreds of career boards.
+                  </li>
+                </ul>
+              </p>
+            </div>
+            <div class="container col-md-3 spacerhperc7" style="min-height:360px;background-color:#fff;">
+              <h3>TopUSAJobs.com for Advertisers:</h3>
+              <p>
+                <ul>
+                  <li>
+                    Increase job applications, registrations and posted resumes on your site. 
+                  </li>
+                  <li>
+                    Post your job listings on one of the leading CPC Job Boards reaching millions of qualified job seekers. 
+                  </li>
+                  <li>
+                    Attract new candidates to your board while showcasing your brand with your logo. 
+                  </li>
+                </ul>
+                View <a href="">Advertiser Terms</a>.
+              </p>
+            </div>
+            <div class="container col-md-3 spacerhperc7" style="min-height:360px;background-color:#fff;">
+              <h3>TopUSAJobs.com for Traffic Affiliates:</h3>
+              <p>
+                <ul>
+                  <li>
+                    Backfill your job board with targeted jobs to provide your candidates with a broader selection of career opportunities. 
+                  </li>
+                  <li>
+                    Generate additional revenue through our click-share program. 
+                  </li>
+                </ul>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
