@@ -63,31 +63,26 @@
         </div>
       </nav>
 	<body>
+		<div><h4>Journey Date: {{searchdate}} </h4></div>
 		<table class="table table-bordered datatable" id="datatable">
 			<thead>
 				<tr>
-					<td>Flight No.</td>
 					<td>Source Station</td>
 					<td>Departure Time</td>
-					<td>Choice</td>
-					<td>Choice Essential</td>
-					<td>Choice Plus</td>
-					<td>First</td>
+					<td>Main Cabin</td>
+					<td>First/Business</td>
 					<td>Arival Time</td>
 					<td>Destination Station</td>
 				</tr>
 			</thead>
 			<tbody>
 				{% if temp %}
-					{% for fno,stn,dept,price1,prc2,prc3,prc4,dsttime,dststn in temp %}
+					{% for stn,dept,price1,cabin1,prc2,cabin2,dsttime,dststn in temp %}
 						<tr>
-							<td>{{fno}} </td>
 							<td>{{stn}} </td>
 							<td>{{dept}} </td>
-							<td>${{price1}} </td>
-							<td>${{prc2}} </td>
-							<td>${{prc3}}</td>
-							<td>${{prc4}} </td>
+							<td>{{price1}} - {{cabin1}} </td>
+							<td>{{prc2}} - {{cabin2}}</td>
 							<td>{{dsttime}}</td>
 							<td>{{dststn}} </td>
 						
@@ -108,13 +103,10 @@
                        
                         $("#datatable").dataTable({
                                 "columns": [
-						            { "data": "Flight No" },
 						            { "data": "Source Station" },
 						            { "data": "Departure Time" },
-						            { "data": "Choice" },
-						            { "data": "Choice Essential" },
-						            { "data": "Choice Plus" },
-						            { "data": "First" },
+						            { "data": "Main Cabin" },
+						            { "data": "First/Business" },
 						            { "data": "Arival Time" },
 						            { "data": "Destination Station" },
 						            
