@@ -349,7 +349,7 @@ border-left: 1px solid #f2f2f2;
 /*JUMBOTRON*/
 
 .jumbotron{
-  background-color: #fff;
+  background-color: #fff;padding:0px;
 }
 .jumbotron h1{
   color: #333;
@@ -506,3 +506,116 @@ ul.nav.navbar-nav.navbar-footerimg a:focus {
 footer .navbar-footer .navbar-toggle .icon-bar {
   background-color: #39A8E0;
 }
+
+/*----------- search css gk */
+
+.nopadding{padding:0px;}
+.na-ra p{      color: #39A8E0;
+    font-weight: 400;
+    font-size: 16px;
+    margin: 0px;
+}
+.flight-rate
+{
+    background: #39A8E0;
+    color: #fff !important;
+    display: inline-block;
+    padding: 5px 10px;
+    margin-top: 5px;
+}
+.arrivel{display:inline-block;}
+.arrivel p, .arrivel-2 p
+{
+      color: #39A8E0;
+    font-weight: 400;
+    font-size: 16px;
+    margin: 0px;
+	!display:inline-block;
+}
+.arrow-div{
+        display: inline-block;
+    width: 35%;
+    height: 2px;
+    /* border: 1px solid; */
+    background: #757575;
+    top: 50%;
+    position: absolute;
+    right: 76px;
+}
+.arrivel-2
+{
+        right: -130px;
+    top: 0px;
+    display: inline-block;
+    float: right;
+}
+
+.pop-hover{ margin-top: 25px;}	
+.pop-hover a
+{
+    color: #39A8E0;
+	font-size:16px;
+	margin-top:10px;	
+}
+.non-stop p{
+      color: #333;
+    font-weight: 300;
+    font-size: 16px;
+	text-align:center;
+}
+.centr-info
+{
+    padding: 17px 0px 0px;
+    border-bottom: 1px solid #39A8E0;
+}
+.form-side
+{
+    background: #E9F2FA;    padding: 10px 10px 0px;    margin-bottom: 10px;
+}
+.form-side label input {
+  display: none;/* <-- hide the default checkbox */
+}
+.form-side label span {/* <-- style the artificial checkbox */
+height: 13px;
+    width: 13px;
+  border: 1px solid #999;
+  display: inline-block;
+  position: relative;
+      margin-right: 5px;
+}
+.form-side [type=checkbox]:checked + span:before {/* <-- style its checked state..with a ticked icon */
+  content: '\2714';
+  position: absolute;
+  top: -5px;
+  left: 0;
+  
+}
+.form-side label 
+{
+padding:0px;    font-family: inherit;
+}
+.form-side p{font-weight: 300;
+    font-size: 18px;
+}
+.pop-hover .well {background:#fff !important;    padding: 10px;    margin: 0px; border:0px;}
+.pop-hover .well h2 {    margin: 0px;
+    padding: 10px 0px;
+    font-weight: 400;
+    font-size: 20px;}
+.pop-hover .well p {       font-weight: 300;
+    font-size: 16px;}
+.table-date-search table td{padding: 10px 5px !important;}
+.econo{display: inline-block !important;
+        color: #333 !important;
+    font-weight: 300 !important;
+    font-size: 16px !important;
+    text-align: center !important;float:right;
+	    padding: 0px 40px 0px;}
+
+		
+		
+		
+		
+		
+		
+		

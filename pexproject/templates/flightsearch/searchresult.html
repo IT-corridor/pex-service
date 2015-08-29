@@ -7,20 +7,18 @@
 		{% load staticfiles %}
 		
 		<link rel="apple-touch-icon" href="apple-touch-icon.png">
-
-        <link rel="stylesheet" href="{% static 'flightsearch/css/bootstrap.min.css' %}">
         <style>
             body {
                 /*padding-top: 50px;*/
                 padding-bottom: 20px;
             }
         </style>
+        <link rel="stylesheet" href="{% static 'flightsearch/css/bootstrap.min.css' %}">
         <link rel="stylesheet" href="{% static 'flightsearch/css/bootstrap-theme.min.css' %}">
         <link rel="stylesheet" href="{% static 'flightsearch/css/datepicker.css' %}">
-        <link rel="stylesheet" href="{% static 'flightsearch/css/main.css' %}">
-        <link rel="stylesheet" href="{% static 'flightsearch/css/bootstrap.css' %}">
-        <link rel="stylesheet" href="{% static 'flightsearch/css/bootstrap.min.css' %}">
-		
+        <!--<link rel="stylesheet" href="{% static 'flightsearch/css/bootstrap.css' %}"> -->
+        
+		<link rel="stylesheet" href="{% static 'flightsearch/css/main.css' %}">
         <script src="{% static 'flightsearch/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js' %}"></script>
         <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>/-->
         <script src="{% static 'flightsearch/js/jquery-2.1.4.min.js' %}"></script>
@@ -62,11 +60,190 @@
           </div>
         </div>
       </nav>
+      
 	<body>
+		<div class="">
+      <div class="jumbotron">
+        <div class="container-fluid">
+			<div class="col-md-12 col-xs-12">
+				<div class="col-md-2 col-xs-12 nopadding">
+			<form>
+			<div class="col-md-12 col-xs-12 nopadding form-side">
+					<div class="priceRangeInfo">
+					DEPARTURE TIME
+					  <input type="range" name="buying_slider_min" id="buying_slider_min" class="minBuyingSlider" value="00:00" min="00:00" max="23:59" />
+					</div>
+					<div class="priceRangeInfo mvt15px">
+					ARRIVAL TIME
+					  <input type="range" name="buying_slider_min" id="buying_slider_min" class="minBuyingSlider" value="0" min="0" max="100" />
+					</div>
+			</div>
+				<div class="col-md-12 col-xs-12 nopadding form-side">
+					<p>NUMBER OF STOPS</p>
+				
+					  <div class="checkbox">
+						<label>
+						  <input type='checkbox'>
+						  <span></span>
+						  NONSTOP
+						</label>
+					  </div>
+					  <div class="checkbox">
+						<label>
+						  <input type='checkbox'>
+						  <span></span>
+						  STOP
+						</label>
+					  </div>
+					  <div class="checkbox">
+						<label>
+						  <input type='checkbox'>
+						  <span></span>
+						  2+ STOPS
+						</label>
+					  </div>
+				
+				</div>
+				<!--
+				<div class="col-md-12 col-xs-12 nopadding form-side">
+					<p>NUMBER OF STOPS</p>
+				<form>
+					  <div class="checkbox">
+						<label>
+						  <input type='checkbox'>
+						  <span></span>
+						  NONSTOP
+						</label>
+					  </div>
+					  <div class="checkbox">
+						<label>
+						  <input type='checkbox'>
+						  <span></span>
+						  STOP
+						</label>
+					  </div>
+					  
+					  <div class="checkbox">
+						<label>
+						  <input type='checkbox'>
+						  <span></span>
+						  2+ STOPS
+						</label>
+					  </div>
+					  
+				</form>
+				</div>
+				-->
+				<div class="col-md-12 col-xs-12 nopadding form-side">
+					<p>CABIN</p>
+				
+					  <div class="checkbox">
+						<label>
+						  <input type='checkbox' name="cabin[]">
+						  <span></span>
+						  ECONOMY
+						</label>
+					  </div>
+					  <div class="checkbox">
+						<label>
+						  <input type='checkbox' name="cabin[]">
+						  <span></span>
+						  BUSINESS
+						</label>
+					  </div>
+					  <div class="checkbox">
+						<label>
+						  <input type='checkbox' name="cabin[]">
+						  <span></span>
+						  FIRST
+						</label>
+					  </div>
+				
+				</div>
+				<div class="col-md-12 col-xs-12 nopadding form-side">
+					<input type="submit" value="SEARCH" class="btn btn-default">
+				</div>
+				</form>
+				</div>
+				<div class="col-md-8 col-xs-12 ">
+				{% if temp %}
+					{% for fno,stn,stp,lyovr,dept,price1,cabin1,prc2,cabin2,dsttime,dststn in temp %}
+					<div class="col-md-12 col-xs-12 centr-info">
+						<div class="col-md-6 col-xs-12 nopadding">
+						<div class="col-md-12 col-xs-12 nopadding">
+							<div class="col-md-8 col-xs-12 nopadding na-ra">
+								<p class="flight-name">{{fno}} <!--FIRST FLIGHT OPTION RESULT--></p>
+								<p class="flight-rate">{{price1}} <!--4,500 POINTS + $5.00 --></p>
+							</div>
+							<div class="col-md-4 col-xs-12"><img src="{% static 'flightsearch/img/logoMain.jpg' %}" class="img-responsive" alt="Responsive image"></div>
+						</div>
+						</div>
+						<div class="col-md-6 col-xs-12 nopadding">	
+						<div class="col-md-12 col-xs-12 nopadding">	
+							<div class="col-md-8 col-xs-12 nopadding">
+								<div class="arrivel">
+									<p>{{stn}}</p>
+									<p>{{dept}}</p>
+								</div>
+								<div class="arrow-div">
+								</div>
+								<div class="arrivel-2">
+									<p>{{dststn}}</p>
+									<p>{{dsttime}}</p>
+								</div>
+	
+								
+								
+							</div>
+							
+							<div class="col-md-4 col-xs-12 non-stop">
+							<p>{{stp}}</p>
+							
+							</div>
+						</div>	
+						<div class="col-xs-12 nopadding pop-hover"><p class="econo">{{cabin1}}</p>
+									<a class="" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">SHOW DETAILS</a>
+								<div class="collapse" id="collapseExample">
+								  <div class="well">
+									<h2>DEPART</h2>
+									<p>COMPANY FLIGHT (ECO)</p>
+									<div class="table-responsive table-date-search">
+									  <table class="table">
+										<tr>
+											<td>{{dept}}</td>
+											<td>{{searchdate}}</td>
+											<td>{{stn}}</td>
+										</tr>
+										<tr>
+											<td>{{dsttime}}</td>
+											<td>{{searchdate}}</td>
+											<td>{{dststn}}</td>
+										</tr>
+									  </table>
+									</div>
+									<a href="#">share</a>
+								  </div>
+								</div>
+								</div>
+						</div>	
+						</div>
+						{%endfor %}
+				{% endif %}
+					</div>
+					
+				
+				
+				<div class="col-md-2 col-xs-12 nopadding"><img src="{% static 'flightsearch/img/ad.jpg' %}" class="img-responsive" alt="Responsive image"></div>
+			</div>
+        </div>
+      </div>
+ </div>
+		<!--
 		<div><h4>Journey Date: {{searchdate}} </h4></div>
 		<table class="table table-bordered datatable" id="datatable">
 			<thead>
 				<tr>
+					<td>Flight No.</td>
 					<td>Source Station</td>
 					<td>Departure Time</td>
 					<td>Main Cabin</td>
@@ -77,9 +254,10 @@
 			</thead>
 			<tbody>
 				{% if temp %}
-					{% for stn,dept,price1,cabin1,prc2,cabin2,dsttime,dststn in temp %}
+					{% for fno,stn,stp,lyovr,dept,price1,cabin1,prc2,cabin2,dsttime,dststn in temp %}
 						<tr>
-							<td>{{stn}} </td>
+							<td>{{fno}}</td>
+							<td>{{stn}} - {{stp}} <h5>{{lyovr}}</h5></td>
 							<td>{{dept}} </td>
 							<td>{{price1}} - {{cabin1}} </td>
 							<td>{{prc2}} - {{cabin2}}</td>
@@ -103,6 +281,7 @@
                        
                         $("#datatable").dataTable({
                                 "columns": [
+                                	{ "data": "Flight No." },
 						            { "data": "Source Station" },
 						            { "data": "Departure Time" },
 						            { "data": "Main Cabin" },
@@ -145,9 +324,9 @@
 		<script src="{% static 'flightsearch/datatables/responsive/js/datatables.responsive.js' %}"></script>
 		<script src="{% static 'flightsearch/datatables/lodash.min.js' %}"></script>
 		<script src="{% static 'flightsearch/js/dataTables.bootstrap.js' %}"></script>
-		
-	
-	</body>
+		-->
+	<script src="{% static 'flightsearch/js/vendor/bootstrap.min.js' %}"></script>
+	</body> 
 </html>
 
 

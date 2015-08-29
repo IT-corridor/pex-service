@@ -6,7 +6,7 @@ from django.template import RequestContext, loader
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import selenium
-#from pyvirtualdisplay import Display
+from pyvirtualdisplay import Display
 from datetime import timedelta
 #from datetime import datetime,date
 import datetime
@@ -45,6 +45,10 @@ def search(request):
     context = {}
     if request.method == "POST":
         
+        #currentdatetime = datetime.datetime.now()
+        #time = currentdatetime.strftime("%Y-%m-%d %H:%M:%S")
+        #print time
+        
     #return render(request, 'flightsearch/index.html', {})
         fromstation = []
         depttime =[]
@@ -54,18 +58,24 @@ def search(request):
         choice2=[]
         maincabin=[]
         firstcabin=[]
-        
+        stop=[]
+        layover=[]
+        flightno=[]
         orgn = request.REQUEST['fromMain'] #"Seattle, WA, US (SEA)"
         dest = request.REQUEST['toMain'] #"New York, NY, US (NYC - All Airports)"
         depart = request.REQUEST['deptdate']
         dt = datetime.datetime.strptime(depart, '%m/%d/%Y')
         date = dt.strftime('%Y/%m/%d')
-        print date
+        time = dt.strftime('%Y-%m-%d %H:%M:%S')
+        print time
+        #records = Flightdata.objects.filter()
         url ="http://www.delta.com/"
 
         #curdate = datetime.date.today() + datetime.timedelta(days=1)
         #date = curdate.strftime('%Y/%m/%d')
         #print date
+        display = Display(visible=0, size=(800, 600))
+        display.start()
         driver = webdriver.Firefox()
         driver.get(url)
         driver.implicitly_wait(5)
@@ -94,48 +104,67 @@ def search(request):
         
         datatable = soup.findAll("table",{"class":"fareDetails"})
         #print datatable
-        i = 1
         for content in datatable:
-            print "=============================data row = "+str(i)+"=================================="
             timeblock = content.findAll("div",{"class":"flightDateTime"})
             for info in timeblock:
                 temp = info.findAll("span")
-                depttime.append(temp[0].text)
-                arivaltime.append(temp[3].text)
+                depature = temp[0].text
+                depttime.append(depature)
+                arival = temp[3].text
+                arivaltime.append(arival)
                 #print temp[0].text,temp[1].text,temp[3].text,temp[4].text
                 
             flite_route = content.findAll("div",{"class":"flightPathWrapper"})
+            fltno = content.find("a",{"class":"helpIcon"}).text
+            flightno.append(fltno)
             for route in flite_route:
+                if route.find("div",{"class":"nonStopBtn"}):
+                    stp = "NONSTOP"
+                    stop.append(stp)
+                    lyover = ""
+                    layover.append(lyover)
+                    #print "nonstop"
+                else:
+                    if route.find("div",{"class":"nStopBtn"}):
+                        stp = route.find("div",{"class":"nStopBtn"}).text
+                        stop.append(stp)
+                        #print route.find("div",{"class":"nStopBtn"}).text
+                        lyover = route.find("div",{"class":"layOver"}).find("span").text
+                        print route.find("div",{"class":"layOver"}).find("span").text
+                        print route.find("div",{"class":"layovertoolTip"}).text
+                        layover.append(lyover)
                 #print route.find("div",{"class":"originCity"}).text
-                fromstation.append(route.find("div",{"class":"originCity"}).text)
-                deststn.append(route.find("div",{"class":"destinationCity"}).text)
+                sourcestn = route.find("div",{"class":"originCity"}).text
+                fromstation.append(sourcestn)
+                destinationstn = route.find("div",{"class":"destinationCity"}).text
+                deststn.append(destinationstn)
                 #print route.find("div",{"class":"destinationCity"}).text
             if content.findAll("div",{"class":"priceHolder"}):
                 fareblock = content.findAll("div",{"class":"priceHolder"})
                 lenght = len(fareblock)
                 #print fareblock[0].text
-                choice1.append(fareblock[0].text)
+                fare1 =fareblock[0].text 
+                choice1.append(fare1)
                 if lenght>1:
                     #print fareblock[1].text
-                    choice2.append(fareblock[1].text)
+                    fare2 = fareblock[1].text
+                    choice2.append(fare2)
             if content.findAll("div",{"class":"frmTxtHldr flightCabinClass"}):
                 cabintype = content.findAll("div",{"class":"frmTxtHldr flightCabinClass"})
                 clength = len(cabintype)
-                #print cabintype[0].text
-                maincabin.append(cabintype[0].text)
+                cabintype1 = cabintype[0].text
+                maincabin.append(cabintype1)
                 if clength>1:
                     #print cabintype[1].text
-                    firstcabin.append(cabintype[1].text)
-            i = i+1
-            #print "Arival Time = "+arival_time
-            #print "Destination Station = "+destination_station
-    
-        #data = {"choice1":choice1,"choice2":choice2,"choice3":choice3,"choice4":choice4}
-        #print choice1, choice2, choice3, choice4, choice5
-        #print "================================================" 
-        record = zip(fromstation, depttime,choice1,maincabin, choice2,firstcabin, arivaltime, deststn) 
-         
+                    cabintype2 = cabintype[1].text
+                    firstcabin.append(cabintype2)
+            #queryset = Flightdata(flighno=fltno,scrapetime=time,stoppage=stp,stoppage_station=lyover, origin=sourcestn,destination=destinationstn,departure=depature,arival=arival,maincabin=fare1,firstclass=fare2,cabintype1=cabintype1,cabintype2=cabintype2) 
+            #queryset.save()
+             
+        record = zip(flightno,fromstation, stop,layover, depttime,choice1,maincabin, choice2,firstcabin, arivaltime, deststn) 
+        display.stop()
         driver.quit()
+        
 
         return render_to_response('flightsearch/searchresult.html', {'temp':record, 'searchdate':date})
     else:
