@@ -16,3 +16,15 @@ class Flightdata(models.Model):
     cabintype1 =  models.CharField(max_length=100)
     cabintype2 =  models.CharField(max_length=100)
 # Create your models here.
+class Flights_wego(models.Model):
+    id = models.IntegerField (primary_key=True)
+    country_id = models.IntegerField ()
+    state_id = models.IntegerField ()
+    city_id = models.IntegerField ()
+    code = models.CharField(max_length=4)
+    type = models.CharField(max_length=10)
+    name = models.CharField(max_length=255)
+    jo_name = models.CharField(max_length=512)
+    time_zone = models.CharField(max_length=5)
+    latitude = models.CharField(max_length=20)
+    logitude = models.CharField(max_length=20)

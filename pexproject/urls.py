@@ -9,6 +9,7 @@ urlpatterns = patterns('',
     url(r'^$', index, name='index'),
     url(r'^login', login, name='login'),
     url(r'^search', search, name='search'),
+    url(r'^get_airport', get_airport, name='get_airport'),
 #    url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT, 'show_indexes':True}),
 )
 

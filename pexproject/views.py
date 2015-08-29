@@ -2,11 +2,12 @@ from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext, loader
+import json
 #from django.template.context_processors import csrf
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import selenium
-from pyvirtualdisplay import Display
+#from pyvirtualdisplay import Display
 from datetime import timedelta
 #from datetime import datetime,date
 import datetime
@@ -17,7 +18,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
-from pexproject.models import Flightdata
+from pexproject.models import Flightdata,Flights_wego
 #from test1.models import Register
 from pexproject.form import LoginForm
 
@@ -44,7 +45,21 @@ def login(request):
 def search(request):
     context = {}
     if request.method == "POST":
-        
+        querylist=''
+        querytype="stoppage__in" 
+        join="="
+        seperator=""
+        #print request.POST
+        #record = Flightdata.objects.filter(stoppage__in=['nonstop'] )
+        if request.POST.getlist('stop'):
+            for value in request.POST.getlist('stop'):
+                querylist =querylist+seperator+"'"+value+"'"
+                print querylist
+                seperator=","
+            qruey = querytype+"["+querylist+"]" 
+            print qruey 
+            record = Flightdata.objects.filter(qruey)
+            print record
         #currentdatetime = datetime.datetime.now()
         #time = currentdatetime.strftime("%Y-%m-%d %H:%M:%S")
         #print time
@@ -61,6 +76,7 @@ def search(request):
         stop=[]
         layover=[]
         flightno=[]
+        """
         orgn = request.REQUEST['fromMain'] #"Seattle, WA, US (SEA)"
         dest = request.REQUEST['toMain'] #"New York, NY, US (NYC - All Airports)"
         depart = request.REQUEST['deptdate']
@@ -74,8 +90,8 @@ def search(request):
         #curdate = datetime.date.today() + datetime.timedelta(days=1)
         #date = curdate.strftime('%Y/%m/%d')
         #print date
-        display = Display(visible=0, size=(800, 600))
-        display.start()
+        #display = Display(visible=0, size=(800, 600))
+        #display.start()
         driver = webdriver.Firefox()
         driver.get(url)
         driver.implicitly_wait(5)
@@ -162,13 +178,31 @@ def search(request):
             #queryset.save()
              
         record = zip(flightno,fromstation, stop,layover, depttime,choice1,maincabin, choice2,firstcabin, arivaltime, deststn) 
-        display.stop()
+        #display.stop()
         driver.quit()
-        
+        """
 
-        return render_to_response('flightsearch/searchresult.html', {'temp':record, 'searchdate':date})
+        return render_to_response('flightsearch/searchresult.html',context_instance=RequestContext(request) )#, {'temp':record, 'searchdate':date})
     else:
         render_to_response('flightsearch/searchresult.html')
+
+def get_airport(request):
+    if request.is_ajax():
+        q = request.GET.get('term', '')
+        airports = Flights_wego.objects.filter(code__icontains = q )[:20]
+        results = []
+        for airportdata in airports:
+            airport_json = {}
+            airport_json['id'] = airportdata.id
+            airport_json['label'] = airportdata.name
+            airport_json['value'] = airportdata.code
+            results.append(airport_json)
+        data = json.dumps(results)
+    else:
+        data = 'fail'
+    mimetype = 'application/json'
+    return HttpResponse(data, mimetype)
+        
         
 
 	

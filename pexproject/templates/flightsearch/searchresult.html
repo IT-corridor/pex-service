@@ -67,7 +67,7 @@
         <div class="container-fluid">
 			<div class="col-md-12 col-xs-12">
 				<div class="col-md-2 col-xs-12 nopadding">
-			<form>
+			<form action="search" method="post">{% csrf_token %}
 			<div class="col-md-12 col-xs-12 nopadding form-side">
 					<div class="priceRangeInfo">
 					DEPARTURE TIME
@@ -83,21 +83,21 @@
 				
 					  <div class="checkbox">
 						<label>
-						  <input type='checkbox'>
+						  <input type='checkbox' name="stop" value="nonstop">
 						  <span></span>
 						  NONSTOP
 						</label>
 					  </div>
 					  <div class="checkbox">
 						<label>
-						  <input type='checkbox'>
+						  <input type='checkbox' name="stop" value="1 STOP">
 						  <span></span>
-						  STOP
+						  1 STOP
 						</label>
 					  </div>
 					  <div class="checkbox">
 						<label>
-						  <input type='checkbox'>
+						  <input type='checkbox' name="stop" value="2+ STOPS">
 						  <span></span>
 						  2+ STOPS
 						</label>
@@ -139,21 +139,21 @@
 				
 					  <div class="checkbox">
 						<label>
-						  <input type='checkbox' name="cabin[]">
+						  <input type='checkbox' name="cabin" value="ECONOMY">
 						  <span></span>
 						  ECONOMY
 						</label>
 					  </div>
 					  <div class="checkbox">
 						<label>
-						  <input type='checkbox' name="cabin[]">
+						  <input type='checkbox' name="cabin" value="Business">
 						  <span></span>
 						  BUSINESS
 						</label>
 					  </div>
 					  <div class="checkbox">
 						<label>
-						  <input type='checkbox' name="cabin[]">
+						  <input type='checkbox' name="cabin" value="First">
 						  <span></span>
 						  FIRST
 						</label>
