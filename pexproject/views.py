@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+import os,sys
 from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
@@ -7,10 +9,11 @@ import json
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import selenium
-#from pyvirtualdisplay import Display
+from pyvirtualdisplay import Display
 from datetime import timedelta
 #from datetime import datetime,date
 import datetime
+from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -51,6 +54,7 @@ def search(request):
         seperator=""
         #print request.POST
         #record = Flightdata.objects.filter(stoppage__in=['nonstop'] )
+	'''
         if request.POST.getlist('stop'):
             for value in request.POST.getlist('stop'):
                 querylist =querylist+seperator+"'"+value+"'"
@@ -60,6 +64,7 @@ def search(request):
             print qruey 
             record = Flightdata.objects.filter(qruey)
             print record
+	'''
         #currentdatetime = datetime.datetime.now()
         #time = currentdatetime.strftime("%Y-%m-%d %H:%M:%S")
         #print time
@@ -76,7 +81,6 @@ def search(request):
         stop=[]
         layover=[]
         flightno=[]
-        """
         orgn = request.REQUEST['fromMain'] #"Seattle, WA, US (SEA)"
         dest = request.REQUEST['toMain'] #"New York, NY, US (NYC - All Airports)"
         depart = request.REQUEST['deptdate']
@@ -90,11 +94,16 @@ def search(request):
         #curdate = datetime.date.today() + datetime.timedelta(days=1)
         #date = curdate.strftime('%Y/%m/%d')
         #print date
-        #display = Display(visible=0, size=(800, 600))
-        #display.start()
+        display = Display(visible=0, size=(800, 600))
+        display.start()
+	#profile_name = '/home/ubuntu/.mozilla/firefox/amozqob6.profile6'
+	#profile = webdriver.FirefoxProfile(profile_name)
+	#driver = webdriver.Firefox(firefox_profile=profile)
+	#binary = FirefoxBinary("/usr/bin/firefox/")
+	#driver = webdriver.Firefox(firefox_binary=binary)
         driver = webdriver.Firefox()
         driver.get(url)
-        driver.implicitly_wait(5)
+        driver.implicitly_wait(40)
         
         oneway = driver.find_element_by_id("oneWayBtn")
         driver.execute_script("arguments[0].click();", oneway)
@@ -111,7 +120,7 @@ def search(request):
         
         driver.find_element_by_id("milesBtn").click()
         driver.find_element_by_id("findFlightsSubmit").click()
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "showAll-footer")))
+        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "showAll-footer")))
         driver.find_element_by_link_text('Show All').click()
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "fareRowContainer_21")))
         driver.implicitly_wait(10)
@@ -178,17 +187,18 @@ def search(request):
             #queryset.save()
              
         record = zip(flightno,fromstation, stop,layover, depttime,choice1,maincabin, choice2,firstcabin, arivaltime, deststn) 
-        #display.stop()
+        display.stop()
         driver.quit()
-        """
+        
 
-        return render_to_response('flightsearch/searchresult.html',context_instance=RequestContext(request) )#, {'temp':record, 'searchdate':date})
+        return render_to_response('flightsearch/searchresult.html', {'temp':record, 'searchdate':date},context_instance=RequestContext(request))
     else:
         render_to_response('flightsearch/searchresult.html')
 
 def get_airport(request):
     if request.is_ajax():
         q = request.GET.get('term', '')
+	print q
         airports = Flights_wego.objects.filter(code__icontains = q )[:20]
         results = []
         for airportdata in airports:
