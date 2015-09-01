@@ -9,23 +9,29 @@ import json
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import selenium
-from pyvirtualdisplay import Display
 from datetime import timedelta
 #from datetime import datetime,date
 import datetime
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
-from pexproject.models import Flightdata,Flights_wego
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.core.context_processors import csrf
+from django.views.decorators.csrf import requires_csrf_token
+from pexproject.models import Flightdata,Flights_wego,Searchkey
+from subprocess import call
+
 #from test1.models import Register
 from pexproject.form import LoginForm
 
 def index(request):
+    
     return  render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
 '''
 def register(request):
@@ -46,165 +52,56 @@ def login(request):
     return render_to_response('flightsearch/login.html',{'LoginForm': form})
 
 def search(request):
-    context = {}
-    if request.method == "POST":
-        querylist=''
-        querytype="stoppage__in" 
-        join="="
-        seperator=""
-        #print request.POST
-        #record = Flightdata.objects.filter(stoppage__in=['nonstop'] )
-	'''
-        if request.POST.getlist('stop'):
-            for value in request.POST.getlist('stop'):
-                querylist =querylist+seperator+"'"+value+"'"
-                print querylist
-                seperator=","
-            qruey = querytype+"["+querylist+"]" 
-            print qruey 
-            record = Flightdata.objects.filter(qruey)
-            print record
-	'''
-        #currentdatetime = datetime.datetime.now()
-        #time = currentdatetime.strftime("%Y-%m-%d %H:%M:%S")
-        #print time
-        
-    #return render(request, 'flightsearch/index.html', {})
-        fromstation = []
-        depttime =[]
-        arivaltime=[]
-        deststn=[]
-        choice1=[]
-        choice2=[]
-        maincabin=[]
-        firstcabin=[]
-        stop=[]
-        layover=[]
-        flightno=[]
+    #context = {}
+    #if request.method == "POST":
+    if request.is_ajax():
+        context = {}
         orgn = request.REQUEST['fromMain'] #"Seattle, WA, US (SEA)"
         dest = request.REQUEST['toMain'] #"New York, NY, US (NYC - All Airports)"
         depart = request.REQUEST['deptdate']
-        dt = datetime.datetime.strptime(depart, '%m/%d/%Y')
+        #print orgn,depart
+        dt = datetime.datetime.strptime(depart, '%Y/%m/%d')
         date = dt.strftime('%Y/%m/%d')
-        time = dt.strftime('%Y-%m-%d %H:%M:%S')
-        print time
-        #records = Flightdata.objects.filter()
-        url ="http://www.delta.com/"
-
-        #curdate = datetime.date.today() + datetime.timedelta(days=1)
-        #date = curdate.strftime('%Y/%m/%d')
-        #print date
-        display = Display(visible=0, size=(800, 600))
-        display.start()
-	#profile_name = '/home/ubuntu/.mozilla/firefox/amozqob6.profile6'
-	#profile = webdriver.FirefoxProfile(profile_name)
-	#driver = webdriver.Firefox(firefox_profile=profile)
-	#binary = FirefoxBinary("/usr/bin/firefox/")
-	#driver = webdriver.Firefox(firefox_binary=binary)
-        driver = webdriver.Firefox()
-        driver.get(url)
-        driver.implicitly_wait(40)
-        
-        oneway = driver.find_element_by_id("oneWayBtn")
-        driver.execute_script("arguments[0].click();", oneway)
-        
-        origin = driver.find_element_by_id("originCity")
-        origin.clear()
-        origin.send_keys(orgn)
-        destination = driver.find_element_by_id("destinationCity")
-        destination.send_keys(dest)
-        #destination.send_keys(Keys.ENTER)
-        
-        driver.find_element_by_id("departureDate").click()
-        driver.find_elements_by_css_selector("td[class='available delta-calendar-td'][data-date='"+date+"']")[0].click()
-        
-        driver.find_element_by_id("milesBtn").click()
-        driver.find_element_by_id("findFlightsSubmit").click()
-        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "showAll-footer")))
-        driver.find_element_by_link_text('Show All').click()
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "fareRowContainer_21")))
-        driver.implicitly_wait(10)
-        html_page = driver.page_source
-        soup = BeautifulSoup(html_page)
-        
-        datatable = soup.findAll("table",{"class":"fareDetails"})
-        #print datatable
-        for content in datatable:
-            timeblock = content.findAll("div",{"class":"flightDateTime"})
-            for info in timeblock:
-                temp = info.findAll("span")
-                depature = temp[0].text
-                depttime.append(depature)
-                arival = temp[3].text
-                arivaltime.append(arival)
-                #print temp[0].text,temp[1].text,temp[3].text,temp[4].text
+        searchdate = dt.strftime('%Y-%m-%d')        
+        currentdatetime = datetime.datetime.now()
+        time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
+        searchkeyid=''
+        obj = Searchkey.objects.filter(source=orgn,destination=dest,traveldate=searchdate)
+        #print len(obj)
+        if len(obj) > 0:
+            print "if block"
+            for keyid in obj:
+                seachkeyid = keyid.searchid
+                print seachkeyid
+                mimetype = 'application/json'
                 
-            flite_route = content.findAll("div",{"class":"flightPathWrapper"})
-            fltno = content.find("a",{"class":"helpIcon"}).text
-            flightno.append(fltno)
-            for route in flite_route:
-                if route.find("div",{"class":"nonStopBtn"}):
-                    stp = "NONSTOP"
-                    stop.append(stp)
-                    lyover = ""
-                    layover.append(lyover)
-                    #print "nonstop"
-                else:
-                    if route.find("div",{"class":"nStopBtn"}):
-                        stp = route.find("div",{"class":"nStopBtn"}).text
-                        stop.append(stp)
-                        #print route.find("div",{"class":"nStopBtn"}).text
-                        lyover = route.find("div",{"class":"layOver"}).find("span").text
-                        print route.find("div",{"class":"layOver"}).find("span").text
-                        print route.find("div",{"class":"layovertoolTip"}).text
-                        layover.append(lyover)
-                #print route.find("div",{"class":"originCity"}).text
-                sourcestn = route.find("div",{"class":"originCity"}).text
-                fromstation.append(sourcestn)
-                destinationstn = route.find("div",{"class":"destinationCity"}).text
-                deststn.append(destinationstn)
-                #print route.find("div",{"class":"destinationCity"}).text
-            if content.findAll("div",{"class":"priceHolder"}):
-                fareblock = content.findAll("div",{"class":"priceHolder"})
-                lenght = len(fareblock)
-                #print fareblock[0].text
-                fare1 =fareblock[0].text 
-                choice1.append(fare1)
-                if lenght>1:
-                    #print fareblock[1].text
-                    fare2 = fareblock[1].text
-                    choice2.append(fare2)
-            if content.findAll("div",{"class":"frmTxtHldr flightCabinClass"}):
-                cabintype = content.findAll("div",{"class":"frmTxtHldr flightCabinClass"})
-                clength = len(cabintype)
-                cabintype1 = cabintype[0].text
-                maincabin.append(cabintype1)
-                if clength>1:
-                    #print cabintype[1].text
-                    cabintype2 = cabintype[1].text
-                    firstcabin.append(cabintype2)
-            #queryset = Flightdata(flighno=fltno,scrapetime=time,stoppage=stp,stoppage_station=lyover, origin=sourcestn,destination=destinationstn,departure=depature,arival=arival,maincabin=fare1,firstclass=fare2,cabintype1=cabintype1,cabintype2=cabintype2) 
-            #queryset.save()
-             
-        record = zip(flightno,fromstation, stop,layover, depttime,choice1,maincabin, choice2,firstcabin, arivaltime, deststn) 
-        display.stop()
-        driver.quit()
+                return HttpResponse(seachkeyid, mimetype)
+        else:
+            print "else"
+            searchdata = Searchkey(source=orgn,destination=dest,traveldate=dt,scrapetime=time) 
+            searchdata.save()
+            searchkeyid = searchdata.searchid 
+            print searchkeyid
+            call(["python", "delta.py",orgn,dest,date,str(searchkeyid)])
+            #record = zip(flightno,fromstation, stop,layover, depttime,choice1,maincabin, choice2,firstcabin, arivaltime, deststn) 
+            #display.stop()
+            mimetype = 'application/json'
+            return HttpResponse(searchkeyid, mimetype)
+            
+    
+    
+            #return render_to_response('flightsearch/searchresult.html', {'temp':record, 'searchdate':date, 'sname':sourcename,'dname':destname},context_instance=RequestContext(request))
         
-
-        return render_to_response('flightsearch/searchresult.html', {'temp':record, 'searchdate':date},context_instance=RequestContext(request))
-    else:
-        render_to_response('flightsearch/searchresult.html')
 
 def get_airport(request):
     if request.is_ajax():
         q = request.GET.get('term', '')
-	print q
-        airports = Flights_wego.objects.filter(code__icontains = q )[:20]
+        airports = Flights_wego.objects.filter(name__icontains = q )[:20]
         results = []
         for airportdata in airports:
             airport_json = {}
             airport_json['id'] = airportdata.id
-            airport_json['label'] = airportdata.name
+            airport_json['label'] = airportdata.name+" ("+airportdata.code+" )"
             airport_json['value'] = airportdata.code
             results.append(airport_json)
         data = json.dumps(results)
@@ -212,7 +109,29 @@ def get_airport(request):
         data = 'fail'
     mimetype = 'application/json'
     return HttpResponse(data, mimetype)
+
+def searchLoading(request):
+    context = {}
+    context = {}
+    if request.method == "POST":
+        orgn = request.REQUEST['fromMain'] #"Seattle, WA, US (SEA)"
+        dest = request.REQUEST['toMain'] #"New York, NY, US (NYC - All Airports)"
+        depart = request.REQUEST['deptdate']
+        dt = datetime.datetime.strptime(depart, '%m/%d/%Y')
+        date = dt.strftime('%Y/%m/%d')     
+        data ={}
         
+        return render_to_response('flightsearch/searchloading.html', {'searchdate':date, 'sname':orgn,'dname':dest},context_instance=RequestContext(request))
+    else:
+        return render_to_response('flightsearch/index.html')
+def getsearchresult(request):
+    if request.GET.get('keyid', ''):
+        searchkey = request.GET.get('keyid', '')
+        record = Flightdata.objects.filter(searchkeyid=searchkey)
+        searchdata = Searchkey.objects.filter(searchid=searchkey)
+        print len(record)
+        return render_to_response('flightsearch/searchresult.html',{'data':record,'search':searchdata},context_instance=RequestContext(request)) 
+    
         
 
 	

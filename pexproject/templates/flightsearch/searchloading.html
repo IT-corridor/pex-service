@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		{% load staticfiles %}
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>New Web Project</title>
+		<script src="{% static 'flightsearch/js/jquery-2.1.4.min.js' %}"></script>
+	</head>
+	
+	<link rel="stylesheet" href="{% static 'flightsearch/css/bootstrap.min.css' %}">
+	<body>
+		<form action="#" method="post">{% csrf_token %}
+		<input type="hidden" name="from" id="from" value="{{sname}}">
+		<input type="hidden" name="to" id="to" value="{{dname}}">
+		<input type="hidden" name="departdate" id="date" value="{{searchdate}}">
+		</form>
+		<form action="index" method="post" id ="formid">
+			<input type="hidden" name="searchid" value="" id="searchid"/>
+		</form>
+		<center>
+			<div id="loading">
+			  <img id="loading-image" src="{% static 'flightsearch/js/images/loading.gif' %}" alt="Loading..." />
+			</div>
+          
+		</center>
+
+<script src="{% static 'flightsearch/js/vendor/bootstrap.min.js' %}"></script>
+<script>
+
+	/*$.ajax({
+    type: "POST",
+    url:"search/",
+    data: 
+    success: function(){
+      alert('test')
+     }
+    $('from').val(),'toMain':$('to').val(),'departdate':$('date')
+});*/
+//alert($('#from').val());
+
+var CSRF_TOKEN = "{{ csrf_token }}";
+var from = $('#from').val();
+var to = $('#to').val();
+var depart = $('#date').val();
+var searchid = '';
+$.ajaxSetup({
+  data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+});
+var formdata={"fromMain":$('#from').val(),"csrtoken":CSRF_TOKEN};
+
+$.ajax({
+        type: "POST",
+        url: "/search/",
+        data: "fromMain="+ encodeURI(from)+ "&toMain=" + encodeURI(to)+ "&deptdate=" + encodeURI(depart) + "&csrfmiddlewaretoken=" + encodeURI(CSRF_TOKEN),
+    	success: function(data){
+        console.log(data);
+        searchid = data;
+        redirecttosearchpage(searchid);
+       
+        
+    },
+	
+   });
+     
+ //alert(searchid)  ;  
+ function redirecttosearchpage(searchid){
+ 	if(searchid != '')
+{
+	//alert(searchid)  ;  
+	$('#searchid').val(searchid);
+	window.location.href = "getsearchresult?keyid="+ encodeURI(searchid) ;
+}
+}
+     
+         
+</script>
+</body>
+</html>

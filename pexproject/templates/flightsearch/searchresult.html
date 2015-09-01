@@ -3,65 +3,31 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title>New Web Project</title>
-		{% load staticfiles %}
+		<title>Pex Search Result</title>
+		{% include "flightsearch/header.html" %}
+    	{% load staticfiles %}
 		
-		<link rel="apple-touch-icon" href="apple-touch-icon.png">
-        <style>
-            body {
-                /*padding-top: 50px;*/
-                padding-bottom: 20px;
-            }
-        </style>
-        <link rel="stylesheet" href="{% static 'flightsearch/css/bootstrap.min.css' %}">
-        <link rel="stylesheet" href="{% static 'flightsearch/css/bootstrap-theme.min.css' %}">
-        <link rel="stylesheet" href="{% static 'flightsearch/css/datepicker.css' %}">
-        <!--<link rel="stylesheet" href="{% static 'flightsearch/css/bootstrap.css' %}"> -->
-        
-		<link rel="stylesheet" href="{% static 'flightsearch/css/main.css' %}">
-        <script src="{% static 'flightsearch/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js' %}"></script>
-        <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>/-->
-        <script src="{% static 'flightsearch/js/jquery-2.1.4.min.js' %}"></script>
-        <script src="{% static 'flightsearch/js/bootstrap-datepicker.js' %}"></script>
 		
-	</head>
-	<body itemscope itemtype="http://schema.org/WebPage">
-        <!--[if lt IE 8]>
-            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
-
-<!-- NAVBAR SECTION/-->
-
-        <nav class="navbar navbar-default">
-          <div class="container-fluid">
-            <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#pexMainNavbar">
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span> 
-            </button>
-
-            <a class="navbar-brand brandmedia" href="http://www.pexportal.com"><img src="{% static 'flightsearch/img/logoMain.jpg' %}" alt="" class="hidden-xs hidden-sm hidden-md"><img src="{% static 'flightsearch/img/logo.jpg' %}" alt="" class="hidden-lg hidden-xs"> <img src="{% static 'flightsearch/img/logo.jpg' %}" alt="" class="hidden-lg hidden-md hidden-sm"></a>
-          </div>
-
-          <div class="collapse navbar-collapse" id="pexMainNavbar">
-            <ul class="nav navbar-nav mainNav mvt30px">
-              <li class=""><a href="#">Flights</a></li>
-              <li class=""><a href="#">Hotels</a></li> 
-              <li class=""><a href="#">Cars</a></li>
-              <li class=""><a href="#">Cruises</a></li> 
-              <li class=""><a href="#">Restaurants</a></li>
-            </ul>   
-            <ul class="nav navbar-nav navbar-right">
-              <li class=""><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-              <li class=""><a href="login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-              <li class=""><a href="#"><span class="glyphicon glyphicon-info-sign"></span> Help</a></li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-      
+      <script type="text/javascript">
+          $(function(){
+            $('#datepicker').datepicker({ minDate: 0});
+          });
+        </script>
 	<body>
+		{% if search %}
+				{% for searchrow in search %}
+					<div class="col-md-12 col-xs-12"><div class="col-md-1 col-xs-1"></div>
+						<div class="col-md-7 col-xs-7">
+							
+							<h4>{{searchrow.source}} ===================>{{searchrow.destination}} </h4>
+						</div>
+						<div class="col-md-4 col-xs-4">
+							<h4> {{searchrow.traveldate}}<!--<input type="text" id="datepicker" name="date" value="{{searchdate}}">--></h4>
+						</div>
+						
+					</div>
+				{%endfor %}
+		{% endif %}
 		<div class="">
       <div class="jumbotron">
         <div class="container-fluid">
@@ -83,21 +49,21 @@
 				
 					  <div class="checkbox">
 						<label>
-						  <input type='checkbox' name="stop" value="nonstop">
+						  <input type='checkbox' name="stoppage" value="NONSTOP">
 						  <span></span>
 						  NONSTOP
 						</label>
 					  </div>
 					  <div class="checkbox">
 						<label>
-						  <input type='checkbox' name="stop" value="1 STOP">
+						  <input type='checkbox' name="stoppage" value="1 STOP">
 						  <span></span>
 						  1 STOP
 						</label>
 					  </div>
 					  <div class="checkbox">
 						<label>
-						  <input type='checkbox' name="stop" value="2+ STOPS">
+						  <input type='checkbox' name="stoppage" value="2+ STOPS">
 						  <span></span>
 						  2+ STOPS
 						</label>
@@ -139,7 +105,7 @@
 				
 					  <div class="checkbox">
 						<label>
-						  <input type='checkbox' name="cabin" value="ECONOMY">
+						  <input type='checkbox' name="cabin" value=" Main Cabin  ( N )      ">
 						  <span></span>
 						  ECONOMY
 						</label>
@@ -160,20 +126,21 @@
 					  </div>
 				
 				</div>
+				<input type="hidden" name="search" value="search">
 				<div class="col-md-12 col-xs-12 nopadding form-side">
 					<input type="submit" value="SEARCH" class="btn btn-default">
 				</div>
 				</form>
 				</div>
 				<div class="col-md-8 col-xs-12 ">
-				{% if temp %}
-					{% for fno,stn,stp,lyovr,dept,price1,cabin1,prc2,cabin2,dsttime,dststn in temp %}
+				{% if data %}
+					{% for row in data %}
 					<div class="col-md-12 col-xs-12 centr-info">
 						<div class="col-md-6 col-xs-12 nopadding">
 						<div class="col-md-12 col-xs-12 nopadding">
 							<div class="col-md-8 col-xs-12 nopadding na-ra">
-								<p class="flight-name">{{fno}} <!--FIRST FLIGHT OPTION RESULT--></p>
-								<p class="flight-rate">{{price1}} <!--4,500 POINTS + $5.00 --></p>
+								<p class="flight-name">{{row.flighno}} <!--FIRST FLIGHT OPTION RESULT--></p>
+								<p class="flight-rate">{{row.maincabin}} <!--4,500 POINTS + $5.00 --></p>
 							</div>
 							<div class="col-md-4 col-xs-12"><img src="{% static 'flightsearch/img/logoMain.jpg' %}" class="img-responsive" alt="Responsive image"></div>
 						</div>
@@ -182,14 +149,14 @@
 						<div class="col-md-12 col-xs-12 nopadding">	
 							<div class="col-md-8 col-xs-12 nopadding">
 								<div class="arrivel">
-									<p>{{stn}}</p>
-									<p>{{dept}}</p>
+									<p>{{row.origin}}</p>
+									<p>{{row.departure}}</p>
 								</div>
 								<div class="arrow-div">
 								</div>
 								<div class="arrivel-2">
-									<p>{{dststn}}</p>
-									<p>{{dsttime}}</p>
+									<p>{{row.destination}}</p>
+									<p>{{row.arival}}</p>
 								</div>
 	
 								
@@ -197,12 +164,12 @@
 							</div>
 							
 							<div class="col-md-4 col-xs-12 non-stop">
-							<p>{{stp}}</p>
+							<p>{{row.stoppage}}</p>
 							
 							</div>
 						</div>	
-						<div class="col-xs-12 nopadding pop-hover"><p class="econo">{{cabin1}}</p>
-									<a class="" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">SHOW DETAILS</a>
+						<div class="col-xs-12 nopadding pop-hover"><p class="econo">{{row.cabintype1}}</p>
+							<a class="" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">SHOW DETAILS</a>
 								<div class="collapse" id="collapseExample">
 								  <div class="well">
 									<h2>DEPART</h2>
@@ -210,14 +177,14 @@
 									<div class="table-responsive table-date-search">
 									  <table class="table">
 										<tr>
-											<td>{{dept}}</td>
+											<td>{{row.departure}}</td>
 											<td>{{searchdate}}</td>
-											<td>{{stn}}</td>
+											<td>{{row.origin}}</td>
 										</tr>
 										<tr>
-											<td>{{dsttime}}</td>
+											<td>{{row.arival}}</td>
 											<td>{{searchdate}}</td>
-											<td>{{dststn}}</td>
+											<td>{{row.destination}}</td>
 										</tr>
 									  </table>
 									</div>
@@ -239,38 +206,7 @@
       </div>
  </div>
 		<!--
-		<div><h4>Journey Date: {{searchdate}} </h4></div>
-		<table class="table table-bordered datatable" id="datatable">
-			<thead>
-				<tr>
-					<td>Flight No.</td>
-					<td>Source Station</td>
-					<td>Departure Time</td>
-					<td>Main Cabin</td>
-					<td>First/Business</td>
-					<td>Arival Time</td>
-					<td>Destination Station</td>
-				</tr>
-			</thead>
-			<tbody>
-				{% if temp %}
-					{% for fno,stn,stp,lyovr,dept,price1,cabin1,prc2,cabin2,dsttime,dststn in temp %}
-						<tr>
-							<td>{{fno}}</td>
-							<td>{{stn}} - {{stp}} <h5>{{lyovr}}</h5></td>
-							<td>{{dept}} </td>
-							<td>{{price1}} - {{cabin1}} </td>
-							<td>{{prc2}} - {{cabin2}}</td>
-							<td>{{dsttime}}</td>
-							<td>{{dststn}} </td>
-						
-				
-						</tr>
-				{%endfor %}
-			{% endif %}
-		</tbody>
-		</table>
-	
+		
 	<script>
 
 		jQuery(window).load(function()
@@ -325,8 +261,10 @@
 		<script src="{% static 'flightsearch/datatables/lodash.min.js' %}"></script>
 		<script src="{% static 'flightsearch/js/dataTables.bootstrap.js' %}"></script>
 		-->
+		{% include "flightsearch/footer.html" %}
 	<script src="{% static 'flightsearch/js/vendor/bootstrap.min.js' %}"></script>
 	</body> 
+	
 </html>
 
 

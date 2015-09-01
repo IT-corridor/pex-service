@@ -3,6 +3,7 @@ from django.db import models
 class Flightdata(models.Model):
     rowid = models.AutoField(primary_key=True)
     scrapetime = models.DateTimeField()
+    searchkeyid = models.IntegerField ()
     flighno = models.CharField(max_length=100)
     stoppage = models.CharField(max_length=100)
     stoppage_station = models.CharField(max_length=100)
@@ -28,3 +29,10 @@ class Flights_wego(models.Model):
     time_zone = models.CharField(max_length=5)
     latitude = models.CharField(max_length=20)
     logitude = models.CharField(max_length=20)
+    
+class Searchkey(models.Model):
+    searchid = models.AutoField(primary_key=True)
+    source = models.CharField(max_length=50)
+    destination = models.CharField(max_length=50)
+    traveldate = models.DateField(max_length=50)
+    scrapetime = models.DateTimeField(max_length=50)

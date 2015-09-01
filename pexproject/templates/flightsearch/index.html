@@ -3,36 +3,30 @@
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+	
     <head>
+    	{% include "flightsearch/header.html" %}
     	{% load staticfiles %}
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title></title>
+        <title> {% block title %}{{ category_name }}{% endblock %}</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
-        <link rel="stylesheet" href="{% static 'flightsearch/css/bootstrap.min.css' %}">
+        
         <style>
             body {
                 /*padding-top: 50px;*/
                 padding-bottom: 20px;
             }
+            
         </style>
-        <link rel="stylesheet" href="{% static 'flightsearch/css/bootstrap-theme.min.css' %}">
-        <link rel="stylesheet" href="{% static 'flightsearch/css/datepicker.css' %}">
-        <link rel="stylesheet" href="{% static 'flightsearch/js/jquery-ui.css' %}">
-        <link rel="stylesheet" href="{% static 'flightsearch/css/main.css' %}">
-
-        <script src="{% static 'flightsearch/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js' %}"></script>
-        <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>/-->
-        <script src="{% static 'flightsearch/js/jquery-2.1.4.min.js' %}"></script>
-        <script src="{% static 'flightsearch/js/bootstrap-datepicker.js' %}"></script>
-        <script src="{% static 'flightsearch/js/jquery.autocomplete.js' %}"></script>
-        <script src="{% static 'flightsearch/js/jquery-ui.min.js' %}"></script>
+        
         <script type="text/javascript">
           $(function(){
-            $('.datepicker').datepicker();
+            $('#departMain').datepicker({ minDate: 0});
+            $('#returnMain').datepicker({ minDate: 0});
           });
           /*jQuery( document ).ready(function( $ ) {
             var nowTemp = new Date();
@@ -76,35 +70,8 @@
 
 <!-- NAVBAR SECTION/-->
 
-        <nav class="navbar navbar-default">
-          <div class="container-fluid">
-            <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#pexMainNavbar">
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span> 
-            </button>
-
-            <a class="navbar-brand brandmedia" href="http://www.pexportal.com"><img src="{% static 'flightsearch/img/logoMain.jpg' %}" alt="" class="hidden-xs hidden-sm hidden-md"><img src="{% static 'flightsearch/img/logo.jpg' %}" alt="" class="hidden-lg hidden-xs"> <img src="{% static 'flightsearch/img/logo.jpg' %}" alt="" class="hidden-lg hidden-md hidden-sm"></a>
-          </div>
-
-          <div class="collapse navbar-collapse" id="pexMainNavbar">
-            <ul class="nav navbar-nav mainNav mvt30px">
-              <li class=""><a href="#">Flights</a></li>
-              <li class=""><a href="#">Hotels</a></li> 
-              <li class=""><a href="#">Cars</a></li>
-              <li class=""><a href="#">Cruises</a></li> 
-              <li class=""><a href="#">Restaurants</a></li>
-            </ul>   
-            <ul class="nav navbar-nav navbar-right">
-              <li class=""><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-              <li class=""><a href="login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-              <li class=""><a href="#"><span class="glyphicon glyphicon-info-sign"></span> Help</a></li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-
+        
+	
 <!-- BODY SECTION/-->
 
     <div class="">
@@ -116,7 +83,7 @@
             </div>
           </div>
         </div>
-        <form class="form-inline" role="form" action="search" method="post">
+        <form class="form-inline" role="form" action="searchLoadingPage" method="post">
         	{% csrf_token %}
           <div class="container">
             <div class="row">
@@ -151,7 +118,7 @@
                   <label class="sr-only" for="departure">Departure Date:</label>
                   <div class="inner-addon left-addon date" id="dp1">
                       <i class="glyphicon glyphicon-calendar"></i>
-                      <input type="search" class="form-control datepicker" id="departMain" placeholder="Depart" name="deptdate">
+                      <input type="text" class="form-control datepicker" id="departMain" placeholder="Depart" name="deptdate">
                   </div>
                 </div>
               </div>
@@ -160,7 +127,7 @@
                   <label class="sr-only" for="return">Return Date:</label>
                   <div class="inner-addon left-addon date" id="dp2">
                       <i class="glyphicon glyphicon-calendar"></i>
-                      <input type="search" class="form-control datepicker" id="returnMain" placeholder="Return">
+                      <input type="text" class="form-control datepicker" id="returnMain" placeholder="Return">
                   </div>
                 </div>
               </div>
@@ -192,110 +159,9 @@
       <br />
       <br />
 
-      <footer class="container-footer">
-        <nav class="navbar navbar-footer">
-          <div class="container-fluid">
-            
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-            </div>
+      {% include "flightsearch/footer.html" %}
 
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <center >
-              <ul class="nav navbar-nav navbar-footerfont">
-                <li><a href="#">About</a></li>
-                <li><a href="#">How It Works</a></li>
-                <li><a href="#">Contact Us</a></li>
-                <li><a href="#">Privacy</a></li>
-              </ul>
-            </center>
-              <br />
-              <ul class="nav navbar-nav navbar-footerimg">
-                <li class=""><a href="http://www.twitter.com/PEXPlus"><img src="{% static 'flightsearch/img/twtr.png' %}"></a></li>
-                <li class=""><a href="http://www.facebook.com/PEXPlus"><img src="{% static 'flightsearch/img/fb.png' %}"></a></li>
-                <li class=""><a href="http://www.instagram.com/PEXPlus"><img src="{% static 'flightsearch/img/instgm.png' %}"></a></li>
-              </ul>
-            </div>
-          </div>
-        </nav>
-        <div class="footertext">
-          <div class="footertext-copyright">
-            <div class="text-center">
-              <p class="">Copyright 2015 PEX+. All Rights Reserved. </p>
-              <p class="alignright pspacerv15t textalignright spacerh15r">Search cheap rewards flights with PEX+ Awards Search. Find the cheapest airline rewards tickets for all top airlines around the world and the top international flight routes. PEX+ Awards Search searches hundreds of travel sites to help you find and book the rewards flight that suits you best.</p>
-              <br />
-            </div>
-          </div>
-        </div>
-      </footer>
-
-      <!-- <footer class="container-footer">
-      <center>
-        
-        bla bla lba
-      </center>
-        <div class="container">
-              <nav class="navbar navbar-footer">
-                <div class="container-fluid">
-                  
-                  <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                      <span class="sr-only">Toggle navigation</span>
-                      <span class="icon-bar"></span>
-                      <span class="icon-bar"></span>
-                      <span class="icon-bar"></span>
-                    </button>
-                  </div>
-
-                  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                  <div class="container">
-                    <div class="row">
-                      <div class="col-sm-6 col-sm-offset-3">
-                        <ul class="nav navbar-nav navbar-footerfont">
-                          <li><a href="#">About</a></li>
-                          <li><a href="#">How It Works</a></li>
-                          <li><a href="#">Contact Us</a></li>
-                          <li><a href="#">Privacy</a></li>
-                        </ul>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-sm-4 col-sm-offset-4">
-                        <ul class="nav navbar-nav navbar-footerimg">
-                          <li class=""><a href="http://www.twitter.com/PEXPlus"><img src="img/twtr.png"></a></li>
-                          <li class=""><a href="http://www.facebook.com/PEXPlus"><img src="img/fb.png"></a></li>
-                          <li class=""><a href="http://www.instagram.com/PEXPlus"><img src="img/instgm.png"></a></li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </nav>
-                <div class="footertext">
-                  <div class="container">
-                    <div class="row">
-                      <div class="col-sm-10">
-                        <div class="footertext-copyright">
-                          <div class="text-center hidden-sm hidden-xs hidden-xxs">
-                            <p class="">Copyright 2015 PEX+. All Rights Reserved. </p>
-                            <p class="alignright pspacerv15t textalignright spacerh15r">Search cheap rewards flights with PEX+ Awards Search. Find the cheapest airline rewards tickets for all top airlines around the world and the top international flight routes. PEX+ Awards Search searches hundreds of travel sites to help you find and book the rewards flight that suits you best.</p>
-                            <br />
-                          </div>
-                          <div class="hidden-lg hidden-md">
-                            <p class="">Copyright 2015 PEX+. All Rights Reserved.</p>
-                            <p class="alignright pspacerv15t textalignright spacerh15r">Search cheap rewards flights with PEX+ Awards Search. Find the cheapest airline rewards tickets for all top airlines around the world and the top international flight routes. PEX+ Awards Search searches hundreds of travel sites to help you find and book the rewards flight that suits you best.</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-          </div>
-        </footer> /-->
+      
       </div><!-- /container -->       
 
     
