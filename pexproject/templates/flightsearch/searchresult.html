@@ -49,14 +49,14 @@
 				
 					  <div class="checkbox">
 						<label>
-						  <input type='checkbox' name="stoppage" value="NONSTOP">
+						  <input type='checkbox' name="nonstop" value="NONSTOP">
 						  <span></span>
 						  NONSTOP
 						</label>
 					  </div>
 					  <div class="checkbox">
 						<label>
-						  <input type='checkbox' name="stoppage" value="1 STOP">
+						  <input type='checkbox' name="onestop" value="1 STOP">
 						  <span></span>
 						  1 STOP
 						</label>
@@ -105,21 +105,21 @@
 				
 					  <div class="checkbox">
 						<label>
-						  <input type='checkbox' name="cabin" value=" Main Cabin  ( N )      ">
+						  <input type='checkbox' name="cabintype1" value=" Main Cabin  ( N )      ">
 						  <span></span>
 						  ECONOMY
 						</label>
 					  </div>
 					  <div class="checkbox">
 						<label>
-						  <input type='checkbox' name="cabin" value="Business">
+						  <input type='checkbox' name="cabintype2" value="Business">
 						  <span></span>
 						  BUSINESS
 						</label>
 					  </div>
 					  <div class="checkbox">
 						<label>
-						  <input type='checkbox' name="cabin" value="First">
+						  <input type='checkbox' name="cabintype2" value="First">
 						  <span></span>
 						  FIRST
 						</label>
@@ -169,8 +169,8 @@
 							</div>
 						</div>	
 						<div class="col-xs-12 nopadding pop-hover"><p class="econo">{{row.cabintype1}}</p>
-							<a class="" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">SHOW DETAILS</a>
-								<div class="collapse" id="collapseExample">
+							<a class="" role="button" data-toggle="collapse" href="#{{row.rowid}}" aria-expanded="false" aria-controls="collapseExample">SHOW DETAILS</a>
+								<div class="collapse" id="{{row.rowid}}">
 								  <div class="well">
 									<h2>DEPART</h2>
 									<p>COMPANY FLIGHT (ECO)</p>

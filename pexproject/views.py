@@ -26,6 +26,7 @@ from django.core.context_processors import csrf
 from django.views.decorators.csrf import requires_csrf_token
 from pexproject.models import Flightdata,Flights_wego,Searchkey
 from subprocess import call
+#import MySQLdb
 
 #from test1.models import Register
 from pexproject.form import LoginForm
@@ -52,8 +53,49 @@ def login(request):
     return render_to_response('flightsearch/login.html',{'LoginForm': form})
 
 def search(request):
-    #context = {}
-    #if request.method == "POST":
+    #db = MySQLdb.connect(user='root', db='pex', passwd='root', host='localhost')
+    #cursor = db.cursor()
+    context = {}
+    if request.method == "POST":
+        if 'search' in request.REQUEST:
+            mstring = []
+            if 'nonstop' in request.REQUEST:
+                nonstop = request.REQUEST['nonstop']
+            if request.REQUEST['onestop']:
+                onestop = request.REQUEST['onestop']
+            data = Flightdata.objects.filter(stoppage__icontains[nonstop,onestop])
+            print data
+            exit()
+            for key in request.POST.iterkeys():
+                if key != "csrfmiddlewaretoken" and key != "buying_slider_min" and key != "search":
+                    valuelist = request.POST[key]
+                    print key
+                    print valuelist
+                    record = Flightdata.objects.filter(key=valuelist)
+                    print record
+                    #mstring.extend(['%s="%s"' % (key, valuelist)])
+                    #print record
+                '''
+                if key != "csrfmiddlewaretoken" and key != "buying_slider_min" and key != "search":
+                    valuelist = request.POST.getlist(key)
+                    print valuelist
+                    mstring.extend(['%s="%s"' % (key, val) for val in valuelist])
+                    print "---------------"
+            
+            print querylist
+            '''
+            querylist = ','.join(mstring)
+            print querylist
+            #record = Flightdata.objects.filter(querylist)
+            #print querylist
+            #print ("select * from pexproject_flightdata where "+query)
+            #cursor.execute("select * from pexproject_flightdata where "+query)
+            #record = cursor.fetchall()
+            searchdata =''
+            record = Flightdata.objects.filter(stoppage="NONSTOP")
+            print record.query
+            return render_to_response('flightsearch/searchresult.html',{'data':record,'search':searchdata},context_instance=RequestContext(request))
+            
     if request.is_ajax():
         context = {}
         orgn = request.REQUEST['fromMain'] #"Seattle, WA, US (SEA)"
@@ -65,9 +107,15 @@ def search(request):
         searchdate = dt.strftime('%Y-%m-%d')        
         currentdatetime = datetime.datetime.now()
         time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
+        time1 = datetime.datetime.now()- timedelta(hours=4)
+        time1 = time1.strftime('%Y-%m-%d %H:%M:%S')
+        print time1
+        if time > time1:
+            print time,time1
+       
         searchkeyid=''
-        obj = Searchkey.objects.filter(source=orgn,destination=dest,traveldate=searchdate)
-        #print len(obj)
+        obj = Searchkey.objects.filter(source=orgn,destination=dest,traveldate=searchdate,scrapetime__gte=time1)
+        print len(obj)
         if len(obj) > 0:
             print "if block"
             for keyid in obj:
@@ -83,8 +131,6 @@ def search(request):
             searchkeyid = searchdata.searchid 
             print searchkeyid
             call(["python", "delta.py",orgn,dest,date,str(searchkeyid)])
-            #record = zip(flightno,fromstation, stop,layover, depttime,choice1,maincabin, choice2,firstcabin, arivaltime, deststn) 
-            #display.stop()
             mimetype = 'application/json'
             return HttpResponse(searchkeyid, mimetype)
             

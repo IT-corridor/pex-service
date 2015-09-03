@@ -4,6 +4,7 @@ import selenium
 from datetime import timedelta
 #from datetime import datetime,date
 import datetime
+from pyvirtualdisplay import Display
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -11,7 +12,18 @@ from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
-import sys,os 
+from pexproject.models import Flightdata,Flights_wego,Searchkey
+import sys,os
+
+
+def is_text_present(text):
+    try:
+        body = driver.find_element_by_id(text) # find body tag element
+        return 
+    except:
+        return False
+    return text in body.text 
+#from pexproject.models import Flightdata,Flights_wego,Searchkey 
 url ="http://www.delta.com/"
 
 curdate = datetime.date.today() + datetime.timedelta(days=1)
@@ -19,6 +31,8 @@ date = sys.argv[3]
 orgn = sys.argv[1]
 dest = sys.argv[2]
 searchid = sys.argv[4]
+currentdatetime = datetime.datetime.now()
+time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
 print"======= delta=========="
 print sys.argv
 print"=======  end delta=========="
@@ -35,8 +49,8 @@ stop=[]
 layover=[]
 flightno=[]
 #print date
-#display = Display(visible=0, size=(800, 600))
-#display.start()
+display = Display(visible=0, size=(800, 600))
+display.start()
 driver = webdriver.Firefox()
 driver.get(url)
 driver.implicitly_wait(40)
@@ -56,16 +70,23 @@ driver.find_elements_by_css_selector("td[class='available delta-calendar-td'][da
 
 driver.find_element_by_id("milesBtn").click()
 driver.find_element_by_id("findFlightsSubmit").click()
-WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "showAll-footer")))
-driver.find_element_by_link_text('Show All').click()
-WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "fareRowContainer_21")))
-driver.implicitly_wait(10)
+
+test = is_text_present("showAll-footer")
+if test != 0:
+    WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "showAll-footer")))
+    driver.find_element_by_link_text('Show All').click()
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "fareRowContainer_21")))
+else:
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "fareRowContainer_2")))
+#driver.implicitly_wait(10)
 html_page = driver.page_source
 soup = BeautifulSoup(html_page)
 
 datatable = soup.findAll("table",{"class":"fareDetails"})
 #print datatable
 for content in datatable:
+    cabintype2 =''
+    fare2 = ''
     timeblock = content.findAll("div",{"class":"flightDateTime"})
     for info in timeblock:
         temp = info.findAll("span")
@@ -79,6 +100,7 @@ for content in datatable:
     flite_route = content.findAll("div",{"class":"flightPathWrapper"})
     fltno = content.find("a",{"class":"helpIcon"}).text
     flightno.append(fltno)
+    
     for route in flite_route:
         if route.find("div",{"class":"nonStopBtn"}):
             stp = "NONSTOP"
@@ -91,9 +113,12 @@ for content in datatable:
                 stp = route.find("div",{"class":"nStopBtn"}).text
                 stop.append(stp)
                 #print route.find("div",{"class":"nStopBtn"}).text
-                lyover = route.find("div",{"class":"layOver"}).find("span").text
-                print route.find("div",{"class":"layOver"}).find("span").text
-                print route.find("div",{"class":"layovertoolTip"}).text
+                if route.find("div",{"class":"layOver"}):
+                    lyover = route.find("div",{"class":"layOver"}).find("span").text
+                else:
+                    lyover=''
+                #print route.find("div",{"class":"layOver"}).find("span").text
+                #print route.find("div",{"class":"layovertoolTip"}).text
                 layover.append(lyover)
         #print route.find("div",{"class":"originCity"}).text
         sourcestn = (route.find("div",{"class":"originCity"}).text)
@@ -117,12 +142,13 @@ for content in datatable:
         cabintype1 = (cabintype[0].text)
         maincabin.append(cabintype1)
         if clength>1:
-            #print cabintype[1].text
+            print cabintype[1].text
             cabintype2 = (cabintype[1].text)
             print cabintype2
             firstcabin.append(cabintype2)
-    #queryset = Flightdata(flighno=fltno,searchkeyid=searchkeyid,scrapetime=time,stoppage=stp,stoppage_station=lyover, origin=sourcestn,destination=destinationstn,departure=depature,arival=arival,maincabin=fare1,firstclass=fare2,cabintype1=cabintype1.strip(),cabintype2=cabintype2.strip()) 
-    #queryset.save()
+    queryset = Flightdata(flighno=fltno,searchkeyid=searchid,scrapetime=time,stoppage=stp,stoppage_station=lyover, origin=sourcestn,destination=destinationstn,departure=depature,arival=arival,maincabin=fare1,firstclass=fare2,cabintype1=cabintype1.strip(),cabintype2=cabintype2.strip()) 
+    queryset.save()
 #print deststn,firstcabin
+display.stop()
 driver.quit()
             
