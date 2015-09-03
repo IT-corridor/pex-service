@@ -46,17 +46,19 @@
 			</div>
 				<div class="col-md-12 col-xs-12 nopadding form-side">
 					<p>NUMBER OF STOPS</p>
-				
+					
+						
+					
 					  <div class="checkbox">
 						<label>
-						  <input type='checkbox' name="nonstop" value="NONSTOP">
+						  <input type='checkbox' name="nonstop" value="NONSTOP" {% for row in filterkey %} {% if row == 'NONSTOP'%} checked="checked" {% endif %}{%endfor %}>
 						  <span></span>
 						  NONSTOP
 						</label>
 					  </div>
 					  <div class="checkbox">
 						<label>
-						  <input type='checkbox' name="onestop" value="1 STOP">
+						  <input type='checkbox' name="onestop" value="1 STOP" {% for row in filterkey %} {% if row == '1 STOP'%} checked="checked" {% endif %}{%endfor %}>
 						  <span></span>
 						  1 STOP
 						</label>
@@ -70,6 +72,7 @@
 					  </div>
 				
 				</div>
+				
 				<!--
 				<div class="col-md-12 col-xs-12 nopadding form-side">
 					<p>NUMBER OF STOPS</p>
@@ -105,7 +108,7 @@
 				
 					  <div class="checkbox">
 						<label>
-						  <input type='checkbox' name="cabintype1" value=" Main Cabin  ( N )      ">
+						  <input type='checkbox' name="cabintype1" value="Main Cabin" {% for row in filterkey %}{% if row == 'Main Cabin'%} checked="checked" {% endif %}{%endfor %}>
 						  <span></span>
 						  ECONOMY
 						</label>
@@ -134,6 +137,9 @@
 				</div>
 				<div class="col-md-8 col-xs-12 ">
 				{% if data %}
+					{% if data == '' %}
+						<h4>Sorry, No Flight Found </h4>
+					{% endif %}
 					{% for row in data %}
 					<div class="col-md-12 col-xs-12 centr-info">
 						<div class="col-md-6 col-xs-12 nopadding">

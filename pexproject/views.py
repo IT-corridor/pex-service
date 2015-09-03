@@ -5,6 +5,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext, loader
 import json
+from django.db.models import Q
 #from django.template.context_processors import csrf
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -59,11 +60,25 @@ def search(request):
     if request.method == "POST":
         if 'search' in request.REQUEST:
             mstring = []
+            onestop = ''
+            nonstop = ''
+            econ = ''
             if 'nonstop' in request.REQUEST:
                 nonstop = request.REQUEST['nonstop']
-            if request.REQUEST['onestop']:
+            if 'onestop' in request.REQUEST:
                 onestop = request.REQUEST['onestop']
-            data = Flightdata.objects.filter(stoppage__icontains[nonstop,onestop])
+                print "one stop",onestop
+            if 'cabintype1' in request.REQUEST:
+                econ = request.REQUEST['cabintype1']
+                #print econ
+            record = Flightdata.objects.filter(Q(cabintype1__contains=econ),Q(stoppage__in=[nonstop,onestop]))
+            print record
+            #searchkey = request.GET.get('keyid', '')
+            #searchdata = Searchkey.objects.filter(searchid=searchkey)
+            searchdata =''
+            filerkey = {nonstop:nonstop,onestop:onestop,econ:"Main Cabin"}
+
+            return render_to_response('flightsearch/searchresult.html',{'data':record,'search':searchdata,'filterkey':filerkey},context_instance=RequestContext(request))
             print data
             exit()
             for key in request.POST.iterkeys():
@@ -158,7 +173,6 @@ def get_airport(request):
 
 def searchLoading(request):
     context = {}
-    context = {}
     if request.method == "POST":
         orgn = request.REQUEST['fromMain'] #"Seattle, WA, US (SEA)"
         dest = request.REQUEST['toMain'] #"New York, NY, US (NYC - All Airports)"
@@ -171,6 +185,7 @@ def searchLoading(request):
     else:
         return render_to_response('flightsearch/index.html')
 def getsearchresult(request):
+    context = {}
     if request.GET.get('keyid', ''):
         searchkey = request.GET.get('keyid', '')
         record = Flightdata.objects.filter(searchkeyid=searchkey)

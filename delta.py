@@ -66,7 +66,7 @@ destination.send_keys(dest)
 #destination.send_keys(Keys.ENTER)
 
 driver.find_element_by_id("departureDate").click()
-driver.find_elements_by_css_selector("td[class='available delta-calendar-td'][data-date='"+date+"']")[0].click()
+driver.find_elements_by_css_selector("td[data-date='"+date+"']")[0].click()
 
 driver.find_element_by_id("milesBtn").click()
 driver.find_element_by_id("findFlightsSubmit").click()
