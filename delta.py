@@ -75,9 +75,9 @@ test = is_text_present("showAll-footer")
 if test != 0:
     WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "showAll-footer")))
     driver.find_element_by_link_text('Show All').click()
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "fareRowContainer_21")))
+    WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "fareRowContainer_20")))
 else:
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "fareRowContainer_2")))
+    WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
 #driver.implicitly_wait(10)
 html_page = driver.page_source
 soup = BeautifulSoup(html_page)
