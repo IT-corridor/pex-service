@@ -5,273 +5,422 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>Pex Search Result</title>
 		{% include "flightsearch/header.html" %}
-    	{% load staticfiles %}
-		
-		
-      <script type="text/javascript">
-          $(function(){
-            $('#datepicker').datepicker({ minDate: 0});
-          });
-        </script>
-	<body>
-		{% if search %}
-				{% for searchrow in search %}
-					<div class="col-md-12 col-xs-12"><div class="col-md-1 col-xs-1"></div>
-						<div class="col-md-7 col-xs-7">
-							
-							<h4>{{searchrow.source}} ===================>{{searchrow.destination}} </h4>
-						</div>
-						<div class="col-md-4 col-xs-4">
-							<h4> {{searchrow.traveldate}}<!--<input type="text" id="datepicker" name="date" value="{{searchdate}}">--></h4>
-						</div>
-						
-					</div>
-				{%endfor %}
-		{% endif %}
-		<div class="">
-      <div class="jumbotron">
-        <div class="container-fluid">
+		{% load staticfiles %}
+
+		<script type="text/javascript">
+			$(function() {
+				$('#datepicker').datepicker({
+					minDate : 0
+				});
+			});
+		</script>
+		<body>
+			{% if search %}
+			{% for searchrow in search %}
 			<div class="col-md-12 col-xs-12">
-				<div class="col-md-2 col-xs-12 nopadding">
-			<form action="search" method="post">{% csrf_token %}
-			<div class="col-md-12 col-xs-12 nopadding form-side">
-					<div class="priceRangeInfo">
-					DEPARTURE TIME
-					  <input type="range" name="buying_slider_min" id="buying_slider_min" class="minBuyingSlider" value="00:00" min="00:00" max="23:59" />
-					</div>
-					<div class="priceRangeInfo mvt15px">
-					ARRIVAL TIME
-					  <input type="range" name="buying_slider_min" id="buying_slider_min" class="minBuyingSlider" value="0" min="0" max="100" />
-					</div>
+				<div class="col-md-1 col-xs-1"></div>
+				<div class="col-md-7 col-xs-7">
+
+					<h4>{{searchrow.source}} ===================>{{searchrow.destination}} </h4>
+				</div>
+				<div class="col-md-4 col-xs-4">
+					<h4> {{searchrow.traveldate}}<!--<input type="text" id="datepicker" name="date" value="{{searchdate}}">--></h4>
+				</div>
+
 			</div>
-				<div class="col-md-12 col-xs-12 nopadding form-side">
-					<p>NUMBER OF STOPS</p>
-					
-						
-					
-					  <div class="checkbox">
-						<label>
-						  <input type='checkbox' name="nonstop" value="NONSTOP" {% for row in filterkey %} {% if row == 'NONSTOP'%} checked="checked" {% endif %}{%endfor %}>
-						  <span></span>
-						  NONSTOP
-						</label>
-					  </div>
-					  <div class="checkbox">
-						<label>
-						  <input type='checkbox' name="onestop" value="1 STOP" {% for row in filterkey %} {% if row == '1 STOP'%} checked="checked" {% endif %}{%endfor %}>
-						  <span></span>
-						  1 STOP
-						</label>
-					  </div>
-					  <div class="checkbox">
-						<label>
-						  <input type='checkbox' name="stoppage" value="2+ STOPS">
-						  <span></span>
-						  2+ STOPS
-						</label>
-					  </div>
-				
-				</div>
-				
-				<!--
-				<div class="col-md-12 col-xs-12 nopadding form-side">
-					<p>NUMBER OF STOPS</p>
-				<form>
-					  <div class="checkbox">
-						<label>
-						  <input type='checkbox'>
-						  <span></span>
-						  NONSTOP
-						</label>
-					  </div>
-					  <div class="checkbox">
-						<label>
-						  <input type='checkbox'>
-						  <span></span>
-						  STOP
-						</label>
-					  </div>
-					  
-					  <div class="checkbox">
-						<label>
-						  <input type='checkbox'>
-						  <span></span>
-						  2+ STOPS
-						</label>
-					  </div>
-					  
-				</form>
-				</div>
-				-->
-				<div class="col-md-12 col-xs-12 nopadding form-side">
-					<p>CABIN</p>
-				
-					  <div class="checkbox">
-						<label>
-						  <input type='checkbox' name="cabintype1" value="Main Cabin" {% for row in filterkey %}{% if row == 'Main Cabin'%} checked="checked" {% endif %}{%endfor %}>
-						  <span></span>
-						  ECONOMY
-						</label>
-					  </div>
-					  <div class="checkbox">
-						<label>
-						  <input type='checkbox' name="cabintype2" value="Business">
-						  <span></span>
-						  BUSINESS
-						</label>
-					  </div>
-					  <div class="checkbox">
-						<label>
-						  <input type='checkbox' name="cabintype2" value="First">
-						  <span></span>
-						  FIRST
-						</label>
-					  </div>
-				
-				</div>
-				<input type="hidden" name="search" value="search">
-				<div class="col-md-12 col-xs-12 nopadding form-side">
-					<input type="submit" value="SEARCH" class="btn btn-default">
-				</div>
-				</form>
-				</div>
-				<div class="col-md-8 col-xs-12 ">
-				{% if data %}
-					{% if data == '' %}
-						<h4>Sorry, No Flight Found </h4>
-					{% endif %}
-					{% for row in data %}
-					<div class="col-md-12 col-xs-12 centr-info">
-						<div class="col-md-6 col-xs-12 nopadding">
-						<div class="col-md-12 col-xs-12 nopadding">
-							<div class="col-md-8 col-xs-12 nopadding na-ra">
-								<p class="flight-name">{{row.flighno}} <!--FIRST FLIGHT OPTION RESULT--></p>
-								<p class="flight-rate">{{row.maincabin}} <!--4,500 POINTS + $5.00 --></p>
-							</div>
-							<div class="col-md-4 col-xs-12"><img src="{% static 'flightsearch/img/logoMain.jpg' %}" class="img-responsive" alt="Responsive image"></div>
-						</div>
-						</div>
-						<div class="col-md-6 col-xs-12 nopadding">	
-						<div class="col-md-12 col-xs-12 nopadding">	
-							<div class="col-md-8 col-xs-12 nopadding">
-								<div class="arrivel">
-									<p>{{row.origin}}</p>
-									<p>{{row.departure}}</p>
-								</div>
-								<div class="arrow-div">
-								</div>
-								<div class="arrivel-2">
-									<p>{{row.destination}}</p>
-									<p>{{row.arival}}</p>
-								</div>
-	
-								
-								
-							</div>
-							
-							<div class="col-md-4 col-xs-12 non-stop">
-							<p>{{row.stoppage}}</p>
-							
-							</div>
-						</div>	
-						<div class="col-xs-12 nopadding pop-hover"><p class="econo">{{row.cabintype1}}</p>
-							<a class="" role="button" data-toggle="collapse" href="#{{row.rowid}}" aria-expanded="false" aria-controls="collapseExample">SHOW DETAILS</a>
-								<div class="collapse" id="{{row.rowid}}">
-								  <div class="well">
-									<h2>DEPART</h2>
-									<p>COMPANY FLIGHT (ECO)</p>
-									<div class="table-responsive table-date-search">
-									  <table class="table">
-										<tr>
-											<td>{{row.departure}}</td>
-											<td>{{searchdate}}</td>
-											<td>{{row.origin}}</td>
-										</tr>
-										<tr>
-											<td>{{row.arival}}</td>
-											<td>{{searchdate}}</td>
-											<td>{{row.destination}}</td>
-										</tr>
-									  </table>
+			{%endfor %}
+			{% endif %}
+			<div class="">
+				<div class="jumbotron">
+					<div class="container-fluid">
+						<div class="col-md-12 col-xs-12">
+							<div class="col-md-2 col-xs-12 nopadding">
+								<form action="search" method="post">
+									{% csrf_token %}
+									<div class="col-md-12 col-xs-12 nopadding form-side">
+										<div class="priceRangeInfo">
+											DEPARTURE TIME
+
+											<div class="slider slider-blue mvt15px" data-postfix=" $" data-min="0" data-max="2000" data-min-val="400" data-max-val="1400" data-fill="#sample-field-2" id="depart"></div>
+											<span id="time"></span>
+										</div>
+										<!--
+										<div class="priceRangeInfo">
+										DEPARTURE TIME
+										<input type="range" name="buying_slider_min" id="buying_slider_min" class="minBuyingSlider" value="00:00" min="00:00" max="23:59" />
+										</div>
+										-->
+										<div class="priceRangeInfo mvt15px">
+											ARRIVAL TIME
+											<div class="slider slider-blue mvt15px" data-postfix=" $" data-min="0" data-max="2000" data-min-val="400" data-max-val="1400" data-fill="#sample-field-2" id="arive"></div>
+											<span id="arivaltime"></span>
+											<!--input type="range" name="buying_slider_min" id="buying_slider_min" class="minBuyingSlider" value="0" min="0" max="100" /> -->
+										</div>
 									</div>
-									<a href="#">share</a>
-								  </div>
+									<div class="col-md-12 col-xs-12 nopadding form-side">
+										<p>
+											NUMBER OF STOPS
+										</p>
+
+										<div class="checkbox">
+											<label>
+												<input type='checkbox' name="stoppage" value="NONSTOP" {% for row in filterkey.stoppage %} {% if row == 'NONSTOP'%} checked="checked" {% endif %}{%endfor %}>
+												<span></span> NONSTOP </label>
+										</div>
+										<div class="checkbox">
+											<label>
+												<input type='checkbox' name="stoppage" value="1 STOP" {% for row in filterkey.stoppage %} {% if row == '1 STOP'%} checked="checked" {% endif %}{%endfor %}>
+												<span></span> 1 STOP </label>
+										</div>
+										<div class="checkbox">
+											<label>
+												<input type='checkbox' name="stoppage" value="2+ STOPS" {% for row in filterkey.stoppage %} {% if row == '2+ STOPS'%} checked="checked" {% endif %}{%endfor %}>
+												<span></span> 2+ STOPS </label>
+										</div>
+
+									</div>
+
+									<!--
+									<div class="col-md-12 col-xs-12 nopadding form-side">
+									<p>NUMBER OF STOPS</p>
+									<form>
+									<div class="checkbox">
+									<label>
+									<input type='checkbox'>
+									<span></span>
+									NONSTOP
+									</label>
+									</div>
+									<div class="checkbox">
+									<label>
+									<input type='checkbox'>
+									<span></span>
+									STOP
+									</label>
+									</div>
+
+									<div class="checkbox">
+									<label>
+									<input type='checkbox'>
+									<span></span>
+									2+ STOPS
+									</label>
+									</div>
+
+									</form>
+									</div>
+									-->
+									<div class="col-md-12 col-xs-12 nopadding form-side">
+										<p>
+											CABIN
+										</p>
+
+										<div class="checkbox">
+											<label>
+												<input type='checkbox' name="cabintype1" value="Cabin">
+												<span></span> ECONOMY </label>
+										</div>
+										<div class="checkbox">
+											<label>
+												<input type='checkbox' name="cabintype2" value="Business">
+												<span></span> BUSINESS </label>
+										</div>
+										<div class="checkbox">
+											<label>
+												<input type='checkbox' name="cabintype2" value="First">
+												<span></span> FIRST </label>
+										</div>
+
+									</div>
+									<input type="hidden" name="search" value="search">
+									<div class="col-md-12 col-xs-12 nopadding form-side">
+										<input type="submit" value="SEARCH" class="btn btn-default">
+									</div>
+								</form>
+							</div>
+							<div class="col-md-8 col-xs-12 ">
+								{% if data %}
+								{% if data == '' %}
+								<h4>Sorry, No Flight Found </h4>
+								{% endif %}
+								{% for row in data %}
+								<div class="col-md-12 col-xs-12 centr-info">
+									<div class="col-md-4 col-xs-12 nopadding">
+										<div class="col-md-12 col-xs-12 nopadding">
+											<div class="col-xs-12 nopadding">
+												<div class="col-sm-6 col-xs-12 nopadding">
+													<p class="flight-name">
+														{{row.flighno}} <!--FIRST FLIGHT OPTION RESULT-->
+													</p>
+												</div>
+												<div class="col-sm-6 col-xs-12">
+													<div class="col-xs-12 nopadding non-stop">
+														<p>
+															{{row.stoppage}}
+														</p>
+
+													</div>
+												</div>
+											</div>
+											<div class="col-md-12 col-xs-12 nopadding">
+												<div class="arrivel">
+													<p>
+														{{row.origin}}
+													</p>
+													<p>
+														{{row.departure}}
+													</p>
+												</div>
+												<div class="arrow-div"></div>
+												<div class="arrivel-2">
+													<p>
+														{{row.destination}}
+													</p>
+													<p>
+														{{row.arival}}
+													</p>
+												</div>
+
+											</div>
+										</div>
+									</div>
+									<div class="col-md-2 col-xs-12 text-center mvb10px"><img src="{% static 'flightsearch/img/logoMain.jpg' %}" class="img-responsive" alt="Responsive image">
+									</div>
+									<div class="col-md-6 col-xs-12 nopadding">
+										<div class="col-md-12 col-xs-12 nopadding">
+											<div class="col-sm-6 col-xs-12">
+												<div class="col-xs-12 nopadding text-center">
+													{% if row.cabintype1 %}
+													<h5 class="econo"> {{row.cabintype1}} </h5>
+													<div class="col-xs-12 nopadding mvb10px na-ra">
+														<p class="flight-rate">
+															{{row.maincabin}} <!--4,500 POINTS + $5.00 -->
+														</p>
+													</div>
+													{% else %}
+													<div class="col-xs-12 nopadding text-center">
+														<h5>Not Available </h5>
+													</div>
+													{% endif %}
+												</div>
+											</div>
+											
+											<div class="col-sm-6 col-xs-12">
+												
+												<div class="col-xs-12 nopadding text-center">
+													{% if row.cabintype2 %}
+													<h5 class="econo">{{row.cabintype2}}</h5>
+													<div class="col-xs-12 nopadding mvb10px na-ra">
+														<p class="flight-rate">
+															{{row.firstclass}} <!--4,500 POINTS + $5.00 -->
+														</p>
+													</div>
+													{% else %}
+														<div class="col-xs-12 nopadding mvb10px na-ra">
+															<h5> Not Available</h5>
+														</div>
+													{% endif %}
+														
+												</div>
+												
+											</div>
+											
+										</div>
+										<div class="col-xs-12 nopadding pop-hover">
+											<a class="" role="button" data-toggle="collapse" href="#{{row.rowid}}" aria-expanded="false" aria-controls="collapseExample">SHOW DETAILS</a>
+											<div class="collapse" id="{{row.rowid}}">
+												<div class="well">
+													<h2>DEPART</h2>
+													<p>
+														COMPANY FLIGHT (ECO)
+													</p>
+													<div class="table-responsive table-date-search">
+														<table class="table">
+															<tr>
+																<td>{{row.departure}}</td>
+																<td>{{searchdate}}</td>
+																<td>{{row.origin}}</td>
+															</tr>
+															<tr>
+																<td>{{row.arival}}</td>
+																<td>{{searchdate}}</td>
+																<td>{{row.destination}}</td>
+															</tr>
+														</table>
+													</div>
+													<a href="#">share</a>
+												</div>
+											</div>
+										</div>
+									</div>
 								</div>
-								</div>
-						</div>	
+								{%endfor %}
+								{% endif %}
+							</div>
+
+							<div class="col-md-2 col-xs-12 nopadding"><img src="{% static 'flightsearch/img/ad.jpg' %}" class="img-responsive" alt="Responsive image">
+							</div>
 						</div>
-						{%endfor %}
-				{% endif %}
 					</div>
-					
-				
-				
-				<div class="col-md-2 col-xs-12 nopadding"><img src="{% static 'flightsearch/img/ad.jpg' %}" class="img-responsive" alt="Responsive image"></div>
+				</div>
 			</div>
-        </div>
-      </div>
- </div>
-		<!--
-		
-	<script>
+			<!--
 
-		jQuery(window).load(function()
-                {
-                        
-                        var $ = jQuery; 
-                        
-                       
-                        $("#datatable").dataTable({
-                                "columns": [
-                                	{ "data": "Flight No." },
-						            { "data": "Source Station" },
-						            { "data": "Departure Time" },
-						            { "data": "Main Cabin" },
-						            { "data": "First/Business" },
-						            { "data": "Arival Time" },
-						            { "data": "Destination Station" },
-						            
-						        ]
-                        });
-                        /*
-                        $("#datatable tbody input[type=checkbox]").each(function(i, el)
-                        {
-                                var $this = $(el),
-                                        $p = $this.closest('tr');
-                                
-                                $(el).on('change', function()
-                                {
-                                        var is_checked = $this.is(':checked');
-                                        
-                                        $p[is_checked ? 'addClass' : 'removeClass']('highlight');
-                                });
-                        });
-                        
-                        // Replace Checboxes
-                        $(".pagination a").click(function(ev)
-                        {
-                                replaceCheckboxes();
-                        });*/
-                        
-                });
-                        
-                // Sample Function to add new row
-                var giCount = 1; 
-	</script>
-		<link rel="stylesheet" href="{% static 'flightsearch/datatables/responsive/css/datatables.responsive.css' %}">
-		<script src="{% static 'flightsearch/js/vendor/jquery-1.11.2.min.js' %}"></script>
-		<script src="{% static 'flightsearch/js/jquery.dataTables.min.js' %}"></script>
-		<script src="{% static 'flightsearch/datatables/TableTools.min.js' %}"></script>
-		<script src="{% static 'flightsearch/datatables/jquery.dataTables.columnFilter.js' %}"></script>
-		<script src="{% static 'flightsearch/datatables/responsive/js/datatables.responsive.js' %}"></script>
-		<script src="{% static 'flightsearch/datatables/lodash.min.js' %}"></script>
-		<script src="{% static 'flightsearch/js/dataTables.bootstrap.js' %}"></script>
-		-->
-		{% include "flightsearch/footer.html" %}
-	<script src="{% static 'flightsearch/js/vendor/bootstrap.min.js' %}"></script>
-	</body> 
-	
+			<script>
+
+			jQuery(window).load(function()
+			{
+
+			var $ = jQuery;
+
+			$("#datatable").dataTable({
+			"columns": [
+			{ "data": "Flight No." },
+			{ "data": "Source Station" },
+			{ "data": "Departure Time" },
+			{ "data": "Main Cabin" },
+			{ "data": "First/Business" },
+			{ "data": "Arival Time" },
+			{ "data": "Destination Station" },
+
+			]
+			});
+			/*
+			$("#datatable tbody input[type=checkbox]").each(function(i, el)
+			{
+			var $this = $(el),
+			$p = $this.closest('tr');
+
+			$(el).on('change', function()
+			{
+			var is_checked = $this.is(':checked');
+
+			$p[is_checked ? 'addClass' : 'removeClass']('highlight');
+			});
+			});
+
+			// Replace Checboxes
+			$(".pagination a").click(function(ev)
+			{
+			replaceCheckboxes();
+			});*/
+
+			});
+
+			// Sample Function to add new row
+			var giCount = 1;
+			</script>
+			<link rel="stylesheet" href="{% static 'flightsearch/datatables/responsive/css/datatables.responsive.css' %}">
+			<script src="{% static 'flightsearch/js/vendor/jquery-1.11.2.min.js' %}"></script>
+			<script src="{% static 'flightsearch/js/jquery.dataTables.min.js' %}"></script>
+			<script src="{% static 'flightsearch/datatables/TableTools.min.js' %}"></script>
+			<script src="{% static 'flightsearch/datatables/jquery.dataTables.columnFilter.js' %}"></script>
+			<script src="{% static 'flightsearch/datatables/responsive/js/datatables.responsive.js' %}"></script>
+			<script src="{% static 'flightsearch/datatables/lodash.min.js' %}"></script>
+			<script src="{% static 'flightsearch/js/dataTables.bootstrap.js' %}"></script>
+			-->
+			{% include "flightsearch/footer.html" %}
+			<script src="{% static 'flightsearch/js/vendor/bootstrap.min.js' %}"></script>
+
+			<script>
+				/*************************** SLIDER DECTION  ******************************/
+				/*
+				 $(function() {
+				 var min_val=0;
+				 var max_val=100;
+
+				 $("#test").slider({
+				 range: true,
+				 min: min_val,
+				 max : max_val,
+				 values: [min_val, max_val],
+				 step: 10,
+				 slide: function(e, ui)
+				 {
+				 var min_val = ui.values[0] ,
+				 max_val =  ui.values[1];
+
+				 },
+				 change: function(ev, ui)
+				 {
+
+				 var min_val =  ui.values[0] ,
+				 max_val =  ui.values[1];
+				 alert(min_val);
+				 alert(max_val);
+				 console.log(min_val);
+				 console.log(max_val);
+				 //getgiftdata(min_val ,max_val);
+
+				 }
+				 });
+				 });
+				 */
+				$("#depart").slider({
+					range : true,
+					min : 0,
+					max : 1439,
+					values : [0, 1439],
+					slide : slideTime1
+				});
+
+				function slideTime1(event, ui) {
+					var val0 = $("#depart").slider("values", 0),
+					    val1 = $("#depart").slider("values", 1),
+					    minutes0 = parseInt(val0 % 60, 10),
+					    hours0 = parseInt(val0 / 60 % 24, 10),
+					    minutes1 = parseInt(val1 % 60, 10),
+					    hours1 = parseInt(val1 / 60 % 24, 10);
+					start = getTime(hours0, minutes0);
+					end = getTime(hours1, minutes1);
+					$("#time").text(start + ' - ' + end);
+				}
+
+
+				$("#arive").slider({
+					range : true,
+					min : 0,
+					max : 1439,
+					values : [540, 1020],
+					slide : slideTime
+				});
+
+				function slideTime(event, ui) {
+					var val0 = $("#arive").slider("values", 0),
+					    val1 = $("#arive").slider("values", 1),
+					    minutes0 = parseInt(val0 % 60, 10),
+					    hours0 = parseInt(val0 / 60 % 24, 10),
+					    minutes1 = parseInt(val1 % 60, 10),
+					    hours1 = parseInt(val1 / 60 % 24, 10);
+					startTime = getTime(hours0, minutes0);
+					endTime = getTime(hours1, minutes1);
+					$("#arivaltime").text(startTime + ' - ' + endTime);
+				}
+
+				function getTime(hours, minutes) {
+					var time = null;
+					minutes = minutes + "";
+					if (hours < 12) {
+						time = "AM";
+					} else {
+						time = "PM";
+					}
+					if (hours == 0) {
+						hours = 12;
+					}
+					if (hours > 12) {
+						hours = hours - 12;
+					}
+					if (minutes.length == 1) {
+						minutes = "0" + minutes;
+					}
+					return hours + ":" + minutes + " " + time;
+				}
+
+				slideTime();
+				slideTime1();
+			</script>
+		</body>
+
 </html>
-
-
 

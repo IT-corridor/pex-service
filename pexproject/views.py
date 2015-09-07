@@ -7,19 +7,11 @@ from django.template import RequestContext, loader
 import json
 from django.db.models import Q
 #from django.template.context_processors import csrf
-from bs4 import BeautifulSoup
-from selenium import webdriver
-import selenium
 from datetime import timedelta
 #from datetime import datetime,date
 import datetime
-from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
-from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import Select
+from subprocess import Popen
+import subprocess
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -54,15 +46,45 @@ def login(request):
     return render_to_response('flightsearch/login.html',{'LoginForm': form})
 
 def search(request):
-    #db = MySQLdb.connect(user='root', db='pex', passwd='root', host='localhost')
-    #cursor = db.cursor()
     context = {}
     if request.method == "POST":
         if 'search' in request.REQUEST:
-            mstring = []
-            onestop = ''
-            nonstop = ''
-            econ = ''
+            querylist =''
+            join=''
+            economy=''
+            list=''
+            multicabin=''
+            if 'stoppage' in request.POST:
+                list = request.POST.getlist('stoppage')
+                if len(list)>1:
+                    querylist = querylist+join+"stoppage IN ('"+"','".join(list)+"')"
+                    join = ' AND '
+                else:
+                    if(len(list) > 0):
+                        querylist = querylist+join+"stoppage = '"+list[0]+"'"
+                        join = ' AND '
+                print querylist
+                
+                
+            if 'cabintype1' in request.POST:
+                economy = request.REQUEST['cabintype1']
+                
+                if economy != '':
+                    querylist = querylist+join+" cabintype1 LIKE '%%"+economy+"%%'" 
+            print querylist
+            records = Flightdata.objects.raw('select * from pexproject_flightdata where '+querylist)
+            
+            
+              
+            '''       
+            if 'cabintype2' in request.POST:
+                multicabin = request.POST.getlist('cabintype2')
+        
+            print list,economy,multicabin
+                    
+            record = Flightdata.objects.filter(Q(stoppage__in=list),Q(cabintype1__contains=economy))
+            print record
+           
             if 'nonstop' in request.REQUEST:
                 nonstop = request.REQUEST['nonstop']
             if 'onestop' in request.REQUEST:
@@ -70,17 +92,24 @@ def search(request):
                 print "one stop",onestop
             if 'cabintype1' in request.REQUEST:
                 econ = request.REQUEST['cabintype1']
+            #if 'twostop' in request.REQUEST:
+                #twostop = request.REQUEST['twostop']
                 #print econ
-            record = Flightdata.objects.filter(Q(cabintype1__contains=econ),Q(stoppage__in=[nonstop,onestop]))
+            if nonstop != '' or onestop != '':
+                record = Flightdata.objects.filter(Q(stoppage__in=[nonstop,onestop]),Q(cabintype1__contains=econ))
+            else:
+                record = Flightdata.objects.filter(cabintype1__contains=econ)
             print record
+            '''
             #searchkey = request.GET.get('keyid', '')
             #searchdata = Searchkey.objects.filter(searchid=searchkey)
             searchdata =''
-            filerkey = {nonstop:nonstop,onestop:onestop,econ:"Main Cabin"}
+            filerkey =  {'stoppage':list,'economy':economy}
+        
+            #print filerkey.economy 
 
-            return render_to_response('flightsearch/searchresult.html',{'data':record,'search':searchdata,'filterkey':filerkey},context_instance=RequestContext(request))
+            return render_to_response('flightsearch/searchresult.html',{'data':records,'search':searchdata,'filterkey':filerkey},context_instance=RequestContext(request))
             print data
-            exit()
             for key in request.POST.iterkeys():
                 if key != "csrfmiddlewaretoken" and key != "buying_slider_min" and key != "search":
                     valuelist = request.POST[key]
@@ -88,8 +117,6 @@ def search(request):
                     print valuelist
                     record = Flightdata.objects.filter(key=valuelist)
                     print record
-                    #mstring.extend(['%s="%s"' % (key, valuelist)])
-                    #print record
                 '''
                 if key != "csrfmiddlewaretoken" and key != "buying_slider_min" and key != "search":
                     valuelist = request.POST.getlist(key)
@@ -99,24 +126,15 @@ def search(request):
             
             print querylist
             '''
-            querylist = ','.join(mstring)
-            print querylist
-            #record = Flightdata.objects.filter(querylist)
-            #print querylist
-            #print ("select * from pexproject_flightdata where "+query)
-            #cursor.execute("select * from pexproject_flightdata where "+query)
-            #record = cursor.fetchall()
+            
             searchdata =''
-            record = Flightdata.objects.filter(stoppage="NONSTOP")
-            print record.query
             return render_to_response('flightsearch/searchresult.html',{'data':record,'search':searchdata},context_instance=RequestContext(request))
             
     if request.is_ajax():
         context = {}
-        orgn = request.REQUEST['fromMain'] #"Seattle, WA, US (SEA)"
-        dest = request.REQUEST['toMain'] #"New York, NY, US (NYC - All Airports)"
+        orgn = request.REQUEST['fromMain'] 
+        dest = request.REQUEST['toMain'] 
         depart = request.REQUEST['deptdate']
-        #print orgn,depart
         dt = datetime.datetime.strptime(depart, '%Y/%m/%d')
         date = dt.strftime('%Y/%m/%d')
         searchdate = dt.strftime('%Y-%m-%d')        
@@ -124,15 +142,9 @@ def search(request):
         time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
         time1 = datetime.datetime.now()- timedelta(hours=4)
         time1 = time1.strftime('%Y-%m-%d %H:%M:%S')
-        print time1
-        if time > time1:
-            print time,time1
-       
         searchkeyid=''
         obj = Searchkey.objects.filter(source=orgn,destination=dest,traveldate=searchdate,scrapetime__gte=time1)
-        print len(obj)
         if len(obj) > 0:
-            print "if block"
             for keyid in obj:
                 seachkeyid = keyid.searchid
                 print seachkeyid
@@ -140,12 +152,16 @@ def search(request):
                 
                 return HttpResponse(seachkeyid, mimetype)
         else:
-            print "else"
             searchdata = Searchkey(source=orgn,destination=dest,traveldate=dt,scrapetime=time) 
             searchdata.save()
+            
+            #p1 = Popen(["python", "delta.py"], stdout=subprocess.PIPE,stderr=subprocess.PIPE, shell=True)
+            #stderr = p1.communicate()
+            
             searchkeyid = searchdata.searchid 
             print searchkeyid
             call(["python", "delta.py",orgn,dest,date,str(searchkeyid)])
+            
             mimetype = 'application/json'
             return HttpResponse(searchkeyid, mimetype)
             
@@ -174,8 +190,8 @@ def get_airport(request):
 def searchLoading(request):
     context = {}
     if request.method == "POST":
-        orgn = request.REQUEST['fromMain'] #"Seattle, WA, US (SEA)"
-        dest = request.REQUEST['toMain'] #"New York, NY, US (NYC - All Airports)"
+        orgn = request.REQUEST['fromMain'] 
+        dest = request.REQUEST['toMain'] 
         depart = request.REQUEST['deptdate']
         dt = datetime.datetime.strptime(depart, '%m/%d/%Y')
         date = dt.strftime('%Y/%m/%d')     
