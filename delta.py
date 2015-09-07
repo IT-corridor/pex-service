@@ -15,7 +15,7 @@ from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
-from pexproject.models import Flightdata,Flights_wego,Searchkey
+#from pexproject.models import Flightdata,Flights_wego,Searchkey
 import sys,os
 
 cursor = connection.cursor()
@@ -53,12 +53,12 @@ stop=[]
 layover=[]
 flightno=[]
 
-#display = Display(visible=0, size=(800, 600))
-#display.start()
-driver = webdriver.Firefox()
-driver.get(url)
+display = Display(visible=0, size=(800, 600))
+display.start()
+driver = Firefox()
 driver.implicitly_wait(40)
 
+driver.get(url)
 oneway = driver.find_element_by_id("oneWayBtn")
 driver.execute_script("arguments[0].click();", oneway)
 
@@ -85,7 +85,7 @@ else:
 #driver.implicitly_wait(10)
 html_page = driver.page_source
 soup = BeautifulSoup(html_page)
-
+#exit()
 datatable = soup.findAll("table",{"class":"fareDetails"})
 
 for content in datatable:

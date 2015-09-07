@@ -8,6 +8,7 @@ import json
 from django.db.models import Q
 #from django.template.context_processors import csrf
 from datetime import timedelta
+import subprocess
 #from datetime import datetime,date
 import datetime
 from subprocess import Popen
@@ -119,7 +120,7 @@ def search(request):
                     print record
                 '''
                 if key != "csrfmiddlewaretoken" and key != "buying_slider_min" and key != "search":
-                    valuelist = request.POST.getlist(key)
+                    valuelist = request.POST.gietlist(key)
                     print valuelist
                     mstring.extend(['%s="%s"' % (key, val) for val in valuelist])
                     print "---------------"
