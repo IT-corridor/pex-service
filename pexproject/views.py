@@ -40,6 +40,7 @@ from selenium.webdriver.support.ui import Select
 import customfunction
 
 from pexproject.form import LoginForm
+from django.utils import timezone
 
 def index(request):
     
@@ -137,8 +138,6 @@ def search(request):
         depart = request.REQUEST['deptdate']
         dt = datetime.datetime.strptime(depart, '%Y/%m/%d')
         date = dt.strftime('%Y/%m/%d')
-        #unitedres = customfunction.united(orgn,dest,date)
-
         searchdate = dt.strftime('%Y-%m-%d')        
         currentdatetime = datetime.datetime.now()
         time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
@@ -157,6 +156,8 @@ def search(request):
             searchdata = Searchkey(source=orgn,destination=dest,traveldate=dt,scrapetime=time) 
             searchdata.save()
             searchkeyid = searchdata.searchid 
+            #unitedres = customfunction.united(orgn,dest,date,searchkeyid)
+            print unitedres
             cursor = connection.cursor()
             
             url ="http://www.delta.com/"
@@ -316,7 +317,7 @@ def search(request):
 def get_airport(request):
     if request.is_ajax():
         q = request.GET.get('term', '')
-        airport = Airports.objects.filter(cityName__icontains = q )[:20]
+        airport = Airports.objects.filter(Q(cityName__istartswith = q ) | Q(code__istartswith = q))[:20]
         results = []
         for airportdata in airport:
             airport_json = {}
@@ -338,7 +339,7 @@ def searchLoading(request):
         depart = request.REQUEST['deptdate']
         dt = datetime.datetime.strptime(depart, '%m/%d/%Y')
         date = dt.strftime('%Y/%m/%d')     
-        data ={}
+        #data ={}
         
         return render_to_response('flightsearch/searchloading.html', {'searchdate':date, 'sname':orgn,'dname':dest},context_instance=RequestContext(request))
     else:
