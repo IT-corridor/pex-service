@@ -137,7 +137,7 @@ def search(request):
         depart = request.REQUEST['deptdate']
         dt = datetime.datetime.strptime(depart, '%Y/%m/%d')
         date = dt.strftime('%Y/%m/%d')
-        unitedres = customfunction.united(orgn,dest,date)
+        #unitedres = customfunction.united(orgn,dest,date)
 
         searchdate = dt.strftime('%Y-%m-%d')        
         currentdatetime = datetime.datetime.now()
@@ -303,7 +303,7 @@ def search(request):
                 transaction.commit()
                 print "data inserted"
                 #queryset.save()
-	    display.stop()
+	        display.stop()
             driver.quit()
             mimetype = 'application/json'
             return HttpResponse(searchkeyid, mimetype)
