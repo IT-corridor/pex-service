@@ -10,8 +10,7 @@ from datetime import timedelta
 import subprocess
 from types import *
 import datetime
-#from subprocess import Popen
-#import subprocess
+
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -29,7 +28,8 @@ from datetime import date
 from django.db import connection,transaction
 import operator
 
-from pyvirtualdisplay import Display
+
+#from pyvirtualdisplay import Display
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -37,7 +37,6 @@ from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
-import sys,os
 import customfunction
 
 from pexproject.form import LoginForm
@@ -90,7 +89,6 @@ def search(request):
                 if economy != '':
                     querylist = querylist+join+" cabintype1 LIKE '%%"+economy+"%%'" 
                     join = ' AND '
-            print  querylist
             if 'searchkeyval' in request.POST:
                 searchkey = request.REQUEST['searchkeyval']
                 querylist = querylist+join+" searchkeyid = "+searchkey
@@ -125,7 +123,6 @@ def search(request):
             records = Flightdata.objects.raw('select * from pexproject_flightdata where '+querylist+' order by departure ASC')
             searchdata = Searchkey.objects.filter(searchid=searchkey)
             timeinfo = {'maxdept':deptmaxtime,'mindept':depttime,'minarival':arivtime,'maxarival':arivtmaxtime}#Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` where "+querylist+" order by departure ASC")
-            print list
             filerkey =  {'stoppage':list,'economy':economy, 'deptmin':depttime,'deptmax': deptmaxtime, 'business':businesslist}
             return render_to_response('flightsearch/searchresult.html',{'data':records,'search':searchdata,'filterkey':filerkey,'timedata':timeinfo},context_instance=RequestContext(request))
             
@@ -136,11 +133,12 @@ def search(request):
         dest = request.REQUEST['toMain'] 
         orgncode = orgn.partition('(')[-1].rpartition(')')[0]
         destcode = dest.partition('(')[-1].rpartition(')')[0]
-        #print orgncode,destcode
+        print orgncode,destcode
         depart = request.REQUEST['deptdate']
         dt = datetime.datetime.strptime(depart, '%Y/%m/%d')
         date = dt.strftime('%Y/%m/%d')
-        #unitedres = customfunction.united(orgn,dest,date)
+        unitedres = customfunction.united(orgn,dest,date)
+
         searchdate = dt.strftime('%Y-%m-%d')        
         currentdatetime = datetime.datetime.now()
         time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
@@ -162,6 +160,7 @@ def search(request):
             cursor = connection.cursor()
             
             url ="http://www.delta.com/"
+
             
             curdate = datetime.date.today() + datetime.timedelta(days=1)
             #date = date
@@ -170,8 +169,8 @@ def search(request):
             searchid = str(searchkeyid)
             currentdatetime = datetime.datetime.now()
             time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
-            display = Display(visible=0, size=(800, 600))
-            display.start()
+            #display = Display(visible=0, size=(800, 600))
+            #display.start()
             driver = webdriver.Firefox()
             driver.implicitly_wait(40)
             
@@ -214,10 +213,11 @@ def search(request):
                 tds = content.findAll("td")
                 detailsblock = tds[0]
                 economy = tds[1]
-		if len(tds) > 2:
-	                business = tds[2]
-		else:
-			business = ''
+                if len(tds) > 2:
+                    business = tds[2]
+                else:
+                    business = ''
+
                 cabintype2 =''
                 fare2 = ''
                 timeblock = detailsblock.findAll("div",{"class":"flightDateTime"})
@@ -283,24 +283,27 @@ def search(request):
                     
                 print "-------------------- Business --------------------------------------------------"
                 if business:
-                	if business.findAll("div",{"class":"priceHolder"}):
-                    		fare2 = business.find("div",{"class":"priceHolder"}).text
-                    		print fare2
-                    #lenght = len(fareblock)
-                    #print fareblock[0].text
-                    		if business.findAll("div",{"class":"frmTxtHldr flightCabinClass"}):
-                        		cabintype2 = business.find("div",{"class":"frmTxtHldr flightCabinClass"}).text
-                	else:
-                    		fare2 = business.find("span",{"class":"ntAvail"}).text
-                    		cabintype2 = ''
-                    		print fare2
+
+                    if business.findAll("div",{"class":"priceHolder"}):
+                        fare2 = business.find("div",{"class":"priceHolder"}).text
+                        print fare2
+                        #lenght = len(fareblock)
+                        #print fareblock[0].text
+                        if business.findAll("div",{"class":"frmTxtHldr flightCabinClass"}):
+                            cabintype2 = business.find("div",{"class":"frmTxtHldr flightCabinClass"}).text
+                            
+                    else:
+                        fare2 = business.find("span",{"class":"ntAvail"}).text
+                        cabintype2 = ''
+                        print fare2
+
                 print "last line"
                 #queryset = Flightdata(flighno=fltno,searchkeyid=searchid,scrapetime=time,stoppage=stp,stoppage_station=lyover, origin=sourcestn,destination=destinationstn,departure=depature,arival=arival,maincabin=fare1,firstclass=fare2,cabintype1=cabintype1.strip(),cabintype2=cabintype2.strip()) 
                 cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,firstclass,cabintype1,cabintype2) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,searchid,time,stp,lyover,sourcestn,destinationstn,test1,arivalformat1,duration,fare1,fare2,cabintype1.strip(),cabintype2.strip()))
                 transaction.commit()
                 print "data inserted"
                 #queryset.save()
-            display.stop()
+
             driver.quit()
             mimetype = 'application/json'
             return HttpResponse(searchkeyid, mimetype)
@@ -347,7 +350,7 @@ def getsearchresult(request):
         searchkey = request.GET.get('keyid', '')
         record = Flightdata.objects.filter(searchkeyid=searchkey)
         searchdata = Searchkey.objects.filter(searchid=searchkey)
-	for s in searchdata:
+        for s in searchdata:
             source = s.source
             destination = s.destination
         timerecord = Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` ")
@@ -359,7 +362,9 @@ def getsearchresult(request):
         if len(record)>0: 
             return render_to_response('flightsearch/searchresult.html',{'data':record,'search':searchdata,'timedata':timeinfo},context_instance=RequestContext(request)) 
         else:
-            msg = "Sorry, No flight found  from "+source+" To "+destination+".  Please search for another date or city "
+
+            msg = "Sorry, NO flight found  from "+source+" To "+destination+".  Please search for another date or city !"
+
             return  render_to_response('flightsearch/index.html',{'message':msg}, context_instance=RequestContext(request))
             
         
