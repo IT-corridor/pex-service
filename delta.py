@@ -7,7 +7,7 @@ from datetime import date
 import datetime
 from django.db import connection,transaction
 
-#from pyvirtualdisplay import Display
+from pyvirtualdisplay import Display
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -55,7 +55,7 @@ flightno=[]
 
 display = Display(visible=0, size=(800, 600))
 display.start()
-driver = Firefox()
+driver = webdriver.Firefox()
 driver.implicitly_wait(40)
 
 driver.get(url)
@@ -158,6 +158,6 @@ for content in datatable:
     cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,firstclass,cabintype1,cabintype2) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,searchid,time,stp,lyover,sourcestn,destinationstn,test1,arivalformat1,duration,fare1,fare2,cabintype1.strip(),cabintype2.strip()))
     transaction.commit()
     #queryset.save()
-#display.stop()
+display.stop()
 driver.quit()
             
