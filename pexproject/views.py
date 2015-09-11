@@ -29,7 +29,7 @@ from django.db import connection,transaction
 import operator
 
 
-#from pyvirtualdisplay import Display
+from pyvirtualdisplay import Display
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -169,8 +169,8 @@ def search(request):
             searchid = str(searchkeyid)
             currentdatetime = datetime.datetime.now()
             time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
-            #display = Display(visible=0, size=(800, 600))
-            #display.start()
+            display = Display(visible=0, size=(800, 600))
+            display.start()
             driver = webdriver.Firefox()
             driver.implicitly_wait(40)
             
@@ -303,7 +303,7 @@ def search(request):
                 transaction.commit()
                 print "data inserted"
                 #queryset.save()
-
+	    display.stop()
             driver.quit()
             mimetype = 'application/json'
             return HttpResponse(searchkeyid, mimetype)
