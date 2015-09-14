@@ -173,12 +173,14 @@ def search(request):
             searchid = str(searchkeyid)
             currentdatetime = datetime.datetime.now()
             time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
+
             display = Display(visible=0, size=(800, 600))
             display.start()
             #logger.debug("Hey there it works!!")
             #logger.info("Hey there it works!!")
             #logger.warn("Hey there it works!!")
             logger.info("before firefox connection!")
+
             driver = webdriver.Firefox()
             driver.implicitly_wait(40)
             logger.error("after firefox connection!")
@@ -206,11 +208,11 @@ def search(request):
                 return HttpResponse(searchkeyid, mimetype)
             
             try:
-                WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "showAll-footer")))
+                WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "showAll-footer")))
                 driver.find_element_by_link_text('Show All').click()
                 WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "fareRowContainer_20")))
             except:
-                WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
+                WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
             WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
             #driver.implicitly_wait(10)
             html_page = driver.page_source
@@ -307,10 +309,12 @@ def search(request):
                 transaction.commit()
                 print "data inserted"
                 #queryset.save()
+
 	    display.stop()
-            driver.quit()
-            mimetype = 'application/json'
-            return HttpResponse(searchkeyid, mimetype)
+
+        driver.quit()
+        mimetype = 'application/json'
+        return HttpResponse(searchkeyid, mimetype)
             
     
     
