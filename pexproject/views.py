@@ -318,6 +318,7 @@ def get_airport(request):
     if request.is_ajax():
         q = request.GET.get('term', '')
         airport = Airports.objects.filter(Q(cityName__istartswith = q ) | Q(code__istartswith = q))[:20]
+        airport.query.group_by = ['code']
         results = []
         for airportdata in airport:
             airport_json = {}
