@@ -139,7 +139,7 @@ def search(request):
         print orgncode,destcode
         depart = request.REQUEST['deptdate']
         dt = datetime.datetime.strptime(depart, '%Y/%m/%d')
-        date = dt.strftime('%Y/%m/%d')
+        date = dt.strftime('%m/%d/%Y')
         searchdate = dt.strftime('%Y-%m-%d')        
         currentdatetime = datetime.datetime.now()
         time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
@@ -194,9 +194,10 @@ def search(request):
             destination = driver.find_element_by_id("destinationCity")
             destination.send_keys(destcode.strip())
             
-            
-            driver.find_element_by_id("departureDate").click()
-            driver.find_elements_by_css_selector("td[data-date='"+date+"']")[0].click()
+            ddate = driver.find_element_by_id("departureDate")#.click()
+            ddate.send_keys(str(date))
+            #driver.find_element_by_id("departureDate").click()
+            #driver.find_elements_by_css_selector("td[data-date='"+date+"']")[0].click()
             
             driver.find_element_by_id("milesBtn").click()
             driver.find_element_by_id("findFlightsSubmit").click()
