@@ -77,14 +77,13 @@ def search(request):
             if 'cabintype2' in request.POST:
                 businesslist = request.POST.getlist('cabintype2')
                 if len(businesslist)>1:
-                    querylist = querylist+join+" cabintype2 LIKE ('%"+"%','%".join(businesslist)+"%')"
+                    querylist = querylist+join+" cabintype2 LIKE '"+businesslist[0]+"%%' or  cabintype2 LIKE '"+businesslist[1]+"%%'"
                     join = ' AND '
                 else:
                     if(len(businesslist) > 0):
                         print "aaya"
                         querylist = querylist+join+" cabintype2 LIKE '"+businesslist[0]+"%%'"
                         join = ' AND ' 
-               
                 
             if 'cabintype1' in request.POST:
                 economy = request.REQUEST['cabintype1']
