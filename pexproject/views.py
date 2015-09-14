@@ -175,13 +175,13 @@ def search(request):
             time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
             display = Display(visible=0, size=(800, 600))
             display.start()
-            logger.debug("Hey there it works!!")
-            logger.info("Hey there it works!!")
-            logger.warn("Hey there it works!!")
-            logger.error("Hey there it works!!")
+            #logger.debug("Hey there it works!!")
+            #logger.info("Hey there it works!!")
+            #logger.warn("Hey there it works!!")
+            logger.info("before firefox connection!")
             driver = webdriver.Firefox()
             driver.implicitly_wait(40)
-            
+            logger.error("after firefox connection!")
             driver.get(url)
             oneway = driver.find_element_by_id("oneWayBtn")
             driver.execute_script("arguments[0].click();", oneway)
@@ -279,7 +279,6 @@ def search(request):
                 print "-------------------- Economy--------------------------------------------------"
                 if economy.findAll("div",{"class":"priceHolder"}):
                     fare1 = economy.find("div",{"class":"priceHolder"}).text
-                    print fare1
                     #lenght = len(fareblock)
                     #print fareblock[0].text
                     if economy.findAll("div",{"class":"frmTxtHldr flightCabinClass"}):
@@ -287,14 +286,12 @@ def search(request):
                 else:
                     fare1 = economy.find("span",{"class":"ntAvail"}).text
                     cabintype1 =''
-                    print fare1
                     
                 print "-------------------- Business --------------------------------------------------"
                 if business:
 
                     if business.findAll("div",{"class":"priceHolder"}):
                         fare2 = business.find("div",{"class":"priceHolder"}).text
-                        print fare2
                         #lenght = len(fareblock)
                         #print fareblock[0].text
                         if business.findAll("div",{"class":"frmTxtHldr flightCabinClass"}):
@@ -303,7 +300,6 @@ def search(request):
                     else:
                         fare2 = business.find("span",{"class":"ntAvail"}).text
                         cabintype2 = ''
-                        print fare2
 
                 print "last line"
                 #queryset = Flightdata(flighno=fltno,searchkeyid=searchid,scrapetime=time,stoppage=stp,stoppage_station=lyover, origin=sourcestn,destination=destinationstn,departure=depature,arival=arival,maincabin=fare1,firstclass=fare2,cabintype1=cabintype1.strip(),cabintype2=cabintype2.strip()) 
@@ -311,7 +307,7 @@ def search(request):
                 transaction.commit()
                 print "data inserted"
                 #queryset.save()
-	        display.stop()
+	    display.stop()
             driver.quit()
             mimetype = 'application/json'
             return HttpResponse(searchkeyid, mimetype)
@@ -372,7 +368,7 @@ def getsearchresult(request):
             return render_to_response('flightsearch/searchresult.html',{'data':record,'search':searchdata,'timedata':timeinfo},context_instance=RequestContext(request)) 
         else:
 
-            msg = "Sorry, NO flight found  from "+source+" To "+destination+".  Please search for another date or city !"
+            msg = "Sorry, No flight found  from "+source+" To "+destination+".  Please search for another date or city !"
 
             return  render_to_response('flightsearch/index.html',{'message':msg}, context_instance=RequestContext(request))
             
