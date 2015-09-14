@@ -41,6 +41,8 @@ import customfunction
 
 from pexproject.form import LoginForm
 from django.utils import timezone
+import logging
+logger = logging.getLogger(__name__)
 
 def index(request):
     
@@ -144,6 +146,8 @@ def search(request):
         time1 = datetime.datetime.now()- timedelta(hours=4)
         time1 = time1.strftime('%Y-%m-%d %H:%M:%S')
         searchkeyid=''
+        Searchkey.objects.filter(scrapetime__lte=time1).delete()
+        Flightdata.objects.filter(scrapetime__lte=time1).delete()
         obj = Searchkey.objects.filter(source=orgn,destination=dest,traveldate=searchdate,scrapetime__gte=time1)
         if len(obj) > 0:
             for keyid in obj:
@@ -157,7 +161,6 @@ def search(request):
             searchdata.save()
             searchkeyid = searchdata.searchid 
             #unitedres = customfunction.united(orgn,dest,date,searchkeyid)
-            print unitedres
             cursor = connection.cursor()
             
             url ="http://www.delta.com/"
@@ -172,6 +175,10 @@ def search(request):
             time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
             display = Display(visible=0, size=(800, 600))
             display.start()
+            logger.debug("Hey there it works!!")
+            logger.info("Hey there it works!!")
+            logger.warn("Hey there it works!!")
+            logger.error("Hey there it works!!")
             driver = webdriver.Firefox()
             driver.implicitly_wait(40)
             
