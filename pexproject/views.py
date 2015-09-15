@@ -77,7 +77,7 @@ def search(request):
             if 'cabintype2' in request.POST:
                 businesslist = request.POST.getlist('cabintype2')
                 if len(businesslist)>1:
-                    querylist = querylist+join+" cabintype2 LIKE '"+businesslist[0]+"%%' or  cabintype2 LIKE '"+businesslist[1]+"%%'"
+                    querylist = querylist+join+" (cabintype2 LIKE '"+businesslist[0]+"%%' or  cabintype2 LIKE '"+businesslist[1]+"%%')"
                     join = ' AND '
                 else:
                     if(len(businesslist) > 0):
@@ -208,12 +208,12 @@ def search(request):
                 return HttpResponse(searchkeyid, mimetype)
             
             try:
-                WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "showAll-footer")))
+                WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "showAll-footer")))
                 driver.find_element_by_link_text('Show All').click()
                 WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "fareRowContainer_20")))
             except:
-                WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
-            WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
+                WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
             #driver.implicitly_wait(10)
             html_page = driver.page_source
             soup = BeautifulSoup(html_page)
@@ -310,7 +310,7 @@ def search(request):
                 print "data inserted"
                 #queryset.save()
 
-	    display.stop()
+	display.stop()
 
         driver.quit()
         mimetype = 'application/json'
