@@ -63,7 +63,6 @@ def search(request):
             list=''
             multicabin=''
             businesslist=''
-            
             if 'stoppage' in request.POST:
                 list = request.POST.getlist('stoppage')
                 if len(list)>1:
@@ -171,7 +170,7 @@ def search(request):
             searchdata = Searchkey(source=orgn,destination=dest,traveldate=dt,scrapetime=time) 
             searchdata.save()
             searchkeyid = searchdata.searchid 
-            #unitedres = customfunction.united(orgn,dest,depart,searchkeyid)
+            unitedres = customfunction.united(orgn,dest,depart,searchkeyid)
             cursor = connection.cursor()
             
             url ="http://www.delta.com/"
@@ -320,7 +319,7 @@ def search(request):
 
                 print "last line"
                 #queryset = Flightdata(flighno=fltno,searchkeyid=searchid,scrapetime=time,stoppage=stp,stoppage_station=lyover, origin=sourcestn,destination=destinationstn,departure=depature,arival=arival,maincabin=fare1,firstclass=fare2,cabintype1=cabintype1.strip(),cabintype2=cabintype2.strip()) 
-                cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,firstclass,cabintype1,cabintype2) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,searchid,time,stp,lyover,sourcestn,destinationstn,test1,arivalformat1,duration,fare1,fare2,cabintype1.strip(),cabintype2.strip()))
+                cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,firstclass,cabintype1,cabintype2,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,searchid,time,stp,lyover,sourcestn,destinationstn,test1,arivalformat1,duration,fare1,fare2,cabintype1.strip(),cabintype2.strip(),"delta"))
                 transaction.commit()
                 print "data inserted"
                 #queryset.save()

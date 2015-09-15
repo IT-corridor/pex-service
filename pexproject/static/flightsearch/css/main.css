@@ -620,9 +620,11 @@ padding:0px;    font-family: inherit;
   	font-weight: 400;
   	font-size: 16px;
   	margin: 0px;	
-}	
-		
-		
+}
+
+.img-responsive{
+	background: #0D4F8B	
+}
 		
 		
 		

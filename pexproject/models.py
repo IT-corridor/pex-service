@@ -16,6 +16,7 @@ class Flightdata(models.Model):
     firstclass = models.CharField(max_length=100)
     cabintype1 =  models.CharField(max_length=100)
     cabintype2 =  models.CharField(max_length=100)
+    datasource =  models.CharField(max_length=20)
 # Create your models here.
 class Airports(models.Model):
     airport_id = models.IntegerField (primary_key=True)

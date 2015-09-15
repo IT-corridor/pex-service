@@ -11,7 +11,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from django.db import connection,transaction
-#from pyvirtualdisplay import Display
+from pyvirtualdisplay import Display
 import socket
 import urllib
 
@@ -23,8 +23,8 @@ def united(origin,destination,searchdate,searchkey):
     cursor=db.cursor()
     url = "http://www.united.com/web/en-US/default.aspx?root=1"
     driver = webdriver.Firefox()
-    #display = Display(visible=0, size=(800, 600))
-    #display.start()
+    display = Display(visible=0, size=(800, 600))
+    display.start()
     dt = datetime.datetime.strptime(searchdate, '%Y/%m/%d')
     date = dt.strftime('%m/%d/%Y')
     #curdate = datetime.date.today() + datetime.timedelta(days=10)
@@ -139,29 +139,37 @@ def united(origin,destination,searchdate,searchkey):
                     cabin.append(miles)
                     #print "K val =",k
                     if j == 2:
-                        cabinval = "|".join(cabin)
+                        #cabinval = "|".join(cabin)
                         if k == 2:
-                            fare1 = cabinval
+                            fare1 = cabin[0]
                             cabintype1 = "Main Cabin"
                             cabin =[]
                             #print cabintype1,fare1
                            
                         if k == 4:
-                            fare2 = cabinval
+                            fare2 = cabin[0]
                             canibtype2 = "Business"
                             cabin =[]
                             #print cabintype2,fare2
                            
                         if k == 6:
-                                fare3 = cabinval
+                                fare3 = cabin[0]
                                 cabintype3 = "first two row"
                                 cabin =[]
                         j=0
                         
                 print canibtype2
-                cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,firstclass,cabintype1,cabintype2) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,str(searchid),time,str(stop-1),"test",source,Destination,test1,arivalformat1,dursn,fare1,fare2,cabintype1,canibtype2))
+                if stop-1 < 1:
+                    stopage = "NONSTOP"
+                elif stop-1 == 1:
+                    stopage = "1 STOP"
+                else:
+                    if stop-1 == 2:
+                        stopage = "2 STOPS"
+                cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,firstclass,cabintype1,cabintype2,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,str(searchid),time,stopage,"test",source,Destination,test1,arivalformat1,dursn,fare1,fare2,cabintype1,canibtype2,"united"))
                 db.commit()
                 print "row inserted"
+    display.stop()
     driver.quit()
     return searchid
     
