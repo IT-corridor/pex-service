@@ -2,6 +2,7 @@
 "http://www.w3.org/TR/html4/loose.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
+		{% include "flightsearch/header.html" %}
 		{% load staticfiles %}
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>New Web Project</title>
@@ -14,6 +15,8 @@
 		<input type="hidden" name="from" id="from" value="{{sname}}">
 		<input type="hidden" name="to" id="to" value="{{dname}}">
 		<input type="hidden" name="departdate" id="date" value="{{searchdate}}">
+		<input type="hidden" name="returndate" id="retdate" value="{{returndate}}">
+		<input type="hidden" name="trip" id="trip" value="{{triptype}}">
 		</form>
 		<form action="index" method="post" id ="formid">
 			<input type="hidden" name="searchid" value="" id="searchid"/>
@@ -43,6 +46,8 @@ var CSRF_TOKEN = "{{ csrf_token }}";
 var from = $('#from').val();
 var to = $('#to').val();
 var depart = $('#date').val();
+var trip = $('#trip').val();
+var returndate = $('#retdate').val();
 var searchid = '';
 $.ajaxSetup({
   data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
@@ -52,7 +57,7 @@ var formdata={"fromMain":$('#from').val(),"csrtoken":CSRF_TOKEN};
 $.ajax({
         type: "POST",
         url: "/search/",
-        data: "fromMain="+ encodeURI(from)+ "&toMain=" + encodeURI(to)+ "&deptdate=" + encodeURI(depart) + "&csrfmiddlewaretoken=" + encodeURI(CSRF_TOKEN),
+        data: "returndate="+ encodeURI(returndate)+ "&triptype="+ encodeURI(trip)+ "&fromMain="+ encodeURI(from)+ "&toMain=" + encodeURI(to)+ "&deptdate=" + encodeURI(depart) + "&csrfmiddlewaretoken=" + encodeURI(CSRF_TOKEN),
     	success: function(data){
         console.log(data);
         searchid = data;

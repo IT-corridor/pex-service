@@ -78,6 +78,7 @@ def search(request):
                 businesslist = request.POST.getlist('cabintype2')
                 if len(businesslist)>1:
                     querylist = querylist+join+" (cabintype2 LIKE '"+businesslist[0]+"%%' or  cabintype2 LIKE '"+businesslist[1]+"%%')"
+
                     join = ' AND '
                 else:
                     if(len(businesslist) > 0):
@@ -121,6 +122,7 @@ def search(request):
                 arivtmaxformat1 = arivtmaxformat.strftime('%H:%M:%S')
                 querylist = querylist+join+" arival <= '"+arivtmaxformat1+"'"
                 join = ' AND '
+                
             
             records = Flightdata.objects.raw('select * from pexproject_flightdata where '+querylist+' order by departure ASC')
             searchdata = Searchkey.objects.filter(searchid=searchkey)
@@ -131,6 +133,16 @@ def search(request):
     if request.is_ajax():
         context = {}
         cursor = connection.cursor()
+        
+        #
+        returndate = request.REQUEST['returndate']
+        if returndate:
+            dt1 = datetime.datetime.strptime(returndate, '%Y/%m/%d')
+            date1 = dt1.strftime('%m/%d/%Y')
+            print date1
+        
+        triptype =  request.REQUEST['triptype']
+        
         orgn = request.REQUEST['fromMain'] 
         dest = request.REQUEST['toMain'] 
         orgncode = orgn.partition('(')[-1].rpartition(')')[0]
@@ -159,7 +171,7 @@ def search(request):
             searchdata = Searchkey(source=orgn,destination=dest,traveldate=dt,scrapetime=time) 
             searchdata.save()
             searchkeyid = searchdata.searchid 
-            #unitedres = customfunction.united(orgn,dest,date,searchkeyid)
+            #unitedres = customfunction.united(orgn,dest,depart,searchkeyid)
             cursor = connection.cursor()
             
             url ="http://www.delta.com/"
@@ -184,7 +196,7 @@ def search(request):
             driver.implicitly_wait(40)
             logger.error("after firefox connection!")
             driver.get(url)
-            oneway = driver.find_element_by_id("oneWayBtn")
+            oneway = driver.find_element_by_id(triptype)   #("oneWayBtn")
             driver.execute_script("arguments[0].click();", oneway)
             
             origin = driver.find_element_by_id("originCity")
@@ -195,6 +207,9 @@ def search(request):
             
             ddate = driver.find_element_by_id("departureDate")#.click()
             ddate.send_keys(str(date))
+            if returndate:
+                returndate = driver.find_element_by_id("returnDate")#.click()
+                returndate.send_keys(date1)
             #driver.find_element_by_id("departureDate").click()
             #driver.find_elements_by_css_selector("td[data-date='"+date+"']")[0].click()
             
@@ -310,7 +325,8 @@ def search(request):
                 print "data inserted"
                 #queryset.save()
 
-	display.stop()
+
+	    display.stop()
 
         driver.quit()
         mimetype = 'application/json'
@@ -345,11 +361,20 @@ def searchLoading(request):
         orgn = request.REQUEST['fromMain'] 
         dest = request.REQUEST['toMain'] 
         depart = request.REQUEST['deptdate']
+        trip = ''
+        date1 = ''
+        if 'trip' in request.REQUEST:
+            trip = request.REQUEST['trip']
+            print trip
+        retdate = request.REQUEST['returndate']
+        if retdate:
+            returndate = datetime.datetime.strptime(retdate, '%m/%d/%Y')
+            date1 = returndate.strftime('%Y/%m/%d') 
         dt = datetime.datetime.strptime(depart, '%m/%d/%Y')
         date = dt.strftime('%Y/%m/%d')     
         #data ={}
         
-        return render_to_response('flightsearch/searchloading.html', {'searchdate':date, 'sname':orgn,'dname':dest},context_instance=RequestContext(request))
+        return render_to_response('flightsearch/searchloading.html', {'searchdate':date, 'sname':orgn,'dname':dest,'returndate':date1,'triptype':trip},context_instance=RequestContext(request))
     else:
         return render_to_response('flightsearch/index.html')
     

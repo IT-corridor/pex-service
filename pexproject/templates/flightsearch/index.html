@@ -92,13 +92,13 @@
             <div class="row">
               <div class="col-sm-11 col-xxs-12 col-sm-offset-1">
                 <div class="checkbox-inline mhr10px">
-                  <label><input type="checkbox" id="rt"> Round-Trip</label>
+                  <label><input type="radio" id="rt" name="trip" value="roundTripBtn"> Round-Trip</label>
                 </div>
                 <div class="checkbox-inline mhr10px">
-                  <label><input type="checkbox" id="ow"> One-Way</label>
+                  <label><input type="radio" id="ow" name="trip" value="oneWayBtn"> One-Way</label>
                 </div>
                 <div class="checkbox-inline mhr10px">
-                  <label><input type="checkbox" id="mc"> Multi-City</label>
+                  <label><input type="checkbox" id="mc" name="multicity"> Multi-City</label>
                 </div>
               </div>
             </div>
@@ -133,7 +133,7 @@
                   <label class="sr-only" for="return">Return Date:</label>
                   <div class="inner-addon left-addon date" id="dp2">
                       <i class="glyphicon glyphicon-calendar"></i>
-                      <input type="text" class="form-control" id="returnMain" placeholder="Return">
+                      <input type="text" class="form-control" id="returnMain" placeholder="Return" name="returndate">
                   </div>
                 </div>
               </div>
@@ -216,6 +216,9 @@
     		{
     			$("#return").show();
     		}
+    		if($("#rt").prop('checked') == true){
+    			$("#return").show();
+    		}
     })
     	$("#ow").click(function(){
     		if($("#ow").prop('checked') == true){
@@ -224,6 +227,16 @@
     		else
     		{
     			$("#return").show();
+    		}
+    		
+    	})
+    	$("#rt").click(function(){
+    		if($("#rt").prop('checked') == true){
+    			$("#return").show();
+    		}
+    		else
+    		{
+    			$("#return").hide();
     		}
     		
     	})
