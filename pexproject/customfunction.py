@@ -16,11 +16,14 @@ import socket
 import urllib
 
 def united(origin,destination,searchdate,searchkey):
+    '''
     db = MySQLdb.connect(host="localhost", 
                      user="root",           
                       passwd="root",        
                       db="pex")
     cursor=db.cursor()
+    '''
+    cursor = connection.cursor()
     url = "http://www.united.com/web/en-US/default.aspx?root=1"
     driver = webdriver.Firefox()
     display = Display(visible=0, size=(800, 600))
@@ -167,9 +170,10 @@ def united(origin,destination,searchdate,searchkey):
                     if stop-1 == 2:
                         stopage = "2 STOPS"
                 cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,firstclass,cabintype1,cabintype2,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,str(searchid),time,stopage,"test",source,Destination,test1,arivalformat1,dursn,fare1,fare2,cabintype1,canibtype2,"united"))
-                db.commit()
+                #db.commit()
+                transaction.commit()
                 print "row inserted"
-    display.stop()
+    display.stop
     driver.quit()
     return searchid
     
