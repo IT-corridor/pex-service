@@ -81,10 +81,31 @@ def united(origin,destination,searchdate,searchkey):
             for datablock in tdsegblock:
                 stop = 0
                 contenttr = datablock.findAll("tr")
+                #========= chnageing on 16/9/2015=============================
+                origininfo = contenttr[0]
+                if origininfo:
+                    if origininfo.find("td",{"class":"tdDepart"}):
+                        departinfo = origininfo.find("td",{"class":"tdDepart"})
+                        info = departinfo.findAll("div")
+                        depart = info[1].text
+                        depart = depart.replace(".","")
+                        test = (datetime.datetime.strptime(depart,'%I:%M %p'))
+                        test1 = test.strftime('%H:%M')
+                        #print "depart Date  : ",info[2].text
+                        source = info[3].text
+                        flightdetail = origininfo.find("td",{"class":"tdSegmentDtl"})
+                        fltno = flightdetail.find("div").text
+                        print fltno
+                        
+                    
+                
+                #========== end===============================================
+                
                 for content in contenttr:
                     if content.find("td",{"class":"tdDepart"}):
                         stop = stop+1
                         print "==================================================================================="
+                        """
                         departinfo = content.find("td",{"class":"tdDepart"})
                         info = departinfo.findAll("div")
                         depart = info[1].text
@@ -93,7 +114,7 @@ def united(origin,destination,searchdate,searchkey):
                         test1 = test.strftime('%H:%M')
                         #print "depart Date  : ",info[2].text
                         source = info[3].text
-                        
+                        """
                         arivinfo = content.find("td",{"class":"tdArrive"})
                         ainfo = arivinfo.findAll("div")
                         arival = ainfo[1].text
@@ -106,12 +127,17 @@ def united(origin,destination,searchdate,searchkey):
                         Destination = ainfo[3].text
                       
                         duration = content.find("td",{"class":"tdTrvlTime"})
+                        if duration.find("span",{"class":"PHead"}):
+                            totaltime = duration.find("span",{"class":"PHead"}).text
+                            print totaltime
                         traveltime = duration.findAll("span")
                         for timetext in traveltime:
                             print timetext.text
+                        """
                         flightdetail = content.find("td",{"class":"tdSegmentDtl"})
                         fltno = flightdetail.find("div").text
                         print fltno
+                        """
                     #duration = ''
                     #for flno in flightdetail:
                         #print flno.find("div").text
@@ -138,25 +164,37 @@ def united(origin,destination,searchdate,searchkey):
                     else:
                         notavl = mileage.find("div",{"class":"divNA"}).text
                         miles = notavl.strip()
-                    
-                    cabin.append(miles)
+                        
+                    if miles != "NotAvailable":
+                        cabin.append(miles)
+                    else:
+                        cabin.append('')
                     #print "K val =",k
                     if j == 2:
                         #cabinval = "|".join(cabin)
                         if k == 2:
-                            fare1 = cabin[0]
+                            if cabin[0]:
+                                fare1 = cabin[0]
+                            else:
+                                fare1 = cabin[1]
                             cabintype1 = "Main Cabin"
                             cabin =[]
                             #print cabintype1,fare1
                            
                         if k == 4:
-                            fare2 = cabin[0]
+                            if cabin[0]:
+                                fare2 = cabin[0]
+                            else:
+                                fare2 = cabin[1]
                             canibtype2 = "Business"
                             cabin =[]
                             #print cabintype2,fare2
                            
                         if k == 6:
+                            if cabin[0]:
                                 fare3 = cabin[0]
+                            else:
+                                fare3 = cabin[1]
                                 cabintype3 = "first two row"
                                 cabin =[]
                         j=0
@@ -169,7 +207,7 @@ def united(origin,destination,searchdate,searchkey):
                 else:
                     if stop-1 == 2:
                         stopage = "2 STOPS"
-                cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,firstclass,cabintype1,cabintype2,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,str(searchid),time,stopage,"test",source,Destination,test1,arivalformat1,dursn,fare1,fare2,cabintype1,canibtype2,"united"))
+                cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,firstclass,cabintype1,cabintype2,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,str(searchid),time,stopage,"test",source,Destination,test1,arivalformat1,totaltime,fare1,fare2,cabintype1,canibtype2,"united"))
                 #db.commit()
                 transaction.commit()
                 print "row inserted"

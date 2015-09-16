@@ -61,6 +61,7 @@ def search(request):
             join=''
             economy=''
             list=''
+            list1=''
             multicabin=''
             businesslist=''
             if 'stoppage' in request.POST:
@@ -71,6 +72,15 @@ def search(request):
                 else:
                     if(len(list) > 0):
                         querylist = querylist+join+"stoppage = '"+list[0]+"'"
+                        join = ' AND '
+            if 'airlines' in request.POST:
+                list1 = request.POST.getlist('airlines')
+                if len(list1)>1:
+                    querylist = querylist+join+"datasource IN ('"+"','".join(list1)+"')"
+                    join = ' AND '
+                else:
+                    if(len(list1) > 0):
+                        querylist = querylist+join+"datasource = '"+list1[0]+"'"
                         join = ' AND '
                 
             if 'cabintype2' in request.POST:
@@ -126,7 +136,7 @@ def search(request):
             records = Flightdata.objects.raw('select * from pexproject_flightdata where '+querylist+' order by departure ASC')
             searchdata = Searchkey.objects.filter(searchid=searchkey)
             timeinfo = {'maxdept':deptmaxtime,'mindept':depttime,'minarival':arivtime,'maxarival':arivtmaxtime}#Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` where "+querylist+" order by departure ASC")
-            filerkey =  {'stoppage':list,'economy':economy, 'deptmin':depttime,'deptmax': deptmaxtime, 'business':businesslist}
+            filerkey =  {'stoppage':list,'economy':economy, 'deptmin':depttime,'deptmax': deptmaxtime, 'business':businesslist,'datasource':list1}
             return render_to_response('flightsearch/searchresult.html',{'data':records,'search':searchdata,'filterkey':filerkey,'timedata':timeinfo},context_instance=RequestContext(request))
             
     if request.is_ajax():
@@ -381,7 +391,7 @@ def getsearchresult(request):
     context = {}
     if request.GET.get('keyid', ''):
         searchkey = request.GET.get('keyid', '')
-        record = Flightdata.objects.filter(searchkeyid=searchkey)
+        record = Flightdata.objects.filter(searchkeyid=searchkey).order_by('departure')
         searchdata = Searchkey.objects.filter(searchid=searchkey)
         for s in searchdata:
             source = s.source

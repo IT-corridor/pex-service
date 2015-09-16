@@ -90,37 +90,24 @@
 										</div>
 
 									</div>
-
-									<!--
 									<div class="col-md-12 col-xs-12 nopadding form-side">
-									<p>NUMBER OF STOPS</p>
-									<form>
+									<p>AIRLINES</p>
 									<div class="checkbox">
 									<label>
-									<input type='checkbox'>
+									<input type='checkbox' name="airlines" value="delta" {% for row in filterkey.datasource %} {% if row == 'delta'%} checked="checked" {% endif %}{%endfor %}>
 									<span></span>
-									NONSTOP
+									DELTA AIRLINES
 									</label>
 									</div>
-									<div class="checkbox">
+									<div class="checkbox" >
 									<label>
-									<input type='checkbox'>
+									<input type='checkbox' name="airlines" value="united" {% for row in filterkey.datasource %} {% if row == 'united'%} checked="checked" {% endif %}{%endfor %}>
 									<span></span>
-									STOP
+									UINTED AIRLINES
 									</label>
 									</div>
-
-									<div class="checkbox">
-									<label>
-									<input type='checkbox'>
-									<span></span>
-									2+ STOPS
-									</label>
+									
 									</div>
-
-									</form>
-									</div>
-									-->
 									<div class="col-md-12 col-xs-12 nopadding form-side">
 										<p>
 											CABIN
@@ -212,7 +199,7 @@
 										<div class="col-md-12 col-xs-12 nopadding">
 											<div class="col-sm-6 col-xs-12">
 												<div class="col-xs-12 nopadding text-center">
-													{% if row.cabintype1 %}
+													{% if row.cabintype1 and row.maincabin %}
 													<h5 class="econo"> {{row.cabintype1}} </h5>
 													<div class="col-xs-12 nopadding mvb10px na-ra">
 														<p class="flight-rate">
@@ -230,7 +217,7 @@
 											<div class="col-sm-6 col-xs-12">
 												
 												<div class="col-xs-12 nopadding text-center">
-													{% if row.cabintype2 %}
+													{% if row.cabintype2 and row.firstclass %}
 													<h5 class="econo">{{row.cabintype2}}</h5>
 													<div class="col-xs-12 nopadding mvb10px na-ra">
 														<p class="flight-rate">
