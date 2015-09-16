@@ -118,8 +118,8 @@
 											</p>
 										<div class="checkbox">
 											<label>
-												<input type='checkbox' name="cabintype1" value="Cabin"  {% if filterkey.economy == 'Cabin'%} checked="checked" {% endif %}>
-												<span></span>MULTIPLE CABINs</label>
+												<input type='checkbox' name="cabintype2" value="Multiple"  {% for row in filterkey.business %} {% if row == 'Multiple'%} checked="checked" {% endif %} {%endfor %}>
+												<span></span>MULTIPLE CABINS</label>
 										</div>
 										<div class="checkbox">
 											<label>
