@@ -176,29 +176,41 @@ def united(origin,destination,searchdate,searchkey):
                                 fare1 = cabin[0]
                             else:
                                 fare1 = cabin[1]
-                            cabintype1 = "Main Cabin"
+                            if fare1:
+                                cabintype1 = "Main Cabin"
+                            else:
+                                cabintype1 = ""
+                            
                             cabin =[]
-                            #print cabintype1,fare1
+                            print cabintype1,fare1
                            
                         if k == 4:
                             if cabin[0]:
                                 fare2 = cabin[0]
                             else:
                                 fare2 = cabin[1]
-                            canibtype2 = "Business"
+                            if fare2:
+                                cabintype2 = "Business"
+                            else:
+                                cabintype2 = ""
                             cabin =[]
-                            #print cabintype2,fare2
+                            print cabintype2,fare2
                            
                         if k == 6:
                             if cabin[0]:
                                 fare3 = cabin[0]
                             else:
                                 fare3 = cabin[1]
-                                cabintype3 = "first two row"
-                                cabin =[]
+                                
+                            if fare3:
+                                cabintype3 = "First"
+                            else:
+                                cabintype3 = ""
+                                #cabintype3 = "first two row"
+                            cabin =[]
                         j=0
                         
-                print canibtype2
+                
                 if stop-1 < 1:
                     stopage = "NONSTOP"
                 elif stop-1 == 1:
@@ -206,7 +218,7 @@ def united(origin,destination,searchdate,searchkey):
                 else:
                     if stop-1 == 2:
                         stopage = "2 STOPS"
-                cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,firstclass,cabintype1,cabintype2,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,str(searchid),time,stopage,"test",source,Destination,test1,arivalformat1,totaltime,fare1,fare2,cabintype1,canibtype2,"united"))
+                cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,firstclass,cabintype1,cabintype2,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,str(searchid),time,stopage,"test",source,Destination,test1,arivalformat1,totaltime,fare1,fare2,cabintype1,cabintype2,"united"))
                 #db.commit()
                 transaction.commit()
                 print "row inserted"
