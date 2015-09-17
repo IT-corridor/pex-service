@@ -31,12 +31,12 @@ class Airports(models.Model):
     lon = models.CharField(max_length=200)
     numAirports = models.IntegerField()
     city = models.BooleanField(default=True)
-    
-    
+       
 class Searchkey(models.Model):
     searchid = models.AutoField(primary_key=True)
     source = models.CharField(max_length=50)
     destination = models.CharField(max_length=50)
     traveldate = models.DateField(max_length=50)
     returndate = models.DateField(null=True)
+    isreturnkey = models.BooleanField(default=False)
     scrapetime = models.DateTimeField(max_length=50)

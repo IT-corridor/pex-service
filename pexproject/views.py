@@ -150,20 +150,24 @@ def search(request):
     if request.is_ajax():
         context = {}
         cursor = connection.cursor()
-        
-        #
         returndate = request.REQUEST['returndate']
+        if request.REQUEST['rndtripkey']:
+                roundtrip = 1
+        else:
+            roundtrip = 0
         dt1 =''
+        searchdate1 = ''
         if returndate:
             dt1 = datetime.datetime.strptime(returndate, '%Y/%m/%d')
             date1 = dt1.strftime('%m/%d/%Y')
+            searchdate1 = dt1.strftime('%Y-%m-%d')
         triptype =  request.REQUEST['triptype']
         
         orgn = request.REQUEST['fromMain'] 
         dest = request.REQUEST['toMain'] 
         orgncode = orgn.partition('(')[-1].rpartition(')')[0]
         destcode = dest.partition('(')[-1].rpartition(')')[0]
-        print orgncode,destcode
+        #print orgncode,destcode
         depart = request.REQUEST['deptdate']
         dt = datetime.datetime.strptime(depart, '%Y/%m/%d')
         date = dt.strftime('%m/%d/%Y')
@@ -175,7 +179,11 @@ def search(request):
         searchkeyid=''
         Searchkey.objects.filter(scrapetime__lte=time1).delete()
         Flightdata.objects.filter(scrapetime__lte=time1).delete()
-        obj = Searchkey.objects.filter(source=orgn,destination=dest,traveldate=searchdate,scrapetime__gte=time1)
+        if searchdate1:
+            obj = Searchkey.objects.filter(source=orgn,destination=dest,traveldate=searchdate,returndate=searchdate1,scrapetime__gte=time1,isreturnkey=roundtrip)
+        else:
+            obj = Searchkey.objects.filter(source=orgn,destination=dest,traveldate=searchdate,scrapetime__gte=time1,isreturnkey=roundtrip)
+        print len(obj)
         if len(obj) > 0:
             for keyid in obj:
                 seachkeyid = keyid.searchid
@@ -187,12 +195,18 @@ def search(request):
             if dt1:
                 searchdata = Searchkey(source=orgn,destination=dest,traveldate=dt,returndate=dt1,scrapetime=time) 
             else:
-                searchdata = Searchkey(source=orgn,destination=dest,traveldate=dt,scrapetime=time)
+                print roundtrip
+                searchdata = Searchkey(source=orgn,destination=dest,traveldate=dt,scrapetime=time,isreturnkey=roundtrip)
             searchdata.save()
             searchkeyid = searchdata.searchid 
-            unitedres = customfunction.united(orgn,dest,depart,searchkeyid)
+            if request.REQUEST['rndtripkey']:
+                print request.REQUEST['rndtripkey'] 
+                unitedres = customfunction.united(orgn,dest,depart,searchkeyid)
+                print unitedres
+                mimetype = 'application/json'
+                return HttpResponse(searchkeyid, mimetype)
             cursor = connection.cursor()
-            
+            unitedres = customfunction.united(orgn,dest,depart,searchkeyid)
             url ="http://www.delta.com/"
             
             searchid = str(searchkeyid)
@@ -280,14 +294,11 @@ def search(request):
                 for route in flite_route:
                     if route.find("div",{"class":"nonStopBtn"}):
                         stp = "NONSTOP"
-                        #stop.append(stp)
                         lyover = ""
-                        #layover.append(lyover)
                         #print "nonstop"
                     else:
                         if route.find("div",{"class":"nStopBtn"}):
                             stp = route.find("div",{"class":"nStopBtn"}).text
-                            #stop.append(stp)
                             #print route.find("div",{"class":"nStopBtn"}).text
                             if route.find("div",{"class":"layOver"}):
                                 lyover = route.find("div",{"class":"layOver"}).find("span").text
@@ -297,9 +308,7 @@ def search(request):
                             #print route.find("div",{"class":"layovertoolTip"}).text
                             #layover.append(lyover)
                     sourcestn = (route.find("div",{"class":"originCity"}).text)
-                    #fromstation.append(sourcestn)
                     destinationstn = (route.find("div",{"class":"destinationCity"}).text)
-                    #deststn.append(destinationstn)
                 print "-------------------- Economy--------------------------------------------------"
                 if economy.findAll("div",{"class":"priceHolder"}):
                     fare1 = economy.find("div",{"class":"priceHolder"}).text
@@ -326,7 +335,6 @@ def search(request):
                         cabintype2 = ''
 
                 print "last line"
-                #queryset = Flightdata(flighno=fltno,searchkeyid=searchid,scrapetime=time,stoppage=stp,stoppage_station=lyover, origin=sourcestn,destination=destinationstn,departure=depature,arival=arival,maincabin=fare1,firstclass=fare2,cabintype1=cabintype1.strip(),cabintype2=cabintype2.strip()) 
                 cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,firstclass,cabintype1,cabintype2,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,searchid,time,stp,lyover,sourcestn,destinationstn,test1,arivalformat1,duration,fare1,fare2,cabintype1.strip(),cabintype2.strip(),"delta"))
                 transaction.commit()
                 print "data inserted"
@@ -365,19 +373,27 @@ def searchLoading(request):
         orgn = request.REQUEST['fromMain'] 
         dest = request.REQUEST['toMain'] 
         depart = request.REQUEST['deptdate']
+        
+        roundtripkey = ''
+        if 'keyid' in request.REQUEST:
+            roundtripkey = request.REQUEST['keyid']
+            
         trip = ''
         date1 = ''
+        print orgn,dest,roundtripkey,depart
         if 'trip' in request.REQUEST:
             trip = request.REQUEST['trip']
             print trip
-        retdate = request.REQUEST['returndate']
-        if retdate:
-            returndate = datetime.datetime.strptime(retdate, '%m/%d/%Y')
-            date1 = returndate.strftime('%Y/%m/%d') 
+        if 'returndate' in  request.REQUEST:
+            retdate = request.REQUEST['returndate']
+            if retdate:
+                returndate = datetime.datetime.strptime(retdate, '%m/%d/%Y')
+                date1 = returndate.strftime('%Y/%m/%d') 
         dt = datetime.datetime.strptime(depart, '%m/%d/%Y')
         date = dt.strftime('%Y/%m/%d')
         
-        return render_to_response('flightsearch/searchloading.html', {'searchdate':date, 'sname':orgn,'dname':dest,'returndate':date1,'triptype':trip},context_instance=RequestContext(request))
+        
+        return render_to_response('flightsearch/searchloading.html', {'searchdate':date, 'sname':orgn,'dname':dest,'returndate':date1,'triptype':trip,'roundtripkey':roundtripkey},context_instance=RequestContext(request))
     else:
         return render_to_response('flightsearch/index.html')
     

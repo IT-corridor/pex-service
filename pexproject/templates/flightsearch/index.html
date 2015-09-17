@@ -24,10 +24,7 @@
         </style>
         
         <script type="text/javascript">
-          $(function(){
-            $('#departMain').datepicker({ minDate: 0});
-            $('#returnMain').datepicker({ minDate: 0});
-          });
+          
           /*jQuery( document ).ready(function( $ ) {
             var nowTemp = new Date();
             var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
@@ -254,6 +251,22 @@
   });
   
     	
+    </script>
+    <script>
+    $(function(){
+            $('#departMain').datepicker({ minDate: 0});
+            $('#returnMain').datepicker({ minDate: 0});
+          });
+    //var depart = $('#departMain').datepicker('getDate');
+    //var returndate = $('#returnMain').datepicker('getDate');
+
+    $('#departMain').on('change', function() {
+    $('#returnMain').datepicker("option", "minDate", $('#departMain').datepicker('getDate'));
+});
+
+    
+    
+    
     </script>
   </body>
 </html>

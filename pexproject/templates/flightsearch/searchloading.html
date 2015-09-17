@@ -16,6 +16,7 @@
 		<input type="hidden" name="to" id="to" value="{{dname}}">
 		<input type="hidden" name="departdate" id="date" value="{{searchdate}}">
 		<input type="hidden" name="returndate" id="retdate" value="{{returndate}}">
+		<input type="hidden" name="roundtripkey" id="rdtrip" value="{{roundtripkey}}">
 		<input type="hidden" name="trip" id="trip" value="{{triptype}}">
 		</form>
 		<form action="index" method="post" id ="formid">
@@ -48,6 +49,7 @@ var to = $('#to').val();
 var depart = $('#date').val();
 var trip = $('#trip').val();
 var returndate = $('#retdate').val();
+var rdtrip = $('#rdtrip').val();
 var searchid = '';
 $.ajaxSetup({
   data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
@@ -57,7 +59,7 @@ var formdata={"fromMain":$('#from').val(),"csrtoken":CSRF_TOKEN};
 $.ajax({
         type: "POST",
         url: "/search/",
-        data: "returndate="+ encodeURI(returndate)+ "&triptype="+ encodeURI(trip)+ "&fromMain="+ encodeURI(from)+ "&toMain=" + encodeURI(to)+ "&deptdate=" + encodeURI(depart) + "&csrfmiddlewaretoken=" + encodeURI(CSRF_TOKEN),
+        data: "returndate="+ encodeURI(returndate)+"&rndtripkey="+encodeURI(rdtrip) +"&triptype="+ encodeURI(trip)+ "&fromMain="+ encodeURI(from)+ "&toMain=" + encodeURI(to)+ "&deptdate=" + encodeURI(depart) + "&csrfmiddlewaretoken=" + encodeURI(CSRF_TOKEN),
     	success: function(data){
         console.log(data);
         searchid = data;

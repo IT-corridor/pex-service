@@ -18,15 +18,25 @@
 			{% if search %}
 			{% for searchrow in search %}
 			<div class="col-md-12 col-xs-12">
-				<div class="col-md-1 col-xs-1"></div>
 				<div class="col-md-7 col-xs-7">
 
-					<h4>{{searchrow.source}} ===================>{{searchrow.destination}} </h4>
+					<h4>{% if searchrow.isreturnkey == 1 %}Return : {% endif %}{{searchrow.source}} ============>{{searchrow.destination}} </h4>
 				</div>
-				<div class="col-md-4 col-xs-4">
+				<div class="col-md-3 col-xs-3">
 					<h4> {{searchrow.traveldate}}<!--<input type="text" id="datepicker" name="date" value="{{searchdate}}">--></h4>
 				</div>
-
+				{% if searchrow.returndate%}
+				<div class="col-md-2 col-xs-2">
+					<form action="searchLoading" method="post">
+						{% csrf_token %}
+						<input type="hidden" name="fromMain" id="from" value="{{searchrow.destination}}">
+						<input type="hidden" name="toMain" id="to" value="{{searchrow.source}}">
+						<input type="hidden" name="deptdate" id="date" value="{{searchrow.returndate|date:"m/d/Y"}}">
+						<input type="hidden" name="keyid" id="keyid" value="{{searchrow.searchid}}">
+						<button type"submit" value="{{searchrow.searchid}}" name="return" id="return">SELECT RETURN</button>
+					</form>
+				</div>
+				{%endif %}
 			</div>
 			{%endfor %}
 			{% endif %}
@@ -195,13 +205,7 @@
 										{% if row.datasource == "delta" %}
 										<img src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
 									</div>
-									{% for searchrow in search %}
-									{% if searchrow.returndate %}
-									<a href="searchLoading?type=return&keyid={{searchrow.searchid}}">
-									<button type"button" value="{{searchrow.searchid}}" name="return">Return</button>
-									</a>
-									{% endif %}
-									{% endfor %}
+									
 									<div class="col-md-6 col-xs-12 nopadding">
 										<div class="col-md-12 col-xs-12 nopadding">
 											<div class="col-sm-6 col-xs-12">
@@ -337,6 +341,37 @@
 			-->
 			{% include "flightsearch/footer.html" %}
 			<script src="{% static 'flightsearch/js/vendor/bootstrap.min.js' %}"></script>
+			
+			<script>
+			/*
+			$('#return').click(function()
+			{
+				var keyid = $('#return').val();
+				
+				alert(keyid);
+				$.ajax({
+			        type: "POST",
+			        url: "/search/",
+			        data: "keyid="+ encodeURI(keyid)+ "&type="+ encodeURI("returntype")+ "&csrfmiddlewaretoken=" + encodeURI(CSRF_TOKEN),
+			    	success: function(data){
+			        console.log(data);
+			        searchid = data;
+			        redirecttosearchpage(searchid);
+			       
+			        
+			    },
+				
+			   });
+			 });
+			function redirecttosearchpage(searchid){
+			 	if(searchid != '')
+			{
+				//alert(searchid)  ;  
+				$('#searchid').val(searchid);
+				window.location.href = "getsearchresult?keyid="+ encodeURI(searchid) ;
+			}
+			} */
+			</script>
 
 			<script>
 			var deptmintime ;
