@@ -11,7 +11,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from django.db import connection,transaction
-from pyvirtualdisplay import Display
+#from pyvirtualdisplay import Display
 import socket
 import urllib
 
@@ -25,8 +25,8 @@ def united(origin,destination,searchdate,searchkey):
     '''
     cursor = connection.cursor()
     url = "http://www.united.com/web/en-US/default.aspx?root=1"
-    display = Display(visible=0, size=(800, 600))
-    display.start()
+    #display = Display(visible=0, size=(800, 600))
+    #display.start()
     driver = webdriver.Firefox()
     dt = datetime.datetime.strptime(searchdate, '%Y/%m/%d')
     date = dt.strftime('%m/%d/%Y')
@@ -222,7 +222,7 @@ def united(origin,destination,searchdate,searchkey):
                 #db.commit()
                 transaction.commit()
                 print "row inserted"
-    display.stop
+    #display.stop
     driver.quit()
     return searchid
     

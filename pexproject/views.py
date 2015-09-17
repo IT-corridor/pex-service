@@ -28,7 +28,9 @@ from datetime import date
 from django.db import connection,transaction
 import operator
 
+
 from pyvirtualdisplay import Display
+
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -151,11 +153,10 @@ def search(request):
         
         #
         returndate = request.REQUEST['returndate']
+        dt1 =''
         if returndate:
             dt1 = datetime.datetime.strptime(returndate, '%Y/%m/%d')
             date1 = dt1.strftime('%m/%d/%Y')
-            print date1
-        
         triptype =  request.REQUEST['triptype']
         
         orgn = request.REQUEST['fromMain'] 
@@ -183,35 +184,30 @@ def search(request):
                 
                 return HttpResponse(seachkeyid, mimetype)
         else:
-            searchdata = Searchkey(source=orgn,destination=dest,traveldate=dt,scrapetime=time) 
+            if dt1:
+                searchdata = Searchkey(source=orgn,destination=dest,traveldate=dt,returndate=dt1,scrapetime=time) 
+            else:
+                searchdata = Searchkey(source=orgn,destination=dest,traveldate=dt,scrapetime=time)
             searchdata.save()
             searchkeyid = searchdata.searchid 
             unitedres = customfunction.united(orgn,dest,depart,searchkeyid)
             cursor = connection.cursor()
             
             url ="http://www.delta.com/"
-
             
-            curdate = datetime.date.today() + datetime.timedelta(days=1)
-            #date = date
-            #orgn = request.REQUEST['fromMain'] 
-            #dest = request.REQUEST['deptdate']
             searchid = str(searchkeyid)
             currentdatetime = datetime.datetime.now()
             time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
 
             display = Display(visible=0, size=(800, 600))
             display.start()
-            #logger.debug("Hey there it works!!")
-            #logger.info("Hey there it works!!")
-            #logger.warn("Hey there it works!!")
             logger.info("before firefox connection!")
 
             driver = webdriver.Firefox()
             driver.implicitly_wait(40)
-            logger.error("after firefox connection!")
+            logger.info("after firefox connection!")
             driver.get(url)
-            oneway = driver.find_element_by_id(triptype)   #("oneWayBtn")
+            oneway = driver.find_element_by_id(triptype)
             driver.execute_script("arguments[0].click();", oneway)
             
             origin = driver.find_element_by_id("originCity")
@@ -244,7 +240,6 @@ def search(request):
             except:
                 WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
             WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
-            #driver.implicitly_wait(10)
             html_page = driver.page_source
             soup = BeautifulSoup(html_page)
             datatable = soup.findAll("table",{"class":"fareDetails"})
@@ -271,19 +266,16 @@ def search(request):
                     test = (datetime.datetime.strptime(depaturetime,'%I:%M %p'))
                     test1 = test.strftime('%H:%M')
                     print test1
-                    #depttime.append(test1)
                     arival = temp[3].text
                     apart =  arival[-2:]
                     arival = arival.replace(apart, "")
                     arivaltime = arival+" "+apart
-                    #arivaltimelist.append(arivaltime)
                     arivalformat = (datetime.datetime.strptime(arivaltime,'%I:%M %p'))
                     arivalformat1 = arivalformat.strftime('%H:%M')
                     duration = temp[4].text
                     
                 flite_route = detailsblock.findAll("div",{"class":"flightPathWrapper"})
                 fltno = detailsblock.find("a",{"class":"helpIcon"}).text
-                #flightno.append(fltno)
                 print 
                 for route in flite_route:
                     if route.find("div",{"class":"nonStopBtn"}):
@@ -338,7 +330,6 @@ def search(request):
                 cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,firstclass,cabintype1,cabintype2,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,searchid,time,stp,lyover,sourcestn,destinationstn,test1,arivalformat1,duration,fare1,fare2,cabintype1.strip(),cabintype2.strip(),"delta"))
                 transaction.commit()
                 print "data inserted"
-                #queryset.save()
 
 
 	    display.stop()
@@ -346,19 +337,14 @@ def search(request):
         driver.quit()
         mimetype = 'application/json'
         return HttpResponse(searchkeyid, mimetype)
-            
-    
-    
-            #return render_to_response('flightsearch/searchresult.html', {'temp':record, 'searchdate':date, 'sname':sourcename,'dname':destname},context_instance=RequestContext(request))
         
-
 def get_airport(request):
     if request.is_ajax():
         q = request.GET.get('term', '')
         airport = Airports.objects.filter(Q(cityName__istartswith = q ) | Q(code__istartswith = q))[:20]
-#        airport.query.group_by = ['code']
+        #airport.query.group_by = ['code']
         results = []
-	airportcode = []
+        airportcode = []
         for airportdata in airport:
             if airportdata.code not in airportcode:
 	            airportcode.append(airportdata.code)
@@ -389,8 +375,7 @@ def searchLoading(request):
             returndate = datetime.datetime.strptime(retdate, '%m/%d/%Y')
             date1 = returndate.strftime('%Y/%m/%d') 
         dt = datetime.datetime.strptime(depart, '%m/%d/%Y')
-        date = dt.strftime('%Y/%m/%d')     
-        #data ={}
+        date = dt.strftime('%Y/%m/%d')
         
         return render_to_response('flightsearch/searchloading.html', {'searchdate':date, 'sname':orgn,'dname':dest,'returndate':date1,'triptype':trip},context_instance=RequestContext(request))
     else:

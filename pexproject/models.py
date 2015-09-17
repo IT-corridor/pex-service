@@ -38,4 +38,5 @@ class Searchkey(models.Model):
     source = models.CharField(max_length=50)
     destination = models.CharField(max_length=50)
     traveldate = models.DateField(max_length=50)
+    returndate = models.DateField(null=True)
     scrapetime = models.DateTimeField(max_length=50)

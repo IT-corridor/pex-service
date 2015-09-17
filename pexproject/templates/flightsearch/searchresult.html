@@ -195,6 +195,13 @@
 										{% if row.datasource == "delta" %}
 										<img src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
 									</div>
+									{% for searchrow in search %}
+									{% if searchrow.returndate %}
+									<a href="searchLoading?type=return&keyid={{searchrow.searchid}}">
+									<button type"button" value="{{searchrow.searchid}}" name="return">Return</button>
+									</a>
+									{% endif %}
+									{% endfor %}
 									<div class="col-md-6 col-xs-12 nopadding">
 										<div class="col-md-12 col-xs-12 nopadding">
 											<div class="col-sm-6 col-xs-12">
