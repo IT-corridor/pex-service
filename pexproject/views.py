@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext, loader
 import json
-from django.db.models import Q
+from django.db.models import Q,Count
 from datetime import timedelta
 import subprocess
 from types import *
@@ -27,7 +27,6 @@ import time
 from datetime import date
 from django.db import connection,transaction
 import operator
-
 
 from pyvirtualdisplay import Display
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
@@ -357,14 +356,17 @@ def get_airport(request):
     if request.is_ajax():
         q = request.GET.get('term', '')
         airport = Airports.objects.filter(Q(cityName__istartswith = q ) | Q(code__istartswith = q))[:20]
-        airport.query.group_by = ['code']
+#        airport.query.group_by = ['code']
         results = []
+	airportcode = []
         for airportdata in airport:
-            airport_json = {}
-            airport_json['id'] = airportdata.airport_id
-            airport_json['label'] = airportdata.cityName+", "+airportdata.cityCode+", "+airportdata.countryCode +"  ("+airportdata.code+" )"
-            airport_json['value'] = airportdata.cityName+", "+airportdata.cityCode+", "+airportdata.countryCode +"  ("+airportdata.code+" )"
-            results.append(airport_json)
+            if airportdata.code not in airportcode:
+	            airportcode.append(airportdata.code)
+        	    airport_json = {}
+	            airport_json['id'] = airportdata.airport_id
+        	    airport_json['label'] = airportdata.cityName+", "+airportdata.cityCode+", "+airportdata.countryCode +"  ("+airportdata.code+" )"
+	            airport_json['value'] = airportdata.cityName+", "+airportdata.cityCode+", "+airportdata.countryCode +"  ("+airportdata.code+" )"
+        	    results.append(airport_json)
         data = json.dumps(results)
     else:
         data = 'fail'
