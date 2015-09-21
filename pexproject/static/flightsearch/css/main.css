@@ -23,6 +23,16 @@ h1{
   font-size: 20px;
 }
 
+
+.no-margin{
+	margin:0;
+}
+.nomr{
+	margin-right:0 !important;
+}
+.noml{
+	margin-left:0 !important;
+}
 /*SPACERS*/
 /*<--HORIZONTAL PIXELS-->*/
 .mhl8px{
@@ -34,6 +44,9 @@ h1{
 }
 .mhl12px{
   margin-left: 12px;
+}
+.mhl15px{
+  margin-left: 15px;
 }
 .mhl20px{
   margin-left: 20px;

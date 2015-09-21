@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext, loader
 import json
-from django.db.models import Q,Count
+from django.db.models import Q,Count,Min
 from datetime import timedelta
 import subprocess
 from types import *
@@ -19,25 +19,13 @@ from django.views.decorators.csrf import requires_csrf_token
 from pexproject.models import Flightdata,Airports,Searchkey
 from subprocess import call
 #import MySQLdb
-from bs4 import BeautifulSoup
-from selenium import webdriver
-import selenium
+
 from datetime import timedelta
 import time
 from datetime import date
 from django.db import connection,transaction
 import operator
 
-
-from pyvirtualdisplay import Display
-
-from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
-from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import Select
 import customfunction
 
 from pexproject.form import LoginForm
@@ -140,19 +128,24 @@ def search(request):
                 querylist = querylist+join+" arival <= '"+arivtmaxformat1+"'"
                 join = ' AND '
                 
+            minprice = request.POST['price']
+            action = request.POST['action']
+            returnkey = ''
+            if 'returnkey' in request.POST:
+                returnkey = request.POST['returnkey']
             
             records = Flightdata.objects.raw('select * from pexproject_flightdata where '+querylist+' order by departure ASC')
             searchdata = Searchkey.objects.filter(searchid=searchkey)
             timeinfo = {'maxdept':deptmaxtime,'mindept':depttime,'minarival':arivtime,'maxarival':arivtmaxtime}#Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` where "+querylist+" order by departure ASC")
             filerkey =  {'stoppage':list,'economy':economy, 'deptmin':depttime,'deptmax': deptmaxtime, 'business':businesslist,'datasource':list1}
-            return render_to_response('flightsearch/searchresult.html',{'data':records,'search':searchdata,'filterkey':filerkey,'timedata':timeinfo},context_instance=RequestContext(request))
+            return render_to_response('flightsearch/searchresult.html',{'returndata':returnkey,'action':action,'minprice':minprice,'data':records,'search':searchdata,'filterkey':filerkey,'timedata':timeinfo},context_instance=RequestContext(request))
             
     if request.is_ajax():
         context = {}
         cursor = connection.cursor()
         returndate = request.REQUEST['returndate']
         if request.REQUEST['rndtripkey']:
-                roundtrip = 1
+            roundtrip = 1
         else:
             roundtrip = 0
         dt1 =''
@@ -177,20 +170,28 @@ def search(request):
         time1 = datetime.datetime.now()- timedelta(hours=4)
         time1 = time1.strftime('%Y-%m-%d %H:%M:%S')
         searchkeyid=''
+        returnkey =''
         Searchkey.objects.filter(scrapetime__lte=time1).delete()
         Flightdata.objects.filter(scrapetime__lte=time1).delete()
         if searchdate1:
-            obj = Searchkey.objects.filter(source=orgn,destination=dest,traveldate=searchdate,returndate=searchdate1,scrapetime__gte=time1,isreturnkey=roundtrip)
+            obj = Searchkey.objects.filter(source=orgn,destination=dest,traveldate=searchdate,scrapetime__gte=time1)
+            returnobj = Searchkey.objects.filter(source=dest,destination=orgn,traveldate=searchdate1,scrapetime__gte=time1)
+            if len(returnobj) > 0:
+                for retkey in returnobj:
+                     returnkey = retkey.searchid
+            else:
+                searchdata = Searchkey(source=dest,destination=orgn,traveldate=dt1,scrapetime=time,isreturnkey=0)
+                searchdata.save()
+                returnkey = searchdata.searchid
+                retdeltares = customfunction.delta(orgncode,destcode,date,returnkey)
+                retrecordkey = customfunction.united(orgn,dest,depart,returnkey)
+                
         else:
-            obj = Searchkey.objects.filter(source=orgn,destination=dest,traveldate=searchdate,scrapetime__gte=time1,isreturnkey=roundtrip)
+            obj = Searchkey.objects.filter(source=orgn,destination=dest,traveldate=searchdate,scrapetime__gte=time1)
         print len(obj)
         if len(obj) > 0:
             for keyid in obj:
-                seachkeyid = keyid.searchid
-                print seachkeyid
-                mimetype = 'application/json'
-                
-                return HttpResponse(seachkeyid, mimetype)
+                searchkeyid = keyid.searchid
         else:
             if dt1:
                 searchdata = Searchkey(source=orgn,destination=dest,traveldate=dt,returndate=dt1,scrapetime=time) 
@@ -199,152 +200,31 @@ def search(request):
                 searchdata = Searchkey(source=orgn,destination=dest,traveldate=dt,scrapetime=time,isreturnkey=roundtrip)
             searchdata.save()
             searchkeyid = searchdata.searchid 
-            if request.REQUEST['rndtripkey']:
-                print request.REQUEST['rndtripkey'] 
-                unitedres = customfunction.united(orgn,dest,depart,searchkeyid)
-                print unitedres
-                mimetype = 'application/json'
-                return HttpResponse(searchkeyid, mimetype)
             cursor = connection.cursor()
-            unitedres = customfunction.united(orgn,dest,depart,searchkeyid)
-            url ="http://www.delta.com/"
-            
-            searchid = str(searchkeyid)
-            currentdatetime = datetime.datetime.now()
-            time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
-
-            display = Display(visible=0, size=(800, 600))
-            display.start()
-            logger.info("before firefox connection!")
-
-            driver = webdriver.Firefox()
-            driver.implicitly_wait(40)
-            logger.info("after firefox connection!")
-            driver.get(url)
-            oneway = driver.find_element_by_id(triptype)
-            driver.execute_script("arguments[0].click();", oneway)
-            
-            origin = driver.find_element_by_id("originCity")
-            origin.clear()
-            origin.send_keys(orgncode.strip())
-            destination = driver.find_element_by_id("destinationCity")
-            destination.send_keys(destcode.strip())
-            
-            ddate = driver.find_element_by_id("departureDate")#.click()
-            ddate.send_keys(str(date))
+            deltares = customfunction.delta(orgncode,destcode,date,searchkeyid)
+            recordkey = customfunction.united(orgn,dest,depart,searchkeyid)
+            returnkey = ''
             if returndate:
-                returndate = driver.find_element_by_id("returnDate")#.click()
-                returndate.send_keys(date1)
-            #driver.find_element_by_id("departureDate").click()
-            #driver.find_elements_by_css_selector("td[data-date='"+date+"']")[0].click()
-            
-            driver.find_element_by_id("milesBtn").click()
-            driver.find_element_by_id("findFlightsSubmit").click()
-            try:
-                WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
-            except:
-                driver.quit()
-                mimetype = 'application/json'
-                return HttpResponse(searchkeyid, mimetype)
-            
-            try:
-                WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "showAll-footer")))
-                driver.find_element_by_link_text('Show All').click()
-                WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "fareRowContainer_20")))
-            except:
-                WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
-            html_page = driver.page_source
-            soup = BeautifulSoup(html_page)
-            datatable = soup.findAll("table",{"class":"fareDetails"})
-            
-            for content in datatable:
-                tds = content.findAll("td")
-                detailsblock = tds[0]
-                economy = tds[1]
-                if len(tds) > 2:
-                    business = tds[2]
+                retunobj = Searchkey.objects.filter(source=dest,destination=orgn,traveldate=searchdate1,scrapetime__gte=time1)
+                if len(retunobj) > 0:
+                    for keyid in retunobj:
+                        returnkey = keyid.searchid
                 else:
-                    business = ''
-
-                cabintype2 =''
-                fare2 = ''
-                timeblock = detailsblock.findAll("div",{"class":"flightDateTime"})
-                for info in timeblock:
-                    temp = info.findAll("span")
-                    depature = temp[0].text
-                    part = depature[-2:]
-                    depature1 = depature.replace(part, "")
-                    depaturetime = depature1+" "+part
-                    print depaturetime
-                    test = (datetime.datetime.strptime(depaturetime,'%I:%M %p'))
-                    test1 = test.strftime('%H:%M')
-                    print test1
-                    arival = temp[3].text
-                    apart =  arival[-2:]
-                    arival = arival.replace(apart, "")
-                    arivaltime = arival+" "+apart
-                    arivalformat = (datetime.datetime.strptime(arivaltime,'%I:%M %p'))
-                    arivalformat1 = arivalformat.strftime('%H:%M')
-                    duration = temp[4].text
-                    
-                flite_route = detailsblock.findAll("div",{"class":"flightPathWrapper"})
-                fltno = detailsblock.find("a",{"class":"helpIcon"}).text
-                print 
-                for route in flite_route:
-                    if route.find("div",{"class":"nonStopBtn"}):
-                        stp = "NONSTOP"
-                        lyover = ""
-                        #print "nonstop"
-                    else:
-                        if route.find("div",{"class":"nStopBtn"}):
-                            stp = route.find("div",{"class":"nStopBtn"}).text
-                            #print route.find("div",{"class":"nStopBtn"}).text
-                            if route.find("div",{"class":"layOver"}):
-                                lyover = route.find("div",{"class":"layOver"}).find("span").text
-                            else:
-                                lyover=''
-                            #print route.find("div",{"class":"layOver"}).find("span").text
-                            #print route.find("div",{"class":"layovertoolTip"}).text
-                            #layover.append(lyover)
-                    sourcestn = (route.find("div",{"class":"originCity"}).text)
-                    destinationstn = (route.find("div",{"class":"destinationCity"}).text)
-                print "-------------------- Economy--------------------------------------------------"
-                if economy.findAll("div",{"class":"priceHolder"}):
-                    fare1 = economy.find("div",{"class":"priceHolder"}).text
-                    #lenght = len(fareblock)
-                    #print fareblock[0].text
-                    if economy.findAll("div",{"class":"frmTxtHldr flightCabinClass"}):
-                        cabintype1 = economy.find("div",{"class":"frmTxtHldr flightCabinClass"}).text
-                else:
-                    fare1 = economy.find("span",{"class":"ntAvail"}).text
-                    cabintype1 =''
-                    
-                print "-------------------- Business --------------------------------------------------"
-                if business:
-
-                    if business.findAll("div",{"class":"priceHolder"}):
-                        fare2 = business.find("div",{"class":"priceHolder"}).text
-                        #lenght = len(fareblock)
-                        #print fareblock[0].text
-                        if business.findAll("div",{"class":"frmTxtHldr flightCabinClass"}):
-                            cabintype2 = business.find("div",{"class":"frmTxtHldr flightCabinClass"}).text
-                            
-                    else:
-                        fare2 = business.find("span",{"class":"ntAvail"}).text
-                        cabintype2 = ''
-
-                print "last line"
-                cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,firstclass,cabintype1,cabintype2,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,searchid,time,stp,lyover,sourcestn,destinationstn,test1,arivalformat1,duration,fare1,fare2,cabintype1.strip(),cabintype2.strip(),"delta"))
-                transaction.commit()
-                print "data inserted"
-
-
-	    display.stop()
-
-        driver.quit()
+                    searchdata = Searchkey(source=dest,destination=orgn,traveldate=dt1,scrapetime=time,isreturnkey=0)
+                    searchdata.save()
+                    returnkey = searchdata.searchid
+                    retdeltares = customfunction.delta(orgncode,destcode,date,returnkey)
+                    retrecordkey = customfunction.united(orgn,dest,depart,returnkey)
+                
         mimetype = 'application/json'
-        return HttpResponse(searchkeyid, mimetype)
+        results = []
+        results.append(searchkeyid)
+        print results
+        if returnkey:
+            results.append(returnkey)
+        data = json.dumps(results)
+        print data
+        return HttpResponse(data, mimetype)
         
 def get_airport(request):
     if request.is_ajax():
@@ -398,10 +278,28 @@ def searchLoading(request):
         return render_to_response('flightsearch/index.html')
     
 def getsearchresult(request):
+    
     context = {}
-    if request.GET.get('keyid', ''):
+    
+    if request.GET.get('keyid', '') :
         searchkey = request.GET.get('keyid', '')
-        record = Flightdata.objects.filter(searchkeyid=searchkey).order_by('departure')
+        returnkey = request.GET.get('returnkey', '')
+        action =''
+        if 'action' in request.GET and request.GET.get('action', '') == 'return':
+            action = request.GET.get('action', '')
+            searchkey = request.GET.get('returnkey', '')
+            returnkey = request.GET.get('keyid', '')
+        record = Flightdata.objects.filter(searchkeyid=searchkey).order_by('maincabin')
+        minprice =0
+        if returnkey:
+            if action:
+                minprice = request.GET.get('price', '')
+                print minprice,
+            else:    
+                data = Flightdata.objects.filter(searchkeyid=returnkey,maincabin__gt=0).aggregate(minprice=Min('maincabin'))
+                minprice = data['minprice']
+                action = 'depart'
+        print minprice
         searchdata = Searchkey.objects.filter(searchid=searchkey)
         for s in searchdata:
             source = s.source
@@ -413,11 +311,10 @@ def getsearchresult(request):
             timeinfo = {'maxdept':row.maxdept,'mindept':row.mindept,'minarival':row.minarival,'maxarival':row.maxarival}
         
         if len(record)>0: 
-            return render_to_response('flightsearch/searchresult.html',{'data':record,'search':searchdata,'timedata':timeinfo},context_instance=RequestContext(request)) 
+            return render_to_response('flightsearch/searchresult.html',{'action':action,'data':record,'minprice':minprice,'returndata':returnkey,'search':searchdata,'timedata':timeinfo},context_instance=RequestContext(request)) 
         else:
 
             msg = "Sorry, No flight found  from "+source+" To "+destination+".  Please search for another date or city !"
-
             return  render_to_response('flightsearch/index.html',{'message':msg}, context_instance=RequestContext(request))
             
         

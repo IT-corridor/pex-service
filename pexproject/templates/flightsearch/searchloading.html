@@ -62,21 +62,25 @@ $.ajax({
         data: "returndate="+ encodeURI(returndate)+"&rndtripkey="+encodeURI(rdtrip) +"&triptype="+ encodeURI(trip)+ "&fromMain="+ encodeURI(from)+ "&toMain=" + encodeURI(to)+ "&deptdate=" + encodeURI(depart) + "&csrfmiddlewaretoken=" + encodeURI(CSRF_TOKEN),
     	success: function(data){
         console.log(data);
-        searchid = data;
-        redirecttosearchpage(searchid);
-       
-        
+        searchid = data[0];
+        var returnid='';
+        if(data[1])
+        {
+        	returnid = data[1];
+        }
+        redirecttosearchpage(searchid,returnid);   
     },
 	
    });
      
  //alert(searchid)  ;  
- function redirecttosearchpage(searchid){
+ function redirecttosearchpage(searchid,returnkey){
  	if(searchid != '')
-{
-	//alert(searchid)  ;  
+{  
 	$('#searchid').val(searchid);
-	window.location.href = "getsearchresult?keyid="+ encodeURI(searchid) ;
+	var location = "getsearchresult?keyid="+ encodeURI(searchid);
+	if(returnkey != ''){ location = location+"&returnkey="+encodeURI(returnkey);}
+	window.location.href = location; 
 }
 }
      

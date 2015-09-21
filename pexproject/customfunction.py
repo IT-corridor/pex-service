@@ -1,3 +1,4 @@
+import os,sys
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import selenium
@@ -16,13 +17,6 @@ import socket
 import urllib
 
 def united(origin,destination,searchdate,searchkey):
-    '''
-    db = MySQLdb.connect(host="localhost", 
-                     user="pex",           
-                      passwd="pex@1234",        
-                      db="pex")
-    cursor=db.cursor()
-    '''
     cursor = connection.cursor()
     url = "http://www.united.com/web/en-US/default.aspx?root=1"
     display = Display(visible=0, size=(800, 600))
@@ -144,9 +138,9 @@ def united(origin,destination,searchdate,searchkey):
                 j = 0
                 k = 0
                 cabin = []
-                fare1 = ''
-                fare2 = ''
-                fare3 = ''
+                fare1 = 0
+                fare2 = 0
+                fare3 = 0
                 cabintype1 = ''
                 cabintype2 = ''
                 cabintype3 = ''
@@ -156,6 +150,10 @@ def united(origin,destination,searchdate,searchkey):
                     k = k+1
                     
                     miles = mileage.find("div",{"class":"divMileage"}).text
+                    miles = miles.replace(",", "")
+                    splitmiles = miles.split(' ') 
+                    miles = splitmiles[0].strip() 
+                    '''
                     if mileage.find("div",{"class":"divTaxBreakdownA"}):
                         extramile = mileage.find("div",{"class":"divTaxBreakdownA"}).text
                         extramile = extramile.split("and")
@@ -163,7 +161,7 @@ def united(origin,destination,searchdate,searchkey):
                     else:
                         notavl = mileage.find("div",{"class":"divNA"}).text
                         miles = notavl.strip()
-                        
+                    '''    
                     if miles != "NotAvailable":
                         cabin.append(miles)
                     else:
@@ -175,7 +173,9 @@ def united(origin,destination,searchdate,searchkey):
                             if cabin[0]:
                                 fare1 = cabin[0]
                             else:
-                                fare1 = cabin[1]
+                                if(cabin[1]):
+                                    fare1 = cabin[1]
+                            #print fare1
                             if fare1:
                                 cabintype1 = "Main Cabin"
                             else:
@@ -188,19 +188,21 @@ def united(origin,destination,searchdate,searchkey):
                             if cabin[0]:
                                 fare2 = cabin[0]
                             else:
-                                fare2 = cabin[1]
+                                if(cabin[1]):
+                                    fare2 = cabin[1]
                             if fare2:
                                 cabintype2 = "Business"
                             else:
                                 cabintype2 = ""
                             cabin =[]
-                            print cabintype2,fare2
+                            #print cabintype2,fare2
                            
                         if k == 6:
                             if cabin[0]:
                                 fare3 = cabin[0]
                             else:
-                                fare3 = cabin[1]
+                                if(cabin[1]):
+                                    fare3 = cabin[1]
                                 
                             if fare3:
                                 cabintype3 = "First"
@@ -218,12 +220,156 @@ def united(origin,destination,searchdate,searchkey):
                 else:
                     if stop-1 == 2:
                         stopage = "2 STOPS"
-                cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,firstclass,cabintype1,cabintype2,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,str(searchid),time,stopage,"test",source,Destination,test1,arivalformat1,totaltime,fare1,fare2,cabintype1,cabintype2,"united"))
-                #db.commit()
+                print fare1,fare2
+                cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,firstclass,cabintype1,cabintype2,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,str(searchid),time,stopage,"test",source,Destination,test1,arivalformat1,totaltime,str(fare1),str(fare2),cabintype1,cabintype2,"united"))
                 transaction.commit()
                 print "row inserted"
     display.stop
     driver.quit()
     return searchid
+
+def delta(orgn,dest,searchdate,searchkey):
+    cursor = connection.cursor()
+    url ="http://www.delta.com/"   
+    searchid = str(searchkey)
+    currentdatetime = datetime.datetime.now()
+    time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
+    print orgn, dest
+    display = Display(visible=0, size=(800, 600))
+    display.start()
+    #logger.info("before firefox connection!")
+
+    driver = webdriver.Firefox()
+    driver.implicitly_wait(40)
+    #logger.info("after firefox connection!")
+    driver.get(url)
+    oneway = driver.find_element_by_id('oneWayBtn')
+    driver.execute_script("arguments[0].click();", oneway)
     
-        
+    origin = driver.find_element_by_id("originCity")
+    origin.clear()
+    origin.send_keys(orgn.strip())
+    destination = driver.find_element_by_id("destinationCity")
+    destination.send_keys(dest.strip())
+    
+    ddate = driver.find_element_by_id("departureDate")#.click()
+    ddate.send_keys(str(searchdate))
+    '''
+    if returndate:
+        returndate = driver.find_element_by_id("returnDate")#.click()
+        returndate.send_keys(date1)
+    '''
+    #driver.find_element_by_id("departureDate").click()
+    #driver.find_elements_by_css_selector("td[data-date='"+date+"']")[0].click()
+    
+    driver.find_element_by_id("milesBtn").click()
+    driver.find_element_by_id("findFlightsSubmit").click()
+    try:
+        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
+    except:
+        driver.quit()
+       # mimetype = 'application/json'
+        #return HttpResponse(searchkeyid, mimetype)
+        return searchkey
+    
+    try:
+        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "showAll-footer")))
+        driver.find_element_by_link_text('Show All').click()
+        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "fareRowContainer_20")))
+    except:
+        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
+    html_page = driver.page_source
+    soup = BeautifulSoup(html_page)
+    datatable = soup.findAll("table",{"class":"fareDetails"})
+    
+    for content in datatable:
+        tds = content.findAll("td")
+        detailsblock = tds[0]
+        economy = tds[1]
+        if len(tds) > 2:
+            business = tds[2]
+        else:
+            business = ''
+
+        cabintype2 =''
+        fare2 = 0
+        timeblock = detailsblock.findAll("div",{"class":"flightDateTime"})
+        for info in timeblock:
+            temp = info.findAll("span")
+            depature = temp[0].text
+            part = depature[-2:]
+            depature1 = depature.replace(part, "")
+            depaturetime = depature1+" "+part
+            print depaturetime
+            test = (datetime.datetime.strptime(depaturetime,'%I:%M %p'))
+            test1 = test.strftime('%H:%M')
+            print test1
+            arival = temp[3].text
+            apart =  arival[-2:]
+            arival = arival.replace(apart, "")
+            arivaltime = arival+" "+apart
+            arivalformat = (datetime.datetime.strptime(arivaltime,'%I:%M %p'))
+            arivalformat1 = arivalformat.strftime('%H:%M')
+            duration = temp[4].text
+            
+        flite_route = detailsblock.findAll("div",{"class":"flightPathWrapper"})
+        fltno = detailsblock.find("a",{"class":"helpIcon"}).text
+        print 
+        for route in flite_route:
+            if route.find("div",{"class":"nonStopBtn"}):
+                stp = "NONSTOP"
+                lyover = ""
+                #print "nonstop"
+            else:
+                if route.find("div",{"class":"nStopBtn"}):
+                    stp = route.find("div",{"class":"nStopBtn"}).text
+                    #print route.find("div",{"class":"nStopBtn"}).text
+                    if route.find("div",{"class":"layOver"}):
+                        lyover = route.find("div",{"class":"layOver"}).find("span").text
+                    else:
+                        lyover=''
+                    #print route.find("div",{"class":"layOver"}).find("span").text
+                    #print route.find("div",{"class":"layovertoolTip"}).text
+                    #layover.append(lyover)
+            sourcestn = (route.find("div",{"class":"originCity"}).text)
+            destinationstn = (route.find("div",{"class":"destinationCity"}).text)
+        print "-------------------- Economy--------------------------------------------------"
+        if economy.findAll("div",{"class":"priceHolder"}):
+            fare1 = economy.find("span",{"class":"tblCntBigTxt mileage"}).text
+            fare1 = fare1.replace(",","")
+            #lenght = len(fareblock)
+            #print fareblock[0].text
+            if economy.findAll("div",{"class":"frmTxtHldr flightCabinClass"}):
+                cabintype1 = economy.find("div",{"class":"frmTxtHldr flightCabinClass"}).text
+        else:
+            fare1 = 0 #economy.find("span",{"class":"ntAvail"}).text
+            cabintype1 =''
+            
+        print "-------------------- Business --------------------------------------------------"
+        if business:
+
+            if business.findAll("div",{"class":"priceHolder"}):
+                fare2 = business.find("span",{"class":"tblCntBigTxt mileage"}).text
+                fare2 = fare2.replace(",","")
+                #lenght = len(fareblock)
+                #print fareblock[0].text
+                if business.findAll("div",{"class":"frmTxtHldr flightCabinClass"}):
+                    cabintype2 = business.find("div",{"class":"frmTxtHldr flightCabinClass"}).text
+                    
+            else:
+                fare2 = 0 #business.find("span",{"class":"ntAvail"}).text
+                cabintype2 = ''
+
+        print "last line"
+        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,firstclass,cabintype1,cabintype2,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,searchid,time,stp,lyover,sourcestn,destinationstn,test1,arivalformat1,duration,str(fare1),str(fare2),cabintype1.strip(),cabintype2.strip(),"delta"))
+        transaction.commit()
+        print "data inserted"
+
+
+    display.stop()
+    
+    driver.quit()
+    return searchkey
+
+    

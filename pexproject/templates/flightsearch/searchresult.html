@@ -20,19 +20,18 @@
 			<div class="col-md-12 col-xs-12">
 				<div class="col-md-7 col-xs-7">
 
-					<h4>{% if searchrow.isreturnkey == 1 %}Return : {% endif %}{{searchrow.source}} ============>{{searchrow.destination}} </h4>
+					<h4>{% if action == 'return' %}Return : {% endif %}{{searchrow.source}} ============>{{searchrow.destination}} </h4>
 				</div>
 				<div class="col-md-3 col-xs-3">
 					<h4> {{searchrow.traveldate}}<!--<input type="text" id="datepicker" name="date" value="{{searchdate}}">--></h4>
 				</div>
 				{% if searchrow.returndate%}
 				<div class="col-md-2 col-xs-2">
-					<form action="searchLoading" method="post">
+					<form action="getsearchresult" method="get">
 						{% csrf_token %}
-						<input type="hidden" name="fromMain" id="from" value="{{searchrow.destination}}">
-						<input type="hidden" name="toMain" id="to" value="{{searchrow.source}}">
-						<input type="hidden" name="deptdate" id="date" value="{{searchrow.returndate|date:"m/d/Y"}}">
+						
 						<input type="hidden" name="keyid" id="keyid" value="{{searchrow.searchid}}">
+						<input type="hidden" name="returnkey" id="returnkey" {% if returndata %} value="{{returndata}}"{%endif%}>
 						<button type"submit" value="{{searchrow.searchid}}" name="return" id="return">SELECT RETURN</button>
 					</form>
 				</div>
@@ -49,8 +48,12 @@
 									{% csrf_token %}
 									{% if search %}
 										{% for searchrow in search %}
-										
+									<input type="hidden" name="action" value="{{action}}">
+									<input type="hidden" name="price" id ="fltrprice" {% if request.GET.price %} value="{{request.GET.price}}" {%else%} value="{{minprice}}"{% endif%}>	
 									<input type="hidden" name="searchkeyval" value="{{ searchrow.searchid }}" id="searchkey"/>
+									{% if returndata %}
+									<input type="hidden" name="returnkey"  value="{{returndata}}" id="returnkey"/>
+									{%endif%}
 									{%endfor %}
 									{% endif %}
 									<div class="col-md-12 col-xs-12 nopadding form-side">
@@ -63,17 +66,10 @@
 											<input type="hidden" name="depaturemax" id="depaturemax" value=""/>
 										</div>
 										
-										<!--
-										<div class="priceRangeInfo">
-										DEPARTURE TIME
-										<input type="range" name="buying_slider_min" id="buying_slider_min" class="minBuyingSlider" value="00:00" min="00:00" max="23:59" />
-										</div>
-										-->
 										<div class="priceRangeInfo mvt15px">
 											ARRIVAL TIME
 											<div class="slider slider-blue mvt15px" data-postfix=" $" data-min="0" data-max="2000" data-min-val="400" data-max-val="1400" data-fill="#sample-field-2" id="arive"></div>
 											<span id="arivaltime"></span>
-											<!--input type="range" name="buying_slider_min" id="buying_slider_min" class="minBuyingSlider" value="0" min="0" max="100" /> -->
 										</div>
 										<input type="hidden" name="arivalmin" id="arivalmin" value=""/>
 										<input type="hidden" name="arivalmax" id="arivalmax" value=""/>
@@ -214,9 +210,24 @@
 													<h5 class="econo"> {{row.cabintype1}} </h5>
 													<div class="col-xs-12 nopadding mvb10px na-ra">
 														<p class="flight-rate">
-															{{row.maincabin}} <!--4,500 POINTS + $5.00 -->
+															{% if row.datasource == "delta" %}
+															{{row.maincabin|add:minprice}} {%else%}{{row.maincabin}} {%endif%} 
 														</p>
+														Miles
 													</div>
+													{% if action == 'depart' %}
+													<div>
+													<form action="getsearchresult" method="get">
+														{% csrf_token %}
+														<input type="hidden" name="price"  value="{{row.maincabin}}">
+														<input type="hidden" name="action"  value="return">
+														<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
+														<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
+														<button type"submit" value="{{searchrow.searchid}}" name="return" id="return">SELECT</button>
+													</form>
+													</div>
+													{%endif%}
+													
 													{% else %}
 													<div class="col-xs-12 nopadding text-center">
 														<h5>Not Available </h5>
@@ -232,15 +243,29 @@
 													<h5 class="econo">{{row.cabintype2}}</h5>
 													<div class="col-xs-12 nopadding mvb10px na-ra">
 														<p class="flight-rate">
-															{{row.firstclass}} <!--4,500 POINTS + $5.00 -->
+															{% if row.datasource == "delta" %}
+															{{row.firstclass|add:minprice}} {%else%}{{row.firstclass}} {%endif%}
 														</p>
+														Miles
 													</div>
+													{% if action == 'depart' %}
+													<div>
+													<form action="getsearchresult" method="get">
+														{% csrf_token %}
+														<input type="hidden" name="price"  value="{{row.firstclass}}">
+														<input type="hidden" name="action"  value="{{action}}">
+														<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
+														<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
+														<button type"submit" value="{{searchrow.searchid}}" name="return" >SELECT</button>
+													</form>
+													</div>
+													{%endif%}
 													{% else %}
 														<div class="col-xs-12 nopadding mvb10px na-ra">
 															<h5> Not Available</h5>
 														</div>
 													{% endif %}
-														
+													
 												</div>
 												
 											</div>

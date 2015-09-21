@@ -12,12 +12,12 @@ class Flightdata(models.Model):
     departure = models.TimeField('Alarm')
     arival = models.TimeField('Alarm')
     duration = models.CharField(max_length=100)
-    maincabin = models.CharField(max_length=100)
-    firstclass = models.CharField(max_length=100)
+    maincabin = models.IntegerField()
+    firstclass = models.IntegerField()
     cabintype1 =  models.CharField(max_length=100)
     cabintype2 =  models.CharField(max_length=100)
     datasource =  models.CharField(max_length=20)
-# Create your models here.
+
 class Airports(models.Model):
     airport_id = models.IntegerField (primary_key=True)
     code = models.CharField(max_length=4)
