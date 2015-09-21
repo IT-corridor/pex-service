@@ -25,17 +25,6 @@
 				<div class="col-md-3 col-xs-3">
 					<h4> {{searchrow.traveldate}}<!--<input type="text" id="datepicker" name="date" value="{{searchdate}}">--></h4>
 				</div>
-				{% if searchrow.returndate%}
-				<div class="col-md-2 col-xs-2">
-					<form action="getsearchresult" method="get">
-						{% csrf_token %}
-						
-						<input type="hidden" name="keyid" id="keyid" value="{{searchrow.searchid}}">
-						<input type="hidden" name="returnkey" id="returnkey" {% if returndata %} value="{{returndata}}"{%endif%}>
-						<button type"submit" value="{{searchrow.searchid}}" name="return" id="return">SELECT RETURN</button>
-					</form>
-				</div>
-				{%endif %}
 			</div>
 			{%endfor %}
 			{% endif %}
