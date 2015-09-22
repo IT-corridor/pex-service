@@ -31,7 +31,7 @@
 										 <label class="sr-only" for="exampleInputPassword3">Departure</label>
 											<div class="inner-addon left-addon date" id="dp1">
 										    <i class="glyphicon glyphicon-calendar"></i>
-										    <input type="text" class="form-control" value="{{searchrow.traveldate}}" id="depart" name="deptdate">
+										    <input type="text" class="form-control" value="{{searchrow.traveldate}}" id="departuredate" name="deptdate">
 									  		</div>
 									  </div>
 									  {%if searchrow.returndate%}
@@ -359,7 +359,7 @@
 			</div>
 			<script type="text/javascript">
 			$(function() {
-				$('#depart').datepicker({
+				$('#departuredate').datepicker({
 					minDate : 0
 				});
 				$('#return').datepicker({
