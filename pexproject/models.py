@@ -16,8 +16,11 @@ class Flightdata(models.Model):
     maintax = models.FloatField()
     firstclass = models.IntegerField()
     firsttax = models.FloatField()
+    business = models.IntegerField()
+    businesstax = models.FloatField()
     cabintype1 =  models.CharField(max_length=100)
     cabintype2 =  models.CharField(max_length=100)
+    cabintype3 =  models.CharField(max_length=100)
     datasource =  models.CharField(max_length=20)
 
 class Airports(models.Model):

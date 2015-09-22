@@ -285,24 +285,25 @@
 												</div>
 												
 											</div>
-											<!--
+											
 											<div class="col-sm-4 col-xs-12 nopr">
 												<div class="col-xs-12 nopadding text-center">
-													{% if row.cabintype2 and row.firstclass %}
-													<h5 class="econo">{{row.cabintype2}}</h5>
+													{% if row.cabintype3 and row.business %}
+													<h5 class="econo">{{row.cabintype3}}</h5>
 													<div class="col-xs-12 nopadding mvb10px na-ra">
 														<p class="flight-rate">
 															{% if row.datasource == "delta" %}
-															{{row.firstclass|add:minprice}} {%else%}{{row.firstclass}} {%endif%} Miles
+															{{row.business|add:minprice}} {%else%}{{row.business}} {%endif%} Miles
 														</p>
 														<p>+</p>
-														<h6>${{row.firsttax|add:tax|floatformat:2 }}</h6>
+														<h6>${{row.businesstax}}</h6>
 													</div>
 													{% if action == 'depart' %}
 													<div>
 													<form action="getsearchresult" method="get">
 														{% csrf_token %}
-														<input type="hidden" name="price"  value="{{row.firstclass}}">
+														<input type="hidden" name="price"  value="{{row.business}}">
+														<input type="hidden" name="tax"  value="{{row.businesstax}}">
 														<input type="hidden" name="action"  value="{{action}}">
 														<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
 														<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
@@ -318,7 +319,7 @@
 													
 												</div>
 											</div>
-											-->
+											
 										</div>
 									</div>
 									<div class="col-xs-12 pop-hover">

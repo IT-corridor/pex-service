@@ -241,7 +241,7 @@ def united(origin,destination,searchdate,searchkey):
                     if stop-1 == 2:
                         stopage = "2 STOPS"
                 print fare1,fare2
-                cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,cabintype1,cabintype2,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,str(searchid),time,stopage,"test",source,Destination,test1,arivalformat1,totaltime,str(fare1),str(maintax),str(fare2),str(businesstax),cabintype1,cabintype2,"united"))
+                cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,str(searchid),time,stopage,"test",source,Destination,test1,arivalformat1,totaltime,str(fare1),str(maintax),str(fare2),str(businesstax),str(fare3),str(firsttax),cabintype1,cabintype2,cabintype3,"united"))
                 transaction.commit()
                 print "row inserted"
     display.stop
@@ -357,6 +357,9 @@ def delta(orgn,dest,searchdate,searchkey):
         print "-------------------- Economy--------------------------------------------------"
         economytax = 0
         businesstax = 0
+        fare3 =0
+        firsttax = 0
+        cabintype3 =''
         if economy.findAll("div",{"class":"priceHolder"}):
             fare1 = economy.find("span",{"class":"tblCntBigTxt mileage"}).text
             fare1 = fare1.replace(",","")
@@ -392,9 +395,14 @@ def delta(orgn,dest,searchdate,searchkey):
             else:
                 fare2 = 0 #business.find("span",{"class":"ntAvail"}).text
                 cabintype2 = ''
+            if 'First' in cabintype2:
+                fare3 = fare2
+                fare2 = 0
+                cabintype3 = cabintype2
+                cabintype2 =''
 
         print "last line"
-        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,cabintype1,cabintype2,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,searchid,time,stp,lyover,sourcestn,destinationstn,test1,arivalformat1,duration,str(fare1),str(economytax),str(fare2),str(businesstax),cabintype1.strip(),cabintype2.strip(),"delta"))
+        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,searchid,time,stp,lyover,sourcestn,destinationstn,test1,arivalformat1,duration,str(fare1),str(economytax),str(fare2),str(businesstax),str(fare3),str(firsttax),cabintype1.strip(),cabintype2.strip(),cabintype3,"delta"))
         transaction.commit()
         print "data inserted"
 
