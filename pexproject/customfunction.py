@@ -144,6 +144,11 @@ def united(origin,destination,searchdate,searchkey):
                 cabintype1 = ''
                 cabintype2 = ''
                 cabintype3 = ''
+                extramile =''
+                extratax = []
+                maintax = 0
+                businesstax =0
+                firsttax = 0
                 tdblock = tds.findAll("td",{"class":"tdRewardPrice"})
                 for mileage in tdblock:
                     j = j+1
@@ -153,15 +158,22 @@ def united(origin,destination,searchdate,searchkey):
                     miles = miles.replace(",", "")
                     splitmiles = miles.split(' ') 
                     miles = splitmiles[0].strip() 
-                    '''
+                   
                     if mileage.find("div",{"class":"divTaxBreakdownA"}):
                         extramile = mileage.find("div",{"class":"divTaxBreakdownA"}).text
                         extramile = extramile.split("and")
-                        miles = miles+" "+extramile[1].strip()
+                        extramile = extramile[1].strip()
+                        extramile = extramile.replace('$','')
+                        extratax.append(extramile)
+                    else:
+                        extratax.append('')
+                        
+                    '''
                     else:
                         notavl = mileage.find("div",{"class":"divNA"}).text
                         miles = notavl.strip()
-                    '''    
+                    '''
+                     
                     if miles != "NotAvailable":
                         cabin.append(miles)
                     else:
@@ -172,9 +184,11 @@ def united(origin,destination,searchdate,searchkey):
                         if k == 2:
                             if cabin[0]:
                                 fare1 = cabin[0]
+                                maintax = extratax[0]
                             else:
                                 if(cabin[1]):
                                     fare1 = cabin[1]
+                                    maintax = extratax[1]
                             #print fare1
                             if fare1:
                                 cabintype1 = "Main Cabin"
@@ -182,34 +196,40 @@ def united(origin,destination,searchdate,searchkey):
                                 cabintype1 = ""
                             
                             cabin =[]
+                            extratax = []
                             print cabintype1,fare1
                            
                         if k == 4:
                             if cabin[0]:
                                 fare2 = cabin[0]
+                                businesstax = extratax[1]
                             else:
                                 if(cabin[1]):
                                     fare2 = cabin[1]
+                                    businesstax = extratax[1]
                             if fare2:
                                 cabintype2 = "Business"
                             else:
                                 cabintype2 = ""
                             cabin =[]
+                            extratax = []
                             #print cabintype2,fare2
                            
                         if k == 6:
                             if cabin[0]:
                                 fare3 = cabin[0]
+                                firsttax = extratax[0]
                             else:
                                 if(cabin[1]):
                                     fare3 = cabin[1]
-                                
+                                    firsttax = extratax[1]
                             if fare3:
                                 cabintype3 = "First"
                             else:
                                 cabintype3 = ""
                                 #cabintype3 = "first two row"
                             cabin =[]
+                            extratax = []
                         j=0
                         
                 
@@ -221,7 +241,7 @@ def united(origin,destination,searchdate,searchkey):
                     if stop-1 == 2:
                         stopage = "2 STOPS"
                 print fare1,fare2
-                cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,firstclass,cabintype1,cabintype2,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,str(searchid),time,stopage,"test",source,Destination,test1,arivalformat1,totaltime,str(fare1),str(fare2),cabintype1,cabintype2,"united"))
+                cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,cabintype1,cabintype2,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,str(searchid),time,stopage,"test",source,Destination,test1,arivalformat1,totaltime,str(fare1),str(maintax),str(fare2),str(businesstax),cabintype1,cabintype2,"united"))
                 transaction.commit()
                 print "row inserted"
     display.stop
@@ -335,9 +355,16 @@ def delta(orgn,dest,searchdate,searchkey):
             sourcestn = (route.find("div",{"class":"originCity"}).text)
             destinationstn = (route.find("div",{"class":"destinationCity"}).text)
         print "-------------------- Economy--------------------------------------------------"
+        economytax = 0
+        businesstax = 0
         if economy.findAll("div",{"class":"priceHolder"}):
             fare1 = economy.find("span",{"class":"tblCntBigTxt mileage"}).text
             fare1 = fare1.replace(",","")
+            if economy.find("span",{"class":"tblCntSmallTxt"}):
+                economytax = economy.find("span",{"class":"tblCntSmallTxt"}).text
+                economytax = economytax.split('$')
+                economytax = economytax[1].strip()
+            print economytax
             #lenght = len(fareblock)
             #print fareblock[0].text
             if economy.findAll("div",{"class":"frmTxtHldr flightCabinClass"}):
@@ -352,6 +379,11 @@ def delta(orgn,dest,searchdate,searchkey):
             if business.findAll("div",{"class":"priceHolder"}):
                 fare2 = business.find("span",{"class":"tblCntBigTxt mileage"}).text
                 fare2 = fare2.replace(",","")
+                if business.find("span",{"class":"tblCntSmallTxt"}):
+                    businesstax = business.find("span",{"class":"tblCntSmallTxt"}).text
+                    businesstax = businesstax.split('$')
+                    businesstax = businesstax[1].strip()
+                print businesstax
                 #lenght = len(fareblock)
                 #print fareblock[0].text
                 if business.findAll("div",{"class":"frmTxtHldr flightCabinClass"}):
@@ -362,7 +394,7 @@ def delta(orgn,dest,searchdate,searchkey):
                 cabintype2 = ''
 
         print "last line"
-        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,firstclass,cabintype1,cabintype2,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,searchid,time,stp,lyover,sourcestn,destinationstn,test1,arivalformat1,duration,str(fare1),str(fare2),cabintype1.strip(),cabintype2.strip(),"delta"))
+        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,cabintype1,cabintype2,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,searchid,time,stp,lyover,sourcestn,destinationstn,test1,arivalformat1,duration,str(fare1),str(economytax),str(fare2),str(businesstax),cabintype1.strip(),cabintype2.strip(),"delta"))
         transaction.commit()
         print "data inserted"
 

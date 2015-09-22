@@ -129,6 +129,7 @@ def search(request):
                 join = ' AND '
                 
             minprice = request.POST['price']
+            tax = request.POST['tax']
             action = request.POST['action']
             returnkey = ''
             if 'returnkey' in request.POST:
@@ -138,7 +139,7 @@ def search(request):
             searchdata = Searchkey.objects.filter(searchid=searchkey)
             timeinfo = {'maxdept':deptmaxtime,'mindept':depttime,'minarival':arivtime,'maxarival':arivtmaxtime}#Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` where "+querylist+" order by departure ASC")
             filerkey =  {'stoppage':list,'economy':economy, 'deptmin':depttime,'deptmax': deptmaxtime, 'business':businesslist,'datasource':list1}
-            return render_to_response('flightsearch/searchresult.html',{'returndata':returnkey,'action':action,'minprice':minprice,'data':records,'search':searchdata,'filterkey':filerkey,'timedata':timeinfo},context_instance=RequestContext(request))
+            return render_to_response('flightsearch/searchresult.html',{'returndata':returnkey,'action':action,'minprice':minprice,'tax':tax,'data':records,'search':searchdata,'filterkey':filerkey,'timedata':timeinfo},context_instance=RequestContext(request))
             
     if request.is_ajax():
         context = {}
@@ -291,15 +292,17 @@ def getsearchresult(request):
             returnkey = request.GET.get('keyid', '')
         record = Flightdata.objects.filter(searchkeyid=searchkey).order_by('maincabin')
         minprice =0
+        tax = 0
         if returnkey:
             if action:
                 minprice = request.GET.get('price', '')
                 print minprice,
             else:    
-                data = Flightdata.objects.filter(searchkeyid=returnkey,maincabin__gt=0).aggregate(minprice=Min('maincabin'))
-                minprice = data['minprice']
+                data = Flightdata.objects.filter(searchkeyid=returnkey,maincabin__gt=0).values('maincabin','maintax').annotate(Min('maincabin'))[:1]
+                tax=data[0]['maintax']
+                minprice =data[0]['maincabin']
                 action = 'depart'
-        print minprice
+        
         searchdata = Searchkey.objects.filter(searchid=searchkey)
         for s in searchdata:
             source = s.source
@@ -311,7 +314,7 @@ def getsearchresult(request):
             timeinfo = {'maxdept':row.maxdept,'mindept':row.mindept,'minarival':row.minarival,'maxarival':row.maxarival}
         
         if len(record)>0: 
-            return render_to_response('flightsearch/searchresult.html',{'action':action,'data':record,'minprice':minprice,'returndata':returnkey,'search':searchdata,'timedata':timeinfo},context_instance=RequestContext(request)) 
+            return render_to_response('flightsearch/searchresult.html',{'action':action,'data':record,'minprice':minprice,'tax':tax,'returndata':returnkey,'search':searchdata,'timedata':timeinfo},context_instance=RequestContext(request)) 
         else:
 
             msg = "Sorry, No flight found  from "+source+" To "+destination+".  Please search for another date or city !"
