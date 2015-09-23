@@ -343,14 +343,17 @@ var total;
 //@@increase decrease on buttom click
     $(function () {
     $('.add').on('click',function(){
-    	
+    	total = tatalpassenger();
+    	if(total < 6 )
+    	{
         var $qty=$(this).closest('p').find('.qty');
         var currentVal = parseInt($qty.val());
         if (!isNaN(currentVal)) {
             $qty.val(currentVal + 1);
         }
-        total = tatalpassenger();
+        
         travelinfo();
+       }
     });
     $('.minus').on('click',function(){
     	total = tatalpassenger();
