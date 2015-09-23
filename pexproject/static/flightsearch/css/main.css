@@ -646,8 +646,11 @@ p.flight-name{
   	margin: 0px;	
 }
 
-.img-responsive{
+.img-responsive {
 	background: #0D4F8B	
+}
+.bgclr{
+	background: #F5F5F5
 }
 
 .delta-arrow-div{
@@ -662,7 +665,7 @@ p.flight-name{
 }
 
 .travelers-down-menu{
-	margin-top:-15px;
+	!margin-top:-15px;
 	width:300px;
 }
 
@@ -715,6 +718,21 @@ p.flight-name{
 .field-width{
 	width:35%;
 }
-		
+
+.selected-flights{
+	border:1px solid #ddd;
+	border-right-color:transparent;
+	border-left-color:transparent;
+	padding: 15px 5px;
+}
+
+.stops-dur span{
+	font-size:12px;
+	color:#797979;
+}
+
+.stops-dur span:first-child{
+	margin-right:5px;
+}		
 		
 		

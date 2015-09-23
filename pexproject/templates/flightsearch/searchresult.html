@@ -31,7 +31,7 @@
 										 <label class="sr-only" for="exampleInputPassword3">Departure</label>
 											<div class="inner-addon left-addon date" id="dp1">
 										    <i class="glyphicon glyphicon-calendar"></i>
-										    <input type="text" class="form-control" value="{{searchrow.traveldate}}" id="departuredate" name="deptdate">
+										    <input type="text" class="form-control" value="{{searchrow.traveldate|date:"m/d/Y"}}" id="departuredate" name="deptdate">
 									  		</div>
 									  </div>
 									  {%if searchrow.returndate%}
@@ -39,7 +39,7 @@
 									    <label class="sr-only" for="exampleInputPassword3">return</label>
 									    <div class="inner-addon left-addon date" id="dp2">
 									    <i class="glyphicon glyphicon-calendar"></i>
-									    <input type="text" class="form-control" value="{{searchrow.returndate}}" id="return" name="returndate">
+									    <input type="text" class="form-control" value="{{searchrow.returndate|date:"m/d/Y"}}" id="return" name="returndate">
 									  </div>
 									  </div>
 									  {%endif%}
@@ -160,7 +160,99 @@
 								</form>
 							</div>
 							<div class="col-md-8 col-xs-12 ">
-								{% if data %}
+								
+								{% if selectedrow %}
+								
+								<div class="col-xs-12 selected-flights bgclr">
+									<div class="col-md-5 col-xs-12 nopadding">
+										<div class="col-xs-12 nopadding">
+											<div class="col-xs-12 nopadding">
+												<div class="arrivel col-sm-5 nopadding">
+													<p>
+														{{selectedrow.origin}}
+													</p>
+													<p>
+														{{selectedrow.departure}}
+													</p>
+												</div>
+												<div class="arrow-div col-sm-2 nopadding">&xrarr;</div>
+												<div class="arrivel-2 col-sm-5 nopadding text-right">
+													<p>
+														{{selectedrow.destination}}
+													</p>
+													<p>
+														{{selectedrow.arival}}
+													</p>
+												</div>
+											</div>
+										</div>
+									</div>
+									
+									<div class="col-md-2 col-xs-5 text-center">
+										{% if selectedrow.datasource == "united" %}
+										<img src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
+										{% if selectedrow.datasource == "delta" %}
+										<img src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
+										<h5>OUTBOUND</h5>
+									</div>
+									
+									<div class="col-md-5 col-xs-12 nopadding">
+										<div class="col-xs-12 nopadding">
+											<div class="col-sm-5 col-xs-12 nopadding">
+												<p class="flight-name">
+													{{selectedrow.flighno}} 
+												</p>
+												<p class="stops-dur"><span>{{selectedrow.stoppage}}</span> <span>{{row.duration}}</span></p>												
+											</div>
+											<div class="col-sm-7 col-xs-12 nopadding">
+												<div class="col-xs-12 nopadding text-center">
+													{% if selectedrow.cabintype1 and selectedrow.maincabin %}
+													<h5 class="econo"> {{row.cabintype1}} </h5>
+													<div class="col-xs-12 nopadding mvb10px na-ra">
+														<p class="flight-rate">
+															{% if selectedrow.datasource == "delta" %}
+															{{selectedrow.maincabin|add:minprice}} {%else%}{{selectedrow.maincabin}} {%endif%} Miles
+														</p>
+														<p>+</p>
+														<h6 class="nomt">${{selectedrow.maintax}}</h6>
+													</div>
+													
+													{% endif %}
+												</div>												
+											</div>											
+										</div>
+									</div>
+									
+									<div class="col-xs-12 nopadding pop-hover">
+											<a class="" role="button" data-toggle="collapse" href="#{{selectedrow.rowid}}" aria-expanded="false" aria-controls="collapseExample">SHOW DETAILS</a>
+											<div class="collapse" id="{{selectedrow.rowid}}">
+												<div class="well">
+													<h2>DEPART</h2>
+													<p>
+														COMPANY FLIGHT (ECO)
+													</p>
+													<div class="table-responsive table-date-search">
+														<table class="table">
+															<tr>
+																<td>{{selectedrow.departure}}</td>
+																<td>{{searchdate}}</td>
+																<td>{{selectedrow.origin}}</td>
+															</tr>
+															<tr>
+																<td>{{selectedrow.arival}}</td>
+																<td>{{searchdate}}</td>
+																<td>{{selectedrow.destination}}</td>
+															</tr>
+														</table>
+													</div>
+													<a href="#">share</a>
+												</div>
+											</div>
+										</div>
+								</div>
+							{% endif %}
+							
+							{% if data %}
 								{% if data == '' %}
 								<h4>Sorry, No Flight Found </h4>
 								{% endif %}
@@ -169,7 +261,7 @@
 									<div class="col-md-5 col-xs-12 nopadding">
 										<div class="col-xs-12 nopadding">
 											<div class="col-xs-12 nopadding">
-												<div class="col-sm-6 col-xs-12 nopadding">
+												<div class="col-sm-4 col-xs-12 nopadding">
 													<div class="col-xs-12 nopadding text-center mvb10px">
 														{% if row.datasource == "united" %}
 														<img src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
@@ -180,7 +272,7 @@
 														{{row.flighno}} <!--FIRST FLIGHT OPTION RESULT-->
 													</p>
 												</div>
-												<div class="col-sm-6 col-xs-12">
+												<div class="col-sm-8 col-xs-12">
 													<div class="col-xs-12 nopadding non-stop">
 														<p>
 															{{row.stoppage}}
@@ -233,6 +325,7 @@
 													<div>
 													<form action="getsearchresult" method="get">
 														{% csrf_token %}
+														<input type="hidden" name="rowid"  value="{{row.rowid}}">
 														<input type="hidden" name="price"  value="{{row.maincabin}}">
 														<input type="hidden" name="tax"  value="{{row.maintax}}">
 														<input type="hidden" name="action"  value="return">
@@ -240,6 +333,10 @@
 														<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
 														<button type"submit" value="{{searchrow.searchid}}" name="return" id="return">SELECT</button>
 													</form>
+													</div>
+													{% else %}
+													<div>
+													<span class="btn btn-default">SELECT</span>
 													</div>
 													{%endif%}
 													
@@ -267,13 +364,18 @@
 													<div>
 													<form action="getsearchresult" method="get">
 														{% csrf_token %}
+														<input type="hidden" name="rowid"  value="{{row.rowid}}">
 														<input type="hidden" name="price"  value="{{row.firstclass}}">
 														<input type="hidden" name="tax"  value="{{row.firsttax}}">
-														<input type="hidden" name="action"  value="{{action}}">
+														<input type="hidden" name="action"  value="return">
 														<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
 														<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
 														<button type"submit" value="{{searchrow.searchid}}" name="return" >SELECT</button>
 													</form>
+													</div>
+													{% else %}
+													<div>
+													<span class="btn btn-default">SELECT</span>
 													</div>
 													{%endif%}
 													{% else %}
@@ -309,6 +411,10 @@
 														<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
 														<button type"submit" value="{{searchrow.searchid}}" name="return" >SELECT</button>
 													</form>
+													</div>
+													{% else %}
+													<div>
+													<span class="btn btn-default">SELECT</span>
 													</div>
 													{%endif%}
 													{% else %}

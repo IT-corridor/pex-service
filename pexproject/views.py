@@ -293,6 +293,8 @@ def getsearchresult(request):
         record = Flightdata.objects.filter(searchkeyid=searchkey).order_by('maincabin')
         minprice =0
         tax = 0
+        selectedrow = ''
+        print action
         if returnkey:
             if action:
                 minprice = request.GET.get('price', '')
@@ -302,6 +304,10 @@ def getsearchresult(request):
                 tax=data[0]['maintax']
                 minprice =data[0]['maincabin']
                 action = 'depart'
+            if 'rowid' in request.GET:
+                recordid = request.GET.get('rowid', '')
+                selectedrow = Flightdata.objects.get(pk=recordid)
+        print action
         
         searchdata = Searchkey.objects.filter(searchid=searchkey)
         for s in searchdata:
@@ -314,7 +320,7 @@ def getsearchresult(request):
             timeinfo = {'maxdept':row.maxdept,'mindept':row.mindept,'minarival':row.minarival,'maxarival':row.maxarival}
         
         if len(record)>0: 
-            return render_to_response('flightsearch/searchresult.html',{'action':action,'data':record,'minprice':minprice,'tax':tax,'returndata':returnkey,'search':searchdata,'timedata':timeinfo},context_instance=RequestContext(request)) 
+            return render_to_response('flightsearch/searchresult.html',{'action':action,'data':record,'minprice':minprice,'tax':tax,'returndata':returnkey,'search':searchdata,'timedata':timeinfo,'selectedrow':selectedrow},context_instance=RequestContext(request)) 
         else:
 
             msg = "Sorry, No flight found  from "+source+" To "+destination+".  Please search for another date or city !"
