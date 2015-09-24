@@ -184,12 +184,11 @@ def search(request):
                 searchdata = Searchkey(source=dest,destination=orgn,traveldate=dt1,scrapetime=time,isreturnkey=0)
                 searchdata.save()
                 returnkey = searchdata.searchid
-                retdeltares = customfunction.delta(orgncode,destcode,date,returnkey)
-                retrecordkey = customfunction.united(orgn,dest,depart,returnkey)
+                retdeltares = customfunction.delta(destcode,orgncode,date1,returnkey)
+                retrecordkey = customfunction.united(dest,orgn,returndate,returnkey)
                 
         else:
             obj = Searchkey.objects.filter(source=orgn,destination=dest,traveldate=searchdate,scrapetime__gte=time1)
-        print len(obj)
         if len(obj) > 0:
             for keyid in obj:
                 searchkeyid = keyid.searchid
@@ -197,7 +196,6 @@ def search(request):
             if dt1:
                 searchdata = Searchkey(source=orgn,destination=dest,traveldate=dt,returndate=dt1,scrapetime=time) 
             else:
-                print roundtrip
                 searchdata = Searchkey(source=orgn,destination=dest,traveldate=dt,scrapetime=time,isreturnkey=roundtrip)
             searchdata.save()
             searchkeyid = searchdata.searchid 
@@ -220,11 +218,9 @@ def search(request):
         mimetype = 'application/json'
         results = []
         results.append(searchkeyid)
-        print results
         if returnkey:
             results.append(returnkey)
         data = json.dumps(results)
-        print data
         return HttpResponse(data, mimetype)
         
 def get_airport(request):
