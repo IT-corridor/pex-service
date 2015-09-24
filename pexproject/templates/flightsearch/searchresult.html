@@ -58,10 +58,14 @@
 							<div class="col-md-2 col-xs-12 nopadding">
 								<form action="search" method="post">
 									{% csrf_token %}
+									{% if selectedrow %}
+									<input type="hidden" name="rowid" value="{{selectedrow.rowid}}" />
+									{% endif %}
 									{% if search %}
 										{% for searchrow in search %}
+										
 									<input type="hidden" name="action" value="{{action}}">
-									<input type="hidden" name="tax" id ="fltrprice" {% if request.GET.price %} value="{{request.GET.tax}}" {%else%} value="{{tax}}"{% endif%}>
+									<input type="hidden" name="tax" id ="fltrtax" {% if request.GET.price %} value="{{request.GET.tax}}" {%else%} value="{{tax}}"{% endif%}>
 									<input type="hidden" name="price" id ="fltrprice" {% if request.GET.price %} value="{{request.GET.price}}" {%else%} value="{{minprice}}"{% endif%}>	
 									<input type="hidden" name="searchkeyval" value="{{ searchrow.searchid }}" id="searchkey"/>
 									{% if returndata %}

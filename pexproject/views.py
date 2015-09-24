@@ -132,14 +132,18 @@ def search(request):
             tax = request.POST['tax']
             action = request.POST['action']
             returnkey = ''
+            selectedrow=''
             if 'returnkey' in request.POST:
                 returnkey = request.POST['returnkey']
+            if 'rowid' in request.POST:
+                recordid = request.REQUEST['rowid']
+                selectedrow = Flightdata.objects.get(pk=recordid)
             
             records = Flightdata.objects.raw('select * from pexproject_flightdata where '+querylist+' order by departure ASC')
             searchdata = Searchkey.objects.filter(searchid=searchkey)
             timeinfo = {'maxdept':deptmaxtime,'mindept':depttime,'minarival':arivtime,'maxarival':arivtmaxtime}#Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` where "+querylist+" order by departure ASC")
             filerkey =  {'stoppage':list,'economy':economy, 'deptmin':depttime,'deptmax': deptmaxtime, 'business':businesslist,'datasource':list1}
-            return render_to_response('flightsearch/searchresult.html',{'returndata':returnkey,'action':action,'minprice':minprice,'tax':tax,'data':records,'search':searchdata,'filterkey':filerkey,'timedata':timeinfo},context_instance=RequestContext(request))
+            return render_to_response('flightsearch/searchresult.html',{'returndata':returnkey,'action':action,'minprice':minprice,'tax':tax,'data':records,'search':searchdata,'selectedrow':selectedrow,'filterkey':filerkey,'timedata':timeinfo},context_instance=RequestContext(request))
             
     if request.is_ajax():
         context = {}
