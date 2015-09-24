@@ -136,22 +136,19 @@
 											CABIN
 										</p>
 										<div class="col-md-10 col-xs-10 nopadding form-side">
-											<p>
-												BUSINESS/FIRST
-											</p>
 										<div class="checkbox">
 											<label>
-												<input type='checkbox' name="cabintype2" value="Multiple"  {% for row in filterkey.business %} {% if row == 'Multiple'%} checked="checked" {% endif %} {%endfor %}>
-												<span></span>MULTIPLE CABINS</label>
+												<input type='checkbox' name="cabin" value="cabintype1"  {% for row in filterkey.cabin %} {% if row == 'cabintype1'%} checked="checked" {% endif %} {%endfor %}>
+												<span></span>Economy</label>
 										</div>
 										<div class="checkbox">
 											<label>
-												<input type='checkbox' name="cabintype2" value="Business" {% for row in filterkey.business %} {% if row == 'Business'%} checked="checked" {% endif %}{%endfor %}>
+												<input type='checkbox' name="cabin" value="cabintype2" {% for row in filterkey.cabin %} {% if row == 'cabintype2'%} checked="checked" {% endif %}{%endfor %}>
 												<span></span> BUSINESS </label>
 										</div>
 										<div class="checkbox">
 											<label>
-												<input type='checkbox' name="cabintype2" value="First" {% for row in filterkey.business %} {% if row == 'First'%} checked="checked" {% endif %}{%endfor %}>
+												<input type='checkbox' name="cabin" value="cabintype3" {% for row in filterkey.cabin %} {% if row == 'cabintype3'%} checked="checked" {% endif %}{%endfor %}>
 												<span></span> FIRST </label>
 										</div>
 

@@ -52,7 +52,7 @@ def search(request):
             list=''
             list1=''
             multicabin=''
-            businesslist=''
+            cabinlist=''
             if 'stoppage' in request.POST:
                 list = request.POST.getlist('stoppage')
                 if len(list)>1:
@@ -71,6 +71,7 @@ def search(request):
                     if(len(list1) > 0):
                         querylist = querylist+join+"datasource = '"+list1[0]+"'"
                         join = ' AND '
+            '''
                 
             if 'cabintype2' in request.POST:
                 businesslist = request.POST.getlist('cabintype2')
@@ -90,13 +91,17 @@ def search(request):
                         print "aaya"
                         querylist = querylist+join+" cabintype2 LIKE '"+businesslist[0]+"%%'"
                         join = ' AND ' 
-                
-            if 'cabintype1' in request.POST:
-                economy = request.REQUEST['cabintype1']
-                
-                if economy != '':
-                    querylist = querylist+join+" cabintype1 LIKE '%%"+economy+"%%'" 
+            '''
+            if 'cabin' in request.POST:
+                cabinlist = request.POST.getlist('cabin')
+                if len(cabinlist)>1:
+                    querylist = querylist+join+"('"+"'!='' or '".join(cabinlist)+"')"
+                    print querylist
                     join = ' AND '
+                else:
+                    if(len(cabinlist) > 0):
+                        querylist = querylist+join+cabinlist[0]+" != ''"
+                        join = ' AND '
             if 'searchkeyval' in request.POST:
                 searchkey = request.REQUEST['searchkeyval']
                 querylist = querylist+join+" searchkeyid = "+searchkey
@@ -142,7 +147,7 @@ def search(request):
             records = Flightdata.objects.raw('select * from pexproject_flightdata where '+querylist+' order by departure ASC')
             searchdata = Searchkey.objects.filter(searchid=searchkey)
             timeinfo = {'maxdept':deptmaxtime,'mindept':depttime,'minarival':arivtime,'maxarival':arivtmaxtime}#Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` where "+querylist+" order by departure ASC")
-            filerkey =  {'stoppage':list,'economy':economy, 'deptmin':depttime,'deptmax': deptmaxtime, 'business':businesslist,'datasource':list1}
+            filerkey =  {'stoppage':list,'cabin':cabinlist, 'deptmin':depttime,'deptmax': deptmaxtime,'datasource':list1}
             return render_to_response('flightsearch/searchresult.html',{'returndata':returnkey,'action':action,'minprice':minprice,'tax':tax,'data':records,'search':searchdata,'selectedrow':selectedrow,'filterkey':filerkey,'timedata':timeinfo},context_instance=RequestContext(request))
             
     if request.is_ajax():
