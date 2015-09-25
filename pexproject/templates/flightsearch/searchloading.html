@@ -18,16 +18,16 @@
 		<input type="hidden" name="returndate" id="retdate" value="{{returndate}}">
 		<input type="hidden" name="roundtripkey" id="rdtrip" value="{{roundtripkey}}">
 		<input type="hidden" name="trip" id="trip" value="{{triptype}}">
+		<input type="hidden" name="cabintype" id="cabin" value="{{cabintype}}">
 		</form>
 		<form action="index" method="post" id ="formid">
 			<input type="hidden" name="searchid" value="" id="searchid"/>
 		</form>
-		<center>
-			<div id="loading">
-			  <img id="loading-image" src="{% static 'flightsearch/js/images/loading.gif' %}" alt="Loading..." />
-			</div>
+		<div id="loading" align="center">
+			 <img id="loading-image" src="{% static 'flightsearch/js/images/loading.gif' %}" alt="Loading..." />
+		</div>
           
-		</center>
+		
 
 <script src="{% static 'flightsearch/js/vendor/bootstrap.min.js' %}"></script>
 <script>
@@ -47,6 +47,7 @@ var CSRF_TOKEN = "{{ csrf_token }}";
 var from = $('#from').val();
 var to = $('#to').val();
 var depart = $('#date').val();
+var cabintype = $('#cabin').val();
 var trip = $('#trip').val();
 var returndate = $('#retdate').val();
 var rdtrip = $('#rdtrip').val();
@@ -78,7 +79,7 @@ $.ajax({
  	if(searchid != '')
 {  
 	$('#searchid').val(searchid);
-	var location = "getsearchresult?keyid="+ encodeURI(searchid);
+	var location = "getsearchresult?keyid="+ encodeURI(searchid)+"&cabin="+encodeURI(cabintype);
 	if(returnkey != ''){ location = location+"&returnkey="+encodeURI(returnkey);}
 	window.location.href = location; 
 }

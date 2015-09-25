@@ -71,27 +71,6 @@ def search(request):
                     if(len(list1) > 0):
                         querylist = querylist+join+"datasource = '"+list1[0]+"'"
                         join = ' AND '
-            '''
-                
-            if 'cabintype2' in request.POST:
-                businesslist = request.POST.getlist('cabintype2')
-                print businesslist
-                if len(businesslist)>1:
-                    searchquery = ''
-                    connect =''
-                    for value in businesslist:
-                        searchquery = searchquery+connect+"cabintype2 LIKE '"+value+"%%'"
-                        connect =' or '
-                        
-                    #querylist = querylist+join+" (cabintype2 LIKE '"+businesslist[0]+"%%' or  cabintype2 LIKE '"+businesslist[1]+"%%')"
-                    querylist = querylist+join+" ("+searchquery+")"
-                    join = ' AND '
-                else:
-                    if(len(businesslist) > 0):
-                        print "aaya"
-                        querylist = querylist+join+" cabintype2 LIKE '"+businesslist[0]+"%%'"
-                        join = ' AND ' 
-            '''
             if 'cabin' in request.POST:
                 cabinlist = request.POST.getlist('cabin')
                 if len(cabinlist)>1:
@@ -259,7 +238,9 @@ def searchLoading(request):
         orgn = request.REQUEST['fromMain'] 
         dest = request.REQUEST['toMain'] 
         depart = request.REQUEST['deptdate']
-        
+        cabintype = ''
+        if 'cabintype' in request.REQUEST:
+            cabintype = request.REQUEST['cabintype']
         roundtripkey = ''
         if 'keyid' in request.REQUEST:
             roundtripkey = request.REQUEST['keyid']
@@ -279,14 +260,17 @@ def searchLoading(request):
         date = dt.strftime('%Y/%m/%d')
         
         
-        return render_to_response('flightsearch/searchloading.html', {'searchdate':date, 'sname':orgn,'dname':dest,'returndate':date1,'triptype':trip,'roundtripkey':roundtripkey},context_instance=RequestContext(request))
+        return render_to_response('flightsearch/searchloading.html', {'searchdate':date, 'sname':orgn,'dname':dest,'returndate':date1,'triptype':trip,'roundtripkey':roundtripkey,'cabintype':cabintype},context_instance=RequestContext(request))
     else:
         return render_to_response('flightsearch/index.html')
     
 def getsearchresult(request):
     
     context = {}
-    
+    cabin =[]
+    cabinclass = request.GET.get('cabin', '')
+    cabin.append(cabinclass)
+    cabintype=''
     if request.GET.get('keyid', '') :
         searchkey = request.GET.get('keyid', '')
         returnkey = request.GET.get('returnkey', '')
@@ -295,13 +279,16 @@ def getsearchresult(request):
             action = request.GET.get('action', '')
             searchkey = request.GET.get('returnkey', '')
             returnkey = request.GET.get('keyid', '')
-        record = Flightdata.objects.filter(searchkeyid=searchkey).order_by('maincabin')
+        if cabinclass !='':
+            cabintype = " and "+cabinclass+ "!=''"
+            
+        record = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+searchkey+cabintype+" order by maincabin ASC")
         minprice =0
         tax = 0
         selectedrow = ''
-        print action
+        
         if returnkey:
-            if action:
+            if action != '':
                 minprice = request.GET.get('price', '')
                 print minprice,
             else:    
@@ -312,20 +299,18 @@ def getsearchresult(request):
             if 'rowid' in request.GET:
                 recordid = request.GET.get('rowid', '')
                 selectedrow = Flightdata.objects.get(pk=recordid)
-        print action
-        
         searchdata = Searchkey.objects.filter(searchid=searchkey)
         for s in searchdata:
             source = s.source
             destination = s.destination
         timerecord = Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` ")
-        
+        filterkey ={'cabin':cabin}
         for row in timerecord:
             
             timeinfo = {'maxdept':row.maxdept,'mindept':row.mindept,'minarival':row.minarival,'maxarival':row.maxarival}
         
-        if len(record)>0: 
-            return render_to_response('flightsearch/searchresult.html',{'action':action,'data':record,'minprice':minprice,'tax':tax,'returndata':returnkey,'search':searchdata,'timedata':timeinfo,'selectedrow':selectedrow},context_instance=RequestContext(request)) 
+        if len(list(record))>0: 
+            return render_to_response('flightsearch/searchresult.html',{'action':action,'data':record,'minprice':minprice,'tax':tax,'returndata':returnkey,'search':searchdata,'timedata':timeinfo,'selectedrow':selectedrow,'filterkey':filterkey},context_instance=RequestContext(request)) 
         else:
 
             msg = "Sorry, No flight found  from "+source+" To "+destination+".  Please search for another date or city !"
