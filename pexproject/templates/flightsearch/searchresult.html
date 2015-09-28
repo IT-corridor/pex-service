@@ -45,6 +45,16 @@
 									  </div>
 									  {%endif%}
 									  <div class="form-group">
+									    <label class="sr-only" for="exampleInputPassword3">Traveller</label>
+									    <div class="inner-addon left-addon " >
+									    <select name="passenger" id="passenger">
+									    	{% for i in "123456" %}
+									    	<option value="{{i}}" {% if passenger == i %} selected="selected" {%endif%}>{{i}}</option>
+									    	{%endfor%}
+									    </select>
+									  </div>
+									  </div>
+									  <div class="form-group">
 									    <button class="btn btn-success btn-sm">Search</button>
 									  </div>
 									</form>
@@ -64,7 +74,7 @@
 									{% endif %}
 									{% if search %}
 										{% for searchrow in search %}
-										
+									<input type="hidden" name="passenger" id="traveller" value="">	
 									<input type="hidden" name="action" value="{{action}}">
 									<input type="hidden" name="tax" id ="fltrtax" {% if request.GET.tax %} value="{{request.GET.tax}}" {%else%} value="{{tax}}"{% endif%}>
 									<input type="hidden" name="price" id ="fltrprice" {% if request.GET.price %} value="{{request.GET.price}}" {%else%} value="{{minprice}}"{% endif%}>	
@@ -308,7 +318,6 @@
 											</div>
 										</div>
 									</div>
-									
 									<div class="col-md-7 col-xs-12 nopadding">
 										<div class="col-md-12 col-xs-12 nopadding">
 											<div class="col-sm-4 col-xs-12 nopl">
@@ -339,7 +348,15 @@
 													</div>
 													{% else %}
 													<div>
-													<span class="btn btn-default">SELECT</span>
+														<form method="post" action="booking">
+														{% csrf_token %}
+														<input type="hidden" name="passenger" id="totalpassenger"  value="{{passenger}}">
+														<input type="hidden" name="cabinname"  value="{{row.cabintype1}}">
+														<input type="hidden" name="rowid"  value="{{row.rowid}}">
+														<input type="hidden" name="price" {% if minprice %} value="{{row.maincabin|add:minprice}}" {%else%} value="{{row.maincabin}}"{%endif%}>
+														<input type="hidden" name="tax"  value="{{row.maintax}}">
+														<button class="btn btn-default">BOOK</button>
+													</form>
 													</div>
 													{%endif%}
 													
@@ -379,7 +396,15 @@
 													</div>
 													{% else %}
 													<div>
-													<span class="btn btn-default">SELECT</span>
+														<form method="post" action="booking">
+															{% csrf_token %}
+														<input type="hidden" name="passenger" id="totalpassenger"  value="{{passenger}}">
+														<input type="hidden" name="cabinname"  value="{{row.cabintype2}}">
+														<input type="hidden" name="rowid"  value="{{row.rowid}}">
+														<input type="hidden" name="price" {% if minprice %} value="{{row.firstclass|add:minprice}}" {%else%}  value="{{row.firstclass}}"{%endif%}>
+														<input type="hidden" name="tax"  value="{{row.firsttax}}">
+														<button class="btn btn-default">BOOK</button>
+													</form>
 													</div>
 													{%endif%}
 													{% else %}
@@ -419,7 +444,15 @@
 													</div>
 													{% else %}
 													<div>
-													<span class="btn btn-default">SELECT</span>
+														<form method="post" action="booking">
+															{% csrf_token %}
+														<input type="hidden" name="passenger" id="totalpassenger"  value="{{passenger}}">
+														<input type="hidden" name="cabinname"  value="{{row.cabintype3}}">
+														<input type="hidden" name="rowid"  value="{{row.rowid}}">
+														<input type="hidden" name="price" {% if minprice %} value="{{row.business|add:minprice}}" {%else%}  value="{{row.business}}"{%endif%}>
+														<input type="hidden" name="tax"  value="{{row.businesstax}}">
+														<button class="btn btn-default">BOOK</button>
+													</form>
 													</div>
 													{%endif%}
 													{% else %}
@@ -480,6 +513,17 @@
 				$('#departMain').on('change', function() {
 			    $('#returnMain').datepicker("option", "minDate", $('#departMain').datepicker('getDate'));
 				});
+			});
+			
+			$(document).ready(function() {
+				$('#traveller').val($('#passenger').val());
+				$('#totalpassenger').val($('#passenger').val());
+			  
+			});
+			
+			$('#passenger').change(function(){
+				$('#traveller').val($('#passenger').val());
+				$('#totalpassenger').val($('#passenger').val());
 			});
 		</script>
 			<!--

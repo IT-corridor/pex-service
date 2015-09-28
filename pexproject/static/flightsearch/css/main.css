@@ -652,7 +652,14 @@ p.flight-name{
 .bgclr{
 	background: #F5F5F5
 }
-
+.bkcl{
+	background: #E7E7E7;
+	padding: 10px 0px 0px;
+}
+.totalprice{
+	background: #ddd;
+	padding: 10px 0px;
+}
 .delta-arrow-div{
     width: 32%;
     left:70px;

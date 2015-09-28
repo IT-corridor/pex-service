@@ -115,6 +115,7 @@ def search(request):
             minprice = request.POST['price']
             tax = request.POST['tax']
             action = request.POST['action']
+            passenger = request.REQUEST['passenger']
             returnkey = ''
             selectedrow=''
             if 'returnkey' in request.POST:
@@ -127,7 +128,7 @@ def search(request):
             searchdata = Searchkey.objects.filter(searchid=searchkey)
             timeinfo = {'maxdept':deptmaxtime,'mindept':depttime,'minarival':arivtime,'maxarival':arivtmaxtime}#Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` where "+querylist+" order by departure ASC")
             filerkey =  {'stoppage':list,'cabin':cabinlist, 'deptmin':depttime,'deptmax': deptmaxtime,'datasource':list1}
-            return render_to_response('flightsearch/searchresult.html',{'returndata':returnkey,'action':action,'minprice':minprice,'tax':tax,'data':records,'search':searchdata,'selectedrow':selectedrow,'filterkey':filerkey,'timedata':timeinfo},context_instance=RequestContext(request))
+            return render_to_response('flightsearch/searchresult.html',{'returndata':returnkey,'action':action,'minprice':minprice,'tax':tax,'data':records,'search':searchdata,'selectedrow':selectedrow,'filterkey':filerkey,'timedata':timeinfo,'passenger':passenger},context_instance=RequestContext(request))
             
     if request.is_ajax():
         context = {}
@@ -238,6 +239,7 @@ def searchLoading(request):
         orgn = request.REQUEST['fromMain'] 
         dest = request.REQUEST['toMain'] 
         depart = request.REQUEST['deptdate']
+        passenger = request.REQUEST['passenger']
         cabintype = ''
         if 'cabintype' in request.REQUEST:
             cabintype = request.REQUEST['cabintype']
@@ -260,7 +262,7 @@ def searchLoading(request):
         date = dt.strftime('%Y/%m/%d')
         
         
-        return render_to_response('flightsearch/searchloading.html', {'searchdate':date, 'sname':orgn,'dname':dest,'returndate':date1,'triptype':trip,'roundtripkey':roundtripkey,'cabintype':cabintype},context_instance=RequestContext(request))
+        return render_to_response('flightsearch/searchloading.html', {'searchdate':date, 'sname':orgn,'dname':dest,'returndate':date1,'triptype':trip,'roundtripkey':roundtripkey,'cabintype':cabintype,'passenger':passenger},context_instance=RequestContext(request))
     else:
         return render_to_response('flightsearch/index.html')
     
@@ -269,6 +271,7 @@ def getsearchresult(request):
     context = {}
     cabin =[]
     cabinclass = request.GET.get('cabin', '')
+    passenger = request.GET.get('passenger', '')
     cabin.append(cabinclass)
     cabintype=''
     if request.GET.get('keyid', '') :
@@ -310,13 +313,28 @@ def getsearchresult(request):
             timeinfo = {'maxdept':row.maxdept,'mindept':row.mindept,'minarival':row.minarival,'maxarival':row.maxarival}
         
         if len(list(record))>0: 
-            return render_to_response('flightsearch/searchresult.html',{'action':action,'data':record,'minprice':minprice,'tax':tax,'returndata':returnkey,'search':searchdata,'timedata':timeinfo,'selectedrow':selectedrow,'filterkey':filterkey},context_instance=RequestContext(request)) 
+            return render_to_response('flightsearch/searchresult.html',{'action':action,'data':record,'minprice':minprice,'tax':tax,'returndata':returnkey,'search':searchdata,'timedata':timeinfo,'selectedrow':selectedrow,'filterkey':filterkey,'passenger':passenger},context_instance=RequestContext(request)) 
         else:
 
             msg = "Sorry, No flight found  from "+source+" To "+destination+".  Please search for another date or city !"
             return  render_to_response('flightsearch/index.html',{'message':msg}, context_instance=RequestContext(request))
             
+def booking(request):
+    context = {}
+    if request.method == "POST":
+        recordid = request.REQUEST['rowid']
+        price = request.REQUEST['price']
+        cabin = request.REQUEST['cabinname']
+        tax = request.REQUEST['tax']
+        passenger = request.REQUEST['passenger']
+        selectedrow = Flightdata.objects.get(pk=recordid)
+        totalprice = int(passenger) * int(price)
+        totaltax = float(tax)*int(passenger)
+        print totaltax
+        return render_to_response('flightsearch/booking.html',{'selectedrow':selectedrow,'tax':tax,'cabin':cabin,'price':price,'passenger':passenger,'total':totalprice,'totaltax':totaltax},context_instance=RequestContext(request)) 
         
+    
+            
 
 	
 # Create your views here.
