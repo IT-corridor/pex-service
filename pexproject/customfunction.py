@@ -408,7 +408,8 @@ def delta(orgn,dest,searchdate,searchkey):
         print "data inserted"
 
 
-    display.stop() 
+
+    display.stop()
     driver.quit()
     return searchkey
 
