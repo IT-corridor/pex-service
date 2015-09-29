@@ -74,7 +74,7 @@ def search(request):
             if 'cabin' in request.POST:
                 cabinlist = request.POST.getlist('cabin')
                 if len(cabinlist)>1:
-                    querylist = querylist+join+"('"+"'!='' or '".join(cabinlist)+"!='' ')"
+                    querylist = querylist+join+"('"+"' != '' or '".join(cabinlist)+"' != '')"
                     
                     join = ' AND '
                 else:
@@ -110,7 +110,8 @@ def search(request):
                 arivtmaxformat = (datetime.datetime.strptime(arivtmaxtime,'%I:%M %p'))
                 arivtmaxformat1 = arivtmaxformat.strftime('%H:%M:%S')
                 querylist = querylist+join+" arival <= '"+arivtmaxformat1+"'"
-                join = ' AND '     
+                join = ' AND '
+                 
             minprice = request.POST['price']
             tax = request.POST['tax']
             action = request.POST['action']
@@ -122,8 +123,8 @@ def search(request):
             if 'rowid' in request.POST:
                 recordid = request.REQUEST['rowid']
                 selectedrow = Flightdata.objects.get(pk=recordid)
-            
             records = Flightdata.objects.raw('select * from pexproject_flightdata where '+querylist+' order by departure ASC')
+            print records.query
             searchdata = Searchkey.objects.filter(searchid=searchkey)
             timeinfo = {'maxdept':deptmaxtime,'mindept':depttime,'minarival':arivtime,'maxarival':arivtmaxtime}#Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` where "+querylist+" order by departure ASC")
             filerkey =  {'stoppage':list,'cabin':cabinlist, 'deptmin':depttime,'deptmax': deptmaxtime,'datasource':list1}
