@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import os,sys
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -30,7 +31,7 @@ def united(origin,destination,searchdate,searchkey):
     time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     #print date
     driver.get(url)
-    driver.implicitly_wait(20)
+    driver.implicitly_wait(40)
     oneway = driver.find_element_by_id("ctl00_ContentInfo_Booking1_rdoSearchType2")
     driver.execute_script("arguments[0].click();", oneway)
 
@@ -54,7 +55,7 @@ def united(origin,destination,searchdate,searchkey):
 
     inputElement2.send_keys(Keys.ENTER)
 
-    driver.implicitly_wait(20)
+    driver.implicitly_wait(40)
     html_page = driver.page_source
 
     soup = BeautifulSoup(html_page)
@@ -285,7 +286,7 @@ def delta(orgn,dest,searchdate,searchkey):
     driver.find_element_by_id("milesBtn").click()
     driver.find_element_by_id("findFlightsSubmit").click()
     try:
-        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
+        WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
     except:
         driver.quit()
        # mimetype = 'application/json'
@@ -293,12 +294,12 @@ def delta(orgn,dest,searchdate,searchkey):
         return searchkey
     
     try:
-        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "showAll-footer")))
+        WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "showAll-footer")))
         driver.find_element_by_link_text('Show All').click()
-        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "fareRowContainer_20")))
+        WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "fareRowContainer_20")))
     except:
-        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
+        WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
+    WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
     html_page = driver.page_source
     soup = BeautifulSoup(html_page)
     datatable = soup.findAll("table",{"class":"fareDetails"})
@@ -407,8 +408,7 @@ def delta(orgn,dest,searchdate,searchkey):
         print "data inserted"
 
 
-    display.stop()
-    
+    display.stop() 
     driver.quit()
     return searchkey
 
