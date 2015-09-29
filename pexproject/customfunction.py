@@ -61,9 +61,10 @@ def united(origin,destination,searchdate,searchkey):
     try:
         WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "rewardSegments")))
     except:
-	    display.stop()
+        display.stop()
         driver.quit()
         return searchkey
+    
     html_page = driver.page_source
 
     soup = BeautifulSoup(html_page)
@@ -297,22 +298,22 @@ def delta(orgn,dest,searchdate,searchkey):
     driver.find_element_by_id("milesBtn").send_keys(Keys.ENTER)
     driver.find_element_by_id("findFlightsSubmit").send_keys(Keys.ENTER)
     try:
-	print "test1"
+        print "test1"
         WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
     except:
-	    display.stop()
+        display.stop()
         driver.quit()
        # mimetype = 'application/json'
         #return HttpResponse(searchkeyid, mimetype)
         return searchkey
     
     try:
-	print "aaya"
+        print "aaya"
         WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "showAll")))
         driver.find_element_by_link_text('Show All').click()
         WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "fareRowContainer_20")))
     except:
-	print "test2"
+        print "test2"
         WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
     #WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
     html_page = driver.page_source
