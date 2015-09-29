@@ -348,6 +348,7 @@
 													</div>
 													{% else %}
 													<div>
+														<!--
 														<form method="post" action="booking">
 														{% csrf_token %}
 														<input type="hidden" name="passenger" id="totalpassenger"  value="{{passenger}}">
@@ -356,7 +357,7 @@
 														<input type="hidden" name="price" {% if minprice %} value="{{row.maincabin|add:minprice}}" {%else%} value="{{row.maincabin}}"{%endif%}>
 														<input type="hidden" name="tax"  value="{{row.maintax}}">
 														<button class="btn btn-default">BOOK</button>
-													</form>
+													</form> -->
 													</div>
 													{%endif%}
 													
@@ -396,6 +397,7 @@
 													</div>
 													{% else %}
 													<div>
+														<!--
 														<form method="post" action="booking">
 															{% csrf_token %}
 														<input type="hidden" name="passenger" id="totalpassenger"  value="{{passenger}}">
@@ -404,7 +406,7 @@
 														<input type="hidden" name="price" {% if minprice %} value="{{row.firstclass|add:minprice}}" {%else%}  value="{{row.firstclass}}"{%endif%}>
 														<input type="hidden" name="tax"  value="{{row.firsttax}}">
 														<button class="btn btn-default">BOOK</button>
-													</form>
+													</form> -->
 													</div>
 													{%endif%}
 													{% else %}
@@ -444,6 +446,7 @@
 													</div>
 													{% else %}
 													<div>
+														<!--
 														<form method="post" action="booking">
 															{% csrf_token %}
 														<input type="hidden" name="passenger" id="totalpassenger"  value="{{passenger}}">
@@ -452,7 +455,7 @@
 														<input type="hidden" name="price" {% if minprice %} value="{{row.business|add:minprice}}" {%else%}  value="{{row.business}}"{%endif%}>
 														<input type="hidden" name="tax"  value="{{row.businesstax}}">
 														<button class="btn btn-default">BOOK</button>
-													</form>
+													</form> -->
 													</div>
 													{%endif%}
 													{% else %}
