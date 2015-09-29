@@ -22,7 +22,7 @@ def united(origin,destination,searchdate,searchkey):
     url = "http://www.united.com/web/en-US/default.aspx?root=1"
     display = Display(visible=0, size=(800, 600))
     display.start()
-    driver = webdriver.Firefox()
+    driver = webdriver.Chrome()
     dt = datetime.datetime.strptime(searchdate, '%Y/%m/%d')
     date = dt.strftime('%m/%d/%Y')
     #curdate = datetime.date.today() + datetime.timedelta(days=10)
@@ -260,7 +260,7 @@ def delta(orgn,dest,searchdate,searchkey):
     display.start()
     #logger.info("before firefox connection!")
 
-    driver = webdriver.Firefox()
+    driver = webdriver.Chrome()
     driver.implicitly_wait(40)
     #logger.info("after firefox connection!")
     driver.get(url)
@@ -283,8 +283,8 @@ def delta(orgn,dest,searchdate,searchkey):
     #driver.find_element_by_id("departureDate").click()
     #driver.find_elements_by_css_selector("td[data-date='"+date+"']")[0].click()
     
-    driver.find_element_by_id("milesBtn").click()
-    driver.find_element_by_id("findFlightsSubmit").click()
+    driver.find_element_by_id("milesBtn").send_keys(Keys.ENTER)
+    driver.find_element_by_id("findFlightsSubmit").send_keys(Keys.ENTER)
     try:
         WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
     except:
