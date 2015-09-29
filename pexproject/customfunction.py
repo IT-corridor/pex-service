@@ -22,7 +22,9 @@ def united(origin,destination,searchdate,searchkey):
     url = "http://www.united.com/web/en-US/default.aspx?root=1"
     display = Display(visible=0, size=(800, 600))
     display.start()
-    driver = webdriver.Chrome()
+    chromedriver = "/usr/bin/chromedriver"
+    os.environ["webdriver.chrome.driver"] = chromedriver
+    driver = webdriver.Chrome(chromedriver)
     dt = datetime.datetime.strptime(searchdate, '%Y/%m/%d')
     date = dt.strftime('%m/%d/%Y')
     #curdate = datetime.date.today() + datetime.timedelta(days=10)
@@ -56,6 +58,12 @@ def united(origin,destination,searchdate,searchkey):
     inputElement2.send_keys(Keys.ENTER)
 
     driver.implicitly_wait(40)
+    try:
+        WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "rewardSegments")))
+    except:
+	display.stop()
+        driver.quit()
+        return searchkey
     html_page = driver.page_source
 
     soup = BeautifulSoup(html_page)
@@ -259,8 +267,11 @@ def delta(orgn,dest,searchdate,searchkey):
     display = Display(visible=0, size=(800, 600))
     display.start()
     #logger.info("before firefox connection!")
+    chromedriver = "/usr/bin/chromedriver"
+    os.environ["webdriver.chrome.driver"] = chromedriver
+    driver = webdriver.Chrome(chromedriver)
 
-    driver = webdriver.Chrome()
+    #driver = webdriver.Chrome()
     driver.implicitly_wait(40)
     #logger.info("after firefox connection!")
     driver.get(url)
@@ -286,18 +297,22 @@ def delta(orgn,dest,searchdate,searchkey):
     driver.find_element_by_id("milesBtn").send_keys(Keys.ENTER)
     driver.find_element_by_id("findFlightsSubmit").send_keys(Keys.ENTER)
     try:
+	print "test1"
         WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
     except:
+	display.stop()
         driver.quit()
        # mimetype = 'application/json'
         #return HttpResponse(searchkeyid, mimetype)
         return searchkey
     
     try:
-        WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "showAll-footer")))
+	print "aaya"
+        WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "showAll")))
         driver.find_element_by_link_text('Show All').click()
         WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "fareRowContainer_20")))
     except:
+	print "test2"
         WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
     WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
     html_page = driver.page_source
