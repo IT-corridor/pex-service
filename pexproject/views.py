@@ -74,8 +74,8 @@ def search(request):
             if 'cabin' in request.POST:
                 cabinlist = request.POST.getlist('cabin')
                 if len(cabinlist)>1:
-                    querylist = querylist+join+"('"+"'!='' or '".join(cabinlist)+"')"
-                    print querylist
+                    querylist = querylist+join+"('"+"'!='' or '".join(cabinlist)+"!='' ')"
+                    
                     join = ' AND '
                 else:
                     if(len(cabinlist) > 0):
@@ -110,8 +110,7 @@ def search(request):
                 arivtmaxformat = (datetime.datetime.strptime(arivtmaxtime,'%I:%M %p'))
                 arivtmaxformat1 = arivtmaxformat.strftime('%H:%M:%S')
                 querylist = querylist+join+" arival <= '"+arivtmaxformat1+"'"
-                join = ' AND '
-                
+                join = ' AND '     
             minprice = request.POST['price']
             tax = request.POST['tax']
             action = request.POST['action']
