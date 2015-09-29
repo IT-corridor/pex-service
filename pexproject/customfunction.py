@@ -61,7 +61,7 @@ def united(origin,destination,searchdate,searchkey):
     try:
         WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "rewardSegments")))
     except:
-	display.stop()
+	    display.stop()
         driver.quit()
         return searchkey
     html_page = driver.page_source
@@ -300,7 +300,7 @@ def delta(orgn,dest,searchdate,searchkey):
 	print "test1"
         WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
     except:
-	display.stop()
+	    display.stop()
         driver.quit()
        # mimetype = 'application/json'
         #return HttpResponse(searchkeyid, mimetype)
@@ -314,7 +314,7 @@ def delta(orgn,dest,searchdate,searchkey):
     except:
 	print "test2"
         WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
-    WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
+    #WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
     html_page = driver.page_source
     soup = BeautifulSoup(html_page)
     datatable = soup.findAll("table",{"class":"fareDetails"})
