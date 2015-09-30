@@ -74,7 +74,7 @@ def search(request):
             if 'cabin' in request.POST:
                 cabinlist = request.POST.getlist('cabin')
                 if len(cabinlist)>1:
-                    querylist = querylist+join+"('"+"' != '' or '".join(cabinlist)+"' != '')"
+                    querylist = querylist+join+"("+" != '' or ".join(cabinlist)+" != '')"
                     join = ' AND '
                 else:
                     if(len(cabinlist) > 0):
