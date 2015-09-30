@@ -47,7 +47,7 @@
 									  <div class="form-group">
 									    <label class="sr-only" for="exampleInputPassword3">Traveller</label>
 									    <div class="inner-addon left-addon " >
-									    <select name="passenger" id="passenger">
+									    <select name="passenger" id="passenger" class="form-control">
 									    	{% for i in "123456" %}
 									    	<option value="{{i}}" {% if passenger == i %} selected="selected" {%endif%}>{{i}}</option>
 									    	{%endfor%}

@@ -8,6 +8,7 @@ from datetime import timedelta
 import time
 import MySQLdb
 from datetime import date
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -22,7 +23,7 @@ def united(origin,destination,searchdate,searchkey):
     url = "http://www.united.com/web/en-US/default.aspx?root=1"
     display = Display(visible=0, size=(800, 600))
     display.start()
-    chromedriver = "/usr/bin/chromedriver"
+    chromedriver = "/usr/local/bin/chromedriver"
     os.environ["webdriver.chrome.driver"] = chromedriver
     driver = webdriver.Chrome(chromedriver)
     dt = datetime.datetime.strptime(searchdate, '%Y/%m/%d')
@@ -268,9 +269,10 @@ def delta(orgn,dest,searchdate,searchkey):
     display = Display(visible=0, size=(800, 600))
     display.start()
     #logger.info("before firefox connection!")
-    chromedriver = "/usr/bin/chromedriver"
+    chromedriver = "/usr/local/bin/chromedriver"
     os.environ["webdriver.chrome.driver"] = chromedriver
-    driver = webdriver.Chrome(chromedriver)
+    chrome_options = Options()
+    driver = webdriver.Chrome(chromedriver,chrome_options=chrome_options)
 
     #driver = webdriver.Chrome()
     driver.implicitly_wait(40)
@@ -299,23 +301,26 @@ def delta(orgn,dest,searchdate,searchkey):
     driver.find_element_by_id("findFlightsSubmit").send_keys(Keys.ENTER)
     try:
         print "test1"
-        WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
+        WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "_fareDisplayContainer_tmplHolder")))
+	print "first"
     except:
+	print "exception"
         display.stop()
         driver.quit()
-       # mimetype = 'application/json'
-        #return HttpResponse(searchkeyid, mimetype)
         return searchkey
     
     try:
-        print "aaya"
+        print "second"
         WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "showAll")))
+	print "showall id found"
         driver.find_element_by_link_text('Show All').click()
+	print "click working"
         WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "fareRowContainer_20")))
+	print "found elemnt"
     except:
-        print "test2"
+        print "test2 exception"
         WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
-    #WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
+    WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
     html_page = driver.page_source
     soup = BeautifulSoup(html_page)
     datatable = soup.findAll("table",{"class":"fareDetails"})

@@ -295,9 +295,10 @@ def getsearchresult(request):
                 print minprice,
             else:    
                 data = Flightdata.objects.filter(searchkeyid=returnkey,maincabin__gt=0).values('maincabin','maintax').annotate(Min('maincabin'))[:1]
-                tax=data[0]['maintax']
-                minprice =data[0]['maincabin']
-                action = 'depart'
+		if data:
+                	tax=data[0]['maintax']
+                	minprice =data[0]['maincabin']
+                	action = 'depart'
             if 'rowid' in request.GET:
                 recordid = request.GET.get('rowid', '')
                 selectedrow = Flightdata.objects.get(pk=recordid)
