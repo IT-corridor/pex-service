@@ -19,6 +19,11 @@ html, body {
   .xs-nopadding {
     padding:0px;
   }
+  .ad-images  img
+{
+width:100%;
+margin-bottom:15px;
+}
 }
 @media (max-width: 767px) {
   .xs-margin-25px {
@@ -40,12 +45,42 @@ padding:0px !important;
 {
 	    white-space: pre-line !important;
 }
+.arrow-size
+{
+font-size:28px !important;
+    line-height:18px;
+}
+.ad-images  img
+{
+width:100%;
+margin-bottom:15px;
+}
+.pd-cls-responsive
+{
+	padding: 0px 5px 0px 10px;
+}
 }
 
 @media (max-width: 420px) {
  .arrow-div {
     font-size: 33px !important;
 }
+}
+
+
+@media (min-width: 767px) and (max-width: 991px) 
+{
+#dropdownMenu1 {
+        padding: 6px 2px;
+		font-size: 11px;
+}
+
+}
+
+.ad-images  img
+{
+width:100%;
+margin-bottom:15px;
 }
 /*GENERAL FONTS*/
 .for-mobile-view
@@ -56,7 +91,10 @@ h1{
   color: #333;
   font-size: 20px;
 }
-
+.arrow-size
+{
+font-size:37px;
+}
 
 .no-margin{
 	margin:0;
