@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os,sys
+from subprocess import call
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import selenium
@@ -7,6 +8,7 @@ import datetime
 from datetime import timedelta
 import time
 import MySQLdb
+from selenium.webdriver.common.proxy import *
 from datetime import date
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
@@ -259,6 +261,7 @@ def united(origin,destination,searchdate,searchkey):
     driver.quit()
     return searchid
 
+	#call(["pgrep chrome | xargs kill"])	
 def delta(orgn,dest,searchdate,searchkey):
     cursor = connection.cursor()
     url ="http://www.delta.com/"   
@@ -266,39 +269,49 @@ def delta(orgn,dest,searchdate,searchkey):
     currentdatetime = datetime.datetime.now()
     time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     print orgn, dest
-    display = Display(visible=0, size=(800, 600))
-    display.start()
+    try:
+    	display = Display(visible=0, size=(800, 600))
+    	display.start()
     #logger.info("before firefox connection!")
-    chromedriver = "/usr/local/bin/chromedriver"
-    os.environ["webdriver.chrome.driver"] = chromedriver
-    chrome_options = Options()
-    driver = webdriver.Chrome(chromedriver,chrome_options=chrome_options)
-
-    #driver = webdriver.Chrome()
-    driver.implicitly_wait(40)
-    #logger.info("after firefox connection!")
-    driver.get(url)
-    oneway = driver.find_element_by_id('oneWayBtn')
-    driver.execute_script("arguments[0].click();", oneway)
+    	chromedriver = "/usr/local/bin/chromedriver"
+    	os.environ["webdriver.chrome.driver"] = chromedriver
+    	chrome_options = Options()
+	#chrome_options = webdriver.ChromeOptions()
+	#chrome_options.add_argument('--enable-alternative-services')
+	chrome_options.add_argument('--enable-sandbox')
+	print "option"
+   	driver = webdriver.Chrome(chromedriver,chrome_options=chrome_options)
+    	driver.implicitly_wait(40)
+    	driver.get(url)
+	print "url"
+    	oneway = driver.find_element_by_id('oneWayBtn')
+    	driver.execute_script("arguments[0].click();", oneway)
+    	print "oneway"
+    	origin = driver.find_element_by_id("originCity")
+    	origin.clear()
+    	origin.send_keys(orgn.strip())
+    	destination = driver.find_element_by_id("destinationCity")
+    	destination.send_keys(dest.strip())
     
-    origin = driver.find_element_by_id("originCity")
-    origin.clear()
-    origin.send_keys(orgn.strip())
-    destination = driver.find_element_by_id("destinationCity")
-    destination.send_keys(dest.strip())
+    	ddate = driver.find_element_by_id("departureDate")#.click()
+    	ddate.send_keys(str(searchdate))
+	print "date"
+    	'''
+    	if returndate:
+        	returndate = driver.find_element_by_id("returnDate")#.click()
+        	returndate.send_keys(date1)
+    	'''
+    	#driver.find_element_by_id("departureDate").click()
+    	#driver.find_elements_by_css_selector("td[data-date='"+date+"']")[0].click()
     
-    ddate = driver.find_element_by_id("departureDate")#.click()
-    ddate.send_keys(str(searchdate))
-    '''
-    if returndate:
-        returndate = driver.find_element_by_id("returnDate")#.click()
-        returndate.send_keys(date1)
-    '''
-    #driver.find_element_by_id("departureDate").click()
-    #driver.find_elements_by_css_selector("td[data-date='"+date+"']")[0].click()
-    
-    driver.find_element_by_id("milesBtn").send_keys(Keys.ENTER)
-    driver.find_element_by_id("findFlightsSubmit").send_keys(Keys.ENTER)
+    	driver.find_element_by_id("milesBtn").send_keys(Keys.ENTER)
+    	driver.find_element_by_id("findFlightsSubmit").send_keys(Keys.ENTER)
+	driver.implicitly_wait(40)
+    except:
+	driver.stop()
+	return searchkey
+	#driver.delete_all_cookies()
+	#driver = webdriver.Chrome("/usr/local/bin/chromedriver")
     try:
         print "test1"
         WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "_fareDisplayContainer_tmplHolder")))
