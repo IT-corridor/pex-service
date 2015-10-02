@@ -72,7 +72,7 @@
       <div class="jumbotron">
         <div class="container">
           <div class="row">
-            <div class="col-sm-11 col-xxs-12 col-sm-offset-1">
+            <div class="col-sm-11 col-xs-12 col-sm-offset-1">
             	{%if message %}
 			    	<h4 class"alert-danger">{{message}}</h4>
 			    	{%endif%}
@@ -84,7 +84,7 @@
         	{% csrf_token %}
           <div class="container-fluid">
             <div class="row">
-              <div class="col-sm-11 col-xxs-12 col-sm-offset-1">
+              <div class="col-sm-11 col-xs-12 col-sm-offset-1">
                 <div class="checkbox-inline mhr10px">
                   <label><input type="radio" id="rt" name="trip" value="roundTripBtn" checked="checked"> Round-Trip</label>
                 </div>
@@ -97,20 +97,20 @@
               </div>
             </div>
             <div class="col-sm-11 col-sm-push-1 col-xs-12 nopadding ">
-              <div class="col-sm-2 col-xs-12">
+              <div class="col-sm-2 col-xs-12 xs-nopadding">
                 <div class="form-group nomr noml" class="ui-widget">
                   <label class="sr-only" for="from">From:</label>
                   <input type="search" class="form-control" id="from" name="fromMain" placeholder="From" autocomplete="off">
                 </div>
               </div>
-              <div class="col-sm-2 col-xs-12">
+              <div class="col-sm-2 col-xs-12 xs-nopadding">
                 <div class="form-group  nomr noml" class="ui-widget">
                   <label class="sr-only" for="to">To:</label>
                   <input type="search" class="form-control" id="to" name="toMain" placeholder="To" autocomplete="off">
                 </div>
               </div>
               <div class="input-daterange">
-              <div class="col-sm-2 col-xs-12">
+              <div class="col-sm-2 col-xs-12 xs-nopadding">
                 <div class="form-group nomr noml">
                   <label class="sr-only" for="departure">Departure Date:</label>
                   <div class="inner-addon left-addon date" id="dp1">
@@ -120,7 +120,7 @@
                   <div class="form-group" id="deptmsg"></div>
                 </div>
               </div>
-              <div class="col-sm-2 col-xs-12" id="return">
+              <div class="col-sm-2 col-xs-12 xs-nopadding" id="return">
                 <div class="form-group nomr noml">
                   <label class="sr-only" for="return">Return Date:</label>
                   <div class="inner-addon left-addon date" id="dp2">
@@ -223,17 +223,17 @@
       </div>
       <div class="container mvb60px">
         <!-- Example row of columns -->
-        <div class="row">
-          <div class="col-md-3 col-xxs-12">
+        <div class="row ad-images">
+          <div class="col-md-3 col-xs-6 pd-cls-responsive">
             <a href="#"><img src="{% static 'flightsearch/img/specials.jpg' %}"></a>
           </div>
-          <div class="col-md-3 col-xxs-12">
+          <div class="col-md-3 col-xs-6 pd-cls-responsive">
               <a href="#"><img src="{% static 'flightsearch/img/specials.jpg' %}"></a>
           </div>
-          <div class="col-md-3 col-xxs-12">
+          <div class="col-md-3 col-xs-6 pd-cls-responsive">
               <a href="#"><img src="{% static 'flightsearch/img/specials.jpg' %}"></a>
           </div>
-          <div class="col-md-3 col-xxs-12">
+          <div class="col-md-3 col-xs-6 pd-cls-responsive">
               <a href="#"><img src="{% static 'flightsearch/img/specials.jpg' %}"></a>
           </div>
         </div>
