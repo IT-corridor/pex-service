@@ -25,7 +25,7 @@ def united(origin,destination,searchdate,searchkey):
     url = "http://www.united.com/web/en-US/default.aspx?root=1"
     display = Display(visible=0, size=(800, 600))
     display.start()
-    chromedriver = "/usr/local/bin/chromedriver"
+    chromedriver = "/usr/bin/chromedriver"
     os.environ["webdriver.chrome.driver"] = chromedriver
     driver = webdriver.Chrome(chromedriver)
     dt = datetime.datetime.strptime(searchdate, '%Y/%m/%d')
@@ -64,7 +64,7 @@ def united(origin,destination,searchdate,searchkey):
     try:
         WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "rewardSegments")))
     except:
-        display.stop()
+        #display.stop()
         driver.quit()
         return searchkey
     
@@ -272,21 +272,19 @@ def delta(orgn,dest,searchdate,searchkey):
     try:
     	display = Display(visible=0, size=(800, 600))
     	display.start()
-    #logger.info("before firefox connection!")
-    	chromedriver = "/usr/local/bin/chromedriver"
+    	chromedriver = "/usr/bin/chromedriver"
     	os.environ["webdriver.chrome.driver"] = chromedriver
     	chrome_options = Options()
-	#chrome_options = webdriver.ChromeOptions()
-	#chrome_options.add_argument('--enable-alternative-services')
-	chrome_options.add_argument('--enable-sandbox')
-	print "option"
-   	driver = webdriver.Chrome(chromedriver,chrome_options=chrome_options)
+    	#chrome_options = webdriver.ChromeOptions()
+    	#chrome_options.add_argument('--enable-alternative-services')
+    	print "option"
+       	driver = webdriver.Chrome(chromedriver)
+        print "oneway"
     	driver.implicitly_wait(40)
     	driver.get(url)
-	print "url"
     	oneway = driver.find_element_by_id('oneWayBtn')
     	driver.execute_script("arguments[0].click();", oneway)
-    	print "oneway"
+    	
     	origin = driver.find_element_by_id("originCity")
     	origin.clear()
     	origin.send_keys(orgn.strip())
@@ -295,7 +293,6 @@ def delta(orgn,dest,searchdate,searchkey):
     
     	ddate = driver.find_element_by_id("departureDate")#.click()
     	ddate.send_keys(str(searchdate))
-	print "date"
     	'''
     	if returndate:
         	returndate = driver.find_element_by_id("returnDate")#.click()
@@ -306,32 +303,26 @@ def delta(orgn,dest,searchdate,searchkey):
     
     	driver.find_element_by_id("milesBtn").send_keys(Keys.ENTER)
     	driver.find_element_by_id("findFlightsSubmit").send_keys(Keys.ENTER)
-	driver.implicitly_wait(40)
+	    
     except:
-	driver.stop()
-	return searchkey
+    	driver.quit()
+    	return searchkey
 	#driver.delete_all_cookies()
 	#driver = webdriver.Chrome("/usr/local/bin/chromedriver")
     try:
         print "test1"
-        WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "_fareDisplayContainer_tmplHolder")))
-	print "first"
+        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "_fareDisplayContainer_tmplHolder")))
     except:
-	print "exception"
+        print "exception"
         display.stop()
         driver.quit()
         return searchkey
     
     try:
-        print "second"
         WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "showAll")))
-	print "showall id found"
         driver.find_element_by_link_text('Show All').click()
-	print "click working"
         WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "fareRowContainer_20")))
-	print "found elemnt"
     except:
-        print "test2 exception"
         WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
     WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
     html_page = driver.page_source
@@ -442,7 +433,7 @@ def delta(orgn,dest,searchdate,searchkey):
         print "data inserted"
 
 
-
+    
     display.stop()
     driver.quit()
     return searchkey

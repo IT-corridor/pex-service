@@ -10,13 +10,13 @@ from datetime import timedelta
 import subprocess
 from types import *
 import datetime
-
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.context_processors import csrf
 from django.views.decorators.csrf import requires_csrf_token
 from pexproject.models import Flightdata,Airports,Searchkey
+from pexproject.templatetags.customfilter import floatadd
 from subprocess import call
 #import MySQLdb
 
