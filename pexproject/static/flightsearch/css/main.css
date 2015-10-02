@@ -15,9 +15,35 @@ html, body {
     display: none !important;
   }
 }
+@media (max-width: 991px) {
+  .xs-nopadding {
+    padding:0px;
+  }
+}
+@media (max-width: 767px) {
+  .xs-margin-25px {
+    margin-top:25px;
+  }
+  .for-mobile-view
+{
+	display:block !important;
+}
+.pop-hover .well
+{
+padding:0px !important;
+}
+}
 
+@media (max-width: 420px) {
+ .arrow-div {
+    font-size: 33px !important;
+}
+}
 /*GENERAL FONTS*/
-
+.for-mobile-view
+{
+	display:none;
+}
 h1{
   color: #333;
   font-size: 20px;
@@ -567,7 +593,8 @@ footer .navbar-footer .navbar-toggle .icon-bar {
     position: absolute;
     left:132px;
     !right: 76px;*/
-   font-size: 30px;
+   font-size: 45px;
+   line-height: 27px;
 }
 .arrivel-2
 {

@@ -10,7 +10,7 @@
 		<body>
 			<div class="">
 				<div class="jumbotron">
-					<div class="container-fluid">
+					<div class="container-fluid xs-nopadding">
 							{% if search %}
 							{% for searchrow in search %}
 							<div class="col-xs-12 mvb10px">
@@ -171,7 +171,7 @@
 									</div>
 								</form>
 							</div>
-							<div class="col-md-8 col-xs-12 ">
+							<div class="col-md-8 col-xs-12 xs-nopadding">
 								
 								{% if selectedrow %}
 								
@@ -187,7 +187,7 @@
 														{{selectedrow.departure}}
 													</p>
 												</div>
-												<div class="arrow-div col-sm-2 nopadding">&xrarr;</div>
+												<div class="arrow-div col-sm-2 nopadding">&#8594;</div>
 												<div class="arrivel-2 col-sm-5 nopadding text-right">
 													<p>
 														{{selectedrow.destination}}
@@ -235,7 +235,7 @@
 										</div>
 									</div>
 									
-									<div class="col-xs-12 nopadding pop-hover">
+									<div class="col-xs-12 nopadding pop-hover xs-nopadding">
 											<a class="" role="button" data-toggle="collapse" href="#{{selectedrow.rowid}}" aria-expanded="false" aria-controls="collapseExample">SHOW DETAILS</a>
 											<div class="collapse" id="{{selectedrow.rowid}}">
 												<div class="well">
@@ -258,6 +258,18 @@
 														</table>
 													</div>
 													<a href="#">share</a>
+														
+													<div class="col-xs-12 nopadding for-mobile-view">
+														<div class="col-xs-6 nopadding">
+															<h5 class="econo">Business for m obile</h5>
+														</div>
+														<div class="col-xs-6 nopadding">
+															<p class="flight-rate">
+																50,000  Miles
+															</p>
+														</div>
+													</div>
+													
 												</div>
 											</div>
 										</div>
@@ -269,11 +281,11 @@
 								<h4>Sorry, No Flight Found </h4>
 								{% endif %}
 								{% for row in data %}
-								<div class="col-md-12 col-xs-5 centr-info">
+								<div class="col-md-12 col-xs-12 centr-info">
 									<div class="col-md-5 col-xs-12 nopadding">
 										<div class="col-xs-12 nopadding">
 											<div class="col-xs-12 nopadding">
-												<div class="col-sm-4 col-xs-12 nopadding">
+												<div class="col-sm-4 col-xs-4 nopadding">
 													<div class="col-xs-12 nopadding text-center mvb10px">
 														{% if row.datasource == "united" %}
 														<img src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
@@ -284,7 +296,7 @@
 														{{row.flighno}} <!--FIRST FLIGHT OPTION RESULT-->
 													</p>
 												</div>
-												<div class="col-sm-8 col-xs-12">
+												<div class="col-sm-8 col-xs-8">
 													<div class="col-xs-12 nopadding non-stop">
 														<p>
 															{{row.stoppage}}
@@ -297,7 +309,7 @@
 												</div>
 											</div>
 											<div class="col-xs-12 nopadding">
-												<div class="arrivel col-sm-5 nopadding">
+												<div class="arrivel col-sm-5 nopadding col-xs-5">
 													<p>
 														{{row.origin}}
 													</p>
@@ -305,8 +317,8 @@
 														{{row.departure}}
 													</p>
 												</div>
-												<div class="arrow-div col-sm-2 nopadding">&xrarr;</div>
-												<div class="arrivel-2 col-sm-5 nopadding text-right">
+												<div class="arrow-div col-sm-2 nopadding">&#8594;</div>
+												<div class="arrivel-2 col-sm-5 nopadding text-right col-xs-5">
 													<p>
 														{{row.destination}}
 													</p>
@@ -321,7 +333,7 @@
 									<div class="col-md-7 col-xs-12 nopadding">
 										<div class="col-md-12 col-xs-12 nopadding">
 											<div class="col-sm-4 col-xs-12 nopl">
-												<div class="col-xs-12 nopadding text-center">
+												<div class="col-xs-12 nopadding text-center xs-margin-25px">
 													{% if row.cabintype1 and row.maincabin %}
 													<h5 class="econo"> {{row.cabintype1}} </h5>
 													<div class="col-xs-12 nopadding mvb10px na-ra">
@@ -343,7 +355,7 @@
 														<input type="hidden" name="action"  value="return">
 														<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
 														<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
-														<button type"submit" value="{{searchrow.searchid}}" name="return" id="return">SELECT</button>
+														<button type="submit" class="btn" value="{{searchrow.searchid}}" name="return" id="return">SELECT</button>
 													</form>
 													</div>
 													{% else %}
@@ -370,7 +382,7 @@
 											</div>
 											
 											<div class="col-sm-4 col-xs-12 nopadding">
-												<div class="col-xs-12 nopadding text-center">
+												<div class="col-xs-12 nopadding text-center xs-margin-25px">
 													{% if row.cabintype2 and row.firstclass %}
 													<h5 class="econo">{{row.cabintype2}}</h5>
 													<div class="col-xs-12 nopadding mvb10px na-ra">
@@ -392,7 +404,7 @@
 														<input type="hidden" name="action"  value="return">
 														<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
 														<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
-														<button type"submit" value="{{searchrow.searchid}}" name="return" >SELECT</button>
+														<button type="submit" class="btn" value="{{searchrow.searchid}}" name="return" >SELECT</button>
 													</form>
 													</div>
 													{% else %}
@@ -420,7 +432,7 @@
 											</div>
 											
 											<div class="col-sm-4 col-xs-12 nopr">
-												<div class="col-xs-12 nopadding text-center">
+												<div class="col-xs-12 nopadding text-center xs-margin-25px">
 													{% if row.cabintype3 and row.business %}
 													<h5 class="econo">{{row.cabintype3}}</h5>
 													<div class="col-xs-12 nopadding mvb10px na-ra">
@@ -441,7 +453,7 @@
 														<input type="hidden" name="action"  value="{{action}}">
 														<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
 														<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
-														<button type"submit" value="{{searchrow.searchid}}" name="return" >SELECT</button>
+														<button type="submit" class="btn" value="{{searchrow.searchid}}" name="return" >SELECT</button>
 													</form>
 													</div>
 													{% else %}
@@ -469,7 +481,26 @@
 											
 										</div>
 									</div>
-									<div class="col-xs-12 pop-hover">
+									
+									
+									<div class="for-mobile-view"> <!----- main data only mobile -->
+										<div class="col-xs-12 nopadding text-center xs-margin-25px">
+													
+													<h5 class="econo">Business for m obile</h5>
+													<div class="col-xs-12 nopadding mvb10px na-ra">
+														<p class="flight-rate">
+															50,000  Miles
+														</p>
+														<p>+</p>
+														<h6 class="nomt">$80.6</h6>
+													</div>	
+										</div>
+									</div>
+									
+									
+									
+									
+									<div class="col-xs-12 pop-hover xs-nopadding">
 											<a class="" role="button" data-toggle="collapse" href="#{{row.rowid}}" aria-expanded="false" aria-controls="collapseExample">SHOW DETAILS</a>
 											<div class="collapse" id="{{row.rowid}}">
 												<div class="well">
@@ -492,6 +523,21 @@
 														</table>
 													</div>
 													<a href="#">share</a>
+													
+													<div class="col-xs-12 nopadding for-mobile-view "> <!--- on more click --->
+													<h1>More details</h1>
+													<div class="col-xs-12 nopadding"> <!--- repeat div --->
+														<div class="col-xs-6 nopadding">
+															<h5 class="econo">
+															</h5>
+														</div>
+														<div class="col-xs-6 nopadding">
+															<p class="flight-rate">
+																50,000  Miles
+															</p>
+														</div>
+													</div>
+													</div>
 												</div>
 											</div>
 										</div>
