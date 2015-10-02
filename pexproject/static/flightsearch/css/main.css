@@ -28,9 +28,17 @@ html, body {
 {
 	display:block !important;
 }
+.for-desktop-view
+{
+	display:none;
+}
 .pop-hover .well
 {
 padding:0px !important;
+}
+.table-date-search table tr td
+{
+	    white-space: pre-line !important;
 }
 }
 
