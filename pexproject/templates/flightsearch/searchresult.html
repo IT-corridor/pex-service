@@ -337,7 +337,7 @@
 										<div class="col-md-12 col-xs-12 nopadding">
 											<div class="col-sm-4 col-xs-12 nopl">
 												<div class="col-xs-12 nopadding text-center xs-margin-25px">
-													{% if row.cabintype1 and row.maincabin %}
+											  {% if row.cabintype1 and row.maincabin %}
 													<h5 class="econo"> {{row.cabintype1}} </h5>
 													<div class="col-xs-12 nopadding mvb10px na-ra">
 														<p class="flight-rate">
@@ -488,28 +488,7 @@
 									
 									<div class="for-mobile-view"> <!----- main data only mobile -->
 										<div class="col-xs-12 nopadding text-center xs-margin-25px"> 
-											{% if row.cabintype1 != '' and filterkey.cabin.0 == "cabintype1" %}
-													<h5 class="econo">{{row.cabintype1}}</h5>
-													<div class="col-xs-12 nopadding mvb10px na-ra">
-														<p class="flight-rate">
-															{% if row.datasource == "delta" %}
-															{{row.maincabin|add:minprice|intcomma}} {%else%}{{row.maincabin|intcomma}} {%endif%} Miles
-														</p>
-														<p>+</p>
-														<h6 class="nomt">${{row.maintax|floatadd:tax|floatformat:2}}</h6>
-													</div>
-											{% elif row.cabintype2 != '' and filterkey.cabin.0 == "cabintype2" %}
-													<h5 class="econo">{{row.cabintype2}}</h5>
-													<div class="col-xs-12 nopadding mvb10px na-ra">
-														<p class="flight-rate">
-															{% if row.datasource == "delta" %}
-															{{row.firstcabin|add:minprice|intcomma}} {%else%}{{row.firstcabin|intcomma}} {%endif%} Miles
-														</p>
-														<p>+</p>
-														<h6 class="nomt">${{row.firsttax|floatadd:tax|floatformat:2}}</h6>
-													</div>
-											{% else %}
-												
+											{% if row.cabintype3 != '' and filterkey.cabin.0 == "cabintype3" %}
 													<h5 class="econo">{{row.cabintype3}}</h5>
 													<div class="col-xs-12 nopadding mvb10px na-ra">
 														<p class="flight-rate">
@@ -519,6 +498,124 @@
 														<p>+</p>
 														<h6 class="nomt">${{row.businesstax|floatadd:tax|floatformat:2}}</h6>
 													</div>
+											{% if action == 'depart' %}
+													<div>
+													<form action="getsearchresult" method="get">
+														{% csrf_token %}
+														<input type="hidden" name="price"  value="{{row.business}}">
+														<input type="hidden" name="cabin"  value="{{request.GET.cabin}}">
+														<input type="hidden" name="tax"  value="{{row.businesstax}}">
+														<input type="hidden" name="action"  value="{{action}}">
+														<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
+														<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
+														<button type="submit" class="btn" value="{{searchrow.searchid}}" name="return" >SELECT</button>
+													</form>
+													</div>
+													{% endif %}
+											{% elif row.cabintype2 != '' and filterkey.cabin.0 == "cabintype2" %}
+													<h5 class="econo">{{row.cabintype2}}</h5>
+													<div class="col-xs-12 nopadding mvb10px na-ra">
+														<p class="flight-rate">
+															{% if row.datasource == "delta" %}
+															{{row.firstclass|add:minprice|intcomma}} {%else%}{{row.firstclass|intcomma}} {%endif%} Miles
+														</p>
+														<p>+</p>
+														<h6 class="nomt">${{row.firsttax|floatadd:tax|floatformat:2}}</h6>
+													</div>
+													{% if action == 'depart' %}
+													<div>
+													<form action="getsearchresult" method="get">
+														{% csrf_token %}
+														<input type="hidden" name="price"  value="{{row.firstclass}}">
+														<input type="hidden" name="cabin"  value="{{request.GET.cabin}}">
+														<input type="hidden" name="tax"  value="{{row.firsttax}}">
+														<input type="hidden" name="action"  value="{{action}}">
+														<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
+														<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
+														<button type="submit" class="btn" value="{{searchrow.searchid}}" name="return" >SELECT</button>
+													</form>
+													</div>
+													{% endif %}
+											{% else %}
+													{% if row.cabintype1 != '' %}
+														<h5 class="econo">{{row.cabintype1}}</h5>
+														<div class="col-xs-12 nopadding mvb10px na-ra">
+															<p class="flight-rate">
+																{% if row.datasource == "delta" %}
+																{{row.maincabin|add:minprice|intcomma}} {%else%}{{row.maincabin|intcomma}} {%endif%} Miles
+															</p>
+															<p>+</p>
+															<h6 class="nomt">${{row.maintax|floatadd:tax|floatformat:2}}</h6>
+														</div>
+														{% if action == 'depart' %}
+														<div>
+														<form action="getsearchresult" method="get">
+															{% csrf_token %}
+															<input type="hidden" name="price"  value="{{row.maincabin}}">
+															<input type="hidden" name="cabin"  value="{{request.GET.cabin}}">
+															<input type="hidden" name="tax"  value="{{row.maintax}}">
+															<input type="hidden" name="action"  value="{{action}}">
+															<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
+															<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
+															<button type="submit" class="btn" value="{{searchrow.searchid}}" name="return" >SELECT</button>
+														</form>
+														</div>
+														{% endif %}
+													{% elif row.cabintype2 != ''%}
+														<h5 class="econo">{{row.cabintype2}}</h5>
+															<div class="col-xs-12 nopadding mvb10px na-ra">
+																<p class="flight-rate">
+																	{% if row.datasource == "delta" %}
+																	{{row.firstcabin|add:minprice|intcomma}} {%else%}{{row.firstcabin|intcomma}} {%endif%} Miles
+																</p>
+																<p>+</p>
+																<h6 class="nomt">${{row.firsttax|floatadd:tax|floatformat:2}}</h6>
+															</div>
+															{% if action == 'depart' %}
+															<div>
+															<form action="getsearchresult" method="get">
+																{% csrf_token %}
+																<input type="hidden" name="price"  value="{{row.firstcabin}}">
+																<input type="hidden" name="cabin"  value="{{request.GET.cabin}}">
+																<input type="hidden" name="tax"  value="{{row.firsttax}}">
+																<input type="hidden" name="action"  value="{{action}}">
+																<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
+																<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
+																<button type="submit" class="btn" value="{{searchrow.searchid}}" name="return" >SELECT</button>
+															</form>
+															</div>
+															{% else %}
+															<div>
+															</div>
+															{% endif %}
+													 {% else %}
+														<h5 class="econo">{{row.cabintype3}}</h5>
+													<div class="col-xs-12 nopadding mvb10px na-ra">
+														<p class="flight-rate">
+															{% if row.datasource == "delta" %}
+															{{row.business|add:minprice|intcomma}} {%else%}{{row.business|intcomma}} {%endif%} Miles
+														</p>
+														<p>+</p>
+														<h6 class="nomt">${{row.businesstax|floatadd:tax|floatformat:2}}</h6>
+													</div>
+											{% if action == 'depart' %}
+													<div>
+													<form action="getsearchresult" method="get">
+														{% csrf_token %}
+														<input type="hidden" name="price"  value="{{row.business}}">
+														<input type="hidden" name="cabin"  value="{{request.GET.cabin}}">
+														<input type="hidden" name="tax"  value="{{row.businesstax}}">
+														<input type="hidden" name="action"  value="{{action}}">
+														<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
+														<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
+														<button type="submit" class="btn" value="{{searchrow.searchid}}" name="return" >SELECT</button>
+													</form>
+													</div>
+													{% else %}
+													<div>
+													</div>
+													{% endif %}
+													{% endif %}
 											{% endif%}											
 										</div>
 									</div>
@@ -551,8 +648,8 @@
 													<a href="#">share</a>
 													
 													<div class="col-xs-12 nopadding for-mobile-view "> <!--- on more click --->
-									
-													<div class="col-xs-12 nopadding"> <!--- repeat div --->
+													{% if row.cabintype1 != ''%}
+													<div class="col-xs-12 nopadding"> 
 														<div class="col-xs-6 nopadding">
 															<h5 class="econo">{{row.cabintype1}}
 															</h5>
@@ -567,7 +664,13 @@
 																
 														</div>
 													</div>
-													<div class="col-xs-12 nopadding"> <!--- repeat div --->
+													{% else %}
+														<div class="col-xs-12 nopadding">
+															<h5> Not Available</h5>
+														</div>
+													{% endif %}
+													{% if row.cabintype2 != '' %}
+													<div class="col-xs-12 nopadding"> 
 														<div class="col-xs-6 nopadding">
 															<h5 class="econo">{{row.cabintype2}}
 															</h5>
@@ -575,14 +678,21 @@
 														<div class="col-xs-6 nopadding">
 															<p class="flight-rate">
 																{% if row.datasource == "delta" %}
-															{{row.firstcabin|add:minprice|intcomma}} {%else%}{{row.firstcabin|intcomma}} {%endif%} Miles
+															{{row.firstclass|add:minprice|intcomma}} {%else%}{{row.firstclass|intcomma}} {%endif%} Miles
 															</p>
 															<p>+</p>
 															<h6 class="nomt">${{row.firsttax|floatadd:tax|floatformat:2}}</h6>
 																
 														</div>
 													</div>
-												   <div class="col-xs-12 nopadding"> <!--- repeat div --->
+													{% else %}
+														<div class="col-xs-12 nopadding">
+															<h5> Not Available</h5>
+														</div>
+													{% endif %}
+													
+													{% if row.cabintype3 != ''%}
+												   <div class="col-xs-12 nopadding"> 
 														<div class="col-xs-6 nopadding">
 															<h5 class="econo">{{row.cabintype3}}
 															</h5>
@@ -597,7 +707,11 @@
 																
 														</div>
 													</div>
-												
+													{% else %}
+														<div class="col-xs-12 nopadding mvb10px na-ra">
+															<h5> Not Available</h5>
+														</div>
+													{% endif %}
 																									
 												
 													</div>
