@@ -728,7 +728,9 @@
 								{%endfor %}
 								{% endif %}
 							</div>
+
 							<div class="col-md-2 col-xs-12 nopadding "><img src="{% static 'flightsearch/img/ad.jpg' %}"  alt="Responsive image" class="img-responsive">
+
 							</div>
 						</div>
 					</div>
@@ -768,7 +770,6 @@
 			var $ = jQuery;
 
 			$("#datatable").dataTable({
-			"columns": [
 			{ "data": "Flight No." },
 			{ "data": "Source Station" },
 			{ "data": "Departure Time" },
@@ -1008,10 +1009,14 @@
 			$(function() {
     
     $( "#from" ).autocomplete({
+    	autoFocus: true,
     	source: "get_airport/",
     	minLength: 2,
-    });
+    }).focus(function(){
+		$(this).trigger('keydown.autocomplete');
+});
     $( "#to" ).autocomplete({
+    	autoFocus: true,
     	source: "get_airport/",
     	minLength: 2,
     });
