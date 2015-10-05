@@ -72,7 +72,7 @@
       <div class="jumbotron">
         <div class="container">
           <div class="row">
-            <div class="col-sm-11 col-xs-12 col-sm-offset-1">
+            <div class="col-sm-12 col-xs-12 ">
             	{%if message %}
 			    	<h4 class"alert-danger">{{message}}</h4>
 			    	{%endif%}
@@ -82,22 +82,23 @@
         </div>
         <form class="form-horizontal" role="form" action="searchLoadingPage" method="post" >
         	{% csrf_token %}
-          <div class="container-fluid">
-            <div class="row">
-              <div class="col-sm-11 col-xs-12 col-sm-offset-1">
+          <div class="container-fluid nopadding">
+            <div class="container nopadding trip-custome" >
+              <div class="col-sm-12 col-xs-12 nopadding">
                 <div class="checkbox-inline mhr10px">
                   <label><input type="radio" id="rt" name="trip" value="roundTripBtn" checked="checked"> Round-Trip</label>
                 </div>
                 <div class="checkbox-inline mhr10px">
                   <label><input type="radio" id="ow" name="trip" value="oneWayBtn"> One-Way</label>
                 </div>
-                <div class="checkbox-inline mhr10px">
+                <div class="checkbox-inline mhr10px" style="margin-left:25px;">
                   <label><input type="checkbox" id="mc" name="multicity"> Multi-City</label>
                 </div>
               </div>
             </div>
-            <div class="col-sm-11 col-sm-push-1 col-xs-12 nopadding ">
-              <div class="col-sm-2 col-xs-12 xs-nopadding">
+            <div class="container xs-nopadding">
+            <div class="col-sm-12 col-xs-12 nopadding pd-xs custome-pd">
+              <div class="col-sm-2 col-xs-12 nopadding">
                 <div class="form-group nomr noml" class="ui-widget">
                   <label class="sr-only" for="from">From:</label>
                   <input type="search" class="form-control" id="from" name="fromMain" placeholder="From" autocomplete="off">
@@ -218,22 +219,23 @@
                 <button type="submit" class="btn btn-pexSearch" id="submitid">Search</button>
               </div>
             </div>
+            </div>
           </div>
         </form>
       </div>
-      <div class="container mvb60px">
+      <div class="container mvb60px nopadding pd-xs">
         <!-- Example row of columns -->
-        <div class="row ad-images">
-          <div class="col-md-3 col-xs-6 pd-cls-responsive">
+        <div class=" ad-images">
+          <div class="col-md-3 col-xs-12 pd-cls-responsive">
             <a href="#"><img src="{% static 'flightsearch/img/specials.jpg' %}"></a>
           </div>
-          <div class="col-md-3 col-xs-6 pd-cls-responsive">
+          <div class="col-md-3 col-xs-12 pd-cls-responsive">
               <a href="#"><img src="{% static 'flightsearch/img/specials.jpg' %}"></a>
           </div>
-          <div class="col-md-3 col-xs-6 pd-cls-responsive">
+          <div class="col-md-3 col-xs-12 pd-cls-responsive">
               <a href="#"><img src="{% static 'flightsearch/img/specials.jpg' %}"></a>
           </div>
-          <div class="col-md-3 col-xs-6 pd-cls-responsive">
+          <div class="col-md-3 col-xs-12 pd-cls-responsive">
               <a href="#"><img src="{% static 'flightsearch/img/specials.jpg' %}"></a>
           </div>
         </div>
@@ -318,10 +320,12 @@
     $(function() {
     
     $( "#from" ).autocomplete({
+		autoFocus: true,
     	source: "get_airport/",
     	minLength: 2,
     });
     $( "#to" ).autocomplete({
+		autoFocus: true,
     	source: "get_airport/",
     	minLength: 2,
     });

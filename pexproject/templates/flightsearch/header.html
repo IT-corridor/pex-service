@@ -77,19 +77,29 @@
 
 <!-- NAVBAR SECTION/-->
         <nav class="navbar navbar-default">
-          <div class="container-fluid">
+		    <div class="container-fluid">
+                <div class="col-xs-12 text-right" style="text-align:right;">
+                    <ul class="nav navbar-nav navbar-footerimg social-icon">
+                     <li class=""><a href="http://www.twitter.com/PEXPlus"><img src="{% static 'flightsearch/img/twtr.png' %}"></a></li>
+					<li class=""><a href="http://www.facebook.com/PEXPlus"><img src="{% static 'flightsearch/img/fb.png' %}"></a></li>
+					<li class=""><a href="http://www.instagram.com/PEXPlus"><img src="{% static 'flightsearch/img/instgm.png' %}"></a></li>
+                    </ul>
+                </div>
+            </div>
+          <div class="container-fluid bk-white">
             <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#pexMainNavbar">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#pexMainNavbar">
+			<span class="sr-only">Toggle navigation</span>
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
               <span class="icon-bar"></span> 
             </button>
 
-            <a class="navbar-brand brandmedia" href="index"><img src="{% static 'flightsearch/img/logoMain.jpg' %}" alt="" class="hidden-xs hidden-sm hidden-md"><img src="{% static 'flightsearch/img/logo.jpg' %}" alt="" class="hidden-lg hidden-xs"> <img src="{% static 'flightsearch/img/logo.jpg' %}" alt="" class="hidden-lg hidden-md hidden-sm"></a>
+            <a class="navbar-brand brandmedia custome-brand" href="index"><img src="{% static 'flightsearch/img/logoMain.jpg' %}" alt="" class="hidden-xs hidden-sm hidden-md img-responsive"><img src="{% static 'flightsearch/img/logo.jpg' %}" alt="" class="hidden-lg hidden-xs img-responsive"> <img src="{% static 'flightsearch/img/logo.jpg' %}" alt="" class="hidden-lg hidden-md hidden-sm img-responsive"></a>
           </div>
 
           <div class="collapse navbar-collapse" id="pexMainNavbar">
-            <ul class="nav navbar-nav mainNav mvt30px">
+            <ul class="nav navbar-nav mainNav mvt10px">
               <li class=""><a href="index">Flights</a></li>
               <!--
               <li class=""><a href="#">Hotels</a></li> 
@@ -98,7 +108,7 @@
               <li class=""><a href="#">Restaurants</a></li>
 			-->
             </ul>   
-            <ul class="nav navbar-nav navbar-right">
+            <ul class="nav navbar-nav navbar-right responsive-edit mvt10px">
               <li class=""><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
               <li class=""><a href="login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
               <li class=""><a href="#"><span class="glyphicon glyphicon-info-sign"></span> Help</a></li>
@@ -106,6 +116,12 @@
           </div>
         </div>
       </nav>
+	  
+	  
+	  
+	  
+	  
+	  
       </body>
 	
 </html>
