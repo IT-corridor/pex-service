@@ -39,7 +39,7 @@ margin-bottom:15px;
     padding:0px;
   }
   .xs-margin-25px {
-    margin-top:25px;
+    margin-top:15px;
   }
   .for-mobile-view
 {
@@ -100,12 +100,51 @@ padding:10px !important;
 {
 	font-size:12px;
 }
+.na-ra p
+{
+font-size:13px !important;
+}
+.right-data-responsive
+{
+	display:inline-block;
+	float:right;
+}
+.custome-edit-block
+{
+text-align:left;
+    background: #f9f9f9;
+    padding: 20px 10px 5px !important;
+}
+.pr-custone-edit
+{
+	padding: 5px 10px 0px !important;
+
+}
+.edit-width-econo
+{
+max-width:115px;
+margin: 0;
+}
+.mainNav
+{
+min-height:30px !important;
+}
+.pr-custone-edit .flight-rate
+{
+font-size:13px !important;
+}
+.custome-brand img
+{
+padding:0px !important;
+}
 }
 
 @media (max-width: 420px) {
  .arrow-div {
     font-size: 33px !important;
 }
+
+
 }
 
 
@@ -894,7 +933,12 @@ p.flight-name{
 .custome-brand .img-responsive{
 	background:#fff;
 }
-.responsive-color-img .img-responsive
+.custome-edit-block p
 {
-	background: #003A76 !important;
+	display:inline-block;
+}
+
+.custome-edit-block h6
+{
+	display:inline-block;
 }
