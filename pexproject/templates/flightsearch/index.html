@@ -144,6 +144,7 @@
 								<option  class="cabin" value="cabintype3">First</option>
 								</select></span>                  			
                   		</div>
+                  		<div class="col-xs-12 alert alert-warning"></div>
                   		<div class="col-xs-12 down-menu-block">
                   			<p>
 							<span class="col-xs-4 nopadding">Adults</span>
@@ -214,6 +215,7 @@
                   	</div>
                   </div>
                 </div>
+                
               </div>
               <div class="col-sm-2 col-xs-12">
                 <button type="submit" class="btn btn-pexSearch" id="submitid">Search</button>
@@ -358,7 +360,7 @@ var total;
     });
     $('.minus').on('click',function(){
     	total = tatalpassenger();
-    	if(total > 1){
+    	if(total > 0){
         var $qty=$(this).closest('p').find('.qty');
         var currentVal = parseInt($qty.val());
         if (!isNaN(currentVal) && currentVal > 0) {
@@ -376,6 +378,7 @@ $('#cabintype').on('change',function(){
 
 $(document).ready(function(){
 	$('#passenger').val('1');
+	$(".alert-warning").hide();
 });
 //@@@Cabin select@@@@
 function travelinfo(){
@@ -391,8 +394,19 @@ function travelinfo(){
 	var selectedcabin = $("#cabintype option:selected").text();
 	var html = "<span id='travelar'>"+total+" "+text+", "+selectedcabin+"</span>";
 	$('#travelar').replaceWith(html);
+	if(total == 0){
+		var msg='';
+		$('#submitid').prop('disabled', true);
+		$(".alert-warning").empty();
+		msg="You must select atleast one traveller";
+		$(".alert-warning").append(msg);
+		$(".alert-warning").show();
+	}
+	else{
+		$('#submitid').prop('disabled', false);
+		$(".alert-warning").hide();
+	}
 }
-
 //@@@Total Passenger@@@@
 function tatalpassenger() {
 var sum = 0;
