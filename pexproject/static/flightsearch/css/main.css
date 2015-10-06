@@ -942,3 +942,8 @@ p.flight-name{
 {
 	display:inline-block;
 }
+.responsive-color-img .img-responsive
+{
+	  background: #003774 !important;
+
+}
