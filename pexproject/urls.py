@@ -8,6 +8,7 @@ from django.conf.urls.static import static
 urlpatterns = patterns('',
     url(r'^$', index, name='index'),
     url(r'^login', login, name='login'),
+    url(r'^flights', flights, name='flights'),
     url(r'^index', index, name='index'),
     url(r'^searchLoading',searchLoading,name='searchLoading'),
     url(r'^search', search, name='search'),

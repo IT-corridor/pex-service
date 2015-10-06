@@ -37,6 +37,8 @@ def index(request):
     
     return  render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
 
+def flights(request):
+    return  render_to_response('flightsearch/flights.html', context_instance=RequestContext(request))
 
 def login(request):
     form = LoginForm
@@ -283,7 +285,7 @@ def getsearchresult(request):
             returnkey = request.GET.get('keyid', '')
         if cabinclass !='':
             cabintype = " and "+cabinclass+ "!=''"
-            
+        print searchkey,cabintype   
         record = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+searchkey+cabintype+" order by maincabin ASC")
         minprice =0
         tax = 0
@@ -315,7 +317,6 @@ def getsearchresult(request):
         if len(list(record))>0: 
             return render_to_response('flightsearch/searchresult.html',{'action':action,'data':record,'minprice':minprice,'tax':tax,'returndata':returnkey,'search':searchdata,'timedata':timeinfo,'selectedrow':selectedrow,'filterkey':filterkey,'passenger':passenger},context_instance=RequestContext(request)) 
         else:
-
             msg = "Sorry, No flight found  from "+source+" To "+destination+".  Please search for another date or city !"
             return  render_to_response('flightsearch/index.html',{'message':msg}, context_instance=RequestContext(request))
             
