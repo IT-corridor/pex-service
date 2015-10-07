@@ -109,60 +109,78 @@
 										<p>
 											NUMBER OF STOPS
 										</p>
-
 										<div class="checkbox">
 											<label>
-												<input type='checkbox' name="stoppage" value="NONSTOP" {% for row in filterkey.stoppage %} {% if row == 'NONSTOP'%} checked="checked" {% endif %}{%endfor %}>
+												<input type='checkbox' id="selectallstop">
+												<span></span> SELECT ALL </label>
+										</div>
+										<div class="col-md-10 col-xs-10 nopadding form-side">
+										<div class="checkbox">
+											<label>
+												<input type='checkbox' class="chk-stoppage" name="stoppage" value="NONSTOP" {% for row in filterkey.stoppage %} {% if row == 'NONSTOP'%} checked="checked" {% endif %}{%endfor %}>
 												<span></span> NONSTOP </label>
 										</div>
 										<div class="checkbox">
 											<label>
-												<input type='checkbox' name="stoppage" value="1 STOP" {% for row in filterkey.stoppage %} {% if row == '1 STOP'%} checked="checked" {% endif %}{%endfor %}>
+												<input type='checkbox' class="chk-stoppage" name="stoppage" value="1 STOP" {% for row in filterkey.stoppage %} {% if row == '1 STOP'%} checked="checked" {% endif %}{%endfor %}>
 												<span></span> 1 STOP </label>
 										</div>
 										<div class="checkbox">
 											<label>
-												<input type='checkbox' name="stoppage" value="2 STOPS" {% for row in filterkey.stoppage %} {% if row == '2 STOPS'%} checked="checked" {% endif %}{%endfor %}>
+												<input type='checkbox' class="chk-stoppage" name="stoppage" value="2 STOPS" {% for row in filterkey.stoppage %} {% if row == '2 STOPS'%} checked="checked" {% endif %}{%endfor %}>
 												<span></span> 2+ STOPS </label>
 										</div>
-
+										</div>
 									</div>
 									<div class="col-md-12 col-xs-12 nopadding form-side">
 									<p>AIRLINES</p>
 									<div class="checkbox">
 									<label>
-									<input type='checkbox' name="airlines" value="delta" {% for row in filterkey.datasource %} {% if row == 'delta'%} checked="checked" {% endif %}{%endfor %}>
+									<input type='checkbox' id='selectairline' />
+									<span></span>
+									SELECT ALL
+									</label>
+									</div>
+									<div class="col-md-11 col-xs-11 nopadding form-side">
+									<div class="checkbox">
+									<label>
+									<input type='checkbox' class="chk-airlines" name="airlines" value="delta" {% for row in filterkey.datasource %} {% if row == 'delta'%} checked="checked" {% endif %}{%endfor %}>
 									<span></span>
 									DELTA AIRLINES
 									</label>
 									</div>
 									<div class="checkbox" >
 									<label>
-									<input type='checkbox' name="airlines" value="united" {% for row in filterkey.datasource %} {% if row == 'united'%} checked="checked" {% endif %}{%endfor %}>
+									<input type='checkbox' class="chk-airlines" name="airlines" value="united" {% for row in filterkey.datasource %} {% if row == 'united'%} checked="checked" {% endif %}{%endfor %}>
 									<span></span>
 									UINTED AIRLINES
 									</label>
 									</div>
-									
+									</div>
 									</div>
 									<div class="col-md-12 col-xs-12 nopadding form-side">
 										<p>
 											CABIN
 										</p>
+										<div class="checkbox">
+											<label>
+												<input type='checkbox' id="checkallcabin" value="selectall">
+												<span></span>SELECT ALL</label>
+										</div>
 										<div class="col-md-10 col-xs-10 nopadding form-side">
 										<div class="checkbox">
 											<label>
-												<input type='checkbox' name="cabin" value="cabintype1"  {% for row in filterkey.cabin %} {% if row == 'cabintype1'%} checked="checked" {% endif %} {%endfor %}>
+												<input type='checkbox' class="chk" name="cabin" value="cabintype1"  {% for row in filterkey.cabin %} {% if row == 'cabintype1'%} checked="checked" {% endif %} {%endfor %}>
 												<span></span> ECONOMY</label>
 										</div>
 										<div class="checkbox">
 											<label>
-												<input type='checkbox' name="cabin" value="cabintype2" {% for row in filterkey.cabin %} {% if row == 'cabintype2'%} checked="checked" {% endif %}{%endfor %}>
+												<input type='checkbox' class="chk" name="cabin" value="cabintype2" {% for row in filterkey.cabin %} {% if row == 'cabintype2'%} checked="checked" {% endif %}{%endfor %}>
 												<span></span> BUSINESS </label>
 										</div>
 										<div class="checkbox">
 											<label>
-												<input type='checkbox' name="cabin" value="cabintype3" {% for row in filterkey.cabin %} {% if row == 'cabintype3'%} checked="checked" {% endif %}{%endfor %}>
+												<input type='checkbox' class="chk" name="cabin" value="cabintype3" {% for row in filterkey.cabin %} {% if row == 'cabintype3'%} checked="checked" {% endif %}{%endfor %}>
 												<span></span> FIRST </label>
 										</div>
 
@@ -780,6 +798,7 @@
 				$('#totalpassenger').val($('#passenger').val());
 			});
 		</script>
+		    
 			<!--
 
 			<script>
@@ -838,34 +857,69 @@
 			<script src="{% static 'flightsearch/js/vendor/bootstrap.min.js' %}"></script>
 			
 			<script>
-			/*
-			$('#return').click(function()
-			{
-				var keyid = $('#return').val();
-				
-				alert(keyid);
-				$.ajax({
-			        type: "POST",
-			        url: "/search/",
-			        data: "keyid="+ encodeURI(keyid)+ "&type="+ encodeURI("returntype")+ "&csrfmiddlewaretoken=" + encodeURI(CSRF_TOKEN),
-			    	success: function(data){
-			        console.log(data);
-			        searchid = data;
-			        redirecttosearchpage(searchid);
-			       
-			        
-			    },
-				
-			   });
-			 });
-			function redirecttosearchpage(searchid){
-			 	if(searchid != '')
-			{
-				//alert(searchid)  ;  
-				$('#searchid').val(searchid);
-				window.location.href = "getsearchresult?keyid="+ encodeURI(searchid) ;
-			}
-			} */
+			
+			//@@@ SELECT ALL CABIN@@@@@@@@@ 
+			$(document).ready(function() {	
+			$("#checkallcabin").on("click", function() {
+			        if ($(this).is(':checked')) {
+			        	$(".chk").each(function(){
+			        		this.checked = true; 
+			        	
+			        });
+			        } else {
+			            $(".chk").each(function(){
+	        			this.checked = false;
+	            	});
+		        }
+		    	});
+		    $(".chk").on("click",function(){
+		    	if(!$(this).is(':checked')){
+		    		$("#checkallcabin").attr('checked', false);
+		    	}
+		    });
+		    
+		    
+		    //@@@@ SELECT ALL AIRLINES @@@@@@@@@
+		    
+		    $("#selectairline").on("click", function() {
+			        if ($(this).is(':checked')) {
+			        	$(".chk-airlines").each(function(){
+			        		this.checked = true; 
+			        	
+			        });
+			        } else {
+			            $(".chk-airlines").each(function(){
+	        			this.checked = false;
+	            	});
+		        }
+		    	});
+		    $(".chk-airlines").on("click",function(){
+		    	if(!$(this).is(':checked')){
+		    		$("#selectairline").attr('checked', false);
+		    	}
+		    });
+		    
+		   //@@@@ SELECT ALL STOPPAGE @@@@@@@@@ 
+		   
+		    $("#selectallstop").on("click", function() {
+			        if ($(this).is(':checked')) {
+			        	$(".chk-stoppage").each(function(){
+			        		this.checked = true; 
+			        	
+			        });
+			        } else {
+			            $(".chk-stoppage").each(function(){
+	        			this.checked = false;
+	            	});
+		        }
+		    	});
+		    $(".chk-stoppage").on("click",function(){
+		    	if(!$(this).is(':checked')){
+		    		$("#selectallstop").attr('checked', false);
+		    	}
+		    });
+		   
+		   });
 			</script>
 
 			<script>
