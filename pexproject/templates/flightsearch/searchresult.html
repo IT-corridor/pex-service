@@ -58,7 +58,7 @@
 									  </div>
 									  </div>
 									  <div class="form-group">
-									    <button class="btn  btn-pexSearch">Search</button>
+									    <button class="btn  btn-pexSearch">Change</button>
 									  </div>
 									</form>
 									<!--
@@ -170,7 +170,7 @@
 									</div>
 									<input type="hidden" name="search" value="search">
 									<div class="col-md-12 col-xs-12 nopadding form-side">
-										<input type="submit" value="SEARCH" class="btn btn-default">
+										<input type="submit" value="SEARCH" class="btn  btn-pexSearch">
 									</div>
 								</form>
 							</div>
@@ -182,7 +182,7 @@
 									<div class="col-md-5 col-xs-12 nopadding">
 										<div class="col-xs-12 nopadding">
 											<div class="col-xs-12 nopadding">
-												<div class="arrivel col-sm-5 nopadding">
+												<div class="arrivel col-xs-5 col-sm-5 nopadding">
 													<p>
 														{{selectedrow.origin}}
 													</p>
@@ -191,7 +191,7 @@
 													</p>
 												</div>
 												<div class="arrow-div col-sm-2 nopadding">&#8594;</div>
-												<div class="arrivel-2 col-sm-5 nopadding text-right">
+												<div class="arrivel-2 col-xs-5 col-sm-5 nopadding text-right">
 													<p>
 														{{selectedrow.destination}}
 													</p>
@@ -203,17 +203,22 @@
 										</div>
 									</div>
 									
-									<div class="col-md-2 col-xs-5 text-center">
+									<div class="col-md-2 col-xs-6 text-center xs-nopadding xs-margin-20">
 										{% if selectedrow.datasource == "united" %}
 										<img src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
 										{% if selectedrow.datasource == "delta" %}
 										<img src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
 										<h5>OUTBOUND</h5>
 									</div>
-									
+											<div class="col-sm-5 col-xs-6 col-xs-12 nopadding for-mobile-view text-right xs-margin-20">
+												<p class="flight-name">
+													{{selectedrow.flighno}} 
+												</p>
+												<p class="stops-dur"><span>{{selectedrow.stoppage}}</span> <span>{{row.duration}}</span></p>												
+											</div>
 									<div class="col-md-5 col-xs-12 nopadding">
 										<div class="col-xs-12 nopadding">
-											<div class="col-sm-5 col-xs-12 nopadding">
+											<div class="col-sm-5 col-xs-12 nopadding for-desktop-view">
 												<p class="flight-name">
 													{{selectedrow.flighno}} 
 												</p>

@@ -20,6 +20,10 @@ html, body {
 
 }
 @media (max-width: 767px) {
+.xs-margin-20
+{
+	margin:20px 0px 10px;
+}
   .ad-images  img
 {
 width:100%;
@@ -153,6 +157,14 @@ padding:0px !important;
 #dropdownMenu1 {
         padding: 6px 2px;
 		font-size: 11px;
+}
+
+}
+
+@media (min-width: 768px) and (max-width: 835px) 
+{
+.travelers-down-menu {
+    width: 260px !important;
 }
 
 }
@@ -844,13 +856,18 @@ p.flight-name{
 
 .down-menu-block span:first-child{
 	font-size:15px;
-	margin-top: 6px;
+	!margin-top: 6px;
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-weight: 300;
+	color:#333;
 }
 
 .down-menu-block span:nth-child(3){
-	font-size:14px;
-	margin-top: 6px;
-	color:#aaa;
+	font-size:15px;
+	!margin-top: 6px;
+	color:#333;
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-weight: 300;
 }
 
 .down-menu-block:first-child{
@@ -946,4 +963,22 @@ p.flight-name{
 {
 	  background: #003774 !important;
 
+}
+.for-height
+{
+	height: 26px;
+    !top: 3px;
+    position: relative;
+}
+.btn-xs 
+{
+	    padding: 0px 6px 3px;
+}
+.pd-adult
+{
+	padding:5px 0px 0px 15px;
+}
+.bgclr .img-responsive
+{
+    background: #003774 !important;
 }
