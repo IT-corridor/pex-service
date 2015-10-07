@@ -19,39 +19,6 @@
             }
             
         </style>
-        
-        <script type="text/javascript">
-          /*
-          jQuery( document ).ready(function( $ ) {
-            var nowTemp = new Date();
-            var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
-
-            var checkin = $('#departMain').datepicker({
-                format: "mm/dd/yyyy",
-                beforeShowDay: function (date) {
-                    return date.valueOf() >= now.valueOf() ?  'disabled' : '';
-                }
-            }).on('changeDate', function (ev) {
-                if (ev.date.valueOf() > checkout.date.valueOf()) {
-                    var newDate = new Date(ev.date);
-                    newDate.setDate(newDate.getDate() + 1);
-
-                    checkout.setValue(newDate);
-                }
-
-                checkin.hide();
-                $('#returnMain')[0].focus();
-            }).data('datepicker');
-            var checkout = $('#returnMain').datepicker({
-                format: "mm/dd/yyyy",
-                beforeShowDay: function (date) {
-                    return date.valueOf() <= checkin.date.valueOf() ? false : '';
-                }
-            }).on('changeDate', function (ev) {
-                checkout.hide();
-            }).data('datepicker');
-          });*/
-        </script>
     </head>
 
     <body itemscope itemtype="http://schema.org/WebPage">
@@ -334,40 +301,18 @@
     	
     </script>
     <script>
-  /*    
-    var nowTemp = new Date();
-var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
- 
-var checkin = $('#departMain').datepicker({
-  beforeShowDay: function(date) {
-    return date.valueOf() >= now.valueOf() ? 'disabled' : '';
-  }
-}).on('changeDate', function(ev) {
-  if (ev.date.valueOf() > checkout.date.valueOf()) {
-    var newDate = new Date(ev.date);
-    newDate.setDate(newDate.getDate() + 1);
-    checkout.setValue(newDate);
-  }
-  checkin.hide();
-  $('#returnMain')[0].focus();
-}).data('datepicker');
-var checkout = $('#returnMain').datepicker({
-  onRender: function(date) {
-    return date.valueOf() <= checkin.date.valueOf() ? 'disabled' : '';
-  }
-}).on('changeDate', function(ev) {
-  checkout.hide();
-}).data('datepicker');
-  */
-  $(function(){
-            $('#departMain').datepicker({ minDate: 0});
-            $('#returnMain').datepicker({ minDate: 0});
-          });
-    $('#departMain').on('change', function(e) {
-    	$('#returnMain').datepicker("option", "minDate", $('#departMain').datepicker('getDate'));
-    	
-		
-	});
+
+	 $(function(){
+	 		$('#returnMain').datetimepicker({format: "m/d/Y",'timepicker': false,closeOnDateSelect: true});
+            $('#departMain').datetimepicker({ format: "m/d/Y",minDate: 0,'timepicker': false,closeOnDateSelect: true,
+                        onSelectDate: function(selectedDate)
+                        {
+                                $("#returnMain").focus();
+                                $( "#returnMain" ).datetimepicker({format: "m/d/Y", minDate: selectedDate });
+                        }
+               });
+       });
+
 var total;
 //@@increase decrease on buttom click
     $(function () {

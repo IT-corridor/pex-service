@@ -153,7 +153,7 @@
 										<div class="checkbox">
 											<label>
 												<input type='checkbox' name="cabin" value="cabintype1"  {% for row in filterkey.cabin %} {% if row == 'cabintype1'%} checked="checked" {% endif %} {%endfor %}>
-												<span></span>ECONOMY</label>
+												<span></span> ECONOMY</label>
 										</div>
 										<div class="checkbox">
 											<label>
@@ -170,7 +170,7 @@
 									</div>
 									<input type="hidden" name="search" value="search">
 									<div class="col-md-12 col-xs-12 nopadding form-side">
-										<input type="submit" value="SEARCH" class="btn  btn-pexSearch">
+										<input type="submit" value="FILTER" class="btn  btn-pexSearch">
 									</div>
 								</form>
 							</div>
@@ -757,17 +757,17 @@
 				</div>
 			</div>
 			<script type="text/javascript">
-			$(function() {
-				$('#departuredate').datepicker({
-					minDate : 0
-				});
-				$('#return').datepicker({
-					minDate : 0
-				});
-				$('#departMain').on('change', function() {
-			    $('#returnMain').datepicker("option", "minDate", $('#departMain').datepicker('getDate'));
-				});
-			});
+			 $(function(){
+	 		$('#return').datetimepicker({format: "m/d/Y",'timepicker': false,closeOnDateSelect: true});
+            $('#departuredate').datetimepicker({ format: "m/d/Y",minDate: 0,'timepicker': false,closeOnDateSelect: true,
+                        onSelectDate: function(selectedDate)
+                        {
+                                $("#return").focus();
+                                $( "#return" ).datetimepicker({format: "m/d/Y", minDate: selectedDate });
+                        }
+               });
+       });
+			
 			
 			$(document).ready(function() {
 				$('#traveller').val($('#passenger').val());
