@@ -287,8 +287,8 @@
     $(function() {
     
     $( "#from" ).autocomplete({
-  		open: function(event, ui) {
-	        	$('.ui-autocomplete').off('menufocus hover mouseover mouseenter');
+  		 open: function(event, ui) {
+	        	$('.ui-autocomplete').off('menufocus hover mouseover');
     		},
 		autoFocus: true,
     	source: "get_airport/",
@@ -296,7 +296,7 @@
     });
     $( "#to" ).autocomplete({
   		open: function(event, ui) {
-	        	$('.ui-autocomplete').off('menufocus hover mouseover mouseenter');
+	        	$('.ui-autocomplete').off('menufocus hover mouseover');
     		},
 
 		autoFocus: true,
