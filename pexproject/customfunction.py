@@ -64,7 +64,7 @@ def united(origin,destination,searchdate,searchkey):
     try:
         WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "rewardSegments")))
     except:
-        #display.stop()
+        display.stop()
         driver.quit()
         return searchkey
     
@@ -204,7 +204,7 @@ def united(origin,destination,searchdate,searchkey):
                                     maintax = extratax[1]
                             #print fare1
                             if fare1:
-                                cabintype1 = "Main Cabin"
+                                cabintype1 = "Economy"
                             else:
                                 cabintype1 = ""
                             
@@ -328,8 +328,29 @@ def delta(orgn,dest,searchdate,searchkey):
     html_page = driver.page_source
     soup = BeautifulSoup(html_page)
     datatable = soup.findAll("table",{"class":"fareDetails"})
-    
+    n=0
     for content in datatable:
+        detailid = content.find("div",{"class":"detailLinkHldr"})['id']
+        driver.execute_script("document.getElementById('"+detailid+"').click()")
+        driver.implicitly_wait(5)
+        page = driver.page_source
+        soup2 = BeautifulSoup(page)
+        datatable1 = soup2.findAll("table",{"class":"fareDetails"})
+        k=0
+        departdetails=[]
+        arrivedetails=[]
+        planedetails=[]
+        for cnt in datatable1:
+            if cnt.find("div",{"class":"detailsRow" }) and k==n:
+                detailblk = cnt.findAll("div",{"class":"detailsRow"})
+                for tmp in detailblk:
+                    print "----------------------------------"
+                    spaninfo =  tmp.findAll("p")
+                    departdetails.append(spaninfo[0].text)
+                    arrivedetails.append(spaninfo[1].text)
+                    planedetails.append(spaninfo[2].text)
+            k=k+1
+        n=n+1
         tds = content.findAll("td")
         detailsblock = tds[0]
         economy = tds[1]
@@ -372,7 +393,13 @@ def delta(orgn,dest,searchdate,searchkey):
                     stp = route.find("div",{"class":"nStopBtn"}).text
                     #print route.find("div",{"class":"nStopBtn"}).text
                     if route.find("div",{"class":"layOver"}):
-                        lyover = route.find("div",{"class":"layOver"}).find("span").text
+                        lyover = route.find("div",{"class":"layOver"}).text
+                    elif route.find("div",{"class":"originCityVia2Stops"}):
+                        multistop = route.findAll("div",{"class":"originCityVia2Stops"})
+                        stoplist =[]
+                        for sp in multistop:
+                            stoplist.append(sp.text)
+                        lyover="|".join(stoplist)
                     else:
                         lyover=''
                     #print route.find("div",{"class":"layOver"}).find("span").text
@@ -397,7 +424,7 @@ def delta(orgn,dest,searchdate,searchkey):
             #lenght = len(fareblock)
             #print fareblock[0].text
             if economy.findAll("div",{"class":"frmTxtHldr flightCabinClass"}):
-                cabintype1 = economy.find("div",{"class":"frmTxtHldr flightCabinClass"}).text
+                cabintype1 = "Economy" #economy.find("div",{"class":"frmTxtHldr flightCabinClass"}).text
         else:
             fare1 = 0 #economy.find("span",{"class":"ntAvail"}).text
             cabintype1 =''
