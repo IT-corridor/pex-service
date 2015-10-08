@@ -671,7 +671,12 @@ footer .navbar-footer .navbar-toggle .icon-bar {
 	text-align: center !important;/*float:right;
 	 padding: 0px 40px 0px;*/
 }
-
+.mecono{
+	display: inline-block !important;
+	color: #333 !important;
+	font-weight: 300 !important;
+	font-size: 14px !important;
+}
 p.flight-name {
 	color: #39A8E0;
 	font-weight: 400;

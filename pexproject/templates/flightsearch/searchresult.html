@@ -71,7 +71,7 @@
 						<div class="col-md-12 col-xs-12">
 							<div class="col-md-2 col-xs-12 nopadding filters-holder">
 								<div class="col-xs-12 nopadding visible-xs filter-collapse form-side">
-									<p class="pull-left">Search Filter</p>
+									<p class="pull-left">Search Filters</p>
 									<p class="pull-right show-filter"><span class="glyphicon glyphicon-th-large"></span></p>
 								</div>
 								<form action="search" method="post">
@@ -405,7 +405,10 @@
 													
 													{% else %}
 													<div class="col-xs-12 nopadding text-center">
-														<h5 class="nomt not-avail-pt">Not Available </h5>
+														<h5 class="econo nomt">Economy</h5>
+															<div class="col-xs-12 nopadding mvb10px na-ra">
+																<h5> Not Available</h5>
+															</div>
 													</div>
 													{% endif %}
 												</div>
@@ -452,8 +455,11 @@
 													</div>
 													{%endif%}
 													{% else %}
-														<div class="col-xs-12 nopadding mvb10px na-ra">
-															<h5 class="nomt not-avail-pt"> Not Available</h5>
+														<div class="col-xs-12 nopadding mvb10px">
+															<h5 class="econo nomt">Business</h5>
+															<div class="col-xs-12 nopadding mvb10px">
+																<h5> Not Available</h5>
+															</div>
 														</div>
 													{% endif %}
 													
@@ -502,8 +508,12 @@
 													</div>
 													{%endif%}
 													{% else %}
-														<div class="col-xs-12 nopadding mvb10px na-ra">
-															<h5 class="nomt not-avail-pt"> Not Available</h5>
+														<div class="col-xs-12 nopadding mvb10px">
+															<h5 class="econo nomt">First</h5>
+															<div class="col-xs-12 nopadding mvb10px">
+																<h5> Not Available</h5>
+															</div>
+															<!--h5 class="nomt not-avail-pt"> Not Available</h5 -->
 														</div>
 													{% endif %}
 													
@@ -693,13 +703,11 @@
 															</tr>
 														</table>
 													</div>
-													<a href="#">share</a>
-													
 													<div class="col-xs-12 nopadding for-mobile-view "> <!--- on more click --->
 													{% if row.cabintype1 != ''%}
 													<div class="col-xs-12 nopadding custome-edit-block pr-custone-edit"> 
 														<div class="col-xs-4 nopadding">
-															<h5 class="econo">{{row.cabintype1}}
+															<h5 class="mecono">{{row.cabintype1}}
 															</h5>
 														</div>
 														<div class="col-xs-8 nopadding text-right">
@@ -713,14 +721,19 @@
 														</div>
 													</div>
 													{% else %}
-														<div class="col-xs-12 nopadding">
+														<div class="col-xs-4 nopadding">
+															<h5 class="mecono">Economy
+															</h5>
+														</div>
+														<div class="col-xs-8 nopadding text-center">
 															<h5> Not Available</h5>
 														</div>
 													{% endif %}
-													{% if row.cabintype2 != '' %}
+													
 													<div class="col-xs-12 nopadding custome-edit-block pr-custone-edit"> 
+														{% if row.cabintype2 != '' %}
 														<div class="col-xs-4 nopadding">
-															<h5 class="econo">{{row.cabintype2}}
+															<h5 class="mecono">{{row.cabintype2}}
 															</h5>
 														</div>
 														<div class="col-xs-8 nopadding text-right">
@@ -732,17 +745,22 @@
 															<h6 class="nomt">${{row.firsttax|floatadd:tax|floatformat:2}}</h6>
 																
 														</div>
-													</div>
-													{% else %}
-														<div class="col-xs-12 nopadding">
+														{% else %}
+														<div class="col-xs-4 nopadding">
+															<h5 class="mecono">Business
+															</h5>
+														</div>
+														<div class="col-xs-8 nopadding text-center">
 															<h5> Not Available</h5>
 														</div>
 													{% endif %}
+													</div>
 													
-													{% if row.cabintype3 != ''%}
+													
 												   <div class="col-xs-12 nopadding custome-edit-block pr-custone-edit"> 
+												   	{% if row.cabintype3 != ''%}
 														<div class="col-xs-4 nopadding">
-															<h5 class="econo ">{{row.cabintype3}}
+															<h5 class="mecono ">{{row.cabintype3}}
 															</h5>
 														</div>
 														<div class="col-xs-8 nopadding text-right">
@@ -754,15 +772,21 @@
 															<h6 class="nomt">${{row.businesstax|floatadd:tax|floatformat:2}}</h6>
 																
 														</div>
-													</div>
-													{% else %}
-														<div class="col-xs-12 nopadding mvb10px na-ra">
+														{% else %}
+														<div class="col-xs-4 nopadding">
+															<h5 class="mecono">First
+															</h5>
+														</div>
+														<div class="col-xs-8 nopadding text-center">
 															<h5> Not Available</h5>
 														</div>
 													{% endif %}
+													</div>
+													
 																									
 												
 													</div>
+													<a href="#">share</a>
 												</div>
 											</div>
 										</div>
@@ -1087,13 +1111,17 @@
 			$(function() {
     
     $( "#from" ).autocomplete({
+    	open: function(event, ui) {
+	        	$('.ui-autocomplete').off('menufocus hover mouseover');
+    		},
     	autoFocus: true,
     	source: "get_airport/",
     	minLength: 2,
-    }).focus(function(){
-		$(this).trigger('keydown.autocomplete');
-});
+    });
     $( "#to" ).autocomplete({
+    	open: function(event, ui) {
+	        	$('.ui-autocomplete').off('menufocus hover mouseover');
+    		},
     	autoFocus: true,
     	source: "get_airport/",
     	minLength: 2,
