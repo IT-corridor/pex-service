@@ -287,11 +287,17 @@
     $(function() {
     
     $( "#from" ).autocomplete({
+    	open: function(event, ui) {
+	        	$('.ui-autocomplete').off('menufocus hover mouseover mouseenter');
+    		},
 		autoFocus: true,
     	source: "get_airport/",
     	minLength: 2,
     });
     $( "#to" ).autocomplete({
+    	open: function(event, ui) {
+	        	$('.ui-autocomplete').off('menufocus hover mouseover mouseenter');
+    		},
 		autoFocus: true,
     	source: "get_airport/",
     	minLength: 2,
