@@ -452,6 +452,7 @@ def delta(orgn,dest,searchdate,searchkey):
                 fare3 = fare2
                 fare2 = 0
                 cabintype3 = cabintype2
+		firsttax = businesstax
                 cabintype2 =''
 
         print "last line"
