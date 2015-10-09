@@ -155,7 +155,10 @@ h1 {
 	font-size: 20px;
 }
 .arrow-size {
-	font-size: 37px;
+	font-size: 57px;
+	margin: 0;
+	text-align: center;
+	line-height: 0.5;
 }
 
 .no-margin {
@@ -671,7 +674,7 @@ footer .navbar-footer .navbar-toggle .icon-bar {
 	text-align: center !important;/*float:right;
 	 padding: 0px 40px 0px;*/
 }
-.mecono{
+.mecono {
 	display: inline-block !important;
 	color: #333 !important;
 	font-weight: 300 !important;
@@ -876,7 +879,7 @@ p.flight-name {
 #departuredate, #return {
 	max-width: 100%;
 }
-.not-avail-pt{
+.not-avail-pt {
 	padding-top: 26px;
 }
 
@@ -1010,15 +1013,15 @@ p.flight-name {
 		!
 		display: none;
 	}
-	.filters-holder,.filters-holder-ht {
+	.filters-holder, .filters-holder-ht {
 		-webkit-transition: all 300ms ease;
 		-moz-transition: all 300ms ease;
 		-ms-transition: all 300ms ease;
 		-o-transition: all 300ms ease;
 		transition: all 300ms ease;
 	}
-	.filters-holder-ht{
-		max-height:40px;
-		overflow:hidden;
+	.filters-holder-ht {
+		max-height: 40px;
+		overflow: hidden;
 	}
 }

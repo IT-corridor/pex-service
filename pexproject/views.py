@@ -114,7 +114,9 @@ def search(request):
                 join = ' AND '
                  
             minprice = request.POST['price']
+            print minprice
             tax = request.POST['tax']
+            print tax
             action = request.POST['action']
             passenger = request.REQUEST['passenger']
             returnkey = ''
@@ -262,7 +264,6 @@ def searchLoading(request):
         dt = datetime.datetime.strptime(depart, '%m/%d/%Y')
         date = dt.strftime('%Y/%m/%d')
         
-        
         return render_to_response('flightsearch/searchloading.html', {'searchdate':date, 'sname':orgn,'dname':dest,'returndate':date1,'triptype':trip,'roundtripkey':roundtripkey,'cabintype':cabintype,'passenger':passenger},context_instance=RequestContext(request))
     else:
         return render_to_response('flightsearch/index.html')
@@ -294,6 +295,7 @@ def getsearchresult(request):
         if returnkey:
             if action != '':
                 minprice = request.GET.get('price', '')
+                tax = request.GET.get('tax', '')
                 print minprice,
             else:    
                 data = Flightdata.objects.filter(searchkeyid=returnkey,maincabin__gt=0).values('maincabin','maintax').annotate(Min('maincabin'))[:1]

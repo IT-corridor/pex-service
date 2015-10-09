@@ -305,6 +305,7 @@ def delta(orgn,dest,searchdate,searchkey):
     	driver.find_element_by_id("findFlightsSubmit").send_keys(Keys.ENTER)
 	    
     except:
+        display.stop
     	driver.quit()
     	return searchkey
 	#driver.delete_all_cookies()
@@ -452,10 +453,10 @@ def delta(orgn,dest,searchdate,searchkey):
                 fare3 = fare2
                 fare2 = 0
                 cabintype3 = cabintype2
-		firsttax = businesstax
+                firsttax = businesstax
                 cabintype2 =''
 
-        print "last line"
+        print "first tax",firsttax
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,searchid,time,stp,lyover,sourcestn,destinationstn,test1,arivalformat1,duration,str(fare1),str(economytax),str(fare2),str(businesstax),str(fare3),str(firsttax),cabintype1.strip(),cabintype2.strip(),cabintype3,"delta"))
         transaction.commit()
         print "data inserted"
