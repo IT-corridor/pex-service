@@ -15,9 +15,10 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.context_processors import csrf
 from django.views.decorators.csrf import requires_csrf_token
-from pexproject.models import Flightdata,Airports,Searchkey
+from pexproject.models import Flightdata,Airports,Searchkey,User
 from pexproject.templatetags.customfilter import floatadd,assign
 from subprocess import call
+from django.conf import settings
 #import MySQLdb
 
 from datetime import timedelta
@@ -39,10 +40,43 @@ def index(request):
 
 def flights(request):
     return  render_to_response('flightsearch/flights.html', context_instance=RequestContext(request))
-
+    
+def signup(request):
+    context = {}
+    if request.method == "POST" and request.session['user']=='':
+        email = request.REQUEST['username']
+        isactive = 0
+        password = request.REQUEST['password']
+        password1 = md5(password)
+        print password1
+        if 'active' in request.POST:
+            isactive = 1 #request.REQUEST['active']
+        object = User(email=email,password=password1,is_active=isactive)
+        object.save()
+        
+    return  render_to_response('flightsearch/register.html', context_instance=RequestContext(request))
 def login(request):
-    form = LoginForm
-    return render_to_response('flightsearch/login.html',{'LoginForm': form})
+    context = {}
+    if request.method == "POST" and request.session['user']=='':
+        user = request.REQUEST['username']
+        password = request.REQUEST['password']
+        print user,password
+        if user == settings.USERNAME and password == settings.PASSWORD :
+            request.session['user'] = user
+            request.session['password'] = password
+            print request.session['user']
+            print request.session['password']
+            return render_to_response('flightsearch/index.html')
+        else:
+            msg="Invalid username or password"
+            return render_to_response('flightsearch/login.html',{'msg':msg},context_instance=RequestContext(request))
+    else:
+        return render_to_response('flightsearch/login.html',context_instance=RequestContext(request))
+
+def logout(request):
+    request.session['user'] = ''
+    request.session['password'] = ''
+    return render_to_response('flightsearch/index.html')
 
 def search(request):
     context = {}
@@ -137,10 +171,6 @@ def search(request):
         context = {}
         cursor = connection.cursor()
         returndate = request.REQUEST['returndate']
-        if request.REQUEST['rndtripkey']:
-            roundtrip = 1
-        else:
-            roundtrip = 0
         dt1 =''
         searchdate1 = ''
         if returndate:
@@ -149,11 +179,18 @@ def search(request):
             searchdate1 = dt1.strftime('%Y-%m-%d')
         triptype =  request.REQUEST['triptype']
         
-        orgn = request.REQUEST['fromMain'] 
-        dest = request.REQUEST['toMain'] 
-        orgncode = orgn.partition('(')[-1].rpartition(')')[0]
-        destcode = dest.partition('(')[-1].rpartition(')')[0]
-        #print orgncode,destcode
+        orgnid = request.REQUEST['fromMain'] 
+        destid = request.REQUEST['toMain']
+        originobj = Airports.objects.filter(airport_id=orgnid)
+        destobj = Airports.objects.filter(airport_id=destid)
+        for row in originobj:
+            orgn = row.cityName+", "+row.cityCode+", "+row.countryCode +"  ("+row.code+")"
+            orgncode = row.code
+            origin = row.cityName+" ("+row.code+")"
+        for row1 in destobj:
+            dest = row1.cityName+", "+row1.cityCode+", "+row1.countryCode +"  ("+row1.code+")"
+            destcode = row1.code
+            destination1 = row1.cityName+" ("+row1.code+")"
         depart = request.REQUEST['deptdate']
         dt = datetime.datetime.strptime(depart, '%Y/%m/%d')
         date = dt.strftime('%m/%d/%Y')
@@ -167,28 +204,32 @@ def search(request):
         Searchkey.objects.filter(scrapetime__lte=time1).delete()
         Flightdata.objects.filter(scrapetime__lte=time1).delete()
         if searchdate1:
-            obj = Searchkey.objects.filter(source=orgn,destination=dest,traveldate=searchdate,scrapetime__gte=time1)
-            returnobj = Searchkey.objects.filter(source=dest,destination=orgn,traveldate=searchdate1,scrapetime__gte=time1)
+            print destination1,origin
+            obj = Searchkey.objects.filter(source=origin,destination=destination1,traveldate=searchdate,scrapetime__gte=time1)
+            returnobj = Searchkey.objects.filter(source=destination1,destination=origin,traveldate=searchdate1,scrapetime__gte=time1)
             if len(returnobj) > 0:
                 for retkey in returnobj:
                      returnkey = retkey.searchid
             else:
-                searchdata = Searchkey(source=dest,destination=orgn,traveldate=dt1,scrapetime=time,isreturnkey=0)
+                print destination1,origin
+                searchdata = Searchkey(source=destination1,destination=origin,traveldate=dt1,scrapetime=time,origin_airport_id=orgnid,destination_airport_id=destid)
                 searchdata.save()
                 returnkey = searchdata.searchid
                 retdeltares = customfunction.delta(destcode,orgncode,date1,returnkey)
                 retrecordkey = customfunction.united(dest,orgn,returndate,returnkey)
                 
         else:
-            obj = Searchkey.objects.filter(source=orgn,destination=dest,traveldate=searchdate,scrapetime__gte=time1)
+            print destination1,origin
+            obj = Searchkey.objects.filter(source=origin,destination=destination1,traveldate=searchdate,scrapetime__gte=time1)
         if len(obj) > 0:
             for keyid in obj:
                 searchkeyid = keyid.searchid
         else:
             if dt1:
-                searchdata = Searchkey(source=orgn,destination=dest,traveldate=dt,returndate=dt1,scrapetime=time) 
+                print destination1,origin
+                searchdata = Searchkey(source=origin,destination=destination1,traveldate=dt,returndate=dt1,scrapetime=time,origin_airport_id=orgnid,destination_airport_id=destid) 
             else:
-                searchdata = Searchkey(source=orgn,destination=dest,traveldate=dt,scrapetime=time,isreturnkey=roundtrip)
+                searchdata = Searchkey(source=origin,destination=destination1,traveldate=dt,scrapetime=time,origin_airport_id=orgnid,destination_airport_id=destid)
             searchdata.save()
             searchkeyid = searchdata.searchid 
             cursor = connection.cursor()
@@ -196,12 +237,12 @@ def search(request):
             recordkey = customfunction.united(orgn,dest,depart,searchkeyid)
             returnkey = ''
             if returndate:
-                retunobj = Searchkey.objects.filter(source=dest,destination=orgn,traveldate=searchdate1,scrapetime__gte=time1)
+                retunobj = Searchkey.objects.filter(source=destination1,destination=origin,traveldate=searchdate1,scrapetime__gte=time1)
                 if len(retunobj) > 0:
                     for keyid in retunobj:
                         returnkey = keyid.searchid
                 else:
-                    searchdata = Searchkey(source=dest,destination=orgn,traveldate=dt1,scrapetime=time,isreturnkey=0)
+                    searchdata = Searchkey(source=destination1,destination=origin,traveldate=dt1,scrapetime=time,origin_airport_id=orgnid,destination_airport_id=destid)
                     searchdata.save()
                     returnkey = searchdata.searchid
                     retdeltares = customfunction.delta(orgncode,destcode,date,returnkey)
@@ -228,7 +269,7 @@ def get_airport(request):
         	    airport_json = {}
 	            airport_json['id'] = airportdata.airport_id
         	    airport_json['label'] = airportdata.cityName+", "+airportdata.cityCode+", "+airportdata.countryCode +"  ("+airportdata.code+" )"
-	            airport_json['value'] = airportdata.cityName+", "+airportdata.cityCode+", "+airportdata.countryCode +"  ("+airportdata.code+" )"
+	            airport_json['value'] = airportdata.cityName+" ("+airportdata.code+")"
         	    results.append(airport_json)
         data = json.dumps(results)
     else:
@@ -269,7 +310,6 @@ def searchLoading(request):
         return render_to_response('flightsearch/index.html')
     
 def getsearchresult(request):
-    
     context = {}
     cabin =[]
     cabinclass = request.GET.get('cabin', '')
