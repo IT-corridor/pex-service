@@ -170,6 +170,9 @@ h1 {
 .nomt {
 	margin-top: 0 !important;
 }
+.nomb {
+	margin-bottom: 0 !important;
+}
 .noml {
 	margin-left: 0 !important;
 }
@@ -332,6 +335,7 @@ h1 {
 	color: #39A8E0;
 }
 .navbar-default .navbar-nav > li > a {
+	padding: 27px 15px;
 	color: #39A8E0;
 }
 .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
@@ -810,11 +814,11 @@ p.flight-name {
 }
 .custome-brand {
 	height: 60px !important;
-	padding: 0px 15px !important;
+	padding: 0px 0px !important;
 }
 .custome-brand img {
-	height: 60px !important;
-	padding: 0px 15px;
+	height: 90px !important;
+	padding: 0px 0px;
 }
 .custome-brand .img-responsive {
 	background: #fff;
@@ -881,6 +885,48 @@ p.flight-name {
 }
 .not-avail-pt {
 	padding-top: 26px;
+}
+.navbar-nav.right-nav-link li a {
+	padding:0px 8px;
+	color: #181818;
+	text-transform: uppercase;
+}
+.navbar-nav.right-nav-link li a:after {
+	content:'|';
+	position: absolute;
+    left: 100%;
+    font-size: 16px;
+    font-weight: 100;
+    top: -2px;
+}
+.navbar-nav.right-nav-link li a.help:last-child:after {
+	content:none;
+}
+.navbar-nav.right-nav-link li a:hover {
+	background: transparent;
+}
+.login-section {
+	border-left: 1px solid #aaa;
+}
+.signup-logn-tabs {
+	margin-bottom: 20px;
+}
+.signup-logn-tabs li a{
+	text-transform: uppercase;
+}
+.signup-logn-tabs li {
+	width: 50%;
+}
+.social-login{
+	padding: 8px 15px;
+	color: #fff;
+	display:inline-block;
+}
+.facebook {
+	background: #4c68a1;
+}
+.google {
+	background: #dd5044;
 }
 
 @media (max-width: 1024px) {

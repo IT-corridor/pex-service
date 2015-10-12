@@ -1,7 +1,7 @@
 		{% load staticfiles %}
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>New Web Project</title>
-		<footer class="container-footer">
+		<footer class="col-xs-12 nopadding container-footer">
         <div class="container footer-custome">
               <nav class="navbar navbar-footer">
                 <div class="col-xs-12 nopadding">
@@ -47,6 +47,87 @@
                 </div>
           </div>
         </footer> 
+      	<!-- Modal -->
+<div class="modal fade" id="login-modal" tabindex="-1" role="dialog"
+	aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				<!-- <button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button> -->
+				<div class="row">
+					<div class="col-sm-6 col-sm-push-6 col-xs-12 login-section">
+						<!-- Nav tabs -->
+						<ul class="nav nav-tabs signup-logn-tabs" role="tablist">
+							<li role="presentation" class="active"><a href="#signup"
+								aria-controls="signup" role="tab" data-toggle="tab">Sign up</a></li>
+							<li role="presentation"><a href="#login" aria-controls="login"
+								role="tab" data-toggle="tab">Login</a></li>
+						</ul>
+
+						<!-- Tab panes -->
+						<div class="tab-content">
+							<div role="tabpanel" class="tab-pane active" id="signup">
+								<form action="" method="post">
+									<div class="form-group">
+										<input type="email" class="form-control" placeholder="Email" name="username" >
+									</div>
+									<div class="form-group">
+										<input type="password" class="form-control" placeholder="Password" name="password">
+									</div>
+									<div class="form-group">
+										<input type="text" class="form-control" placeholder="Home Airport" name="home_airport" >
+									</div>
+									<div class="checkbox">
+										<label><input type="checkbox" name="pexdeals"> Email me PEX+ amazing deals</label>
+									</div>
+									<div class="form-group text-center">
+										<button type="submit" class="btn btn-info">Sign up</button>
+									</div>
+									<hr>
+									<div class="form-group text-center">
+										<h5>or login with</h5>
+										<span class="social-login facebook">Facebook</span> <span class="social-login google">Google+</span>
+									</div>									
+								</form>
+							</div>
+							<div role="tabpanel" class="tab-pane" id="login">
+								<form action="" method="post">
+									<div class="form-group">
+										<input type="email" class="form-control" placeholder="Email" >
+									</div>
+									<div class="form-group">
+										<input type="password" class="form-control" placeholder="Password" >
+									</div>
+									<div class="form-group">
+										<a href="#">Forgot Password?</a>
+									</div>
+									<div class="form-group text-center">
+										<button type="submit" class="btn btn-info">Log in</button>
+									</div>
+									<hr>
+									<div class="form-group text-center">
+										<h4>or login with</h4>
+										<span class="social-login facebook">Facebook</span> <span class="social-login google">Google+</span>
+									</div>									
+								</form>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-6 col-sm-pull-6 col-xs-12"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	$(function(){
+		$('#login').tab('show')
+	});
+</script>
 	</body>
 </html>
 

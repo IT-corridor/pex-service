@@ -8,7 +8,7 @@
 		{% load staticfiles %}
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title></title>
+        <title> </title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="apple-touch-icon" href="{% static 'flightsearch' %}/apple-touch-icon.png">
@@ -46,7 +46,7 @@
               <span class="icon-bar"></span> 
             </button>
 
-            <a class="navbar-brand brandmedia custome-brand" href="index"><img src="{% static 'flightsearch/img/logoMain.jpg' %}" alt="" class="hidden-xs hidden-sm hidden-md img-responsive"><img src="{% static 'flightsearch/img/logo.jpg' %}" alt="" class="hidden-lg hidden-xs img-responsive"> <img src="{% static 'flightsearch/img/logo.jpg' %}" alt="" class="hidden-lg hidden-md hidden-sm img-responsive"></a>
+            <a class="navbar-brand brandmedia custome-brand" href="index"><img src="{% static 'flightsearch/img/logoMain.png' %}" alt="" class="hidden-xs hidden-sm hidden-md img-responsive"><img src="{% static 'flightsearch/img/logo.jpg' %}" alt="" class="hidden-lg hidden-xs img-responsive"> <img src="{% static 'flightsearch/img/logo.jpg' %}" alt="" class="hidden-lg hidden-md hidden-sm img-responsive"></a>
           </div>
 
           <div class="collapse navbar-collapse" id="pexMainNavbar">
@@ -59,12 +59,17 @@
               <li class=""><a href="#">Cruises</a></li> 
               <li class=""><a href="#">Restaurants</a></li>
 			-->
-            </ul>   
-            <ul class="nav navbar-nav navbar-right responsive-edit mvt10px">
-              <li class=""><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-              <li class=""><a href="login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-              <li class=""><a href="#"><span class="glyphicon glyphicon-info-sign"></span> Help</a></li>
-            </ul>
+            </ul> 
+            <ul class="nav navbar-nav navbar-right right-nav-link responsive-edit mvt10px">
+            	{% if request.session.user %}
+              	<li class=""><a href="#"><span class="glyphicon glyphicon-user">{{request.session.user}}</span></a></li>
+            		<li class=""><a href="logout"><span>Logout</span></a></li>
+              	{%else%}
+              	<li class=""><a href="#" data-toggle="modal" data-target="#login-modal"><!-- <span class="glyphicon glyphicon-user"></span> --> Sign Up</a></li>
+              	<li class=""><a href="login.php" data-toggle="modal" data-target="#login-modal"><!-- <span class="glyphicon glyphicon-log-in"></span> --> Login</a></li>
+              	{%endif%}
+              	<li class=""><a href="#" class="help"><!-- <span class="glyphicon glyphicon-info-sign"></span> --> Help</a></li>
+            </ul>  
             <div class="col-xs-12 text-left for-mobile-view">
                     <ul class="nav navbar-nav navbar-footerimg social-icon">
                      <li class=""><a href="http://www.twitter.com/PEXPlus"><img src="{% static 'flightsearch/img/twtr.png' %}"></a></li>
