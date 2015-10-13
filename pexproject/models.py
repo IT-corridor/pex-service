@@ -46,10 +46,11 @@ class Searchkey(models.Model):
     scrapetime = models.DateTimeField(max_length=50)
     origin_airport_id = models.IntegerField ()
     destination_airport_id = models.IntegerField ()
-'''
+
 class User(models.Model):
     user_id = models.AutoField(primary_key=True)
     email = models.EmailField()
     password = models.CharField(max_length=100)
-    is_active = models.BooleanField(default=True)
-'''
+    home_airport = models.CharField(max_length=100)
+    
+    #def save(self,):

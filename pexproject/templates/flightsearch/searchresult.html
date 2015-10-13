@@ -983,9 +983,17 @@
 			-->
 			{% include "flightsearch/footer.html" %}
 			<script src="{% static 'flightsearch/js/vendor/bootstrap.min.js' %}"></script>
-			
 			<script>
-			
+				$(document).ready(function(){
+					if($('.chk:checked').length == $('.chk').length){
+						$("#checkallcabin").prop('checked', true);
+					}
+					else{
+						$("#checkallcabin").prop('checked', false);	
+					}
+				});
+			</script>
+			<script>
 			//@@@ SELECT ALL CABIN@@@@@@@@@ 
 			$(document).ready(function() {	
 			$("#checkallcabin").on("click", function() {
@@ -1208,7 +1216,7 @@
 				slideTime();
 				slideTime1();
 				
-			$(function() {
+	$(function() {
     
     $( "#from" ).autocomplete({
     	open: function(event, ui) {
@@ -1217,6 +1225,9 @@
     	autoFocus: true,
     	source: "get_airport/",
     	minLength: 2,
+    	select: function(event, ui) {
+    		$('#fromid').val(ui.item.id);
+    	},
     });
     $( "#to" ).autocomplete({
     	open: function(event, ui) {
@@ -1225,6 +1236,9 @@
     	autoFocus: true,
     	source: "get_airport/",
     	minLength: 2,
+    	select: function(event, ui) {
+    		$('#toid').val(ui.item.id);
+    	},
     });
   });
 			</script>

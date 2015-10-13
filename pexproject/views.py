@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os,sys
+import hashlib
 from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
@@ -26,16 +27,13 @@ import time
 from datetime import date
 from django.db import connection,transaction
 import operator
-
 import customfunction
-
 from pexproject.form import LoginForm
 from django.utils import timezone
 import logging
 logger = logging.getLogger(__name__)
 
 def index(request):
-    
     return  render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
 
 def flights(request):
@@ -43,30 +41,33 @@ def flights(request):
     
 def signup(request):
     context = {}
-    if request.method == "POST" and request.session['user']=='':
+    if request.method == "POST":
         email = request.REQUEST['username']
-        isactive = 0
+        user = User.objects.filter(email=email)
+        if len(user) > 0:
+            msg = "Email is already registered"
+            return render_to_response('flightsearch/index.html',{'msg':msg,'action':"signup"},context_instance=RequestContext(request))
         password = request.REQUEST['password']
-        password1 = md5(password)
-        print password1
-        if 'active' in request.POST:
-            isactive = 1 #request.REQUEST['active']
-        object = User(email=email,password=password1,is_active=isactive)
+        password1 = hashlib.md5(password).hexdigest()
+        airport = request.REQUEST['home_airport']
+        object = User(email=email,password=password1,home_airport=airport)
         object.save()
-        
+        if object.user_id:
+            return render_to_response('flightsearch/index.html', context_instance=RequestContext(request))   
     return  render_to_response('flightsearch/register.html', context_instance=RequestContext(request))
 def login(request):
     context = {}
-    if request.method == "POST" and request.session['user']=='':
-        user = request.REQUEST['username']
+    if request.method == "POST":  #and not request.session.get('username', None)
+        username = request.REQUEST['username']
         password = request.REQUEST['password']
-        print user,password
-        if user == settings.USERNAME and password == settings.PASSWORD :
-            request.session['user'] = user
-            request.session['password'] = password
-            print request.session['user']
+        password1 = hashlib.md5(password).hexdigest()
+        user = User.objects.filter(email=username,password=password1)
+        if len(user) > 0:
+            request.session['username'] = username
+            request.session['password'] = password1
+            print request.session['username']
             print request.session['password']
-            return render_to_response('flightsearch/index.html')
+            return render_to_response('flightsearch/index.html',context_instance=RequestContext(request))
         else:
             msg="Invalid username or password"
             return render_to_response('flightsearch/login.html',{'msg':msg},context_instance=RequestContext(request))

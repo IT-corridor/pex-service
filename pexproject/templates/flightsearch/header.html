@@ -61,12 +61,12 @@
 			-->
             </ul> 
             <ul class="nav navbar-nav navbar-right right-nav-link responsive-edit mvt10px">
-            	{% if request.session.user %}
-              	<li class=""><a href="#"><span class="glyphicon glyphicon-user">{{request.session.user}}</span></a></li>
+            	{% if request.session.username and request.session.password  %}
+              	<li class=""><a href="#"><span class="glyphicon glyphicon-user">{{request.session.username}}</span></a></li>
             		<li class=""><a href="logout"><span>Logout</span></a></li>
               	{%else%}
-              	<li class=""><a href="#" data-toggle="modal" data-target="#login-modal"><!-- <span class="glyphicon glyphicon-user"></span> --> Sign Up</a></li>
-              	<li class=""><a href="login.php" data-toggle="modal" data-target="#login-modal"><!-- <span class="glyphicon glyphicon-log-in"></span> --> Login</a></li>
+              	<li class="" id="signupbtn" ><a href="#" data-toggle="modal" data-target="#login-modal" ><!-- <span class="glyphicon glyphicon-user"></span> --> Sign Up</a></li>
+              	<li class="" id="loginbtn"><a href="#" data-toggle="modal" data-target="#login-modal"><!-- <span class="glyphicon glyphicon-log-in"></span> --> Login</a></li>
               	{%endif%}
               	<li class=""><a href="#" class="help"><!-- <span class="glyphicon glyphicon-info-sign"></span> --> Help</a></li>
             </ul>  
