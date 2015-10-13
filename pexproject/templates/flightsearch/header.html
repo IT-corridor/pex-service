@@ -65,10 +65,10 @@
               	<li class=""><a href="#"><span class="glyphicon glyphicon-user">{{request.session.username}}</span></a></li>
             		<li class=""><a href="logout"><span>Logout</span></a></li>
               	{%else%}
-              	<li class="" id="signupbtn" ><a href="#" data-toggle="modal" data-target="#login-modal" ><!-- <span class="glyphicon glyphicon-user"></span> --> Sign Up</a></li>
-              	<li class="" id="loginbtn"><a href="#" data-toggle="modal" data-target="#login-modal"><!-- <span class="glyphicon glyphicon-log-in"></span> --> Login</a></li>
+              	<li class="" id="signupbtn" ><a href="#" data-toggle="modal" data-target="#login-modal" ><span class="glyphicon glyphicon-user hidden"></span> Sign Up</a></li>
+              	<li class="" id="loginbtn"><a href="#" data-toggle="modal" data-target="#login-modal"><span class="glyphicon glyphicon-log-in hidden"></span> Login</a></li>
               	{%endif%}
-              	<li class=""><a href="#" class="help"><!-- <span class="glyphicon glyphicon-info-sign"></span> --> Help</a></li>
+              	<li class=""><a href="#" class="help"><span class="glyphicon glyphicon-info-sign hidden"></span> Help</a></li>
             </ul>  
             <div class="col-xs-12 text-left for-mobile-view">
                     <ul class="nav navbar-nav navbar-footerimg social-icon">

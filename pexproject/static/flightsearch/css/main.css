@@ -45,6 +45,7 @@ html, body {
 	}
 	.for-mobile-view {
 		display: block !important;
+		padding: 0;
 	}
 	.for-desktop-view {
 		display: none;
@@ -562,11 +563,11 @@ footer .navbar-footer .navbar-toggle .icon-bar {
 	margin: 0px;
 }
 .flight-rate {
-	/*background: #39A8E0;*/
-	color: #39A8E0 !important;
-	font-weight: 600 !important;
+	background: #39A8E0;
+	color: #fff !important;
+	font-weight: 400 !important;
 	display: inline-block;
-	padding: 0px 10px;
+	padding: 5px 10px;
 	margin-top: 5px;
 }
 .arrivel {
@@ -614,7 +615,7 @@ footer .navbar-footer .navbar-toggle .icon-bar {
 	color: #333;
 	font-weight: 300;
 	font-size: 15px;
-	text-align: right;
+	!text-align: right;
 	margin-bottom: 11px;
 	margin-top: -4px;
 }
@@ -675,8 +676,8 @@ footer .navbar-footer .navbar-toggle .icon-bar {
 .econo {
 	display: inline-block !important;
 	color: #333 !important;
-	font-weight: 300 !important;
-	font-size: 14px !important;
+	font-weight: 400 !important;
+	font-size: 17px !important;
 	text-align: center !important;/*float:right;
 	 padding: 0px 40px 0px;*/
 }
@@ -954,17 +955,42 @@ button.close{
     line-height: 0.7;
     position: absolute;
     left: 97%;
-    bottom: 96%;
-    background-color: #069AC5;
+    bottom: 97%;
+    background: #797979;
     opacity: 1;
     color: #fff;
     border-radius: 50%;
+opacity: 0.9;
+}
+button.close:hover,button.close:active:focus{
+	background: #069AC5;
+	opacity:1;
+	color: #fff;
+}
+.navbar-toggle {
+	border: 0;
+}
+.show-details {
+	color: #39A8E0;
+	font-size: 16px;
 }
 
 @media (max-width: 1024px) {
 	.navbar-default .navbar-brand {
 		color: #39A8E0;
 		padding-top: 2px;
+	}
+	.arrow-size{
+		font-size: 25px;
+	}
+	.custome-brand img {
+    		height: auto !important;
+	}
+	.mainNav {
+		min-height:50px;
+	}
+	.navbar-default .navbar-nav > li > a {
+		padding: 10px 15px;
 	}
 }
 @media (min-width: 768px) and (max-width: 1024px) {
@@ -1074,6 +1100,24 @@ button.close{
 	}
 }
 @media (max-width: 767px) {
+	.navbar-nav.mainNav li {
+		background: #E9F2FA;
+	}
+	.navbar-nav.right-nav-link {
+		margin-top: 0;
+		margin-bottom: 0;
+	}
+	.navbar-nav.right-nav-link li a span {
+		display: inline-block !important;
+		visibility: visible!important;
+		color: #39A8E0;
+	}
+	.navbar-nav.right-nav-link li a {
+		color: #39A8E0;
+	}
+	.navbar-nav.right-nav-link li a:after {
+		content: '';
+	}
 	.date-wd {
 		width: inherit;
 	}
@@ -1101,5 +1145,12 @@ button.close{
 	.filters-holder-ht {
 		max-height: 40px;
 		overflow: hidden;
+	}
+	button.close {
+		left: 94%;
+	}
+	.navbar-nav.social-icon {
+		margin-top: 0;
+		margin-bottom: 0;
 	}
 }
