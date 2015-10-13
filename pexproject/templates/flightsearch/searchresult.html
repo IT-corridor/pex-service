@@ -111,6 +111,7 @@
 									</div>
 									</div>
 									</div>
+									<!--
 									<div class="col-md-12 col-xs-12 nopadding form-side">
 										<p>
 											CABIN
@@ -139,6 +140,7 @@
 
 									</div>
 									</div>
+									-->
 									<input type="hidden" name="search" value="search">
 									<div class="col-md-12 col-xs-12 nopadding">
 										<input type="submit" value="FILTER" class="btn  btn-pexSearch filter-serch-btn">
@@ -155,7 +157,8 @@
 										{% csrf_token %}
 									  <div class="form-group date-wd">
 									    <label class="sr-only" for="exampleInputEmail3">Source</label>
-									    <input type="text" id="from" class="form-control" value="{{searchrow.source}}" name="fromMain">
+									    <input type="text" id="from" class="form-control" value="{{searchrow.source}}">
+									  	<input type="hidden" id="fromid" value="{{searchrow.origin_airport_id}}" name="fromMain">
 									  </div>
 									   <div class="form-group">
 									    <h4 class="for-desktop-view arrow-size">&#8594;</h4>
@@ -163,7 +166,8 @@
 									  </div>
 									  <div class="form-group date-wd">
 									    <label class="sr-only" for="exampleInputPassword3">Destination</label>
-									    <input type="text" id="to" class="form-control" value="{{searchrow.destination}}" name="toMain">
+									    <input type="text" id="to" class="form-control" value="{{searchrow.destination}}">
+									  	<input type="hidden" id="toid" value="{{searchrow.destination_airport_id}}" name="toMain">
 									  </div>
 									  <div class="form-group date-wd">
 										 <label class="sr-only" for="exampleInputPassword3">Departure</label>
@@ -429,6 +433,7 @@
 														</div>
 														{% if action == 'depart' %}
 														<div>
+															<!--
 														<form action="getsearchresult" method="get">
 															{% csrf_token %}
 															<input type="hidden" name="cabin"  value="{{request.GET.cabin}}">
@@ -439,7 +444,7 @@
 															<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
 															<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
 															<button type="submit" class="btn btn-pexSearch" value="{{searchrow.searchid}}" name="return" id="return">SELECT</button>
-														</form>
+														</form> -->
 														</div>
 														{% else %}
 														<div>
@@ -641,7 +646,8 @@
 													</div>
 											{% if action == 'depart' %}
 													<div>
-													<form action="getsearchresult" method="get">
+														
+													<!-- <form action="getsearchresult" method="get">
 														{% csrf_token %}
 														<input type="hidden" name="price"  value="{{row.business}}">
 														<input type="hidden" name="rowid"  value="{{row.rowid}}">
@@ -651,7 +657,7 @@
 														<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
 														<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
 														<button type="submit" class="btn btn-pexSearch" value="{{searchrow.searchid}}" name="return" >SELECT</button>
-													</form>
+													</form> -->
 													</div>
 													{% endif %}
 											{% elif row.cabintype2 != '' and filterkey.cabin.0 == "cabintype2" %}
@@ -669,6 +675,7 @@
 													</div>
 													{% if action == 'depart' %}
 													<div>
+														<!--
 													<form action="getsearchresult" method="get">
 														{% csrf_token %}
 														<input type="hidden" name="price"  value="{{row.firstclass}}">
@@ -679,7 +686,7 @@
 														<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
 														<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
 														<button type="submit" class="btn btn-pexSearch" value="{{searchrow.searchid}}" name="return" >SELECT</button>
-													</form>
+													</form> -->
 													</div>
 													{% endif %}
 											{% else %}
@@ -698,6 +705,7 @@
 														</div>
 														{% if action == 'depart' %}
 														<div>
+															<!--
 														<form action="getsearchresult" method="get">
 															{% csrf_token %}
 															<input type="hidden" name="price"  value="{{row.maincabin}}">
@@ -708,7 +716,7 @@
 															<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
 															<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
 															<button type="submit" class="btn btn-pexSearch" value="{{searchrow.searchid}}" name="return" >SELECT</button>
-														</form>
+														</form> -->
 														</div>
 														{% endif %}
 													{% elif row.cabintype2 != ''%}
@@ -725,6 +733,7 @@
 															</div>
 															{% if action == 'depart' %}
 															<div>
+																<!--
 															<form action="getsearchresult" method="get">
 																{% csrf_token %}
 																<input type="hidden" name="price"  value="{{row.firstclass}}">
@@ -735,7 +744,7 @@
 																<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
 																<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
 																<button type="submit" class="btn btn-pexSearch" value="{{searchrow.searchid}}" name="return" >SELECT</button>
-															</form>
+															</form> -->
 															</div>
 															{% else %}
 															<div>
@@ -756,6 +765,7 @@
 													</div>
 											{% if action == 'depart' %}
 													<div>
+														<!--
 													<form action="getsearchresult" method="get">
 														{% csrf_token %}
 														<input type="hidden" name="price"  value="{{row.business}}">
@@ -766,7 +776,7 @@
 														<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
 														<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
 														<button type="submit" class="btn btn-pexSearch" value="{{searchrow.searchid}}" name="return" >SELECT</button>
-													</form>
+													</form> -->
 													</div>
 													{% else %}
 													<div>

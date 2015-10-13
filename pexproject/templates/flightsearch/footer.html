@@ -78,10 +78,10 @@
 								<form action="signup" method="post">
 									{% csrf_token %}
 									<div class="form-group">
-										<input type="email" class="form-control" placeholder="Email" name="username" >
+										<input type="email" class="form-control" placeholder="Email" name="username" required >
 									</div>
 									<div class="form-group">
-										<input type="password" class="form-control" placeholder="Password" name="password">
+										<input type="password" class="form-control" placeholder="Password" name="password" required>
 									</div>
 									<div class="form-group">
 										<input type="text" class="form-control" placeholder="Home Airport" name="home_airport" >
@@ -94,7 +94,7 @@
 									</div>
 									<hr>
 									<div class="form-group text-center">
-										<h5>or login with</h5>
+										<h5>Or Login with</h5>
 										<span class="social-login facebook">Facebook</span> <span class="social-login google">Google+</span>
 									</div>									
 								</form>
@@ -103,10 +103,10 @@
 								<form action="login" method="post">
 									{% csrf_token %}
 									<div class="form-group">
-										<input type="email" class="form-control" placeholder="Email" name="username">
+										<input type="email" class="form-control" placeholder="Email" name="username" required>
 									</div>
 									<div class="form-group">
-										<input type="password" class="form-control" placeholder="Password" name="password">
+										<input type="password" class="form-control" placeholder="Password" name="password" required>
 									</div>
 									<div class="form-group">
 										<a href="#">Forgot Password?</a>
@@ -116,7 +116,7 @@
 									</div>
 									<hr>
 									<div class="form-group text-center">
-										<h4>or login with</h4>
+										<h5>Or Login with</h5>
 										<span class="social-login facebook">Facebook</span> <span class="social-login google">Google+</span>
 									</div>									
 								</form>

@@ -3,6 +3,7 @@ import os,sys
 import hashlib
 from django.shortcuts import render
 from django.shortcuts import render_to_response
+from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext, loader
 import json
@@ -20,7 +21,6 @@ from pexproject.models import Flightdata,Airports,Searchkey,User
 from pexproject.templatetags.customfilter import floatadd,assign
 from subprocess import call
 from django.conf import settings
-#import MySQLdb
 
 from datetime import timedelta
 import time
@@ -46,14 +46,14 @@ def signup(request):
         user = User.objects.filter(email=email)
         if len(user) > 0:
             msg = "Email is already registered"
-            return render_to_response('flightsearch/index.html',{'msg':msg,'action':"signup"},context_instance=RequestContext(request))
+            return HttpResponseRedirect(reverse('index'),{'msg':msg,'action':"signup"})
         password = request.REQUEST['password']
         password1 = hashlib.md5(password).hexdigest()
         airport = request.REQUEST['home_airport']
         object = User(email=email,password=password1,home_airport=airport)
         object.save()
         if object.user_id:
-            return render_to_response('flightsearch/index.html', context_instance=RequestContext(request))   
+            return HttpResponseRedirect(reverse('index'), context_instance=RequestContext(request))   
     return  render_to_response('flightsearch/register.html', context_instance=RequestContext(request))
 def login(request):
     context = {}
@@ -67,17 +67,19 @@ def login(request):
             request.session['password'] = password1
             print request.session['username']
             print request.session['password']
-            return render_to_response('flightsearch/index.html',context_instance=RequestContext(request))
+            return HttpResponseRedirect(reverse('index'))
         else:
             msg="Invalid username or password"
-            return render_to_response('flightsearch/login.html',{'msg':msg},context_instance=RequestContext(request))
+            return render_to_response('flightsearch/index.html',{'msg':msg},context_instance=RequestContext(request))
     else:
-        return render_to_response('flightsearch/login.html',context_instance=RequestContext(request))
+        return HttpResponseRedirect(reverse('index'))
 
 def logout(request):
+    context = {}
     request.session['user'] = ''
     request.session['password'] = ''
-    return render_to_response('flightsearch/index.html')
+    return HttpResponseRedirect(reverse('index'))
+    #return render_to_response('flightsearch/index.html',context_instance=RequestContext(request))
 
 def search(request):
     context = {}

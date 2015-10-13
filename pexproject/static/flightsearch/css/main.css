@@ -905,7 +905,7 @@ p.flight-name {
 .navbar-nav.right-nav-link li a {
 	padding:0px 8px;
 	color: #181818;
-	text-transform: uppercase;
+	
 }
 .navbar-nav.right-nav-link li a:after {
 	content:'|';
