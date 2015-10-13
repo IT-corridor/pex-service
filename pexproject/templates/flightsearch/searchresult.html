@@ -10,16 +10,150 @@
 		{% load humanize %}
 		
 		<body>
-			<div class="">
+<style>
+	.add {
+    margin-left: -5px;}
+</style>
+			<div class="col-xs-12 nopadding">
 				<div class="jumbotron">
 					<div class="container-fluid xs-nopadding">
-							{% if search %}
+						<div class="col-md-12 col-xs-12">
+							<div class="col-md-2 col-xs-12 nopadding filters-holder">
+								<div class="col-xs-12 nopadding visible-xs filter-collapse form-side">
+									<p class="pull-left">Filters</p>
+									<p class="pull-right show-filter"><span class="glyphicon glyphicon-th-large"></span></p>
+								</div>
+								<form action="search" method="post">
+									{% csrf_token %}
+									{% if selectedrow %}
+									<input type="hidden" name="rowid" value="{{selectedrow.rowid}}" />
+									{% endif %}
+									{% if search %}
+										{% for searchrow in search %}
+									<input type="hidden" name="passenger" id="traveller" value="">	
+									<input type="hidden" name="action" value="{{action}}">
+									<input type="hidden" name="tax" id ="fltrtax" {% if request.GET.tax %} value="{{request.GET.tax}}" {%else%} value="{{tax}}"{% endif%}>
+									<input type="hidden" name="price" id ="fltrprice" {% if request.GET.price %} value="{{request.GET.price}}" {%else%} value="{{minprice}}"{% endif%}>	
+									<input type="hidden" name="searchkeyval" value="{{ searchrow.searchid }}" id="searchkey"/>
+									{% if returndata %}
+									<input type="hidden" name="returnkey"  value="{{returndata}}" id="returnkey"/>
+									{%endif%}
+									{%endfor %}
+									{% endif %}
+									<div class="col-md-12 col-xs-12 nopadding form-side">
+										<div class="priceRangeInfo">
+											DEPARTURE TIME
+
+											<div class="slider slider-blue mvt15px" data-postfix=" $" data-min="0" data-max="2000" data-min-val="400" data-max-val="1400" data-fill="#sample-field-2" id="depart"></div>
+											<span id="time"></span>
+											<input type="hidden" name="depaturemin" id="depaturemin" value=""/>
+											<input type="hidden" name="depaturemax" id="depaturemax" value=""/>
+										</div>
+										
+										<div class="priceRangeInfo mvt15px">
+											ARRIVAL TIME
+											<div class="slider slider-blue mvt15px" data-postfix=" $" data-min="0" data-max="2000" data-min-val="400" data-max-val="1400" data-fill="#sample-field-2" id="arive"></div>
+											<span id="arivaltime"></span>
+										</div>
+										<input type="hidden" name="arivalmin" id="arivalmin" value=""/>
+										<input type="hidden" name="arivalmax" id="arivalmax" value=""/>
+									</div>
+									<div class="col-md-12 col-xs-12 nopadding form-side">
+										<p>
+											NUMBER OF STOPS
+										</p>
+										<div class="col-md-10 col-xs-10 nopadding">
+										<div class="checkbox">
+											<label>
+												<input type='checkbox' id="selectallstop">
+												<span></span> SELECT ALL </label>
+										</div>
+										<div class="checkbox">
+											<label>
+												<input type='checkbox' class="chk-stoppage" name="stoppage" value="NONSTOP" {% for row in filterkey.stoppage %} {% if row == 'NONSTOP'%} checked="checked" {% endif %}{%endfor %}>
+												<span></span> NONSTOP </label>
+										</div>
+										<div class="checkbox">
+											<label>
+												<input type='checkbox' class="chk-stoppage" name="stoppage" value="1 STOP" {% for row in filterkey.stoppage %} {% if row == '1 STOP'%} checked="checked" {% endif %}{%endfor %}>
+												<span></span> 1 STOP </label>
+										</div>
+										<div class="checkbox">
+											<label>
+												<input type='checkbox' class="chk-stoppage" name="stoppage" value="2 STOPS" {% for row in filterkey.stoppage %} {% if row == '2 STOPS'%} checked="checked" {% endif %}{%endfor %}>
+												<span></span> 2+ STOPS </label>
+										</div>
+										</div>
+									</div>
+									<div class="col-md-12 col-xs-12 nopadding form-side">
+									<p>AIRLINES</p>
+									<div class="col-md-11 col-xs-11 nopadding">
+									<div class="checkbox">
+									<label>
+									<input type='checkbox' id='selectairline' />
+									<span></span>
+									SELECT ALL
+									</label>
+									</div>
+									<div class="checkbox">
+									<label>
+									<input type='checkbox' class="chk-airlines" name="airlines" value="delta" {% for row in filterkey.datasource %} {% if row == 'delta'%} checked="checked" {% endif %}{%endfor %}>
+									<span></span>
+									DELTA AIRLINES
+									</label>
+									</div>
+									<div class="checkbox" >
+									<label>
+									<input type='checkbox' class="chk-airlines" name="airlines" value="united" {% for row in filterkey.datasource %} {% if row == 'united'%} checked="checked" {% endif %}{%endfor %}>
+									<span></span>
+									UINTED AIRLINES
+									</label>
+									</div>
+									</div>
+									</div>
+									<div class="col-md-12 col-xs-12 nopadding form-side">
+										<p>
+											CABIN
+										</p>
+										<div class="col-md-10 col-xs-10 nopadding">
+										<div class="checkbox">
+											<label>
+												<input type='checkbox' id="checkallcabin" value="selectall">
+												<span></span>SELECT ALL</label>
+										</div>
+										<div class="checkbox">
+											<label>
+												<input type='checkbox' class="chk" name="cabin" value="cabintype1"  {% for row in filterkey.cabin %} {% if row == 'cabintype1'%} checked="checked" {% endif %} {%endfor %}>
+												<span></span> ECONOMY</label>
+										</div>
+										<div class="checkbox">
+											<label>
+												<input type='checkbox' class="chk" name="cabin" value="cabintype2" {% for row in filterkey.cabin %} {% if row == 'cabintype2'%} checked="checked" {% endif %}{%endfor %}>
+												<span></span> BUSINESS </label>
+										</div>
+										<div class="checkbox">
+											<label>
+												<input type='checkbox' class="chk" name="cabin" value="cabintype3" {% for row in filterkey.cabin %} {% if row == 'cabintype3'%} checked="checked" {% endif %}{%endfor %}>
+												<span></span> FIRST </label>
+										</div>
+
+									</div>
+									</div>
+									<input type="hidden" name="search" value="search">
+									<div class="col-md-12 col-xs-12 nopadding">
+										<input type="submit" value="FILTER" class="btn  btn-pexSearch filter-serch-btn">
+									</div>
+								</form>
+							</div>
+							<div class="col-md-8 col-xs-12 xs-nopadding">
+
+								{% if search %}
 							{% for searchrow in search %}
-							<div class="col-xs-12 mvb10px">
-								<div class="col-sm-11 col-sm-push-1 col-xs-12">
+							<div class="col-xs-12 mvb10px nopadding">
+								<div class="col-xs-12 nopadding">
 									<form class="form-inline" method="post" action="searchLoadingPage">
 										{% csrf_token %}
-									  <div class="form-group">
+									  <div class="form-group date-wd">
 									    <label class="sr-only" for="exampleInputEmail3">Source</label>
 									    <input type="text" id="from" class="form-control" value="{{searchrow.source}}" name="fromMain">
 									  </div>
@@ -27,7 +161,7 @@
 									    <h4 class="for-desktop-view arrow-size">&#8594;</h4>
 									    <h4 class="for-mobile-view text-center arrow-size">&#8595;</h4>
 									  </div>
-									  <div class="form-group">
+									  <div class="form-group date-wd">
 									    <label class="sr-only" for="exampleInputPassword3">Destination</label>
 									    <input type="text" id="to" class="form-control" value="{{searchrow.destination}}" name="toMain">
 									  </div>
@@ -77,9 +211,9 @@
                   			<p>
 							<span class="col-xs-4 nopadding">Adults</span>
 							<span class="col-xs-5 text-right nopadding">
-								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
-								<input type="text" class="field-width custom-field-control numberHolder qty" value="1" id="adults">								
 								<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
+								<input type="text" class="field-width custom-field-control numberHolder qty" value="1" id="adults">
+								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>								
 							</span>
 							<span class="col-xs-3 nopr">18+</span> 
 							</p>                 			
@@ -88,9 +222,10 @@
                   			<p>
 							<span class="col-xs-4 nopadding">Seniors</span>
 							<span class="col-xs-5 text-right nopadding">
-								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
-								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="senior">								
 								<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
+								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="senior">
+								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>								
+								
 							</span>
 							<span class="col-xs-3 nopr">65+</span> 
 							</p>                 			
@@ -99,9 +234,10 @@
                   			<p>
 							<span class="col-xs-4 nopadding">Youths</span>
 							<span class="col-xs-5 text-right nopadding">
-								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
-								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="youth">								
 								<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
+								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="youth">
+								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>								
+								
 							</span>
 							<span class="col-xs-3 nopr">12-17</span>  
 							</p>                			
@@ -110,9 +246,10 @@
                   			<p>
 							<span class="col-xs-4 nopadding">Children</span>
 							<span class="col-xs-5 text-right nopadding">
-								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
-								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="children">								
 								<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
+								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="children">								
+								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
+								
 							</span>
 							<span class="col-xs-3 nopr">2-11</span>
 							</p>                  			
@@ -121,9 +258,10 @@
                   			<p>
 							<span class="col-xs-4 nopadding">Seat infants</span>
 							<span class="col-xs-5 text-right nopadding">
-								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
-								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="seatinfants">								
 								<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
+								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="seatinfants">								
+								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
+								
 							</span>
 							<span class="col-xs-3 nopr">under 2</span>  
 							</p>                			
@@ -132,12 +270,13 @@
                   			<p>
 							<span class="col-xs-4 nopadding">Lap infants</span>
 							<span class="col-xs-5 text-right nopadding">
-								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
-								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="lapinfants">								
 								<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
+								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="lapinfants">								
+								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
+								
 							</span>
 							<span class="col-xs-3 nopr">under 2</span> 
-							</p>                 			
+							</p>              			
                   		</div>
                   		<input type="hidden" id="passenger" name="passenger" value="">
                   	</div>
@@ -156,135 +295,7 @@
 							</div>
 							{%endfor %}
 							{% endif %}
-						<div class="col-md-12 col-xs-12">
-							<div class="col-md-2 col-xs-12 nopadding filters-holder">
-								<div class="col-xs-12 nopadding visible-xs filter-collapse form-side">
-									<p class="pull-left">Filters</p>
-									<p class="pull-right show-filter"><span class="glyphicon glyphicon-th-large"></span></p>
-								</div>
-								<form action="search" method="post">
-									{% csrf_token %}
-									{% if selectedrow %}
-									<input type="hidden" name="rowid" value="{{selectedrow.rowid}}" />
-									{% endif %}
-									{% if search %}
-										{% for searchrow in search %}
-									<input type="hidden" name="passenger" id="traveller" value="">	
-									<input type="hidden" name="action" value="{{action}}">
-									<input type="hidden" name="tax" id ="fltrtax" {% if request.GET.tax %} value="{{request.GET.tax}}" {%else%} value="{{tax}}"{% endif%}>
-									<input type="hidden" name="price" id ="fltrprice" {% if request.GET.price %} value="{{request.GET.price}}" {%else%} value="{{minprice}}"{% endif%}>	
-									<input type="hidden" name="searchkeyval" value="{{ searchrow.searchid }}" id="searchkey"/>
-									{% if returndata %}
-									<input type="hidden" name="returnkey"  value="{{returndata}}" id="returnkey"/>
-									{%endif%}
-									{%endfor %}
-									{% endif %}
-									<div class="col-md-12 col-xs-12 nopadding form-side">
-										<div class="priceRangeInfo">
-											DEPARTURE TIME
-
-											<div class="slider slider-blue mvt15px" data-postfix=" $" data-min="0" data-max="2000" data-min-val="400" data-max-val="1400" data-fill="#sample-field-2" id="depart"></div>
-											<span id="time"></span>
-											<input type="hidden" name="depaturemin" id="depaturemin" value=""/>
-											<input type="hidden" name="depaturemax" id="depaturemax" value=""/>
-										</div>
-										
-										<div class="priceRangeInfo mvt15px">
-											ARRIVAL TIME
-											<div class="slider slider-blue mvt15px" data-postfix=" $" data-min="0" data-max="2000" data-min-val="400" data-max-val="1400" data-fill="#sample-field-2" id="arive"></div>
-											<span id="arivaltime"></span>
-										</div>
-										<input type="hidden" name="arivalmin" id="arivalmin" value=""/>
-										<input type="hidden" name="arivalmax" id="arivalmax" value=""/>
-									</div>
-									<div class="col-md-12 col-xs-12 nopadding form-side">
-										<p>
-											NUMBER OF STOPS
-										</p>
-										<div class="checkbox">
-											<label>
-												<input type='checkbox' id="selectallstop">
-												<span></span> SELECT ALL </label>
-										</div>
-										<div class="col-md-10 col-xs-10 nopadding form-side">
-										<div class="checkbox">
-											<label>
-												<input type='checkbox' class="chk-stoppage" name="stoppage" value="NONSTOP" {% for row in filterkey.stoppage %} {% if row == 'NONSTOP'%} checked="checked" {% endif %}{%endfor %}>
-												<span></span> NONSTOP </label>
-										</div>
-										<div class="checkbox">
-											<label>
-												<input type='checkbox' class="chk-stoppage" name="stoppage" value="1 STOP" {% for row in filterkey.stoppage %} {% if row == '1 STOP'%} checked="checked" {% endif %}{%endfor %}>
-												<span></span> 1 STOP </label>
-										</div>
-										<div class="checkbox">
-											<label>
-												<input type='checkbox' class="chk-stoppage" name="stoppage" value="2 STOPS" {% for row in filterkey.stoppage %} {% if row == '2 STOPS'%} checked="checked" {% endif %}{%endfor %}>
-												<span></span> 2+ STOPS </label>
-										</div>
-										</div>
-									</div>
-									<div class="col-md-12 col-xs-12 nopadding form-side">
-									<p>AIRLINES</p>
-									<div class="checkbox">
-									<label>
-									<input type='checkbox' id='selectairline' />
-									<span></span>
-									SELECT ALL
-									</label>
-									</div>
-									<div class="col-md-11 col-xs-11 nopadding form-side">
-									<div class="checkbox">
-									<label>
-									<input type='checkbox' class="chk-airlines" name="airlines" value="delta" {% for row in filterkey.datasource %} {% if row == 'delta'%} checked="checked" {% endif %}{%endfor %}>
-									<span></span>
-									DELTA AIRLINES
-									</label>
-									</div>
-									<div class="checkbox" >
-									<label>
-									<input type='checkbox' class="chk-airlines" name="airlines" value="united" {% for row in filterkey.datasource %} {% if row == 'united'%} checked="checked" {% endif %}{%endfor %}>
-									<span></span>
-									UINTED AIRLINES
-									</label>
-									</div>
-									</div>
-									</div>
-									<div class="col-md-12 col-xs-12 nopadding form-side">
-										<p>
-											CABIN
-										</p>
-										<div class="checkbox">
-											<label>
-												<input type='checkbox' id="checkallcabin" value="selectall">
-												<span></span>SELECT ALL</label>
-										</div>
-										<div class="col-md-10 col-xs-10 nopadding form-side">
-										<div class="checkbox">
-											<label>
-												<input type='checkbox' class="chk" name="cabin" value="cabintype1"  {% for row in filterkey.cabin %} {% if row == 'cabintype1'%} checked="checked" {% endif %} {%endfor %}>
-												<span></span> ECONOMY</label>
-										</div>
-										<div class="checkbox">
-											<label>
-												<input type='checkbox' class="chk" name="cabin" value="cabintype2" {% for row in filterkey.cabin %} {% if row == 'cabintype2'%} checked="checked" {% endif %}{%endfor %}>
-												<span></span> BUSINESS </label>
-										</div>
-										<div class="checkbox">
-											<label>
-												<input type='checkbox' class="chk" name="cabin" value="cabintype3" {% for row in filterkey.cabin %} {% if row == 'cabintype3'%} checked="checked" {% endif %}{%endfor %}>
-												<span></span> FIRST </label>
-										</div>
-
-									</div>
-									</div>
-									<input type="hidden" name="search" value="search">
-									<div class="col-md-12 col-xs-12 nopadding">
-										<input type="submit" value="FILTER" class="btn  btn-pexSearch filter-serch-btn">
-									</div>
-								</form>
-							</div>
-							<div class="col-md-8 col-xs-12 xs-nopadding">
+								
 								
 								{% if selectedrow %}
 								

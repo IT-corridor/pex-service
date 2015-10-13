@@ -155,10 +155,11 @@ h1 {
 	font-size: 20px;
 }
 .arrow-size {
-	font-size: 57px;
+	font-size: 44px;
 	margin: 0;
 	text-align: center;
 	line-height: 0.5;
+margin-top: -8px;
 }
 
 .no-margin {
@@ -650,6 +651,7 @@ footer .navbar-footer .navbar-toggle .icon-bar {
 .form-side p {
 	font-weight: 300;
 	font-size: 18px;
+	margin-bottom: 5px;
 }
 .pop-hover .well {
 	background: #fff !important;
@@ -863,22 +865,35 @@ p.flight-name {
 	border-radius: 0;
 }
 .add, .minus {
-	padding: 5px 8px;
+	padding: 10px 8px;
 	vertical-align: top;
 	background: #ddd;
+	vertical-align: baseline;
+}
+.add span, .minus span {
+	line-height:0.8;
+	font-weight: 800 !important;
 }
 .add {
-	margin-right: -5px;
-	border-top-right-radius: 0;
-	border-bottom-right-radius: 0;
-}
-.minus {
 	margin-left: -6px;
 	border-top-left-radius: 0;
 	border-bottom-left-radius: 0;
+	border-left:0;
+}
+.minus {
+	margin-right: -6px;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	border-right: 0;
 }
 .date-wd {
 	width: 14%;
+}
+.date-wd input{
+	max-width: 100%;
+}
+.numberHolder{
+	text-align: center;
 }
 #departuredate, #return {
 	max-width: 100%;
@@ -927,6 +942,23 @@ p.flight-name {
 }
 .google {
 	background: #dd5044;
+}
+button.close{
+	width: 25px;
+    height: 25px;
+    font-size: 14px;
+    border: 2px solid #fff;
+    box-shadow: 0px 2px 4px 1px rgba(0,0,0,0.2);
+-webkit-box-shadow: 0px 2px 4px 1px rgba(0,0,0,0.2);
+-moz-box-shadow: 0px 2px 4px 1px rgba(0,0,0,0.2);
+    line-height: 0.7;
+    position: absolute;
+    left: 97%;
+    bottom: 96%;
+    background-color: #069AC5;
+    opacity: 1;
+    color: #fff;
+    border-radius: 50%;
 }
 
 @media (max-width: 1024px) {

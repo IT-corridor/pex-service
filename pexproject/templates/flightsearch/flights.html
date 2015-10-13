@@ -17,6 +17,9 @@
                 /*padding-top: 50px;
                 padding-bottom: 20px;*/
             }
+.add, .minus {
+	    padding: 5px 8px;
+}
             
         </style>
     </head>
@@ -32,7 +35,7 @@
 	
 <!-- BODY SECTION/-->
 
-    <div class="">
+    <div class="col-xs-12 nopadding">
       <div class="jumbotron">
         <div class="container">
           <div class="row">
@@ -46,9 +49,9 @@
         </div>
         <form class="form-horizontal" role="form" action="searchLoadingPage" method="post" >
         	{% csrf_token %}
-          <div class="container-fluid nopadding">
-            <div class="container nopadding trip-custome" >
-              <div class="col-sm-12 col-xs-12 nopadding">
+         <div class="col-xs-12 nopadding">
+				<div class="container nopadding trip-custome">
+					<div class="col-sm-12 col-xs-12 nopadding">
                 <div class="checkbox-inline mhr10px">
                   <label><input type="radio" id="rt" name="trip" value="roundTripBtn" checked="checked"> Round-Trip</label>
                 </div>
@@ -56,7 +59,7 @@
                   <label><input type="radio" id="ow" name="trip" value="oneWayBtn"> One-Way</label>
                 </div>
                 <div class="checkbox-inline mhr10px" style="margin-left:25px;">
-                  <label><input type="checkbox" id="mc" name="multicity"> Multi-City</label>
+                  <label><input type="radio" id="mc" value="multicity" name="trip"> Multi-City</label>
                 </div>
               </div>
             </div>
@@ -65,13 +68,15 @@
               <div class="col-sm-2 col-xs-12 nopadding">
                 <div class="form-group nomr noml" class="ui-widget">
                   <label class="sr-only" for="from">From:</label>
-                  <input type="search" class="form-control" id="from" name="fromMain" placeholder="From" autocomplete="off">
+                  <input type="search" tabindex="1" class="form-control" id="from" name="from" placeholder="From" autocomplete="off">
+                  <input type="hidden" id="fromid" name="fromMain" />
                 </div>
               </div>
               <div class="col-sm-2 col-xs-12 xs-nopadding">
                 <div class="form-group  nomr noml" class="ui-widget">
                   <label class="sr-only" for="to">To:</label>
-                  <input type="search" class="form-control" id="to" name="toMain" placeholder="To" autocomplete="off">
+                  <input type="search" tabindex="2" class="form-control" id="to" name="to" placeholder="To" autocomplete="off">
+                  <input type="hidden" id="toid" name="toMain" />
                 </div>
               </div>
               <div class="input-daterange">
@@ -80,7 +85,7 @@
                   <label class="sr-only" for="departMain">Departure Date:</label>
                   <div class="inner-addon left-addon date" id="dp1">
                       <i class="glyphicon glyphicon-calendar"></i>
-                      <input type="text" class="form-control" id="departMain" placeholder="Depart" name="deptdate">
+                      <input type="text" tabindex="3" class="form-control" id="departMain" placeholder="Depart" name="deptdate">
                   </div>
                   <div class="form-group" id="deptmsg"></div>
                 </div>
@@ -90,32 +95,32 @@
                   <label class="sr-only" for="returnMain">Return Date:</label>
                   <div class="inner-addon left-addon date" id="dp2">
                       <i class="glyphicon glyphicon-calendar"></i>
-                      <input type="text" class="form-control" id="returnMain" placeholder="Return" name="returndate">
+                      <input type="text" tabindex="4" class="form-control" id="returnMain" placeholder="Return" name="returndate">
                   </div>
                 </div>
               </div>
               </div>
-              <div class="col-sm-2 col-xs-12 nopadding">
+              <div class="col-sm-2 col-xs-12 nopadding" id="cabintab" tabindex="5">
                 <div class="form-group travelers-dpdn-details nomr noml" class="ui-widget">
                   <div class="dropdown travelers-holder">
                   	<span class="form-control" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="travelar">1 adult, Economy</span> <span class="caret"></span></span>
                   	<div class="travelers-down-menu dropdown-menu" aria-labelledby="dropdownMenu1">
                   		<div class="col-xs-12 down-menu-block">
 							<span class="col-xs-4 nopadding">Class</span>
-							<span class="col-xs-8 text-right nopr"><select class="custom-field-control" id="cabintype" name="cabintype">
+							<span class="col-xs-8 text-right nopr"><select class="custom-field-control " id="cabintype" name="cabintype">
 								<option class="cabin" value="cabintype1">Economy</option>
 								<option class="cabin" value="cabintype2">Business</option>
 								<option  class="cabin" value="cabintype3">First</option>
 								</select></span>                  			
                   		</div>
-                  		<div class="col-xs-12 alert alert-warning"></div>
+                  		<div class="col-xs-12 alert alert-warning"> </div>
                   		<div class="col-xs-12 down-menu-block">
                   			<p>
 							<span class="col-xs-4 nopadding">Adults</span>
 							<span class="col-xs-5 text-right nopadding">
-								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
-								<input type="text" class="field-width custom-field-control numberHolder qty" value="1" id="adults">								
 								<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
+								<input type="text" class="field-width custom-field-control numberHolder qty" value="1" id="adults">
+								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>								
 							</span>
 							<span class="col-xs-3 nopr">18+</span> 
 							</p>                 			
@@ -124,9 +129,10 @@
                   			<p>
 							<span class="col-xs-4 nopadding">Seniors</span>
 							<span class="col-xs-5 text-right nopadding">
-								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
-								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="senior">								
 								<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
+								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="senior">
+								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>								
+								
 							</span>
 							<span class="col-xs-3 nopr">65+</span> 
 							</p>                 			
@@ -135,9 +141,10 @@
                   			<p>
 							<span class="col-xs-4 nopadding">Youths</span>
 							<span class="col-xs-5 text-right nopadding">
-								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
-								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="youth">								
 								<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
+								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="youth">
+								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>								
+								
 							</span>
 							<span class="col-xs-3 nopr">12-17</span>  
 							</p>                			
@@ -146,9 +153,10 @@
                   			<p>
 							<span class="col-xs-4 nopadding">Children</span>
 							<span class="col-xs-5 text-right nopadding">
-								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
-								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="children">								
 								<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
+								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="children">								
+								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
+								
 							</span>
 							<span class="col-xs-3 nopr">2-11</span>
 							</p>                  			
@@ -157,9 +165,10 @@
                   			<p>
 							<span class="col-xs-4 nopadding">Seat infants</span>
 							<span class="col-xs-5 text-right nopadding">
-								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
-								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="seatinfants">								
 								<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
+								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="seatinfants">								
+								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
+								
 							</span>
 							<span class="col-xs-3 nopr">under 2</span>  
 							</p>                			
@@ -168,9 +177,10 @@
                   			<p>
 							<span class="col-xs-4 nopadding">Lap infants</span>
 							<span class="col-xs-5 text-right nopadding">
-								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
-								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="lapinfants">								
 								<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
+								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="lapinfants">								
+								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
+								
 							</span>
 							<span class="col-xs-3 nopr">under 2</span> 
 							</p>                 			
@@ -189,23 +199,29 @@
           </div>
         </form>
       </div>
-      <div class="container mvb60px nopadding pd-xs">
-        <!-- Example row of columns -->
-        <div class=" ad-images">
-          <div class="col-md-3 col-xs-12 pd-cls-responsive">
-            <a href="#"><img src="{% static 'flightsearch/img/specials.jpg' %}"></a>
-          </div>
-          <div class="col-md-3 col-xs-12 pd-cls-responsive">
-              <a href="#"><img src="{% static 'flightsearch/img/specials.jpg' %}"></a>
-          </div>
-          <div class="col-md-3 col-xs-12 pd-cls-responsive">
-              <a href="#"><img src="{% static 'flightsearch/img/specials.jpg' %}"></a>
-          </div>
-          <div class="col-md-3 col-xs-12 pd-cls-responsive">
-              <a href="#"><img src="{% static 'flightsearch/img/specials.jpg' %}"></a>
-          </div>
-        </div>
-      </div>
+      <div class="col-xs-12 nopadding pd-xs">
+		<div class="container">
+			<div class="col-xs-12 nopadding">
+				<!-- Example row of columns -->
+				<div class="col-xs-12 nopadding ad-images">
+					<img src="{% static 'flightsearch/img/banner.png' %}" class="img-responsive nomb">
+					<!-- <div class="col-md-3 col-xs-12 pd-cls-responsive">
+				            <a href="#"><img src="img/specials.jpg"></a>
+				        </div>
+				        <div class="col-md-3 col-xs-12 pd-cls-responsive">
+				            <a href="#"><img src="img/specials.jpg"></a>
+				        </div>
+				        <div class="col-md-3 col-xs-12 pd-cls-responsive">
+				            <a href="#"><img src="img/specials.jpg"></a>
+				        </div>
+				        <div class="col-md-3 col-xs-12 pd-cls-responsive">
+				            <a href="#"><img src="img/specials.jpg"></a>
+				        </div> -->
+				</div>
+			</div>
+		</div>
+	</div>
+        
 
       {% include "flightsearch/footer.html" %}
 
@@ -230,6 +246,10 @@
         e.src='//www.google-analytics.com/analytics.js';
         r.parentNode.insertBefore(e,r);}(window,document,'script','ga'));
         ga('create','UA-XXXXX-X','auto');ga('send','pageview');
+        
+        $( "#cabintab" ).focus(function() {
+		  $( "#cabintab" ).click();
+		});
     </script>
     <script>
     $("#submitid").click(function(event) {
@@ -287,27 +307,34 @@
     $(function() {
     
     $( "#from" ).autocomplete({
-    	open: function(event, ui) {
+  		 open: function(event, ui) {
 	        	$('.ui-autocomplete').off('menufocus hover mouseover');
     		},
 		autoFocus: true,
     	source: "get_airport/",
     	minLength: 2,
+    	select: function(event, ui) {
+    		$('#fromid').val(ui.item.id);
+    	},
     });
     $( "#to" ).autocomplete({
-    	open: function(event, ui) {
+  		open: function(event, ui) {
 	        	$('.ui-autocomplete').off('menufocus hover mouseover');
     		},
+
 		autoFocus: true,
     	source: "get_airport/",
     	minLength: 2,
+    	select: function(event, ui) {
+    		$('#toid').val(ui.item.id);
+    	},
     });
   });
-  
     	
     </script>
     <script>
-   $(function(){
+
+	 $(function(){
 	 		$('#returnMain').datetimepicker({format: "m/d/Y",'timepicker': false,closeOnDateSelect: true});
             $('#departMain').datetimepicker({ format: "m/d/Y",minDate: 0,'timepicker': false,closeOnDateSelect: true,
                         onSelectDate: function(selectedDate)
@@ -317,6 +344,7 @@
                         }
                });
        });
+
 var total;
 //@@increase decrease on buttom click
     $(function () {
@@ -397,5 +425,3 @@ return sum;
     });
     
     </script>
-  </body>
-</html>
