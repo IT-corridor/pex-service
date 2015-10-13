@@ -100,8 +100,8 @@ html, body {
 	}
 	.custome-edit-block {
 		text-align: left;
-		background: #f9f9f9;
-		padding: 20px 10px 5px !important;
+		!background: #f9f9f9;
+		!padding: 20px 10px 5px !important;
 	}
 	.pr-custone-edit {
 		padding: 5px 10px 0px !important;
@@ -164,7 +164,7 @@ margin-top: -8px;
 }
 
 .no-margin {
-	margin: 0;
+	margin: 0 !important;
 }
 .nomr {
 	margin-right: 0 !important;
@@ -183,6 +183,12 @@ margin-top: -8px;
 }
 .nopl {
 	padding-left: 0 !important;
+}
+.pl5{
+	padding-left: 5px;
+}
+.pr5 {
+	padding-right: 5px;
 }
 /*SPACERS*/
 /*<--HORIZONTAL PIXELS-->*/
@@ -905,7 +911,7 @@ p.flight-name {
 .navbar-nav.right-nav-link li a {
 	padding:0px 8px;
 	color: #181818;
-	
+	text-transform: uppercase;
 }
 .navbar-nav.right-nav-link li a:after {
 	content:'|';
@@ -1100,6 +1106,22 @@ button.close:hover,button.close:active:focus{
 	}
 }
 @media (max-width: 767px) {
+	.xs-pl5{
+		padding-left: 5px;
+	}
+	.xs-pr5 {
+		padding-right: 5px;
+	}
+	#submitid {
+		margin-top: 10px;
+		width: 100%;
+	}
+	.navbar-nav.social-icon {
+		padding-left: 10px;
+	}
+	.navbar-nav.social-icon li a{
+		padding: 10px 5px;
+	}
 	.navbar-nav.mainNav li {
 		background: #E9F2FA;
 	}
@@ -1152,5 +1174,9 @@ button.close:hover,button.close:active:focus{
 	.navbar-nav.social-icon {
 		margin-top: 0;
 		margin-bottom: 0;
+	}
+	.add, .minus {
+    		!margin-top: 4px;
+vertical-align: inherit;
 	}
 }

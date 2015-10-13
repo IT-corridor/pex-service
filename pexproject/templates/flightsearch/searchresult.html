@@ -111,7 +111,6 @@
 									</div>
 									</div>
 									</div>
-									<!--
 									<div class="col-md-12 col-xs-12 nopadding form-side">
 										<p>
 											CABIN
@@ -140,7 +139,6 @@
 
 									</div>
 									</div>
-									-->
 									<input type="hidden" name="search" value="search">
 									<div class="col-md-12 col-xs-12 nopadding">
 										<input type="submit" value="FILTER" class="btn  btn-pexSearch filter-serch-btn">
@@ -157,8 +155,7 @@
 										{% csrf_token %}
 									  <div class="form-group date-wd">
 									    <label class="sr-only" for="exampleInputEmail3">Source</label>
-									    <input type="text" id="from" class="form-control" value="{{searchrow.source}}">
-									  	<input type="hidden" id="fromid" value="{{searchrow.origin_airport_id}}" name="fromMain">
+									    <input type="text" id="from" class="form-control" value="{{searchrow.source}}" name="fromMain">
 									  </div>
 									   <div class="form-group">
 									    <h4 class="for-desktop-view arrow-size">&#8594;</h4>
@@ -166,8 +163,7 @@
 									  </div>
 									  <div class="form-group date-wd">
 									    <label class="sr-only" for="exampleInputPassword3">Destination</label>
-									    <input type="text" id="to" class="form-control" value="{{searchrow.destination}}">
-									  	<input type="hidden" id="toid" value="{{searchrow.destination_airport_id}}" name="toMain">
+									    <input type="text" id="to" class="form-control" value="{{searchrow.destination}}" name="toMain">
 									  </div>
 									  <div class="form-group date-wd">
 										 <label class="sr-only" for="exampleInputPassword3">Departure</label>
@@ -415,13 +411,21 @@
 								{% endif %}
 								{% for row in data %}
 								<div class="col-md-12 col-xs-12 centr-info responsive-color-img">
-									<div class="col-xs-12 nopadding">
+									<div class="col-xs-6 visible-xs nopl">
+										<div class="col-xs-12 nopadding text-center">
+											{% if row.datasource == "united" %}
+											<img src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
+											{% if row.datasource == "delta" %}
+											<img src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
+										</div>
+									</div>
+									<div class="col-md-12 col-xs-6 nopadding">
 										<p class="flight-name">
 											{{row.flighno}} <!--FIRST FLIGHT OPTION RESULT-->
 										</p>
 									</div>
-									<div class="col-md-5 col-xs-12 nopadding">
-										<div class="col-md-8 col-xs-12 nopadding">
+									<div class="col-md-5 col-xs-12 nopadding hidden-xs">
+										<div class="col-sm-8 col-xs-12 nopadding">
 											<div class="col-md-12 col-xs-12 nopadding">
 													<div class="col-xs-12 nopadding xs-margin-25px">
 												  {% if row.cabintype1 and row.maincabin %}
@@ -433,7 +437,6 @@
 														</div>
 														{% if action == 'depart' %}
 														<div>
-															<!--
 														<form action="getsearchresult" method="get">
 															{% csrf_token %}
 															<input type="hidden" name="cabin"  value="{{request.GET.cabin}}">
@@ -444,7 +447,7 @@
 															<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
 															<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
 															<button type="submit" class="btn btn-pexSearch" value="{{searchrow.searchid}}" name="return" id="return">SELECT</button>
-														</form> -->
+														</form>
 														</div>
 														{% else %}
 														<div>
@@ -463,7 +466,7 @@
 													</div>
 											</div>
 										</div>
-										<div class="col-md-4 col-xs-12 nopl">
+										<div class="col-sm-4 col-xs-12 nopl">
 											<div class="col-xs-12 nopadding text-center mvb10px">
 												{% if row.datasource == "united" %}
 												<img src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
@@ -473,7 +476,7 @@
 										</div>
 									</div>
 									<div class="col-md-7 col-xs-12 nopadding">
-										<div class="col-md-8 col-xs-12 nopadding for-desktop-view">
+										<div class="col-md-8 col-xs-12 nopadding">
 											<div class="col-xs-12 nopadding mvb10px">
 												<div class="arrivel col-sm-5 nopadding col-xs-5">
 													<p>
@@ -493,9 +496,164 @@
 													</p>
 												</div>
 											</div>
+											<div class="col-xs-12 nopadding visible-xs">
+												<div class="col-xs-6 nopl non-stop">
+													<p>
+													{{row.duration}}
+													</p>
+												</div>
+												<div class="col-xs-6 nopr non-stop text-right">
+													<p>
+													{{row.stoppage}}
+													</p>
+												</div>
+											</div>
+											<div class="col-xs-12 nopadding for-mobile-view"> <!-- main data only mobile -->
+										<div class="col-xs-12 nopadding text-center custome-edit-block"> 
+											{% if row.cabintype3 != '' and filterkey.cabin.0 == "cabintype3" %}
+											
+													
+													<div class="col-xs-12 nopadding mvb10px na-ra">
+													<h5 class="econo edit-width-econo">{{row.cabintype3}}</h5>
+													<div class="right-data-responsive">
+														<p class="flight-rate">
+																{% if row.datasource == "delta" %}
+																{{row.maincabin|add:minprice|intcomma}} {%else%}{{row.maincabin|intcomma}} {%endif%} Miles + <span>${{row.maintax|floatadd:tax|floatformat:2}}</span>
+															</p>
+														</div>
+													</div>
+											{% if action == 'depart' %}
+													<div>
+													<form action="getsearchresult" method="get">
+														{% csrf_token %}
+														<input type="hidden" name="price"  value="{{row.business}}">
+														<input type="hidden" name="rowid"  value="{{row.rowid}}">
+														<input type="hidden" name="cabin"  value="{{request.GET.cabin}}">
+														<input type="hidden" name="tax"  value="{{row.businesstax}}">
+														<input type="hidden" name="action"  value="return">
+														<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
+														<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
+														<button type="submit" class="btn btn-pexSearch" value="{{searchrow.searchid}}" name="return" >SELECT</button>
+													</form>
+													</div>
+													{% endif %}
+											{% elif row.cabintype2 != '' and filterkey.cabin.0 == "cabintype2" %}
+													
+													<div class="col-xs-12 nopadding mvb10px na-ra">
+														<h5 class="econo edit-width-econo">{{row.cabintype2}}</h5>
+														<div class="right-data-responsive">
+														<p class="flight-rate">
+																{% if row.datasource == "delta" %}
+																{{row.maincabin|add:minprice|intcomma}} {%else%}{{row.maincabin|intcomma}} {%endif%} Miles + <span>${{row.maintax|floatadd:tax|floatformat:2}}</span>
+															</p>
+														</div>
+													</div>
+													{% if action == 'depart' %}
+													<div>
+													<form action="getsearchresult" method="get">
+														{% csrf_token %}
+														<input type="hidden" name="price"  value="{{row.firstclass}}">
+														<input type="hidden" name="rowid"  value="{{row.rowid}}">
+														<input type="hidden" name="cabin"  value="{{request.GET.cabin}}">
+														<input type="hidden" name="tax"  value="{{row.firsttax}}">
+														<input type="hidden" name="action"  value="return">
+														<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
+														<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
+														<button type="submit" class="btn btn-pexSearch" value="{{searchrow.searchid}}" name="return" >SELECT</button>
+													</form>
+													</div>
+													{% endif %}
+											{% else %}
+													{% if row.cabintype1 != '' %}
+
+														<div class="col-xs-12 nopadding mvb10px na-ra">
+															<h5 class="econo edit-width-econo">{{row.cabintype1}}</h5>
+															<div class="right-data-responsive">
+															<p class="flight-rate">
+																{% if row.datasource == "delta" %}
+																{{row.maincabin|add:minprice|intcomma}} {%else%}{{row.maincabin|intcomma}} {%endif%} Miles + <span>${{row.maintax|floatadd:tax|floatformat:2}}</span>
+															</p>
+														</div>
+														</div>
+														{% if action == 'depart' %}
+														<div>
+														<form action="getsearchresult" method="get">
+															{% csrf_token %}
+															<input type="hidden" name="price"  value="{{row.maincabin}}">
+															<input type="hidden" name="rowid"  value="{{row.rowid}}">
+															<input type="hidden" name="cabin"  value="{{request.GET.cabin}}">
+															<input type="hidden" name="tax"  value="{{row.maintax}}">
+															<input type="hidden" name="action"  value="return">
+															<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
+															<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
+															<button type="submit" class="btn btn-pexSearch" value="{{searchrow.searchid}}" name="return" >SELECT</button>
+														</form>
+														</div>
+														{% endif %}
+													{% elif row.cabintype2 != ''%}
+													
+															<div class="col-xs-12 nopadding mvb10px na-ra">
+																<h5 class="econo edit-width-econo">{{row.cabintype2}}</h5>
+																<div class="right-data-responsive">
+																<p class="flight-rate">
+																{% if row.datasource == "delta" %}
+																{{row.maincabin|add:minprice|intcomma}} {%else%}{{row.maincabin|intcomma}} {%endif%} Miles + <span>${{row.maintax|floatadd:tax|floatformat:2}}</span>
+															</p></div>
+															</div>
+															{% if action == 'depart' %}
+															<div>
+															<form action="getsearchresult" method="get">
+																{% csrf_token %}
+																<input type="hidden" name="price"  value="{{row.firstclass}}">
+																<input type="hidden" name="rowid"  value="{{row.rowid}}">
+																<input type="hidden" name="cabin"  value="{{request.GET.cabin}}">
+																<input type="hidden" name="tax"  value="{{row.firsttax}}">
+																<input type="hidden" name="action"  value="return">
+																<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
+																<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
+																<button type="submit" class="btn btn-pexSearch" value="{{searchrow.searchid}}" name="return" >SELECT</button>
+															</form>
+															</div>
+															{% else %}
+															<div>
+															</div>
+															{% endif %}
+													 {% else %}
+														
+													<div class="col-xs-12 nopadding mvb10px na-ra">
+													<h5 class="econo edit-width-econo">{{row.cabintype3}}</h5>
+													<div class="right-data-responsive">
+														<p class="flight-rate">
+																{% if row.datasource == "delta" %}
+																{{row.maincabin|add:minprice|intcomma}} {%else%}{{row.maincabin|intcomma}} {%endif%} Miles + <span>${{row.maintax|floatadd:tax|floatformat:2}}</span>
+															</p>
+														</div>
+													</div>
+											{% if action == 'depart' %}
+													<div>
+													<form action="getsearchresult" method="get">
+														{% csrf_token %}
+														<input type="hidden" name="price"  value="{{row.business}}">
+														<input type="hidden" name="rowid"  value="{{row.rowid}}">
+														<input type="hidden" name="cabin"  value="{{request.GET.cabin}}">
+														<input type="hidden" name="tax"  value="{{row.businesstax}}">
+														<input type="hidden" name="action"  value="return">
+														<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
+														<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
+														<button type="submit" class="btn btn-pexSearch" value="{{searchrow.searchid}}" name="return" >SELECT</button>
+													</form>
+													</div>
+													{% else %}
+													<div>
+													</div>
+													{% endif %}
+													{% endif %}
+											{% endif%}											
+										</div>
+									</div>
 											<a class="show-details" role="button" data-toggle="collapse" href="#{{row.rowid}}" aria-expanded="false" aria-controls="collapseExample">SHOW DETAILS</a>
 										</div>
-										<div class="col-md-4 col-xs-12 text-center nopr">
+										<div class="col-md-4 col-xs-12 text-center nopr hidden-xs">
 											<div class="col-xs-12 nopadding non-stop">
 												<p>
 													{{row.stoppage}}
@@ -536,254 +694,9 @@
 															</tr>
 														</table>
 													</div>
-													<div class="col-xs-12 nopadding for-mobile-view "> <!--- on more click --->
-													{% if row.cabintype1 != ''%}
-													<div class="col-xs-12 nopadding custome-edit-block pr-custone-edit"> 
-														<div class="col-xs-4 nopadding">
-															<h5 class="mecono">{{row.cabintype1}}
-															</h5>
-														</div>
-														<div class="col-xs-8 nopadding text-right">
-															<p class="flight-rate">
-																{% if row.datasource == "delta" %}
-															{{row.maincabin|add:minprice|intcomma}} {%else%}{{row.maincabin|intcomma}} {%endif%} Miles
-															</p>
-															<p>+</p>
-															<h6 class="nomt">${{row.maintax|floatadd:tax|floatformat:2}}</h6>
-																
-														</div>
-													</div>
-													{% else %}
-													<div class="col-xs-12 nopadding custome-edit-block pr-custone-edit">
-														<div class="col-xs-4 nopadding">
-															<h5 class="mecono">Economy
-															</h5>
-														</div>
-														<div class="col-xs-8 nopadding text-center">
-															<h5> Not Available</h5>
-														</div>
-													</div>
-													{% endif %}
-													
-													<div class="col-xs-12 nopadding custome-edit-block pr-custone-edit"> 
-														{% if row.cabintype2 != '' %}
-														<div class="col-xs-4 nopadding">
-															<h5 class="mecono">{{row.cabintype2}}
-															</h5>
-														</div>
-														<div class="col-xs-8 nopadding text-right">
-															<p class="flight-rate">
-																{% if row.datasource == "delta" %}
-															{{row.firstclass|add:minprice|intcomma}} {%else%}{{row.firstclass|intcomma}} {%endif%} Miles
-															</p>
-															<p>+</p>
-															<h6 class="nomt">${{row.firsttax|floatadd:tax|floatformat:2}}</h6>
-																
-														</div>
-														{% else %}
-														<div class="col-xs-4 nopadding">
-															<h5 class="mecono">Business
-															</h5>
-														</div>
-														<div class="col-xs-8 nopadding text-center">
-															<h5> Not Available</h5>
-														</div>
-													{% endif %}
-													</div>
-													
-													
-												   <div class="col-xs-12 nopadding custome-edit-block pr-custone-edit"> 
-												   	{% if row.cabintype3 != ''%}
-														<div class="col-xs-4 nopadding">
-															<h5 class="mecono ">{{row.cabintype3}}
-															</h5>
-														</div>
-														<div class="col-xs-8 nopadding text-right">
-															<p class="flight-rate">
-																{% if row.datasource == "delta" %}
-															{{row.business|add:minprice|intcomma}} {%else%}{{row.business|intcomma}} {%endif%} Miles
-															</p>
-															<p>+</p>
-															<h6 class="nomt">${{row.businesstax|floatadd:tax|floatformat:2}}</h6>
-																
-														</div>
-														{% else %}
-														<div class="col-xs-4 nopadding">
-															<h5 class="mecono">First
-															</h5>
-														</div>
-														<div class="col-xs-8 nopadding text-center">
-															<h5> Not Available</h5>
-														</div>
-													{% endif %}
-													</div>
-													
-																									
-												
-													</div>
 													<a href="#">share</a>
 												</div>
 											</div>
-										</div>
-									</div>
-									
-									
-									<div class="for-mobile-view"> <!-- main data only mobile -->
-										<div class="col-xs-12 nopadding text-center xs-margin-25px custome-edit-block"> 
-											{% if row.cabintype3 != '' and filterkey.cabin.0 == "cabintype3" %}
-											
-													
-													<div class="col-xs-12 nopadding mvb10px na-ra">
-													<h5 class="econo edit-width-econo">{{row.cabintype3}}</h5>
-													<div class="right-data-responsive">
-														<p class="flight-rate">
-															{% if row.datasource == "delta" %}
-															{{row.business|add:minprice|intcomma}} {%else%}{{row.business|intcomma}} {%endif%} Miles
-														</p>
-														<p>+</p>
-														<h6 class="nomt">${{row.businesstax|floatadd:tax|floatformat:2}}</h6>
-														</div>
-													</div>
-											{% if action == 'depart' %}
-													<div>
-														
-													<!-- <form action="getsearchresult" method="get">
-														{% csrf_token %}
-														<input type="hidden" name="price"  value="{{row.business}}">
-														<input type="hidden" name="rowid"  value="{{row.rowid}}">
-														<input type="hidden" name="cabin"  value="{{request.GET.cabin}}">
-														<input type="hidden" name="tax"  value="{{row.businesstax}}">
-														<input type="hidden" name="action"  value="return">
-														<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
-														<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
-														<button type="submit" class="btn btn-pexSearch" value="{{searchrow.searchid}}" name="return" >SELECT</button>
-													</form> -->
-													</div>
-													{% endif %}
-											{% elif row.cabintype2 != '' and filterkey.cabin.0 == "cabintype2" %}
-													
-													<div class="col-xs-12 nopadding mvb10px na-ra">
-														<h5 class="econo edit-width-econo">{{row.cabintype2}}</h5>
-														<div class="right-data-responsive">
-														<p class="flight-rate">
-															{% if row.datasource == "delta" %}
-															{{row.firstclass|add:minprice|intcomma}} {%else%}{{row.firstclass|intcomma}} {%endif%} Miles
-														</p>
-														<p>+</p>
-														<h6 class="nomt">${{row.firsttax|floatadd:tax|floatformat:2}}</h6>
-														</div>
-													</div>
-													{% if action == 'depart' %}
-													<div>
-														<!--
-													<form action="getsearchresult" method="get">
-														{% csrf_token %}
-														<input type="hidden" name="price"  value="{{row.firstclass}}">
-														<input type="hidden" name="rowid"  value="{{row.rowid}}">
-														<input type="hidden" name="cabin"  value="{{request.GET.cabin}}">
-														<input type="hidden" name="tax"  value="{{row.firsttax}}">
-														<input type="hidden" name="action"  value="return">
-														<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
-														<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
-														<button type="submit" class="btn btn-pexSearch" value="{{searchrow.searchid}}" name="return" >SELECT</button>
-													</form> -->
-													</div>
-													{% endif %}
-											{% else %}
-													{% if row.cabintype1 != '' %}
-
-														<div class="col-xs-12 nopadding mvb10px na-ra">
-															<h5 class="econo edit-width-econo">{{row.cabintype1}}</h5>
-															<div class="right-data-responsive">
-															<p class="flight-rate">
-															{% if row.datasource == "delta" %}
-																{{row.maincabin|add:minprice|intcomma}} {%else%}{{row.maincabin|intcomma}} {%endif%} Miles
-															</p>
-															<p>+</p>
-															<h6 class="nomt">${{row.maintax|floatadd:tax|floatformat:2}}</h6>
-														</div>
-														</div>
-														{% if action == 'depart' %}
-														<div>
-															<!--
-														<form action="getsearchresult" method="get">
-															{% csrf_token %}
-															<input type="hidden" name="price"  value="{{row.maincabin}}">
-															<input type="hidden" name="rowid"  value="{{row.rowid}}">
-															<input type="hidden" name="cabin"  value="{{request.GET.cabin}}">
-															<input type="hidden" name="tax"  value="{{row.maintax}}">
-															<input type="hidden" name="action"  value="return">
-															<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
-															<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
-															<button type="submit" class="btn btn-pexSearch" value="{{searchrow.searchid}}" name="return" >SELECT</button>
-														</form> -->
-														</div>
-														{% endif %}
-													{% elif row.cabintype2 != ''%}
-													
-															<div class="col-xs-12 nopadding mvb10px na-ra">
-																<h5 class="econo edit-width-econo">{{row.cabintype2}}</h5>
-																<div class="right-data-responsive">
-																<p class="flight-rate">
-																	{% if row.datasource == "delta" %}
-																	{{row.firstclass|add:minprice|intcomma}} {%else%}{{row.firstclass|intcomma}} {%endif%} Miles
-																</p>
-																<p>+</p>
-																<h6 class="nomt">${{row.firsttax|floatadd:tax|floatformat:2}}</h6></div>
-															</div>
-															{% if action == 'depart' %}
-															<div>
-																<!--
-															<form action="getsearchresult" method="get">
-																{% csrf_token %}
-																<input type="hidden" name="price"  value="{{row.firstclass}}">
-																<input type="hidden" name="rowid"  value="{{row.rowid}}">
-																<input type="hidden" name="cabin"  value="{{request.GET.cabin}}">
-																<input type="hidden" name="tax"  value="{{row.firsttax}}">
-																<input type="hidden" name="action"  value="return">
-																<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
-																<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
-																<button type="submit" class="btn btn-pexSearch" value="{{searchrow.searchid}}" name="return" >SELECT</button>
-															</form> -->
-															</div>
-															{% else %}
-															<div>
-															</div>
-															{% endif %}
-													 {% else %}
-														
-													<div class="col-xs-12 nopadding mvb10px na-ra">
-													<h5 class="econo edit-width-econo">{{row.cabintype3}}</h5>
-													<div class="right-data-responsive">
-														<p class="flight-rate">
-															{% if row.datasource == "delta" %}
-															{{row.business|add:minprice|intcomma}} {%else%}{{row.business|intcomma}} {%endif%} Miles
-														</p>
-														<p>+</p>
-														<h6 class="nomt">${{row.businesstax|floatadd:tax|floatformat:2}}</h6>
-														</div>
-													</div>
-											{% if action == 'depart' %}
-													<div>
-														<!--
-													<form action="getsearchresult" method="get">
-														{% csrf_token %}
-														<input type="hidden" name="price"  value="{{row.business}}">
-														<input type="hidden" name="rowid"  value="{{row.rowid}}">
-														<input type="hidden" name="cabin"  value="{{request.GET.cabin}}">
-														<input type="hidden" name="tax"  value="{{row.businesstax}}">
-														<input type="hidden" name="action"  value="return">
-														<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
-														<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
-														<button type="submit" class="btn btn-pexSearch" value="{{searchrow.searchid}}" name="return" >SELECT</button>
-													</form> -->
-													</div>
-													{% else %}
-													<div>
-													</div>
-													{% endif %}
-													{% endif %}
-											{% endif%}											
 										</div>
 									</div>
 								</div>
