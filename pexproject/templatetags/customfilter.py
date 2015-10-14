@@ -11,16 +11,7 @@ def assign(varname,arg):
     return varname
 def split(value, seperator):
     datalist = value.split(seperator)
-    i=0
-    items=[]
-    data=''
-    val =''
-    for item in datalist:
-        val = data+str(i) 
-        val = item
-        i = i+1
-        items.append(val)
-    return items
+    return datalist
     
         
 register.filter('floatadd', floatadd)

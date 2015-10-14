@@ -202,8 +202,8 @@
 									  -->
 										<div class="form-group">
 						                <div class="form-group travelers-dpdn-details nomr noml" class="ui-widget">
-						                  <div class="dropdown travelers-holder">
-						                  	<span class="form-control" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="travelar">1 adult, Economy</span> <span class="caret"></span></span>
+						                  <div class="dropdown travelers-holder form-control">
+						                  	<span class="" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="travelar">1 adult, Economy</span> <span class="caret"></span></span>
 						                  	<div class="travelers-down-menu dropdown-menu" aria-labelledby="dropdownMenu1">
 						                  		<div class="col-xs-12 down-menu-block">
 													<span class="col-xs-4 nopadding">Class</span>
@@ -684,36 +684,94 @@
 													</p>
 													<div class="table-responsive table-date-search">
 														<table class="table">
-															
+															{% with row.departdetails|split:'@' as mylist%}
+															{% with row.arivedetails|split:'@' as mylist1%}
+															{% with row.planedetails|split:'@' as mylist2%}
 															<tr>
-																{% for item in row.departdetails|split:'@' %}
-																	<td>{{item}}</td>
-																
-																<!--<td>{{row.departure}}</td>
-																<td>{{searchdate}}</td>
-																<td>{{row.origin}}</td> -->
-																{% endfor %}
+																<td>Depart:</td>
+																<td>
+																{{mylist.0}}
+																</td>
 															</tr>
 															
 															
 															<tr>
-																{% for ariveitem in row.arivedetails|split:'@' %}
-																	<td> {{ariveitem}} </td>
-																{% endfor %}
-																<!-- <td>{{row.arival}}</td>
-																<td>{{searchdate}}</td>
-																<td>{{row.destination}}</td> -->
+																<td>Arives:</td>
+																<td>
+																{{mylist1.0}} 
+																</td>
+															</tr>
+															<tr>
+																<td>Flight:</td>
+																<td>
+																{{mylist2.0}}
+																</td>
+															</tr>
+															{% if row.datasource == "delta" %}
+															{% if row.stoppage == '1 STOP' or row.stoppage == '2 STOPS' %}
+															<tr>
+																<td></td>
+																<td>
+																	<h4>Change planes </h4>
+																</td>
+															</tr>
+															<tr>
+																<td>Depart:</td>
+																<td>
+																{{mylist.1}}
+																</td>
 															</tr>
 															
 															
 															<tr>
-																{% for planeitem in row.planedetails|split:'@' %}
-																	<td>{{planeitem}}</td>
-																{% endfor %}
-																<!-- <td>{{row.arival}}</td>
-																<td>{{searchdate}}</td>
-																<td>{{row.destination}}</td> -->
+																<td>Arives:</td>
+																<td>
+																{{mylist1.1}} 
+																</td>
 															</tr>
+															<tr>
+																<td>Flight:</td>
+																<td>
+																{{mylist2.1}}
+																</td>
+															</tr>
+															
+															{% endif %}
+															{% if row.stoppage == '2 STOPS' %}
+															<tr>
+																<td></td>
+																<td>
+																	<h4>Change planes </h4>
+																</td>
+															</tr>
+															<tr>
+																<td>Depart:</td>
+																<td>
+																{{mylist.2}}
+																</td>
+															</tr>
+															
+															
+															<tr>
+																<td>Arives:</td>
+																<td>
+																{{mylist1.2}} 
+																</td>
+															</tr>
+															<tr>
+																<td>Flight:</td>
+																<td>
+																{{mylist2.2}}
+																</td>
+															</tr>
+															
+															{% endif %}
+															{% endif %}
+															
+															
+															{% endwith %}
+															{% endwith %}
+															{% endwith %}
 															
 														</table>
 													</div>

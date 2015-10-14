@@ -328,6 +328,9 @@ def getsearchresult(request):
         print searchkey,cabintype   
         record = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+searchkey+cabintype+" order by maincabin ASC")
         print record.query
+        for row in record:
+            items = row.departdetails.split('@')
+            print items[0]
         minprice =0
         tax = 0
         selectedrow = ''

@@ -16,7 +16,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from django.db import connection,transaction
-#from pyvirtualdisplay import Display
+from pyvirtualdisplay import Display
 import socket
 import urllib
 
@@ -317,7 +317,7 @@ def delta(orgn,dest,searchdate,searchkey):
     	driver.find_element_by_id("findFlightsSubmit").send_keys(Keys.ENTER)
 	    
     except:
-        #display.stop
+        display.stop
     	driver.quit()
     	return searchkey
 	#driver.delete_all_cookies()
@@ -361,7 +361,7 @@ def delta(orgn,dest,searchdate,searchkey):
                     spaninfo =  tmp.findAll("p")
                     departdetails.append((spaninfo[0].text).replace('DEPARTS',''))
                     arrivedetails.append(spaninfo[1].text.replace('ARRIVES',''))
-                    planedetails.append(spaninfo[2].text)
+                    planedetails.append(spaninfo[2].text.replace('FLIGHT',''))
             k=k+1
         n=n+1
         tds = content.findAll("td")
