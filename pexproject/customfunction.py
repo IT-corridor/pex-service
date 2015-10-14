@@ -254,7 +254,7 @@ def united(origin,destination,searchdate,searchkey):
                     if stop-1 == 2:
                         stopage = "2 STOPS"
                 print fare1,fare2
-                cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,str(searchid),time,stopage,"test",source,Destination,test1,arivalformat1,totaltime,str(fare1),str(maintax),str(fare2),str(businesstax),str(fare3),str(firsttax),cabintype1,cabintype2,cabintype3,"united"))
+                cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,str(searchid),time,stopage,"test",source,Destination,test1,arivalformat1,totaltime,str(fare1),str(maintax),str(fare2),str(businesstax),str(fare3),str(firsttax),cabintype1,cabintype2,cabintype3,"united",'','',''))
                 transaction.commit()
                 print "row inserted"
     display.stop
@@ -305,7 +305,7 @@ def delta(orgn,dest,searchdate,searchkey):
     	driver.find_element_by_id("findFlightsSubmit").send_keys(Keys.ENTER)
 	    
     except:
-        display.stop
+        #display.stop
     	driver.quit()
     	return searchkey
 	#driver.delete_all_cookies()
@@ -347,8 +347,8 @@ def delta(orgn,dest,searchdate,searchkey):
                 for tmp in detailblk:
                     print "----------------------------------"
                     spaninfo =  tmp.findAll("p")
-                    departdetails.append(spaninfo[0].text)
-                    arrivedetails.append(spaninfo[1].text)
+                    departdetails.append((spaninfo[0].text).replace('DEPARTS',''))
+                    arrivedetails.append(spaninfo[1].text.replace('ARRIVES',''))
                     planedetails.append(spaninfo[2].text)
             k=k+1
         n=n+1
@@ -458,8 +458,12 @@ def delta(orgn,dest,searchdate,searchkey):
             else:
                 cabintype2 = "Business"
 
-        print "first tax",firsttax
-        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,searchid,time,stp,lyover,sourcestn,destinationstn,test1,arivalformat1,duration,str(fare1),str(economytax),str(fare2),str(businesstax),str(fare3),str(firsttax),cabintype1.strip(),cabintype2.strip(),cabintype3,"delta"))
+        deptdetail = '@'.join(departdetails)
+        arivedetail = '@'.join(arrivedetails)
+        planetext = '@'.join(planedetails)
+        #print 'arivedetail',arrivedetails
+        #print 'plane', planedetails
+        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,searchid,time,stp,lyover,sourcestn,destinationstn,test1,arivalformat1,duration,str(fare1),str(economytax),str(fare2),str(businesstax),str(fare3),str(firsttax),cabintype1.strip(),cabintype2.strip(),cabintype3,"delta",deptdetail,arivedetail,planetext))
         transaction.commit()
         print "data inserted"
 
