@@ -667,21 +667,42 @@
 											<div class="collapse" id="{{row.rowid}}">
 												<div class="well">
 													<h2>DEPART</h2>
-													<p>data
+													<p>
 														COMPANY FLIGHT (ECO)
 													</p>
 													<div class="table-responsive table-date-search">
 														<table class="table">
+															
 															<tr>
-																<td>{{row.departure}}</td>
+																{% for item in row.departdetails|split:'@' %}
+																	<td>{{item}}</td>
+																
+																<!--<td>{{row.departure}}</td>
 																<td>{{searchdate}}</td>
-																<td>{{row.origin}}</td>
+																<td>{{row.origin}}</td> -->
+																{% endfor %}
 															</tr>
+															
+															
 															<tr>
-																<td>{{row.arival}}</td>
+																{% for ariveitem in row.arivedetails|split:'@' %}
+																	<td> {{ariveitem}} </td>
+																{% endfor %}
+																<!-- <td>{{row.arival}}</td>
 																<td>{{searchdate}}</td>
-																<td>{{row.destination}}</td>
+																<td>{{row.destination}}</td> -->
 															</tr>
+															
+															
+															<tr>
+																{% for planeitem in row.planedetails|split:'@' %}
+																	<td>{{planeitem}}</td>
+																{% endfor %}
+																<!-- <td>{{row.arival}}</td>
+																<td>{{searchdate}}</td>
+																<td>{{row.destination}}</td> -->
+															</tr>
+															
 														</table>
 													</div>
 													<a href="#">share</a>
