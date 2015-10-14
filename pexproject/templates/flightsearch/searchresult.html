@@ -444,7 +444,7 @@
 															</p>
 														</div>
 														{% else %}
-															{% if request.GET.cabin == 'business' or cabin == 'business'%}
+															{% if request.GET.cabin == 'business' or cabin == 'business' %}
 															<div class="col-xs-12 nopadding mvb10px na-ra">
 															<p class="flight-rate">
 																{% if row.datasource == "delta" %}
@@ -501,11 +501,11 @@
 											
 									<div class="col-xs-12 nopadding for-mobile-view"> <!-- main data only mobile -->
 										<div class="col-xs-12 nopadding text-center custome-edit-block"> 
-											{% if row.cabintype3 != '' and filterkey.cabin.0 == "cabintype3" %}
+											{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' %}
 											
 													
 													<div class="col-xs-12 nopadding mvb10px na-ra">
-													<h5 class="econo edit-width-econo">{{row.cabintype3}}</h5>
+													<h5 class="econo edit-width-econo">{{row.cabintype1}}</h5>
 													<div class="right-data-responsive">
 														<p class="flight-rate">
 																{% if row.datasource == "delta" %}
@@ -529,14 +529,14 @@
 													</form> -->
 													</div>
 													{% endif %}
-											{% elif row.cabintype2 != '' and filterkey.cabin.0 == "cabintype2" %}
+											{% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %}
 													
 													<div class="col-xs-12 nopadding mvb10px na-ra">
 														<h5 class="econo edit-width-econo">{{row.cabintype2}}</h5>
 														<div class="right-data-responsive">
 														<p class="flight-rate">
 																{% if row.datasource == "delta" %}
-																{{row.maincabin|add:minprice|intcomma}} {%else%}{{row.maincabin|intcomma}} {%endif%} Miles + <span>${{row.maintax|floatadd:tax|floatformat:2}}</span>
+																{{row.firstclass|add:minprice|intcomma}} {%else%}{{row.firstclass|intcomma}} {%endif%} Miles + <span>${{row.firsttax|floatadd:tax|floatformat:2}}</span>
 															</p>
 														</div>
 													</div>
@@ -557,14 +557,14 @@
 													</div>
 													{% endif %}
 											{% else %}
-													{% if row.cabintype1 != '' %}
+													{% if request.GET.cabin == 'business' or cabin == 'business' %}
 
 														<div class="col-xs-12 nopadding mvb10px na-ra">
-															<h5 class="econo edit-width-econo">{{row.cabintype1}}</h5>
+															<h5 class="econo edit-width-econo">{{row.cabintype3}}</h5>
 															<div class="right-data-responsive">
 															<p class="flight-rate">
 																{% if row.datasource == "delta" %}
-																{{row.maincabin|add:minprice|intcomma}} {%else%}{{row.maincabin|intcomma}} {%endif%} Miles + <span>${{row.maintax|floatadd:tax|floatformat:2}}</span>
+																{{row.business|add:minprice|intcomma}} {%else%}{{row.business|intcomma}} {%endif%} Miles + <span>${{row.businesstax|floatadd:tax|floatformat:2}}</span>
 															</p>
 														</div>
 														</div>
