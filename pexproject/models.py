@@ -22,6 +22,18 @@ class Flightdata(models.Model):
     cabintype2 =  models.CharField(max_length=100)
     cabintype3 =  models.CharField(max_length=100)
     datasource =  models.CharField(max_length=20)
+    arivedetails = models.TextField()
+    departdetails = models.TextField()
+    planedetails = models.TextField()
+    
+    '''
+    def arive_list(self):
+        return self.arivedetails.split('@')
+    def depart_list(self):
+        return self.departdetails.split('@')
+    def plane_list(self):
+        return self.planedetails.split('@')
+    '''
 
 class Airports(models.Model):
     airport_id = models.IntegerField (primary_key=True)

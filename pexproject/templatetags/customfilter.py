@@ -9,5 +9,9 @@ def assign(varname,arg):
     else:
         varname = arg
     return varname
+def split(value, seperator):
+    return value.split(seperator)
+
 register.filter('floatadd', floatadd)
 register.filter('assign', assign)
+register.filter('split', split)

@@ -111,14 +111,9 @@ def search(request):
                         querylist = querylist+join+"datasource = '"+list1[0]+"'"
                         join = ' AND '
             if 'cabin' in request.POST:
-                cabinlist = request.POST.getlist('cabin')
-                if len(cabinlist)>1:
-                    querylist = querylist+join+"("+" != '' or ".join(cabinlist)+" != '')"
-                    join = ' AND '
-                else:
-                    if(len(cabinlist) > 0):
-                        querylist = querylist+join+cabinlist[0]+" != ''"
-                        join = ' AND '
+                cabinlist = request.REQUEST['cabin']
+                querylist = querylist+join+cabinlist+" > 0 "
+                join = ' AND '
             if 'searchkeyval' in request.POST:
                 searchkey = request.REQUEST['searchkeyval']
                 querylist = querylist+join+" searchkeyid = "+searchkey
@@ -167,8 +162,8 @@ def search(request):
             print records.query
             searchdata = Searchkey.objects.filter(searchid=searchkey)
             timeinfo = {'maxdept':deptmaxtime,'mindept':depttime,'minarival':arivtime,'maxarival':arivtmaxtime}#Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` where "+querylist+" order by departure ASC")
-            filerkey =  {'stoppage':list,'cabin':cabinlist, 'deptmin':depttime,'deptmax': deptmaxtime,'datasource':list1}
-            return render_to_response('flightsearch/searchresult.html',{'returndata':returnkey,'action':action,'minprice':minprice,'tax':tax,'data':records,'search':searchdata,'selectedrow':selectedrow,'filterkey':filerkey,'timedata':timeinfo,'passenger':passenger},context_instance=RequestContext(request))
+            filerkey =  {'stoppage':list,'deptmin':depttime,'deptmax': deptmaxtime,'datasource':list1}
+            return render_to_response('flightsearch/searchresult.html',{'cabin':cabinlist,'returndata':returnkey,'action':action,'minprice':minprice,'tax':tax,'data':records,'search':searchdata,'selectedrow':selectedrow,'filterkey':filerkey,'timedata':timeinfo,'passenger':passenger},context_instance=RequestContext(request))
             
     if request.is_ajax():
         context = {}
@@ -290,6 +285,7 @@ def searchLoading(request):
         cabintype = ''
         if 'cabintype' in request.REQUEST:
             cabintype = request.REQUEST['cabintype']
+        print cabintype
         roundtripkey = ''
         if 'keyid' in request.REQUEST:
             roundtripkey = request.REQUEST['keyid']
@@ -328,9 +324,10 @@ def getsearchresult(request):
             searchkey = request.GET.get('returnkey', '')
             returnkey = request.GET.get('keyid', '')
         if cabinclass !='':
-            cabintype = " and "+cabinclass+ "!=''"
+            cabintype = " and "+cabinclass+ " > 0"
         print searchkey,cabintype   
         record = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+searchkey+cabintype+" order by maincabin ASC")
+        print record.query
         minprice =0
         tax = 0
         selectedrow = ''
