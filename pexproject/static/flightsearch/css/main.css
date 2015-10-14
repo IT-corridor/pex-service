@@ -9,139 +9,6 @@ html, body {
 .wrapper {
 	min-height: 100%;
 }
-/*GENERAL MEDIA QUERIES*/
-@media (max-width: 600px) {
-	.hidden-xxs {
-		display: none !important;
-	}
-}
-@media (max-width: 991px) {
-}
-@media (max-width: 767px) {
-	.date-wd {
-		width: inherit;
-	}
-	.xs-margin-20 {
-		margin: 20px 0px 10px;
-	}
-	.ad-images  img {
-		width: 100%;
-		margin-bottom: 15px;
-	}
-	.responsive-edit a {
-		text-align: left;
-	}
-	.responsive-edit {
-		!
-		min-height: 80px;
-		padding-top: 0px !important;
-	}
-
-	.xs-nopadding {
-		padding: 0px;
-	}
-	.xs-margin-25px {
-		margin-top: 15px;
-	}
-	.for-mobile-view {
-		display: block !important;
-		padding: 0;
-	}
-	.for-desktop-view {
-		display: none;
-	}
-	.pop-hover .well {
-		padding: 0px !important;
-	}
-	.table-date-search table tr td {
-		white-space: pre-line !important;
-	}
-	.arrow-size {
-		font-size: 28px !important;
-		line-height: 18px;
-	}
-	.ad-images  img {
-		width: 100%;
-		margin-bottom: 15px;
-	}
-	.pd-cls-responsive {
-		padding: 0px 5px 0px 10px;
-	}
-	.pd-xs {
-		padding: 10px !important;
-	}
-	.custome-pd .radio-inline, .checkbox-inline {
-		display: inline-block;
-		padding-left: 12px;
-	}
-	.jumbotron h1 {
-		color: #333;
-		font-size: 17px !important;
-	}
-	.footer-custome .nav > li {
-		display: inline-block;
-	}
-	.footer-custome .nav > li > a {
-		padding: 10px 6px;
-	}
-
-	.social-icon > li {
-		display: inline-block;
-	}
-	.trip-custome label {
-		font-size: 12px;
-	}
-	.na-ra p {
-		font-size: 13px !important;
-	}
-	.right-data-responsive {
-		display: inline-block;
-		float: right;
-	}
-	.custome-edit-block {
-		text-align: left;
-		!background: #f9f9f9;
-		!padding: 20px 10px 5px !important;
-	}
-	.pr-custone-edit {
-		padding: 5px 10px 0px !important;
-	}
-	.edit-width-econo {
-		max-width: 115px;
-		margin: 0;
-	}
-	.mainNav {
-		min-height: 30px !important;
-	}
-	.pr-custone-edit .flight-rate {
-		font-size: 13px !important;
-	}
-	.custome-brand img {
-		padding: 0px !important;
-	}
-}
-
-@media (max-width: 420px) {
-	.arrow-div {
-		font-size: 33px !important;
-	}
-
-}
-
-@media (min-width: 767px) and (max-width: 991px) {
-	#dropdownMenu1 {
-		padding: 6px 2px;
-		font-size: 11px;
-	}
-
-}
-
-@media (min-width: 768px) and (max-width: 835px) {
-	.travelers-down-menu {
-		width: 260px !important;
-	}
-
-}
 
 .ad-images  img {
 	width: 100%;
@@ -580,7 +447,8 @@ footer .navbar-footer .navbar-toggle .icon-bar {
 	display: inline-block;
 }
 .arrivel p, .arrivel-2 p {
-	color: #39A8E0;
+	/*color: #39A8E0;*/
+	color: #181818;
 	font-weight: 400;
 	font-size: 15px;
 	margin: 0px;
@@ -610,7 +478,7 @@ footer .navbar-footer .navbar-toggle .icon-bar {
 }
 
 .pop-hover {
-	margin-top: 10px;
+	!margin-top: 10px;
 }
 .pop-hover a {
 	color: #39A8E0;
@@ -619,14 +487,14 @@ footer .navbar-footer .navbar-toggle .icon-bar {
 }
 .non-stop p {
 	color: #333;
-	font-weight: 300;
+	font-weight: 400;
 	font-size: 15px;
 	!text-align: right;
-	margin-bottom: 11px;
-	margin-top: -4px;
+	margin-bottom: 0px;
+	!margin-top: -4px;
 }
 .centr-info {
-	padding: 17px 0px 0px;
+	padding: 10px 0px 0px;
 	border-bottom: 1px solid #39A8E0;
 }
 .form-side {
@@ -827,7 +695,7 @@ p.flight-name {
 }
 .custome-brand img {
 	!height: 75px !important;
-	padding: 0px 10px;
+	padding: 0px 15px;
 	max-height: 100%;
 }
 .custome-brand .img-responsive {
@@ -988,6 +856,143 @@ button.close:hover,button.close:active:focus{
     box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
 }
 
+/*GENERAL MEDIA QUERIES*/
+@media (max-width: 600px) {
+	.hidden-xxs {
+		display: none !important;
+	}
+}
+@media (max-width: 991px) {
+}
+@media (max-width: 767px) {
+	.date-wd {
+		width: inherit;
+	}
+	.xs-margin-20 {
+		margin: 20px 0px 10px;
+	}
+	.ad-images  img {
+		width: 100%;
+		margin-bottom: 15px;
+	}
+	.responsive-edit a {
+		text-align: left;
+	}
+	.responsive-edit {
+		!
+		min-height: 80px;
+		padding-top: 0px !important;
+	}
+
+	.xs-nopadding {
+		padding: 0px;
+	}
+	.xs-margin-25px {
+		margin-top: 15px;
+	}
+	.for-mobile-view {
+		display: block !important;
+		padding: 0;
+	}
+	.for-desktop-view {
+		display: none;
+	}
+	.pop-hover .well {
+		padding: 0px !important;
+	}
+	.table-date-search table tr td {
+		white-space: pre-line !important;
+	}
+	.arrow-size {
+		font-size: 28px !important;
+		line-height: 18px;
+	}
+	.ad-images  img {
+		width: 100%;
+		margin-bottom: 15px;
+	}
+	.pd-cls-responsive {
+		padding: 0px 5px 0px 10px;
+	}
+	.pd-xs {
+		padding: 10px !important;
+	}
+	.custome-pd .radio-inline, .checkbox-inline {
+		display: inline-block;
+		padding-left: 12px;
+	}
+	.jumbotron h1 {
+		color: #333;
+		font-size: 17px !important;
+	}
+	.footer-custome .nav > li {
+		display: inline-block;
+	}
+	.footer-custome .nav > li > a {
+		padding: 10px 6px;
+	}
+
+	.social-icon > li {
+		display: inline-block;
+	}
+	.trip-custome label {
+		font-size: 12px;
+	}
+	.na-ra p {
+		font-size: 13px !important;
+	}
+	.right-data-responsive {
+		display: inline-block;
+		float: right;
+	}
+	.custome-edit-block {
+		text-align: left;
+		!background: #f9f9f9;
+		!padding: 20px 10px 5px !important;
+	}
+	.pr-custone-edit {
+		padding: 5px 10px 0px !important;
+	}
+	.edit-width-econo {
+		max-width: 115px;
+		margin: 0;
+	}
+	.mainNav {
+		min-height: 30px !important;
+	}
+	.pr-custone-edit .flight-rate {
+		font-size: 13px !important;
+	}
+	.custome-brand img {
+		padding: 0 12px !important;
+	}
+}
+
+@media (max-width: 420px) {
+	.arrow-div {
+		font-size: 25px !important;
+	}
+	.arrivel-2 {
+		float: left;
+	}
+
+}
+
+@media (min-width: 767px) and (max-width: 991px) {
+	#dropdownMenu1 {
+		padding: 6px 2px;
+		font-size: 11px;
+	}
+
+}
+
+@media (min-width: 768px) and (max-width: 835px) {
+	.travelers-down-menu {
+		width: 260px !important;
+	}
+
+}
+
 @media (max-width: 1024px) {
 	.navbar-default .navbar-brand {
 		color: #39A8E0;
@@ -1113,6 +1118,9 @@ button.close:hover,button.close:active:focus{
 	}
 }
 @media (max-width: 767px) {
+	.xs-text-center {
+		text-align: center;
+	}
 	.xs-pl5{
 		padding-left: 5px;
 	}

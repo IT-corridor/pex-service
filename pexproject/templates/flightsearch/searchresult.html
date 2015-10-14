@@ -16,8 +16,8 @@
 </style>
 			<div class="col-xs-12 nopadding">
 				<div class="jumbotron">
-					<div class="container-fluid xs-nopadding">
-						<div class="col-md-12 col-xs-12">
+					<div class="container-fluid">
+						<div class="col-md-12 col-xs-12 nopadding">
 							<div class="col-md-2 col-xs-12 nopadding filters-holder mvb10px ">
 								<div class="col-xs-12 nopadding visible-xs filter-collapse form-side">
 									<p class="pull-left">Filters</p>
@@ -467,8 +467,8 @@
 									</div>
 									<div class="col-md-7 col-xs-12 nopadding">
 										<div class="col-md-8 col-xs-12 nopadding">
-											<div class="col-xs-12 nopadding mvb10px">
-												<div class="arrivel col-sm-5 nopadding col-xs-5">
+											<div class="col-xs-12 nopadding">
+												<div class="arrivel col-sm-5 nopadding col-xs-4">
 													<p>
 														{{row.origin}}
 													</p>
@@ -476,8 +476,8 @@
 														{{row.departure}}
 													</p>
 												</div>
-												<div class="arrow-div col-sm-2 text-center nopadding">&#8594;</div>
-												<div class="arrivel-2 col-sm-5 nopadding text-right col-xs-5">
+												<div class="arrow-div col-sm-2 col-xs-1 text-center nopadding">&#8594;</div>
+												<div class="arrivel-2 col-sm-4 nopadding text-right col-xs-4 xs-text-center">
 													<p>
 														{{row.destination}}
 													</p>
@@ -485,8 +485,20 @@
 														{{row.arival}}
 													</p>
 												</div>
+												<div class="col-xs-3 nopadding visible-xs text-right">
+													<div class="col-xs-12 nopadding non-stop text-right">
+														<p>
+															{{row.stoppage}}
+														</p>
+													</div>
+													<div class="col-xs-12 nopadding non-stop">
+														<p>
+															{{row.duration}}
+														</p>
+													</div>
+												</div>
 											</div>
-											<div class="col-xs-12 nopadding visible-xs">
+											<!-- div class="col-xs-12 nopadding visible-xs">
 												<div class="col-xs-6 nopl non-stop">
 													<p>
 													{{row.duration}}
@@ -497,9 +509,9 @@
 													{{row.stoppage}}
 													</p>
 												</div>
-											</div>
-											
-									<div class="col-xs-12 nopadding for-mobile-view"> <!-- main data only mobile -->
+											</div -->
+									<a class="show-details" role="button" data-toggle="collapse" href="#{{row.rowid}}" aria-expanded="false" aria-controls="collapseExample">SHOW DETAILS</a>		
+									<div class="col-xs-12 nopadding mvt10px for-mobile-view"> <!-- main data only mobile -->
 										<div class="col-xs-12 nopadding text-center custome-edit-block"> 
 											{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' %}
 											
@@ -646,7 +658,7 @@
 											{% endif%}											
 										</div>
 									</div>  
-											<a class="show-details" role="button" data-toggle="collapse" href="#{{row.rowid}}" aria-expanded="false" aria-controls="collapseExample">SHOW DETAILS</a>
+											
 										</div>
 										<div class="col-md-4 col-xs-12 text-center nopr hidden-xs">
 											<div class="col-xs-12 nopadding non-stop">
