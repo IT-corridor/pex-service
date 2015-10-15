@@ -247,7 +247,15 @@
         ga('create','UA-XXXXX-X','auto');ga('send','pageview');
         
         $( "#cabintab" ).focus(function(){
-		});
+		$(".travelers-holder").addClass('open');
+		return false;
+	});
+	$( "#cabintab" ).click(function(){
+		$(".travelers-holder").addClass('open');
+		return false;
+	});
+	
+
     </script>
     <script>
     $("#submitid").click(function(event) {

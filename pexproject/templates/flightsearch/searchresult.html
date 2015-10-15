@@ -200,7 +200,7 @@
 									  </div>
 									  </div>
 									  -->
-										<div class="form-group">
+										<div class="form-group" id="cabintab" tabindex="5">
 						                <div class="form-group travelers-dpdn-details nomr noml" class="ui-widget">
 						                  <div class="dropdown travelers-holder form-control">
 						                  	<span class="" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="travelar">1 adult, Economy</span> <span class="caret"></span></span>
@@ -804,7 +804,7 @@
                         }
                });
        });
-			
+
 			
 			
 			
@@ -1150,6 +1150,14 @@
 				$(this).parent().parent().toggleClass('filters-holder-ht');
 			});
 		}
+		$("#cabintab").focus(function(){
+			$(".travelers-holder").addClass('open');
+			return false;
+		});
+		$("#cabintab").click(function(){
+			$(".travelers-holder").addClass('open');
+			return false;
+		});
 	});
 </script>
 <script>
