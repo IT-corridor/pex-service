@@ -201,7 +201,7 @@
 									  </div>
 									  -->
 										<div class="form-group opentab" id="cabintab" tabindex="5">
-						                <div class="form-group travelers-dpdn-details nomr noml" class="ui-widget">
+						                <div class="form-group travelers-dpdn-details nomr noml nomb" class="ui-widget">
 						                  <div class="dropdown travelers-holder form-control">
 						                  	<span class="" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="travelar">1 adult, Economy</span> <span class="caret"></span></span>
 						                  	<div class="travelers-down-menu dropdown-menu opentab" aria-labelledby="dropdownMenu1">
@@ -293,7 +293,7 @@
 						                
 						              </div>
 									  <div class="form-group">
-									    <button class="btn  btn-pexSearch" tabindex="6">Change</button>
+									    <button class="btn  btn-pexSearch xs-fw" tabindex="6">Change</button>
 									  </div>
 									</form>
 									<!--
@@ -1155,6 +1155,7 @@
 			$(".travelers-holder").addClass('open');
 			return false;
 		});
+
 		$(".opentab").focusout(function(){
 			$('#cabintype').click(function(){
 			if( $(".opentab").hasClass('open')){
