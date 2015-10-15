@@ -160,7 +160,7 @@
 										{% csrf_token %}
 									  <div class="form-group date-wd">
 									    <label class="sr-only" for="exampleInputEmail3">Source</label>
-									    <input type="text" tabindex="1" id="from" class="form-control" value="{{searchrow.source}}">
+									    <input type="text" tabindex="1" id="from" class="form_val form-control" value="{{searchrow.source}}">
 									  	<input type="hidden" id="fromid" name="fromMain" value="{{searchrow.origin_airport_id}}">
 									  </div>
 									   <div class="form-group">
@@ -169,14 +169,14 @@
 									  </div>
 									  <div class="form-group date-wd">
 									    <label class="sr-only" for="exampleInputPassword3">Destination</label>
-									    <input type="text" tabindex="2" id="to" class="form-control" value="{{searchrow.destination}}">
+									    <input type="text" tabindex="2" id="to" class="form_val form-control" value="{{searchrow.destination}}">
 									  	<input type="hidden" id="toid" name="toMain" value="{{searchrow.destination_airport_id}}">
 									  </div>
 									  <div class="form-group date-wd">
 										 <label class="sr-only" for="exampleInputPassword3">Departure</label>
 											<div class="inner-addon left-addon date" id="dp1">
 										    <i class="glyphicon glyphicon-calendar"></i>
-										    <input type="text"  tabindex="3" class="form-control" value="{{searchrow.traveldate|date:"m/d/Y"}}" id="departuredate" name="deptdate">
+										    <input type="text"  tabindex="3" class="form_val form-control" value="{{searchrow.traveldate|date:"m/d/Y"}}" id="departuredate" name="deptdate">
 									  		</div>
 									  </div>
 									  {%if searchrow.returndate%}
@@ -184,7 +184,7 @@
 									    <label class="sr-only" for="exampleInputPassword3">return</label>
 									    <div class="inner-addon left-addon date" id="dp2">
 									    <i class="glyphicon glyphicon-calendar"></i>
-									    <input type="text" tabindex="4" class="form-control" value="{{searchrow.returndate|date:"m/d/Y"}}" id="return" name="returndate">
+									    <input type="text" tabindex="4" class="form_val form-control" value="{{searchrow.returndate|date:"m/d/Y"}}" id="return" name="returndate">
 									  </div>
 									  </div>
 									  {%endif%}
@@ -200,15 +200,15 @@
 									  </div>
 									  </div>
 									  -->
-										<div class="form-group opentab" id="cabintab" tabindex="5">
+										<div class="form-group" id="cabintab" tabindex="5">
 						                <div class="form-group travelers-dpdn-details nomr noml" class="ui-widget">
 						                  <div class="dropdown travelers-holder form-control">
 						                  	<span class="" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="travelar">1 adult, Economy</span> <span class="caret"></span></span>
-						                  	<div class="travelers-down-menu dropdown-menu opentab" aria-labelledby="dropdownMenu1">
+						                  	<div class="travelers-down-menu dropdown-menu" aria-labelledby="dropdownMenu1">
 						                  		<div class="col-xs-12 down-menu-block">
 													<span class="col-xs-4 nopadding">Class</span>
 
-													<span class="col-xs-8 text-right nopr"><select class="custom-field-control notclose" id="cabintype" name="cabintype">
+													<span class="col-xs-8 text-right nopr"><select class="custom-field-control notclose" id="cabintype" name="cabintype" tabindex="6">
 														<option class="cabin" value="maincabin" {% if request.GET.cabin == "maincabin" or cabin == "maincabin" %} selected="selected" {% endif %}>Economy</option>
 														<option class="cabin" value="firstclass" {% if request.GET.cabin == "firstclass" or cabin == "firstclass" %} selected="selected" {% endif %}>Business</option>
 														<option  class="cabin" value="business" {% if request.GET.cabin == "business" or cabin == "business" %} selected="selected" {% endif %}>First</option>
@@ -220,7 +220,7 @@
 													<span class="col-xs-4 nopadding">Adults</span>
 													<span class="col-xs-5 text-right nopadding">
 														<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
-														<input type="text" class="field-width custom-field-control numberHolder qty" value="1" id="adults">
+														<input type="text" class="field-width custom-field-control numberHolder qty" value="1" id="adults" tabindex="7">
 														<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>								
 													</span>
 													<span class="col-xs-3 nopr">18+</span> 
@@ -231,7 +231,7 @@
 													<span class="col-xs-4 nopadding">Seniors</span>
 													<span class="col-xs-5 text-right nopadding">
 														<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
-														<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="senior">
+														<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="senior" tabindex="8">
 														<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>								
 														
 													</span>
@@ -243,7 +243,7 @@
 													<span class="col-xs-4 nopadding">Youths</span>
 													<span class="col-xs-5 text-right nopadding">
 														<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
-														<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="youth">
+														<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="youth" tabindex="9">
 														<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>								
 														
 													</span>
@@ -255,7 +255,7 @@
 													<span class="col-xs-4 nopadding">Children</span>
 													<span class="col-xs-5 text-right nopadding">
 														<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
-														<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="children">								
+														<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="children" tabindex="10">								
 														<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
 														
 													</span>
@@ -267,7 +267,7 @@
 													<span class="col-xs-4 nopadding">Seat infants</span>
 													<span class="col-xs-5 text-right nopadding">
 														<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
-														<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="seatinfants">								
+														<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="seatinfants" tabindex="11">								
 														<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
 														
 													</span>
@@ -279,7 +279,7 @@
 													<span class="col-xs-4 nopadding">Lap infants</span>
 													<span class="col-xs-5 text-right nopadding">
 														<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
-														<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="lapinfants">								
+														<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="lapinfants" tabindex="12">								
 														<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
 														
 													</span>
@@ -293,7 +293,7 @@
 						                
 						              </div>
 									  <div class="form-group">
-									    <button class="btn  btn-pexSearch" tabindex="6">Change</button>
+									    <button class="form_val btn  btn-pexSearch" tabindex="13">Change</button>
 									  </div>
 									</form>
 									<!--
@@ -1151,23 +1151,17 @@
 				$(this).parent().parent().toggleClass('filters-holder-ht');
 			});
 		}
-		$(".opentab").focus(function(){
+		$( "#cabintab" ).focus(function(){
 			$(".travelers-holder").addClass('open');
 			return false;
 		});
-		$(".opentab").focusout(function(){
-			$('#cabintype').click(function(){
-			if( $(".opentab").hasClass('open')){
-				$(".travelers-holder").addClass('open');
-			}
-			else{
-				$(".travelers-holder").removeClass('open');
-			}
-			});
-		});
-		$(".opentab").click(function(e){
+		$( "#cabintab" ).click(function(){
 			$(".travelers-holder").addClass('open');
 			return false;
+		});
+		
+		$(".form_val").focus(function(){
+			if(!$(this).hasClass("cabin_type")){ $(".travelers-holder").removeClass('open'); }
 		});
 	});
 </script>
