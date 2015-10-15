@@ -510,7 +510,7 @@
 													</p>
 												</div>
 											</div -->
-									<a class="show-details" role="button" data-toggle="collapse" href="#{{row.rowid}}" aria-expanded="false" aria-controls="collapseExample">SHOW DETAILS</a>		
+											
 									<div class="col-xs-12 nopadding mvt10px for-mobile-view"> <!-- main data only mobile -->
 										<div class="col-xs-12 nopadding text-center custome-edit-block"> 
 											{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' %}
@@ -670,10 +670,6 @@
 												</p>
 
 											</div>
-											<h4 class="econo nomt"> 
-												{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
-												{{row.cabintype1}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{row.cabintype2}} {% else%}{{row.cabintype3}} {% endif %}</h4>
-											
 										</div>
 										<div class="col-xs-12 pop-hover nopadding">
 											<div class="collapse" id="{{row.rowid}}">
@@ -778,6 +774,10 @@
 												</div>
 											</div>
 										</div>
+										<a class="show-details" role="button" data-toggle="collapse" href="#{{row.rowid}}" aria-expanded="false" aria-controls="collapseExample">SHOW DETAILS</a>
+										<h4 class="econo nomt hidden-xs"> 
+												{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
+												{{row.cabintype1}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{row.cabintype2}} {% else%}{{row.cabintype3}} {% endif %}</h4>
 									</div>
 								</div>
 								{% endfor %}
@@ -1157,7 +1157,7 @@
 		$("#cabintab").focusout(function(){
 			$(".travelers-holder").removeClass('open');
 		});
-		$("#cabintab").click(function(){
+		$("#cabintab").click(function(e){
 			$(".travelers-holder").addClass('open');
 			return false;
 		});
