@@ -13,6 +13,10 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>
+		html, body {
+			height: 100%;
+		}
+
             body {
                 /*padding-top: 50px;
                 padding-bottom: 20px;*/
@@ -35,7 +39,7 @@
 	
 <!-- BODY SECTION/-->
 
-    <div class="col-xs-12 nopadding">
+    <div class="col-xs-12 nopadding" style="height:100%;padding-bottom:232px;">
       <div class="jumbotron">
         <div class="container">
           <div class="row">
@@ -203,8 +207,8 @@
 					<div class="col-xs-12 nopadding">
 				<!-- Example row of columns -->
 				<div class="col-xs-12 nopadding ad-images">
-					<img src="{% static 'flightsearch/img/banner.png' %}" class="img-responsive nomb">
-					<!-- <div class="col-md-3 col-xs-12 pd-cls-responsive">
+					<!-- <img src="{% static 'flightsearch/img/banner.png' %}" class="img-responsive nomb">
+					<div class="col-md-3 col-xs-12 pd-cls-responsive">
 				            <a href="#"><img src="img/specials.jpg"></a>
 				        </div>
 				        <div class="col-md-3 col-xs-12 pd-cls-responsive">
