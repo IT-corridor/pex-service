@@ -104,26 +104,28 @@ def united(origin,destination,searchdate,searchkey):
                             info = departinfo.findAll("div")
                             depart = info[1].text
                             departdate= info[2].text
+                            print "Departdate", departdate
                             depart = depart.replace(".","")
                             test = (datetime.datetime.strptime(depart,'%I:%M %p'))
                             source1 = info[3].text
                             flightdetail = content.find("td",{"class":"tdSegmentDtl"})
                             fltno1 = flightdetail.find("div").text
-                            print fltno1
-                            planelist.append(fltno1.replace('Flight:',''))
-                            if m == 0:
+    
+                            if stop == 1:
                                 test1 = test.strftime('%H:%M')
                                 source2 = source1.split('(')
                                 source = source2[1].replace(')','')
                                 fltno = fltno1
                             
-                            departdetail=departdate.replace('.,',"")+" | "+test1+"  from   "+source1
+                            departdetail=departdate.replace('.,',"")+" | "+depart+"  from   "+source1
                             departdlist.append(departdetail)
                             
                             arivinfo = content.find("td",{"class":"tdArrive"})
                             ainfo = arivinfo.findAll("div")
                             arival = ainfo[1].text
+                            print arival
                             arivedate = info[2].text
+                            print "arivedate",arivedate
                             
                             arival1 = arival.replace(".","").strip()
                             if '+' in arival1:
@@ -134,15 +136,26 @@ def united(origin,destination,searchdate,searchkey):
                             destination1 = ainfo[3].text
                             destination2 = destination1.split('(')
                             Destination = (destination2[1].replace(')',''))
-                          
+                            
                             duration = content.find("td",{"class":"tdTrvlTime"})
+                            traveltime = duration.find("span").text
+                            if 'Travel Time:' in traveltime:
+                                traveltime = traveltime.replace('Travel Time:','')
+                                
+                            print traveltime
+                            
+                            fltno2 = fltno1.replace('Flight:','')
+                            planecontent = fltno2+"  |  "+traveltime.replace('Flight Time:','')
+                            
+                            planelist.append(planecontent)
+                            
                             if duration.find("span",{"class":"PHead"}):
                                 totaltime = duration.find("span",{"class":"PHead"}).text
-                                print totaltime
+                                #print totaltime
                             traveltime = duration.findAll("span")
                             for timetext in traveltime:
                                 print timetext.text
-                            arivedetail = arivedate.replace('.,',"")+" | "+arivalformat1+"  at   "+destination1
+                            arivedetail = arivedate.replace('.,',"")+" | "+arival+"  at   "+destination1
                             arivelist.append(arivedetail)
                             """
                             flightdetail = content.find("td",{"class":"tdSegmentDtl"})
@@ -153,7 +166,6 @@ def united(origin,destination,searchdate,searchkey):
                     #for flno in flightdetail:
                         #print flno.find("div").text
                     #print content.find("td",{"class":"tdSegmentDtl"}).text
-                    print "planelist",planelist
                     departdetails='@'.join(departdlist)
                     arivedetails='@'.join(arivelist)
                     planedetails='@'.join(planelist)
@@ -219,7 +231,6 @@ def united(origin,destination,searchdate,searchkey):
                             
                             cabin =[]
                             extratax = []
-                            print cabintype1,fare1
                            
                         if k == 4:
                             if cabin[0]:
@@ -252,8 +263,7 @@ def united(origin,destination,searchdate,searchkey):
                                 #cabintype3 = "first two row"
                             cabin =[]
                             extratax = []
-                        j=0
-                print "stopage" ,stop        
+                        j=0        
                 if stop-1 < 1:
                     stopage = "NONSTOP"
                 elif stop-1 == 1:
