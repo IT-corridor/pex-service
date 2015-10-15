@@ -68,14 +68,14 @@
               <div class="col-sm-2 col-xs-12 nopadding">
                 <div class="form-group nomr noml" class="ui-widget">
                   <label class="sr-only" for="from">From:</label>
-                  <input type="search" tabindex="1" class="form-control" id="from" name="from" placeholder="From" autocomplete="off">
+                  <input type="search" tabindex="1" class="form_val form-control" id="from" name="from" placeholder="From" autocomplete="off">
                   <input type="hidden" id="fromid" name="fromMain" />
                 </div>
               </div>
               <div class="col-sm-2 col-xs-12 xs-nopadding">
                 <div class="form-group  nomr noml" class="ui-widget">
                   <label class="sr-only" for="to">To:</label>
-                  <input type="search" tabindex="2" class="form-control" id="to" name="to" placeholder="To" autocomplete="off">
+                  <input type="search" tabindex="2" class="form_val form-control" id="to" name="to" placeholder="To" autocomplete="off">
                   <input type="hidden" id="toid" name="toMain" />
                 </div>
               </div>
@@ -85,7 +85,7 @@
                   <label class="sr-only" for="departMain">Departure Date:</label>
                   <div class="inner-addon left-addon date" id="dp1">
                       <i class="glyphicon glyphicon-calendar"></i>
-                      <input type="text" tabindex="3" class="form-control" id="departMain" placeholder="Depart" name="deptdate">
+                      <input type="text" tabindex="3" class="form_val form-control" id="departMain" placeholder="Depart" name="deptdate">
                   </div>
                   <div class="form-group" id="deptmsg"></div>
                 </div>
@@ -95,7 +95,7 @@
                   <label class="sr-only" for="returnMain">Return Date:</label>
                   <div class="inner-addon left-addon date" id="dp2">
                       <i class="glyphicon glyphicon-calendar"></i>
-                      <input type="text" tabindex="4" class="form-control" id="returnMain" placeholder="Return" name="returndate">
+                      <input type="text" tabindex="4" class="form_val form-control" id="returnMain" placeholder="Return" name="returndate">
                   </div>
                 </div>
               </div>
@@ -107,7 +107,7 @@
                   	<div class="travelers-down-menu dropdown-menu" aria-labelledby="dropdownMenu1">
                   		<div class="col-xs-12 down-menu-block">
 							<span class="col-xs-4 nopadding">Class</span>
-							<span class="col-xs-8 text-right nopr"><select class="custom-field-control " id="cabintype" name="cabintype">
+							<span class="col-xs-8 text-right nopr"><select class="custom-field-control " id="cabintype" name="cabintype" tabindex="6">
 								<option class="cabin" value="maincabin">Economy</option>
 								<option class="cabin" value="firstclass">Business</option>
 								<option  class="cabin" value="business">First</option>
@@ -119,7 +119,7 @@
 							<span class="col-xs-4 nopadding">Adults</span>
 							<span class="col-xs-5 text-right nopadding">
 								<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
-								<input type="text" class="field-width custom-field-control numberHolder qty" value="1" id="adults">
+								<input type="text" class="field-width custom-field-control numberHolder qty" value="1" id="adults" tabindex="7">
 								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>								
 							</span>
 							<span class="col-xs-3 nopr">18+</span> 
@@ -130,7 +130,7 @@
 							<span class="col-xs-4 nopadding">Seniors</span>
 							<span class="col-xs-5 text-right nopadding">
 								<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
-								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="senior">
+								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="senior" tabindex="8">
 								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>								
 								
 							</span>
@@ -142,7 +142,7 @@
 							<span class="col-xs-4 nopadding">Youths</span>
 							<span class="col-xs-5 text-right nopadding">
 								<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
-								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="youth">
+								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="youth" tabindex="9">
 								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>								
 								
 							</span>
@@ -154,7 +154,7 @@
 							<span class="col-xs-4 nopadding">Children</span>
 							<span class="col-xs-5 text-right nopadding">
 								<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
-								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="children">								
+								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="children" tabindex="10">								
 								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
 								
 							</span>
@@ -166,7 +166,7 @@
 							<span class="col-xs-4 nopadding">Seat infants</span>
 							<span class="col-xs-5 text-right nopadding">
 								<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
-								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="seatinfants">								
+								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="seatinfants" tabindex="11">								
 								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
 								
 							</span>
@@ -178,7 +178,7 @@
 							<span class="col-xs-4 nopadding">Lap infants</span>
 							<span class="col-xs-5 text-right nopadding">
 								<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
-								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="lapinfants">								
+								<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="lapinfants" tabindex="12">								
 								<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
 								
 							</span>
@@ -192,7 +192,7 @@
                 
               </div>
               <div class="col-sm-2 col-xs-12 xs-nopadding">
-                <button type="submit" class="btn btn-pexSearch" id="submitid" tabindex="6">Search</button>
+                <button type="submit" class="form_val btn btn-pexSearch" id="submitid" tabindex="13">Search</button>
               </div>
             </div>
             </div>
@@ -252,6 +252,9 @@
 	$( "#cabintab" ).click(function(){
 		$(".travelers-holder").addClass('open');
 		return false;
+	});
+	$(".form_val").focus(function(){
+		if(!$(this).hasClass("cabin_type")){ $(".travelers-holder").removeClass('open'); }
 	});
     </script>
     <script>
