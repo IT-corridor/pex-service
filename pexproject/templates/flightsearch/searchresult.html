@@ -160,7 +160,7 @@
 										{% csrf_token %}
 									  <div class="form-group date-wd">
 									    <label class="sr-only" for="exampleInputEmail3">Source</label>
-									    <input type="text" id="from" class="form-control" value="{{searchrow.source}}">
+									    <input type="text" tabindex="1" id="from" class="form-control" value="{{searchrow.source}}">
 									  	<input type="hidden" id="fromid" name="fromMain" value="{{searchrow.origin_airport_id}}">
 									  </div>
 									   <div class="form-group">
@@ -169,14 +169,14 @@
 									  </div>
 									  <div class="form-group date-wd">
 									    <label class="sr-only" for="exampleInputPassword3">Destination</label>
-									    <input type="text" id="to" class="form-control" value="{{searchrow.destination}}">
+									    <input type="text" tabindex="2" id="to" class="form-control" value="{{searchrow.destination}}">
 									  	<input type="hidden" id="toid" name="toMain" value="{{searchrow.destination_airport_id}}">
 									  </div>
 									  <div class="form-group date-wd">
 										 <label class="sr-only" for="exampleInputPassword3">Departure</label>
 											<div class="inner-addon left-addon date" id="dp1">
 										    <i class="glyphicon glyphicon-calendar"></i>
-										    <input type="text" class="form-control" value="{{searchrow.traveldate|date:"m/d/Y"}}" id="departuredate" name="deptdate">
+										    <input type="text"  tabindex="3" class="form-control" value="{{searchrow.traveldate|date:"m/d/Y"}}" id="departuredate" name="deptdate">
 									  		</div>
 									  </div>
 									  {%if searchrow.returndate%}
@@ -184,7 +184,7 @@
 									    <label class="sr-only" for="exampleInputPassword3">return</label>
 									    <div class="inner-addon left-addon date" id="dp2">
 									    <i class="glyphicon glyphicon-calendar"></i>
-									    <input type="text" class="form-control" value="{{searchrow.returndate|date:"m/d/Y"}}" id="return" name="returndate">
+									    <input type="text" tabindex="4" class="form-control" value="{{searchrow.returndate|date:"m/d/Y"}}" id="return" name="returndate">
 									  </div>
 									  </div>
 									  {%endif%}
@@ -292,7 +292,7 @@
 						                
 						              </div>
 									  <div class="form-group">
-									    <button class="btn  btn-pexSearch">Change</button>
+									    <button class="btn  btn-pexSearch" tabindex="6">Change</button>
 									  </div>
 									</form>
 									<!--
@@ -795,12 +795,12 @@
 			</div>
 			<script type="text/javascript">
 			 $(function(){
-	 		$('#return').datetimepicker({format: "m/d/Y",'timepicker': false,closeOnDateSelect: true});
-            $('#departuredate').datetimepicker({ format: "m/d/Y",minDate: 0,'timepicker': false,closeOnDateSelect: true,
+	 		$('#return').datetimepicker({format: "m/d/Y",'timepicker': false,closeOnDateSelect: true,scrollMonth: false});
+            $('#departuredate').datetimepicker({ format: "m/d/Y",minDate: 0,'timepicker': false,closeOnDateSelect: true,scrollMonth: false,
                         onSelectDate: function(selectedDate)
                         {
                                 $("#return").focus();
-                                $( "#return" ).datetimepicker({format: "m/d/Y", minDate: selectedDate });
+                                $( "#return" ).datetimepicker({format: "m/d/Y", minDate: selectedDate,scrollMonth: false });
                         }
                });
        });
@@ -1153,6 +1153,9 @@
 		$("#cabintab").focus(function(){
 			$(".travelers-holder").addClass('open');
 			return false;
+		});
+		$("#cabintab").focusout(function(){
+			$(".travelers-holder").removeClass('open');
 		});
 		$("#cabintab").click(function(){
 			$(".travelers-holder").addClass('open');

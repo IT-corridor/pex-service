@@ -192,7 +192,7 @@
                 
               </div>
               <div class="col-sm-2 col-xs-12 xs-nopadding">
-                <button type="submit" class="btn btn-pexSearch" id="submitid">Search</button>
+                <button type="submit" class="btn btn-pexSearch" id="submitid" tabindex="6">Search</button>
               </div>
             </div>
             </div>
@@ -249,6 +249,9 @@
 		$(".travelers-holder").addClass('open');
 		return false;
 	});
+	$("#cabintab").focusout(function(){
+			$(".travelers-holder").removeClass('open');
+		});
 	$( "#cabintab" ).click(function(){
 		$(".travelers-holder").addClass('open');
 		return false;
@@ -338,8 +341,8 @@
     <script>
 
 	 $(function(){
-	 		$('#returnMain').datetimepicker({format: "m/d/Y",'timepicker': false,closeOnDateSelect: true});
-            $('#departMain').datetimepicker({ format: "m/d/Y",minDate: 0,'timepicker': false,closeOnDateSelect: true,
+	 		$('#returnMain').datetimepicker({format: "m/d/Y",'timepicker': false,closeOnDateSelect: true,scrollMonth: false});
+            $('#departMain').datetimepicker({ format: "m/d/Y",minDate: 0,'timepicker': false,closeOnDateSelect: true,scrollMonth: false,
                         onSelectDate: function(selectedDate)
                         {
                                 $("#returnMain").focus();
