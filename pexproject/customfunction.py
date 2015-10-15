@@ -83,84 +83,80 @@ def united(origin,destination,searchdate,searchkey):
     arivedetails=''
     planedetails=''
     test1 =''
+    stop = 0
     for trs in table:
         trblock = trs.findAll("tr")
         for tds in trblock:
             tdsegblock = tds.findAll("td",{"class":"tdSegmentBlock"})
             for datablock in tdsegblock:
-                stop = 0
                 contenttr = datablock.findAll("tr")
-                #========= changing on 16/9/2015=============================
-                origininfo = contenttr[0]
-                if origininfo:
-                    if origininfo.find("td",{"class":"tdDepart"}):
-                        departinfo = origininfo.find("td",{"class":"tdDepart"})
-                        info = departinfo.findAll("div")
-                        depart = info[1].text
-                        departdate= info[2].text
-                        depart = depart.replace(".","")
-                        test = (datetime.datetime.strptime(depart,'%I:%M %p'))
-                        test1 = test.strftime('%H:%M')
-                        #print "depart Date  : ",info[2].text
-                        source1 = info[3].text
-                        source2 = source1.split('(')
-                        source = source2[1].replace(')','')
-                        flightdetail = origininfo.find("td",{"class":"tdSegmentDtl"})
-                        fltno = flightdetail.find("div").text
-                        
-                        departdetails=departdate.replace('.,',"")+" | "+test1+"  from   "+source1
-                        print fltno
-                        
-                    
-                
-                #========== end===============================================
-                
-                for content in contenttr:
-                    if content.find("td",{"class":"tdDepart"}):
-                        stop = stop+1
-                        print "==================================================================================="
-                        """
-                        departinfo = content.find("td",{"class":"tdDepart"})
-                        info = departinfo.findAll("div")
-                        depart = info[1].text
-                        depart = depart.replace(".","")
-                        test = (datetime.datetime.strptime(depart,'%I:%M %p'))
-                        test1 = test.strftime('%H:%M')
-                        #print "depart Date  : ",info[2].text
-                        source = info[3].text
-                        """
-                        arivinfo = content.find("td",{"class":"tdArrive"})
-                        ainfo = arivinfo.findAll("div")
-                        arival = ainfo[1].text
-                        arivedate = info[2].text
-                        
-                        arival1 = arival.replace(".","").strip()
-                        if '+' in arival1:
-                            arival1 = arival1.split("+")
-                            arival1 = arival1[0].strip()
-                        arivalformat = (datetime.datetime.strptime(arival1,'%I:%M %p'))
-                        arivalformat1 = arivalformat.strftime('%H:%M')
-                        destination1 = ainfo[3].text
-                        destination2 = destination1.split('(')
-                        Destination = (destination2[1].replace(')',''))
-                      
-                        duration = content.find("td",{"class":"tdTrvlTime"})
-                        if duration.find("span",{"class":"PHead"}):
-                            totaltime = duration.find("span",{"class":"PHead"}).text
-                            print totaltime
-                        traveltime = duration.findAll("span")
-                        for timetext in traveltime:
-                            print timetext.text
-                        arivedetails = arivedate.replace('.,',"")+" | "+arivalformat1+"  at   "+destination1
-                        """
-                        flightdetail = content.find("td",{"class":"tdSegmentDtl"})
-                        fltno = flightdetail.find("div").text
-                        print fltno
-                        """
+                blocklenght = len(contenttr)
+                for m in range(0,blocklenght):
+                    stop = 0
+                    departdlist = []
+                    arivelist= []
+                    planelist= []
+                    for content in contenttr:
+                        if content.find("td",{"class":"tdDepart"}):
+                            stop = stop+1
+                            print "==================================================================================="
+                            departinfo = content.find("td",{"class":"tdDepart"})
+                            info = departinfo.findAll("div")
+                            depart = info[1].text
+                            departdate= info[2].text
+                            depart = depart.replace(".","")
+                            test = (datetime.datetime.strptime(depart,'%I:%M %p'))
+                            source1 = info[3].text
+                            flightdetail = content.find("td",{"class":"tdSegmentDtl"})
+                            fltno1 = flightdetail.find("div").text
+                            print fltno1
+                            planelist.append(fltno1.replace('Flight:',''))
+                            if m == 0:
+                                test1 = test.strftime('%H:%M')
+                                source2 = source1.split('(')
+                                source = source2[1].replace(')','')
+                                fltno = fltno1
+                            
+                            departdetail=departdate.replace('.,',"")+" | "+test1+"  from   "+source1
+                            departdlist.append(departdetail)
+                            
+                            arivinfo = content.find("td",{"class":"tdArrive"})
+                            ainfo = arivinfo.findAll("div")
+                            arival = ainfo[1].text
+                            arivedate = info[2].text
+                            
+                            arival1 = arival.replace(".","").strip()
+                            if '+' in arival1:
+                                arival1 = arival1.split("+")
+                                arival1 = arival1[0].strip()
+                            arivalformat = (datetime.datetime.strptime(arival1,'%I:%M %p'))
+                            arivalformat1 = arivalformat.strftime('%H:%M')
+                            destination1 = ainfo[3].text
+                            destination2 = destination1.split('(')
+                            Destination = (destination2[1].replace(')',''))
+                          
+                            duration = content.find("td",{"class":"tdTrvlTime"})
+                            if duration.find("span",{"class":"PHead"}):
+                                totaltime = duration.find("span",{"class":"PHead"}).text
+                                print totaltime
+                            traveltime = duration.findAll("span")
+                            for timetext in traveltime:
+                                print timetext.text
+                            arivedetail = arivedate.replace('.,',"")+" | "+arivalformat1+"  at   "+destination1
+                            arivelist.append(arivedetail)
+                            """
+                            flightdetail = content.find("td",{"class":"tdSegmentDtl"})
+                            fltno = flightdetail.find("div").text
+                            print fltno
+                            """
                     #duration = ''
                     #for flno in flightdetail:
                         #print flno.find("div").text
                     #print content.find("td",{"class":"tdSegmentDtl"}).text
+                    print "planelist",planelist
+                    departdetails='@'.join(departdlist)
+                    arivedetails='@'.join(arivelist)
+                    planedetails='@'.join(planelist)
                 j = 0
                 k = 0
                 cabin = []
@@ -257,7 +253,7 @@ def united(origin,destination,searchdate,searchkey):
                             cabin =[]
                             extratax = []
                         j=0
-                         
+                print "stopage" ,stop        
                 if stop-1 < 1:
                     stopage = "NONSTOP"
                 elif stop-1 == 1:
@@ -266,7 +262,7 @@ def united(origin,destination,searchdate,searchkey):
                     if stop-1 == 2:
                         stopage = "2 STOPS"
                 print fare1,fare2
-                cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,str(searchid),time,stopage,"test",source,Destination,test1,arivalformat1,totaltime,str(fare1),str(maintax),str(fare2),str(businesstax),str(fare3),str(firsttax),cabintype1,cabintype2,cabintype3,"united",departdetails,arivedetails,''))
+                cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,str(searchid),time,stopage,"test",source,Destination,test1,arivalformat1,totaltime,str(fare1),str(maintax),str(fare2),str(businesstax),str(fare3),str(firsttax),cabintype1,cabintype2,cabintype3,"united",departdetails,arivedetails,planedetails))
                 transaction.commit()
                 print "row inserted"
     display.stop
