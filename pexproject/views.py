@@ -158,7 +158,7 @@ def search(request):
             if 'rowid' in request.POST:
                 recordid = request.REQUEST['rowid']
                 selectedrow = Flightdata.objects.get(pk=recordid)
-            records = Flightdata.objects.raw('select * from pexproject_flightdata where '+querylist+' order by departure ASC')
+            records = Flightdata.objects.raw('select * from pexproject_flightdata where '+querylist+' order by maincabin ASC')
             print records.query
             searchdata = Searchkey.objects.filter(searchid=searchkey)
             timeinfo = {'maxdept':deptmaxtime,'mindept':depttime,'minarival':arivtime,'maxarival':arivtmaxtime}#Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` where "+querylist+" order by departure ASC")

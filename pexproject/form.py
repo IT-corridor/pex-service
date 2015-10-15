@@ -3,27 +3,9 @@ from django.forms.extras.widgets import SelectDateWidget
 #from flightsearch.models import Register
 '''
 class RegisterForm(forms.ModelForm):
-    name=forms.CharField(label="Name")
-    username=forms.CharField(label="username")
-    password=forms.CharField(label="password", widget=forms.PasswordInput)
-    contact=forms.CharField(label="contact")
-   # dob=forms.ChoiceField(choices=[(x, x) for x in range(1980, 2010)], required=False)
-    
     email=forms.EmailField(label="Email")
-    sex = (
-           (1,"male"),(2,"female")
-        )
-    gender=forms.ChoiceField(widget=forms.RadioSelect(), choices=sex)
-    photo=forms.ImageField()
-    
-    class Media:
-        css = {
-               'all': ('',)
-               }
-
-    class Meta:
-        model = Register
-        fields = ['id','name','username','password','contact','email','subject','gender','photo']
+    password=forms.CharField(label="password", widget=forms.PasswordInput)
+    home_airport = forms.CharField()
 '''
 
 class LoginForm(forms.Form):

@@ -696,7 +696,7 @@ body {
 															{% with row.arivedetails|split:'@' as mylist1%}
 															{% with row.planedetails|split:'@' as mylist2%}
 															<tr itemscope itemtype="http://schema.org/Flight">
-																<td>Depart:</td>
+																<td><b>Depart: </b></td>
 																<td>
 																{{mylist.0}}
 																</td>
@@ -704,7 +704,8 @@ body {
 															
 															
 															<tr itemscope itemtype="http://schema.org/Flight">
-																<td>Arives:</td>
+															
+																<td><b>Arives:</b></td>
 																<td>
 																<time itemprop="arrivalTime">{{mylist1.0}}</time> 
 																</td>
@@ -712,6 +713,7 @@ body {
 															<tr itemscope itemtype="http://schema.org/Flight">
 																<td>Flight:</td>
 																<td itemprop="flightNumber">
+																<td>
 																{{mylist2.0}}
 																</td>
 															</tr>
@@ -719,11 +721,11 @@ body {
 															<tr>
 																<td></td>
 																<td>
-																	<h4>Change planes </h4>
+																	<h5><b>Change planes </b></h5>
 																</td>
 															</tr>
 															<tr>
-																<td>Depart:</td>
+																<td><b>Depart: </b></td>
 																<td>
 																{{mylist.1}}
 																</td>
@@ -731,13 +733,13 @@ body {
 															
 															
 															<tr>
-																<td>Arives:</td>
+																<td><b>Arives:</b></td>
 																<td>
 																{{mylist1.1}} 
 																</td>
 															</tr>
 															<tr>
-																<td>Flight:</td>
+																<td><b>Flight:</b></td>
 																<td>
 																{{mylist2.1}}
 																</td>
@@ -748,11 +750,11 @@ body {
 															<tr>
 																<td></td>
 																<td>
-																	<h4>Change planes </h4>
+																	<h5><b>Change planes </b></h5>
 																</td>
 															</tr>
 															<tr>
-																<td>Depart:</td>
+																<td><b>Depart: </b></td>
 																<td>
 																{{mylist.2}}
 																</td>
@@ -760,13 +762,13 @@ body {
 															
 															
 															<tr>
-																<td>Arives:</td>
+																<td><b>Arives:</b></td>
 																<td>
 																{{mylist1.2}} 
 																</td>
 															</tr>
 															<tr>
-																<td>Flight:</td>
+																<td><b>Flight:</b></td>
 																<td>
 																{{mylist2.2}}
 																</td>
