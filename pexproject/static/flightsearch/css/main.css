@@ -553,8 +553,10 @@ footer .navbar-footer .navbar-toggle .icon-bar {
 	color: #333 !important;
 	font-weight: 400 !important;
 	font-size: 17px !important;
-	text-align: center !important;/*float:right;
-	 padding: 0px 40px 0px;*/
+	text-align: center !important;
+	float:right;
+	margin-top: 15px;
+	padding: 0px 40px 0px;
 }
 .mecono {
 	display: inline-block !important;
