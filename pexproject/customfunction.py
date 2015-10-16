@@ -136,24 +136,27 @@ def united(origin,destination,searchdate,searchkey):
                             arivalformat1 = arivalformat.strftime('%H:%M')
                             destination1 = ainfo[3].text
                             destination2 = destination1.split('(')
-                            destination3 = (source2[1].replace(')','')).split('-')
+                            destination3 = (destination2[1].replace(')','')).split('-')
                             Destination = destination3[0]
                             
                             duration = content.find("td",{"class":"tdTrvlTime"})
                             traveltime = duration.find("span").text
+                            print "traveltime",traveltime
                             if 'Travel Time:' in traveltime:
                                 traveltime = traveltime.replace('Travel Time:','')
                                 
-                            print traveltime
                             
                             fltno2 = fltno1.replace('Flight:','')
-                            planecontent = fltno2+"  |  "+traveltime.replace('Flight Time:','')
                             
-                            planelist.append(planecontent)
+                            
+                            
                             
                             if duration.find("span",{"class":"PHead"}):
                                 totaltime = duration.find("span",{"class":"PHead"}).text
-                                #print totaltime
+                            if traveltime == '':
+                                traveltime = totaltime
+                            planecontent = fltno2+"  |  "+traveltime.replace('Flight Time:','')
+                            planelist.append(planecontent)
                             traveltime = duration.findAll("span")
                             for timetext in traveltime:
                                 print timetext.text
