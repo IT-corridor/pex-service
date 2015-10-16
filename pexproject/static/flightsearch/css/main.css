@@ -859,6 +859,7 @@ button.close:hover,button.close:active:focus{
 }
 .travelers-holder.form-control {
 	border: 0;
+    	height: 32px;
 }
 .travelers-holder.form-control:focus, #cabintab:focus, .trav-info-dpdn:focus {
     border-color: #66afe9;
@@ -874,6 +875,24 @@ button.close:hover,button.close:active:focus{
 #dropdownMenu1 {
 	width: 100%;
 	display: block;
+}
+.for_cabin_class {
+	!margin-left:5px !important;
+}
+.main-holder {
+	min-height: 100%;
+	height: auto !important;
+    	height: 100%;
+	padding-top: 80px;
+    	margin-top: -80px;
+    	margin-bottom: -263px;
+    	padding-bottom: 263px;
+	width: 100%;
+    	float: left;
+    	position: relative;
+}
+footer {
+	margin-top: 30px;
 }
 
 /*GENERAL MEDIA QUERIES*/
