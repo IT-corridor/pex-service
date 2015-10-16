@@ -399,10 +399,10 @@ function travelinfo(){
 	$('#passenger').val(total);
 	var text;
 	if(total == 1){
-		text = "traveller";
+		text = "traveler";
 	}
 	else{
-		text = "travellers";
+		text = "travelers";
 	}
 	var selectedcabin = $("#cabintype option:selected").text();
 	var html = "<span id='travelar'>"+total+" "+text+", "+selectedcabin+"</span>";
@@ -411,7 +411,7 @@ function travelinfo(){
 		var msg='';
 		$('#submitid').prop('disabled', true);
 		$(".alert-warning").empty();
-		msg="You must select atleast one traveller";
+		msg="You must select atleast one traveler";
 		$(".alert-warning").append(msg);
 		$(".alert-warning").show();
 	}
