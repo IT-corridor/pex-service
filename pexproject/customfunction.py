@@ -114,7 +114,8 @@ def united(origin,destination,searchdate,searchkey):
                             if stop == 1:
                                 test1 = test.strftime('%H:%M')
                                 source2 = source1.split('(')
-                                source = source2[1].replace(')','')
+                                source3 = (source2[1].replace(')','')).split('-')
+                                source = source3[0]
                                 fltno = fltno1
                             
                             departdetail=departdate.replace('.,',"")+" | "+depart+"  from   "+source1
@@ -135,7 +136,8 @@ def united(origin,destination,searchdate,searchkey):
                             arivalformat1 = arivalformat.strftime('%H:%M')
                             destination1 = ainfo[3].text
                             destination2 = destination1.split('(')
-                            Destination = (destination2[1].replace(')',''))
+                            destination3 = (source2[1].replace(')','')).split('-')
+                            Destination = destination3[0]
                             
                             duration = content.find("td",{"class":"tdTrvlTime"})
                             traveltime = duration.find("span").text
@@ -443,7 +445,7 @@ def delta(orgn,dest,searchdate,searchkey):
             #lenght = len(fareblock)
             #print fareblock[0].text
             if economy.findAll("div",{"class":"frmTxtHldr flightCabinClass"}):
-                cabintype1 = "Economy" #economy.find("div",{"class":"frmTxtHldr flightCabinClass"}).text
+                cabintype1 = economy.find("div",{"class":"frmTxtHldr flightCabinClass"}).text
         else:
             fare1 = 0 #economy.find("span",{"class":"ntAvail"}).text
             cabintype1 =''
