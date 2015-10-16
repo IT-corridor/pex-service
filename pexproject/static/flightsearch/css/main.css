@@ -854,6 +854,9 @@ button.close:hover,button.close:active:focus{
 	color: #39A8E0;
 	font-size: 16px;
 }
+.flight-div-repeat:nth-child(2) {
+	margin-top:10px;
+}
 #cabintab, .trav-info-dpdn {
 	border: 1px solid #ccc;
 	border-radius: 4px;

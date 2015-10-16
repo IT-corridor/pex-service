@@ -80,7 +80,8 @@
                 </div>
               </div>
               <div class="input-daterange">
-              <div class="col-sm-2 col-xs-6 nopl xs-pr5">
+              <div class="col-sm-2 col-xs-6 nopadding xs-pr5 mobile-wt">
+
                 <div class="form-group nomr noml nomb">
                   <label class="sr-only" for="departMain">Departure Date:</label>
                   <div class="inner-addon left-addon date" id="dp1">
@@ -281,6 +282,7 @@
     $(document).ready(function(){
     	if($("#ow").prop('checked') == true){
     			$("#return").hide();
+    			
     		}
     		else
     		{
@@ -293,9 +295,13 @@
     	$("#ow").click(function(){
     		if($("#ow").prop('checked') == true){
     			$("#return").hide();
+    			$('.mobile-wt').removeClass('col-xs-6 xs-pr5');
+    			$('.mobile-wt').addClass('col-xs-12');
+    			
     		}
     		else
     		{
+    			
     			$("#return").show();
     		}
     		
@@ -303,6 +309,8 @@
     	$("#rt").click(function(){
     		if($("#rt").prop('checked') == true){
     			$("#return").show();
+    			$('.mobile-wt').removeClass('col-xs-12');
+    			$('.mobile-wt').addClass('col-xs-6 xs-pr5');
     		}
     		else
     		{

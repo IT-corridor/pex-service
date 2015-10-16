@@ -435,7 +435,7 @@
 															<div class="col-xs-12 nopadding mvb10px na-ra" itemscope itemtype ="http://schema.org/FlightReservation">
 																<p class="flight-rate" itemprop="totalPrice">
 																	{% if row.datasource == "delta" %}
-																	{{row.maincabin|add:minprice|intcomma}} {%else%}{{row.maincabin|intcomma}} {%endif%} Miles + <span>${{row.maintax|floatadd:tax|floatformat:2}}</span>
+																	{{row.maincabin|add:deltaminval|intcomma}} Miles + <span>${{row.maintax|floatadd:deltatax|floatformat:2}}</span> {%else%}{{row.maincabin|add:unitedminval|intcomma}}  Miles + <span>${{row.maintax|floatadd:unitedtax|floatformat:2}} </span> {%endif%}
 																</p>
 															</div> 
 														
@@ -443,7 +443,7 @@
 															<div class="col-xs-12 nopadding mvb10px na-ra" itemscope itemtype ="http://schema.org/FlightReservation">
 															<p class="flight-rate" itemprop="totalPrice">
 																{% if row.datasource == "delta" %}
-																{{row.firstclass|add:minprice|intcomma}} {%else%}{{row.firstclass|intcomma}} {%endif%} Miles + <span>${{row.firsttax|floatadd:tax|floatformat:2}}</span>
+																{{row.firstclass|add:deltaminval|intcomma}} {%else%}{{row.firstclass|add:unitedminval|intcomma}} {%endif%} Miles + <span>${{row.firsttax|floatadd:tax|floatformat:2}}</span>
 															</p>
 														</div>
 														{% else %}
@@ -451,7 +451,7 @@
 															<div class="col-xs-12 nopadding mvb10px na-ra" itemscope itemtype ="http://schema.org/FlightReservation">
 															<p class="flight-rate" itemprop="totalPrice">
 																{% if row.datasource == "delta" %}
-																{{row.business|add:minprice|intcomma}} {%else%}{{row.business|intcomma}} {%endif%} Miles + <span>${{row.businesstax|floatadd:tax|floatformat:2}}</span>
+																{{row.business|add:deltaminval|intcomma}} {%else%}{{row.business|add:unitedminval|intcomma}} {%endif%} Miles + <span>${{row.businesstax|floatadd:tax|floatformat:2}}</span>
 															</p>
 														</div>
 														{% endif %}
@@ -469,6 +469,9 @@
 										</div>
 									</div>
 									<div class="col-md-7 col-xs-12 nopadding">
+										
+										
+										<div class="col-xs-12 nopadding flight-div-repeat"> 
 										<div class="col-md-8 col-sm-8 col-xs-12 nopadding">
 											<div class="col-xs-12 nopadding">
 												<div class="arrivel col-sm-5 nopadding col-xs-4" itemscope itemtype ="http://schema.org/Flight">
@@ -662,7 +665,7 @@
 										</div>
 									</div>  
 											
-										</div>
+									</div>
 										<div class="col-md-4 col-sm-4 col-xs-12 text-center nopr hidden-xs">
 											<div class="col-xs-12 nopadding non-stop">
 												<p>
@@ -675,6 +678,227 @@
 												</div>
 											</div>
 										</div>
+									</div>
+									
+									<!-- terurn data block -->
+									{% if returndate %}
+									{% if row.datasource == "delta" %}
+										{% with deltareturn as returnrecord %} {% endwith %}
+									{% else %}
+										{% with unitedreturn as returnrecord %}
+									<div class="col-xs-12 nopadding flight-div-repeat"> 
+										<div class="col-md-8 col-sm-8 col-xs-12 nopadding">
+											<div class="col-xs-12 nopadding">
+												<div class="arrivel col-sm-5 nopadding col-xs-4" itemscope itemtype ="http://schema.org/Flight">
+													<p itemprop="departureAirport">
+														{{returnrecord.0.origin}}
+													</p>
+													<p>
+														<time itemprop="departureTime">{{returnrecord.0.departure}}</time>
+													</p>
+												</div>
+												<div class="arrow-div col-sm-2 col-xs-1 text-center nopadding">&#8594;</div>
+												<div class="arrivel-2 col-sm-4 nopadding text-right col-xs-4 xs-text-center" itemscope itemtype ="http://schema.org/Flight">
+													<p itemprop="arrivalAirport">
+														{{returnrecord.0.destination}}
+													</p>
+													<p>
+														<time itemprop="arrivalTime">{{returnrecord.0.arival}}</time>
+													</p>
+												</div>
+												<div class="col-xs-3 nopadding visible-xs text-right">
+													<div class="col-xs-12 nopadding non-stop text-right">
+														<p>
+															{{returnrecord.0.stoppage}}
+														</p>
+													</div>
+													<div class="col-xs-12 nopadding non-stop" itemscope itemtype ="http://schema.org/Flight">
+														<p itemprop="estimatedFlightDuration">
+															{{returnrecord.0.duration}}
+														</p>
+													</div>
+												</div>
+											</div>
+											<!-- div class="col-xs-12 nopadding visible-xs">
+												<div class="col-xs-6 nopl non-stop">
+													<p>
+													{{row.duration}}
+													</p>
+												</div>
+												<div class="col-xs-6 nopr non-stop text-right">
+													<p>
+													{{row.stoppage}}
+													</p>
+												</div>
+											</div -->
+											
+									<div class="col-xs-12 nopadding mvt10px for-mobile-view"> <!-- main data only mobile -->
+										<div class="col-xs-12 nopadding text-center custome-edit-block"> 
+											{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' %}
+											
+													
+													<div class="col-xs-12 nopadding mvb10px na-ra">
+													<h5 class="econo edit-width-econo">{{row.cabintype1}}</h5>
+													<div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
+														<p class="flight-rate" itemprop="totalPrice">
+																{% if row.datasource == "delta" %}
+																{{row.maincabin|add:minprice|intcomma}} {%else%}{{row.maincabin|intcomma}} {%endif%} Miles + <span>${{row.maintax|floatadd:tax|floatformat:2}}</span>
+															</p>
+														</div>
+													</div>
+											{% if action == 'depart' %}
+													<div>
+														<!--
+													<form action="getsearchresult" method="get">
+														{% csrf_token %}
+														<input type="hidden" name="price"  value="{{row.business}}">
+														<input type="hidden" name="rowid"  value="{{row.rowid}}">
+														<input type="hidden" name="cabin"  value="{{request.GET.cabin}}">
+														<input type="hidden" name="tax"  value="{{row.businesstax}}">
+														<input type="hidden" name="action"  value="return">
+														<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
+														<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
+														<button type="submit" class="btn btn-pexSearch" value="{{searchrow.searchid}}" name="return" >SELECT</button>
+													</form> -->
+													</div>
+													{% endif %}
+											{% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %}
+													
+													<div class="col-xs-12 nopadding mvb10px na-ra">
+														<h5 class="econo edit-width-econo">{{row.cabintype2}}</h5>
+														<div class="right-data-responsive">
+														<p class="flight-rate">
+																{% if row.datasource == "delta" %}
+																{{row.firstclass|add:minprice|intcomma}} {%else%}{{row.firstclass|intcomma}} {%endif%} Miles + <span>${{row.firsttax|floatadd:tax|floatformat:2}}</span>
+															</p>
+														</div>
+													</div>
+													{% if action == 'depart' %}
+													<div>
+														<!--
+													<form action="getsearchresult" method="get">
+														{% csrf_token %}
+														<input type="hidden" name="price"  value="{{row.firstclass}}">
+														<input type="hidden" name="rowid"  value="{{row.rowid}}">
+														<input type="hidden" name="cabin"  value="{{request.GET.cabin}}">
+														<input type="hidden" name="tax"  value="{{row.firsttax}}">
+														<input type="hidden" name="action"  value="return">
+														<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
+														<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
+														<button type="submit" class="btn btn-pexSearch" value="{{searchrow.searchid}}" name="return" >SELECT</button>
+													</form>  -->
+													</div>
+													{% endif %}
+											{% else %}
+													{% if request.GET.cabin == 'business' or cabin == 'business' %}
+
+														<div class="col-xs-12 nopadding mvb10px na-ra">
+															<h5 class="econo edit-width-econo">{{row.cabintype3}}</h5>
+															<div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
+															<p class="flight-rate" itemprop="totalPrice">
+																{% if row.datasource == "delta" %}
+																{{row.business|add:minprice|intcomma}} {%else%}{{row.business|intcomma}} {%endif%} Miles + <span>${{row.businesstax|floatadd:tax|floatformat:2}}</span>
+															</p>
+														</div>
+														</div>
+														{% if action == 'depart' %}
+														<div> <!--
+														<form action="getsearchresult" method="get">
+															{% csrf_token %}
+															<input type="hidden" name="price"  value="{{row.maincabin}}">
+															<input type="hidden" name="rowid"  value="{{row.rowid}}">
+															<input type="hidden" name="cabin"  value="{{request.GET.cabin}}">
+															<input type="hidden" name="tax"  value="{{row.maintax}}">
+															<input type="hidden" name="action"  value="return">
+															<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
+															<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
+															<button type="submit" class="btn btn-pexSearch" value="{{searchrow.searchid}}" name="return" >SELECT</button>
+														</form>-->
+														</div>
+														{% endif %}
+													{% elif row.cabintype2 != ''%}
+													
+															<div class="col-xs-12 nopadding mvb10px na-ra">
+																<h5 class="econo edit-width-econo">{{row.cabintype2}}</h5>
+																<div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
+																<p class="flight-rate" itemprop="totalPrice">
+																{% if row.datasource == "delta" %}
+																{{row.maincabin|add:minprice|intcomma}} {%else%}{{row.maincabin|intcomma}} {%endif%} Miles + <span>${{row.maintax|floatadd:tax|floatformat:2}}</span>
+															</p></div>
+															</div>
+															{% if action == 'depart' %}
+															<div>
+																<!--
+															<form action="getsearchresult" method="get">
+																{% csrf_token %}
+																<input type="hidden" name="price"  value="{{row.firstclass}}">
+																<input type="hidden" name="rowid"  value="{{row.rowid}}">
+																<input type="hidden" name="cabin"  value="{{request.GET.cabin}}">
+																<input type="hidden" name="tax"  value="{{row.firsttax}}">
+																<input type="hidden" name="action"  value="return">
+																<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
+																<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
+																<button type="submit" class="btn btn-pexSearch" value="{{searchrow.searchid}}" name="return" >SELECT</button>
+															</form> -->
+															</div>
+															{% else %}
+															<div>
+															</div>
+															{% endif %}
+													 {% else %}
+														
+													<div class="col-xs-12 nopadding mvb10px na-ra">
+													<h5 class="econo edit-width-econo">{{row.cabintype3}}</h5>
+													<div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
+														<p class="flight-rate" itemprop="totalPrice">
+																{% if row.datasource == "delta" %}
+																{{row.maincabin|add:minprice|intcomma}} {%else%}{{row.maincabin|intcomma}} {%endif%} Miles + <span>${{row.maintax|floatadd:tax|floatformat:2}}</span>
+															</p>
+														</div>
+													</div>
+											{% if action == 'depart' %}
+													<div>
+														<!--
+													<form action="getsearchresult" method="get">
+														{% csrf_token %}
+														<input type="hidden" name="price"  value="{{row.business}}">
+														<input type="hidden" name="rowid"  value="{{row.rowid}}">
+														<input type="hidden" name="cabin"  value="{{request.GET.cabin}}">
+														<input type="hidden" name="tax"  value="{{row.businesstax}}">
+														<input type="hidden" name="action"  value="return">
+														<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
+														<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
+														<button type="submit" class="btn btn-pexSearch" value="{{searchrow.searchid}}" name="return" >SELECT</button>
+													</form> -->
+													</div>
+													{% else %}
+													<div>
+													</div>
+													{% endif %}
+													{% endif %}
+											{% endif%}											
+										</div>
+									</div>  
+											
+									</div>
+										<div class="col-md-4 col-sm-4 col-xs-12 text-center nopr hidden-xs">
+											<div class="col-xs-12 nopadding non-stop">
+												<p>
+													{{returnrecord.0.stoppage}}
+												</p>
+												<div class="col-xs-12 nopadding non-stop" itemscope itemtype ="http://schema.org/Flight">
+													<p itemprop="estimatedFlightDuration">
+														{{returnrecord.0.duration}}
+													</p>
+												</div>
+											</div>
+										</div>
+									</div> <!-- end retun block -->
+									{%endwith%}
+								{% endif%}
+							{% endif%}	
+									
+									
 										<a class="show-details" role="button" data-toggle="collapse" href="#{{row.rowid}}" aria-expanded="false" aria-controls="collapseExample">SHOW DETAILS</a>
 										<h4 class="econo hidden-xs"> 
 												{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
