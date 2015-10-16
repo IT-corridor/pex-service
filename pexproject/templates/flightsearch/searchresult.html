@@ -180,12 +180,12 @@
 										    <input type="text"  tabindex="3" class="form_val form-control" value="{{searchrow.traveldate|date:"m/d/Y"}}" id="departuredate" name="deptdate">
 									  		</div>
 									  </div>
-									  {%if returndate %}
+									  {%if searchrow.returndate%}
 									  <div class="form-group date-wd">
 									    <label class="sr-only" for="exampleInputPassword3">return</label>
 									    <div class="inner-addon left-addon date" id="dp2">
 									    <i class="glyphicon glyphicon-calendar"></i>
-									    <input type="text" tabindex="4" class="form_val form-control" value="{{returndate.0|date:"m/d/Y"}}" id="return" name="returndate">
+									    <input type="text" tabindex="4" class="form_val form-control" value="{{searchrow.returndate|date:"m/d/Y"}}" id="return" name="returndate">
 									  </div>
 									  </div>
 									  {%endif%}
@@ -693,7 +693,7 @@
 															{% with row.planedetails|split:'@' as mylist2%}
 															<tr itemscope itemtype="http://schema.org/Flight">
 																<td><b>Depart: </b></td>
-																<td>{{mylist.0}}</td>
+																<td><time itemprop="departureTime">{{mylist.0}}</time></td>
 															</tr>
 															
 															
@@ -713,15 +713,15 @@
 																	<h5><b>Change planes </b></h5>
 																</td>
 															</tr>
-															<tr>
+															<tr itemscope itemtype="http://schema.org/Flight">
 																<td><b>Depart: </b></td>
-																<td>{{mylist.1}}</td>
+																<td><time itemprop="departureTime">{{mylist.1}}</time></td>
 															</tr>
 															
 															
-															<tr>
+															<tr itemscope itemtype="http://schema.org/Flight">
 																<td><b>Arives:</b></td>
-																<td>{{mylist1.1}}</td>
+																<td><time itemprop="arrivalTime">{{mylist1.1}}</time></td>
 															</tr>
 															<tr>
 																<td><b>Flight:</b></td>
@@ -736,15 +736,15 @@
 																	<h5><b>Change planes </b></h5>
 																</td>
 															</tr>
-															<tr>
+															<tr itemscope itemtype="http://schema.org/Flight">
 																<td><b>Depart: </b></td>
-																<td>{{mylist.2}}</td>
+																<td><time itemprop="departureTime">{{mylist.2}}</time></td>
 															</tr>
 															
 															
-															<tr>
+															<tr itemscope itemtype="http://schema.org/Flight">
 																<td><b>Arives:</b></td>
-																<td>{{mylist1.2}}</td>
+																<td><time itemprop="arrivalTime">{{mylist1.2}}</time></td>
 															</tr>
 															<tr>
 																<td><b>Flight:</b></td>

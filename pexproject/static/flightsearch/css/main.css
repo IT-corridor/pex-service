@@ -1200,6 +1200,7 @@ footer {
 	}
 	.navbar-nav.right-nav-link li a {
 		color: #39A8E0;
+		padding: 12px 15px;
 	}
 	.navbar-nav.right-nav-link li a:after {
 		content: '';
