@@ -346,17 +346,20 @@ def getsearchresult(request):
         if returnkey:
             returndate = Searchkey.objects.values_list('traveldate', flat=True).filter(searchid=returnkey)
             #------------------------change code for return trip------------------------------------
-            deltamin = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',maincabin__gt=0).values('maincabin','maintax').annotate(Min('maincabin'))[:1]
+            deltamin = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',maincabin__gt=0).values('maincabin','maintax').annotate(Min('maincabin')).order_by('maincabin')[0]
+            print deltamin
             if deltamin:
-                deltaminval =  deltamin[0]['maincabin']
-                deltatax =  deltamin[0]['maintax']
+                deltaminval =  deltamin['maincabin']
+                print deltaminval
+                deltatax =  deltamin['maintax']
+                print deltaminval, deltatax
             returndelta = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',maincabin=deltaminval)
             print 'returndelta',(len(returndelta))
             
-            unitedmin = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',maincabin__gt=0).values('maincabin','maintax').annotate(Min('maincabin'))[:1]
+            unitedmin = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',maincabin__gt=0).values('maincabin','maintax').annotate(Min('maincabin')).order_by('maincabin')[0]
             if unitedmin:
-                unitedminval =  unitedmin[0]['maincabin']
-                unitedtax = unitedmin[0]['maintax']
+                unitedminval =  unitedmin['maincabin']
+                unitedtax = unitedmin['maintax']
             returnunited = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',maincabin=deltaminval)
             print 'teruenunited',(len(returnunited))
             #---------------------------------------------------------------------------------------
