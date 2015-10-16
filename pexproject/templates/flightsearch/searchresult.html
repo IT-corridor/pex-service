@@ -31,6 +31,7 @@
 									{% endif %}
 									{% if search %}
 										{% for searchrow in search %}
+									
 									<input type="hidden" name="passenger" id="traveller" value="">
 									<input type="hidden" name="cabin" {% if cabin %} value="{{cabin}}" {% else %}value="{{request.GET.cabin}}"{% endif%} >	
 									<input type="hidden" name="action" value="{{action}}">
@@ -42,6 +43,10 @@
 									{%endif%}
 									{%endfor %}
 									{% endif %}
+									<input type="hidden" name="deltamin" value="{{deltaminval}}"  />
+									<input type="hidden" name="deltatax" value="{{deltatax}}"  />
+									<input type="hidden" name="unitedmin" value="{{unitedminval}}"  />
+									<input type="hidden" name="unitedtax" value="{{unitedtax}}"  />
 									<div class="col-md-12 col-xs-12 nopadding form-side">
 										<div class="priceRangeInfo">
 											DEPARTURE TIME
@@ -180,12 +185,12 @@
 										    <input type="text"  tabindex="3" class="form_val form-control" value="{{searchrow.traveldate|date:"m/d/Y"}}" id="departuredate" name="deptdate">
 									  		</div>
 									  </div>
-									  {%if searchrow.returndate%}
+									  {%if returndate %}
 									  <div class="form-group date-wd">
 									    <label class="sr-only" for="exampleInputPassword3">return</label>
 									    <div class="inner-addon left-addon date" id="dp2">
 									    <i class="glyphicon glyphicon-calendar"></i>
-									    <input type="text" tabindex="4" class="form_val form-control" value="{{searchrow.returndate|date:"m/d/Y"}}" id="return" name="returndate">
+									    <input type="text" tabindex="4" class="form_val form-control" value="{{returndate.0|date:"m/d/Y"}}" id="return" name="returndate">
 									  </div>
 									  </div>
 									  {%endif%}
@@ -682,10 +687,11 @@
 									
 									<!-- terurn data block -->
 									{% if returndate %}
-									{% if row.datasource == "delta" %}
-										{% with deltareturn as returnrecord %} {% endwith %}
+									{% if row.datasource == "united" %}
+										{% with unitedreturn as returnrecord %} {% endwith %}
 									{% else %}
-										{% with unitedreturn as returnrecord %}
+										{% with deltareturn as returnrecord %} 
+										
 									<div class="col-xs-12 nopadding flight-div-repeat"> 
 										<div class="col-md-8 col-sm-8 col-xs-12 nopadding">
 											<div class="col-xs-12 nopadding">
