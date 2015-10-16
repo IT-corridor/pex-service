@@ -411,7 +411,7 @@
 								
 								{% for row in data %}
 								<div class="col-md-12 col-xs-12 centr-info responsive-color-img">
-									<div class="col-xs-6 visible-xs nopl">
+									<div class="col-sm-3 col-xs-5 visible-xs visible-sm nopl">
 										<div class="col-xs-12 nopadding text-center" itemscope itemtype ="http://schema.org/Airline">
 											{% if row.datasource == "united" %}
 												<img itemprop="logo" src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">
@@ -421,13 +421,13 @@
 											{% endif %}
 										</div>
 									</div>
-									<div class="col-md-12 col-xs-6 nopadding" itemscope itemtype ="http://schema.org/Flight">
+									<div class="col-md-12 col-sm-9 col-xs-7 nopadding" itemscope itemtype ="http://schema.org/Flight">
 										<p class="flight-name" itemprop="flightNumber">
 											{{row.flighno}} <!--FIRST FLIGHT OPTION RESULT-->
 										</p>
 									</div>
-									<div class="col-md-5 col-xs-12 nopadding hidden-xs">
-										<div class="col-sm-8 col-xs-12 nopadding">
+									<div class="col-md-5 col-xs-12 nopadding hidden-xs hidden-sm">
+										<div class="col-sm-8 col-sm-8 col-xs-12 nopl">
 											<div class="col-md-12 col-xs-12 nopadding">
 													<div class="col-xs-12 nopadding xs-margin-25px">
 														{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' %}
@@ -459,7 +459,7 @@
 													</div>
 											</div>
 										</div>
-										<div class="col-sm-4 col-xs-12 nopl">
+										<div class="col-md-4 col-sm-4 col-xs-12 nopl">
 											<div class="col-xs-12 nopadding text-center mvb10px" itemscope itemtype ="http://schema.org/Airline">
 												{% if row.datasource == "united" %}
 												<img itemprop="logo" src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
@@ -469,7 +469,7 @@
 										</div>
 									</div>
 									<div class="col-md-7 col-xs-12 nopadding">
-										<div class="col-md-8 col-xs-12 nopadding">
+										<div class="col-md-8 col-sm-8 col-xs-12 nopadding">
 											<div class="col-xs-12 nopadding">
 												<div class="arrivel col-sm-5 nopadding col-xs-4" itemscope itemtype ="http://schema.org/Flight">
 													<p itemprop="departureAirport">
@@ -663,7 +663,7 @@
 									</div>  
 											
 										</div>
-										<div class="col-md-4 col-xs-12 text-center nopr hidden-xs">
+										<div class="col-md-4 col-sm-4 col-xs-12 text-center nopr hidden-xs">
 											<div class="col-xs-12 nopadding non-stop">
 												<p>
 													{{row.stoppage}}
@@ -693,25 +693,18 @@
 															{% with row.planedetails|split:'@' as mylist2%}
 															<tr itemscope itemtype="http://schema.org/Flight">
 																<td><b>Depart: </b></td>
-																<td>
-																{{mylist.0}}
-																</td>
+																<td>{{mylist.0}}</td>
 															</tr>
 															
 															
 															<tr itemscope itemtype="http://schema.org/Flight">
 															
 																<td><b>Arives:</b></td>
-																<td>
-																<time itemprop="arrivalTime">{{mylist1.0}}</time> 
-																</td>
+																<td><time itemprop="arrivalTime">{{mylist1.0}}</time></td>
 															</tr>
 															<tr itemscope itemtype="http://schema.org/Flight">
-																<td itemprop="flightNumber">
-																<b>Flight:</b>
-																<td>
-																{{mylist2.0}}
-																</td>
+																<td itemprop="flightNumber"><b>Flight:</b></td>
+																<td>{{mylist2.0}}</td>
 															</tr>
 															{% if row.stoppage == '1 STOP' or row.stoppage == '2 STOPS' %}
 															<tr>
@@ -722,23 +715,17 @@
 															</tr>
 															<tr>
 																<td><b>Depart: </b></td>
-																<td>
-																{{mylist.1}}
-																</td>
+																<td>{{mylist.1}}</td>
 															</tr>
 															
 															
 															<tr>
 																<td><b>Arives:</b></td>
-																<td>
-																{{mylist1.1}} 
-																</td>
+																<td>{{mylist1.1}}</td>
 															</tr>
 															<tr>
 																<td><b>Flight:</b></td>
-																<td>
-																{{mylist2.1}}
-																</td>
+																<td>{{mylist2.1}}</td>
 															</tr>
 															
 															{% endif %}
@@ -751,23 +738,17 @@
 															</tr>
 															<tr>
 																<td><b>Depart: </b></td>
-																<td>
-																{{mylist.2}}
-																</td>
+																<td>{{mylist.2}}</td>
 															</tr>
 															
 															
 															<tr>
 																<td><b>Arives:</b></td>
-																<td>
-																{{mylist1.2}} 
-																</td>
+																<td>{{mylist1.2}}</td>
 															</tr>
 															<tr>
 																<td><b>Flight:</b></td>
-																<td>
-																{{mylist2.2}}
-																</td>
+																<td>{{mylist2.2}}</td>
 															</tr>
 															
 															{% endif %}

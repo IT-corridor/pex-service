@@ -203,6 +203,7 @@ margin-top: -8px;
 .navbar-default {
 	background-color: #fff;
 	border-color: #fff;
+	z-index:99;
 }
 .navbar-default .navbar-brand {
 	color: #39A8E0;
@@ -993,7 +994,7 @@ footer {
 		padding: 5px 10px 0px !important;
 	}
 	.edit-width-econo {
-		max-width: 115px;
+		!max-width: 115px;
 		margin: 0;
 	}
 	.mainNav {
@@ -1029,6 +1030,9 @@ footer {
 	.travelers-down-menu {
 		width: 260px !important;
 	}
+	.travelers-holder span span.caret {
+		top: -9px;
+	}
 
 }
 
@@ -1047,7 +1051,10 @@ footer {
 		min-height:50px;
 	}
 	.navbar-default .navbar-nav > li > a {
-		padding: 10px 15px;
+		padding: 12px 15px;
+	}
+	.navbar-right.right-nav-link li a {
+		padding: 0 8px;
 	}
 }
 @media (min-width: 768px) and (max-width: 1024px) {
@@ -1237,10 +1244,37 @@ footer {
 		!vertical-align: inherit;
 	}
 	.econo {
-		float:none;
-		padding: 0;
+		float: none;
+    		padding: 0;
+    		text-align: left !important;
 	}
 	.hidden-xs {
     		display: none!important;
 	}
+	.main-holder {
+    		margin-bottom: -200px;
+    		padding-bottom: 200px;
+	}
+
+}
+
+@media (max-width: 420px) {
+	.main-holder {
+    		margin-bottom: -225px;
+    		padding-bottom: 225px;
+	}
+}
+
+@media (max-width: 380px) {
+	.main-holder {
+    		margin-bottom: -240px;
+    		padding-bottom: 240px;
+	}
+}
+
+@media (max-width: 320px) {
+	.edit-width-econo {
+		max-width: 95px;
+	}
+
 }

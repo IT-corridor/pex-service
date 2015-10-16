@@ -13,9 +13,6 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>
-		html, body {
-			height: 100%;
-		}
             body {
                 /*padding-top: 50px;
                 padding-bottom: 20px;*/
@@ -37,8 +34,8 @@
         
 	
 <!-- BODY SECTION/-->
-
-    <div class="col-xs-12 nopadding" style="height:100%;padding-bottom:232px;">
+<div class="main-holder">
+    <div class="col-xs-12 nopadding">
       <div class="jumbotron">
         <div class="container">
           <div class="row">
@@ -207,29 +204,26 @@
 			<div class="col-xs-12 nopadding">
 				<!-- Example row of columns -->
 				<div class="col-xs-12 nopadding ad-images">
-					<div class="col-md-3 col-xs-12 xs-nopadding">
+					<div class="col-md-3 col-sm-6 col-xs-12 xs-nopadding">
 						<a href="#"><img src="{% static 'flightsearch/img/specials.jpg' %}"></a>
 					</div>
-					<div class="col-md-3 col-xs-12 xs-nopadding">
+					<div class="col-md-3 col-sm-6 col-xs-12 xs-nopadding">
 						<a href="#"><img src="{% static 'flightsearch/img/specials.jpg' %}"></a>
 					</div>
-					<div class="col-md-3 col-xs-12 xs-nopadding">
+					<div class="col-md-3 col-sm-6 col-xs-12 xs-nopadding">
 						<a href="#"><img src="{% static 'flightsearch/img/specials.jpg' %}"></a>
 					</div>
-					<div class="col-md-3 col-xs-12 xs-nopadding">
+					<div class="col-md-3 col-sm-6 col-xs-12 xs-nopadding">
 						<a href="#"><img src="{% static 'flightsearch/img/specials.jpg' %}"></a>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-        
+    </div><!-- /container -->       
+</div>
 
-      {% include "flightsearch/footer.html" %}
-
-      
-      </div><!-- /container -->       
-
+{% include "flightsearch/footer.html" %}
     
 
 
