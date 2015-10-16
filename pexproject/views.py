@@ -315,6 +315,8 @@ def getsearchresult(request):
     passenger = request.GET.get('passenger', '')
     cabin.append(cabinclass)
     cabintype=''
+    if request.GET:
+        print "test"
     if request.GET.get('keyid', '') :
         searchkey = request.GET.get('keyid', '')
         returnkey = request.GET.get('returnkey', '')
@@ -330,8 +332,9 @@ def getsearchresult(request):
         minprice =0
         tax = 0
         selectedrow = ''
-        
+        returndate =''
         if returnkey:
+            returndate = Searchkey.objects.values_list('traveldate', flat=True).filter(searchid=returnkey)
             if action != '':
                 minprice = request.GET.get('price', '')
                 tax = request.GET.get('tax', '')
@@ -351,15 +354,13 @@ def getsearchresult(request):
             destination = s.destination
         timerecord = Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` ")
         filterkey ={'cabin':cabin}
-        for row in timerecord:
-            
+        for row in timerecord:  
             timeinfo = {'maxdept':row.maxdept,'mindept':row.mindept,'minarival':row.minarival,'maxarival':row.maxarival}
-        
         if len(list(record))>0: 
-            return render_to_response('flightsearch/searchresult.html',{'action':action,'data':record,'minprice':minprice,'tax':tax,'returndata':returnkey,'search':searchdata,'timedata':timeinfo,'selectedrow':selectedrow,'filterkey':filterkey,'passenger':passenger},context_instance=RequestContext(request)) 
+            return render_to_response('flightsearch/searchresult.html',{'action':action,'data':record,'minprice':minprice,'tax':tax,'returndata':returnkey,'search':searchdata,'timedata':timeinfo,'selectedrow':selectedrow,'filterkey':filterkey,'passenger':passenger,'returndate':returndate},context_instance=RequestContext(request)) 
         else:
             msg = "Sorry, No flight found  from "+source+" To "+destination+".  Please search for another date or city !"
-            return  render_to_response('flightsearch/index.html',{'message':msg}, context_instance=RequestContext(request))
+            return  render_to_response('flightsearch/flights.html',{'message':msg}, context_instance=RequestContext(request))
             
 def booking(request):
     context = {}

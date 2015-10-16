@@ -346,9 +346,11 @@
             $('#departMain').datetimepicker({ format: "m/d/Y",minDate: 0,'timepicker': false,closeOnDateSelect: true,scrollMonth:false,
                         onSelectDate: function(selectedDate)
                         {
+                        		
                                 $("#returnMain").focus();
                                 $( "#returnMain" ).datetimepicker({format: "m/d/Y", minDate: selectedDate });
                         }
+                        
                });
        });
 

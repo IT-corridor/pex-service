@@ -180,12 +180,12 @@
 										    <input type="text"  tabindex="3" class="form_val form-control" value="{{searchrow.traveldate|date:"m/d/Y"}}" id="departuredate" name="deptdate">
 									  		</div>
 									  </div>
-									  {%if searchrow.returndate%}
+									  {%if returndate %}
 									  <div class="form-group date-wd">
 									    <label class="sr-only" for="exampleInputPassword3">return</label>
 									    <div class="inner-addon left-addon date" id="dp2">
 									    <i class="glyphicon glyphicon-calendar"></i>
-									    <input type="text" tabindex="4" class="form_val form-control" value="{{searchrow.returndate|date:"m/d/Y"}}" id="return" name="returndate">
+									    <input type="text" tabindex="4" class="form_val form-control" value="{{returndate.0|date:"m/d/Y"}}" id="return" name="returndate">
 									  </div>
 									  </div>
 									  {%endif%}
