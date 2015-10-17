@@ -186,6 +186,11 @@
 							<span class="col-xs-3 nopr">under 2</span> 
 							</p>                 			
                   		</div>
+                  		<div class="col-xs-12 down-menu-block">
+                  			
+                  				<span class="btn btn-pexSearch" id="apply_traveler">Apply</span>
+                  			
+                  		</div>
                   		<input type="hidden" id="passenger" name="passenger" value="">
                   	</div>
                   </div>
@@ -256,6 +261,10 @@
 	});
 	$(".form_val").focus(function(){
 		if(!$(this).hasClass("cabin_type")){ $(".travelers-holder").removeClass('open'); }
+	});
+	
+	$('#apply_traveler').click(function(){
+		$(".travelers-holder").removeClass('open');
 	});
     </script>
     <script>

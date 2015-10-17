@@ -449,6 +449,8 @@ def delta(orgn,dest,searchdate,searchkey):
             #print fareblock[0].text
             if economy.findAll("div",{"class":"frmTxtHldr flightCabinClass"}):
                 cabintype1 = economy.find("div",{"class":"frmTxtHldr flightCabinClass"}).text
+                if 'Main Cabin' in cabintype1:
+                    cabintype1 = cabintype1.replace('Main Cabin','Economy')
         else:
             fare1 = 0 #economy.find("span",{"class":"ntAvail"}).text
             cabintype1 =''
