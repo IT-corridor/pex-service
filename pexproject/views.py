@@ -90,8 +90,11 @@ def search(request):
             economy=''
             list=''
             list1=''
+            returndate=''
             multicabin=''
             cabinlist=''
+            returnunited=''
+            returndelta=''
             deltaminval = request.REQUEST['deltamin']
             deltatax = request.REQUEST['deltatax']
             unitedminval = request.REQUEST['unitedmin']
@@ -150,24 +153,71 @@ def search(request):
                 join = ' AND '
                  
             minprice = request.POST['price']
-            print minprice
+            
             tax = request.POST['tax']
-            print tax
+            
             action = request.POST['action']
             passenger = request.REQUEST['passenger']
             returnkey = ''
             selectedrow=''
             if 'returnkey' in request.POST:
                 returnkey = request.POST['returnkey']
+                returndate = Searchkey.objects.values_list('traveldate', flat=True).filter(searchid=returnkey)
+                deltamin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',maincabin__gt=0).values('maincabin','maintax').annotate(Min('maincabin')).order_by('maincabin')
+                if len(deltamin1) <= 0:
+                    deltamin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',firstclass__gt=0).values('firstclass','firsttax').annotate(Min('firstclass')).order_by('firstclass')
+                    if len(deltamin1) <= 0:
+                        deltamin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',firstclass__gt=0).values('business','businesstax').annotate(Min('business')).order_by('business')
+                        if deltamin1:
+                            deltamin = deltamin1[0]
+                            deltaminval =  deltamin['business']
+                            deltatax =  deltamin['businesstax']
+                            
+                    else:
+                        deltamin = deltamin1[0]
+                        deltaminval =  deltamin['firstclass']
+                        deltatax =  deltamin['firsttax']
+                else:
+                    deltamin = deltamin1[0]
+                    deltaminval =  deltamin['maincabin']
+                    deltatax =  deltamin['maintax']   
+                returndelta = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',maincabin=deltaminval)            
+    
+                unitedmin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',maincabin__gt=0).values('maincabin','maintax').annotate(Min('maincabin')).order_by('maincabin')
+                
+                if len(unitedmin1) <= 0 :
+                    unitedmin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',firstclass__gt=0).values('firstclass','firsttax').annotate(Min('firstclass')).order_by('firstclass')
+                    if len(unitedmin1) <= 0:
+                        unitedmin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',firstclass__gt=0).values('business','businesstax').annotate(Min('business')).order_by('business')
+                        if unitedmin1:
+                            unitedmin = unitedmin1[0] 
+                            unitedminval =  unitedmin['business']
+                            unitedtax =  unitedmin['businesstax']
+                            returnunited = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',business=unitedminval)
+                            
+                    else:
+                        unitedmin = unitedmin1[0] 
+                        unitedminval =  unitedmin['firstclass']
+                        unitedtax =  unitedmin['firsttax']
+                        returnunited = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',firstclass=unitedminval)
+                else:             
+                    unitedmin = unitedmin1[0] 
+                    unitedminval =  unitedmin['maincabin']
+                    unitedtax = unitedmin['maintax']
+                    returnunited = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',maincabin=unitedminval)
+                
+            
+            
             if 'rowid' in request.POST:
                 recordid = request.REQUEST['rowid']
                 selectedrow = Flightdata.objects.get(pk=recordid)
             records = Flightdata.objects.raw('select * from pexproject_flightdata where '+querylist+' order by '+cabinlist+' ASC')
-            print records.query
+            
             searchdata = Searchkey.objects.filter(searchid=searchkey)
             timeinfo = {'maxdept':deptmaxtime,'mindept':depttime,'minarival':arivtime,'maxarival':arivtmaxtime}#Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` where "+querylist+" order by departure ASC")
             filerkey =  {'stoppage':list,'deptmin':depttime,'deptmax': deptmaxtime,'datasource':list1}
-            return render_to_response('flightsearch/searchresult.html',{'cabin':cabinlist,'returndata':returnkey,'action':action,'minprice':minprice,'tax':tax,'data':records,'search':searchdata,'selectedrow':selectedrow,'filterkey':filerkey,'timedata':timeinfo,'passenger':passenger,'deltatax':deltatax,'unitedtax':unitedtax,'unitedminval':unitedminval,'deltaminval':deltaminval},context_instance=RequestContext(request))
+            
+            return render_to_response('flightsearch/searchresult.html',{'cabin':cabinlist,'returndata':returnkey,'action':action,'minprice':minprice,'tax':tax,'data':records,'search':searchdata,'selectedrow':selectedrow,'filterkey':filerkey,'timedata':timeinfo,'passenger':passenger,'returndate':returndate,'deltareturn':returndelta,'unitedreturn':returnunited,'deltatax':deltatax,'unitedtax':unitedtax,'unitedminval':unitedminval,'deltaminval':deltaminval},context_instance=RequestContext(request))
             
     if request.is_ajax():
         context = {}
@@ -343,25 +393,54 @@ def getsearchresult(request):
         unitedtax = 0
         unitedminval=0
         returnunited=''
+        deltacabin = ''
+        unitedcabin =''
         if returnkey:
             returndate = Searchkey.objects.values_list('traveldate', flat=True).filter(searchid=returnkey)
             #------------------------change code for return trip------------------------------------
-            deltamin = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',maincabin__gt=0).values('maincabin','maintax').annotate(Min('maincabin')).order_by('maincabin')[0]
-            print deltamin
-            if deltamin:
+            deltamin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',maincabin__gt=0).values('maincabin','maintax').annotate(Min('maincabin')).order_by('maincabin')
+            if len(deltamin1) <= 0:
+                deltamin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',firstclass__gt=0).values('firstclass','firsttax').annotate(Min('firstclass')).order_by('firstclass')
+                if len(deltamin1) <= 0:
+                    deltamin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',business__gt=0).values('business','businesstax').annotate(Min('business')).order_by('business')
+                    if deltamin1:
+                        deltamin = deltamin1[0]
+                        deltaminval =  deltamin['business']
+                        deltatax =  deltamin['businesstax']
+                        
+                else:
+                    deltamin = deltamin1[0]
+                    deltaminval =  deltamin['firstclass']
+                    deltatax =  deltamin['firsttax']
+            else:
+                deltamin = deltamin1[0]
                 deltaminval =  deltamin['maincabin']
-                print deltaminval
                 deltatax =  deltamin['maintax']
-                print deltaminval, deltatax
-            returndelta = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',maincabin=deltaminval)
-            print 'returndelta',(len(returndelta))
+                
+            returndelta = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',maincabin=deltaminval)            
+            unitedmin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',maincabin__gt=0).values('maincabin','maintax').annotate(Min('maincabin')).order_by('maincabin')
             
-            unitedmin = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',maincabin__gt=0).values('maincabin','maintax').annotate(Min('maincabin')).order_by('maincabin')[0]
-            if unitedmin:
+            if len(unitedmin1) <= 0 :
+                unitedmin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',firstclass__gt=0).values('firstclass','firsttax').annotate(Min('firstclass')).order_by('firstclass')
+                if len(unitedmin1) <= 0:
+                    unitedmin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',business__gt=0).values('business','businesstax').annotate(Min('business')).order_by('business')
+                    if unitedmin1:
+                        unitedmin = unitedmin1[0] 
+                        unitedminval =  unitedmin['business']
+                        unitedtax =  unitedmin['businesstax']
+                        returnunited = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',business=unitedminval)
+                        
+                else:
+                    unitedmin = unitedmin1[0] 
+                    unitedminval =  unitedmin['firstclass']
+                    unitedtax =  unitedmin['firsttax']
+                    returnunited = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',firstclass=unitedminval)
+            else:             
+                unitedmin = unitedmin1[0] 
                 unitedminval =  unitedmin['maincabin']
                 unitedtax = unitedmin['maintax']
-            returnunited = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',maincabin=deltaminval)
-            print 'teruenunited',(len(returnunited))
+                returnunited = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',maincabin=unitedminval)
+            
             #---------------------------------------------------------------------------------------
             
             if action != '':
