@@ -47,6 +47,8 @@
 									<input type="hidden" name="deltatax" value="{{deltatax}}"  />
 									<input type="hidden" name="unitedmin" value="{{unitedminval}}"  />
 									<input type="hidden" name="unitedtax" value="{{unitedtax}}"  />
+									<input type="hidden" name="deltacabin_name" id="" value="{{deltacabin_name}}"/>
+									<input type="hidden" name="unitedcabin_name" id="" value="{{unitedcabin_name}}"/>
 									<div class="col-md-12 col-xs-12 nopadding form-side">
 										<div class="priceRangeInfo">
 											DEPARTURE TIME
@@ -64,6 +66,7 @@
 										</div>
 										<input type="hidden" name="arivalmin" id="arivalmin" value=""/>
 										<input type="hidden" name="arivalmax" id="arivalmax" value=""/>
+										
 									</div>
 									<div class="col-md-12 col-xs-12 nopadding form-side">
 										<p>
@@ -804,7 +807,7 @@
 													<div class="well" itemscope itemtype="http://schema.org/Flight">
 													<h2>RETURN</h2>
 													<p itemprop="flightNumber">
-														{{deltareturn.0.datasource|title}} | {{deltareturn.0.flighno}}
+														{{deltareturn.0.datasource|title}} | {{deltareturn.0.flighno}} ({{deltacabin_name}})
 														<!-- ( {% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
 												{{deltareturn.0.cabintype1}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{deltareturn.0.cabintype2}} {% else%}{{deltareturn.0.cabintype3}} {% endif %})-->
 													</p>
@@ -889,7 +892,7 @@
 													<div class="well" itemscope itemtype="http://schema.org/Flight">
 													<h2>RETURN</h2>
 													<p itemprop="flightNumber">
-														{{unitedreturn.0.datasource|title}}  | {{unitedreturn.0.flighno}} 
+														{{unitedreturn.0.datasource|title}}  | {{unitedreturn.0.flighno}} ({{unitedcabin_name}})
 														<!--( {% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
 												{{unitedreturn.0.cabintype1}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{unitedreturn.0.cabintype2}} {% else%}{{unitedreturn.0.cabintype3}} {% endif %})-->
 													</p>
@@ -913,7 +916,7 @@
 																<td itemprop="flightNumber"><b>Flight:</b></td>
 																<td>{{mylist2.0}}</td>
 															</tr>
-															{% if deltareturn.0.stoppage == '1 STOP' or deltareturn.0.stoppage == '2 STOPS' %}
+															{% if unitedreturn.0.stoppage == '1 STOP' or unitedreturn.0.stoppage == '2 STOPS' %}
 															<tr>
 																<td></td>
 																<td>
@@ -936,7 +939,7 @@
 															</tr>
 															
 															{% endif %}
-															{% if deltareturn.0.stoppage == '2 STOPS' %}
+															{% if unitedreturn.0.stoppage == '2 STOPS' %}
 															<tr>
 																<td></td>
 																<td>
@@ -981,10 +984,18 @@
 								</div>
 								{% endfor %}
 							{% endif %}
-							
+							<div class="col-xs-12 nopadding text-right">
+								<ul class="pagination">
+									<li><a href="#" class="new_page"  >&lt; Previous</a></li>
+									<li  ><a class="new_page" href="#" >1</a></li>
+									
+									
+									<li><a href="#" class="page new_page" >Next &gt;</a></li>
+
+							</div>
 							
 							</div>
-
+							
 							<div class="col-md-2 col-xs-12 nopadding "><img src="{% static 'flightsearch/img/ad.jpg' %}"  alt="Responsive image" class="img-responsive">
 
 							</div>
