@@ -288,12 +288,16 @@
 													<span class="col-xs-3 nopr">under 2</span> 
 													</p>              			
 						                  		</div>
+						                  		<div class="col-xs-12 down-menu-block">
+		                  							<span class="btn btn-pexSearch" id="apply_traveler">Apply</span>
+						                  		</div>
 						                  		<input type="hidden" id="passenger" name="passenger" value="">
 						                  	</div>
 						                  </div>
 						                </div>
 						                
 						              </div>
+						              
 									  <div class="form-group flight-search-xswd xs-pl5">
 
 									    <button class="form_val btn  btn-pexSearch xs-fw" tabindex="13">Change</button>
@@ -974,8 +978,26 @@
 												</table>
 												</div>
 												</div>
+											{% endif %}	
+											{% if action == 'depart' %}
+													<div>
+													<form action="getsearchresult" method="get">
+														{% csrf_token %}
+														<input type="hidden" name="cabin"  value="{{request.GET.cabin}}">
+														<input type="hidden" name="rowid"  value="{{row.rowid}}">
+														<input type="hidden" name="price" 
+														{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%} 
+														 value="{{row.maincabin}}" {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass'%} 
+														 value="{{row.firstclass}}"{% else %}{% if request.GET.cabin == 'business' or cabin == 'business'%} 
+														 value="{{row.business}}"{%endif%}{% endif %}>
+														<input type="hidden" name="tax"  value="{{row.maintax}}">
+														<input type="hidden" name="action"  value="return">
+														<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
+														<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
+														<button type"submit" value="{{searchrow.searchid}}" name="return" id="return">Other Option</button>
+													</form>
+													</div>
 											{% endif %}
-													
 												<!-- END RETURN UNITED BLOCK -->
 													
 													
@@ -988,6 +1010,7 @@
 								</div>
 								{% endfor %}
 							{% endif %}
+							<!--
 							<div class="col-xs-12 nopadding text-right">
 								<ul class="pagination">
 									<li><a href="#" class="new_page"  >&lt; Previous</a></li>
@@ -996,8 +1019,23 @@
 									
 									<li><a href="#" class="page new_page" >Next &gt;</a></li>
 
-							</div>
+							</div> -->
+							<div class="pagination">
+							    <span class="step-links">
+							        {% if data.has_previous %}
+							            <a href="?keyid={{request.GET.keyid}}&passenger={{request.GET.passenger}}&cabin={{request.GET.cabin}}&page={{ data.previous_page_number }}{%if request.GET.returnkey %}&returnkey={{request.GET.returnkey}}{% endif %}">previous</a>
+							        {% endif %}
 							
+							        <span class="current">
+							            Page {{ data.number }} of {{ data.paginator.num_pages }}.
+							        </span>
+							
+							        {% if data.has_next %}
+							            <a href="?keyid={{request.GET.keyid}}&passenger={{request.GET.passenger}}&cabin={{request.GET.cabin}}&page={{ data.next_page_number }}{%if request.GET.returnkey %}&returnkey={{request.GET.returnkey}}{% endif %}">next</a>
+							        {% endif %}
+							    </span>
+							</div>
+														
 							</div>
 							
 							<div class="col-md-2 col-xs-12 nopadding "><img src="{% static 'flightsearch/img/ad.jpg' %}"  alt="Responsive image" class="img-responsive">
@@ -1030,6 +1068,14 @@
 			$('#passenger').change(function(){
 				$('#traveller').val($('#passenger').val());
 			});
+		</script>
+		<script>
+		$(document).ready(function(){
+			if("{{request.GET.returnkey}}"==''){
+				$('.travelers-down-menu').addClass('full-width-res');
+			}
+		});
+			
 		</script>
 		
 		<script>
@@ -1393,6 +1439,9 @@
 		$(".form_val").focus(function(){
 			if(!$(this).hasClass("cabin_type")){ $(".travelers-holder").removeClass('open'); }
 		});
+	});
+	$('#apply_traveler').click(function(){
+		$(".travelers-holder").removeClass('open');
 	});
 </script>
 <script>

@@ -211,7 +211,18 @@ def search(request):
                 recordid = request.REQUEST['rowid']
                 selectedrow = Flightdata.objects.get(pk=recordid)
             records = Flightdata.objects.raw('select * from pexproject_flightdata where '+querylist+' order by '+cabinlist+' ASC')
-            
+            '''
+            paginator = Paginator(records, 10)
+            paginator._count = 
+            page = request.GET.get('page')
+            try:
+                record = paginator.page(page)
+            except PageNotAnInteger:
+                record = paginator.page(1)
+            except EmptyPage:
+                record = paginator.page(paginator.num_pages)
+          
+            '''
             searchdata = Searchkey.objects.filter(searchid=searchkey)
             timeinfo = {'maxdept':deptmaxtime,'mindept':depttime,'minarival':arivtime,'maxarival':arivtmaxtime}#Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` where "+querylist+" order by departure ASC")
             filerkey =  {'stoppage':list,'deptmin':depttime,'deptmax': deptmaxtime,'datasource':list1}
@@ -380,6 +391,21 @@ def getsearchresult(request):
             cabintype = " and "+cabinclass+ " > 0"
           
         record = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+searchkey+cabintype+" order by "+cabinclass+" ASC")
+        
+        #------------------pagignation----------------------------------------------------
+        paginator = Paginator(record, 10)
+        paginator._count = len(list(record))
+        page = request.GET.get('page')
+    
+        try:
+            record = paginator.page(page)
+        except PageNotAnInteger:
+            record = paginator.page(1)
+        except EmptyPage:
+            record = paginator.page(paginator.num_pages)
+        
+        #---------------------------------------------------------------------------------
+        
         minprice =0
         tax = 0
         selectedrow = ''
