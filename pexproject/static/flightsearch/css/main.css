@@ -1259,7 +1259,23 @@ footer {
     		margin-bottom: -200px;
     		padding-bottom: 200px;
 	}
-
+	.xs-collapse {
+		display: none;
+		visibility: hidden;
+	}
+	.xs-collapse.in {
+		display: block;
+		visibility: visible;
+	}
+	.flight-search-xswd {
+		width: 50%;
+		float: left;
+	}
+	#dropdownMenu1 {
+		max-height: 22px;
+    		overflow: hidden;
+		white-space: nowrap;
+	}
 }
 
 @media (max-width: 420px) {
