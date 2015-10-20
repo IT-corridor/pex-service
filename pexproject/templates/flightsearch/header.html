@@ -11,7 +11,7 @@
 		<meta property="og:type" content="flight" />
 		<meta name="description" content="">
 		<meta name="keywords" content="">
-		<meta property="og:url" content="http://pex.techens.com/share?selectedid={{request.GET.selectedid}}&cabin={{request.GET.cabin}}&passenger={{request.GET.passenger}}{% if request.GET.returnrowid %}&returnrowid={{request.GET.returnrowid}}{%endif%}" />
+		<meta property="og:url" content="http://pex.techens.com/share?selectedid={{request.GET.selectedid|urlencode}}&cabin={{request.GET.cabin|urlencode}}&passenger={{request.GET.passenger|urlencode}}{% if request.GET.returnrowid %}&returnrowid={{request.GET.returnrowid|urlencode}}{%endif%}" />
 		<meta property="og:title" content="Pex Search Details" />
 		<meta property="og:description" content="test" />
 		<meta property="fb:app_id" content="391171981062613" />
