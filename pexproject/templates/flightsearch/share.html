@@ -3,7 +3,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title>Pex Search Result</title>
+		<meta property="og:locale" content="en_US" />
+		<meta property="og:type" content="flight" />
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<meta property="og:url" content="http://pex.techens.com/share?selectedid={{request.GET.selectedid}}&cabin={{request.GET.cabin}}&passenger={{request.GET.passenger}}{% if request.GET.returnrowid %}&returnrowid={{request.GET.returnrowid}}{%endif%}" />
+		<meta property="og:title" content="Pex Search Details" />
+		<meta property="og:description" content="test" />
+		<meta property="fb:app_id" content="" />
+		<meta property="og:site_name" content="pex.techens.com" />
+		<meta property="og:image" content="{% static 'flightsearch/img/logoMain.png' %}" />
+		
+		<title>Pex Search Details</title>
 		{% include "flightsearch/header.html" %}
 		{% load customfilter %}
 		{% load staticfiles %}
@@ -700,5 +711,6 @@
 				</div>
 			</div>
 		</div>
+		{% include "flightsearch/footer.html" %}
 	</body>
 </html>
