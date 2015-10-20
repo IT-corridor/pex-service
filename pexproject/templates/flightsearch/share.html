@@ -41,15 +41,20 @@
 						<div class="col-sm-8 col-sm-8 col-xs-12 nopl">
 							<div class="col-md-12 col-xs-12 nopadding">
 								<div class="col-xs-12 nopadding xs-margin-25px">
-									{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' %}
-
 									<div class="col-xs-12 nopadding mvb10px na-ra" itemscope itemtype ="http://schema.org/FlightReservation">
 										<p class="flight-rate" itemprop="totalPrice">
+										{% if cabin == 'maincabin'%}	
+											{{record.maincabin}} Miles + <span>${{record.maintax|floatformat:2}}</span>
+										{% elif cabin == 'firstcabin' %}
+											{{record.firstclass}} Miles + <span>${{record.firsttax|floatformat:2}}</span>
+										{% else %}
+											{% if cabin == 'business' %}
+												{{record.business}} Miles + <span>${{record.businesstax|floatformat:2}}</span>
+											{% endif %}
+										{% endif %}
 											
-											{{price|intcomma}} Miles + <span>${{tax|floatformat:2}}</span>
 										</p>
 									</div>
-									{%endif%}
 								</div>
 							</div>
 						</div>

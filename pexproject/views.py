@@ -12,6 +12,7 @@ from datetime import timedelta
 import subprocess
 from types import *
 import datetime
+from django.shortcuts import get_object_or_404
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -510,30 +511,31 @@ def getsearchresult(request):
 def share(request):
     context ={}
     if 'selectedid' in request.GET:
-        selectedrow = request.GET.get('selectedid','')
+        selectedid = request.GET.get('selectedid','')
         cabin =  request.GET.get('cabin','')
         traveler =  request.GET.get('passenger','')
-        record = Flightdata.objects.get(pk=selectedrow)
+        #record = Flightdata.objects.get(pk=selectedid)
+        record = get_object_or_404(Flightdata, pk=selectedid)
         returnrecord = ''
 	#price = 0
 	#tax = 0
         if 'returnrowid' in request.GET:
             returnrowid =request.GET.get('returnrowid','')
             returnrecord = Flightdata.objects.get(pk=returnrowid)
-        if cabin == 'maincabin':
+        if cabin == 'maincabin' and returnrecord:
             price = record.maincabin
             tax = record.maintax
-        elif cabin == 'firstclass':
+        elif cabin == 'firstclass' and returnrecord:
             price = record.firstclass
             tax = record.firsttax
         else:
-            if cabin == 'business':
+            if cabin == 'business' and returnrecord:
                 price = record.business
                 tax = record.businesstax
         #print price,tax
         #totalprice = int(traveler) * int(price)
         #totaltax = float(tax)*int(traveler)
-        return render_to_response('flightsearch/share.html',{'record':record,'cabin':cabin,'traveler':traveler,'returnrecord':returnrecord,'totalprice':totalprice,'totaltax':totaltax,'price':price}, context_instance=RequestContext(request))
+        return render_to_response('flightsearch/share.html',{'record':record,'cabin':cabin,'traveler':traveler,'returnrecord':returnrecord}, context_instance=RequestContext(request))
 
 
 
