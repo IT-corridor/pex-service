@@ -24,7 +24,8 @@
 									<p class="pull-left">Filters</p>
 									<p class="pull-right show-filter"><span class="glyphicon glyphicon-th-large"></span></p>
 								</div>
-								<form action="search" method="post">
+								<form action="search?keyid={{request.GET.keyid}}&passenger={{request.GET.passenger}}&cabin={{request.GET.cabin}}
+								{% if request.GET.returnkey%}&returnkey={{request.GET.returnkey}}{% endif %}" method="post">
 									{% csrf_token %}
 									{% if selectedrow %}
 									<input type="hidden" name="rowid" value="{{selectedrow.rowid}}" />
@@ -311,7 +312,7 @@
 							{%endfor %}
 							{% endif %}
 								
-								<!--
+							
 								{% if selectedrow %}
 								
 								<div class="col-xs-12 selected-flights bgclr">
@@ -339,7 +340,7 @@
 										</div>
 									</div>
 									
-									<div class="col-md-2 col-xs-6 text-center xs-nopadding xs-margin-20">
+									<div class="col-md-2 col-xs-6 text-left xs-nopadding xs-margin-20">
 										{% if selectedrow.datasource == "united" %}
 										<img src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
 										{% if selectedrow.datasource == "delta" %}
@@ -361,6 +362,7 @@
 												<p class="stops-dur"><span>{{selectedrow.stoppage}}</span> <span>{{row.duration}}</span></p>												
 											</div>
 											<div class="col-sm-7 col-xs-12 nopadding">
+												<!--
 												<div class="col-xs-12 nopadding text-center">
 													{% if selectedrow.cabintype1 and selectedrow.maincabin %}
 													<h5 class="econo"> {{row.cabintype1}} </h5>
@@ -372,9 +374,9 @@
 														<p>+</p>
 														<h6 class="nomt">${{selectedrow.maintax|floatadd:tax|floatformat:2}}</h6>
 													</div>
-													
 													{% endif %}
-												</div>												
+												</div>
+													-->											
 											</div>											
 										</div>
 									</div>
@@ -389,16 +391,77 @@
 													</p>
 													<div class="table-responsive table-date-search">
 														<table class="table">
+															{% with selectedrow.departdetails|split:'@' as mylist%}
+															{% with selectedrow.arivedetails|split:'@' as mylist1%}
+															{% with selectedrow.planedetails|split:'@' as mylist2%}
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Depart: </b></td>
+																<td><time itemprop="departureTime">{{mylist.0}}</time></td>
+															</tr>
+															
+															
+															<tr itemscope itemtype="http://schema.org/Flight">
+															
+																<td><b>Arives:</b></td>
+																<td><time itemprop="arrivalTime">{{mylist1.0}}</time></td>
+															</tr>
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td itemprop="flightNumber"><b>Flight:</b></td>
+																<td>{{mylist2.0}}</td>
+															</tr>
+															{% if selectedrow.stoppage == '1 STOP' or selectedrow.stoppage == '2 STOPS' %}
 															<tr>
-																<td>{{selectedrow.departure}}</td>
-																<td>{{searchdate}}</td>
-																<td>{{selectedrow.origin}}</td>
+																<td></td>
+																<td>
+																	<h5><b>Change planes </b></h5>
+																</td>
+															</tr>
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Depart: </b></td>
+																<td><time itemprop="departureTime">{{mylist.1}}</time></td>
+															</tr>
+															
+															
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Arives:</b></td>
+																<td><time itemprop="arrivalTime">{{mylist1.1}}</time></td>
 															</tr>
 															<tr>
-																<td>{{selectedrow.arival}}</td>
-																<td>{{searchdate}}</td>
-																<td>{{selectedrow.destination}}</td>
+																<td><b>Flight:</b></td>
+																<td>{{mylist2.1}}</td>
 															</tr>
+															
+															{% endif %}
+															{% if selectedrow.stoppage == '2 STOPS' %}
+															<tr>
+																<td></td>
+																<td>
+																	<h5><b>Change planes </b></h5>
+																</td>
+															</tr>
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Depart: </b></td>
+																<td><time itemprop="departureTime">{{mylist.2}}</time></td>
+															</tr>
+															
+															
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Arives:</b></td>
+																<td><time itemprop="arrivalTime">{{mylist1.2}}</time></td>
+															</tr>
+															<tr>
+																<td><b>Flight:</b></td>
+																<td>{{mylist2.2}}</td>
+															</tr>
+															
+															{% endif %}
+															
+															
+															
+															{% endwith %}
+															{% endwith %}
+															{% endwith %}
+															
 														</table>
 													</div>
 													<a href="#">share</a>
@@ -408,7 +471,7 @@
 										</div>
 								</div>
 							{% endif %}
-							-->
+							
 							
 							
 							{% if data %}
@@ -731,7 +794,7 @@
 												<div class="well" itemscope itemtype="http://schema.org/Flight">
 													<h2>DEPART</h2>
 													<p itemprop="flightNumber">
-														{{row.datasource|title}} | {{row.flighno}} ( {% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
+														{{row.datasource|title}} | {{row.flighno}} ({% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
 												{{row.cabintype1}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{row.cabintype2}} {% else%}{{row.cabintype3}} {% endif %})
 													</p>
 													<div class="table-responsive table-date-search">
@@ -990,11 +1053,17 @@
 														 value="{{row.maincabin}}" {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass'%} 
 														 value="{{row.firstclass}}"{% else %}{% if request.GET.cabin == 'business' or cabin == 'business'%} 
 														 value="{{row.business}}"{%endif%}{% endif %}>
-														<input type="hidden" name="tax"  value="{{row.maintax}}">
+														<input type="hidden" name="tax"
+														{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%} 
+														 value="{{row.maintax}}" {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass'%} 
+														 value="{{row.firsttax}}"{% else %}{% if request.GET.cabin == 'business' or cabin == 'business'%} 
+														 value="{{row.businesstax}}"{%endif%}{% endif %}>
 														<input type="hidden" name="action"  value="return">
+														<input type="hidden" name="datasource"  value="{{row.datasource}}">
+														<input type="hidden" name="passenger"  value="{{request.GET.passenger}}">
 														<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
 														<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
-														<button type"submit" value="{{searchrow.searchid}}" name="return" id="return">Other Option</button>
+														<button type"submit" value="{{searchrow.searchid}}" name="return" class="btn btn-pexSearch">Other Options For Return Flight</button>
 													</form>
 													</div>
 											{% endif %}
@@ -1011,31 +1080,22 @@
 								{% endfor %}
 							{% endif %}
 							<!--
-							<div class="col-xs-12 nopadding text-right">
-								<ul class="pagination">
-									<li><a href="#" class="new_page"  >&lt; Previous</a></li>
-									<li  ><a class="new_page" href="#" >1</a></li>
-									
-									
-									<li><a href="#" class="page new_page" >Next &gt;</a></li>
-
-							</div> -->
 							<div class="pagination">
 							    <span class="step-links">
 							        {% if data.has_previous %}
-							            <a href="?keyid={{request.GET.keyid}}&passenger={{request.GET.passenger}}&cabin={{request.GET.cabin}}&page={{ data.previous_page_number }}{%if request.GET.returnkey %}&returnkey={{request.GET.returnkey}}{% endif %}">previous</a>
+							        	<a href="?keyid={{request.GET.keyid}}&passenger={{request.GET.passenger}}&cabin={{request.GET.cabin}}&page={{ data.previous_page_number }}{%if request.GET.returnkey %}&returnkey={{request.GET.returnkey}}{% endif %}">previous</a>
 							        {% endif %}
 							
 							        <span class="current">
 							            Page {{ data.number }} of {{ data.paginator.num_pages }}.
 							        </span>
-							
+									{{passenger}}
 							        {% if data.has_next %}
-							            <a href="?keyid={{request.GET.keyid}}&passenger={{request.GET.passenger}}&cabin={{request.GET.cabin}}&page={{ data.next_page_number }}{%if request.GET.returnkey %}&returnkey={{request.GET.returnkey}}{% endif %}">next</a>
+							        	 <a href="?keyid={{request.GET.keyid}}&passenger={{request.GET.passenger}}&cabin={{request.GET.cabin}}&page={{ data.next_page_number }}{%if request.GET.returnkey %}&returnkey={{request.GET.returnkey}}{% endif %}">next</a>
 							        {% endif %}
 							    </span>
 							</div>
-														
+							-->							
 							</div>
 							
 							<div class="col-md-2 col-xs-12 nopadding "><img src="{% static 'flightsearch/img/ad.jpg' %}"  alt="Responsive image" class="img-responsive">
