@@ -515,6 +515,8 @@ def share(request):
         traveler =  request.GET.get('passenger','')
         record = Flightdata.objects.get(pk=selectedrow)
         returnrecord = ''
+	#price = 0
+	#tax = 0
         if 'returnrowid' in request.GET:
             returnrowid =request.GET.get('returnrowid','')
             returnrecord = Flightdata.objects.get(pk=returnrowid)
@@ -528,9 +530,9 @@ def share(request):
             if cabin == 'business':
                 price = record.business
                 tax = record.businesstax
-        print price,tax
-        totalprice = int(traveler) * int(price)
-        totaltax = float(tax)*int(traveler)
+        #print price,tax
+        #totalprice = int(traveler) * int(price)
+        #totaltax = float(tax)*int(traveler)
         return render_to_response('flightsearch/share.html',{'record':record,'cabin':cabin,'traveler':traveler,'returnrecord':returnrecord,'totalprice':totalprice,'totaltax':totaltax,'price':price}, context_instance=RequestContext(request))
 
 
