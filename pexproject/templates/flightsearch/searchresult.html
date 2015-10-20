@@ -464,7 +464,7 @@
 															
 														</table>
 													</div>
-													<a href="#">share</a>
+													
 													
 												</div>
 											</div>
@@ -1071,7 +1071,7 @@
 													
 													
 													
-													<a href="#">share</a>
+													<a href="share?selectedid={{row.rowid}}&cabin={{request.GET.cabin}}&passenger={{request.GET.passenger}}{% if request.GET.returnkey and row.datasource == 'united' and unitedreturn.0.rowid %}&returnrowid={{unitedreturn.0.rowid}}{%endif%}{% if request.GET.returnkey and row.datasource == 'delta' and deltareturn.0.rowid%}&returnrowid={{deltareturn.0.rowid}}{%endif%}">share</a>
 												</div>
 											</div>
 										</div>

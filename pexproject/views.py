@@ -507,6 +507,34 @@ def getsearchresult(request):
             msg = "Sorry, No flight found  from "+source+" To "+destination+".  Please search for another date or city !"
             return  render_to_response('flightsearch/flights.html',{'message':msg}, context_instance=RequestContext(request))
             
+def share(request):
+    context ={}
+    if 'selectedid' in request.GET:
+        selectedrow = request.GET.get('selectedid','')
+        cabin =  request.GET.get('cabin','')
+        traveler =  request.GET.get('passenger','')
+        record = Flightdata.objects.get(pk=selectedrow)
+        returnrecord = ''
+        if 'returnrowid' in request.GET:
+            returnrowid =request.GET.get('returnrowid','')
+            returnrecord = Flightdata.objects.get(pk=returnrowid)
+        if cabin == 'maincabin':
+            price = record.maincabin
+            tax = record.maintax
+        elif cabin == 'firstclass':
+            price = record.firstclass
+            tax = record.firsttax
+        else:
+            if cabin == 'business':
+                price = record.business
+                tax = record.businesstax
+        print price,tax
+        totalprice = int(traveler) * int(price)
+        totaltax = float(tax)*int(traveler)
+        return render_to_response('flightsearch/share.html',{'record':record,'cabin':cabin,'traveler':traveler,'returnrecord':returnrecord,'totalprice':totalprice,'totaltax':totaltax,'price':price}, context_instance=RequestContext(request))
+
+
+
 def booking(request):
     context = {}
     if request.method == "POST":
