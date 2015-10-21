@@ -533,29 +533,34 @@ def share(request):
     if 'selectedid' in request.GET:
         selectedid = request.GET.get('selectedid','')
         cabin =  request.GET.get('cabin','')
+        print cabin
         traveler =  request.GET.get('passenger','')
         #record = Flightdata.objects.get(pk=selectedid)
         record = get_object_or_404(Flightdata, pk=selectedid)
         returnrecord = ''
         price = 0
         tax = 0
+        returncabin = ''
         if 'returnrowid' in request.GET:
             returnrowid =request.GET.get('returnrowid','')
             returnrecord = Flightdata.objects.get(pk=returnrowid)
-        if cabin == 'maincabin' and returnrecord:
+        if returnrecord.maincabin > 0:
             price = returnrecord.maincabin
             tax = returnrecord.maintax
-        elif cabin == 'firstclass' and returnrecord:
+            returncabin = returnrecord.cabintype1
+        elif returnrecord.firstclass > 0:
             price = returnrecord.firstclass
             tax = returnrecord.firsttax
+            returncabin = returnrecord.cabintype2
         else:
-            if cabin == 'business' and returnrecord:
+            if returnrecord.business > 0:
                 price = returnrecord.business
                 tax = returnrecord.businesstax
+                returncabin = returnrecord.cabintype3
         #print price,tax
         #totalprice = int(traveler) * int(price)
         #totaltax = float(tax)*int(traveler)
-        return render_to_response('flightsearch/share.html',{'record':record,'cabin':cabin,'traveler':traveler,'returnrecord':returnrecord,"price":price,"tax":tax}, context_instance=RequestContext(request))
+        return render_to_response('flightsearch/share.html',{'record':record,'cabin':cabin,'traveler':traveler,'returnrecord':returnrecord,"price":price,"tax":tax,'returncabin':returncabin}, context_instance=RequestContext(request))
 
 
 

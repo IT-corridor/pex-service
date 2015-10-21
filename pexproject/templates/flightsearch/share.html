@@ -45,7 +45,7 @@
 										<p class="flight-rate" itemprop="totalPrice">
 										{% if cabin == 'maincabin'%}	
 											{{record.maincabin|intcomma}} Miles + <span>${{record.maintax|floatformat:2}}</span>
-										{% elif cabin == 'firstcabin' %}
+										{% elif cabin == 'firstclass' %}
 											{{record.firstclass}} Miles + <span>${{record.firsttax|floatformat:2}}</span>
 										{% else %}
 											{% if cabin == 'business' %}
@@ -405,8 +405,7 @@
 									</div>
 								</div>
 							</div>
-							<h4 class="econo hidden-xs"> {% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
-						{{returnrecord.cabintype1}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{returnrecord.cabintype2}} {% else%}{{returnrecord.cabintype3}} {% endif %}</h4>
+							<h4 class="econo hidden-xs"> {{returncabin}} </h4>
 						</div>
 						</div>
 					</div>
