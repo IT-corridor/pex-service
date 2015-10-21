@@ -362,21 +362,19 @@
 												<p class="stops-dur"><span>{{selectedrow.stoppage}}</span> <span>{{row.duration}}</span></p>												
 											</div>
 											<div class="col-sm-7 col-xs-12 nopadding">
-												<!--
+												
 												<div class="col-xs-12 nopadding text-center">
-													{% if selectedrow.cabintype1 and selectedrow.maincabin %}
-													<h5 class="econo"> {{row.cabintype1}} </h5>
+													{% if request.GET.cabin == 'maincabin' %}
 													<div class="col-xs-12 nopadding na-ra">
 														<p class="flight-rate">
-															{% if selectedrow.datasource == "delta" %}
-															{{selectedrow.maincabin|add:minprice|intcomma}} {%else%}{{selectedrow.maincabin|intcomma}} {%endif%} Miles
+															{{selectedrow.maincabin|intcomma}} Miles + <span>${{selectedrow.maintax|floatformat:2}}</span>
 														</p>
-														<p>+</p>
-														<h6 class="nomt">${{selectedrow.maintax|floatadd:tax|floatformat:2}}</h6>
 													</div>
+													<h5 class="econo"> {{selectedrow.cabintype1}} </h5>
+													
 													{% endif %}
 												</div>
-													-->											
+																							
 											</div>											
 										</div>
 									</div>
