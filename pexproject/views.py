@@ -98,6 +98,7 @@ def search(request):
             returndelta=''
             deltacabin_name=''
             unitedcabin_name=''
+            taxes=''
             deltaminval = request.REQUEST['deltamin']
             deltatax = request.REQUEST['deltatax']
             unitedminval = request.REQUEST['unitedmin']
@@ -124,6 +125,14 @@ def search(request):
                 cabinlist = request.GET.get('cabin','')
                 querylist = querylist+join+cabinlist+" > 0 "
                 join = ' AND '
+                if cabinlist == 'maincabin':
+                    taxes = "maintax"
+                elif cabinlist == 'firstclass':
+                    taxes = "firsttax"
+                else:
+                    if cabinlist == 'bsiness':
+                        taxes = "businesstax"
+                
             if 'keyid' in request.GET:
                 searchkey = request.GET.get('keyid','')
                 querylist = querylist+join+" searchkeyid = "+searchkey
@@ -210,7 +219,7 @@ def search(request):
             if 'rowid' in request.POST:
                 recordid = request.REQUEST['rowid']
                 selectedrow = Flightdata.objects.get(pk=recordid)
-            records = Flightdata.objects.raw('select * from pexproject_flightdata where '+querylist+' order by '+cabinlist+' ASC')
+            records = Flightdata.objects.raw('select * from pexproject_flightdata where '+querylist+' order by '+cabinlist+','+taxes+',departure ASC')
            
             
             '''
@@ -406,7 +415,7 @@ def getsearchresult(request):
             cabintype = " and "+cabinclass+ " > 0"
             
           
-        record = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+searchkey+cabintype+" order by "+cabinclass+" ASC")
+        record = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+searchkey+cabintype+" order by "+cabinclass+","+taxes+",departure ASC")
         
         #------------------pagignation----------------------------------------------------
         '''
@@ -528,25 +537,25 @@ def share(request):
         #record = Flightdata.objects.get(pk=selectedid)
         record = get_object_or_404(Flightdata, pk=selectedid)
         returnrecord = ''
-	#price = 0
-	#tax = 0
+        price = 0
+        tax = 0
         if 'returnrowid' in request.GET:
             returnrowid =request.GET.get('returnrowid','')
             returnrecord = Flightdata.objects.get(pk=returnrowid)
         if cabin == 'maincabin' and returnrecord:
-            price = record.maincabin
-            tax = record.maintax
+            price = returnrecord.maincabin
+            tax = returnrecord.maintax
         elif cabin == 'firstclass' and returnrecord:
-            price = record.firstclass
-            tax = record.firsttax
+            price = returnrecord.firstclass
+            tax = returnrecord.firsttax
         else:
             if cabin == 'business' and returnrecord:
-                price = record.business
-                tax = record.businesstax
+                price = returnrecord.business
+                tax = returnrecord.businesstax
         #print price,tax
         #totalprice = int(traveler) * int(price)
         #totaltax = float(tax)*int(traveler)
-        return render_to_response('flightsearch/share.html',{'record':record,'cabin':cabin,'traveler':traveler,'returnrecord':returnrecord}, context_instance=RequestContext(request))
+        return render_to_response('flightsearch/share.html',{'record':record,'cabin':cabin,'traveler':traveler,'returnrecord':returnrecord,"price":price,"tax":tax}, context_instance=RequestContext(request))
 
 
 
