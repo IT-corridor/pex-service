@@ -378,6 +378,7 @@ def searchLoading(request):
 def getsearchresult(request):
     context = {}
     cabin =[]
+    taxes = ''
     cabinclass = request.GET.get('cabin', '')
     passenger = request.GET.get('passenger', '')
     cabin.append(cabinclass)
@@ -395,7 +396,15 @@ def getsearchresult(request):
             searchkey = request.GET.get('returnkey', '')
             returnkey = request.GET.get('keyid', '')
         if cabinclass !='':
+            if cabinclass == 'maincabin':
+                taxes = "maintax"
+            elif cabinclass == 'firstclass':
+                taxes = "firsttax"
+            else:
+                if cabinclass == 'business':
+                    taxes = "businesstax"
             cabintype = " and "+cabinclass+ " > 0"
+            
           
         record = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+searchkey+cabintype+" order by "+cabinclass+" ASC")
         
@@ -435,11 +444,13 @@ def getsearchresult(request):
             if 'rowid' in request.GET:
                 recordid = request.GET.get('rowid', '')
                 datasources= request.GET.get('datasource','')
+                '''
                 if datasources:
                     deltaminval = request.GET.get('price','')
                     deltatax = request.GET.get('tax','')
                     unitedminval = request.GET.get('price','')
                     unitedtax = request.GET.get('tax','')
+                '''
                     
                 selectedrow = Flightdata.objects.get(pk=recordid,datasource=datasources)
                 action = 'return'
