@@ -543,19 +543,19 @@ def share(request):
         if 'returnrowid' in request.GET:
             returnrowid =request.GET.get('returnrowid','')
             returnrecord = Flightdata.objects.get(pk=returnrowid)
-        if returnrecord.maincabin > 0:
-            price = returnrecord.maincabin
-            tax = returnrecord.maintax
-            returncabin = returnrecord.cabintype1
-        elif returnrecord.firstclass > 0:
-            price = returnrecord.firstclass
-            tax = returnrecord.firsttax
-            returncabin = returnrecord.cabintype2
-        else:
-            if returnrecord.business > 0:
-                price = returnrecord.business
-                tax = returnrecord.businesstax
-                returncabin = returnrecord.cabintype3
+            if returnrecord.maincabin > 0:
+                price = returnrecord.maincabin
+                tax = returnrecord.maintax
+                returncabin = returnrecord.cabintype1
+            elif returnrecord.firstclass > 0:
+                price = returnrecord.firstclass
+                tax = returnrecord.firsttax
+                returncabin = returnrecord.cabintype2
+            else:
+                if returnrecord.business > 0:
+                    price = returnrecord.business
+                    tax = returnrecord.businesstax
+                    returncabin = returnrecord.cabintype3
         #print price,tax
         #totalprice = int(traveler) * int(price)
         #totaltax = float(tax)*int(traveler)
