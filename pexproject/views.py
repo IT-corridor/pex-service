@@ -533,7 +533,6 @@ def share(request):
     if 'selectedid' in request.GET:
         selectedid = request.GET.get('selectedid','')
         cabin =  request.GET.get('cabin','')
-        print cabin
         traveler =  request.GET.get('passenger','')
         #record = Flightdata.objects.get(pk=selectedid)
         record = get_object_or_404(Flightdata, pk=selectedid)
