@@ -1584,7 +1584,12 @@ return sum;
             function loadArticle(pageNumber){    
             	var airline =new Array();
             	var stoppage = new Array();
-            	var rowid = $('#rowid').val();
+            	var row_val = "";
+            	if($('#rowid').length)
+            	{
+            		row_val = "&rowid="+$('#rowid').val() ;
+            		
+            	}
              	$(".chk-airlines:checked").each(function(){
 	        			airline.push($(this).val());
 	        			
@@ -1599,7 +1604,7 @@ return sum;
                     $.ajax({
                         url:urls,
                         type:'POST',
-                        data: "action="+encodeURI('infinite_scroll')+"&page_no="+encodeURI(pageNumber)+ "&loop_file=loop&csrfmiddlewaretoken={{ csrf_token }}&depaturemin="+depaturemin+"&depaturemax="+depaturemax+"&airlines="+airline+"&stoppage="+stoppage{% if rowid != "undefined" %}+"&rowid="+rowid{%endif%}, 
+                        data: "action="+encodeURI('infinite_scroll')+"&page_no="+encodeURI(pageNumber)+ "&loop_file=loop&csrfmiddlewaretoken={{ csrf_token }}&depaturemin="+depaturemin+"&depaturemax="+depaturemax+"&airlines="+airline+"&stoppage="+stoppage+row_val, 
                         success: function(html){
                             $("#content").append(html);   // This will be the div where our content will be loaded
                             if($("#nodata").length) is_data = 0 ;
