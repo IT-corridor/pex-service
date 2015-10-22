@@ -355,6 +355,7 @@
     <script>
 
 	 $(function(){
+	 	/*
 	 		$('#returnMain').datetimepicker({format: "m/d/Y",'timepicker': false,closeOnDateSelect: true,scrollMonth: false});
             $('#departMain').datetimepicker({ format: "m/d/Y",minDate: 0,'timepicker': false,closeOnDateSelect: true,scrollMonth: false,
                         onSelectDate: function(selectedDate)
@@ -362,7 +363,35 @@
                                 $("#returnMain").focus();
                                 $( "#returnMain" ).datetimepicker({format: "m/d/Y", minDate: selectedDate });
                         }
-               });
+               });*/
+              $('#departMain').datepicker(
+               	{
+               		minDate: 0,
+               		onSelect: function()
+               		{
+               			setTimeout(function function_name (argument) {
+							 $('#returnMain').focus();
+						   },200);
+               			
+               		},
+               		  onClose: function(selectedDate) {
+        					// Set the minDate of 'to' as the selectedDate of 'from'
+        						$("#returnMain").datepicker("option", "minDate", selectedDate);
+    					}
+               	}
+               	
+               );
+              $('#returnMain').datepicker({
+              		minDate:0,
+              		onSelect: function()
+               		{
+               		/*	setTimeout(function function_name (argument) {
+							 $('#cabintab').focus();
+						   },50);
+               			*/
+               		},
+              	
+              	}) ;
        });
 
 var total;

@@ -24,11 +24,11 @@
 									<p class="pull-left">Filters</p>
 									<p class="pull-right show-filter"><span class="glyphicon glyphicon-th-large"></span></p>
 								</div>
-								<form action="search?keyid={{request.GET.keyid}}&passenger={{request.GET.passenger}}&cabin={{request.GET.cabin}}
+								<form action="getsearchresult?keyid={{request.GET.keyid}}&passenger={{request.GET.passenger}}&cabin={{request.GET.cabin}}
 								{% if request.GET.returnkey%}&returnkey={{request.GET.returnkey}}{% endif %}" method="post">
 									{% csrf_token %}
 									{% if selectedrow %}
-									<input type="hidden" name="rowid" value="{{selectedrow.rowid}}" />
+									<input type="hidden" name="rowid" id="rowid" value="{{selectedrow.rowid}}" />
 									{% endif %}
 									{% if search %}
 										{% for searchrow in search %}
@@ -122,37 +122,6 @@
 									</div>
 									</div>
 									</div>
-									<!--
-									<div class="col-md-12 col-xs-12 nopadding form-side">
-										
-										<p>
-											CABIN
-										</p>
-										
-										<div class="col-md-10 col-xs-10 nopadding">
-										<div class="checkbox">
-											<label>
-												<input type='checkbox' id="checkallcabin" value="selectall">
-												<span></span>SELECT ALL</label>
-										</div>
-										<div class="checkbox">
-											<label>
-												<input type='checkbox' class="chk" name="cabin" value="cabintype1"  {% for row in filterkey.cabin %} {% if row == 'cabintype1'%} checked="checked" {% endif %} {%endfor %}>
-												<span></span> ECONOMY</label>
-										</div>
-										<div class="checkbox">
-											<label>
-												<input type='checkbox' class="chk" name="cabin" value="cabintype2" {% for row in filterkey.cabin %} {% if row == 'cabintype2'%} checked="checked" {% endif %}{%endfor %}>
-												<span></span> BUSINESS </label>
-										</div>
-										<div class="checkbox">
-											<label>
-												<input type='checkbox' class="chk" name="cabin" value="cabintype3" {% for row in filterkey.cabin %} {% if row == 'cabintype3'%} checked="checked" {% endif %}{%endfor %}>
-												<span></span> FIRST </label>
-										</div>
-
-									</div> 
-									</div> -->
 									
 									<input type="hidden" name="search" value="search">
 									<div class="col-md-12 col-xs-12 nopadding">
@@ -1102,9 +1071,11 @@
 					</div>
 				</div>
 			</div>
+			<div id="content"></div>
 		</div>
 	<script type="text/javascript">
 	$(function(){
+		/*
 	 		$('#return').datetimepicker({format: "m/d/Y",'timepicker': false,closeOnDateSelect: true,scrollMonth: false});
             $('#departuredate').datetimepicker({ format: "m/d/Y",minDate: 0,'timepicker': false,closeOnDateSelect: true,scrollMonth: false,
                         onSelectDate: function(selectedDate)
@@ -1112,8 +1083,36 @@
                                 $("#return").focus();
                                 $( "#return" ).datetimepicker({format: "m/d/Y", minDate: selectedDate,scrollMonth: false });
                         }
-               });
-       	});
+              }); */
+             $('#departuredate').datepicker(
+               	{
+               		minDate: 0,
+               		onSelect: function()
+               		{
+               			setTimeout(function function_name (argument) {
+							 $('#return').focus();
+						   },200);
+               			
+               		},
+               		  onClose: function(selectedDate) {
+        					// Set the minDate of 'to' as the selectedDate of 'from'
+        						$("#return").datepicker("option", "minDate", selectedDate);
+    					}
+               	}
+               	
+               );
+              $('#return').datepicker({
+              		minDate:0,
+              		onSelect: function()
+               		{
+               		/*	setTimeout(function function_name (argument) {
+							 $('#cabintab').focus();
+						   },50);
+               			*/
+               		},
+              	
+              	}) ;
+       }); 
 
 	$(".flight-search-show").click(function(){
 		$(".flight-search-panel").toggleClass('in');
@@ -1145,61 +1144,6 @@
 			    });
 			});
 		</script>
-		    
-			<!--
-
-			<script>
-
-			jQuery(window).load(function()
-			{
-
-			var $ = jQuery;
-
-			$("#datatable").dataTable({
-			{ "data": "Flight No." },
-			{ "data": "Source Station" },
-			{ "data": "Departure Time" },
-			{ "data": "Main Cabin" },
-			{ "data": "First/Business" },
-			{ "data": "Arival Time" },
-			{ "data": "Destination Station" },
-
-			]
-			});
-			/*
-			$("#datatable tbody input[type=checkbox]").each(function(i, el)
-			{
-			var $this = $(el),
-			$p = $this.closest('tr');
-
-			$(el).on('change', function()
-			{
-			var is_checked = $this.is(':checked');
-
-			$p[is_checked ? 'addClass' : 'removeClass']('highlight');
-			});
-			});
-
-			// Replace Checboxes
-			$(".pagination a").click(function(ev)
-			{
-			replaceCheckboxes();
-			});*/
-
-			});
-
-			// Sample Function to add new row
-			var giCount = 1;
-			</script>
-			<link rel="stylesheet" href="{% static 'flightsearch/datatables/responsive/css/datatables.responsive.css' %}">
-			<script src="{% static 'flightsearch/js/vendor/jquery-1.11.2.min.js' %}"></script>
-			<script src="{% static 'flightsearch/js/jquery.dataTables.min.js' %}"></script>
-			<script src="{% static 'flightsearch/datatables/TableTools.min.js' %}"></script>
-			<script src="{% static 'flightsearch/datatables/jquery.dataTables.columnFilter.js' %}"></script>
-			<script src="{% static 'flightsearch/datatables/responsive/js/datatables.responsive.js' %}"></script>
-			<script src="{% static 'flightsearch/datatables/lodash.min.js' %}"></script>
-			<script src="{% static 'flightsearch/js/dataTables.bootstrap.js' %}"></script>
-			-->
 			{% include "flightsearch/footer.html" %}
 			<script src="{% static 'flightsearch/js/vendor/bootstrap.min.js' %}"></script>
 			<script>
@@ -1248,7 +1192,7 @@
 		    
 		    
 		    //@@@@ SELECT ALL AIRLINES @@@@@@@@@
-		    
+		    var airlines = {}
 		    $("#selectairline").on("click", function() {
 			        if ($(this).is(':checked')) {
 			        	$(".chk-airlines").each(function(){
@@ -1371,7 +1315,11 @@
 					else{
 						arivemaxtime=1439;
 					}
-					
+				{% else %}
+				  	deptmintime=0;
+				  	arivemintime=0;
+				  	deptmaxtime=1439;
+				  	arivemaxtime=1439;
 					
 				{% endif%}
 			
@@ -1388,7 +1336,10 @@
 					values : [deptmintime, deptmaxtime],
 					slide : slideTime1
 				});
-
+				var depaturemin = $('depaturemin').val();
+	            var depaturemax = $('depaturemax').val();
+	            var arivalmin = $('arivalmin').val();
+	            var arivalmax = $('arivalmax').val();
 				function slideTime1(event, ui) {
 					var val0 = $("#depart").slider("values", 0),
 						val1 = $("#depart").slider("values", 1),
@@ -1400,6 +1351,8 @@
 						end = getTime(hours1, minutes1);
 						$('#depaturemin').val(start);
 						$('#depaturemax').val(end);
+						depaturemin = start;
+						depaturemax = end;
 						$("#time").text(start + ' - ' + end);
 				}
 
@@ -1422,6 +1375,8 @@
 						$('#arivalmin').val(startTime);
 						endTime = getTime(hours1, minutes1);
 						$('#arivalmax').val(endTime);
+						arivalmin = startTime;
+						arivalmax = endTime;
 						$("#arivaltime").text(startTime + ' - ' + endTime);
 				}
 
@@ -1609,4 +1564,53 @@ return sum;
     });
 	
 </script>
+<script type="text/javascript">
+
+//@@---------------------- pagination -------------------------------------
+            var pagecount = 2;
+            var is_data = 1 ;
+            
+            $(window).scroll(function(){
+                    if  ($(window).scrollTop() == $(document).height() - $(window).height()){
+                    	if(is_data > 0)
+                    	{
+                       loadArticle(pagecount);
+                       
+                       pagecount++;
+                      }
+                    }
+            }); 
+ 			var urls = ("{{request.get_full_path}}");
+            function loadArticle(pageNumber){    
+            	var airline =new Array();
+            	var stoppage = new Array();
+            	var rowid = $('#rowid').val();
+             	$(".chk-airlines:checked").each(function(){
+	        			airline.push($(this).val());
+	        			
+	            	});
+	            
+	            $(".chk-stoppage:checked").each(function(){
+	        			stoppage.push($(this).val());
+	        			
+	            	});
+	            	var stoplenght = stoppage.length;
+	            	var airlinelenght = airline.length;
+                    $.ajax({
+                        url:urls,
+                        type:'POST',
+                        data: "action="+encodeURI('infinite_scroll')+"&page_no="+encodeURI(pageNumber)+ "&loop_file=loop&csrfmiddlewaretoken={{ csrf_token }}&depaturemin="+depaturemin+"&depaturemax="+depaturemax+"&airlines="+airline+"&stoppage="+stoppage{% if rowid != "undefined" %}+"&rowid="+rowid{%endif%}, 
+                        success: function(html){
+                            $("#content").append(html);   // This will be the div where our content will be loaded
+                            if($("#nodata").length) is_data = 0 ;
+                            
+                            
+                        }
+                    });
+                return false;
+            }
+</script>
+
+
+
 

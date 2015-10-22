@@ -84,163 +84,6 @@ def logout(request):
 
 def search(request):
     context = {}
-    if request.method == "POST":
-        if 'search' in request.REQUEST:
-            querylist =''
-            join=''
-            economy=''
-            list=''
-            list1=''
-            returndate=''
-            multicabin=''
-            cabinlist=''
-            returnunited=''
-            returndelta=''
-            deltacabin_name=''
-            unitedcabin_name=''
-            taxes=''
-            deltaminval = request.REQUEST['deltamin']
-            deltatax = request.REQUEST['deltatax']
-            unitedminval = request.REQUEST['unitedmin']
-            unitedtax = request.REQUEST['unitedtax']
-            if 'stoppage' in request.POST:
-                list = request.POST.getlist('stoppage')
-                if len(list)>1:
-                    querylist = querylist+join+"stoppage IN ('"+"','".join(list)+"')"
-                    join = ' AND '
-                else:
-                    if(len(list) > 0):
-                        querylist = querylist+join+"stoppage = '"+list[0]+"'"
-                        join = ' AND '
-            if 'airlines' in request.POST:
-                list1 = request.POST.getlist('airlines')
-                if len(list1)>1:
-                    querylist = querylist+join+"datasource IN ('"+"','".join(list1)+"')"
-                    join = ' AND '
-                else:
-                    if(len(list1) > 0):
-                        querylist = querylist+join+"datasource = '"+list1[0]+"'"
-                        join = ' AND '
-            if 'cabin' in request.GET:
-                cabinlist = request.GET.get('cabin','')
-                querylist = querylist+join+cabinlist+" > 0 "
-                join = ' AND '
-                if cabinlist == 'maincabin':
-                    taxes = "maintax"
-                elif cabinlist == 'firstclass':
-                    taxes = "firsttax"
-                else:
-                    if cabinlist == 'bsiness':
-                        taxes = "businesstax"
-                
-            if 'keyid' in request.GET:
-                searchkey = request.GET.get('keyid','')
-                querylist = querylist+join+" searchkeyid = "+searchkey
-                join = ' AND '
-            if 'depaturemin' in request.POST:
-                 depttime = request.REQUEST['depaturemin']
-                 deptformat = (datetime.datetime.strptime(depttime,'%I:%M %p'))
-                 deptformat1 = deptformat.strftime('%H:%M:%S')
-                 querylist = querylist+join+" departure >= '"+deptformat1+"'"
-                 join = ' AND '
-            if 'depaturemax' in request.POST:
-                deptmaxtime = request.REQUEST['depaturemax']
-                #print deptmaxtime
-                deptmaxformat = (datetime.datetime.strptime(deptmaxtime,'%I:%M %p'))
-                deptmaxformat1 = deptmaxformat.strftime('%H:%M:%S')
-                querylist = querylist+join+" departure <= '"+deptmaxformat1+"'"
-                join = ' AND '
-            if 'arivalmin' in request.POST:
-                 arivtime = request.REQUEST['arivalmin']
-                 arivformat = (datetime.datetime.strptime(arivtime,'%I:%M %p'))
-                 arivformat1 = arivformat.strftime('%H:%M:%S')
-                 querylist = querylist+join+" arival >= '"+arivformat1+"'"
-                 join = ' AND '
-            if 'arivalmax' in request.POST:
-                arivtmaxtime = request.REQUEST['arivalmax']
-                #print deptmaxtime
-                arivtmaxformat = (datetime.datetime.strptime(arivtmaxtime,'%I:%M %p'))
-                arivtmaxformat1 = arivtmaxformat.strftime('%H:%M:%S')
-                querylist = querylist+join+" arival <= '"+arivtmaxformat1+"'"
-                join = ' AND '    
-            minprice =0 #request.POST['price']
-            
-            tax =0 #request.POST['tax']
-            
-            action = request.POST['action']
-            passenger = request.GET.get('passenger','')
-            returnkey = ''
-            selectedrow=''
-            if 'returnkey' in request.POST:
-                returnkey = request.POST['returnkey']
-                deltacabin_name=request.POST['deltacabin_name']
-                unitedcabin_name=request.POST['unitedcabin_name']
-                returndate = Searchkey.objects.values_list('traveldate', flat=True).filter(searchid=returnkey)
-                deltamin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',maincabin__gt=0).values('maincabin','maintax').annotate(Min('maincabin')).order_by('maincabin')
-                if len(deltamin1) <= 0:
-                    deltamin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',firstclass__gt=0).values('firstclass','firsttax').annotate(Min('firstclass')).order_by('firstclass')
-                    if len(deltamin1) <= 0:
-                        deltamin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',firstclass__gt=0).values('business','businesstax').annotate(Min('business')).order_by('business')
-                        if deltamin1:
-                            deltamin = deltamin1[0]
-                            deltaminval =  deltamin['business']
-                            
-                    else:
-                        deltamin = deltamin1[0]
-                        deltaminval =  deltamin['firstclass']
-                else:
-                    deltamin = deltamin1[0]
-                    deltaminval =  deltamin['maincabin']
-                returndelta = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',maincabin=deltaminval)            
-    
-                unitedmin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',maincabin__gt=0).values('maincabin','maintax').annotate(Min('maincabin')).order_by('maincabin')
-                
-                if len(unitedmin1) <= 0 :
-                    unitedmin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',firstclass__gt=0).values('firstclass','firsttax').annotate(Min('firstclass')).order_by('firstclass')
-                    if len(unitedmin1) <= 0:
-                        unitedmin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',firstclass__gt=0).values('business','businesstax').annotate(Min('business')).order_by('business')
-                        if unitedmin1:
-                            unitedmin = unitedmin1[0] 
-                            unitedminval =  unitedmin['business']
-                            
-                            returnunited = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',business=unitedminval)
-                            
-                    else:
-                        unitedmin = unitedmin1[0] 
-                        unitedminval =  unitedmin['firstclass']
-                        returnunited = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',firstclass=unitedminval)
-                else:             
-                    unitedmin = unitedmin1[0] 
-                    unitedminval =  unitedmin['maincabin']
-                    returnunited = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',maincabin=unitedminval)
-                
-            
-            
-            if 'rowid' in request.POST:
-                recordid = request.REQUEST['rowid']
-                selectedrow = Flightdata.objects.get(pk=recordid)
-            records = Flightdata.objects.raw('select * from pexproject_flightdata where '+querylist+' order by '+cabinlist+','+taxes+',departure ASC')
-           
-            
-            '''
-            paginator = Paginator(records, 10)
-            paginator._count = sum(1 for record in records ) 
-            page = request.GET.get('page')
-            try:
-                records = paginator.page(page)
-            except PageNotAnInteger:
-                records = paginator.page(1)
-            except EmptyPage:
-                records = paginator.page(paginator.num_pages)
-            '''
-            
-            searchdata = Searchkey.objects.filter(searchid=searchkey)
-            timeinfo = {'maxdept':deptmaxtime,'mindept':depttime,'minarival':arivtime,'maxarival':arivtmaxtime}#Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` where "+querylist+" order by departure ASC")
-            filerkey =  {'stoppage':list,'deptmin':depttime,'deptmax': deptmaxtime,'datasource':list1}
-           
-           
-            return render_to_response('flightsearch/searchresult.html',{'cabin':cabinlist,'returndata':returnkey,'action':action,'minprice':minprice,'tax':tax,'data':records,'search':searchdata,'selectedrow':selectedrow,'filterkey':filerkey,'timedata':timeinfo,'passenger':passenger,'returndate':returndate,'deltareturn':returndelta,'unitedreturn':returnunited,'deltatax':deltatax,'unitedtax':unitedtax,'unitedminval':unitedminval,'deltaminval':deltaminval,'deltacabin_name':deltacabin_name,'unitedcabin_name':unitedcabin_name},context_instance=RequestContext(request))
-            
     if request.is_ajax():
         context = {}
         cursor = connection.cursor()
@@ -392,18 +235,119 @@ def getsearchresult(request):
     passenger = request.GET.get('passenger', '')
     cabin.append(cabinclass)
     cabintype=''
+    querylist =''
+    join=''
+    list2=''
+    list1=''
+    minprice =0
+    tax = 0
+    selectedrow = ''
+    returndate =''
+    returndelta=''
+    returnkey =''
+    deltaminval = 0
+    deltatax = 0
+    unitedtax = 0
+    unitedminval=0
+    returnunited=''
+    deltacabin = ''
+    unitedcabin =''
+    deltacabin_name=''
+    unitedcabin_name=''
+    
+    offset = 0
+    pageno = 1
+    limit = 10
+    
+    if request.is_ajax():
+        pageno = request.REQUEST['page_no']
+        offset = (int(pageno) - 1) * limit
+    else:
+        if request.GET.get('keyid', ''):
+            recordkey = request.GET.get('keyid', '')
+            totalrecords = Flightdata.objects.filter(searchkeyid=recordkey).count()
+        
+        
+    if 'stoppage' in request.POST:
+        if request.is_ajax():
+            list2 = request.POST.getlist('stoppage')
+            list2 = list2[0].split(',')
+            print list2
+            if list2[0] != '':
+                querylist = querylist+join+"stoppage in ('"+"','".join(list2)+"')"
+                join = ' AND '    
+        
+        else:
+            list2 = request.POST.getlist('stoppage')
+            if len(list2)>1:
+                querylist = querylist+join+"stoppage IN ('"+"','".join(list2)+"')"
+                join = ' AND '
+            else:
+                if(len(list2) > 0):
+                    querylist = querylist+join+"stoppage = '"+list2[0]+"'"
+                    join = ' AND ' 
+    print querylist    
+    if 'airlines' in request.POST:
+        if request.is_ajax():
+            list1 = request.POST.getlist('airlines')
+            list1 = list1[0].split(',')
+            if list1[0] != '':
+                querylist = querylist+join+"datasource IN ('"+"','".join(list1)+"')"
+                join = ' AND '
+        else:
+            list1 = request.POST.getlist('airlines')
+            if len(list1)>1:
+                querylist = querylist+join+"datasource IN ('"+"','".join(list1)+"')"
+                join = ' AND '
+            else:
+                if(len(list1) > 0):
+                    querylist = querylist+join+"datasource = '"+list1[0]+"'"
+                    join = ' AND '
+    if 'depaturemin' in request.POST:
+         depttime = request.REQUEST['depaturemin']
+         deptformat = (datetime.datetime.strptime(depttime,'%I:%M %p'))
+         deptformat1 = deptformat.strftime('%H:%M:%S')
+         querylist = querylist+join+" departure >= '"+deptformat1+"'"
+         join = ' AND '
+    if 'depaturemax' in request.POST:
+        deptmaxtime = request.REQUEST['depaturemax']
+        #print deptmaxtime
+        deptmaxformat = (datetime.datetime.strptime(deptmaxtime,'%I:%M %p'))
+        deptmaxformat1 = deptmaxformat.strftime('%H:%M:%S')
+        querylist = querylist+join+" departure <= '"+deptmaxformat1+"'"
+        join = ' AND '
+    if 'arivalmin' in request.POST:
+         arivtime = request.REQUEST['arivalmin']
+         arivformat = (datetime.datetime.strptime(arivtime,'%I:%M %p'))
+         arivformat1 = arivformat.strftime('%H:%M:%S')
+         querylist = querylist+join+" arival >= '"+arivformat1+"'"
+         join = ' AND '
+    if 'arivalmax' in request.POST:
+        arivtmaxtime = request.REQUEST['arivalmax']
+        #print deptmaxtime
+        arivtmaxformat = (datetime.datetime.strptime(arivtmaxtime,'%I:%M %p'))
+        arivtmaxformat1 = arivtmaxformat.strftime('%H:%M:%S')
+        querylist = querylist+join+" arival <= '"+arivtmaxformat1+"'"
+        join = ' AND ' 
+
+   
+    
     if request.GET.get('keyid', '') :
         searchkey = request.GET.get('keyid', '')
-        returnkey = request.GET.get('returnkey', '')
+        if ('action' in request.GET and request.GET.get('action', '') == 'return') or 'rowid' in request.POST:
+            action = request.GET.get('action', '')
+            searchkey = request.GET.get('returnkey', '')
+            returnkey = request.GET.get('keyid', '')
+        
+        querylist = querylist+join+" searchkeyid = "+searchkey
+        join = ' AND '
+        
         searchdata = Searchkey.objects.filter(searchid=searchkey)
         for s in searchdata:
             source = s.source
             destination = s.destination
         action =''
-        if 'action' in request.GET and request.GET.get('action', '') == 'return':
-            action = request.GET.get('action', '')
-            searchkey = request.GET.get('returnkey', '')
-            returnkey = request.GET.get('keyid', '')
+        
         if cabinclass !='':
             if cabinclass == 'maincabin':
                 taxes = "maintax"
@@ -414,55 +358,23 @@ def getsearchresult(request):
                     taxes = "businesstax"
             cabintype = " and "+cabinclass+ " > 0"
             
-          
-        record = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+searchkey+cabintype+" order by "+cabinclass+","+taxes+",departure ASC")
         
-        #------------------pagignation----------------------------------------------------
-        '''
-        paginator = Paginator(record, 10)
-        paginator._count = len(list(record))
-        page = request.GET.get('page')
-    
-        try:
-            record = paginator.page(page)
-        except PageNotAnInteger:
-            record = paginator.page(1)
-        except EmptyPage:
-            record = paginator.page(paginator.num_pages)
-        '''
-        
-        #---------------------------------------------------------------------------------
-        
-        minprice =0
-        tax = 0
-        selectedrow = ''
-        returndate =''
-        returndelta=''
-        deltaminval = 0
-        deltatax = 0
-        unitedtax = 0
-        unitedminval=0
-        returnunited=''
-        deltacabin = ''
-        unitedcabin =''
-        deltacabin_name=''
-        unitedcabin_name=''
-        if returnkey:
+        record = Flightdata.objects.raw("select * from pexproject_flightdata where "+querylist+" order by "+cabinclass+","+taxes+",departure ASC LIMIT "+str(limit)+" OFFSET "+str(offset))
+        print record.query
+        if 'returnkey' in request.GET or 'returnkey' in request.POST:
+            returnkey = request.GET.get('returnkey', '')
+            
             action = 'depart'
             returndate = Searchkey.objects.values_list('traveldate', flat=True).filter(searchid=returnkey)
-            if 'rowid' in request.GET:
+            if 'rowid' in request.GET or 'rowid' in request.POST:
                 recordid = request.GET.get('rowid', '')
+                if 'rowid' in request.POST:
+                    recordid = request.REQUEST['rowid']
+                 
                 datasources= request.GET.get('datasource','')
-                '''
-                if datasources:
-                    deltaminval = request.GET.get('price','')
-                    deltatax = request.GET.get('tax','')
-                    unitedminval = request.GET.get('price','')
-                    unitedtax = request.GET.get('tax','')
-                '''
-                    
-                selectedrow = Flightdata.objects.get(pk=recordid,datasource=datasources)
-                action = 'return'
+                if recordid != "undefined":
+                    selectedrow = Flightdata.objects.get(pk=recordid)
+                    action = 'return'
                 
             else:
                 
@@ -518,13 +430,19 @@ def getsearchresult(request):
             
             #---------------------------------------------------------------------------------------
         timerecord = Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` ")
-        filterkey ={'cabin':cabin}
-        for row in timerecord:  
-            timeinfo = {'maxdept':row.maxdept,'mindept':row.mindept,'minarival':row.minarival,'maxarival':row.maxarival}
-        
-        if len(list(record))>0: 
-            return render_to_response('flightsearch/searchresult.html',{'action':action,'data':record,'minprice':minprice,'tax':tax,'returndata':returnkey,'search':searchdata,'timedata':timeinfo,'selectedrow':selectedrow,'filterkey':filterkey,'passenger':passenger,'returndate':returndate,'deltareturn':returndelta,'unitedreturn':returnunited,'deltatax':deltatax,'unitedtax':unitedtax,'unitedminval':unitedminval,'deltaminval':deltaminval,'deltacabin_name':deltacabin_name,'unitedcabin_name':unitedcabin_name},context_instance=RequestContext(request)) 
+        filterkey =  {'stoppage':list2,'datasource':list1,'cabin':cabin} 
+        #for row in timerecord:  
+            #timeinfo = {'maxdept':row.maxdept,'mindept':row.mindept,'minarival':row.minarival,'maxarival':row.maxarival}
+            
+        if request.is_ajax():
+            return render_to_response('flightsearch/search.html',{'action':action,'data':record,'minprice':minprice,'tax':tax,'returndata':returnkey,'search':searchdata,'selectedrow':selectedrow,'filterkey':filterkey,'passenger':passenger,'returndate':returndate,'deltareturn':returndelta,'unitedreturn':returnunited,'deltatax':deltatax,'unitedtax':unitedtax,'unitedminval':unitedminval,'deltaminval':deltaminval,'deltacabin_name':deltacabin_name,'unitedcabin_name':unitedcabin_name},context_instance=RequestContext(request))
+        if totalrecords>0:
+            return render_to_response('flightsearch/searchresult.html',{'action':action,'data':record,'minprice':minprice,'tax':tax,'returndata':returnkey,'search':searchdata,'selectedrow':selectedrow,'filterkey':filterkey,'passenger':passenger,'returndate':returndate,'deltareturn':returndelta,'unitedreturn':returnunited,'deltatax':deltatax,'unitedtax':unitedtax,'unitedminval':unitedminval,'deltaminval':deltaminval,'deltacabin_name':deltacabin_name,'unitedcabin_name':unitedcabin_name},context_instance=RequestContext(request)) 
         else:
+            print "no data"
+            if request.is_ajax():
+                print "ajax no data"
+                return render_to_response('flightsearch/search.html',{'action':action,'data':record,'minprice':minprice,'tax':tax,'returndata':returnkey,'search':searchdata,'selectedrow':selectedrow,'filterkey':filterkey,'passenger':passenger,'returndate':returndate,'deltareturn':returndelta,'unitedreturn':returnunited,'deltatax':deltatax,'unitedtax':unitedtax,'unitedminval':unitedminval,'deltaminval':deltaminval,'deltacabin_name':deltacabin_name,'unitedcabin_name':unitedcabin_name},context_instance=RequestContext(request))
             msg = "Sorry, No flight found  from "+source+" To "+destination+".  Please search for another date or city !"
             return  render_to_response('flightsearch/flights.html',{'message':msg}, context_instance=RequestContext(request))
             
