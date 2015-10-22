@@ -9,6 +9,11 @@ def assign(varname,arg):
     else:
         varname = arg
     return varname
+def assignval(record):
+    row_count = 0 
+    for row in record:
+        row_count = row_count+1
+    return row_count
 def split(value, seperator):
     datalist = value.split(seperator)
     return datalist
@@ -17,3 +22,4 @@ def split(value, seperator):
 register.filter('floatadd', floatadd)
 register.filter('assign', assign)
 register.filter('split', split)
+register.filter('assignval', assignval)

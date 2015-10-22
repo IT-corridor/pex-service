@@ -1,389 +1,664 @@
-<!doctype html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Pex Search Result</title>
+		
+		{% load customfilter %}
+		{% load staticfiles %}
+		{% load humanize %}
+		
+		<body>
+<style>
+.add {
+    margin-left: -6px;}
+</style>
 
-        <link rel="stylesheet" href="css/bootstrap.min.css">
-        <style>
-            body {
-                /*padding-top: 50px;*/
-                padding-bottom: 20px;
-            }
-        </style>
-        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
-        <link rel="stylesheet" href="css/datepicker.css">
-        <link rel="stylesheet" href="css/main.css">
-
-        <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
-        <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>/-->
-        <script src="js/jquery-2.1.4.min.js"></script>
-        <script src="js/bootstrap-datepicker.js"></script>
-        <script type="text/javascript">
-          $(function(){
-            $('.datepicker').datepicker();
-          });
-          /*jQuery( document ).ready(function( $ ) {
-            var nowTemp = new Date();
-            var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
-
-            var checkin = $('#dp1').datepicker({
-                language: "pt",
-                format: "dd/mm/yyyy",
-                beforeShowDay: function (date) {
-                    return date.valueOf() < now.valueOf() ? false : '';
-                }
-            }).on('changeDate', function (ev) {
-                if (ev.date.valueOf() > checkout.date.valueOf()) {
-                    var newDate = new Date(ev.date);
-                    newDate.setDate(newDate.getDate() + 1);
-
-                    checkout.setValue(newDate);
-                }
-
-                checkin.hide();
-                $('#DtChkOut').focus();
-            }).data('datepicker');
-
-            var checkout = $('#dp2').datepicker({
-                language: "pt",
-                format: "dd/mm/yyyy",
-                beforeShowDay: function (date) {
-                    return date.valueOf() <= checkin.date.valueOf() ? false : '';
-                }
-            }).on('changeDate', function (ev) {
-                checkout.hide();
-            }).data('datepicker');
-          });*/
-        </script>
-    </head>
-
-    <body itemscope itemtype="http://schema.org/WebPage">
-        <!--[if lt IE 8]>
-            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
-
-<!-- NAVBAR SECTION/-->
-
-        <nav class="navbar navbar-default">
-          <div class="container-fluid">
-            <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#pexMainNavbar">
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span> 
-            </button>
-
-            <a class="navbar-brand brandmedia" href="http://www.pexportal.com"><img src="img/logoMain.jpg" alt="" class="hidden-xs hidden-sm hidden-md"><img src="img/logo.jpg" alt="" class="hidden-lg hidden-xs"><img src="img/logo.jpg" alt="" class="hidden-lg hidden-md hidden-sm"></a>
-          </div>
-
-          <div class="collapse navbar-collapse" id="pexMainNavbar">
-            <ul class="nav navbar-nav mainNav mvt30px">
-              <li class=""><a href="#">Flights</a></li>
-              <li class=""><a href="#">Hotels</a></li> 
-              <li class=""><a href="#">Cars</a></li>
-              <li class=""><a href="#">Cruises</a></li> 
-              <li class=""><a href="#">Restaurants</a></li>
-            </ul>   
-            <ul class="nav navbar-nav navbar-right">
-              <li class=""><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-              <li class=""><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-              <li class=""><a href="#"><span class="glyphicon glyphicon-info-sign"></span> Help</a></li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-
-<!-- BODY SECTION/-->
-
-    <div class="">
-      <div class="jumbotron">
-        <div class="container-fluid">
-			<div class="col-md-12 col-xs-12">
-				<div class="col-md-2 col-xs-12 nopadding">
-			<div class="col-md-12 col-xs-12 nopadding form-side">
-					<div class="priceRangeInfo">
-					DEPARTURE TIME
-					  <input type="range" name="buying_slider_min" id="buying_slider_min" class="minBuyingSlider" value="0" min="0" max="100" />
-					</div>
-					<div class="priceRangeInfo mvt15px">
-					ARRIVAL TIME
-					  <input type="range" name="buying_slider_min" id="buying_slider_min" class="minBuyingSlider" value="0" min="0" max="100" />
-					</div>
-			</div>
-				<div class="col-md-12 col-xs-12 nopadding form-side">
-					<p>NUMBER OF STOPS</p>
-				<form>
-					  <div class="checkbox">
-						<label>
-						  <input type='checkbox'>
-						  <span></span>
-						  NONSTOP
-						</label>
-					  </div>
-					  <div class="checkbox">
-						<label>
-						  <input type='checkbox'>
-						  <span></span>
-						  STOP
-						</label>
-					  </div>
-					  <div class="checkbox">
-						<label>
-						  <input type='checkbox'>
-						  <span></span>
-						  2+ STOPS
-						</label>
-					  </div>
-				</form>
-				</div>
-				<div class="col-md-12 col-xs-12 nopadding form-side">
-					<p>NUMBER OF STOPS</p>
-				<form>
-					  <div class="checkbox">
-						<label>
-						  <input type='checkbox'>
-						  <span></span>
-						  NONSTOP
-						</label>
-					  </div>
-					  <div class="checkbox">
-						<label>
-						  <input type='checkbox'>
-						  <span></span>
-						  STOP
-						</label>
-					  </div>
-					  <div class="checkbox">
-						<label>
-						  <input type='checkbox'>
-						  <span></span>
-						  2+ STOPS
-						</label>
-					  </div>
-				</form>
-				</div>
-				<div class="col-md-12 col-xs-12 nopadding form-side">
-					<p>NUMBER OF STOPS</p>
-				<form>
-					  <div class="checkbox">
-						<label>
-						  <input type='checkbox'>
-						  <span></span>
-						  NONSTOP
-						</label>
-					  </div>
-					  <div class="checkbox">
-						<label>
-						  <input type='checkbox'>
-						  <span></span>
-						  STOP
-						</label>
-					  </div>
-					  <div class="checkbox">
-						<label>
-						  <input type='checkbox'>
-						  <span></span>
-						  2+ STOPS
-						</label>
-					  </div>
-				</form>
-				</div>
-				</div>
-				<div class="col-md-8 col-xs-12 ">
-					<div class="col-md-12 col-xs-12 centr-info">
-						<div class="col-md-6 col-xs-12 nopadding">
+		<div class="main-holder">
+			<div class="col-xs-12 nopadding">
+				<div class="jumbotron">
+					<div class="container-fluid">
 						<div class="col-md-12 col-xs-12 nopadding">
-							<div class="col-md-8 col-xs-12 nopadding na-ra">
-								<p class="flight-name">FIRST FLIGHT OPTION RESULT</p>
-								<p class="flight-rate">4,500 POINTS + $5.00</p>
-							</div>
-							<div class="col-md-4 col-xs-12"><img src="img/logoMain.jpg" class="img-responsive" alt="Responsive image"></div>
-						</div>
-						</div>
-						<div class="col-md-6 col-xs-12 nopadding">	
-						<div class="col-md-12 col-xs-12 nopadding">	
-							<div class="col-md-8 col-xs-12 nopadding">
-								<div class="arrivel">
-									<p>FILL</p>
-									<p>19:25</p>
+							<div class="col-md-2 col-xs-12 nopadding filters-holder mvb10px ">
 								</div>
-								<div class="arrow-div">
-								</div>
-								<div class="arrivel-2">
-									<p>FILL</p>
-									<p>19:25</p>
-								</div>
-	
+							
+							<div class="col-md-8 col-xs-12 xs-nopadding">
+
 								
 								
-							</div>
 							
-							<div class="col-md-2 col-xs-12 non-stop">
-							<p>NONSTOP</p>
+								
 							
-							</div>
-						</div>	
-						<div class="col-xs-12 nopadding pop-hover"><p class="econo">ECONOMY</p>
-									<a class="" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">SHOW DETAILS</a>
-								<div class="collapse" id="collapseExample">
-								  <div class="well">
-									<h2>DEPART</h2>
-									<p>COMPANY FLIGHT (ECO)</p>
-									<div class="table-responsive table-date-search">
-									  <table class="table">
-										<tr>
-											<td>19:25</td>
-											<td>Flight Date</td>
-											<td>Fll Ft. lauderdale</td>
-										</tr>
-										<tr>
-											<td>19:25</td>
-											<td>Flight Date</td>
-											<td>Fll Ft. lauderdale</td>
-										</tr>
-									  </table>
+							{% with "1" as rows_count %}
+							
+					
+							{% if data %}
+								
+								
+								{% for row in data %}
+								
+								<div class="col-md-12 col-xs-12 centr-info responsive-color-img">
+									<div class="col-sm-3 col-xs-5 visible-xs visible-sm nopl">
+										<div class="col-xs-12 nopadding text-center" itemscope itemtype ="http://schema.org/Airline">
+											{% if row.datasource == "united" %}
+												<img itemprop="logo" src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">
+											{% endif %}
+											{% if row.datasource == "delta" %}
+												<img itemprop="logo" src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">
+											{% endif %}
+										</div>
 									</div>
-									<a href="#">share</a>
-								  </div>
+									<div class="col-md-12 col-sm-9 col-xs-7 nopadding" itemscope itemtype ="http://schema.org/Flight">
+										<p class="flight-name" itemprop="flightNumber">
+											{{row.flighno}} <!--FIRST FLIGHT OPTION RESULT-->
+										</p>
+									</div>
+									<div class="col-md-5 col-xs-12 nopadding hidden-xs hidden-sm">
+										<div class="col-sm-8 col-sm-8 col-xs-12 nopl">
+											<div class="col-md-12 col-xs-12 nopadding">
+													<div class="col-xs-12 nopadding xs-margin-25px">
+														{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' %}
+												  
+															<div class="col-xs-12 nopadding mvb10px na-ra" itemscope itemtype ="http://schema.org/FlightReservation">
+																<p class="flight-rate" itemprop="totalPrice">
+																	{% if row.datasource == "delta" %}
+																	{{row.maincabin|add:deltaminval|intcomma}} Miles + <span>${{row.maintax|floatadd:deltatax|floatformat:2}}</span> {%else%}{{row.maincabin|add:unitedminval|intcomma}}  Miles + <span>${{row.maintax|floatadd:unitedtax|floatformat:2}} </span> {%endif%}
+																</p>
+															</div> 
+														
+														{% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %}
+															<div class="col-xs-12 nopadding mvb10px na-ra" itemscope itemtype ="http://schema.org/FlightReservation">
+															<p class="flight-rate" itemprop="totalPrice">
+																{% if row.datasource == "delta" %}
+																{{row.firstclass|add:deltaminval|intcomma}} {%else%}{{row.firstclass|add:unitedminval|intcomma}} {%endif%} Miles + <span>${{row.firsttax|floatadd:tax|floatformat:2}}</span>
+															</p>
+														</div>
+														{% else %}
+															{% if request.GET.cabin == 'business' or cabin == 'business' %}
+															<div class="col-xs-12 nopadding mvb10px na-ra" itemscope itemtype ="http://schema.org/FlightReservation">
+															<p class="flight-rate" itemprop="totalPrice">
+																{% if row.datasource == "delta" %}
+																{{row.business|add:deltaminval|intcomma}} {%else%}{{row.business|add:unitedminval|intcomma}} {%endif%} Miles + <span>${{row.businesstax|floatadd:tax|floatformat:2}}</span>
+															</p>
+														</div>
+														{% endif %}
+													{%endif%}
+													</div>
+											</div>
+										</div>
+										<div class="col-md-4 col-sm-4 col-xs-12 nopl">
+											<div class="col-xs-12 nopadding text-center mvb10px" itemscope itemtype ="http://schema.org/Airline">
+												{% if row.datasource == "united" %}
+												<img itemprop="logo" src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
+												{% if row.datasource == "delta" %}
+												<img itemprop="logo" src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
+											</div>
+										</div>
+									</div>
+									<div class="col-md-7 col-xs-12 nopadding">
+										
+										
+										<div class="col-xs-12 nopadding flight-div-repeat"> 
+										<div class="col-md-8 col-sm-8 col-xs-12 nopadding">
+											<div class="col-xs-12 nopadding">
+												<div class="arrivel col-sm-5 nopadding col-xs-4" itemscope itemtype ="http://schema.org/Flight">
+													<p itemprop="departureAirport">
+														{{row.origin}}
+													</p>
+													<p>
+														<time itemprop="departureTime">{{row.departure}}</time>
+													</p>
+												</div>
+												<div class="arrow-div col-sm-2 col-xs-1 text-center nopadding">&#8594;</div>
+												<div class="arrivel-2 col-sm-4 nopadding text-right col-xs-4 xs-text-center" itemscope itemtype ="http://schema.org/Flight">
+													<p itemprop="arrivalAirport">
+														{{row.destination}}
+													</p>
+													<p>
+														<time itemprop="arrivalTime">{{row.arival}}</time>
+													</p>
+												</div>
+												<div class="col-xs-3 nopadding visible-xs text-right">
+													<div class="col-xs-12 nopadding non-stop text-right">
+														<p>
+															{{row.stoppage}}
+														</p>
+													</div>
+													<div class="col-xs-12 nopadding non-stop" itemscope itemtype ="http://schema.org/Flight">
+														<p itemprop="estimatedFlightDuration">
+															{{row.duration}}
+														</p>
+													</div>
+												</div>
+											</div>
+											
+									{% if returndate == '' %}	
+									<div class="col-xs-12 nopadding mvt10px for-mobile-view"> <!-- main data only mobile -->
+										<div class="col-xs-12 nopadding text-center custome-edit-block"> 
+											{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' %}
+											
+													
+													<div class="col-xs-12 nopadding mvb10px na-ra">
+													<h5 class="econo edit-width-econo">{{row.cabintype1}}</h5>
+													<div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
+														<p class="flight-rate" itemprop="totalPrice">
+																{% if row.datasource == "delta" %}
+																{{row.maincabin|add:deltaminval|intcomma}} Miles + <span>${{row.maintax|floatadd:deltatax|floatformat:2}}</span> {%else%}{{row.maincabin|add:unitedminval|intcomma}} Miles + <span>${{row.maintax|floatadd:unitedtax|floatformat:2}}</span> {%endif%} 
+															</p>
+														</div>
+													</div>
+											{% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %}
+													
+													<div class="col-xs-12 nopadding mvb10px na-ra">
+														<h5 class="econo edit-width-econo">{{row.cabintype2}}</h5>
+														<div class="right-data-responsive">
+														<p class="flight-rate">
+																{% if row.datasource == "delta" %}
+																{{row.firstclass|add:deltaminval|intcomma}} Miles + <span>${{row.firsttax|floatadd:deltatax|floatformat:2}}</span> {%else%}{{row.firstclass|add:unitedminval|intcomma}} Miles + <span>${{row.firsttax|floatadd:unitedtax|floatformat:2}}</span> {%endif%}
+															</p>
+														</div>
+													</div>
+													
+											{% else %}
+													{% if request.GET.cabin == 'business' or cabin == 'business' %}
+
+														<div class="col-xs-12 nopadding mvb10px na-ra">
+															<h5 class="econo edit-width-econo">{{row.cabintype3}}</h5>
+															<div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
+															<p class="flight-rate" itemprop="totalPrice">
+																{% if row.datasource == "delta" %}
+																{{row.business|add:deltaminval|intcomma}} Miles + <span>${{row.businesstax|floatadd:deltatax|floatformat:2}}</span> {%else%}{{row.business|add:unitedminval|intcomma}} Miles + <span>${{row.businesstax|floatadd:unitedtax|floatformat:2}}</span> {%endif%}
+															</p>
+														</div>
+														</div>
+													{% endif %}
+											{% endif%}											
+										</div>
+									</div>  
+									{% endif %}		
+									</div>
+										<div class="col-md-4 col-sm-4 col-xs-12 text-center nopr hidden-xs">
+											<div class="col-xs-12 nopadding non-stop">
+												<p>
+													{{row.stoppage}}
+												</p>
+												<div class="col-xs-12 nopadding non-stop" itemscope itemtype ="http://schema.org/Flight">
+													<p itemprop="estimatedFlightDuration">
+														{{row.duration}}
+													</p>
+												</div>
+											</div>
+										</div>
+									</div>
+									
+									<!-- terurn data block -->
+									{% if returndate %}
+									{% if row.datasource == "united" and unitedreturn %}
+										{% with unitedreturn as returnrecord %} 
+									<div class="col-xs-12 nopadding flight-div-repeat"> 
+										<div class="col-md-8 col-sm-8 col-xs-12 nopadding">
+											<div class="col-xs-12 nopadding">
+												<div class="arrivel col-sm-5 nopadding col-xs-4" itemscope itemtype ="http://schema.org/Flight">
+													<p itemprop="departureAirport">
+														{{returnrecord.0.origin}}
+													</p>
+													<p>
+														<time itemprop="departureTime">{{returnrecord.0.departure}}</time>
+													</p>
+												</div>
+												<div class="arrow-div col-sm-2 col-xs-1 text-center nopadding">&#8594;</div>
+												<div class="arrivel-2 col-sm-4 nopadding text-right col-xs-4 xs-text-center" itemscope itemtype ="http://schema.org/Flight">
+													<p itemprop="arrivalAirport">
+														{{returnrecord.0.destination}}
+													</p>
+													<p>
+														<time itemprop="arrivalTime">{{returnrecord.0.arival}}</time>
+													</p>
+												</div>
+												<div class="col-xs-3 nopadding visible-xs text-right">
+													<div class="col-xs-12 nopadding non-stop text-right">
+														<p>
+															{{returnrecord.0.stoppage}}
+														</p>
+													</div>
+													<div class="col-xs-12 nopadding non-stop" itemscope itemtype ="http://schema.org/Flight">
+														<p itemprop="estimatedFlightDuration">
+															{{returnrecord.0.duration}}
+														</p>
+													</div>
+												</div>
+											</div>
+											
+									</div>
+										<div class="col-md-4 col-sm-4 col-xs-12 text-center nopr hidden-xs">
+											<div class="col-xs-12 nopadding non-stop">
+												<p>
+													{{returnrecord.0.stoppage}}
+												</p>
+												<div class="col-xs-12 nopadding non-stop" itemscope itemtype ="http://schema.org/Flight">
+													<p itemprop="estimatedFlightDuration">
+														{{returnrecord.0.duration}}
+													</p>
+												</div>
+											</div>
+										</div>
+									</div> <!-- end retun block -->
+									{%endwith%}
+								{% endif%}
+								{% if row.datasource == "delta" and deltareturn %}
+										{% with deltareturn as returnrecord %} 
+									<div class="col-xs-12 nopadding flight-div-repeat"> 
+										<div class="col-md-8 col-sm-8 col-xs-12 nopadding">
+											<div class="col-xs-12 nopadding">
+												<div class="arrivel col-sm-5 nopadding col-xs-4" itemscope itemtype ="http://schema.org/Flight">
+													<p itemprop="departureAirport">
+														{{returnrecord.0.origin}}
+													</p>
+													<p>
+														<time itemprop="departureTime">{{returnrecord.0.departure}}</time>
+													</p>
+												</div>
+												<div class="arrow-div col-sm-2 col-xs-1 text-center nopadding">&#8594;</div>
+												<div class="arrivel-2 col-sm-4 nopadding text-right col-xs-4 xs-text-center" itemscope itemtype ="http://schema.org/Flight">
+													<p itemprop="arrivalAirport">
+														{{returnrecord.0.destination}}
+													</p>
+													<p>
+														<time itemprop="arrivalTime">{{returnrecord.0.arival}}</time>
+													</p>
+												</div>
+												<div class="col-xs-3 nopadding visible-xs text-right">
+													<div class="col-xs-12 nopadding non-stop text-right">
+														<p>
+															{{returnrecord.0.stoppage}}
+														</p>
+													</div>
+													<div class="col-xs-12 nopadding non-stop" itemscope itemtype ="http://schema.org/Flight">
+														<p itemprop="estimatedFlightDuration">
+															{{returnrecord.0.duration}}
+														</p>
+													</div>
+												</div>
+											</div>
+											
+									</div>
+										<div class="col-md-4 col-sm-4 col-xs-12 text-center nopr hidden-xs">
+											<div class="col-xs-12 nopadding non-stop">
+												<p>
+													{{returnrecord.0.stoppage}}
+												</p>
+												<div class="col-xs-12 nopadding non-stop" itemscope itemtype ="http://schema.org/Flight">
+													<p itemprop="estimatedFlightDuration">
+														{{returnrecord.0.duration}}
+													</p>
+												</div>
+											</div>
+										</div>
+									</div> <!-- end retun block -->
+									{%endwith%}
+								{% endif%}
+								
+								<div class="col-xs-12 nopadding mvt10px for-mobile-view"> <!-- main data only mobile  if return in present -->
+										<div class="col-xs-12 nopadding text-center custome-edit-block"> 
+											{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' %}
+											
+													
+													<div class="col-xs-12 nopadding mvb10px na-ra">
+													<h5 class="econo edit-width-econo">{{row.cabintype1}}</h5>
+													<div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
+														<p class="flight-rate" itemprop="totalPrice">
+																{% if row.datasource == "delta" %}
+																{{row.maincabin|add:deltaminval|intcomma}} Miles + <span>${{row.maintax|floatadd:deltatax|floatformat:2}}</span> {%else%}{{row.maincabin|add:unitedminval|intcomma}} Miles + <span>${{row.maintax|floatadd:unitedtax|floatformat:2}}</span> {%endif%} 
+															</p>
+														</div>
+													</div>
+											{% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %}
+													
+													<div class="col-xs-12 nopadding mvb10px na-ra">
+														<h5 class="econo edit-width-econo">{{row.cabintype2}}</h5>
+														<div class="right-data-responsive">
+														<p class="flight-rate">
+																{% if row.datasource == "delta" %}
+																{{row.firstclass|add:deltaminval|intcomma}} Miles + <span>${{row.firsttax|floatadd:deltatax|floatformat:2}}</span> {%else%}{{row.firstclass|add:unitedminval|intcomma}} Miles + <span>${{row.firsttax|floatadd:unitedtax|floatformat:2}}</span> {%endif%}
+															</p>
+														</div>
+													</div>
+													
+											{% else %}
+													{% if request.GET.cabin == 'business' or cabin == 'business' %}
+
+														<div class="col-xs-12 nopadding mvb10px na-ra">
+															<h5 class="econo edit-width-econo">{{row.cabintype3}}</h5>
+															<div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
+															<p class="flight-rate" itemprop="totalPrice">
+																{% if row.datasource == "delta" %}
+																{{row.business|add:deltaminval|intcomma}} Miles + <span>${{row.businesstax|floatadd:deltatax|floatformat:2}}</span> {%else%}{{row.business|add:unitedminval|intcomma}} Miles + <span>${{row.businesstax|floatadd:unitedtax|floatformat:2}}</span> {%endif%}
+															</p>
+														</div>
+														</div>
+													{% endif %}
+											{% endif%}											
+										</div>
+									</div>  
+							{% endif%}	
+							
+									
+									
+										<a class="show-details" role="button" data-toggle="collapse" href="#{{row.rowid}}" aria-expanded="false" aria-controls="collapseExample">SHOW DETAILS</a>
+										<h4 class="econo hidden-xs"> 
+												{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
+												{{row.cabintype1}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{row.cabintype2}} {% else%}{{row.cabintype3}} {% endif %}</h4>	
+										<div class="col-xs-12 pop-hover nopadding">
+											<div class="collapse" id="{{row.rowid}}">
+												<div class="well" itemscope itemtype="http://schema.org/Flight">
+													<h2>DEPART</h2>
+													<p itemprop="flightNumber">
+														{{row.datasource|title}} | {{row.flighno}} ({% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
+												{{row.cabintype1}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{row.cabintype2}} {% else%}{{row.cabintype3}} {% endif %})
+													</p>
+													<div class="table-responsive table-date-search">
+														<table class="table">
+															{% with row.departdetails|split:'@' as mylist%}
+															{% with row.arivedetails|split:'@' as mylist1%}
+															{% with row.planedetails|split:'@' as mylist2%}
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Depart: </b></td>
+																<td><time itemprop="departureTime">{{mylist.0}}</time></td>
+															</tr>
+															
+															
+															<tr itemscope itemtype="http://schema.org/Flight">
+															
+																<td><b>Arives:</b></td>
+																<td><time itemprop="arrivalTime">{{mylist1.0}}</time></td>
+															</tr>
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td itemprop="flightNumber"><b>Flight:</b></td>
+																<td>{{mylist2.0}}</td>
+															</tr>
+															{% if row.stoppage == '1 STOP' or row.stoppage == '2 STOPS' %}
+															<tr>
+																<td></td>
+																<td>
+																	<h5><b>Change planes </b></h5>
+																</td>
+															</tr>
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Depart: </b></td>
+																<td><time itemprop="departureTime">{{mylist.1}}</time></td>
+															</tr>
+															
+															
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Arives:</b></td>
+																<td><time itemprop="arrivalTime">{{mylist1.1}}</time></td>
+															</tr>
+															<tr>
+																<td><b>Flight:</b></td>
+																<td>{{mylist2.1}}</td>
+															</tr>
+															
+															{% endif %}
+															{% if row.stoppage == '2 STOPS' %}
+															<tr>
+																<td></td>
+																<td>
+																	<h5><b>Change planes </b></h5>
+																</td>
+															</tr>
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Depart: </b></td>
+																<td><time itemprop="departureTime">{{mylist.2}}</time></td>
+															</tr>
+															
+															
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Arives:</b></td>
+																<td><time itemprop="arrivalTime">{{mylist1.2}}</time></td>
+															</tr>
+															<tr>
+																<td><b>Flight:</b></td>
+																<td>{{mylist2.2}}</td>
+															</tr>
+															
+															{% endif %}
+															
+															
+															
+															{% endwith %}
+															{% endwith %}
+															{% endwith %}
+															
+														</table>
+													</div>
+													
+													<!--  FOR RETURN DELTA BLOCK -->
+													{% if returndate and row.datasource == 'delta' and deltareturn%}
+													<div class="well" itemscope itemtype="http://schema.org/Flight">
+													<h2>RETURN</h2>
+													<p itemprop="flightNumber">
+														{{deltareturn.0.datasource|title}} | {{deltareturn.0.flighno}} ({{deltacabin_name}})
+														<!-- ( {% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
+												{{deltareturn.0.cabintype1}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{deltareturn.0.cabintype2}} {% else%}{{deltareturn.0.cabintype3}} {% endif %})-->
+													</p>
+													<div class="table-responsive table-date-search">
+														<table class="table">
+															{% with deltareturn.0.departdetails|split:'@' as mylist%}
+															{% with deltareturn.0.arivedetails|split:'@' as mylist1%}
+															{% with deltareturn.0.planedetails|split:'@' as mylist2%}
+															{{ deltareturn.departdetails}}
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Depart: </b></td>
+																<td><time itemprop="departureTime">{{mylist.0}}</time></td>
+															</tr>
+															
+															
+															<tr itemscope itemtype="http://schema.org/Flight">
+															
+																<td><b>Arives:</b></td>
+																<td><time itemprop="arrivalTime">{{mylist1.0}}</time></td>
+															</tr>
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td itemprop="flightNumber"><b>Flight:</b></td>
+																<td>{{mylist2.0}}</td>
+															</tr>
+															{% if deltareturn.0.stoppage == '1 STOP' or deltareturn.0.stoppage == '2 STOPS' %}
+															<tr>
+																<td></td>
+																<td>
+																	<h5><b>Change planes </b></h5>
+																</td>
+															</tr>
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Depart: </b></td>
+																<td><time itemprop="departureTime">{{mylist.1}}</time></td>
+															</tr>
+															
+															
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Arives:</b></td>
+																<td><time itemprop="arrivalTime">{{mylist1.1}}</time></td>
+															</tr>
+															<tr>
+																<td><b>Flight:</b></td>
+																<td>{{mylist2.1}}</td>
+															</tr>
+															
+															{% endif %}
+															{% if deltareturn.0.stoppage == '2 STOPS' %}
+															<tr>
+																<td></td>
+																<td>
+																	<h5><b>Change planes </b></h5>
+																</td>
+															</tr>
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Depart: </b></td>
+																<td><time itemprop="departureTime">{{mylist.2}}</time></td>
+															</tr>
+															
+															
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Arives:</b></td>
+																<td><time itemprop="arrivalTime">{{mylist1.2}}</time></td>
+															</tr>
+															<tr>
+																<td><b>Flight:</b></td>
+																<td>{{mylist2.2}}</td>
+															</tr>
+															
+															{% endif %}
+													
+													
+													{% endwith %}
+													{% endwith %}
+													{% endwith %}
+												</table>
+												</div>
+												</div>
+											{% endif %}
+											<!-- RETTUN DELTA BLOCK END AND START RETURN UNITED BLOCK -->
+											{% if returndate and row.datasource == 'united' and unitedreturn%}
+													<div class="well" itemscope itemtype="http://schema.org/Flight">
+													<h2>RETURN</h2>
+													<p itemprop="flightNumber">
+														{{unitedreturn.0.datasource|title}}  | {{unitedreturn.0.flighno}} ({{unitedcabin_name}})
+														<!--( {% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
+												{{unitedreturn.0.cabintype1}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{unitedreturn.0.cabintype2}} {% else%}{{unitedreturn.0.cabintype3}} {% endif %})-->
+													</p>
+													<div class="table-responsive table-date-search">
+														<table class="table">
+															{% with unitedreturn.0.departdetails|split:'@' as mylist%}
+															{% with unitedreturn.0.arivedetails|split:'@' as mylist1%}
+															{% with unitedreturn.0.planedetails|split:'@' as mylist2%}
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Depart: </b></td>
+																<td><time itemprop="departureTime">{{mylist.0}}</time></td>
+															</tr>
+															
+															
+															<tr itemscope itemtype="http://schema.org/Flight">
+															
+																<td><b>Arives:</b></td>
+																<td><time itemprop="arrivalTime">{{mylist1.0}}</time></td>
+															</tr>
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td itemprop="flightNumber"><b>Flight:</b></td>
+																<td>{{mylist2.0}}</td>
+															</tr>
+															{% if unitedreturn.0.stoppage == '1 STOP' or unitedreturn.0.stoppage == '2 STOPS' %}
+															<tr>
+																<td></td>
+																<td>
+																	<h5><b>Change planes </b></h5>
+																</td>
+															</tr>
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Depart: </b></td>
+																<td><time itemprop="departureTime">{{mylist.1}}</time></td>
+															</tr>
+															
+															
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Arives:</b></td>
+																<td><time itemprop="arrivalTime">{{mylist1.1}}</time></td>
+															</tr>
+															<tr>
+																<td><b>Flight:</b></td>
+																<td>{{mylist2.1}}</td>
+															</tr>
+															
+															{% endif %}
+															{% if unitedreturn.0.stoppage == '2 STOPS' %}
+															<tr>
+																<td></td>
+																<td>
+																	<h5><b>Change planes </b></h5>
+																</td>
+															</tr>
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Depart: </b></td>
+																<td><time itemprop="departureTime">{{mylist.2}}</time></td>
+															</tr>
+															
+															
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Arives:</b></td>
+																<td><time itemprop="arrivalTime">{{mylist1.2}}</time></td>
+															</tr>
+															<tr>
+																<td><b>Flight:</b></td>
+																<td>{{mylist2.2}}</td>
+															</tr>
+															
+															{% endif %}
+													
+													
+													{% endwith %}
+													{% endwith %}
+													{% endwith %}
+												</table>
+												</div>
+												</div>
+											{% endif %}	
+											{% if action == 'depart' %}
+													<div>
+													<form action="getsearchresult" method="get">
+														{% csrf_token %}
+														<input type="hidden" name="cabin"  value="{{request.GET.cabin}}">
+														<input type="hidden" name="rowid"  value="{{row.rowid}}">
+														<input type="hidden" name="price" 
+														{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%} 
+														 value="{{row.maincabin}}" {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass'%} 
+														 value="{{row.firstclass}}"{% else %}{% if request.GET.cabin == 'business' or cabin == 'business'%} 
+														 value="{{row.business}}"{%endif%}{% endif %}>
+														<input type="hidden" name="tax"
+														{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%} 
+														 value="{{row.maintax}}" {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass'%} 
+														 value="{{row.firsttax}}"{% else %}{% if request.GET.cabin == 'business' or cabin == 'business'%} 
+														 value="{{row.businesstax}}"{%endif%}{% endif %}>
+														<input type="hidden" name="action"  value="return">
+														<input type="hidden" name="datasource"  value="{{row.datasource}}">
+														<input type="hidden" name="passenger"  value="{{request.GET.passenger}}">
+														<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
+														<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
+														<button type"submit" value="{{searchrow.searchid}}" name="return" class="btn btn-pexSearch">Other Options For Return Flight</button>
+													</form>
+													</div>
+											{% endif %}
+												<!-- END RETURN UNITED BLOCK -->
+													
+													
+													
+													<a href="share?selectedid={{row.rowid}}&cabin={{request.GET.cabin}}&passenger={{request.GET.passenger}}{% if request.GET.returnkey and row.datasource == 'united' and unitedreturn.0.rowid %}&returnrowid={{unitedreturn.0.rowid}}{%endif%}{% if request.GET.returnkey and row.datasource == 'delta' and deltareturn.0.rowid%}&returnrowid={{deltareturn.0.rowid}}{%endif%}">share</a>
+												</div>
+											</div>
+										</div>
+									</div>
 								</div>
-								</div>
-						</div>	
+								{% endfor %}
+							
+								   
+							{% endif %}
+							{{data|length}}
+							{% if data|assignval == 0 %}
+								<input type="hidden" id="nodata" name="nodata" />	
+							{% endif %}	
+							{% endwith %}					
+							</div>
+							<!--
+							<div class="col-md-2 col-xs-12 nopadding "><img src="{% static 'flightsearch/img/ad.jpg' %}"  alt="Responsive image" class="img-responsive">
+
+							</div> -->
 						</div>
-						
 					</div>
-				
-				
-				<div class="col-md-2 col-xs-12 nopadding"><img src="img/ad.jpg" class="img-responsive" alt="Responsive image"></div>
+				</div>
 			</div>
-        </div>
-      </div>
- </div>
-
-      <footer class="container-footer">
-        <nav class="navbar navbar-footer">
-          <div class="container-fluid">
-            
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-            </div>
-
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <center >
-              <ul class="nav navbar-nav navbar-footerfont">
-                <li><a href="#">About</a></li>
-                <li><a href="#">How It Works</a></li>
-                <li><a href="#">Contact Us</a></li>
-                <li><a href="#">Privacy</a></li>
-              </ul>
-            </center>
-              <br />
-              <ul class="nav navbar-nav navbar-footerimg">
-                <li class=""><a href="http://www.twitter.com/PEXPlus"><img src="img/twtr.png"></a></li>
-                <li class=""><a href="http://www.facebook.com/PEXPlus"><img src="img/fb.png"></a></li>
-                <li class=""><a href="http://www.instagram.com/PEXPlus"><img src="img/instgm.png"></a></li>
-              </ul>
-            </div>
-          </div>
-        </nav>
-        <div class="footertext">
-          <div class="footertext-copyright">
-            <div class="text-center">
-              <p class="">Copyright 2015 PEX+. All Rights Reserved. </p>
-              <p class="alignright pspacerv15t textalignright spacerh15r">Search cheap rewards flights with PEX+ Awards Search. Find the cheapest airline rewards tickets for all top airlines around the world and the top international flight routes. PEX+ Awards Search searches hundreds of travel sites to help you find and book the rewards flight that suits you best.</p>
-              <br />
-            </div>
-          </div>
-        </div>
-      </footer>
-
-      <!-- <footer class="container-footer">
-      <center>
-        
-        bla bla lba
-      </center>
-        <div class="container">
-              <nav class="navbar navbar-footer">
-                <div class="container-fluid">
-                  
-                  <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                      <span class="sr-only">Toggle navigation</span>
-                      <span class="icon-bar"></span>
-                      <span class="icon-bar"></span>
-                      <span class="icon-bar"></span>
-                    </button>
-                  </div>
-
-                  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                  <div class="container">
-                    <div class="row">
-                      <div class="col-sm-6 col-sm-offset-3">
-                        <ul class="nav navbar-nav navbar-footerfont">
-                          <li><a href="#">About</a></li>
-                          <li><a href="#">How It Works</a></li>
-                          <li><a href="#">Contact Us</a></li>
-                          <li><a href="#">Privacy</a></li>
-                        </ul>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-sm-4 col-sm-offset-4">
-                        <ul class="nav navbar-nav navbar-footerimg">
-                          <li class=""><a href="http://www.twitter.com/PEXPlus"><img src="img/twtr.png"></a></li>
-                          <li class=""><a href="http://www.facebook.com/PEXPlus"><img src="img/fb.png"></a></li>
-                          <li class=""><a href="http://www.instagram.com/PEXPlus"><img src="img/instgm.png"></a></li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </nav>
-                <div class="footertext">
-                  <div class="container">
-                    <div class="row">
-                      <div class="col-sm-10">
-                        <div class="footertext-copyright">
-                          <div class="text-center hidden-sm hidden-xs hidden-xxs">
-                            <p class="">Copyright 2015 PEX+. All Rights Reserved. </p>
-                            <p class="alignright pspacerv15t textalignright spacerh15r">Search cheap rewards flights with PEX+ Awards Search. Find the cheapest airline rewards tickets for all top airlines around the world and the top international flight routes. PEX+ Awards Search searches hundreds of travel sites to help you find and book the rewards flight that suits you best.</p>
-                            <br />
-                          </div>
-                          <div class="hidden-lg hidden-md">
-                            <p class="">Copyright 2015 PEX+. All Rights Reserved.</p>
-                            <p class="alignright pspacerv15t textalignright spacerh15r">Search cheap rewards flights with PEX+ Awards Search. Find the cheapest airline rewards tickets for all top airlines around the world and the top international flight routes. PEX+ Awards Search searches hundreds of travel sites to help you find and book the rewards flight that suits you best.</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-          </div>
-        </footer> /-->
-      </div><!-- /container -->       
-
-    
+			
+		</div>
+	
 
 
-    <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
 
-    <script src="js/vendor/bootstrap.min.js"></script>
-    
-    <script src="js/main.js"></script>
 
-    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-   
-   
-  </body>
-</html>
