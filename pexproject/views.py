@@ -359,14 +359,14 @@ def getsearchresult(request):
             cabintype = " and "+cabinclass+ " > 0"
             
         
-        record = Flightdata.objects.raw("select * from pexproject_flightdata where "+querylist+" order by "+cabinclass+","+taxes+",departure ASC LIMIT "+str(limit)+" OFFSET "+str(offset))
-        print record.query
+        
         if 'returnkey' in request.GET or 'returnkey' in request.POST:
             returnkey = request.GET.get('returnkey', '')
-            
+           
             action = 'depart'
             returndate = Searchkey.objects.values_list('traveldate', flat=True).filter(searchid=returnkey)
             if 'rowid' in request.GET or 'rowid' in request.POST:
+                print "in rowid"
                 recordid = request.GET.get('rowid', '')
                 if 'rowid' in request.POST:
                     recordid = request.REQUEST['rowid']
@@ -377,7 +377,7 @@ def getsearchresult(request):
                     action = 'return'
                 
             else:
-                
+                print "ajxa",returnkey 
                 #------------------------change code for return trip------------------------------------
                 deltamin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',maincabin__gt=0).values('maincabin','maintax','cabintype1').annotate(Min('maincabin')).order_by('maincabin')
                 if len(deltamin1) <= 0:
@@ -426,8 +426,15 @@ def getsearchresult(request):
                     unitedtax = unitedmin['maintax']
                     unitedcabin_name = unitedmin['cabintype1']
                     returnunited = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',maincabin=unitedminval)
-                
-            
+         
+        print "unitedminval",unitedminval   
+        print "deltaminval",deltaminval   
+        print "cabin",cabinclass
+        unitedorderprice =  cabinclass+"+"+str(unitedminval)
+        deltaorderprice = cabinclass+"+"+str(deltaminval)
+        print deltaorderprice
+        record = Flightdata.objects.raw("select * , case when datasource = 'delta' then "+deltaorderprice+"  else "+unitedorderprice+" end as finalprice  from pexproject_flightdata where "+querylist+" order by finalprice ,"+taxes+",departure ASC LIMIT "+str(limit)+" OFFSET "+str(offset))
+        print record.query    
             #---------------------------------------------------------------------------------------
         timerecord = Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` ")
         filterkey =  {'stoppage':list2,'datasource':list1,'cabin':cabin} 
