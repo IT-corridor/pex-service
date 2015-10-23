@@ -285,8 +285,7 @@ def getsearchresult(request):
             else:
                 if(len(list2) > 0):
                     querylist = querylist+join+"stoppage = '"+list2[0]+"'"
-                    join = ' AND ' 
-    print querylist    
+                    join = ' AND '    
     if 'airlines' in request.POST:
         if request.is_ajax():
             list1 = request.POST.getlist('airlines')
@@ -334,6 +333,10 @@ def getsearchresult(request):
     
     if request.GET.get('keyid', '') :
         searchkey = request.GET.get('keyid', '')
+        searchdata = Searchkey.objects.filter(searchid=searchkey)
+        for s in searchdata:
+            source = s.source
+            destination = s.destination
         if ('action' in request.GET and request.GET.get('action', '') == 'return') or 'rowid' in request.POST:
             action = request.GET.get('action', '')
             searchkey = request.GET.get('returnkey', '')
@@ -342,10 +345,7 @@ def getsearchresult(request):
         querylist = querylist+join+" searchkeyid = "+searchkey
         join = ' AND '
         
-        searchdata = Searchkey.objects.filter(searchid=searchkey)
-        for s in searchdata:
-            source = s.source
-            destination = s.destination
+        
         action =''
         
         if cabinclass !='':
@@ -356,7 +356,9 @@ def getsearchresult(request):
             else:
                 if cabinclass == 'business':
                     taxes = "businesstax"
+            print "aaya"
             cabintype = " and "+cabinclass+ " > 0"
+            querylist = querylist+cabintype
             
         
         
@@ -432,9 +434,9 @@ def getsearchresult(request):
         print "cabin",cabinclass
         unitedorderprice =  cabinclass+"+"+str(unitedminval)
         deltaorderprice = cabinclass+"+"+str(deltaminval)
-        print deltaorderprice
+
         record = Flightdata.objects.raw("select * , case when datasource = 'delta' then "+deltaorderprice+"  else "+unitedorderprice+" end as finalprice  from pexproject_flightdata where "+querylist+" order by finalprice ,"+taxes+",departure ASC LIMIT "+str(limit)+" OFFSET "+str(offset))
-        print record.query    
+        print record.query
             #---------------------------------------------------------------------------------------
         timerecord = Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` ")
         filterkey =  {'stoppage':list2,'datasource':list1,'cabin':cabin} 
