@@ -1292,9 +1292,9 @@
 					
 				
 			}
-			
-				{%if timedata %}
 				
+				if ("{{timedata}}")
+				{
 					
 					var dept = "{{ timedata.mindept }}";
 					if(dept != "None")
@@ -1333,13 +1333,14 @@
 					else{
 						arivemaxtime=1439;
 					}
-				{% else %}
+				}
+				else{
 				  	deptmintime=0;
 				  	arivemintime=0;
 				  	deptmaxtime=1439;
 				  	arivemaxtime=1439;
 					
-				{% endif%}
+				}
 			
 			
 			

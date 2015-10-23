@@ -98,6 +98,7 @@ def search(request):
         
         orgnid = request.REQUEST['fromMain'] 
         destid = request.REQUEST['toMain']
+        
         originobj = Airports.objects.filter(airport_id=orgnid)
         destobj = Airports.objects.filter(airport_id=destid)
         for row in originobj:
@@ -302,6 +303,11 @@ def getsearchresult(request):
                 if(len(list1) > 0):
                     querylist = querylist+join+"datasource = '"+list1[0]+"'"
                     join = ' AND '
+    depttime = datetime.time(0, 0, 0)
+    deptmaxtime = datetime.time(0, 0, 0)
+    arivtime = datetime.time(0, 0, 0)
+    arivtmaxtime = datetime.time(0, 0, 0)
+    
     if 'depaturemin' in request.POST:
          depttime = request.REQUEST['depaturemin']
          deptformat = (datetime.datetime.strptime(depttime,'%I:%M %p'))
@@ -440,18 +446,19 @@ def getsearchresult(request):
             #---------------------------------------------------------------------------------------
         timerecord = Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` ")
         filterkey =  {'stoppage':list2,'datasource':list1,'cabin':cabin} 
-        #for row in timerecord:  
-            #timeinfo = {'maxdept':row.maxdept,'mindept':row.mindept,'minarival':row.minarival,'maxarival':row.maxarival}
-            
+        if depttime:
+            timeinfo = {'maxdept':deptmaxtime,'mindept':depttime,'minarival':arivtime,'maxarival':arivtmaxtime}
+        else:
+            timeinfo=''    
         if request.is_ajax():
-            return render_to_response('flightsearch/search.html',{'action':action,'data':record,'minprice':minprice,'tax':tax,'returndata':returnkey,'search':searchdata,'selectedrow':selectedrow,'filterkey':filterkey,'passenger':passenger,'returndate':returndate,'deltareturn':returndelta,'unitedreturn':returnunited,'deltatax':deltatax,'unitedtax':unitedtax,'unitedminval':unitedminval,'deltaminval':deltaminval,'deltacabin_name':deltacabin_name,'unitedcabin_name':unitedcabin_name},context_instance=RequestContext(request))
+            return render_to_response('flightsearch/search.html',{'action':action,'data':record,'minprice':minprice,'tax':tax,'timedata':timeinfo,'returndata':returnkey,'search':searchdata,'selectedrow':selectedrow,'filterkey':filterkey,'passenger':passenger,'returndate':returndate,'deltareturn':returndelta,'unitedreturn':returnunited,'deltatax':deltatax,'unitedtax':unitedtax,'unitedminval':unitedminval,'deltaminval':deltaminval,'deltacabin_name':deltacabin_name,'unitedcabin_name':unitedcabin_name},context_instance=RequestContext(request))
         if totalrecords>0:
-            return render_to_response('flightsearch/searchresult.html',{'action':action,'data':record,'minprice':minprice,'tax':tax,'returndata':returnkey,'search':searchdata,'selectedrow':selectedrow,'filterkey':filterkey,'passenger':passenger,'returndate':returndate,'deltareturn':returndelta,'unitedreturn':returnunited,'deltatax':deltatax,'unitedtax':unitedtax,'unitedminval':unitedminval,'deltaminval':deltaminval,'deltacabin_name':deltacabin_name,'unitedcabin_name':unitedcabin_name},context_instance=RequestContext(request)) 
+            return render_to_response('flightsearch/searchresult.html',{'action':action,'data':record,'minprice':minprice,'tax':tax,'timedata':timeinfo,'returndata':returnkey,'search':searchdata,'selectedrow':selectedrow,'filterkey':filterkey,'passenger':passenger,'returndate':returndate,'deltareturn':returndelta,'unitedreturn':returnunited,'deltatax':deltatax,'unitedtax':unitedtax,'unitedminval':unitedminval,'deltaminval':deltaminval,'deltacabin_name':deltacabin_name,'unitedcabin_name':unitedcabin_name},context_instance=RequestContext(request)) 
         else:
             print "no data"
             if request.is_ajax():
                 print "ajax no data"
-                return render_to_response('flightsearch/search.html',{'action':action,'data':record,'minprice':minprice,'tax':tax,'returndata':returnkey,'search':searchdata,'selectedrow':selectedrow,'filterkey':filterkey,'passenger':passenger,'returndate':returndate,'deltareturn':returndelta,'unitedreturn':returnunited,'deltatax':deltatax,'unitedtax':unitedtax,'unitedminval':unitedminval,'deltaminval':deltaminval,'deltacabin_name':deltacabin_name,'unitedcabin_name':unitedcabin_name},context_instance=RequestContext(request))
+                return render_to_response('flightsearch/search.html',{'action':action,'data':record,'minprice':minprice,'tax':tax,'timedata':timeinfo,'returndata':returnkey,'search':searchdata,'selectedrow':selectedrow,'filterkey':filterkey,'passenger':passenger,'returndate':returndate,'deltareturn':returndelta,'unitedreturn':returnunited,'deltatax':deltatax,'unitedtax':unitedtax,'unitedminval':unitedminval,'deltaminval':deltaminval,'deltacabin_name':deltacabin_name,'unitedcabin_name':unitedcabin_name},context_instance=RequestContext(request))
             msg = "Sorry, No flight found  from "+source+" To "+destination+".  Please search for another date or city !"
             return  render_to_response('flightsearch/flights.html',{'message':msg}, context_instance=RequestContext(request))
             
