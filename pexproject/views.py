@@ -364,7 +364,7 @@ def getsearchresult(request):
                     taxes = "businesstax"
             print "aaya"
             cabintype = " and "+cabinclass+ " > 0"
-            querylist = querylist+cabintype
+            
             
         
         
@@ -374,7 +374,7 @@ def getsearchresult(request):
             action = 'depart'
             returndate = Searchkey.objects.values_list('traveldate', flat=True).filter(searchid=returnkey)
             if 'rowid' in request.GET or 'rowid' in request.POST:
-                print "in rowid"
+                cabintype =''
                 recordid = request.GET.get('rowid', '')
                 if 'rowid' in request.POST:
                     recordid = request.REQUEST['rowid']
@@ -440,7 +440,7 @@ def getsearchresult(request):
         print "cabin",cabinclass
         unitedorderprice =  cabinclass+"+"+str(unitedminval)
         deltaorderprice = cabinclass+"+"+str(deltaminval)
-
+        querylist = querylist+cabintype
         record = Flightdata.objects.raw("select * , case when datasource = 'delta' then "+deltaorderprice+"  else "+unitedorderprice+" end as finalprice  from pexproject_flightdata where "+querylist+" order by finalprice ,"+taxes+",departure ASC LIMIT "+str(limit)+" OFFSET "+str(offset))
         print record.query
             #---------------------------------------------------------------------------------------
