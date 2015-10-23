@@ -362,9 +362,8 @@ def getsearchresult(request):
             else:
                 if cabinclass == 'business':
                     taxes = "businesstax"
-            print "aaya"
             cabintype = " and "+cabinclass+ " > 0"
-            
+            querylist = querylist+cabintype
             
         
         
@@ -385,62 +384,73 @@ def getsearchresult(request):
                     action = 'return'
                 
             else:
-                print "ajxa",returnkey 
+                
                 #------------------------change code for return trip------------------------------------
-                deltamin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',maincabin__gt=0).values('maincabin','maintax','cabintype1').annotate(Min('maincabin')).order_by('maincabin')
-                if len(deltamin1) <= 0:
+                if cabinclass == "maincabin" :
+                    deltamin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',maincabin__gt=0).values('maincabin','maintax','cabintype1').annotate(Min('maincabin')).order_by('maincabin')
+                    if len(deltamin1)>0:
+                        deltamin = deltamin1[0]
+                        deltaminval =  deltamin['maincabin']
+                        deltatax =  deltamin['maintax']
+                        deltacabin_name=deltamin['cabintype1']
+                        returndelta = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',maincabin=deltaminval)   
+                elif cabinclass == "firstclass" :
                     deltamin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',firstclass__gt=0).values('firstclass','firsttax','cabintype2').annotate(Min('firstclass')).order_by('firstclass')
-                    if len(deltamin1) <= 0:
-                        deltamin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',business__gt=0).values('business','businesstax','cabintype3').annotate(Min('business')).order_by('business')
-                        if deltamin1:
-                            deltamin = deltamin1[0]
-                            deltaminval =  deltamin['business']
-                            deltatax =  deltamin['businesstax']
-                            deltacabin_name=deltamin['cabintype3']
-                            
-                    else:
+                    if len(deltamin1)>0:
                         deltamin = deltamin1[0]
                         deltaminval =  deltamin['firstclass']
                         deltatax =  deltamin['firsttax']
                         deltacabin_name=deltamin['cabintype2']
+                        returndelta = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',firstclass=deltaminval)
                 else:
-                    deltamin = deltamin1[0]
-                    deltaminval =  deltamin['maincabin']
-                    deltatax =  deltamin['maintax']
-                    deltacabin_name=deltamin['cabintype1']   
+                    if cabinclass == "business":
+                        deltamin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',business__gt=0).values('business','businesstax','cabintype3').annotate(Min('business')).order_by('business')
+                        if len(deltamin1)>0:
+                            deltamin = deltamin1[0]
+                            deltaminval =  deltamin['business']
+                            deltatax =  deltamin['businesstax']
+                            deltacabin_name=deltamin['cabintype3']
+                            returndelta = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',business=deltaminval)
+                print "returndelta",returndelta       
+                '''
                 returndelta = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',maincabin=deltaminval)            
+                '''
                 unitedmin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',maincabin__gt=0).values('maincabin','maintax','cabintype1').annotate(Min('maincabin')).order_by('maincabin')
-                
-                if len(unitedmin1) <= 0 :
+                if cabinclass == "maincabin" :
+                    unitedmin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',maincabin__gt=0).values('maincabin','maintax','cabintype1').annotate(Min('maincabin')).order_by('maincabin')
+                    if len(unitedmin1)>0:
+                        unitedmin = unitedmin1[0] 
+                        unitedminval =  unitedmin['maincabin']
+                        unitedtax = unitedmin['maintax']
+                        unitedcabin_name = unitedmin['cabintype1']
+                        returnunited = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',maincabin=unitedminval)   
+                elif cabinclass == "firstclass" :
                     unitedmin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',firstclass__gt=0).values('firstclass','firsttax','cabintype2').annotate(Min('firstclass')).order_by('firstclass')
-                    if len(unitedmin1) <= 0:
-                        unitedmin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',business__gt=0).values('business','businesstax','cabintype3').annotate(Min('business')).order_by('business')
-                        if unitedmin1:
-                            unitedmin = unitedmin1[0] 
-                            unitedminval =  unitedmin['business']
-                            unitedtax =  unitedmin['businesstax']
-                            unitedcabin_name = unitedmin['cabintype3']
-                            returnunited = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',business=unitedminval)
-                            
-                    else:
+                    if len(unitedmin1)>0:
                         unitedmin = unitedmin1[0] 
                         unitedminval =  unitedmin['firstclass']
                         unitedtax =  unitedmin['firsttax']
                         unitedcabin_name = unitedmin['cabintype2']
                         returnunited = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',firstclass=unitedminval)
-                else:             
-                    unitedmin = unitedmin1[0] 
-                    unitedminval =  unitedmin['maincabin']
-                    unitedtax = unitedmin['maintax']
-                    unitedcabin_name = unitedmin['cabintype1']
-                    returnunited = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',maincabin=unitedminval)
-         
-        print "unitedminval",unitedminval   
-        print "deltaminval",deltaminval   
-        print "cabin",cabinclass
+                else:
+                    if cabinclass == "business":
+                        unitedmin1 = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',business__gt=0).values('business','businesstax','cabintype3').annotate(Min('business')).order_by('business')
+                        if len(unitedmin1)>0:
+                            unitedmin = unitedmin1[0] 
+                            unitedminval =  unitedmin['business']
+                            unitedtax =  unitedmin['businesstax']
+                            unitedcabin_name = unitedmin['cabintype3']
+                            returnunited = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',business=unitedminval)
+                
+        
         unitedorderprice =  cabinclass+"+"+str(unitedminval)
         deltaorderprice = cabinclass+"+"+str(deltaminval)
-        querylist = querylist+cabintype
+        if 'returnkey' in request.GET and returndelta == '' and ('rowid' not in request.GET) and 'rowid' not in request.POST:
+            querylist = querylist+join+"datasource NOT IN ('delta')"
+            join = ' AND '
+        if 'returnkey' in request.GET and returnunited == '' and ('rowid' not in request.GET) and 'rowid' not in request.POST:
+            querylist = querylist+join+"datasource NOT IN ('united')"
+            join = ' AND '
         record = Flightdata.objects.raw("select * , case when datasource = 'delta' then "+deltaorderprice+"  else "+unitedorderprice+" end as finalprice  from pexproject_flightdata where "+querylist+" order by finalprice ,"+taxes+",departure ASC LIMIT "+str(limit)+" OFFSET "+str(offset))
         print record.query
             #---------------------------------------------------------------------------------------
@@ -455,9 +465,9 @@ def getsearchresult(request):
         if totalrecords>0:
             return render_to_response('flightsearch/searchresult.html',{'action':action,'data':record,'minprice':minprice,'tax':tax,'timedata':timeinfo,'returndata':returnkey,'search':searchdata,'selectedrow':selectedrow,'filterkey':filterkey,'passenger':passenger,'returndate':returndate,'deltareturn':returndelta,'unitedreturn':returnunited,'deltatax':deltatax,'unitedtax':unitedtax,'unitedminval':unitedminval,'deltaminval':deltaminval,'deltacabin_name':deltacabin_name,'unitedcabin_name':unitedcabin_name},context_instance=RequestContext(request)) 
         else:
-            print "no data"
+            
             if request.is_ajax():
-                print "ajax no data"
+                
                 return render_to_response('flightsearch/search.html',{'action':action,'data':record,'minprice':minprice,'tax':tax,'timedata':timeinfo,'returndata':returnkey,'search':searchdata,'selectedrow':selectedrow,'filterkey':filterkey,'passenger':passenger,'returndate':returndate,'deltareturn':returndelta,'unitedreturn':returnunited,'deltatax':deltatax,'unitedtax':unitedtax,'unitedminval':unitedminval,'deltaminval':deltaminval,'deltacabin_name':deltacabin_name,'unitedcabin_name':unitedcabin_name},context_instance=RequestContext(request))
             msg = "Sorry, No flight found  from "+source+" To "+destination+".  Please search for another date or city !"
             return  render_to_response('flightsearch/flights.html',{'message':msg}, context_instance=RequestContext(request))
