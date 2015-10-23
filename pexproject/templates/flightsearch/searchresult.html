@@ -342,6 +342,24 @@
 													<h5 class="econo"> {{selectedrow.cabintype1}} </h5>
 													
 													{% endif %}
+													{% if request.GET.cabin == 'firstclass' %}
+													<div class="col-xs-12 nopadding na-ra">
+														<p class="flight-rate">
+															{{selectedrow.firstclass|intcomma}} Miles + <span>${{selectedrow.firsttax|floatformat:2}}</span>
+														</p>
+													</div>
+													<h5 class="econo"> {{selectedrow.cabintype2}} </h5>
+													
+													{% endif %}
+													{% if request.GET.cabin == 'business' %}
+													<div class="col-xs-12 nopadding na-ra">
+														<p class="flight-rate">
+															{{selectedrow.business|intcomma}} Miles + <span>${{selectedrow.businesstax|floatformat:2}}</span>
+														</p>
+													</div>
+													<h5 class="econo"> {{selectedrow.cabintype3}} </h5>
+													
+													{% endif %}
 												</div>
 																							
 											</div>											
