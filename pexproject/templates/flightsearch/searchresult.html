@@ -285,38 +285,58 @@
 								{% if selectedrow %}
 								
 								<div class="col-xs-12 selected-flights bgclr">
+									<div class="col-xs-12 nopadding visible-xs visible-sm">
+										<div class="col-sm-3 col-xs-5 text-left nopl ">
+											{% if selectedrow.datasource == "united" %}
+											<img src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
+											{% if selectedrow.datasource == "delta" %}
+											<img src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
+										</div>
+										<div class="col-sm-9 col-xs-7 nopr">
+											<p class="flight-name">
+												{{selectedrow.flighno}} 
+											</p>
+										</div>
+									</div>
 									<div class="col-md-5 col-xs-12 nopadding">
 										<div class="col-xs-12 nopadding">
 											<div class="col-xs-12 nopadding">
-												<div class="arrivel col-xs-5 col-sm-5 nopadding" itemscope itemtype ="http://schema.org/Flight">
-													<p itemprop="departureAirport">
-														{{selectedrow.origin}}
-													</p>
-													<p itemprop="departureTime">
-														{{selectedrow.departure}}
-													</p>
+												<div class="col-md-12 col-sm-9 col-xs-9 nopadding">
+													<div class="arrivel col-md-5 col-xs-5 col-sm-5 nopadding" itemscope itemtype ="http://schema.org/Flight">
+														<p itemprop="departureAirport">
+															{{selectedrow.origin}}
+														</p>
+														<p itemprop="departureTime">
+															{{selectedrow.departure}}
+														</p>
+													</div>
+													<div class="arrow-div col-md-2 col-xs-2 col-sm-2 nopadding">&#8594;</div>
+													<div class="arrivel-2 col-md-5 col-xs-5 col-sm-5 nopadding text-right" itemscope itemtype ="http://schema.org/Flight">
+														<p itemprop="arrivalAirport">
+															{{selectedrow.destination}}
+														</p>
+														<p itemprop="arrivalTime">
+															{{selectedrow.arival}}
+														</p>
+													</div>
 												</div>
-												<div class="arrow-div col-sm-2 nopadding">&#8594;</div>
-												<div class="arrivel-2 col-xs-5 col-sm-5 nopadding text-right" itemscope itemtype ="http://schema.org/Flight">
-													<p itemprop="arrivalAirport">
-														{{selectedrow.destination}}
-													</p>
-													<p itemprop="arrivalTime">
-														{{selectedrow.arival}}
-													</p>
+												<div class="col-sm-3 col-xs-3 nopr visible-sm visible-xs text-center">
+													<div class="col-xs-12 nopadding">
+														<p class="stops-dur"><span>{{selectedrow.stoppage}}</span> <span>{{row.duration}}</span></p>
+													</div>
 												</div>
 											</div>
 										</div>
 									</div>
 									
-									<div class="col-md-2 col-xs-6 text-left xs-nopadding xs-margin-20">
+									<div class="col-md-2 col-xs-6 text-left xs-nopadding hidden-xs hidden-sm xs-margin-20">
 										{% if selectedrow.datasource == "united" %}
 										<img src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
 										{% if selectedrow.datasource == "delta" %}
 										<img src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
 										<h5>OUTBOUND</h5>
 									</div>
-											<div class="col-sm-5 col-xs-6 col-xs-12 nopadding for-mobile-view text-right xs-margin-20">
+											<div class="col-sm-5 col-xs-6 col-xs-12 nopadding hidden-sm hidden-xs for-mobile-view text-right xs-margin-20">
 												<p class="flight-name">
 													{{selectedrow.flighno}} 
 												</p>
@@ -324,13 +344,13 @@
 											</div>
 									<div class="col-md-5 col-xs-12 nopadding">
 										<div class="col-xs-12 nopadding">
-											<div class="col-sm-5 col-xs-12 nopadding for-desktop-view">
+											<div class="col-md-5 col-sm-5 col-xs-12 nopadding hidden-sm hidden-xs for-desktop-view">
 												<p class="flight-name">
 													{{selectedrow.flighno}} 
 												</p>
 												<p class="stops-dur"><span>{{selectedrow.stoppage}}</span> <span>{{row.duration}}</span></p>												
 											</div>
-											<div class="col-sm-7 col-xs-12 nopadding">
+											<div class="col-md-7 col-sm-12 col-xs-12 nopadding hidden-xs hidden-sm">
 												
 												<div class="col-xs-12 nopadding text-center">
 													{% if request.GET.cabin == 'maincabin' %}
@@ -358,6 +378,39 @@
 														</p>
 													</div>
 													<h5 class="econo"> {{selectedrow.cabintype3}} </h5>
+													
+													{% endif %}
+												</div>
+																							
+											</div>
+											<div class="col-sm-12 col-xs-12 nopadding mvt10px visible-sm visible-xs">
+												
+												<div class="col-xs-12 nopadding text-center">
+													{% if request.GET.cabin == 'maincabin' %}
+													<div class="col-xs-12 nopadding na-ra text-right">
+														<h5 class="econo pull-left nopl nomt"> {{selectedrow.cabintype1}} </h5>
+														<p class="flight-rate pull-right">
+															{{selectedrow.maincabin|intcomma}} Miles + <span>${{selectedrow.maintax|floatformat:2}}</span>
+														</p>
+													</div>
+													
+													{% endif %}
+													{% if request.GET.cabin == 'firstclass' %}
+													<div class="col-xs-6 nopadding na-ra text-right">
+														<h5 class="econo pull-left nopl nomt"> {{selectedrow.cabintype2}} </h5>
+														<p class="flight-rate pull-right">
+															{{selectedrow.firstclass|intcomma}} Miles + <span>${{selectedrow.firsttax|floatformat:2}}</span>
+														</p>
+													</div>
+													
+													{% endif %}
+													{% if request.GET.cabin == 'business' %}
+													<div class="col-xs-6 nopadding na-ra text-right">
+														<h5 class="econo pull-left nopl nomt"> {{selectedrow.cabintype3}} </h5>
+														<p class="flight-rate pull-right">
+															{{selectedrow.business|intcomma}} Miles + <span>${{selectedrow.businesstax|floatformat:2}}</span>
+														</p>
+													</div>
 													
 													{% endif %}
 												</div>
@@ -999,7 +1052,7 @@
 															
 															
 															<tr itemscope itemtype="http://schema.org/Flight">
-																<td><b>Arives:</b></td>
+																<td><bglyphicon glyphicon-menu-up>Arives:</b></td>
 																<td><time itemprop="arrivalTime">{{mylist1.1}}</time></td>
 															</tr>
 															<tr>
@@ -1069,7 +1122,8 @@
 													
 													
 													
-													<a href="share?selectedid={{row.rowid}}&cabin={{request.GET.cabin}}&passenger={{request.GET.passenger}}{% if request.GET.returnkey and row.datasource == 'united' and unitedreturn.0.rowid %}&returnrowid={{unitedreturn.0.rowid}}{%endif%}{% if request.GET.returnkey and row.datasource == 'delta' and deltareturn.0.rowid%}&returnrowid={{deltareturn.0.rowid}}{%endif%}">share</a>
+													<!-- <a href="share?selectedid={{row.rowid}}&cabin={{request.GET.cabin}}&passenger={{request.GET.passenger}}{% if request.GET.returnkey and row.datasource == 'united' and unitedreturn.0.rowid %}&returnrowid={{unitedreturn.0.rowid}}{%endif%}{% if request.GET.returnkey and row.datasource == 'delta' and deltareturn.0.rowid%}&returnrowid={{deltareturn.0.rowid}}{%endif%}" data-toggle="modal" data-target="#myModal">share</a> -->
+													<a href="#" data-toggle="modal" data-target="#share-modal">share</a>
 												</div>
 											</div>
 										</div>
@@ -1105,9 +1159,77 @@
 			</div>
 			<div id="content"></div>
 			<p id="back-top">
-				<a href="#top"><span>Go To Top</span></a>
+				<a href="#top"><span class="glyphicon glyphicon-chevron-up"></span> TOP</a>
 			</p>
 		</div>
+		
+		<!-- Modal -->
+		<div class="modal fade" id="share-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		      <div class="modal-body">
+		        <div>
+				  <!-- Nav tabs -->
+				  <ul class="nav nav-tabs" role="tablist">
+				    <li role="presentation" class="active"><a href="#facebook" aria-controls="facebook" role="tab" data-toggle="tab">Facebook</a></li>
+				    <li role="presentation"><a href="#twitter" aria-controls="twitter" role="tab" data-toggle="tab">Twitter</a></li>
+				    <!-- <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Email</a></li>
+				    <li role="presentation"><a href="#link" aria-controls="link" role="tab" data-toggle="tab">Link</a></li> -->
+				  </ul>
+				
+				  <!-- Tab panes -->
+				  <div class="tab-content">
+				    <div role="tabpanel" class="tab-pane active" id="facebook">
+				    	<form class="mvt10px mvb10px">
+				    		<div class="media">
+							  <div class="media-left">
+							    <a href="#">
+							      <img class="media-object" src="{% static 'flightsearch/img/headshot_whitebg.png' %}" alt="">
+							    </a>
+							  </div>
+							  <div class="media-body">
+							    <div class="form-group">
+							    	<textarea rows="3" class="form-control" placeholder="Enter your comment"></textarea>
+							    </div>
+							    <div class="media">
+								  <div class="media-left">
+								    <a href="#">
+								      <img class="media-object" src="" alt="">
+								    </a>
+								  </div>
+								  <div class="media-body">
+								    <h4 class="media-heading">Media heading</h4>
+								    <p></p>
+								  </div>
+								</div>
+							  </div>
+							</div>
+							<div class="form-group mvt10px">
+								<button type="submit" class="btn btn-pexSearch filter-serch-btn">Post</button>
+							</div>
+				    	</form>
+				    </div>
+				    <div role="tabpanel" class="tab-pane" id="twitter">
+				    	<form class="mvt10px mvb10px">
+				    		<div class="form-group">
+				    			<label>Tweet about this</label>
+				    			<textarea rows="2" class="form-control" placeholder="Enter your tweet"></textarea>
+				    		</div>
+				    		<div class="form-group">
+				    			<button type="submit" class="btn btn-pexSearch filter-serch-btn">Tweet</button>
+				    		</div>
+				    	</form>
+				    </div>
+				    <!-- <div role="tabpanel" class="tab-pane" id="email">...</div>
+				    <div role="tabpanel" class="tab-pane" id="link">...</div> -->
+				  </div>
+				</div>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		
 	<script type="text/javascript">
 	$(function(){
 		/*
