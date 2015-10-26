@@ -906,6 +906,49 @@ footer {
 	font-size: 17px;
 }
 
+.ui-datepicker .ui-datepicker-header {
+	background: #fff;
+    	border-color: #fff;
+	color: #444;
+}
+
+.ui-datepicker .ui-datepicker-next, .ui-datepicker .ui-datepicker-prev {
+	border-color: #fff;
+    	background: #fff;
+}
+
+.ui-datepicker-calendar {
+	background: #f4f4f4;
+}
+
+.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
+	border: #39a8e0;
+	background-color: #39a8e0 !important;
+	color: #fff !important;
+}
+
+.ui-state-hover, .ui-widget-content .ui-state-hover {
+	border-color: #39a8e0;
+	background: transparent;
+	color: #39a8e0;
+}
+.ui-datepicker .ui-datepicker-next {
+	right: 1px;
+	top: 1px;
+}
+.ui-datepicker .ui-datepicker-prev {
+	left: 1px;
+	top: 1px;
+}
+
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
+	border-color: #39a8e0;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default {
+	color: #181818;
+}
+
 /*GENERAL MEDIA QUERIES*/
 @media (max-width: 600px) {
 	.hidden-xxs {
