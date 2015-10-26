@@ -4,16 +4,16 @@
 	
 	<head>
 		{% load staticfiles %}
-		{% if request.GET.selectedid %}
+		{% if request.GET.keyid %}
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta property="og:locale" content="en_US" />
-		<meta property="og:type" content="flight" />
+		<meta property="og:type" content="Pex flight search" />
 		<meta name="description" content="">
 		<meta name="keywords" content="">
-		<meta property="og:url" content="http://pex.techens.com/share?selectedid={{request.GET.selectedid|urlencode}}&cabin={{request.GET.cabin|urlencode}}&passenger={{request.GET.passenger|urlencode}}{% if request.GET.returnrowid %}&returnrowid={{request.GET.returnrowid|urlencode}}{%endif%}" />
-		<meta property="og:title" content="Pex Search Details" />
-		<meta property="og:description" content="Make Your journey Easy" />
+		<meta property="og:url" content="http://pex.techens.com/share?keyid={{request.GET.keyid|urlencode}}&cabin={{request.GET.cabin|urlencode}}&passenger={{request.GET.passenger|urlencode}}{% if request.GET.returnkey %}&returnkey={{request.GET.returnkey|urlencode}}{%endif%}" />
+		<meta property="og:title" content="Flights search results from {{search.0.source}} to {{search.0.destination}} on {{search.0.traveldate}}" />
+		<meta property="og:description" content="Hey, I found a great flight on Pex from ({{search.0.source}}) to ({{search.0.destination}}). Join me." />
 		<meta property="fb:app_id" content="" />
 		<meta property="og:site_name" content="pex.techens.com" />
 		<meta property="og:image" content="{% static 'flightsearch/img/logoMain.png' %}" />

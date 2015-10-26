@@ -16,15 +16,15 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from django.db import connection,transaction
-from pyvirtualdisplay import Display
+#from pyvirtualdisplay import Display
 import socket
 import urllib
 
 def united(origin,destination,searchdate,searchkey):
     cursor = connection.cursor()
     url = "http://www.united.com/web/en-US/default.aspx?root=1"
-    display = Display(visible=0, size=(800, 600))
-    display.start()
+    #display = Display(visible=0, size=(800, 600))
+    #display.start()
     chromedriver = "/usr/bin/chromedriver"
     os.environ["webdriver.chrome.driver"] = chromedriver
     driver = webdriver.Chrome(chromedriver)
@@ -64,7 +64,7 @@ def united(origin,destination,searchdate,searchkey):
     try:
         WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "rewardSegments")))
     except:
-        display.stop()
+        #display.stop()
         driver.quit()
         return searchkey
     
@@ -286,7 +286,7 @@ def united(origin,destination,searchdate,searchkey):
                 cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,str(searchid),time,stopage,"test",source,Destination,test1,arivalformat1,totaltime,str(fare1),str(maintax),str(fare2),str(businesstax),str(fare3),str(firsttax),cabintype1,cabintype2,cabintype3,"united",departdetails,arivedetails,planedetails,operatedbytext))
                 transaction.commit()
                 print "row inserted"
-    display.stop
+    #display.stop
     driver.quit()
     return searchid
 
@@ -299,8 +299,8 @@ def delta(orgn,dest,searchdate,searchkey):
     time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     print orgn, dest
     try:
-    	display = Display(visible=0, size=(800, 600))
-    	display.start()
+    	#display = Display(visible=0, size=(800, 600))
+    	#display.start()
     	chromedriver = "/usr/bin/chromedriver"
     	os.environ["webdriver.chrome.driver"] = chromedriver
     	chrome_options = Options()
@@ -337,6 +337,7 @@ def delta(orgn,dest,searchdate,searchkey):
         display.stop
     	driver.quit()
     	return searchkey
+	
     try:
         print "test1"
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "_fareDisplayContainer_tmplHolder")))
@@ -501,7 +502,7 @@ def delta(orgn,dest,searchdate,searchkey):
 
 
     
-    display.stop()
+    #display.stop()
     driver.quit()
     return searchkey
 

@@ -340,7 +340,7 @@
 												<p class="flight-name">
 													{{selectedrow.flighno}} 
 												</p>
-												<p class="stops-dur"><span>{{selectedrow.stoppage}}</span> <span>{{row.duration}}</span></p>												
+												<p class="stops-dur"><span>{{selectedrow.stoppage}}</span> <span>{{selectedrow.duration}}</span></p>												
 											</div>
 									<div class="col-md-5 col-xs-12 nopadding">
 										<div class="col-xs-12 nopadding">
@@ -348,7 +348,7 @@
 												<p class="flight-name">
 													{{selectedrow.flighno}} 
 												</p>
-												<p class="stops-dur"><span>{{selectedrow.stoppage}}</span> <span>{{row.duration}}</span></p>												
+												<p class="stops-dur"><span>{{selectedrow.stoppage}}</span> <span>{{selectedrow.duration}}</span></p>												
 											</div>
 											<div class="col-md-7 col-sm-12 col-xs-12 nopadding hidden-xs hidden-sm">
 												
@@ -1232,6 +1232,7 @@
 							<div class="col-md-2 col-xs-12 nopadding "><img src="{% static 'flightsearch/img/ad.jpg' %}"  alt="Responsive image" class="img-responsive">
 
 							</div>
+							
 						</div>
 					</div>
 				</div>
@@ -1260,7 +1261,7 @@
 				  <!-- Tab panes -->
 				  <div class="tab-content">
 				    <div role="tabpanel" class="tab-pane active" id="facebook">
-				    	<form class="mvt10px mvb10px">
+				    	<form class="mvt10px mvb10px" action="#" methos="post">
 				    		<div class="media">
 							  <div class="media-left">
 							    <a href="#">
@@ -1274,18 +1275,18 @@
 							    <div class="media">
 								  <div class="media-left">
 								    <a href="#">
-								      <img class="media-object" src="" alt="">
+								      <img class="media-object" src="{% static 'flightsearch/img/logoMain.png' %}" alt="">
 								    </a>
 								  </div>
 								  <div class="media-body">
-								    <h4 class="media-heading">Media heading</h4>
+								    <h4 class="media-heading">Hey, I found a great flight on Pex from ({{search.0.source}}) to ({{search.0.destination}}). Join me.</h4>
 								    <p></p>
 								  </div>
 								</div>
 							  </div>
 							</div>
 							<div class="form-group mvt10px">
-								<button type="submit" class="btn btn-pexSearch filter-serch-btn">Post</button>
+							<a href="https://www.facebook.com/sharer/sharer.php?u=http://pex.techens.com/getsearchresult?keyid={{request.GET.keyid}}%26cabin={{request.GET.cabin}}%26passenger={{request.GET.passenger}}{% if request.GET.returnkey %}%26returnkey={{request.GET.returnkey}}{%endif%}">	<span class="btn btn-pexSearch filter-serch-btn">Post</span></a>
 							</div>
 				    	</form>
 				    </div>
