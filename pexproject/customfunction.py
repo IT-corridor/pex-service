@@ -36,7 +36,7 @@ def united(origin,destination,searchdate,searchkey):
     time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     #print date
     driver.get(url)
-    driver.implicitly_wait(40)
+    driver.implicitly_wait(20)
     oneway = driver.find_element_by_id("ctl00_ContentInfo_Booking1_rdoSearchType2")
     driver.execute_script("arguments[0].click();", oneway)
 
@@ -60,9 +60,9 @@ def united(origin,destination,searchdate,searchkey):
 
     inputElement2.send_keys(Keys.ENTER)
 
-    driver.implicitly_wait(40)
+    driver.implicitly_wait(20)
     try:
-        WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "rewardSegments")))
+        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "rewardSegments")))
     except:
         display.stop()
         driver.quit()
@@ -309,7 +309,7 @@ def delta(orgn,dest,searchdate,searchkey):
     	print "option"
        	driver = webdriver.Chrome(chromedriver)
         print "oneway"
-    	driver.implicitly_wait(40)
+    	driver.implicitly_wait(20)
     	driver.get(url)
     	oneway = driver.find_element_by_id('oneWayBtn')
     	driver.execute_script("arguments[0].click();", oneway)
@@ -337,11 +337,9 @@ def delta(orgn,dest,searchdate,searchkey):
         display.stop
     	driver.quit()
     	return searchkey
-	#driver.delete_all_cookies()
-	#driver = webdriver.Chrome("/usr/local/bin/chromedriver")
     try:
         print "test1"
-        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "_fareDisplayContainer_tmplHolder")))
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "_fareDisplayContainer_tmplHolder")))
     except:
         print "exception"
         display.stop()
@@ -349,12 +347,12 @@ def delta(orgn,dest,searchdate,searchkey):
         return searchkey
     
     try:
-        WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "showAll")))
+        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "showAll")))
         driver.find_element_by_link_text('Show All').click()
-        WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "fareRowContainer_20")))
+        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "fareRowContainer_20")))
     except:
-        WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
-    WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
+        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
+    WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
     html_page = driver.page_source
     soup = BeautifulSoup(html_page)
     datatable = soup.findAll("table",{"class":"fareDetails"})
@@ -362,7 +360,7 @@ def delta(orgn,dest,searchdate,searchkey):
     for content in datatable:
         detailid = content.find("div",{"class":"detailLinkHldr"})['id']
         driver.execute_script("document.getElementById('"+detailid+"').click()")
-        driver.implicitly_wait(5)
+        driver.implicitly_wait(2)
         page = driver.page_source
         soup2 = BeautifulSoup(page)
         datatable1 = soup2.findAll("table",{"class":"fareDetails"})
@@ -458,6 +456,8 @@ def delta(orgn,dest,searchdate,searchkey):
                 cabintype1 = economy.find("div",{"class":"frmTxtHldr flightCabinClass"}).text
                 if 'Main Cabin' in cabintype1:
                     cabintype1 = cabintype1.replace('Main Cabin','Economy')
+                if 'Multiple Cabins' in cabintype1:
+                    cabintype1 = cabintype1.replace('Multiple Cabins','Economy')
         else:
             fare1 = 0 #economy.find("span",{"class":"ntAvail"}).text
             cabintype1 =''
