@@ -25,6 +25,7 @@ class Flightdata(models.Model):
     arivedetails = models.TextField()
     departdetails = models.TextField()
     planedetails = models.TextField()
+    operatedby = models.TextField()
     
     '''
     def arive_list(self):
