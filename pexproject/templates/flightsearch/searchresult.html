@@ -1349,16 +1349,7 @@
 			
 		</script>
 		
-		<script>
-			// ==========show/hide details=======================================
-			$('.show-details').click(function () {
-			    var collapse_content_selector = $(this).attr('href');
-			    var toggle_switch = $(this);
-			    $(collapse_content_selector).slideToggle(function () {
-			        $(this).is(':visible')? toggle_switch.text('HIDE DETAILS') : toggle_switch.text('SHOW DETAILS');
-			    });
-			});
-		</script>
+		
 			{% include "flightsearch/footer.html" %}
 			<script src="{% static 'flightsearch/js/vendor/bootstrap.min.js' %}"></script>
 			<script>
@@ -1859,6 +1850,17 @@ $(document).ready(function(){
 
 });
 </script>
+<script>
+			// ==========show/hide details=======================================
+			//$(document).on('click', ".show-details", function() {
+			$('a.show-details').on('click',function () {
+			    var collapse_content_selector = $(this).attr('href');
+			    var toggle_switch = $(this);
+			    $(collapse_content_selector).slideToggle(function () {
+			        $(this).is(':visible')? toggle_switch.text('HIDE DETAILS') : toggle_switch.text('SHOW DETAILS');
+			    });
+			});
+		</script>
 
 
 

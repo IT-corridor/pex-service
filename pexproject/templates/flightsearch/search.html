@@ -15,7 +15,7 @@
     margin-left: -6px;}
 </style>
 
-		<div class="main-holder">
+	<!--	<div class="main-holder"> -->
 			<div class="col-xs-12 nopadding">
 				<div class="jumbotron">
 					<div class="container-fluid">
@@ -345,7 +345,7 @@
 							
 									
 									
-										<a class="show-details" role="button" data-toggle="collapse" href="#{{row.rowid}}" aria-expanded="false" aria-controls="collapseExample">SHOW DETAILS</a>
+										<a class="show-details showhide" role="button" data-toggle="collapse" href="#{{row.rowid}}" aria-expanded="false" aria-controls="collapseExample">SHOW DETAILS</a>
 										<h4 class="econo hidden-xs"> 
 												{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
 												{{row.cabintype1}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{row.cabintype2}} {% else%}{{row.cabintype3}} {% endif %}</h4>	
@@ -654,9 +654,19 @@
 					</div>
 				</div>
 			</div>
-			
-		</div>
-	
+			<script>
+			// ==========show/hide details=======================================
+			//$(document).on('click', ".show-details", function() {
+			$('a.showhide').on('click',function () {
+			    var collapse_content_selector = $(this).attr('href');
+			    var toggle_switch = $(this);
+			    $(collapse_content_selector).slideToggle(function () {
+			        $(this).is(':visible')? toggle_switch.text('HIDE DETAILS') : toggle_switch.text('SHOW DETAILS');
+			    });
+			});
+		</script>
+	<!--	</div> -->
+		
 
 
 
