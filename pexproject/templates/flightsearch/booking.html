@@ -39,13 +39,13 @@
 							<form class="form-inline">
 								<div class="col-xs-12 nopadding">
 									<div class="checkbox-inline nopl mhr10px">
-					                  <label><input type="radio" id="rt" name="trip" value="roundTripBtn" checked="checked"> Round-Trip</label>
+					                  <label><input type="radio" id="rt" name="trip" value="roundTripBtn" > Round-Trip</label>
 					                </div>
 					                <div class="checkbox-inline mhr10px">
 					                  <label><input type="radio" id="ow" name="trip" value="oneWayBtn"> One-Way</label>
 					                </div>
 					                <div class="checkbox-inline mhr10px">
-					                  <label><input type="radio" id="mc" value="multicity" name="trip"> Multi-City</label>
+					                  <label><input type="radio" id="mc" value="multicity" name="trip" checked="checked"> Multi-City</label>
 					                </div>
 								</div>
 				                <div class="col-xs-12 nopadding mvt10px mvb10px">
@@ -67,13 +67,7 @@
 					                  </div>
 					                  <div class="form-group hide" id="deptmsg"></div>
 					                </div>
-					                <div class="form-group nomr noml">
-					                  <label class="sr-only" for="returnMain">Return Date:</label>
-					                  <div class="inner-addon left-addon date" id="dp2">
-					                      <i class="glyphicon glyphicon-calendar"></i>
-					                      <input type="text" tabindex="4" class="form_val form-control" id="returnMain" placeholder="Return" name="returndate" autocomplete="off">
-					                  </div>
-					                </div>
+					                
 					                <div class="form-group" >
 						                <button type="submit" class="form_val btn btn-pexSearch" id="submitid" tabindex="13">Search</button>
 						              </div>
@@ -97,15 +91,9 @@
 					                  </div>
 					                  <div class="form-group hide" id="deptmsg"></div>
 					                </div>
-					                <div class="form-group nomr noml">
-					                  <label class="sr-only" for="returnMain">Return Date:</label>
-					                  <div class="inner-addon left-addon date" id="dp2">
-					                      <i class="glyphicon glyphicon-calendar"></i>
-					                      <input type="text" tabindex="4" class="form_val form-control" id="returnMain" placeholder="Return" name="returndate" autocomplete="off">
-					                  </div>
-					                </div>
+					                
 				                </div>
-				                <div class="col-xs-12 nopadding mvt10px mvb10px">
+				                <div class="col-xs-12 nopadding mvt10px mvb10px addmore">
 				                	<div class="form-group nomr noml" class="ui-widget">
 					                  <label class="sr-only" for="from">From:</label>
 					                  <input type="search" tabindex="1" class=" form_val form-control" id="from" name="from" placeholder="From" autocomplete="off">
@@ -124,6 +112,7 @@
 					                  </div>
 					                  <div class="form-group hide" id="deptmsg"></div>
 					                </div>
+					                <!--
 					                <div class="form-group nomr noml">
 					                  <label class="sr-only" for="returnMain">Return Date:</label>
 					                  <div class="inner-addon left-addon date" id="dp2">
@@ -131,7 +120,9 @@
 					                      <input type="text" tabindex="4" class="form_val form-control" id="returnMain" placeholder="Return" name="returndate" autocomplete="off">
 					                  </div>
 					                </div>
+					                -->
 				                </div>
+				                <span class="btn btn-pexSearch add_field_button"> Add Another Flight</span>
 							</form>
 						</div>
 					</div>
@@ -140,3 +131,28 @@
 		</div>
 
 		{% include "flightsearch/footer.html" %}
+		
+		<script>
+		
+		$(document).ready(function() {
+	    var max_fields      = 6; //maximum input boxes allowed
+	    var add_button      = $(".add_field_button"); //Add button ID
+	    var x = 1; //initlal text box count
+	    $(add_button).click(function(e){ 
+	    	
+	        e.preventDefault();
+	        
+	        if(x < max_fields){ //max input box allowed
+	            x++; //text box increment
+	            $('.addmore').append('<div><input type="text" name="mytext[]"/><a href="#" class="remove_field">Remove</a></div>'); //add input box
+	        }
+	    });
+	   
+	    $('.addmore').on("click",".remove_field", function(e){ //user click on remove text
+	        e.preventDefault(); $(this).parent('div').remove(); x--;
+	    }); 
+	});
+		
+		
+			
+		</script>

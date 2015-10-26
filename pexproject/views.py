@@ -35,6 +35,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 def index(request):
+    print "test";
     return  render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
 
 def flights(request):
@@ -509,17 +510,8 @@ def share(request):
 
 def booking(request):
     context = {}
-    if request.method == "POST":
-        recordid = request.REQUEST['rowid']
-        price = request.REQUEST['price']
-        cabin = request.REQUEST['cabinname']
-        tax = request.REQUEST['tax']
-        passenger = request.REQUEST['passenger']
-        selectedrow = Flightdata.objects.get(pk=recordid)
-        totalprice = int(passenger) * int(price)
-        totaltax = float(tax)*int(passenger)
-        print totaltax
-        return render_to_response('flightsearch/booking.html',{'selectedrow':selectedrow,'tax':tax,'cabin':cabin,'price':price,'passenger':passenger,'total':totalprice,'totaltax':totaltax},context_instance=RequestContext(request)) 
+    
+    return render_to_response('flightsearch/booking.html',context_instance=RequestContext(request)) 
         
     
             

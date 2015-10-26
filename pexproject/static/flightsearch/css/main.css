@@ -1374,3 +1374,8 @@ footer {
 /* end scroll */
 
 
+.ui-datepicker .ui-widget-content {
+    background: #999 none;
+}
+
+
