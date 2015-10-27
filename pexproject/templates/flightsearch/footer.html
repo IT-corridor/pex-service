@@ -62,7 +62,7 @@
 					<div class="col-sm-6 col-sm-push-6 col-xs-12 login-section">
 						<!-- Nav tabs -->
 						<ul class="nav nav-tabs signup-logn-tabs" role="tablist">
-							<li role="presentation" class="active"><a href="#signup"
+							<li role="presentation" class="active" id="signuptab"><a href="#signup"
 								aria-controls="signup" role="tab" data-toggle="tab">Sign up</a></li>
 							<li role="presentation" id="logintab"><a href="#login" aria-controls="login"
 								role="tab" data-toggle="tab">Login</a></li>
@@ -137,15 +137,21 @@
 	</script>
 
 	<script>
+	/*
 	$(function(){
 		$('#loginbtn').click(function(){
-			//$('#signuptab').removeClass('active');
-			//$('#logintab').addClass('active');
+			alert('test');
+			$('#signuptab').removeClass('active');
+			$('#logintab').addClass('active');
 			$('#login').tab('show');
 		});
 		$('#signupbtn').click(function(){
+			alert("signup");
 			$('#logintab').removeClass('active');
 			$('#signuptab').addClass('active');
+			//$('#signup').show();
+			$('#signup').model('show');
+			$('#login').model('hide');
 		});
 	});
 	$(window).load(function(){
@@ -155,8 +161,29 @@
         $('#login-modal').modal('show');
         $('#signuptab').tab('show');
        }
-    });
-
+    });*/
+   
+	 $(".signuplogin").click(function(){
+	var which_button_is_clicked=$(this).attr('id');
+	
+	 if($.trim(which_button_is_clicked)=="loginbtn"){ 
+	 	
+	 	$('#signup').removeClass('active');
+	 	$('#signuptab').removeClass('active');
+		$('#login').addClass('active');
+		$('#logintab').addClass('active');
+		
+	}
+	 else if($.trim(which_button_is_clicked)=="signupbtn")
+	 {
+	 	
+	 	$('#login').removeClass('active');
+	 	$('#logintab').removeClass('active');
+		$('#signup').addClass('active');
+		$('#signuptab').addClass('active');
+		
+	 }
+});
 	
 	
 </script>
