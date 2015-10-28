@@ -30,6 +30,8 @@ def united(origin,destination,searchdate,searchkey):
     url = "https://www.united.com/ual/en/us/flight-search/book-a-flight/results/awd?f="+origin+"&t="+destination+"&d="+date+"&tt=1&at=1&sc=7&px=1&taxng=1&idx=1"
     #url = "https://www.united.com/ual/en/us/flight-search/book-a-flight/results/awd?f="+origin+"&t="+dest+"&d=2015-10-31&r=2015-11-10&at=1&sc=0,0&px="+str(px)+"&taxng=1&idx=1"
     #url = "https://www.united.com/ual/en/us/?root=1"
+    display = Display(visible=0, size=(800, 600))
+    display.start()
     driver = webdriver.Chrome()
     driver.get(url)
     driver.implicitly_wait(20)
