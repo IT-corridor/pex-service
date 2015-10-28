@@ -32,6 +32,7 @@ def united(origin,destination,searchdate,searchkey):
     #url = "https://www.united.com/ual/en/us/?root=1"
     driver = webdriver.Chrome()
     driver.get(url)
+<<<<<<< Updated upstream
     driver.implicitly_wait(20)
     change = driver.find_element_by_link_text("Change").click()
     try:
@@ -41,6 +42,7 @@ def united(origin,destination,searchdate,searchkey):
         alert = driver.switch_to_alert()
         print "test1"
         alert.accept()
+
     except:
         print "no alert to accept"
     driver.implicitly_wait(20)
@@ -257,7 +259,7 @@ def delta(orgn,dest,searchdate,searchkey):
     	print "option"
        	driver = webdriver.Chrome(chromedriver)
         print "oneway"
-    	driver.implicitly_wait(20)
+    	driver.implicitly_wait(40)
     	driver.get(url)
     	oneway = driver.find_element_by_id('oneWayBtn')
     	driver.execute_script("arguments[0].click();", oneway)
@@ -288,7 +290,7 @@ def delta(orgn,dest,searchdate,searchkey):
 	
     try:
         print "test1"
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "_fareDisplayContainer_tmplHolder")))
+        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "_fareDisplayContainer_tmplHolder")))
     except:
         print "exception"
         display.stop()
@@ -296,12 +298,12 @@ def delta(orgn,dest,searchdate,searchkey):
         return searchkey
     
     try:
-        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "showAll")))
+        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "showAll")))
         driver.find_element_by_link_text('Show All').click()
-        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "fareRowContainer_20")))
+        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "fareRowContainer_20")))
     except:
-        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
-    WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
+        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
+    WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
     html_page = driver.page_source
     soup = BeautifulSoup(html_page)
     datatable = soup.findAll("table",{"class":"fareDetails"})
