@@ -134,7 +134,7 @@ def search(request):
                 searchdata = Searchkey(source=destination1,destination=origin,traveldate=dt1,scrapetime=time,origin_airport_id=orgnid,destination_airport_id=destid)
                 searchdata.save()
                 returnkey = searchdata.searchid
-                retdeltares = customfunction.delta(destcode,orgncode,date1,returnkey)
+                #retdeltares = customfunction.delta(destcode,orgncode,date1,returnkey)
                 retrecordkey = customfunction.united(dest,orgn,returndate,returnkey)
                 
         else:
@@ -152,7 +152,7 @@ def search(request):
             searchdata.save()
             searchkeyid = searchdata.searchid 
             cursor = connection.cursor()
-            deltares = customfunction.delta(orgncode,destcode,date,searchkeyid)
+            #deltares = customfunction.delta(orgncode,destcode,date,searchkeyid)
             recordkey = customfunction.united(orgn,dest,depart,searchkeyid)
             returnkey = ''
             if returndate:
@@ -164,7 +164,7 @@ def search(request):
                     searchdata = Searchkey(source=destination1,destination=origin,traveldate=dt1,scrapetime=time,origin_airport_id=orgnid,destination_airport_id=destid)
                     searchdata.save()
                     returnkey = searchdata.searchid
-                    retdeltares = customfunction.delta(orgncode,destcode,date,returnkey)
+                    #retdeltares = customfunction.delta(orgncode,destcode,date,returnkey)
                     retrecordkey = customfunction.united(orgn,dest,depart,returnkey)
                 
         mimetype = 'application/json'

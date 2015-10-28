@@ -35,7 +35,10 @@ def united(origin,destination,searchdate,searchkey):
     driver = webdriver.Chrome()
     driver.get(url)
     driver.implicitly_wait(20)
-    change = driver.find_element_by_link_text("Change").click()
+    try:
+    	change = driver.find_element_by_link_text("Change").click()
+    except:
+	print "no change"
     try:
         print "test"
         WebDriverWait(driver, 3).until(EC.alert_is_present())
@@ -48,14 +51,17 @@ def united(origin,destination,searchdate,searchkey):
         print "no alert to accept"
     driver.implicitly_wait(20)
     try:  
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "product_MIN-ECONOMY-SURP-OR-DISP")))
+	print "main try"
+        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "product_MIN-ECONOMY-SURP-OR-DISP")))
     except:
+	print "skip data"
+	print driver.current_url
         display.stop
         driver.quit()
         return searchkey
     html_page = driver.page_source
     soup = BeautifulSoup(html_page)
-    datablock = soup.find("section",{"id":"fl-results"})
+    #datablock = soup.find("section",{"id":"fl-results"})
     pages =[]
     searchid=searchkey
     page = soup.findAll("a",{"class":"page-link"})
