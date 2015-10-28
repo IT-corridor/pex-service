@@ -32,7 +32,6 @@ def united(origin,destination,searchdate,searchkey):
     #url = "https://www.united.com/ual/en/us/?root=1"
     driver = webdriver.Chrome()
     driver.get(url)
-<<<<<<< Updated upstream
     driver.implicitly_wait(20)
     change = driver.find_element_by_link_text("Change").click()
     try:
