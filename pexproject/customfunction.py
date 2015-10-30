@@ -26,7 +26,7 @@ def united(origin,destination,searchdate,searchkey):
     date = dt.strftime('%Y-%m-%d')
     currentdatetime = datetime.datetime.now()
     searchkey = searchkey
-    time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
+    stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     url = "https://www.united.com/ual/en/us/flight-search/book-a-flight/results/awd?f="+origin+"&t="+destination+"&d="+date+"&tt=1&at=1&sc=7&px=1&taxng=1&idx=1"
     #url = "https://www.united.com/ual/en/us/flight-search/book-a-flight/results/awd?f="+origin+"&t="+dest+"&d=2015-10-31&r=2015-11-10&at=1&sc=0,0&px="+str(px)+"&taxng=1&idx=1"
     #url = "https://www.united.com/ual/en/us/?root=1"
@@ -38,27 +38,26 @@ def united(origin,destination,searchdate,searchkey):
     try:
     	change = driver.find_element_by_link_text("Change").click()
     except:
-	print "no change"
+        print "no change"
     try:
         print "test"
         WebDriverWait(driver, 3).until(EC.alert_is_present())
-        print "test1"
         alert = driver.switch_to_alert()
-        print "test1"
         alert.accept()
 
     except:
         print "no alert to accept"
     driver.implicitly_wait(20)
-    try:  
-	print "main try"
+    try:
+        print "main try"
         WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "product_MIN-ECONOMY-SURP-OR-DISP")))
     except:
-	print "skip data"
-	print driver.current_url
+    	print "skip data"
+    	print driver.current_url
         display.stop
         driver.quit()
         return searchkey
+    time.sleep(3)
     html_page = driver.page_source
     soup = BeautifulSoup(html_page)
     #datablock = soup.find("section",{"id":"fl-results"})
@@ -69,7 +68,8 @@ def united(origin,destination,searchdate,searchkey):
        if (p.text).isdigit():
           pages.append(p.text)
     print pages
-    def scrapepage(searchkey):
+    def scrapepage(searchkey,soup):
+        soup = soup
         print "aaya"
         fare1 = 0
         fare2 = 0
@@ -94,22 +94,49 @@ def united(origin,destination,searchdate,searchkey):
         operatedbytext =''
         totaltime =''
         #firsttax = 0
-        datadiv = soup.findAll("div",{"class":"flight-block flight-block-fares  "})
+        datadiv = soup.findAll("div",{"class":"flight-block"})
         print len(datadiv)
         for row in datadiv:
+            stoppage = row.find("div",{"class":"flight-connection-container"}).text
+            print "stoppage"
+            if '1' in stoppage:
+                stoppage = '1 STOP'
+            elif '2' in stoppage:
+                stoppage = '2 STOPS'
+            else :
+                if stoppage.strip() == 'Nonstop':
+                    stoppage = 'NONSTOP'
+            
+            source1 = row.find("div",{"class":"flight-station flight-station-origin"}).text
+            source2 = source1.split('(')
+            source3 = (source2 [1].replace(')','')).split('-')
+            source = source3[0].strip()
+            print source1
+            destination1 = row.find("div",{"class":"flight-station flight-station-destination"}).text
+            destination2 = destination1.split('(')
+            destination3 = (destination2[1].replace(')','')).split('-')
+            Destination = destination3[0].strip()
+            print destination1
             departdlist = []
             arivelist= []
             planelist= []
             operatedby=[]
             detailblock = row.findAll("div",{"class":"segment"})
+            
+            
+            '''
             for datainfo in detailblock:
-                fromto = datainfo.find("div",{"class":"segment-market"})['oldtitle']
-                if 'to<br ></div>' in fromto:
-                    fromto1 = fromto.split('to<br ></div>')
-                    fromairport = fromto1[0]
-                    departdlist.append(fromairport)
-                    toairport = fromto1[1]
-                    arivelist.append(toairport)
+                try:
+                    fromto = datainfo.find("div",{"class":"segment-market"})['oldtitle']
+                    if 'to<br ></div>' in fromto:
+                        fromto1 = fromto.split('to<br ></div>')
+                        fromairport = fromto1[0]
+                        departdlist.append(fromairport)
+                        toairport = fromto1[1]
+                        arivelist.append(toairport)
+                except:
+                    departdlist.append(source1)
+                    arivelist.append(destination1)
                 fltno = datainfo.find("div",{"class":"segment-flight-number"}).text
                 aircraft = datainfo.find("div",{"class":"segment-aircraft-type"}).text
                 fltcraft = fltno +" | "+aircraft
@@ -118,6 +145,7 @@ def united(origin,destination,searchdate,searchkey):
                 if operateby:
                     operateby = operateby.text
                     operatedby.append(operateby)
+            '''
             stopinfo = row.findAll("div",{"class":"segment-market"})
             for info in stopinfo:
                 print info.text
@@ -144,31 +172,61 @@ def united(origin,destination,searchdate,searchkey):
             arivetime1 = (datetime.datetime.strptime(arivaltime,'%I:%M %p'))
             arivetime2 = arivetime1.strftime('%H:%M')
             print "arivetime",arivetime2
-            source1 = row.find("div",{"class":"flight-station flight-station-origin"}).text
-            source2 = source1.split('(')
-            source3 = (source2 [1].replace(')','')).split('-')
-            source = source3[0].strip()
             
-            destination1 = row.find("div",{"class":"flight-station flight-station-destination"}).text
-            destination2 = destination1.split('(')
-            destination3 = (destination2[1].replace(')','')).split('-')
-            Destination = destination3[0].strip()
-            stoppage = row.find("div",{"class":"flight-connection-container"}).text
-            print "stoppage"
-            if '1' in stoppage:
-                stoppage = '1 STOP'
-            elif '2' in stoppage:
-                stoppage = '2 STOPS'
-            else :
-                if stoppage.strip() == 'Nonstop':
-                    stoppage = 'NONSTOP'
-            print "stoppage",stoppage
             totaltime = row.find("a",{"class":"flight-duration otp-tooltip-trigger"}).text
             if 'total' in totaltime:
                 totaltime = totaltime.replace('total','')
             flightno = row.find("div",{"class":"segment-flight-number"}).text
             planetype = row.find("div",{"class":"segment-aircraft-type"}).text
             
+            detaillink = row.find("a",{"class":"toggle-flight-block-details ui-tabs-anchor"})['href']
+            print detaillink
+            test = driver.find_element_by_xpath("//a[@href='"+detaillink+"']")
+            dtlid = detaillink.replace('#','').strip()
+            driver.execute_script("arguments[0].click();", test);
+            time.sleep(1)
+            html_page1 = driver.page_source
+            soup2 = BeautifulSoup(html_page1)
+            departuretime = ''
+            desttime = ''
+            flight_duration= ''
+            flight_number = ''
+            if soup2.find("div",{"id":dtlid}):
+                 detailsinfo = soup2.find("div",{"id":dtlid})
+                 infoblock = detailsinfo.findAll("div",{"class":"segment-details-left"})
+                 for info in infoblock:
+                     origindest1 = info.find("div",{"class":"segment-orig-dest"}).text
+                     origindest2 = origindest1.split(' to ')
+                     depart = origindest2[0]
+                     dest = origindest2[1]
+                     if info.find("div",{"class":"segment-times"}):
+                         timesegmt = info.find("div",{"class":"segment-times"}).text
+                         timesegmt1 = timesegmt.split('-')
+                         departuretime = timesegmt1[0]
+                         timesegmt2 = timesegmt1[1].split('(')
+                         desttime = timesegmt2[0]
+                         flight_duration = timesegmt2[1].replace(')','')
+                     if departuretime:
+                         departtext = departuretime+" from "+depart
+                     else:
+                         departtext = departtime+" from "+depart
+                     if desttime:
+                         dest_text = desttime+" at "+dest
+                     else:
+                         dest_text = arivetime+" at "+dest
+                     departdlist.append(departtext)
+                     arivelist.append(dest_text)
+                     flight_number = info.find("div",{"class":"segment-flight-equipment"}).text
+                     if flight_duration:
+                         plane_text = flight_number+" ("+flight_duration+")"
+                         planelist.append(plane_text)
+                     else:
+                         planelist.append(flight_number)
+                     
+                     operateby = info.find("div",{"class":"segment-operator"})
+                     if operateby:
+                         operateby = operateby.text
+                         operatedby.append(operateby)
             
             priceblock = row.findAll("div",{"class":"flight-block-fares-container"})
             
@@ -231,18 +289,19 @@ def united(origin,destination,searchdate,searchkey):
             if len(operatedby)>0:
                 operatedbytext='@'.join(operatedby)
             
-            cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (flightno,str(searchid),time,stoppage,"test",source,Destination,test1,arivetime2,totaltime,str(fare1),str(maintax),str(fare2),str(businesstax),str(fare3),str(firsttax),cabintype1,cabintype2,cabintype3,"united",departdetails,arivedetails,planedetails,operatedbytext))
+            cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (flightno,str(searchid),stime,stoppage,"test",source,Destination,test1,arivetime2,totaltime,str(fare1),str(maintax),str(fare2),str(businesstax),str(fare3),str(firsttax),cabintype1,cabintype2,cabintype3,"united",departdetails,arivedetails,planedetails,operatedbytext))
             transaction.commit()
             print "row inserted"
+    scrapepage(searchkey,soup)
     for i in range(0,len(pages)):
         link = driver.find_element_by_link_text(pages[i])
         print link
         link.send_keys(Keys.ENTER)
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "product_MIN-ECONOMY-SURP-OR-DISP")))
-        driver.implicitly_wait(5)
+        time.sleep(2)
         html_page1 = driver.page_source
         soup = BeautifulSoup(html_page1)
-        scrapepage(searchkey)
+        scrapepage(searchkey,soup)
     display.stop
     driver.quit()
     return searchid
@@ -253,7 +312,7 @@ def delta(orgn,dest,searchdate,searchkey):
     url ="http://www.delta.com/"   
     searchid = str(searchkey)
     currentdatetime = datetime.datetime.now()
-    time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
+    stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     print orgn, dest
     try:
     	display = Display(visible=0, size=(800, 600))
@@ -263,11 +322,10 @@ def delta(orgn,dest,searchdate,searchkey):
     	chrome_options = Options()
     	#chrome_options = webdriver.ChromeOptions()
     	#chrome_options.add_argument('--enable-alternative-services')
-    	print "option"
        	driver = webdriver.Chrome(chromedriver)
-        print "oneway"
     	driver.implicitly_wait(40)
     	driver.get(url)
+        time.sleep(1)
     	oneway = driver.find_element_by_id('oneWayBtn')
     	driver.execute_script("arguments[0].click();", oneway)
     	
@@ -335,7 +393,14 @@ def delta(orgn,dest,searchdate,searchkey):
                     spaninfo =  tmp.findAll("p")
                     departdetails.append((spaninfo[0].text).replace('DEPARTS',''))
                     arrivedetails.append(spaninfo[1].text.replace('ARRIVES',''))
-                    planedetails.append(spaninfo[2].text.replace('FLIGHT',''))
+                    flight_duration = spaninfo[2].text.replace('FLIGHT','')
+                    flight_duration1 = flight_duration.split("|")
+                    flight_no = flight_duration1[0].strip()
+                    plane_duration = flight_duration1[1].strip()
+                    aircraft1 = spaninfo[3].text.replace('PLANE','')
+                    aircraft = aircraft1.replace('- View SeatsOpens in a new window','')
+                    planedetailinfo = flight_no+" | "+aircraft+" ("+plane_duration+")"
+                    planedetails.append(planedetailinfo)
             k=k+1
         n=n+1
         tds = content.findAll("td")
@@ -453,7 +518,7 @@ def delta(orgn,dest,searchdate,searchkey):
         planetext = '@'.join(planedetails)
         #print 'arivedetail',arrivedetails
         #print 'plane', planedetails
-        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,searchid,time,stp,lyover,sourcestn,destinationstn,test1,arivalformat1,duration,str(fare1),str(economytax),str(fare2),str(businesstax),str(fare3),str(firsttax),cabintype1.strip(),cabintype2.strip(),cabintype3,"delta",deptdetail,arivedetail,planetext,operatedbytext))
+        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,searchid,stime,stp,lyover,sourcestn,destinationstn,test1,arivalformat1,duration,str(fare1),str(economytax),str(fare2),str(businesstax),str(fare3),str(firsttax),cabintype1.strip(),cabintype2.strip(),cabintype3,"delta",deptdetail,arivedetail,planetext,operatedbytext))
         transaction.commit()
         print "data inserted"
 
