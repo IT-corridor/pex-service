@@ -574,7 +574,7 @@
 															<div class="col-xs-12 nopadding mvb10px na-ra" itemscope itemtype ="http://schema.org/FlightReservation">
 															<p class="flight-rate" itemprop="totalPrice">
 																{% if row.datasource == "delta" %}
-																{{row.firstclass|add:deltaminval|intcomma}} {%else%}{{row.firstclass|add:unitedminval|intcomma}} {%endif%} Miles + <span>${{row.firsttax|floatadd:tax|floatformat:2}}</span>
+																{{row.firstclass|add:deltaminval|intcomma}} Miles + <span>${{row.firsttax|floatadd:deltatax|floatformat:2}}</span> {%else%}{{row.firstclass|add:unitedminval|intcomma}}  Miles + <span>${{row.firsttax|floatadd:unitedtax|floatformat:2}} </span> {%endif%}
 															</p>
 														</div>
 														{% else %}
@@ -582,7 +582,8 @@
 															<div class="col-xs-12 nopadding mvb10px na-ra" itemscope itemtype ="http://schema.org/FlightReservation">
 															<p class="flight-rate" itemprop="totalPrice">
 																{% if row.datasource == "delta" %}
-																{{row.business|add:deltaminval|intcomma}} {%else%}{{row.business|add:unitedminval|intcomma}} {%endif%} Miles + <span>${{row.businesstax|floatadd:tax|floatformat:2}}</span>
+																{{row.business|add:deltaminval|intcomma}} Miles + <span>${{row.businesstax|floatadd:deltatax|floatformat:2}}</span> {%else%}{{row.business|add:unitedminval|intcomma}}  Miles + <span>${{row.businesstax|floatadd:unitedtax|floatformat:2}} </span> {%endif%}
+																
 															</p>
 														</div>
 														{% endif %}
@@ -1119,7 +1120,7 @@
 															
 															
 															<tr itemscope itemtype="http://schema.org/Flight">
-																<td><bglyphicon glyphicon-menu-up>Arives:</b></td>
+																<td><bglyphicon glyphicon-menu-up></b>Arives:</td>
 																<td><time itemprop="arrivalTime">{{mylist1.1}}</time></td>
 															</tr>
 															<tr>
@@ -1202,7 +1203,7 @@
 													
 													
 													<!-- <a href="share?selectedid={{row.rowid}}&cabin={{request.GET.cabin}}&passenger={{request.GET.passenger}}{% if request.GET.returnkey and row.datasource == 'united' and unitedreturn.0.rowid %}&returnrowid={{unitedreturn.0.rowid}}{%endif%}{% if request.GET.returnkey and row.datasource == 'delta' and deltareturn.0.rowid%}&returnrowid={{deltareturn.0.rowid}}{%endif%}" data-toggle="modal" data-target="#myModal">share</a> -->
-													<a href="#" data-toggle="modal" data-target="#share-modal">share</a>
+													<a href="#" data-toggle="modal" class="share" data-target="#share-modal" id="{{row.rowid}}">share</a>
 												</div>
 											</div>
 										</div>
@@ -1277,7 +1278,9 @@
 								    <a href="#">
 								      <img class="media-object" src="{% static 'flightsearch/img/logoMain.png' %}" alt="">
 								    </a>
+								    <input type="hidden" id="recorid" value="">
 								  </div>
+								  
 								  <div class="media-body">
 								    <h4 class="media-heading">Hey, I found a great flight on Pex from ({{search.0.source}}) to ({{search.0.destination}}). Join me.</h4>
 								    <p></p>
@@ -1286,7 +1289,7 @@
 							  </div>
 							</div>
 							<div class="form-group mvt10px">
-							<a href="https://www.facebook.com/sharer/sharer.php?u=http://pex.techens.com/getsearchresult?keyid={{request.GET.keyid}}%26cabin={{request.GET.cabin}}%26passenger={{request.GET.passenger}}{% if request.GET.returnkey %}%26returnkey={{request.GET.returnkey}}{%endif%}">	<span class="btn btn-pexSearch filter-serch-btn">Post</span></a>
+							<a href="https://www.facebook.com/sharer/sharer.php?u=http://pex.techens.com/share?keyid={{request.GET.keyid}}%26cabin={{request.GET.cabin}}%26passenger={{request.GET.passenger}}{% if request.GET.returnkey %}%26returnkey={{request.GET.returnkey}}{%endif%}">	<span class="btn btn-pexSearch filter-serch-btn">Post</span></a>
 							</div>
 				    	</form>
 				    </div>
@@ -1883,6 +1886,13 @@ $(document).ready(function(){
 			    });
 			});
 		</script>
+<script>
+	$(document.body).on('click','.share',function(){
+		var record = $(this).attr("id");
+		alert(record);
+		$('#recorid').val(record);
+	});
+</script>
 
 
 
