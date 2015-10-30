@@ -86,7 +86,7 @@
 			              <div class="input-daterange">
 			              <div class="col-sm-2 col-xs-6 nopl xs-pr5 mobile-wt">
 			
-			                <div class="form-group nomr noml nomb">
+			                <div class="form-group nomr noml nomb" id="rmv_nomr">
 			                  <label class="sr-only" for="departMain">Departure Date:</label>
 			                  <div class="inner-addon left-addon date" id="dp1">
 			                      <i class="glyphicon glyphicon-calendar"></i>
@@ -311,6 +311,7 @@
     			$("#return").hide();
     			$('.mobile-wt').removeClass('col-xs-6 xs-pr5');
     			$('.mobile-wt').addClass('col-xs-12');
+    			$('#rmv_nomr').removeClass('nomr');
     		}
     		else
     		{
@@ -323,6 +324,7 @@
     			$("#return").show();
     			$('.mobile-wt').removeClass('col-xs-12');
     			$('.mobile-wt').addClass('col-xs-6 xs-pr5');
+    			$('#rmv_nomr').addClass('nomr');
     		}
     		else
     		{
