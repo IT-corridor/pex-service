@@ -81,7 +81,6 @@ def logout(request):
     request.session['user'] = ''
     request.session['password'] = ''
     return HttpResponseRedirect(reverse('index'))
-    #return render_to_response('flightsearch/index.html',context_instance=RequestContext(request))
 
 def search(request):
     context = {}
@@ -505,9 +504,6 @@ def share(request):
                     price = returnrecord.business
                     tax = returnrecord.businesstax
                     returncabin = returnrecord.cabintype3
-        #print price,tax
-        #totalprice = int(traveler) * int(price)
-        #totaltax = float(tax)*int(traveler)
         return render_to_response('flightsearch/share.html',{'record':record,'cabin':cabin,'traveler':traveler,'returnrecord':returnrecord,"price":price,"tax":tax,'returncabin':returncabin}, context_instance=RequestContext(request))
 
 
