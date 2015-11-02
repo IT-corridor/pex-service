@@ -405,8 +405,10 @@ def delta(orgn,dest,searchdate,searchkey):
             k=k+1
         n=n+1
         tds = content.findAll("td")
+	print tds
         detailsblock = tds[0]
-        economy = tds[1]
+	if tds[1]:
+            economy = tds[1]
         if len(tds) > 2:
             business = tds[2]
         else:

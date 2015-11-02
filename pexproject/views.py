@@ -155,8 +155,9 @@ def search(request):
             searchkeyid = searchdata.searchid 
             cursor = connection.cursor()
             
-            deltares = customfunction.delta(orgncode,destcode,date,searchkeyid)
     
+            deltares = customfunction.delta(orgncode,destcode,date,searchkeyid)
+
             recordkey = customfunction.united(orgncode,destcode,depart,searchkeyid)
                 
                 
@@ -175,6 +176,7 @@ def search(request):
                     searchdata.save()
                     returnkey = searchdata.searchid
                     retdeltares = customfunction.delta(orgncode,destcode,date,returnkey)
+
                     retrecordkey = customfunction.united(orgncode,destcode,depart,returnkey)
 
                 
