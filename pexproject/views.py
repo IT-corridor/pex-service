@@ -25,6 +25,8 @@ from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from datetime import timedelta
 import time
+import threading
+from multiprocessing import Process
 from datetime import date
 from django.db import connection,transaction
 import operator
@@ -152,9 +154,16 @@ def search(request):
             searchdata.save()
             searchkeyid = searchdata.searchid 
             cursor = connection.cursor()
-            #deltares = customfunction.delta(orgncode,destcode,date,searchkeyid)
-
+            
+            deltares = customfunction.delta(orgncode,destcode,date,searchkeyid)
+    
             recordkey = customfunction.united(orgncode,destcode,depart,searchkeyid)
+                
+                
+                
+                #deltares = t.start()
+                #recordkey = t1.start()
+            
             returnkey = ''
             if returndate:
                 retunobj = Searchkey.objects.filter(source=destination1,destination=origin,traveldate=searchdate1,scrapetime__gte=time1)
@@ -165,8 +174,7 @@ def search(request):
                     searchdata = Searchkey(source=destination1,destination=origin,traveldate=dt1,scrapetime=time,origin_airport_id=orgnid,destination_airport_id=destid)
                     searchdata.save()
                     returnkey = searchdata.searchid
-                    #retdeltares = customfunction.delta(orgncode,destcode,date,returnkey)
-
+                    retdeltares = customfunction.delta(orgncode,destcode,date,returnkey)
                     retrecordkey = customfunction.united(orgncode,destcode,depart,returnkey)
 
                 
@@ -488,7 +496,8 @@ def getsearchresult(request):
                 
                 return render_to_response('flightsearch/search.html',{'action':action,'data':record,'minprice':minprice,'tax':tax,'timedata':timeinfo,'returndata':returnkey,'search':searchdata,'selectedrow':selectedrow,'filterkey':filterkey,'passenger':passenger,'returndate':returndate,'deltareturn':returndelta,'unitedreturn':returnunited,'deltatax':deltatax,'unitedtax':unitedtax,'unitedminval':unitedminval,'deltaminval':deltaminval,'deltacabin_name':deltacabin_name,'unitedcabin_name':unitedcabin_name},context_instance=RequestContext(request))
             msg = "Sorry, No flight found  from "+source+" To "+destination+".  Please search for another date or city !"
-            return  render_to_response('flightsearch/flights.html',{'message':msg}, context_instance=RequestContext(request))
+        
+            return  render_to_response('flightsearch/flights.html',{'message':msg,'source':source,'destination':destination}, context_instance=RequestContext(request))
             
 def share(request):
     context ={}

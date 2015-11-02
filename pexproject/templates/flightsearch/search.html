@@ -571,7 +571,7 @@
 																</tr>
 															{% endif %}
 														{% endif %}
-														{% if deltareturn.0.stoppage == '3 STOPS'%}
+														{% if deltareturn.0.stoppage == '3 STOPS' and mylist.3%}
 															<tr>
 																<td></td>
 																<td>
@@ -659,7 +659,7 @@
 															
 															
 															<tr itemscope itemtype="http://schema.org/Flight">
-																<td><bglyphicon glyphicon-menu-up></b>Arives:</td>
+																<td><bglyphicon glyphicon-menu-up><b>Arives:</b></td>
 																<td><time itemprop="arrivalTime">{{mylist1.1}}</time></td>
 															</tr>
 															<tr>
@@ -703,7 +703,7 @@
 															{% endif %}
 															
 															{% endif %}
-															{% if unitedreturn.0.stoppage == '3 STOPS'%}
+															{% if unitedreturn.0.stoppage == '3 STOPS' and mylist.3 %}
 															<tr>
 																<td></td>
 																<td>

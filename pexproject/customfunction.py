@@ -8,6 +8,7 @@ import datetime
 from datetime import timedelta
 import time
 import MySQLdb
+import re
 from selenium.webdriver.common.proxy import *
 from datetime import date
 from selenium.webdriver.chrome.options import Options
@@ -434,7 +435,6 @@ def delta(orgn,dest,searchdate,searchkey):
             
         flite_route = detailsblock.findAll("div",{"class":"flightPathWrapper"})
         fltno = detailsblock.find("a",{"class":"helpIcon"}).text
-        print 
         for route in flite_route:
             if route.find("div",{"class":"nonStopBtn"}):
                 stp = "NONSTOP"
@@ -469,9 +469,11 @@ def delta(orgn,dest,searchdate,searchkey):
             fare1 = economy.find("span",{"class":"tblCntBigTxt mileage"}).text
             fare1 = fare1.replace(",","")
             if economy.find("span",{"class":"tblCntSmallTxt"}):
-                economytax = economy.find("span",{"class":"tblCntSmallTxt"}).text
-                economytax = economytax.split('$')
-                economytax = economytax[1].strip()
+                economytax1 = economy.find("span",{"class":"tblCntSmallTxt"}).text
+                print economytax1
+                ecotax = re.findall("\d+.\d+", economytax1)
+                print ecotax[0]
+                economytax = ecotax[0]
             print economytax
             #lenght = len(fareblock)
             #print fareblock[0].text
@@ -492,9 +494,11 @@ def delta(orgn,dest,searchdate,searchkey):
                 fare2 = business.find("span",{"class":"tblCntBigTxt mileage"}).text
                 fare2 = fare2.replace(",","")
                 if business.find("span",{"class":"tblCntSmallTxt"}):
-                    businesstax = business.find("span",{"class":"tblCntSmallTxt"}).text
-                    businesstax = businesstax.split('$')
-                    businesstax = businesstax[1].strip()
+                    businesstax1 = business.find("span",{"class":"tblCntSmallTxt"}).text
+                    buss_tax = re.findall("\d+.\d+", businesstax1)
+                    print buss_tax[0]
+                    businesstax = buss_tax[0]  
+                       
                 print businesstax
                 #lenght = len(fareblock)
                 #print fareblock[0].text
