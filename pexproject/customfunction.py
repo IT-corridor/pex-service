@@ -24,6 +24,8 @@ def united(origin,destination,searchdate,searchkey):
     cursor = connection.cursor()
     dt = datetime.datetime.strptime(searchdate, '%Y/%m/%d')
     date = dt.strftime('%Y-%m-%d')
+    date_format = dt.strftime('%a, %b %-d')
+    print date_format
     currentdatetime = datetime.datetime.now()
     searchkey = searchkey
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
@@ -166,6 +168,8 @@ def united(origin,destination,searchdate,searchkey):
             desttime = ''
             flight_duration= ''
             flight_number = ''
+            arival_date = ''
+            departure_date =''
             if soup2.find("div",{"id":dtlid}):
                  detailsinfo = soup2.find("div",{"id":dtlid})
                  infoblock = detailsinfo.findAll("div",{"class":"segment-details-left"})
@@ -175,9 +179,16 @@ def united(origin,destination,searchdate,searchkey):
                      depart = origindest2[0]
                      dest = origindest2[1]
                      if info.find('ul',{"class":"advisories-messages"}):
-                         dateinfo = info.find('ul',{"class":"advisories-messages"}).text
-                         if ":" in dateinfo:
-                             departdateinfo = dateinfo.split(':')
+                         uls = info.find('ul',{"class":"advisories-messages"})
+                         lis = uls.findAll("li")
+                         if len(lis) > 1:
+                              ddate = lis[0].text
+                              ardate = lis[1].text 
+                              if ':' in ddate and ':' in ardate:
+                                  ddate = ddate.split(':')
+                                  departure_date = ddate[1]
+                                  ardate = ardate.split(':')
+                                  arival_date = ardate[1]
                      if info.find("div",{"class":"segment-times"}):
                          timesegmt = info.find("div",{"class":"segment-times"}).text
                          timesegmt1 = timesegmt.split('-')
@@ -187,12 +198,22 @@ def united(origin,destination,searchdate,searchkey):
                          flight_duration = timesegmt2[1].replace(')','')
                      if departuretime:
                          departtext = departuretime+" from "+depart
+                         if departure_date:
+                             departtext = departure_date+" | "+departuretime+" from "+depart
+                         else:
+                             departtext = date_format+" | "+departuretime+" from "+depart
+                             
                      else:
-                         departtext = departtime+" from "+depart
+                         departtext = date_format+" | "+departtime+" from "+depart
                      if desttime:
                          dest_text = desttime+" at "+dest
+                         if arival_date:
+                            dest_text = arival_date+" | "+desttime+" at "+dest
+                         else:
+                             dest_text = date_format+" | "+desttime+" at "+dest
+                              
                      else:
-                         dest_text = arivetime+" at "+dest
+                         dest_text = date_format+" | "+arivetime+" at "+dest
                      departdlist.append(departtext)
                      arivelist.append(dest_text)
                      flight_number = info.find("div",{"class":"segment-flight-equipment"}).text

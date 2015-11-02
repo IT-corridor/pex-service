@@ -837,7 +837,8 @@ button.close{
     opacity: 1;
     color: #fff;
     border-radius: 50%;
-opacity: 0.9;
+	opacity: 0.9;
+	  z-index: 9;
 }
 button.close:hover,button.close:active:focus{
 	background: #069AC5;
