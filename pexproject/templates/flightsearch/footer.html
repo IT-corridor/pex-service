@@ -108,6 +108,7 @@
 									<div class="form-group">
 										<input type="password" class="form-control" placeholder="Password" name="password" required>
 									</div>
+									<input type="hidden" name="url" value="{{request.path}}">
 									<div class="form-group">
 										<a href="#">Forgot Password?</a>
 									</div>
@@ -137,32 +138,6 @@
 	</script>
 
 	<script>
-	/*
-	$(function(){
-		$('#loginbtn').click(function(){
-			alert('test');
-			$('#signuptab').removeClass('active');
-			$('#logintab').addClass('active');
-			$('#login').tab('show');
-		});
-		$('#signupbtn').click(function(){
-			alert("signup");
-			$('#logintab').removeClass('active');
-			$('#signuptab').addClass('active');
-			//$('#signup').show();
-			$('#signup').model('show');
-			$('#login').model('hide');
-		});
-	});
-	$(window).load(function(){
-	var action= "{{action}}";
-	if (action == 'signup'){
-    
-        $('#login-modal').modal('show');
-        $('#signuptab').tab('show');
-       }
-    });*/
-   
 	 $(".signuplogin").click(function(){
 	var which_button_is_clicked=$(this).attr('id');
 	

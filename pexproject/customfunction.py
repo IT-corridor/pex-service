@@ -40,7 +40,7 @@ def united(origin,destination,searchdate,searchkey):
     except:
         print "no change"
     try:
-        print "test"
+        
         WebDriverWait(driver, 3).until(EC.alert_is_present())
         alert = driver.switch_to_alert()
         alert.accept()
@@ -49,10 +49,10 @@ def united(origin,destination,searchdate,searchkey):
         print "no alert to accept"
     driver.implicitly_wait(20)
     try:
-        print "main try"
-        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "product_MIN-ECONOMY-SURP-OR-DISP")))
+        
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "product_MIN-ECONOMY-SURP-OR-DISP")))
     except:
-    	print "skip data"
+    	
     	print driver.current_url
         display.stop
         driver.quit()
@@ -70,7 +70,7 @@ def united(origin,destination,searchdate,searchkey):
     print pages
     def scrapepage(searchkey,soup):
         soup = soup
-        print "aaya"
+        
         fare1 = 0
         fare2 = 0
         fare3 = 0
@@ -95,14 +95,16 @@ def united(origin,destination,searchdate,searchkey):
         totaltime =''
         #firsttax = 0
         datadiv = soup.findAll("div",{"class":"flight-block"})
-        print len(datadiv)
+        
         for row in datadiv:
             stoppage = row.find("div",{"class":"flight-connection-container"}).text
-            print "stoppage"
+            
             if '1' in stoppage:
                 stoppage = '1 STOP'
             elif '2' in stoppage:
                 stoppage = '2 STOPS'
+            elif '3' in stoppage:
+                stoppage = '3 STOPS'
             else :
                 if stoppage.strip() == 'Nonstop':
                     stoppage = 'NONSTOP'
@@ -111,44 +113,16 @@ def united(origin,destination,searchdate,searchkey):
             source2 = source1.split('(')
             source3 = (source2 [1].replace(')','')).split('-')
             source = source3[0].strip()
-            print source1
+            #print source1
             destination1 = row.find("div",{"class":"flight-station flight-station-destination"}).text
             destination2 = destination1.split('(')
             destination3 = (destination2[1].replace(')','')).split('-')
             Destination = destination3[0].strip()
-            print destination1
+            #print destination1
             departdlist = []
             arivelist= []
             planelist= []
             operatedby=[]
-            detailblock = row.findAll("div",{"class":"segment"})
-            
-            
-            '''
-            for datainfo in detailblock:
-                try:
-                    fromto = datainfo.find("div",{"class":"segment-market"})['oldtitle']
-                    if 'to<br ></div>' in fromto:
-                        fromto1 = fromto.split('to<br ></div>')
-                        fromairport = fromto1[0]
-                        departdlist.append(fromairport)
-                        toairport = fromto1[1]
-                        arivelist.append(toairport)
-                except:
-                    departdlist.append(source1)
-                    arivelist.append(destination1)
-                fltno = datainfo.find("div",{"class":"segment-flight-number"}).text
-                aircraft = datainfo.find("div",{"class":"segment-aircraft-type"}).text
-                fltcraft = fltno +" | "+aircraft
-                planelist.append(fltcraft)
-                operateby = datainfo.find("div",{"class":"segment-operator"})
-                if operateby:
-                    operateby = operateby.text
-                    operatedby.append(operateby)
-            '''
-            stopinfo = row.findAll("div",{"class":"segment-market"})
-            for info in stopinfo:
-                print info.text
             
             departtime = row.find("div",{"class":"flight-time flight-time-depart"}).text
             dateduration =''
@@ -156,22 +130,24 @@ def united(origin,destination,searchdate,searchkey):
             if row.find("div",{"class":"date-duration"}):
                 dateinfo = row.findAll("div",{"class":"date-duration"})
                 dateduration = dateinfo[0].text
-            print dateduration
+            #print dateduration
             depttime  = departtime.replace(dateduration,'').strip()
-            print depttime
+            #print depttime
             test = (datetime.datetime.strptime(depttime,'%I:%M %p'))
             test1 = test.strftime('%H:%M')
-            print test1
+            #print test1
             
             arivetime = row.find("div",{"class":"flight-time flight-time-arrive"}).text
             arivedate = ''
             if row.find("div",{"class":"date-duration"}) and dateinfo[1]:
                 arivedate = dateinfo[1].text
-            print arivedate
+            #print arivedate
             arivaltime = arivetime.replace(arivedate,'').strip()
+            if '.' in arivaltime:
+                arivaltime = arivaltime.replace('.','')
             arivetime1 = (datetime.datetime.strptime(arivaltime,'%I:%M %p'))
             arivetime2 = arivetime1.strftime('%H:%M')
-            print "arivetime",arivetime2
+            #print "arivetime",arivetime2
             
             totaltime = row.find("a",{"class":"flight-duration otp-tooltip-trigger"}).text
             if 'total' in totaltime:
@@ -180,7 +156,6 @@ def united(origin,destination,searchdate,searchkey):
             planetype = row.find("div",{"class":"segment-aircraft-type"}).text
             
             detaillink = row.find("a",{"class":"toggle-flight-block-details ui-tabs-anchor"})['href']
-            print detaillink
             test = driver.find_element_by_xpath("//a[@href='"+detaillink+"']")
             dtlid = detaillink.replace('#','').strip()
             driver.execute_script("arguments[0].click();", test);
@@ -199,6 +174,10 @@ def united(origin,destination,searchdate,searchkey):
                      origindest2 = origindest1.split(' to ')
                      depart = origindest2[0]
                      dest = origindest2[1]
+                     if info.find('ul',{"class":"advisories-messages"}):
+                         dateinfo = info.find('ul',{"class":"advisories-messages"}).text
+                         if ":" in dateinfo:
+                             departdateinfo = dateinfo.split(':')
                      if info.find("div",{"class":"segment-times"}):
                          timesegmt = info.find("div",{"class":"segment-times"}).text
                          timesegmt1 = timesegmt.split('-')
@@ -234,32 +213,32 @@ def united(origin,destination,searchdate,searchkey):
                 if prc.find("div",{"class":"fare-option bg-economy"}):
                     cabintype1 = "Economy"
                     eco = prc.find("div",{"class":"fare-option bg-economy"})
-                    print "economy"
+                    #print "economy"
                     economy = eco.find("div",{"class":"pp-base-price price-point"}).text
                     if "k" in economy:
                         economy = (economy.replace('k','')).replace("miles",'')
                         fare1 = float(economy) * int('1000')
-                    print fare1
+                    
                     econtax = eco.find("div",{"class":"pp-additional-fare price-point"}).text
                     if "+$" in econtax:
                         maintax = econtax.replace('+$','')
-                    print "econtax",maintax
+                    
                 else:
                     print "economy not available"
                     
                 if prc.find("div",{"class":"fare-option bg-business"}):
                     cabintype2 = 'Business'
                     buss = prc.find("div",{"class":"fare-option bg-business"})
-                    print "business"
+                    #print "business"
                     business = buss.find("div",{"class":"pp-base-price price-point"}).text
                     if "k" in business:
                         business = (business.replace('k','')).replace("miles",'')
                         fare2 = float(business) * int('1000')
-                    print fare2
+                    
                     busstax = buss.find("div",{"class":"pp-additional-fare price-point"}).text
                     if "+$" in busstax:
                         businesstax = busstax.replace('+$','')
-                    print "busstax",businesstax
+                    #print "busstax",businesstax
                     
                 else:
                     print "business not available"
@@ -267,16 +246,16 @@ def united(origin,destination,searchdate,searchkey):
                 if prc.find("div",{"class":"fare-option bg-first"}):
                     cabintype3 = 'First'
                     first1 = prc.find("div",{"class":"fare-option bg-first"})
-                    print "first"
+                    
                     first = first1.find("div",{"class":"pp-base-price price-point"}).text
                     if "k" in first:
                         first = (first.replace('k','')).replace("miles",'')
                         fare3 = float(first) * int('1000')
-                    print fare3
+                    
                     firsttax = first1.find("div",{"class":"pp-additional-fare price-point"}).text
                     if "+$" in firsttax:
                         firsttax = firsttax.replace('+$','')
-                    print "firsttax",firsttax
+                    
                 else:
                     print "first not available"
     
@@ -284,7 +263,7 @@ def united(origin,destination,searchdate,searchkey):
             arivedetails='@'.join(arivelist)
             planedetails='@'.join(planelist)
             
-            print "operatedby",operatedby
+            #print "operatedby",operatedby
             
             if len(operatedby)>0:
                 operatedbytext='@'.join(operatedby)
@@ -355,7 +334,7 @@ def delta(orgn,dest,searchdate,searchkey):
 	
     try:
         print "test1"
-        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "_fareDisplayContainer_tmplHolder")))
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "_fareDisplayContainer_tmplHolder")))
     except:
         print "exception"
         display.stop()
@@ -363,12 +342,12 @@ def delta(orgn,dest,searchdate,searchkey):
         return searchkey
     
     try:
-        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "showAll")))
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "showAll")))
         driver.find_element_by_link_text('Show All').click()
-        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "fareRowContainer_20")))
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "fareRowContainer_20")))
     except:
-        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
-    WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
     html_page = driver.page_source
     soup = BeautifulSoup(html_page)
     datatable = soup.findAll("table",{"class":"fareDetails"})

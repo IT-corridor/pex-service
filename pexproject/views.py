@@ -277,20 +277,33 @@ def getsearchresult(request):
         if request.is_ajax():
             list2 = request.POST.getlist('stoppage')
             list2 = list2[0].split(',')
-            print list2
-            if list2[0] != '':
-                querylist = querylist+join+"stoppage in ('"+"','".join(list2)+"')"
-                join = ' AND '    
+            if '2 STOPS' in list2:
+                print list2
+                querylist = querylist+join+"stoppage in ('"+"','".join(list2)+"','3 STOPS')"
+                join = ' AND '
+            else: 
+                if list2[0] != '':
+                    querylist = querylist+join+"stoppage in ('"+"','".join(list2)+"')"
+                    join = ' AND ' 
+                
+                   
         
         else:
             list2 = request.POST.getlist('stoppage')
             if len(list2)>1:
+                if '2 STOPS' in list2:
+                    list2.append('3 STOPS')
                 querylist = querylist+join+"stoppage IN ('"+"','".join(list2)+"')"
                 join = ' AND '
             else:
                 if(len(list2) > 0):
-                    querylist = querylist+join+"stoppage = '"+list2[0]+"'"
-                    join = ' AND '    
+                    stops = request.REQUEST['stoppage']
+                    if stops == '2 STOPS':
+                         querylist = querylist+join+"stoppage NOT IN ('NONSTOP','1 STOP')"
+                         join = ' AND '
+                    else:
+                        querylist = querylist+join+"stoppage = '"+list2[0]+"'"
+                        join = ' AND '    
     if 'airlines' in request.POST:
         if request.is_ajax():
             list1 = request.POST.getlist('airlines')
@@ -446,7 +459,8 @@ def getsearchresult(request):
                             unitedcabin_name = unitedmin['cabintype3']
                             returnunited = Flightdata.objects.filter(searchkeyid=returnkey,datasource='united',business=unitedminval)
                 
-        
+        print "unitedtax",unitedtax
+        print "deltatax",deltatax
         unitedorderprice =  cabinclass+"+"+str(unitedminval)
         deltaorderprice = cabinclass+"+"+str(deltaminval)
         if 'returnkey' in request.GET and returndelta == '' and ('rowid' not in request.GET) and 'rowid' not in request.POST:

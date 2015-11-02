@@ -457,7 +457,7 @@
 																	<td>{{mylist3.0}}</td>
 																</tr>
 															{% endif %}
-															{% if selectedrow.stoppage == '1 STOP' or selectedrow.stoppage == '2 STOPS' %}
+															{% if selectedrow.stoppage == '1 STOP' or selectedrow.stoppage == '2 STOPS' or selectedrow.stoppage == '3 STOPS'%}
 															<tr>
 																<td></td>
 																<td>
@@ -485,7 +485,7 @@
 																</tr>
 															{% endif %}
 															{% endif %}
-															{% if selectedrow.stoppage == '2 STOPS' %}
+															{% if selectedrow.stoppage == '2 STOPS' or selectedrow.stoppage == '3 STOPS'%}
 															<tr>
 																<td></td>
 																<td>
@@ -510,6 +510,34 @@
 																<tr>
 																	<td><b>Operated By:</b></td>
 																	<td>{{mylist3.2}}</td>
+																</tr>
+															{% endif %}
+															{% endif %}
+															{% if selectedrow.stoppage == '3 STOPS'%}
+															<tr>
+																<td></td>
+																<td>
+																	<h5><b>Change planes </b></h5>
+																</td>
+															</tr>
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Depart: </b></td>
+																<td><time itemprop="departureTime">{{mylist.3}}</time></td>
+															</tr>
+															
+															
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Arives:</b></td>
+																<td><time itemprop="arrivalTime">{{mylist1.3}}</time></td>
+															</tr>
+															<tr>
+																<td><b>Flight:</b></td>
+																<td>{{mylist2.3}}</td>
+															</tr>
+															{% if mylist3.3 %}
+																<tr>
+																	<td><b>Operated By:</b></td>
+																	<td>{{mylist3.3}}</td>
 																</tr>
 															{% endif %}
 															{% endif %}
@@ -898,7 +926,7 @@
 																	<td>{{mylist3.0}}</td>
 																</tr>
 															{% endif %}
-															{% if row.stoppage == '1 STOP' or row.stoppage == '2 STOPS' %}
+															{% if row.stoppage == '1 STOP' or row.stoppage == '2 STOPS' or row.stoppage == '3 STOPS'%}
 															<tr>
 																<td></td>
 																<td>
@@ -927,7 +955,7 @@
 															{% endif %}
 															
 															{% endif %}
-															{% if row.stoppage == '2 STOPS' %}
+															{% if row.stoppage == '2 STOPS' or row.stoppage == '3 STOPS' %}
 															<tr>
 																<td></td>
 																<td>
@@ -954,9 +982,35 @@
 																	<td>{{mylist3.2}}</td>
 																</tr>
 															{% endif %}
-															
 															{% endif %}
+															{% if row.stoppage == '3 STOPS' %}
+															<tr>
+																<td></td>
+																<td>
+																	<h5><b>Change planes </b></h5>
+																</td>
+															</tr>
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Depart: </b></td>
+																<td><time itemprop="departureTime">{{mylist.3}}</time></td>
+															</tr>
 															
+															
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Arives:</b></td>
+																<td><time itemprop="arrivalTime">{{mylist1.3}}</time></td>
+															</tr>
+															<tr>
+																<td><b>Flight:</b></td>
+																<td>{{mylist2.3}}</td>
+															</tr>
+															{% if mylist3.3 %}
+																<tr>
+																	<td><b>Operated By:</b></td>
+																	<td>{{mylist3.3}}</td>
+																</tr>
+															{% endif %}
+															{% endif %}
 															
 															
 															{% endwith %}
@@ -1003,7 +1057,7 @@
 																<td>{{mylist3.0}}</td>
 															</tr>
 															{%endif%}
-															{% if deltareturn.0.stoppage == '1 STOP' or deltareturn.0.stoppage == '2 STOPS' %}
+															{% if deltareturn.0.stoppage == '1 STOP' or deltareturn.0.stoppage == '2 STOPS' or deltareturn.0.stoppage == '3 STOPS'%}
 															<tr>
 																<td></td>
 																<td>
@@ -1032,7 +1086,7 @@
 															{% endif%}
 															
 															{% endif %}
-															{% if deltareturn.0.stoppage == '2 STOPS' %}
+															{% if deltareturn.0.stoppage == '2 STOPS' or deltareturn.0.stoppage == '3 STOPS'%}
 															<tr>
 																<td></td>
 																<td>
@@ -1060,6 +1114,34 @@
 																</tr>
 															{% endif %}
 														{% endif %}
+														{% if deltareturn.0.stoppage == '3 STOPS'%}
+															<tr>
+																<td></td>
+																<td>
+																	<h5><b>Change planes </b></h5>
+																</td>
+															</tr>
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Depart: </b></td>
+																<td><time itemprop="departureTime">{{mylist.3}}</time></td>
+															</tr>
+															
+															
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Arives:</b></td>
+																<td><time itemprop="arrivalTime">{{mylist1.3}}</time></td>
+															</tr>
+															<tr>
+																<td><b>Flight:</b></td>
+																<td>{{mylist2.3}}</td>
+															</tr>
+															{% if mylist3.3 %}
+																<tr>
+																	<td><b>Operated By:</b></td>
+																	<td>{{mylist3.3}}</td>
+																</tr>
+															{% endif %}
+															{% endif %}
 													
 													
 													{% endwith %}
@@ -1106,7 +1188,7 @@
 																	<td>{{mylist3.0}}</td>
 																</tr>
 															{% endif %}
-															{% if unitedreturn.0.stoppage == '1 STOP' or unitedreturn.0.stoppage == '2 STOPS' %}
+															{% if unitedreturn.0.stoppage == '1 STOP' or unitedreturn.0.stoppage == '2 STOPS' or unitedreturn.0.stoppage == '3 STOPS' %}
 															<tr>
 																<td></td>
 																<td>
@@ -1135,7 +1217,7 @@
 															{% endif %}
 															
 															{% endif %}
-															{% if unitedreturn.0.stoppage == '2 STOPS' %}
+															{% if unitedreturn.0.stoppage == '2 STOPS' or unitedreturn.0.stoppage == '3 STOPS'%}
 															<tr>
 																<td></td>
 																<td>
@@ -1160,6 +1242,35 @@
 																<tr>
 																	<td><b>Operated By:</b></td>
 																	<td>{{mylist3.2}}</td>
+																</tr>
+															{% endif %}
+															
+															{% endif %}
+															{% if unitedreturn.0.stoppage == '3 STOPS'%}
+															<tr>
+																<td></td>
+																<td>
+																	<h5><b>Change planes </b></h5>
+																</td>
+															</tr>
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Depart: </b></td>
+																<td><time itemprop="departureTime">{{mylist.3}}</time></td>
+															</tr>
+															
+															
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Arives:</b></td>
+																<td><time itemprop="arrivalTime">{{mylist1.3}}</time></td>
+															</tr>
+															<tr>
+																<td><b>Flight:</b></td>
+																<td>{{mylist2.3}}</td>
+															</tr>
+															{% if mylist3.3 %}
+																<tr>
+																	<td><b>Operated By:</b></td>
+																	<td>{{mylist3.3}}</td>
 																</tr>
 															{% endif %}
 															
@@ -1210,24 +1321,7 @@
 									</div>
 								</div>
 								{% endfor %}
-							{% endif %}
-							<!--
-							<div class="pagination">
-							    <span class="step-links">
-							        {% if data.has_previous %}
-							        	<a href="?keyid={{request.GET.keyid}}&passenger={{request.GET.passenger}}&cabin={{request.GET.cabin}}&page={{ data.previous_page_number }}{%if request.GET.returnkey %}&returnkey={{request.GET.returnkey}}{% endif %}">previous</a>
-							        {% endif %}
-							
-							        <span class="current">
-							            Page {{ data.number }} of {{ data.paginator.num_pages }}.
-							        </span>
-									{{passenger}}
-							        {% if data.has_next %}
-							        	 <a href="?keyid={{request.GET.keyid}}&passenger={{request.GET.passenger}}&cabin={{request.GET.cabin}}&page={{ data.next_page_number }}{%if request.GET.returnkey %}&returnkey={{request.GET.returnkey}}{% endif %}">next</a>
-							        {% endif %}
-							    </span>
-							</div>
-							-->							
+							{% endif %}					
 							</div>
 							
 							<div class="col-md-2 col-xs-12 nopadding "><img src="{% static 'flightsearch/img/ad.jpg' %}"  alt="Responsive image" class="img-responsive">
@@ -1889,7 +1983,6 @@ $(document).ready(function(){
 <script>
 	$(document.body).on('click','.share',function(){
 		var record = $(this).attr("id");
-		alert(record);
 		$('#recorid').val(record);
 	});
 </script>
