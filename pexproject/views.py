@@ -135,10 +135,11 @@ def search(request):
                 searchdata = Searchkey(source=destination1,destination=origin,traveldate=dt1,scrapetime=time,origin_airport_id=orgnid,destination_airport_id=destid)
                 searchdata.save()
                 returnkey = searchdata.searchid
-                retdeltares = customfunction.delta(destcode,orgncode,date1,returnkey)
-
-                retrecordkey = customfunction.united(destcode,orgncode,returndate,returnkey)
-                
+                try:
+                    threading.Thread(target=customfunction.united(destcode,orgncode,returndate,returnkey))
+                    threading.Thread(target=customfunction.delta(destcode,orgncode,date1,returnkey))
+                except:
+                    print "not working"
         else:
             print destination1,origin
             obj = Searchkey.objects.filter(source=origin,destination=destination1,traveldate=searchdate,scrapetime__gte=time1)
@@ -154,16 +155,16 @@ def search(request):
             searchdata.save()
             searchkeyid = searchdata.searchid 
             cursor = connection.cursor()
-            
-            deltares = customfunction.delta(orgncode,destcode,date,searchkeyid)
-    
-            recordkey = customfunction.united(orgncode,destcode,depart,searchkeyid)
+            try:
+                threading.Thread(target=customfunction.united(orgncode,destcode,depart,searchkeyid))
+                threading.Thread(target=customfunction.delta(orgncode,destcode,date,searchkeyid))
                 
-                
-                
-                #deltares = t.start()
-                #recordkey = t1.start()
-            
+                '''
+                deltares = customfunction.delta(orgncode,destcode,date,searchkeyid)
+                recordkey = customfunction.united(orgncode,destcode,depart,searchkeyid)
+                '''
+            except:
+                print "not working"
             returnkey = ''
             if returndate:
                 retunobj = Searchkey.objects.filter(source=destination1,destination=origin,traveldate=searchdate1,scrapetime__gte=time1)
@@ -174,8 +175,12 @@ def search(request):
                     searchdata = Searchkey(source=destination1,destination=origin,traveldate=dt1,scrapetime=time,origin_airport_id=orgnid,destination_airport_id=destid)
                     searchdata.save()
                     returnkey = searchdata.searchid
-                    retdeltares = customfunction.delta(orgncode,destcode,date,returnkey)
-                    retrecordkey = customfunction.united(orgncode,destcode,depart,returnkey)
+                    try:
+                        threading.Thread(target=customfunction.united(orgncode,destcode,depart,returnkey))
+                        threading.Thread(target=customfunction.delta(orgncode,destcode,date,returnkey))
+                        
+                    except:
+                        print "not working"
 
                 
         mimetype = 'application/json'

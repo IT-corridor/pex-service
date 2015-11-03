@@ -31,8 +31,6 @@ def united(origin,destination,searchdate,searchkey):
     searchkey = searchkey
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     url = "https://www.united.com/ual/en/us/flight-search/book-a-flight/results/awd?f="+origin+"&t="+destination+"&d="+date+"&tt=1&at=1&sc=7&px=1&taxng=1&idx=1"
-    #url = "https://www.united.com/ual/en/us/flight-search/book-a-flight/results/awd?f="+origin+"&t="+dest+"&d=2015-10-31&r=2015-11-10&at=1&sc=0,0&px="+str(px)+"&taxng=1&idx=1"
-    #url = "https://www.united.com/ual/en/us/?root=1"
     display = Display(visible=0, size=(800, 600))
     display.start()
     driver = webdriver.Chrome()
@@ -60,7 +58,7 @@ def united(origin,destination,searchdate,searchkey):
         display.stop
         driver.quit()
         return searchkey
-    time.sleep(3)
+    time.sleep(2)
     html_page = driver.page_source
     soup = BeautifulSoup(html_page)
     #datablock = soup.find("section",{"id":"fl-results"})
@@ -161,8 +159,9 @@ def united(origin,destination,searchdate,searchkey):
             detaillink = row.find("a",{"class":"toggle-flight-block-details ui-tabs-anchor"})['href']
             test = driver.find_element_by_xpath("//a[@href='"+detaillink+"']")
             dtlid = detaillink.replace('#','').strip()
+            print dtlid
             driver.execute_script("arguments[0].click();", test);
-            time.sleep(1)
+            time.sleep(0.1)
             html_page1 = driver.page_source
             soup2 = BeautifulSoup(html_page1)
             departuretime = ''
@@ -178,6 +177,7 @@ def united(origin,destination,searchdate,searchkey):
                      origindest1 = info.find("div",{"class":"segment-orig-dest"}).text
                      origindest2 = origindest1.split(' to ')
                      depart = origindest2[0]
+                     print "depart"
                      dest = origindest2[1]
                      if info.find('ul',{"class":"advisories-messages"}):
                          uls = info.find('ul',{"class":"advisories-messages"})
@@ -227,6 +227,8 @@ def united(origin,destination,searchdate,searchkey):
                      operateby = info.find("div",{"class":"segment-operator"})
                      if operateby:
                          operateby = operateby.text
+                         if 'Operated by' in operateby:
+                             operateby = operateby.replace('Operated by','')
                          operatedby.append(operateby)
             
             priceblock = row.findAll("div",{"class":"flight-block-fares-container"})
@@ -299,15 +301,13 @@ def united(origin,destination,searchdate,searchkey):
         print link
         link.send_keys(Keys.ENTER)
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "product_MIN-ECONOMY-SURP-OR-DISP")))
-        time.sleep(2)
+        time.sleep(.5)
         html_page1 = driver.page_source
         soup = BeautifulSoup(html_page1)
         scrapepage(searchkey,soup)
     display.stop
     driver.quit()
     return searchid
-
-	#call(["pgrep chrome | xargs kill"])	
 def delta(orgn,dest,searchdate,searchkey):
     cursor = connection.cursor()
     url ="http://www.delta.com/"   
@@ -324,9 +324,10 @@ def delta(orgn,dest,searchdate,searchkey):
     	#chrome_options = webdriver.ChromeOptions()
     	#chrome_options.add_argument('--enable-alternative-services')
        	driver = webdriver.Chrome(chromedriver)
-    	driver.implicitly_wait(40)
+    	driver.implicitly_wait(20)
     	driver.get(url)
         time.sleep(1)
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "oneWayBtn")))
     	oneway = driver.find_element_by_id('oneWayBtn')
     	driver.execute_script("arguments[0].click();", oneway)
     	
@@ -350,7 +351,7 @@ def delta(orgn,dest,searchdate,searchkey):
     	driver.find_element_by_id("findFlightsSubmit").send_keys(Keys.ENTER)
 	    
     except:
-        display.stop
+        #display.stop
     	driver.quit()
     	return searchkey
 	
@@ -364,12 +365,12 @@ def delta(orgn,dest,searchdate,searchkey):
         return searchkey
     
     try:
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "showAll")))
+        WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "showAll")))
         driver.find_element_by_link_text('Show All').click()
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "fareRowContainer_20")))
+        WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "fareRowContainer_20")))
     except:
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
+        WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
+    WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
     html_page = driver.page_source
     soup = BeautifulSoup(html_page)
     datatable = soup.findAll("table",{"class":"fareDetails"})
@@ -377,7 +378,7 @@ def delta(orgn,dest,searchdate,searchkey):
     for content in datatable:
         detailid = content.find("div",{"class":"detailLinkHldr"})['id']
         driver.execute_script("document.getElementById('"+detailid+"').click()")
-        driver.implicitly_wait(2)
+        time.sleep(0.1)
         page = driver.page_source
         soup2 = BeautifulSoup(page)
         datatable1 = soup2.findAll("table",{"class":"fareDetails"})
