@@ -472,7 +472,6 @@ def delta(orgn,dest,searchdate,searchkey):
             fare1 = fare1.replace(",","")
             if economy.find("span",{"class":"tblCntSmallTxt"}):
                 economytax1 = economy.find("span",{"class":"tblCntSmallTxt"}).text
-                print economytax1
                 ecotax = re.findall("\d+.\d+", economytax1)
                 print ecotax[0]
                 economytax = ecotax[0]
@@ -498,7 +497,6 @@ def delta(orgn,dest,searchdate,searchkey):
                 if business.find("span",{"class":"tblCntSmallTxt"}):
                     businesstax1 = business.find("span",{"class":"tblCntSmallTxt"}).text
                     buss_tax = re.findall("\d+.\d+", businesstax1)
-                    print buss_tax[0]
                     businesstax = buss_tax[0]  
                        
                 print businesstax
