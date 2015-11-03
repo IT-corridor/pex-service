@@ -155,9 +155,18 @@ def search(request):
             searchdata.save()
             searchkeyid = searchdata.searchid 
             cursor = connection.cursor()
+<<<<<<< HEAD
             try:
                 threading.Thread(target=customfunction.united(orgncode,destcode,depart,searchkeyid))
                 threading.Thread(target=customfunction.delta(orgncode,destcode,date,searchkeyid))
+=======
+            
+    
+            deltares = customfunction.delta(orgncode,destcode,date,searchkeyid)
+
+            recordkey = customfunction.united(orgncode,destcode,depart,searchkeyid)
+                
+>>>>>>> e2361f1048921ac4bfb2c67d9a7fe6b313872181
                 
                 '''
                 deltares = customfunction.delta(orgncode,destcode,date,searchkeyid)
@@ -175,12 +184,18 @@ def search(request):
                     searchdata = Searchkey(source=destination1,destination=origin,traveldate=dt1,scrapetime=time,origin_airport_id=orgnid,destination_airport_id=destid)
                     searchdata.save()
                     returnkey = searchdata.searchid
+<<<<<<< HEAD
                     try:
                         threading.Thread(target=customfunction.united(orgncode,destcode,depart,returnkey))
                         threading.Thread(target=customfunction.delta(orgncode,destcode,date,returnkey))
                         
                     except:
                         print "not working"
+=======
+                    retdeltares = customfunction.delta(orgncode,destcode,date,returnkey)
+
+                    retrecordkey = customfunction.united(orgncode,destcode,depart,returnkey)
+>>>>>>> e2361f1048921ac4bfb2c67d9a7fe6b313872181
 
                 
         mimetype = 'application/json'
