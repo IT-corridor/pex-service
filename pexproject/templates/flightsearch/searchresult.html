@@ -958,7 +958,7 @@
 															{% endwith %}
 														</table>
 														{% if row.rowid1 %}
-															<div>
+													<!--		<div>
 																<form action="getsearchresult" method="get">
 																	{% csrf_token %}
 																	<input type="hidden" name="cabin"  value="{{request.GET.cabin}}">
@@ -980,7 +980,7 @@
 																	<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
 																	<button type"submit" value="{{searchrow.searchid}}" name="return" class="btn btn-pexSearch">Other Options For Depart Flight</button>
 																</form>
-															</div>
+															</div>-->
 														{% endif %}
 													</div>
 													
@@ -1727,24 +1727,28 @@ return sum;
 <script type="text/javascript">
 
 //@@---------------------- pagination -------------------------------------
+		var call_sent = "completed";
             var pagecount = 2;
             var is_data = 1 ;
             $(window).scroll(function(){
-            	var doch =($(document).height()-100);
-            	var winh = ($(window).height()-100);
-            	
-                    if  ($(window).scrollTop() == doch - winh){
-                    	
+            	var doch =($(document).height()-200);
+            	var winh = ($(window).height() + 200);
+            	console.log($(window).scrollTop(), $("footer").offset().top - $("footer").outerHeight() - 200, is_data);
+                    if  ($(window).scrollTop() >= doch - winh){
+        //            if(parseInt($(window).scrollTop()) >= parseInt( $("footer").offset().top - $("footer").outerHeight() - 200) ){	
+//		alert("1");
                     	if(is_data > 0)
                     	{
+			if(call_sent == "completed") {
                        loadArticle(pagecount);
                        
-                       pagecount++;
+                       pagecount++; }
                       }
                     }
             }); 
  			var urls = ("{{request.get_full_path}}");
-            function loadArticle(pageNumber){    
+            function loadArticle(pageNumber){   
+		call_sent = "in_progress"; 
             	var airline =new Array();
             	var stoppage = new Array();
             	var row_val = "";
@@ -1770,6 +1774,7 @@ return sum;
                         data: "action="+encodeURI('infinite_scroll')+"&page_no="+encodeURI(pageNumber)+ "&loop_file=loop&csrfmiddlewaretoken={{ csrf_token }}&depaturemin="+depaturemin+"&depaturemax="+depaturemax+"&airlines="+airline+"&stoppage="+stoppage+row_val, 
                         success: function(html){
                             $("#content").append(html);   // This will be the div where our content will be loaded
+				call_sent = "completed";
                             if($("#nodata").length) is_data = 0 ;
                             
                             
