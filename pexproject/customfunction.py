@@ -327,7 +327,7 @@ def delta(orgn,dest,searchdate,searchkey):
     	driver.implicitly_wait(20)
     	driver.get(url)
         time.sleep(1)
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "oneWayBtn")))
+        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "oneWayBtn")))
     	oneway = driver.find_element_by_id('oneWayBtn')
     	driver.execute_script("arguments[0].click();", oneway)
     	
@@ -351,7 +351,7 @@ def delta(orgn,dest,searchdate,searchkey):
     	driver.find_element_by_id("findFlightsSubmit").send_keys(Keys.ENTER)
 	    
     except:
-        #display.stop
+        display.stop
     	driver.quit()
     	return searchkey
 	
@@ -406,7 +406,6 @@ def delta(orgn,dest,searchdate,searchkey):
             k=k+1
         n=n+1
         tds = content.findAll("td")
-	print tds
         detailsblock = tds[0]
 	if tds[1]:
             economy = tds[1]

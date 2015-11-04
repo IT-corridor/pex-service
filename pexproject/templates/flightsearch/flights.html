@@ -60,7 +60,7 @@
 			                  <label><input type="radio" id="rt" name="trip" value="roundTripBtn" checked="checked"> Round-Trip</label>
 			                </div>
 			                <div class="checkbox-inline mhr10px">
-			                  <label><input type="radio" id="ow" name="trip" value="oneWayBtn"> One-Way</label>
+			                  <label><input type="radio" id="ow" name="trip" value="oneWayBtn" {% if returndate == ''%} checked="checked" {%endif%}> One-Way</label>
 			                </div>
 			                <div class="checkbox-inline mhr10px">
 			                  <label><input type="radio" id="mc" value="multicity" name="trip"> Multi-City</label>
@@ -72,15 +72,15 @@
 			              <div class="col-sm-2 col-xs-12 nopadding">
 			                <div class="form-group nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="from">From:</label>
-			                  <input type="search" tabindex="1" class=" form_val form-control" id="from" name="from" placeholder="From" autocomplete="off">
-			                  <input type="hidden" id="fromid" name="fromMain" />
+			                  <input type="search" tabindex="1" class=" form_val form-control" id="from" name="from" placeholder="From" autocomplete="off" {% if search %} value="{{search.source}}" {%endif%}>
+			                  <input type="hidden" id="fromid" name="fromMain" {% if search %} value="{{search.origin_airport_id}}" {%endif%} />
 			                </div>
 			              </div>
 			              <div class="col-sm-2 col-xs-12 xs-nopadding">
 			                <div class="form-group  nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="to">To:</label>
-			                  <input type="search" tabindex="2" class="form_val form-control" id="to" name="to" placeholder="To" autocomplete="off">
-			                  <input type="hidden" id="toid" name="toMain" />
+			                  <input type="search" tabindex="2" class="form_val form-control" id="to" name="to" placeholder="To" autocomplete="off" {% if search %} value="{{search.destination}}" {%endif%}>
+			                  <input type="hidden" id="toid" name="toMain" {% if search %} value="{{search.destination_airport_id}}" {%endif%}/>
 			                </div>
 			              </div>
 			              <div class="input-daterange">
@@ -90,7 +90,7 @@
 			                  <label class="sr-only" for="departMain">Departure Date:</label>
 			                  <div class="inner-addon left-addon date" id="dp1">
 			                      <i class="glyphicon glyphicon-calendar"></i>
-			                      <input type="text" tabindex="3" class="form_val form-control" id="departMain" placeholder="Depart" name="deptdate" autocomplete="off">
+			                      <input type="text" tabindex="3" class="form_val form-control" id="departMain" placeholder="Depart" name="deptdate" autocomplete="off" {% if search %} value="{{search.traveldate|date:'m/d/Y'}}" {%endif%}>
 			                  </div>
 			                  <div class="form-group" id="deptmsg"></div>
 			                </div>
@@ -100,7 +100,7 @@
 			                  <label class="sr-only" for="returnMain">Return Date:</label>
 			                  <div class="inner-addon left-addon date" id="dp2">
 			                      <i class="glyphicon glyphicon-calendar"></i>
-			                      <input type="text" tabindex="4" class="form_val form-control" id="returnMain" placeholder="Return" name="returndate" autocomplete="off">
+			                      <input type="text" tabindex="4" class="form_val form-control" id="returnMain" placeholder="Return" name="returndate" autocomplete="off" {% if returndate %} value= "{{returndate.0|date:'m/d/Y'}}" {%endif%}>
 			                  </div>
 			                </div>
 			              </div>

@@ -63,7 +63,6 @@ $.ajax({
         url: "/search/",
         data: "returndate="+ encodeURI(returndate)+"&rndtripkey="+encodeURI(rdtrip) +"&triptype="+ encodeURI(trip)+ "&fromMain="+ encodeURI(from)+ "&toMain=" + encodeURI(to)+ "&deptdate=" + encodeURI(depart) + "&csrfmiddlewaretoken=" + encodeURI(CSRF_TOKEN),
     	success: function(data){
-        console.log(data);
         searchid = data[0];
         var returnid='';
         if(data[1])

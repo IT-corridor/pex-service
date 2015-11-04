@@ -359,7 +359,7 @@
 															{{selectedrow.maincabin|intcomma}} Miles + <span>${{selectedrow.maintax|floatformat:2}}</span>
 														</p>
 													</div>
-													<h5 class="econo"> {{selectedrow.cabintype1}} </h5>
+													<h5 class="econom">{{selectedrow.cabintype1}}</h5>
 													
 													{% endif %}
 													{% if request.GET.cabin == 'firstclass' %}
@@ -368,7 +368,7 @@
 															{{selectedrow.firstclass|intcomma}} Miles + <span>${{selectedrow.firsttax|floatformat:2}}</span>
 														</p>
 													</div>
-													<h5 class="econo"> {{selectedrow.cabintype2}} </h5>
+													<h5 class="econom"> {{selectedrow.cabintype2}} </h5>
 													
 													{% endif %}
 													{% if request.GET.cabin == 'business' %}
@@ -377,7 +377,7 @@
 															{{selectedrow.business|intcomma}} Miles + <span>${{selectedrow.businesstax|floatformat:2}}</span>
 														</p>
 													</div>
-													<h5 class="econo"> {{selectedrow.cabintype3}} </h5>
+													<h5 class="econom"> {{selectedrow.cabintype3}} </h5>
 													
 													{% endif %}
 												</div>
@@ -593,24 +593,22 @@
 												  
 															<div class="col-xs-12 nopadding mvb10px na-ra" itemscope itemtype ="http://schema.org/FlightReservation">
 																<p class="flight-rate" itemprop="totalPrice">
-																	{% if row.datasource == "delta" %}
-																	{{row.maincabin|add:deltaminval|intcomma}} Miles + <span>${{row.maintax|floatadd:deltatax|floatformat:2}}</span> {%else%}{{row.maincabin|add:unitedminval|intcomma}}  Miles + <span>${{row.maintax|floatadd:unitedtax|floatformat:2}} </span> {%endif%}
+																	{{row.finalprice|intcomma}} Miles + {% if returndate%} <span>${{row.maintax|floatadd:row.maintax1|floatformat:2}}</span> {%else%}<span>${{row.maintax|floatformat:2}} </span> {%endif%}
 																</p>
 															</div> 
 														
 														{% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %}
 															<div class="col-xs-12 nopadding mvb10px na-ra" itemscope itemtype ="http://schema.org/FlightReservation">
 															<p class="flight-rate" itemprop="totalPrice">
-																{% if row.datasource == "delta" %}
-																{{row.firstclass|add:deltaminval|intcomma}} Miles + <span>${{row.firsttax|floatadd:deltatax|floatformat:2}}</span> {%else%}{{row.firstclass|add:unitedminval|intcomma}}  Miles + <span>${{row.firsttax|floatadd:unitedtax|floatformat:2}} </span> {%endif%}
+																{{row.finalprice|intcomma}} Miles + {% if returndate%} <span>${{row.firsttax|floatadd:row.firsttax1|floatformat:2}}</span> {%else%}<span>${{row.firsttax|floatformat:2}} </span> {%endif%}
 															</p>
 														</div>
 														{% else %}
 															{% if request.GET.cabin == 'business' or cabin == 'business' %}
 															<div class="col-xs-12 nopadding mvb10px na-ra" itemscope itemtype ="http://schema.org/FlightReservation">
 															<p class="flight-rate" itemprop="totalPrice">
-																{% if row.datasource == "delta" %}
-																{{row.business|add:deltaminval|intcomma}} Miles + <span>${{row.businesstax|floatadd:deltatax|floatformat:2}}</span> {%else%}{{row.business|add:unitedminval|intcomma}}  Miles + <span>${{row.businesstax|floatadd:unitedtax|floatformat:2}} </span> {%endif%}
+																
+																{{row.finalprice|intcomma}} Miles + {% if returndate%} <span>${{row.businesstax|floatadd:row.businesstax1|floatformat:2}}</span> {%else%}<span>${{row.businesstax|floatformat:2}} </span> {%endif%}
 																
 															</p>
 														</div>
@@ -679,8 +677,7 @@
 																	<h5 class="econo edit-width-econo">{{row.cabintype1}}</h5>
 																	<div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
 																		<p class="flight-rate" itemprop="totalPrice">
-																				{% if row.datasource == "delta" %}
-																				{{row.maincabin|add:deltaminval|intcomma}} Miles + <span>${{row.maintax|floatadd:deltatax|floatformat:2}}</span> {%else%}{{row.maincabin|add:unitedminval|intcomma}} Miles + <span>${{row.maintax|floatadd:unitedtax|floatformat:2}}</span> {%endif%} 
+																				{{row.finalprice|intcomma}} Miles + {% if returndate %} <span>${{row.maintax|floatadd:row.maintax1|floatformat:2}}</span> {% else%} <span>${{row.maintax|floatformat:2}}</span> {% endif %}   
 																			</p>
 																		</div>
 																	</div>
@@ -690,8 +687,7 @@
 																		<h5 class="econo edit-width-econo">{{row.cabintype2}}</h5>
 																		<div class="right-data-responsive">
 																		<p class="flight-rate">
-																				{% if row.datasource == "delta" %}
-																				{{row.firstclass|add:deltaminval|intcomma}} Miles + <span>${{row.firsttax|floatadd:deltatax|floatformat:2}}</span> {%else%}{{row.firstclass|add:unitedminval|intcomma}} Miles + <span>${{row.firsttax|floatadd:unitedtax|floatformat:2}}</span> {%endif%}
+																				{{row.finalprice|intcomma}} Miles + {% if returndate %} <span>${{row.firsttax|floatadd:row.firsttax1|floatformat:2}}</span> {% else %}<span>${{row.firsttax|floatformat:2}}</span>{% endif %}
 																			</p>
 																		</div>
 																	</div>
@@ -703,8 +699,7 @@
 																			<h5 class="econo edit-width-econo">{{row.cabintype3}}</h5>
 																			<div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
 																			<p class="flight-rate" itemprop="totalPrice">
-																				{% if row.datasource == "delta" %}
-																				{{row.business|add:deltaminval|intcomma}} Miles + <span>${{row.businesstax|floatadd:deltatax|floatformat:2}}</span> {%else%}{{row.business|add:unitedminval|intcomma}} Miles + <span>${{row.businesstax|floatadd:unitedtax|floatformat:2}}</span> {%endif%}
+																				{{row.finalprice|intcomma}} Miles +  {% if returndate %} <span>${{row.businesstax|floatadd:row.businesstax1|floatformat:2}}</span>{% else %}<span>${{row.businesstax|floatformat:2}}</span>{% endif %}
 																			</p>
 																		</div>
 																		</div>
@@ -730,38 +725,37 @@
 									</div>
 									
 									<!-- terurn data block -->
-									{% if returndate %}
-									{% if row.datasource == "united" and unitedreturn %}
-										{% with unitedreturn as returnrecord %} 
+									{% if returndate and row.origin1%}
+									 
 									<div class="col-xs-12 nopadding flight-div-repeat"> 
 										<div class="col-md-8 col-sm-8 col-xs-12 nopadding">
 											<div class="col-xs-12 nopadding">
 												<div class="arrivel col-sm-5 nopadding col-xs-4" itemscope itemtype ="http://schema.org/Flight">
 													<p itemprop="departureAirport">
-														{{returnrecord.0.origin}}
+														{{row.origin1}}
 													</p>
 													<p>
-														<time itemprop="departureTime">{{returnrecord.0.departure}}</time>
+														<time itemprop="departureTime">{{row.departure1}}</time>
 													</p>
 												</div>
 												<div class="arrow-div col-sm-2 col-xs-1 text-center nopadding">&#8594;</div>
 												<div class="arrivel-2 col-sm-4 nopadding text-right col-xs-4 xs-text-center" itemscope itemtype ="http://schema.org/Flight">
 													<p itemprop="arrivalAirport">
-														{{returnrecord.0.destination}}
+														{{row.destination1}}
 													</p>
 													<p>
-														<time itemprop="arrivalTime">{{returnrecord.0.arival}}</time>
+														<time itemprop="arrivalTime">{{row.arival1}}</time>
 													</p>
 												</div>
 												<div class="col-xs-3 nopadding visible-xs text-right">
 													<div class="col-xs-12 nopadding non-stop text-right">
 														<p>
-															{{returnrecord.0.stoppage}}
+															{{row.stoppage1}}
 														</p>
 													</div>
 													<div class="col-xs-12 nopadding non-stop" itemscope itemtype ="http://schema.org/Flight">
 														<p itemprop="estimatedFlightDuration">
-															{{returnrecord.0.duration}}
+															{{row.duration1}}
 														</p>
 													</div>
 												</div>
@@ -771,70 +765,17 @@
 										<div class="col-md-4 col-sm-4 col-xs-12 text-center nopr hidden-xs">
 											<div class="col-xs-12 nopadding non-stop">
 												<p>
-													{{returnrecord.0.stoppage}}
+													{{row.stoppage1}}
 												</p>
 												<div class="col-xs-12 nopadding non-stop" itemscope itemtype ="http://schema.org/Flight">
 													<p itemprop="estimatedFlightDuration">
-														{{returnrecord.0.duration}}
+														{{row.duration1}}
 													</p>
 												</div>
 											</div>
 										</div>
 									</div> <!-- end retun block -->
-									{%endwith%}
-								{% endif%}
-								{% if row.datasource == "delta" and deltareturn %}
-										{% with deltareturn as returnrecord %} 
-									<div class="col-xs-12 nopadding flight-div-repeat"> 
-										<div class="col-md-8 col-sm-8 col-xs-12 nopadding">
-											<div class="col-xs-12 nopadding">
-												<div class="arrivel col-sm-5 nopadding col-xs-4" itemscope itemtype ="http://schema.org/Flight">
-													<p itemprop="departureAirport">
-														{{returnrecord.0.origin}}
-													</p>
-													<p>
-														<time itemprop="departureTime">{{returnrecord.0.departure}}</time>
-													</p>
-												</div>
-												<div class="arrow-div col-sm-2 col-xs-1 text-center nopadding">&#8594;</div>
-												<div class="arrivel-2 col-sm-4 nopadding text-right col-xs-4 xs-text-center" itemscope itemtype ="http://schema.org/Flight">
-													<p itemprop="arrivalAirport">
-														{{returnrecord.0.destination}}
-													</p>
-													<p>
-														<time itemprop="arrivalTime">{{returnrecord.0.arival}}</time>
-													</p>
-												</div>
-												<div class="col-xs-3 nopadding visible-xs text-right">
-													<div class="col-xs-12 nopadding non-stop text-right">
-														<p>
-															{{returnrecord.0.stoppage}}
-														</p>
-													</div>
-													<div class="col-xs-12 nopadding non-stop" itemscope itemtype ="http://schema.org/Flight">
-														<p itemprop="estimatedFlightDuration">
-															{{returnrecord.0.duration}}
-														</p>
-													</div>
-												</div>
-											</div>
-											
-									</div>
-										<div class="col-md-4 col-sm-4 col-xs-12 text-center nopr hidden-xs">
-											<div class="col-xs-12 nopadding non-stop">
-												<p>
-													{{returnrecord.0.stoppage}}
-												</p>
-												<div class="col-xs-12 nopadding non-stop" itemscope itemtype ="http://schema.org/Flight">
-													<p itemprop="estimatedFlightDuration">
-														{{returnrecord.0.duration}}
-													</p>
-												</div>
-											</div>
-										</div>
-									</div> <!-- end retun block -->
-									{%endwith%}
-								{% endif%}
+								
 								
 								<div class="col-xs-12 nopadding mvt10px for-mobile-view"> <!-- main data only mobile  if return in present -->
 										<div class="col-xs-12 nopadding text-center custome-edit-block"> 
@@ -845,8 +786,8 @@
 													<h5 class="econo edit-width-econo">{{row.cabintype1}}</h5>
 													<div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
 														<p class="flight-rate" itemprop="totalPrice">
-																{% if row.datasource == "delta" %}
-																{{row.maincabin|add:deltaminval|intcomma}} Miles + <span>${{row.maintax|floatadd:deltatax|floatformat:2}}</span> {%else%}{{row.maincabin|add:unitedminval|intcomma}} Miles + <span>${{row.maintax|floatadd:unitedtax|floatformat:2}}</span> {%endif%} 
+																
+																{{row.finalprice|intcomma}} Miles + {% if returndate %} <span>${{row.maintax|floatadd:row.maintax1|floatformat:2}}</span> {% else%} <span>${{row.maintax|floatformat:2}}</span> {% endif %} 
 															</p>
 														</div>
 													</div>
@@ -856,8 +797,7 @@
 														<h5 class="econo edit-width-econo">{{row.cabintype2}}</h5>
 														<div class="right-data-responsive">
 														<p class="flight-rate">
-																{% if row.datasource == "delta" %}
-																{{row.firstclass|add:deltaminval|intcomma}} Miles + <span>${{row.firsttax|floatadd:deltatax|floatformat:2}}</span> {%else%}{{row.firstclass|add:unitedminval|intcomma}} Miles + <span>${{row.firsttax|floatadd:unitedtax|floatformat:2}}</span> {%endif%}
+																{{row.finalprice|intcomma}} Miles + {% if returndate %}<span>${{row.firsttax|floatadd:row.firsttax1|floatformat:2}}</span> {% else%} <span>${{row.firsttax|floatformat:2}}</span> {% endif %}
 															</p>
 														</div>
 													</div>
@@ -869,8 +809,7 @@
 															<h5 class="econo edit-width-econo">{{row.cabintype3}}</h5>
 															<div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
 															<p class="flight-rate" itemprop="totalPrice">
-																{% if row.datasource == "delta" %}
-																{{row.business|add:deltaminval|intcomma}} Miles + <span>${{row.businesstax|floatadd:deltatax|floatformat:2}}</span> {%else%}{{row.business|add:unitedminval|intcomma}} Miles + <span>${{row.businesstax|floatadd:unitedtax|floatformat:2}}</span> {%endif%}
+																{{row.finalprice|intcomma}} Miles + {% if returndate %}<span>${{row.businesstax|floatadd:row.businesstax1|floatformat:2}}</span>{% else%} <span>${{row.businesstax|floatformat:2}}</span> {% endif %} 
 															</p>
 														</div>
 														</div>
@@ -882,14 +821,14 @@
 							
 									
 									
-										<a class="show-details" role="button" data-toggle="collapse" href="#{{row.rowid}}" aria-expanded="false" aria-controls="collapseExample">SHOW DETAILS</a>
+										<a class="show-details" role="button" data-toggle="collapse" href="#{{row.newid}}" aria-expanded="false" aria-controls="collapseExample">SHOW DETAILS</a>
 										<h4 class="econo hidden-xs"> 
 												
 													{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
 													{{row.cabintype1}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{row.cabintype2}} {% else%}{{row.cabintype3}} {% endif %}</h4>	
 												
 										<div class="col-xs-12 pop-hover nopadding">
-											<div class="collapse" id="{{row.rowid}}">
+											<div class="collapse" id="{{row.newid}}">
 												<div class="well" itemscope itemtype="http://schema.org/Flight">
 													<h2>DEPART</h2>
 													<p itemprop="flightNumber">
@@ -1018,24 +957,49 @@
 															{% endwith %}
 															{% endwith %}
 														</table>
+														{% if row.rowid1 %}
+															<div>
+																<form action="getsearchresult" method="get">
+																	{% csrf_token %}
+																	<input type="hidden" name="cabin"  value="{{request.GET.cabin}}">
+																	<input type="hidden" name="rowid"  value="{{row.rowid1}}">
+																	<input type="hidden" name="price" 
+																	{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%} 
+																	 value="{{row.maincabin1}}" {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass'%} 
+																	 value="{{row.firstclass1}}"{% else %}{% if request.GET.cabin == 'business' or cabin == 'business'%} 
+																	 value="{{row.business1}}"{%endif%}{% endif %}>
+																	<input type="hidden" name="tax"
+																	{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%} 
+																	 value="{{row.maintax1}}" {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass'%} 
+																	 value="{{row.firsttax1}}"{% else %}{% if request.GET.cabin == 'business' or cabin == 'business'%} 
+																	 value="{{row.businesstax1}}"{%endif%}{% endif %}>
+																	<input type="hidden" name="action"  value="depart">
+																	<input type="hidden" name="datasource"  value="{{row.datasource}}">
+																	<input type="hidden" name="passenger"  value="{{request.GET.passenger}}">
+																	<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
+																	<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
+																	<button type"submit" value="{{searchrow.searchid}}" name="return" class="btn btn-pexSearch">Other Options For Depart Flight</button>
+																</form>
+															</div>
+														{% endif %}
 													</div>
 													
 													<!--  FOR RETURN DELTA BLOCK -->
-													{% if returndate and row.datasource == 'delta' and deltareturn%}
+													{% if returndate and row.origin1%}
 													<div class="well" itemscope itemtype="http://schema.org/Flight">
 													<h2>RETURN</h2>
 													<p itemprop="flightNumber">
-														{{deltareturn.0.datasource|title}} | {{deltareturn.0.flighno}} ({{deltacabin_name}})
-														<!-- ( {% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
-												{{deltareturn.0.cabintype1}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{deltareturn.0.cabintype2}} {% else%}{{deltareturn.0.cabintype3}} {% endif %})-->
+														{{row.datasource|title}} | {{row.flighno1}} 
+														({% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
+												{{row.cabintype11}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{row.cabintype21}} {% else%}{{row.cabintype31}} {% endif %})
 													</p>
 													<div class="table-responsive table-date-search">
 														
 														<table class="table">
-															{% with deltareturn.0.departdetails|split:'@' as mylist%}
-															{% with deltareturn.0.arivedetails|split:'@' as mylist1%}
-															{% with deltareturn.0.planedetails|split:'@' as mylist2%}
-															{% with deltareturn.0.operatedby|split:'@' as mylist3%}
+															{% with row.departdetails1|split:'@' as mylist%}
+															{% with row.arivedetails1|split:'@' as mylist1%}
+															{% with row.planedetails1|split:'@' as mylist2%}
+															{% with row.operatedby1|split:'@' as mylist3%}
 															<tr itemscope itemtype="http://schema.org/Flight">
 																<td><b>Depart: </b></td>
 																<td><time itemprop="departureTime">{{mylist.0}}</time></td>
@@ -1057,7 +1021,7 @@
 																<td>{{mylist3.0}}</td>
 															</tr>
 															{%endif%}
-															{% if deltareturn.0.stoppage == '1 STOP' or deltareturn.0.stoppage == '2 STOPS' or deltareturn.0.stoppage == '3 STOPS'%}
+															{% if row.stoppage1 == '1 STOP' or row.stoppage1 == '2 STOPS' or row.stoppage1 == '3 STOPS'%}
 															<tr>
 																<td></td>
 																<td>
@@ -1086,7 +1050,7 @@
 															{% endif%}
 															
 															{% endif %}
-															{% if deltareturn.0.stoppage == '2 STOPS' or deltareturn.0.stoppage == '3 STOPS'%}
+															{% if row.stoppage1 == '2 STOPS' or row.stoppage1 == '3 STOPS'%}
 															<tr>
 																<td></td>
 																<td>
@@ -1114,7 +1078,7 @@
 																</tr>
 															{% endif %}
 														{% endif %}
-														{% if deltareturn.0.stoppage == '3 STOPS' and mylist.3 %}
+														{% if row.stoppage1 == '3 STOPS' and mylist.3 %}
 															<tr>
 																<td></td>
 																<td>
@@ -1152,138 +1116,8 @@
 												</div>
 												</div>
 											{% endif %}
-											<!-- RETTUN DELTA BLOCK END AND START RETURN UNITED BLOCK -->
-											{% if returndate and row.datasource == 'united' and unitedreturn%}
-													<div class="well" itemscope itemtype="http://schema.org/Flight">
-													<h2>RETURN</h2>
-													<p itemprop="flightNumber">
-														{{unitedreturn.0.datasource|title}}  | {{unitedreturn.0.flighno}} ({{unitedcabin_name}})
-														<!--( {% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
-												{{unitedreturn.0.cabintype1}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{unitedreturn.0.cabintype2}} {% else%}{{unitedreturn.0.cabintype3}} {% endif %})-->
-													</p>
-													<div class="table-responsive table-date-search">
-														<table class="table">
-															{% with unitedreturn.0.departdetails|split:'@' as mylist%}
-															{% with unitedreturn.0.arivedetails|split:'@' as mylist1%}
-															{% with unitedreturn.0.planedetails|split:'@' as mylist2%}
-															{% with unitedreturn.0.operatedby|split:'@' as mylist3%}
-															<tr itemscope itemtype="http://schema.org/Flight">
-																<td><b>Depart: </b></td>
-																<td><time itemprop="departureTime">{{mylist.0}}</time></td>
-															</tr>
-															
-															
-															<tr itemscope itemtype="http://schema.org/Flight">
-															
-																<td><b>Arives:</b></td>
-																<td><time itemprop="arrivalTime">{{mylist1.0}}</time></td>
-															</tr>
-															<tr itemscope itemtype="http://schema.org/Flight">
-																<td itemprop="flightNumber"><b>Flight:</b></td>
-																<td>{{mylist2.0}}</td>
-															</tr>
-															{% if mylist3.0 %}
-																<tr>
-																	<td><b>Operated By:</b></td>
-																	<td>{{mylist3.0}}</td>
-																</tr>
-															{% endif %}
-															{% if unitedreturn.0.stoppage == '1 STOP' or unitedreturn.0.stoppage == '2 STOPS' or unitedreturn.0.stoppage == '3 STOPS' %}
-															<tr>
-																<td></td>
-																<td>
-																	<h5><b>Change planes </b></h5>
-																</td>
-															</tr>
-															<tr itemscope itemtype="http://schema.org/Flight">
-																<td><b>Depart: </b></td>
-																<td><time itemprop="departureTime">{{mylist.1}}</time></td>
-															</tr>
-															
-															
-															<tr itemscope itemtype="http://schema.org/Flight">
-																<td><bglyphicon glyphicon-menu-up></b>Arives:</td>
-																<td><time itemprop="arrivalTime">{{mylist1.1}}</time></td>
-															</tr>
-															<tr>
-																<td><b>Flight:</b></td>
-																<td>{{mylist2.1}}</td>
-															</tr>
-															{% if mylist3.1 %}
-																<tr>
-																	<td><b>Operated By:</b></td>
-																	<td>{{mylist3.1}}</td>
-																</tr>
-															{% endif %}
-															
-															{% endif %}
-															{% if unitedreturn.0.stoppage == '2 STOPS' or unitedreturn.0.stoppage == '3 STOPS'%}
-															<tr>
-																<td></td>
-																<td>
-																	<h5><b>Change planes </b></h5>
-																</td>
-															</tr>
-															<tr itemscope itemtype="http://schema.org/Flight">
-																<td><b>Depart: </b></td>
-																<td><time itemprop="departureTime">{{mylist.2}}</time></td>
-															</tr>
-															
-															
-															<tr itemscope itemtype="http://schema.org/Flight">
-																<td><b>Arives:</b></td>
-																<td><time itemprop="arrivalTime">{{mylist1.2}}</time></td>
-															</tr>
-															<tr>
-																<td><b>Flight:</b></td>
-																<td>{{mylist2.2}}</td>
-															</tr>
-															{% if mylist3.2 %}
-																<tr>
-																	<td><b>Operated By:</b></td>
-																	<td>{{mylist3.2}}</td>
-																</tr>
-															{% endif %}
-															
-															{% endif %}
-															{% if unitedreturn.0.stoppage == '3 STOPS' and mylist.3%}
-															<tr>
-																<td></td>
-																<td>
-																	<h5><b>Change planes </b></h5>
-																</td>
-															</tr>
-															<tr itemscope itemtype="http://schema.org/Flight">
-																<td><b>Depart: </b></td>
-																<td><time itemprop="departureTime">{{mylist.3}}</time></td>
-															</tr>
-															
-															
-															<tr itemscope itemtype="http://schema.org/Flight">
-																<td><b>Arives:</b></td>
-																<td><time itemprop="arrivalTime">{{mylist1.3}}</time></td>
-															</tr>
-															<tr>
-																<td><b>Flight:</b></td>
-																<td>{{mylist2.3}}</td>
-															</tr>
-															{% if mylist3.3 %}
-																<tr>
-																	<td><b>Operated By:</b></td>
-																	<td>{{mylist3.3}}</td>
-																</tr>
-															{% endif %}
-															
-															{% endif %}
-													
-													{% endwith %}
-													{% endwith %}
-													{% endwith %}
-													{% endwith %}
-												</table>
-												</div>
-												</div>
-											{% endif %}	
+											<!-- RETTUN  BLOCK END  -->
+											
 											{% if action == 'depart' %}
 													<div>
 													<form action="getsearchresult" method="get">
@@ -1895,9 +1729,12 @@ return sum;
 //@@---------------------- pagination -------------------------------------
             var pagecount = 2;
             var is_data = 1 ;
-            
             $(window).scroll(function(){
-                    if  ($(window).scrollTop() == $(document).height() - $(window).height()){
+            	var doch =($(document).height()-100);
+            	var winh = ($(window).height()-100);
+            	
+                    if  ($(window).scrollTop() == doch - winh){
+                    	
                     	if(is_data > 0)
                     	{
                        loadArticle(pagecount);
