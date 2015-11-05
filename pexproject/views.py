@@ -363,7 +363,7 @@ def getsearchresult(request):
         join = ' AND ' 
 
    
-    
+    action = ''
     if request.GET.get('keyid', '') :
         searchkey = request.GET.get('keyid', '')
         searchdata = Searchkey.objects.filter(searchid=searchkey)
@@ -374,13 +374,13 @@ def getsearchresult(request):
             action = request.GET.get('action', '')
             searchkey = request.GET.get('returnkey', '')
             returnkey = request.GET.get('keyid', '')
-            print "searchkey",searchkey
+            
         
         querylist = querylist + join + " p1.searchkeyid = " + searchkey
         join = ' AND '
         
         
-        action = ''
+       
         
         if cabinclass != '':
             if cabinclass == 'maincabin':
@@ -392,6 +392,7 @@ def getsearchresult(request):
                     taxes = "businesstax"
             
             
+        
         
         
         if 'returnkey' in request.GET or 'returnkey' in request.POST:
@@ -439,7 +440,7 @@ def getsearchresult(request):
                             deltatax = deltamin['businesstax']
                             deltacabin_name = deltamin['cabintype3']
                             returndelta = Flightdata.objects.filter(searchkeyid=returnkey, datasource='delta', business=deltaminval)
-                print "returndelta", returndelta       
+                       
                 '''
                 returndelta = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',maincabin=deltaminval)            
                 '''
@@ -470,8 +471,8 @@ def getsearchresult(request):
                             unitedcabin_name = unitedmin['cabintype3']
                             returnunited = Flightdata.objects.filter(searchkeyid=returnkey, datasource='united', business=unitedminval)
                 
-        print "unitedtax", unitedtax
-        print "deltatax", deltatax
+        
+        
         unitedorderprice = cabinclass + "+" + str(unitedminval)
         deltaorderprice = cabinclass + "+" + str(deltaminval)
         if 'returnkey' in request.GET and returndelta == '' and ('rowid' not in request.GET) and 'rowid' not in request.POST:
@@ -482,18 +483,17 @@ def getsearchresult(request):
             join = ' AND '
         
         if returnkeyid1 and ('rowid' not in request.GET) and 'rowid' not in request.POST:
-        	totalfare = "p1." + cabinclass + "+p2." + cabinclass
-        	returnfare = "p2." + cabinclass
-        	departfare = "p1." + cabinclass
-        	record = Flightdata.objects.raw("select p1.*,(p1.rowid+p2.rowid) as newid,p2.origin as origin1,p2.rowid as rowid1, p2.stoppage as stoppage1,p2.flighno as flighno1, p2.cabintype1 as cabintype11,p2.cabintype2 as cabintype21,p2.cabintype3 as cabintype31, p2.destination as destination1, p2.departure as departure1, p2.arival as arival1, p2.duration as duration1, p2.maincabin as maincabin1, p2.maintax as maintax1, p2.firsttax as firsttax1, p2.businesstax as businesstax1,p2.departdetails as departdetails1,p2.arivedetails as arivedetails1, p2.planedetails as planedetails1,p2.operatedby as operatedby1," + totalfare + " as finalprice from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ='" + returnkeyid1 + "' and " + returnfare + " > '0'  where  p1.searchkeyid = '" + searchkey + "' and " + departfare + " > 0 and " + querylist + " order by finalprice ," + taxes + ", departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset))
-            
+            totalfare = "p1." + cabinclass + "+p2." + cabinclass
+            returnfare = "p2." + cabinclass
+            departfare = "p1." + cabinclass
+            totaltax = "p1."+taxes+"+p2."+taxes
+            record = Flightdata.objects.raw("select p1.*,(p1.rowid+p2.rowid) as newid,p2.origin as origin1,p2.rowid as rowid1, p2.stoppage as stoppage1,p2.flighno as flighno1, p2.cabintype1 as cabintype11,p2.cabintype2 as cabintype21,p2.cabintype3 as cabintype31, p2.destination as destination1, p2.departure as departure1, p2.arival as arival1, p2.duration as duration1, p2.maincabin as maincabin1, p2.maintax as maintax1, p2.firsttax as firsttax1, p2.businesstax as businesstax1,p2.departdetails as departdetails1,p2.arivedetails as arivedetails1, p2.planedetails as planedetails1,p2.operatedby as operatedby1," + totalfare + " as finalprice,  "+totaltax+" as totaltaxes from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ='" + returnkeyid1 + "' and " + returnfare + " > '0'  where  p1.searchkeyid = '" + searchkey + "' and " + departfare + " > 0 and " + querylist + " order by finalprice ,totaltaxes, departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset))
+            print record.query
         else:
             cabintype = " and " + cabinclass + " > 0"
             querylist = querylist+cabintype
             record = Flightdata.objects.raw("select p1.*,p1.maintax as maintax1, p1.firsttax as firsttax1, p1.businesstax as businesstax1,p1.rowid as newid ,case when datasource = 'delta' then " + deltaorderprice + "  else " + unitedorderprice + " end as finalprice  from pexproject_flightdata as p1 where " + querylist + " order by finalprice ," + taxes + ",departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset))
-        print record.query
-        for row in record:
-                print row.newid
+        
         timerecord = Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` ")
         filterkey = {'stoppage':list2, 'datasource':list1, 'cabin':cabin} 
         if depttime:
