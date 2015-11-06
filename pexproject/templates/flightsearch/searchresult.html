@@ -35,12 +35,12 @@
 									
 									<input type="hidden" name="passenger" id="traveller" value="">
 									<input type="hidden" name="cabin" {% if cabin %} value="{{cabin}}" {% else %}value="{{request.GET.cabin}}"{% endif%} >	
-									<input type="hidden" name="action" value="{{action}}">
+									<input type="hidden" name="action" {% if 'action' in request.GET and request.GET.action == 'depart' %}value="{{request.GET.action}}" {% else%} value="{{action}}" {%endif%}>
 									<input type="hidden" name="tax" id ="fltrtax" {% if request.GET.tax %} value="{{request.GET.tax}}" {%else%} value="{{tax}}"{% endif%}>
 									<input type="hidden" name="price" id ="fltrprice" {% if request.GET.price %} value="{{request.GET.price}}" {%else%} value="{{minprice}}"{% endif%}>	
-									<input type="hidden" name="searchkeyval" value="{{ searchrow.searchid }}" id="searchkey"/>
+									<input type="hidden" name="searchkeyval"  value="{{ searchrow.searchid }}" id="searchkey"/>
 									{% if returndata %}
-									<input type="hidden" name="returnkey"  value="{{returndata}}" id="returnkey"/>
+									<input type="hidden" name="returnkey"   value="{{returndata}}" id="returnkey"/>
 									{%endif%}
 									{%endfor %}
 									{% endif %}

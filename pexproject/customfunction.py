@@ -17,6 +17,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from django.db import connection,transaction
+from multiprocessing import Process
+import threading
 from pyvirtualdisplay import Display
 import socket
 import urllib
@@ -26,7 +28,6 @@ def united(origin,destination,searchdate,searchkey):
     dt = datetime.datetime.strptime(searchdate, '%Y/%m/%d')
     date = dt.strftime('%Y-%m-%d')
     date_format = dt.strftime('%a, %b %-d')
-    print date_format
     currentdatetime = datetime.datetime.now()
     searchkey = searchkey
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
@@ -35,6 +36,7 @@ def united(origin,destination,searchdate,searchkey):
     display.start()
     driver = webdriver.Chrome()
     driver.get(url)
+    time.sleep(2)
     driver.implicitly_wait(20)
     try:
     	change = driver.find_element_by_link_text("Change").click()
@@ -51,7 +53,7 @@ def united(origin,destination,searchdate,searchkey):
     driver.implicitly_wait(20)
     try:
         
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "product_MIN-ECONOMY-SURP-OR-DISP")))
+        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "product_MIN-ECONOMY-SURP-OR-DISP")))
     except:
     	
     	print driver.current_url
@@ -159,9 +161,8 @@ def united(origin,destination,searchdate,searchkey):
             detaillink = row.find("a",{"class":"toggle-flight-block-details ui-tabs-anchor"})['href']
             test = driver.find_element_by_xpath("//a[@href='"+detaillink+"']")
             dtlid = detaillink.replace('#','').strip()
-            print dtlid
             driver.execute_script("arguments[0].click();", test);
-            time.sleep(0.1)
+            time.sleep(0.05)
             html_page1 = driver.page_source
             soup2 = BeautifulSoup(html_page1)
             departuretime = ''
@@ -177,7 +178,6 @@ def united(origin,destination,searchdate,searchkey):
                      origindest1 = info.find("div",{"class":"segment-orig-dest"}).text
                      origindest2 = origindest1.split(' to ')
                      depart = origindest2[0]
-                     print "depart"
                      dest = origindest2[1]
                      if info.find('ul',{"class":"advisories-messages"}):
                          uls = info.find('ul',{"class":"advisories-messages"})
@@ -357,7 +357,7 @@ def delta(orgn,dest,searchdate,searchkey):
 	
     try:
         print "test1"
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "_fareDisplayContainer_tmplHolder")))
+        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "_fareDisplayContainer_tmplHolder")))
     except:
         print "exception"
         display.stop()
@@ -365,9 +365,9 @@ def delta(orgn,dest,searchdate,searchkey):
         return searchkey
     
     try:
-        WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "showAll")))
+        WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.ID, "showAll")))
         driver.find_element_by_link_text('Show All').click()
-        WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "fareRowContainer_20")))
+        WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.ID, "fareRowContainer_20")))
     except:
         WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
     WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
@@ -378,7 +378,8 @@ def delta(orgn,dest,searchdate,searchkey):
     for content in datatable:
         detailid = content.find("div",{"class":"detailLinkHldr"})['id']
         driver.execute_script("document.getElementById('"+detailid+"').click()")
-        time.sleep(0.1)
+        print detailid
+        time.sleep(0.06)
         page = driver.page_source
         soup2 = BeautifulSoup(page)
         datatable1 = soup2.findAll("table",{"class":"fareDetails"})
@@ -426,7 +427,6 @@ def delta(orgn,dest,searchdate,searchkey):
             print depaturetime
             test = (datetime.datetime.strptime(depaturetime,'%I:%M %p'))
             test1 = test.strftime('%H:%M')
-            print test1
             arival = temp[3].text
             apart =  arival[-2:]
             arival = arival.replace(apart, "")
@@ -531,5 +531,54 @@ def delta(orgn,dest,searchdate,searchkey):
     display.stop()
     driver.quit()
     return searchkey
+def scrape(orgn,dest,deltasearchdate, unitedsearchdate,searchkey,returnid):
+    cursor = connection.cursor()
+    if returnid:
+        
+        cursor.execute("select traveldate from pexproject_searchkey where searchid="+str(returnid))
+        returndate = cursor.fetchone()
+        dt1 = returndate[0].strftime('%Y/%m/%d')
+        dt2 = returndate[0].strftime('%m/%d/%Y')
+        print "returndate",dt1,dt2
+        
+        p1 = Process(target=united, args=(orgn, dest, unitedsearchdate, searchkey))
+        p1.daemon = True
+        p1.start()
+        p2 = Process(target=delta, args=(orgn, dest, deltasearchdate, searchkey))
+        p2.daemon = True
+        p2.start()
+        p3 = Process(target=united, args=(dest,orgn, dt1, returnid))
+        p3.daemon = True
+        p3.start()
+        p4 = Process(target=delta, args=(dest,orgn, dt2, returnid))
+        p4.daemon = True
+        p4.start()
+        
+       
+        if p1.is_alive():
+            p1.join()
+        if p2.is_alive():
+            p2.join()
+        if p3.is_alive():
+            p3.join()
+        if p4.is_alive():
+            p4.join()
+       
+        
+    else:
+        print "else"
+        print deltasearchdate,unitedsearchdate
+        p1 = Process(target=united, args=(orgn, dest, unitedsearchdate, searchkey))
+        p1.start()
+        p2 = Process(target=delta, args=(orgn, dest, deltasearchdate, searchkey))
+        p2.start()
+        p1.join()
+        p2.join()
+    '''
+    delta(orgn,dest,deltasearchdate,searchkey)
+    united(origin,unitedsearchdate,searchdate,searchkey)
+    '''
+    
+    
 
     

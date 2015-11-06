@@ -48,9 +48,10 @@ def signup(request):
     if request.method == "POST":
         email = request.REQUEST['username']
         user = User.objects.filter(email=email)
+        print len(user)
         if len(user) > 0:
             msg = "Email is already registered"
-            return HttpResponseRedirect(reverse('index'), {'msg':msg, 'action':"signup"})
+            return HttpResponseRedirect(reverse('index'), {'singup_msg':msg, 'action':"signup"})
         password = request.REQUEST['password']
         password1 = hashlib.md5(password).hexdigest()
         airport = request.REQUEST['home_airport']
@@ -100,7 +101,6 @@ def search(request):
         
         orgnid = request.REQUEST['fromMain'] 
         destid = request.REQUEST['toMain']
-        
         originobj = Airports.objects.filter(airport_id=orgnid)
         destobj = Airports.objects.filter(airport_id=destid)
         for row in originobj:
@@ -121,27 +121,22 @@ def search(request):
         time1 = time1.strftime('%Y-%m-%d %H:%M:%S')
         searchkeyid = ''
         returnkey = ''
+        flag1 = 0
+        flag2 = 0
         Searchkey.objects.filter(scrapetime__lte=time1).delete()
         Flightdata.objects.filter(scrapetime__lte=time1).delete()
         if searchdate1:
-            print destination1, origin
             obj = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, scrapetime__gte=time1)
             returnobj = Searchkey.objects.filter(source=destination1, destination=origin, traveldate=searchdate1, scrapetime__gte=time1)
             if len(returnobj) > 0:
                 for retkey in returnobj:
                      returnkey = retkey.searchid
             else:
-                print destination1, origin
                 searchdata = Searchkey(source=destination1, destination=origin, traveldate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid)
                 searchdata.save()
                 returnkey = searchdata.searchid
-                try:
-                    threading.Thread(target=customfunction.united(destcode, orgncode, returndate, returnkey))
-                    threading.Thread(target=customfunction.delta(destcode, orgncode, date1, returnkey))
-                except:
-                    print "not working"
+                flag2 = 1
         else:
-            print destination1, origin
             obj = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, scrapetime__gte=time1)
         if len(obj) > 0:
             for keyid in obj:
@@ -155,15 +150,8 @@ def search(request):
             searchdata.save()
             searchkeyid = searchdata.searchid 
             cursor = connection.cursor()
-            try:
-                threading.Thread(target=customfunction.united(orgncode, destcode, depart, searchkeyid))
-                threading.Thread(target=customfunction.delta(orgncode, destcode, date, searchkeyid))
-                '''
-                deltares = customfunction.delta(orgncode,destcode,date,searchkeyid)
-                recordkey = customfunction.united(orgncode,destcode,depart,searchkeyid)
-                '''
-            except:
-                print "not working"
+            flag1 = 1
+            
             returnkey = ''
             if returndate:
                 retunobj = Searchkey.objects.filter(source=destination1, destination=origin, traveldate=searchdate1, scrapetime__gte=time1)
@@ -174,12 +162,23 @@ def search(request):
                     searchdata = Searchkey(source=destination1, destination=origin, traveldate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid)
                     searchdata.save()
                     returnkey = searchdata.searchid
-                    try:
-                        threading.Thread(target=customfunction.united(orgncode, destcode, depart, returnkey))
-                        threading.Thread(target=customfunction.delta(orgncode, destcode, date, returnkey))
-                        
-                    except:
-                        print "not working"
+                    flag2 = 1
+                    #customfunction.scrape(destcode, orgncode, date, depart, returnkey)
+        returnid = ''
+        
+        if flag1 == 1 and flag2 == 1:
+            returnid = returnkey
+            customfunction.scrape(orgncode, destcode, date, depart, searchkeyid,returnid)
+            
+            #customfunction.scrape(orgncode, destcode, date, depart, searchkeyid)
+            #customfunction.scrape(destcode, orgncode, date, depart, returnkey)
+        elif flag1 == 1 and flag2 == 0:
+            print "one way",searchkeyid,date
+            customfunction.scrape(orgncode, destcode, date, depart, searchkeyid,returnid)
+        else:
+            if flag2 == 1 and flag1 == 0:
+                customfunction.scrape(destcode, orgncode, date1, returndate, returnkey,returnid)
+                       
         mimetype = 'application/json'
         results = []
         results.append(searchkeyid)

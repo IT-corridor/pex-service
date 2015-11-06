@@ -100,6 +100,9 @@
 								</form>
 							</div>
 							<div role="tabpanel" class="tab-pane" id="login">
+								{% if msg %}
+									<div class="show-msg">{{msg}} </div>
+								{% endif %}
 								<form action="login" method="post">
 									{% csrf_token %}
 									<div class="form-group">
@@ -132,8 +135,23 @@
 </div>
 
 <script>
+	var lmsg = "{{msg}}";
+	var smsg = "{{smsg}}";
+	console.log(smsg);
 	$(function(){
-		//$('#login').tab('show');
+		$(document).ready(function() {
+			if (lmsg != '')
+			{
+				$('#login-modal').modal('show');
+				activeLogin();
+			}
+			if (smsg != '')
+			{
+				$('#login-modal').modal('show');
+				activeSignup();	
+			}
+		  
+		});
 	});
 	</script>
 
@@ -142,25 +160,27 @@
 	var which_button_is_clicked=$(this).attr('id');
 	
 	 if($.trim(which_button_is_clicked)=="loginbtn"){ 
-	 	
-	 	$('#signup').removeClass('active');
-	 	$('#signuptab').removeClass('active');
-		$('#login').addClass('active');
-		$('#logintab').addClass('active');
-		
+	 	activeLogin();
 	}
-	 else if($.trim(which_button_is_clicked)=="signupbtn")
-	 {
-	 	
-	 	$('#login').removeClass('active');
-	 	$('#logintab').removeClass('active');
-		$('#signup').addClass('active');
-		$('#signuptab').addClass('active');
-		
-	 }
+	else if($.trim(which_button_is_clicked)=="signupbtn")
+	{
+	 	activeSignup();
+	}
 });
-	
-	
+function activeLogin(){
+	$('#signup').removeClass('active');
+	$('#signuptab').removeClass('active');
+	$('#login').addClass('active');
+	$('#logintab').addClass('active');
+}
+
+function activeSignup(){
+	$('#login').removeClass('active');
+	$('#logintab').removeClass('active');
+	$('#signup').addClass('active');
+	$('#signuptab').addClass('active');
+}	
+
 </script>
 	</body>
 </html>
