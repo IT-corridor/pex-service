@@ -121,8 +121,8 @@ def search(request):
         time1 = time1.strftime('%Y-%m-%d %H:%M:%S')
         searchkeyid = ''
         returnkey = ''
-        flag1 = 0
-        flag2 = 0
+        #flag1 = 0
+        #flag2 = 0
         Searchkey.objects.filter(scrapetime__lte=time1).delete()
         Flightdata.objects.filter(scrapetime__lte=time1).delete()
         if searchdate1:
@@ -135,7 +135,8 @@ def search(request):
                 searchdata = Searchkey(source=destination1, destination=origin, traveldate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid)
                 searchdata.save()
                 returnkey = searchdata.searchid
-                flag2 = 1
+                #flag2 = 1
+                customfunction.scrape(destcode, orgncode, date1, returndate, returnkey)
         else:
             obj = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, scrapetime__gte=time1)
         if len(obj) > 0:
@@ -150,8 +151,8 @@ def search(request):
             searchdata.save()
             searchkeyid = searchdata.searchid 
             cursor = connection.cursor()
-            flag1 = 1
-            
+            #flag1 = 1
+            customfunction.scrape(orgncode, destcode, date, depart, searchkeyid)
             returnkey = ''
             if returndate:
                 retunobj = Searchkey.objects.filter(source=destination1, destination=origin, traveldate=searchdate1, scrapetime__gte=time1)
@@ -162,23 +163,24 @@ def search(request):
                     searchdata = Searchkey(source=destination1, destination=origin, traveldate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid)
                     searchdata.save()
                     returnkey = searchdata.searchid
-                    flag2 = 1
-                    #customfunction.scrape(destcode, orgncode, date, depart, returnkey)
+                    #flag2 = 1
+                    #customfunction.scrape(destcode, orgncode, date1, returndate, returnkey)
+                    customfunction.scrape(destcode, orgncode, date, depart, returnkey)
+        '''
         returnid = ''
-        
         if flag1 == 1 and flag2 == 1:
             returnid = returnkey
-            customfunction.scrape(orgncode, destcode, date, depart, searchkeyid,returnid)
+            #customfunction.scrape(orgncode, destcode, date, depart, searchkeyid,returnid)
             
-            #customfunction.scrape(orgncode, destcode, date, depart, searchkeyid)
-            #customfunction.scrape(destcode, orgncode, date, depart, returnkey)
+            customfunction.scrape(orgncode, destcode, date, depart, searchkeyid)
+            customfunction.scrape(destcode, orgncode, date, depart, returnkey)
         elif flag1 == 1 and flag2 == 0:
             print "one way",searchkeyid,date
             customfunction.scrape(orgncode, destcode, date, depart, searchkeyid,returnid)
         else:
             if flag2 == 1 and flag1 == 0:
                 customfunction.scrape(destcode, orgncode, date1, returndate, returnkey,returnid)
-                       
+        '''               
         mimetype = 'application/json'
         results = []
         results.append(searchkeyid)
