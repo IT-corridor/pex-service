@@ -432,7 +432,7 @@
 														</table>
 														<!--
 														{% if row.rowid1 %}
-															<div>
+													<!--		<div>
 																<form action="getsearchresult" method="get">
 																	{% csrf_token %}
 																	<input type="hidden" name="cabin"  value="{{request.GET.cabin}}">
@@ -454,9 +454,8 @@
 																	<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
 																	<button type"submit" value="{{searchrow.searchid}}" name="return" class="btn btn-pexSearch">Other Options For Depart Flight</button>
 																</form>
-															</div>
-														{% endif %} 
-														-->
+															</div>-->
+														{% endif %}
 													</div>
 													
 													<!--  FOR RETURN DELTA BLOCK -->
