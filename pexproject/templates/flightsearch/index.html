@@ -69,14 +69,14 @@
 			            </div>
 			            <div class="container xs-nopadding">
 			            <div class="col-sm-12 col-xs-12 nopadding pl5 pd-xs custome-pd">
-			              <div class="col-sm-2 col-xs-12 nopadding">
+			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
 			                <div class="form-group nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="from">From:</label>
 			                  <input type="search" tabindex="1" class=" form_val form-control" id="from" name="from" placeholder="From" autocomplete="off">
 			                  <input type="hidden" id="fromid" name="fromMain" />
 			                </div>
 			              </div>
-			              <div class="col-sm-2 col-xs-12 xs-nopadding">
+			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
 			                <div class="form-group  nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="to">To:</label>
 			                  <input type="search" tabindex="2" class="form_val form-control" id="to" name="to" placeholder="To" autocomplete="off">
@@ -238,12 +238,12 @@
 {% include "flightsearch/footer.html" %}
     
 	<script>
-	/*
+	
 		$('#mc').click(function() {
-			window.location.href = "/booking/";
-		  
+			var location = "flights?action=mc";
+			window.location.href = location;
 		});
-		*/
+		
 		
 	</script>
 

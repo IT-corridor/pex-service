@@ -52,6 +52,7 @@ var trip = $('#trip').val();
 var returndate = $('#retdate').val();
 var rdtrip = $('#rdtrip').val();
 var traveller = $('#passenger').val();
+var multikey ='';
 var searchid = '';
 $.ajaxSetup({
   data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
@@ -63,7 +64,9 @@ $.ajax({
         url: "/search/",
         data: "returndate="+ encodeURI(returndate)+"&rndtripkey="+encodeURI(rdtrip) +"&triptype="+ encodeURI(trip)+ "&fromMain="+ encodeURI(from)+ "&toMain=" + encodeURI(to)+ "&deptdate=" + encodeURI(depart) + "&csrfmiddlewaretoken=" + encodeURI(CSRF_TOKEN),
     	success: function(data){
-        searchid = data[0];
+        multikey = data[0];
+        searchid1 = multikey.split(',');
+        searchid = searchid1[0];
         var returnid='';
         if(data[1])
         {
@@ -76,10 +79,14 @@ $.ajax({
      
  //alert(searchid)  ;  
  function redirecttosearchpage(searchid,returnkey){
+ 	multicity='';
+ 	if(multikey.indexOf(",") >= 0){
+ 		multicity = "&multicity="+encodeURI(multikey);
+ 	}
  	if(searchid != '')
 {  
 	$('#searchid').val(searchid);
-	var location = "getsearchresult?keyid="+ encodeURI(searchid)+"&cabin="+encodeURI(cabintype)+"&passenger="+encodeURI(traveller);
+	var location = "getsearchresult?keyid="+ encodeURI(searchid)+"&cabin="+encodeURI(cabintype)+"&passenger="+encodeURI(traveller)+multicity;
 	if(returnkey != ''){ location = location+"&returnkey="+encodeURI(returnkey);}
 	window.location.href = location; 
 }

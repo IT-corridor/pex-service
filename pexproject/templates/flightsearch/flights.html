@@ -53,30 +53,238 @@
         	<div class="col-xs-12 xs-nopadding">
 				<form class="form-horizontal" role="form" action="searchLoadingPage" method="post" >
 		        	{% csrf_token %}
-			         <div class="col-xs-12 nopadding">
+		        	<div class="col-xs-12 nopadding">
 							<div class="container nopadding trip-custome">
 								<div class="col-sm-12 col-xs-12 nopadding">
 			                <div class="checkbox-inline mhr10px">
 			                  <label><input type="radio" id="rt" name="trip" value="roundTripBtn" checked="checked"> Round-Trip</label>
 			                </div>
 			                <div class="checkbox-inline mhr10px">
-			                  <label><input type="radio" id="ow" name="trip" value="oneWayBtn" {% if returndate == ''%} checked="checked" {%endif%}> One-Way</label>
+			                  <label><input type="radio" id="ow" name="trip" value="oneWayBtn" {% if returndate == '' or mc == 'ow'%} checked="checked" {%endif%}> One-Way</label>
 			                </div>
 			                <div class="checkbox-inline mhr10px">
-			                  <label><input type="radio" id="mc" value="multicity" name="trip"> Multi-City</label>
+			                  <label><input type="radio" id="mc" value="multicity" name="trip" {% if mc == 'mc'%} checked="checked" {%endif%}> Multi-City</label>
 			                </div>
 			              </div>
 			            </div>
+			            {% if mc == 'mc' %}
+			            <input type="hidden" name="multicy" value="mc">
+			            	<div class="container xs-nopadding">
+			            <div class="col-sm-12 col-xs-12 nopadding pl5 pd-xs custome-pd">
+			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
+			                <div class="form-group nomr noml" class="ui-widget">
+			                  <label class="sr-only" for="from">From:</label>
+			                  <input type="search" tabindex="1" class=" form_val form-control depart_code" name="from" placeholder="From" autocomplete="off" {% if search %} value="{{search.source}}" {%endif%}>
+			                  <input type="hidden" id="fromid1" class="fromid" name="fromMain" />
+			                </div>
+			              </div>
+			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
+			                <div class="form-group  nomr noml" class="ui-widget">
+			                  <label class="sr-only" for="to">To:</label>
+			                  <input type="search" tabindex="2" class="form_val form-control arive_code" name="to" placeholder="To" autocomplete="off" {% if search %} value="{{search.destination}}" {%endif%}>
+			                  <input type="hidden" id="toid1" name="toMain" class="fromid" />
+			                </div>
+			              </div>
+			              <div class="input-daterange">
+			              <div class="col-sm-2 col-xs-6 nopl xs-pr5 mobile-wt">
+			
+			                <div class="form-group nomr noml nomb">
+			                  <label class="sr-only" for="departMain">Departure Date:</label>
+			                  <div class="inner-addon left-addon date" id="dp1">
+			                      <i class="glyphicon glyphicon-calendar"></i>
+			                      <input type="text" tabindex="3" class="form_val form-control calender_class"  placeholder="Depart" name="deptdate" autocomplete="off" >
+			                  </div>
+			                  <div class="form-group" id="deptmsg"></div>
+			                </div>
+			              </div>
+			              </div>
+			              <div class="col-sm-2 col-xs-12 xs-nopadding" >
+			                <button type="submit" class="form_val btn btn-pexSearch" id="submitid" tabindex="13">Search</button>
+			              </div>
+			            </div>
+			            </div>
+			            
+			            
+		        		<div class="col-xs-12 nopadding addmore">
+		        		<div class="container xs-nopadding">
+			            <div class="col-sm-12 col-xs-12 nopadding pl5 pd-xs custome-pd">
+			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
+			                <div class="form-group nomr noml" class="ui-widget">
+			                  <label class="sr-only" for="from">From:</label>
+			                  <input type="search" tabindex="1" class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" {% if search %} value="{{search.source}}" {%endif%}>
+			                  <input type="hidden" id="fromid2" class="fromid" name="fromMain"/>
+			                </div>
+			              </div>
+			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
+			                <div class="form-group  nomr noml" class="ui-widget">
+			                  <label class="sr-only" for="to">To:</label>
+			                  <input type="search" tabindex="2" class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" {% if search %} value="{{search.destination}}" {%endif%}>
+			                  <input type="hidden" id="toid2" class="fromid" name="toMain"/>
+			                </div>
+			              </div>
+			              <div class="input-daterange">
+			              <div class="col-sm-2 col-xs-6 nopl xs-pr5 mobile-wt">
+			
+			                <div class="form-group nomr noml nomb">
+			                  <label class="sr-only" for="departMain">Departure Date:</label>
+			                  <div class="inner-addon left-addon date" id="dp1">
+			                      <i class="glyphicon glyphicon-calendar"></i>
+			                      <input type="text" tabindex="3" class="form_val form-control calender_class"  placeholder="Depart" name="deptdate" autocomplete="off" {% if search %} value="{{search.traveldate|date:'m/d/Y'}}" {%endif%}>
+			                  </div>
+			     
+			                </div>
+			              </div>
+			              </div>
+			              <a href="#" class="remove_field">Remove</a>
+			              </div>
+			              
+			            </div>
+			            </div>
+			          <div class="col-xs-12 nopadding">
+			            
+			            	<div class="container xs-nopadding">
+			            <div class="col-sm-12 col-xs-12 nopadding pl5 pd-xs custome-pd ">
+			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
+			                <div class="form-group nomr noml" class="ui-widget">
+			                  <label class="sr-only" for="from">From:</label>
+			                  <input type="search" tabindex="1" class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" >
+			                  <input type="hidden" id="fromid3" class="fromid" name="fromMain"  />
+			                </div>
+			              </div>
+			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
+			                <div class="form-group  nomr noml" class="ui-widget">
+			                  <label class="sr-only" for="to">To:</label>
+			                  <input type="search" tabindex="2" class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" >
+			                  <input type="hidden" id="toid3" class="fromid" name="toMain" />
+			                </div>
+			              </div>
+			              <div class="input-daterange">
+			              <div class="col-sm-2 col-xs-6 nopl xs-pr5 mobile-wt">
+			
+			                <div class="form-group nomr noml nomb" >
+			                  <label class="sr-only" for="departMain">Departure Date:</label>
+			                  <div class="inner-addon left-addon date" id="dp1">
+			                      <i class="glyphicon glyphicon-calendar"></i>
+			                      <input type="text" tabindex="3" class="form_val form-control calender_class"  placeholder="Depart" name="deptdate" autocomplete="off" >
+			                  </div>
+			                  
+			                </div>
+			                 
+			              </div>
+			              
+			              </div>
+			              <a href="#" class="remove_field">Remove</a>
+			            </div>
+			            
+			              <div class="col-sm-2 col-xs-12 nopadding for_cabin_class" id="cabintab" tabindex="5">
+			                <div class="form-group travelers-dpdn-details no-margin" class="ui-widget">
+			                  <div class="dropdown travelers-holder form-control">
+			                  	<span class="" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="travelar">1 adult, Economy</span> <span class="caret"></span></span>
+			                  	<div class="travelers-down-menu dropdown-menu for_cabin_class" aria-labelledby="dropdownMenu1">
+			                  		<div class="col-xs-12 down-menu-block">
+										<span class="col-xs-4 nopadding">Class</span>
+										<span class="col-xs-8 text-right nopr"><select class="custom-field-control " id="cabintype" name="cabintype" tabindex="6">
+											<option class="cabin" value="maincabin">Economy</option>
+											<option class="cabin" value="firstclass">Business</option>
+											<option  class="cabin" value="business">First</option>
+											</select></span>                  			
+			                  		</div>
+			                  		<div class="col-xs-12 alert alert-warning"> </div>
+			                  		<div class="col-xs-12 down-menu-block">
+			                  			<p>
+										<span class="col-xs-4 nopadding">Adults</span>
+										<span class="col-xs-5 text-right nopadding">
+											<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
+											<input type="text" class="field-width custom-field-control numberHolder qty" value="1" id="adults" tabindex="7">
+											<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>								
+										</span>
+										<span class="col-xs-3 nopr">18+</span> 
+										</p>                 			
+			                  		</div>
+			                  		<div class="col-xs-12 down-menu-block">
+			                  			<p>
+										<span class="col-xs-4 nopadding">Seniors</span>
+										<span class="col-xs-5 text-right nopadding">
+											<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
+											<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="senior" tabindex="8">
+											<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>								
+											
+										</span>
+										<span class="col-xs-3 nopr">65+</span> 
+										</p>                 			
+			                  		</div>
+			                  		<div class="col-xs-12 down-menu-block">
+			                  			<p>
+										<span class="col-xs-4 nopadding">Youths</span>
+										<span class="col-xs-5 text-right nopadding">
+											<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
+											<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="youth" tabindex="9">
+											<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>								
+											
+										</span>
+										<span class="col-xs-3 nopr">12-17</span>  
+										</p>                			
+			                  		</div>
+			                  		<div class="col-xs-12 down-menu-block">
+			                  			<p>
+										<span class="col-xs-4 nopadding">Children</span>
+										<span class="col-xs-5 text-right nopadding">
+											<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
+											<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="children" tabindex="10">								
+											<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
+											
+										</span>
+										<span class="col-xs-3 nopr">2-11</span>
+										</p>                  			
+			                  		</div>
+			                  		<div class="col-xs-12 down-menu-block">
+			                  			<p>
+										<span class="col-xs-4 nopadding">Seat infants</span>
+										<span class="col-xs-5 text-right nopadding">
+											<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
+											<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="seatinfants" tabindex="11">								
+											<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
+											
+										</span>
+										<span class="col-xs-3 nopr">under 2</span>  
+										</p>                			
+			                  		</div>
+			                  		<div class="col-xs-12 down-menu-block">
+			                  			<p>
+										<span class="col-xs-4 nopadding">Lap infants</span>
+										<span class="col-xs-5 text-right nopadding">
+											<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
+											<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="lapinfants" tabindex="12">								
+											<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
+											
+										</span>
+										<span class="col-xs-3 nopr">under 2</span> 
+										</p>                 			
+			                  		</div>
+			                  		<div class="col-xs-12 down-menu-block">
+			                  			
+			                  				<span class="btn btn-pexSearch" id="apply_traveler">Apply</span>
+			                  			
+			                  		</div>
+			                  		<input type="hidden" id="passenger" name="passenger" value="">
+			                  	</div>
+			                  </div>
+			                </div>
+			                
+			              </div>
+			            
+			            <span class="btn btn-pexSearch add_field_button"> Add Another Flight</span>
+			            {% else %}
 			            <div class="container xs-nopadding">
 			            <div class="col-sm-12 col-xs-12 nopadding pl5 pd-xs custome-pd">
-			              <div class="col-sm-2 col-xs-12 nopadding">
+			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
 			                <div class="form-group nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="from">From:</label>
 			                  <input type="search" tabindex="1" class=" form_val form-control" id="from" name="from" placeholder="From" autocomplete="off" {% if search %} value="{{search.source}}" {%endif%}>
 			                  <input type="hidden" id="fromid" name="fromMain" {% if search %} value="{{search.origin_airport_id}}" {%endif%} />
 			                </div>
 			              </div>
-			              <div class="col-sm-2 col-xs-12 xs-nopadding">
+			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
 			                <div class="form-group  nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="to">To:</label>
 			                  <input type="search" tabindex="2" class="form_val form-control" id="to" name="to" placeholder="To" autocomplete="off" {% if search %} value="{{search.destination}}" {%endif%}>
@@ -84,7 +292,7 @@
 			                </div>
 			              </div>
 			              <div class="input-daterange">
-			              <div class="col-sm-2 col-xs-6 nopl xs-pr5 mobile-wt">
+			              <div {% if mc == 'ow' %} class="col-sm-2 col-xs-12 mobile-wt nopl"{%else%} class="col-sm-2 col-xs-6 nopl xs-pr5 mobile-wt" {%endif%}>
 			
 			                <div class="form-group nomr noml nomb" id="rmv_nomr">
 			                  <label class="sr-only" for="departMain">Departure Date:</label>
@@ -206,7 +414,9 @@
 			              </div>
 			            </div>
 			            </div>
+			            {% endif %}
 			          </div>
+			           
 			        </form>	        		
         	</div>
         </div>
@@ -275,6 +485,41 @@
 	});
     </script>
     <script>
+		
+		$(document).ready(function() {
+	    var max_fields      = 6; //maximum input boxes allowed
+	    var add_button      = $(".add_field_button"); //Add button ID
+	    var x = 1; //initlal text box count
+	    $(add_button).click(function(e){ 
+	    	var html='';
+	        e.preventDefault();
+	        	html='';
+	        	html = '<div class="col-xs-12 nopadding"><div class="container xs-nopadding"><div class="col-sm-12 col-xs-12 nopadding pl5 pd-xs custome-pd">';
+	        	html= html+ ' <div class="col-sm-2 col-xs-12 nopadding"><div class="form-group nomr noml" class="ui-widget"><label class="sr-only" for="from">From:</label>';
+	        	html= html+'<input type="search" tabindex="1" class=" form_val form-control" id="from" name="from"placeholder="From" autocomplete="off"></div></div>';
+	        	html= html+'<div class="col-sm-2 col-xs-12 xs-nopadding"> <div class="form-group  nomr noml" class="ui-widget"><label class="sr-only" for="to">To:</label>';
+	        	html=html+'<input type="search" tabindex="2" class="form_val form-control" name="to" placeholder="To" autocomplete="off"></div></div>';
+	        	html=html+'<div class="input-daterange"><div class="col-sm-2 col-xs-6 nopl xs-pr5 mobile-wt"><div class="form-group nomr noml nomb">';
+	        	html=html+'<label class="sr-only" for="departMain">Departure Date:</label><div class="inner-addon left-addon date" id="dp1">';
+	        	html=html+'<i class="glyphicon glyphicon-calendar"></i><input type="text" tabindex="3" class="form_val form-control"';
+	        	html=html+'placeholder="Depart" name="deptdate" autocomplete="off"></div></div></div></div><a href="#" class="remove_field">Remove</a></div></div></div>';
+	        if(x < max_fields){ //max input box allowed
+	            x++; //text box increment
+	            $('.addmore').append(html);
+	            html=''; //add input box
+	        }
+	    });
+	    $('.remove_field').on('click',function (e) {
+		  e.preventDefault(); $(this).parent('div').remove(); x--;
+		});
+	   
+	    $('.addmore').on("click",".remove_field", function(e){ //user click on remove text
+	        e.preventDefault(); $(this).parent('div').remove(); x--;
+	    }); 
+	});
+	</script>
+        
+    <script>
     $("#submitid").click(function(event) {
     	if($('#from').val().length<1)
     	{
@@ -306,7 +551,13 @@
     			$("#return").show();
     		}
     });
+    	var action = "{{mc}}" ;
     	$("#ow").click(function(){
+    		
+    		if(action == 'mc'){
+    			redirect('ow');
+    		}
+    		
     		if($("#ow").prop('checked') == true){
     			$("#return").hide();
     			$('.mobile-wt').removeClass('col-xs-6 xs-pr5');
@@ -319,7 +570,24 @@
     		}
     		
     	});
+    	$('#mc').click(function() {
+    		if(action != 'mc')
+    		{
+    			redirect('mc');
+    		}
+			
+		});
+		
+	   function redirect(page){
+	   	var location = "flights?action="+encodeURI(page);
+		window.location.href = location;
+	   }
+	
     	$("#rt").click(function(){
+    		if(action == 'mc')
+    		{
+    			redirect('');	
+    		}
     		if($("#rt").prop('checked') == true){
     			$("#return").show();
     			$('.mobile-wt').removeClass('col-xs-12');
@@ -333,7 +601,24 @@
     		
     	});
     	
+  	
+    	
     $(function() {
+    $('.depart_code, .arive_code').autocomplete({
+  		 open: function(event, ui) {
+	        	$('.ui-autocomplete').off('menufocus hover mouseover');
+    		},
+		autoFocus: true,
+    	source: "get_airport/",
+    	minLength: 2,
+    	select: function(event, ui) {
+    		var hiddenid = $(this).siblings('.fromid').attr('id');
+    		console.log(hiddenid);
+    		$("#"+hiddenid).val(ui.item.id);
+    	},
+    	
+    	});
+        
     
     $( "#from" ).autocomplete({
   		 open: function(event, ui) {
@@ -362,6 +647,9 @@
     	
     </script>
     <script>
+    $(function(){
+    	$('.calender_class').datepicker({format: "m/d/Y", minDate: 0 });
+    });
 
 	 $(function(){
 	 	/*

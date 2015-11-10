@@ -17,8 +17,15 @@ def assignval(record):
 def split(value, seperator):
     datalist = value.split(seperator)
     return datalist
-    
-        
+
+def lookup(var,key):
+    return var[key]
+
+def increament(val):
+    return val+1;
+
+register.filter('increament', increament)            
+register.filter('lookup', lookup)        
 register.filter('floatadd', floatadd)
 register.filter('assign', assign)
 register.filter('split', split)

@@ -562,7 +562,6 @@
 							
 							{% if data %}
 								
-								
 								{% for row in data %}
 								<div class="col-md-12 col-xs-12 centr-info responsive-color-img">
 									<div class="col-sm-3 col-xs-5 visible-xs visible-sm nopl">
@@ -593,7 +592,7 @@
 												  
 															<div class="col-xs-12 nopadding mvb10px na-ra" itemscope itemtype ="http://schema.org/FlightReservation">
 																<p class="flight-rate" itemprop="totalPrice">
-																	{{row.finalprice|intcomma}} Miles + {% if returndate%} <span>${{row.maintax|floatadd:row.maintax1|floatformat:2}}</span> {%else%}<span>${{row.maintax|floatformat:2}} </span> {%endif%}
+																	{{row.finalprice|intcomma}} Miles + {% if returndate %} <span>${{row.maintax|floatadd:row.maintax1|floatformat:2}}</span> {%else%}<span>${{row.maintax|floatformat:2}} </span> {%endif%}
 																</p>
 															</div> 
 														
@@ -627,9 +626,8 @@
 											</div>
 										</div>
 									</div>
+									
 									<div class="col-md-7 col-xs-12 nopadding">
-										
-										
 										<div class="col-xs-12 nopadding flight-div-repeat"> 
 										<div class="col-md-8 col-sm-8 col-xs-12 nopadding">
 											<div class="col-xs-12 nopadding">
@@ -722,10 +720,9 @@
 												</div>
 											</div>
 										</div>
-									</div>
-									
+									</div>	
 									<!-- terurn data block -->
-									{% if returndate and row.origin1%}
+									{% if returndate and row.origin1 %}
 									 
 									<div class="col-xs-12 nopadding flight-div-repeat"> 
 										<div class="col-md-8 col-sm-8 col-xs-12 nopadding">
@@ -985,7 +982,7 @@
 													</div>
 													
 													<!--  FOR RETURN DELTA BLOCK -->
-													{% if returndate and row.origin1%}
+													{% if returndate and row.origin1 %}
 													<div class="well" itemscope itemtype="http://schema.org/Flight">
 													<h2>RETURN</h2>
 													<p itemprop="flightNumber">
@@ -1155,6 +1152,7 @@
 									</div>
 								</div>
 								{% endfor %}
+								
 							{% endif %}					
 							</div>
 							
@@ -1733,7 +1731,6 @@ return sum;
             $(window).scroll(function(){
             	var doch =($(document).height()-200);
             	var winh = ($(window).height() + 200);
-            	console.log($(window).scrollTop(), $("footer").offset().top - $("footer").outerHeight() - 200, is_data);
                     if  ($(window).scrollTop() >= doch - winh){
         //            if(parseInt($(window).scrollTop()) >= parseInt( $("footer").offset().top - $("footer").outerHeight() - 200) ){	
 //		alert("1");
@@ -1766,12 +1763,19 @@ return sum;
 	        			stoppage.push($(this).val());
 	        			
 	            	});
+	            	var multicity='';
+	            	var multicity1 = "{{request.GET.multicity}}";
+	            	if (multicity1 != '')
+	            	{
+	            		multicity = "&multicity="+multicity1;
+	            	}
+	            	console.log(multicity);
 	            	var stoplenght = stoppage.length;
 	            	var airlinelenght = airline.length;
                     $.ajax({
                         url:urls,
                         type:'POST',
-                        data: "action="+encodeURI('infinite_scroll')+"&page_no="+encodeURI(pageNumber)+ "&loop_file=loop&csrfmiddlewaretoken={{ csrf_token }}&depaturemin="+depaturemin+"&depaturemax="+depaturemax+"&airlines="+airline+"&stoppage="+stoppage+row_val, 
+                        data: "action="+encodeURI('infinite_scroll')+"&page_no="+encodeURI(pageNumber)+ "&loop_file=loop&csrfmiddlewaretoken={{ csrf_token }}&depaturemin="+depaturemin+"&depaturemax="+depaturemax+"&airlines="+airline+"&stoppage="+stoppage+row_val+multicity, 
                         success: function(html){
                             $("#content").append(html);   // This will be the div where our content will be loaded
 				call_sent = "completed";
