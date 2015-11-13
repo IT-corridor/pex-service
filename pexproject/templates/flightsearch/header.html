@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	
 	<head>
+		
 		{% load staticfiles %}
 		{% if request.GET.selectedid %}
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -73,14 +74,29 @@
 			-->
             </ul> 
             <ul class="nav navbar-nav navbar-right right-nav-link responsive-edit mvt10px">
+            	
             	{% if request.session.username and request.session.password  %}
-              	<li class=""><a href="#"><span class="glyphicon glyphicon-user">{{request.session.username}}</span></a></li>
-            		<li class=""><a href="logout"><span>LOGOUT</span></a></li>
+              	<li class="">
+              		
+              		<div class="dropdown">
+					  <a id="dLabel" data-target="#" href="http://example.com" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+					    <span class="glyphicon glyphicon-user"></span>{{request.session.username}}
+					    <span class="caret"></span>
+					  </a>
+					
+					  <ul class="dropdown-menu" aria-labelledby="dLabel">
+					  	 <li ><a href="#"><span>Manage Account</span></a></li>
+					    <li ><a href="logout"><span>Logout</span></a></li>
+					  </ul>
+					</div>
+					</li>
+            		
               	{%else%}
               	<li class="signuplogin" id="signupbtn" ><a href="#" data-toggle="modal" data-target="#login-modal" > SIGN UP</a></li>
               	<li class="signuplogin" id="loginbtn"><a href="#" data-toggle="modal" data-target="#login-modal"> LOGIN</a></li>
               	{%endif%}
               	<li class=""><a href="#" class="help"><!-- <span class="glyphicon glyphicon-info-sign"></span> --> HELP</a></li>
+           
             </ul>  
             <div class="col-xs-12 text-left for-mobile-view">
                     <ul class="nav navbar-nav navbar-footerimg social-icon">

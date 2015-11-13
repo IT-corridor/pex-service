@@ -41,7 +41,6 @@ logger = logging.getLogger(__name__)
 
 def index(request):
     context = {}
-    print "test";
     return  render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
 
 def flights(request):
@@ -57,7 +56,6 @@ def signup(request):
     if request.method == "POST":
         email = request.REQUEST['username']
         user = User.objects.filter(email=email)
-        print len(user)
         if len(user) > 0:
             msg = "Email is already registered"
             return render_to_response('flightsearch/index.html', {'signup_msg':msg},context_instance=RequestContext(request))
@@ -353,10 +351,8 @@ def getsearchresult(request):
             recordkey = request.GET.get('keyid', '')
             totalrecords = Flightdata.objects.filter(searchkeyid=recordkey).count()
     if 'multicity' in request.GET or 'multicity' in request.POST:
-        print "coming"
         multicitykey = request.GET.get('multicity', '')
         multicitykey1 = multicitykey.split(',')
-        print "multicitykey1",multicitykey1[1]
     if 'stoppage' in request.POST:
         if request.is_ajax():
             list2 = request.POST.getlist('stoppage')
@@ -440,7 +436,13 @@ def getsearchresult(request):
     action = ''
     if request.GET.get('keyid', '') :
         searchkey = request.GET.get('keyid', '')
-        searchdata = Searchkey.objects.filter(searchid=searchkey)
+        if request.GET.get('multicity'):
+            allkey = request.GET.get('multicity')
+            multiple_key = allkey.split(',')
+            searchdata = Searchkey.objects.filter(searchid__in=multiple_key)
+            print searchdata
+        else:
+            searchdata = Searchkey.objects.filter(searchid=searchkey)
         for s in searchdata:
             source = s.source
             destination = s.destination
@@ -559,19 +561,64 @@ def getsearchresult(request):
         multirecods ={}
         counter =0
         recordlen = 0
+        
+        mainlist =[]
+        multicity = ''
+        n = 1
+        
         if multicitykey1:
-            cabintype = " and " + cabinclass + " > 0"
+            multicity='true' 
+            cabintype = " and " + "p1."+cabinclass + " > 0"
             querylist = querylist+cabintype
             replacekey = searchkey
+            totalfare = ", p1." + cabinclass
+            totaltax = ", p1."+taxes
+            departfare = "p1." + cabinclass 
+            qry1 = "select p1.*,"
+            qry2=''
+            qry3=''
+            newidstring="p1.rowid"
+            sep = ",'_',"
+            sep1 = ''
             for keys in multicitykey1:
-                print "keys",keys
-                querykey = "p1.searchkeyid = "+keys
-                querylist = querylist.replace('p1.searchkeyid = '+replacekey,querykey)
-                print querylist 
-                record = Flightdata.objects.raw("select p1.*,p1.maintax as maintax1, p1.firsttax as firsttax1, p1.businesstax as businesstax1,p1.rowid as newid ,case when datasource = 'delta' then " + deltaorderprice + "  else " + unitedorderprice + " end as finalprice  from pexproject_flightdata as p1 where " + querylist + " order by finalprice ," + taxes + ",departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset))
-                replacekey = keys
-                multirecods[counter]=record
+                #print "keys",keys
+                if n > 1:
+                    totalfare = totalfare+"+p"+str(n)+"." + cabinclass
+                    totaltax = totaltax+"+p"+str(n)+"."+taxes
+                    newidstring =newidstring+sep+"p"+str(n)+".rowid"
+                    qry2 = qry2+sep1+'p'+str(n)+'.origin as origin'+str(n)+',p'+str(n)+'.rowid as rowid'+str(n)+', p'+str(n)+'.stoppage as stoppage'+str(n)+',p'+str(n)+'.flighno as flighno'+str(n)+', p'+str(n)+'.cabintype1 as cabintype1'+str(n)+',p'+str(n)+'.cabintype2 as cabintype2'+str(n)+',p'+str(n)+'.cabintype3 as cabintype3'+str(n)+', p'+str(n)+'.destination as destination'+str(n)+', p'+str(n)+'.departure as departure'+str(n)+', p'+str(n)+'.arival as arival'+str(n)+', p'+str(n)+'.duration as duration'+str(n)+', p'+str(n)+'.maincabin as maincabin'+str(n)+', p'+str(n)+'.maintax as maintax'+str(n)+', p'+str(n)+'.firsttax as firsttax'+str(n)+', p'+str(n)+'.businesstax as businesstax'+str(n)+',p'+str(n)+'.departdetails as departdetails'+str(n)+',p'+str(n)+'.arivedetails as arivedetails'+str(n)+', p'+str(n)+'.planedetails as planedetails'+str(n)+',p'+str(n)+'.operatedby as operatedby'+str(n)
+                    sep1 = ','
+                    qry3 = qry3+"inner join pexproject_flightdata p"+str(n)+" on p1.datasource = p"+str(n)+".datasource and p"+str(n)+".searchkeyid ='" +keys+"' and p"+str(n)+"."+cabinclass +" > '0' "
                 counter = counter+1
+                n = n+1   
+            finalquery = qry1+"CONCAT("+newidstring+") as newid ,"+qry2+ totalfare+" as finalprice "+totaltax+" as totaltax from pexproject_flightdata p1 "+qry3+"where " + querylist + " order by finalprice,totaltax , departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset)
+            record = Flightdata.objects.raw(finalquery)
+            #print record.query
+            for row in record:
+                mainlist1=''
+                multirecordlist = {}
+                multidetail_list = {}
+                pos = 0
+                multirecordlist[pos] = {"origin":row.origin,"destination":row.destination,"stoppage":row.stoppage,"departure":row.departure,"arival":row.arival,"duration":row.duration}
+                multidetail_list[pos] = {"departdetails":row.departdetails,"arivedetails":row.arivedetails,"planedetails":row.planedetails,"operatedby":row.operatedby}
+                pos = pos+1
+                for i in range(2,len(multicitykey1)+1):
+                    org = getattr(row, "origin"+str(i))
+                    stop = getattr(row, "stoppage"+str(i))
+                    dest = getattr(row, "destination"+str(i))
+                    depart = getattr(row, "departure"+str(i))
+                    arival = getattr(row, "arival"+str(i))
+                    duration = getattr(row,"duration"+str(i))
+                    dept_detail = getattr(row,"departdetails"+str(i))
+                    arive_detail = getattr(row,"arivedetails"+str(i))
+                    plane_detail = getattr(row,"planedetails"+str(i))
+                    operate_detail = getattr(row,"operatedby"+str(i))
+                    data = {"origin":org,"destination":dest,"stoppage":stop,"departure":depart,"arival":arival,"duration":duration}
+                    multirecordlist[pos]=data
+                    multidetail_list[pos] = {"departdetails":dept_detail,"arivedetails":arive_detail,"planedetails":plane_detail,"operatedby":operate_detail}
+                    pos=pos+1
+                mainlist1 = {"newid":row.newid,"flighno":row.flighno,"datasource":row.datasource,"cabintype1":row.cabintype1,"cabintype2":row.cabintype2,"cabintype3":row.cabintype3,"finalprice":row.finalprice,"taxes":row.totaltax,"origin":multirecordlist,"multidetail_list":multidetail_list}
+                mainlist.append(mainlist1)
         else:
             if (returnkeyid1 and ('rowid' not in request.GET) and 'rowid' not in request.POST) or len(multicitykey1) > 0:
                 totalfare = "p1." + cabinclass + "+p2." + cabinclass
@@ -584,8 +631,8 @@ def getsearchresult(request):
                 cabintype = " and " + cabinclass + " > 0"
                 querylist = querylist+cabintype
                 record = Flightdata.objects.raw("select p1.*,p1.maintax as maintax1, p1.firsttax as firsttax1, p1.businesstax as businesstax1,p1.rowid as newid ,case when datasource = 'delta' then " + deltaorderprice + "  else " + unitedorderprice + " end as finalprice  from pexproject_flightdata as p1 where " + querylist + " order by finalprice ," + taxes + ",departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset))
-            #multirecods[counter] = record
-        #recordlen = len(multirecods)
+            mainlist = record  
+        recordlen = len(multicitykey1)
         timerecord = Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` ")
         filterkey = {'stoppage':list2, 'datasource':list1, 'cabin':cabin} 
         if depttime:
@@ -593,9 +640,9 @@ def getsearchresult(request):
         else:
             timeinfo = ''    
         if request.is_ajax():
-            return render_to_response('flightsearch/search.html', {'action':action, 'data':record, 'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name}, context_instance=RequestContext(request))
+            return render_to_response('flightsearch/search.html', {'action':action, 'data':mainlist,'multirecod':mainlist, 'multicity':multicity, 'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name}, context_instance=RequestContext(request))
         if totalrecords > 0:
-            return render_to_response('flightsearch/searchresult.html', {'action':action,'data':record,'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name}, context_instance=RequestContext(request)) 
+            return render_to_response('flightsearch/searchresult.html', {'action':action,'data':mainlist,'multirecod':mainlist,'multicity':multicity,'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name}, context_instance=RequestContext(request)) 
         else:
             
             if request.is_ajax():
