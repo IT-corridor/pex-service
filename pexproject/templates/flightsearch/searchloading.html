@@ -67,10 +67,12 @@ $.ajax({
         multikey = data[0];
         searchid1 = multikey.split(',');
         searchid = searchid1[0];
+        console.log(searchid);
         var returnid='';
         if(data[1])
         {
         	returnid = data[1];
+        	
         }
         redirecttosearchpage(searchid,returnid);   
     },

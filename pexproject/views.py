@@ -10,7 +10,7 @@ from django.template import RequestContext, loader
 import json
 from django.db.models import Q, Count, Min
 from datetime import timedelta
-import subprocess
+
 from types import *
 import datetime
 from django.shortcuts import get_object_or_404,redirect
@@ -22,7 +22,7 @@ from django.core.context_processors import csrf
 from django.views.decorators.csrf import requires_csrf_token
 from pexproject.models import Flightdata, Airports, Searchkey, User
 from pexproject.templatetags.customfilter import floatadd, assign
-from subprocess import call
+
 from django.conf import settings
 from random import randint
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -78,8 +78,6 @@ def login(request):
         if len(user) > 0:
             request.session['username'] = username
             request.session['password'] = password1
-            print request.session['username']
-            print request.session['password']
             return HttpResponseRedirect(reverse('index'))
         else:
             msg = "Invalid username or password"
@@ -99,13 +97,10 @@ def forgotPassword(request):
     if request.POST:
         user_email =  request.REQUEST['email']
         password = randint(100000,999999)
-        print password
         password1 = hashlib.md5(str(password)).hexdigest()
-        print password1
         obj = User.objects.get(email=user_email)
         obj.password=password1
         obj.save()
-        print obj
         send_mail('Forgot Your Password', 'Your password has been reset. Please login with your new password '+str(password), 'PEX', ['jk.dhn2010@gmail.com'])
     else:
         msg = "forgot password"
@@ -148,19 +143,17 @@ def search(request):
             for row in originobj:
                 orgn = row.cityName + ", " + row.cityCode + ", " + row.countryCode + "  (" + row.code + ")"
                 orgncode = row.code
-                print orgncode
                 origin = row.cityName + " (" + row.code + ")"
             for row1 in destobj:
                 dest = row1.cityName + ", " + row1.cityCode + ", " + row1.countryCode + "  (" + row1.code + ")"
                 destcode = row1.code
-                print destcode
                 destination1 = row1.cityName + " (" + row1.code + ")"
             dt = datetime.datetime.strptime(depart, '%Y/%m/%d')
             date = dt.strftime('%m/%d/%Y')
             searchdate = dt.strftime('%Y-%m-%d')        
             currentdatetime = datetime.datetime.now()
             time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
-            time1 = datetime.datetime.now() - timedelta(hours=4)
+            time1 = datetime.datetime.now() - timedelta(hours=8)
             time1 = time1.strftime('%Y-%m-%d %H:%M:%S')
             
             #flag1 = 0
@@ -186,7 +179,6 @@ def search(request):
                     searchkeyid = keyid.searchid
             else:
                 if dt1:
-                    print destination1, origin
                     searchdata = Searchkey(source=origin, destination=destination1, traveldate=dt, returndate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid) 
                 else:
                     searchdata = Searchkey(source=origin, destination=destination1, traveldate=dt, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid)
@@ -194,7 +186,6 @@ def search(request):
                 searchkeyid = searchdata.searchid 
                 cursor = connection.cursor()
                 #flag1 = 1
-                print "full info",orgncode, destcode, date, depart, searchkeyid
                 customfunction.scrape(orgncode, destcode, date, depart, searchkeyid)
                 returnkey = ''
                 if returndate:
@@ -211,22 +202,7 @@ def search(request):
                         customfunction.scrape(destcode, orgncode, date, depart, returnkey)
             if len(departlist) >0 :
                 multiplekey = multiplekey+seperator+str(searchkeyid)
-                seperator = ',' 
-        '''
-        returnid = ''
-        if flag1 == 1 and flag2 == 1:
-            returnid = returnkey
-            #customfunction.scrape(orgncode, destcode, date, depart, searchkeyid,returnid)
-            
-            customfunction.scrape(orgncode, destcode, date, depart, searchkeyid)
-            customfunction.scrape(destcode, orgncode, date, depart, returnkey)
-        elif flag1 == 1 and flag2 == 0:
-            print "one way",searchkeyid,date
-            customfunction.scrape(orgncode, destcode, date, depart, searchkeyid,returnid)
-        else:
-            if flag2 == 1 and flag1 == 0:
-                customfunction.scrape(destcode, orgncode, date1, returndate, returnkey,returnid)
-        '''               
+                seperator = ','             
         mimetype = 'application/json'
         results = []
         results.append(multiplekey)
@@ -281,15 +257,11 @@ def searchLoading(request):
             cabintype = ''
             if 'cabintype' in request.REQUEST:
                 cabintype = request.REQUEST['cabintype']
-            print cabintype
             roundtripkey = ''
             if 'keyid' in request.REQUEST:
                 roundtripkey = request.REQUEST['keyid']
-                
-            print orgn, dest, roundtripkey, depart
             if 'trip' in request.REQUEST:
                 trip = request.REQUEST['trip']
-                print trip
             if 'returndate' in  request.REQUEST:
                 retdate = request.REQUEST['returndate']
                 if retdate:
@@ -305,7 +277,6 @@ def searchLoading(request):
         else: 
             dt = datetime.datetime.strptime(depart, '%m/%d/%Y')
             date = dt.strftime('%Y/%m/%d')
-            print orgn,dest,depart
         return render_to_response('flightsearch/searchloading.html', {'searchdate':date, 'sname':orgn, 'dname':dest, 'returndate':date1, 'triptype':trip, 'roundtripkey':roundtripkey, 'cabintype':cabintype, 'passenger':passenger}, context_instance=RequestContext(request))
     else:
         return render_to_response('flightsearch/index.html')
@@ -350,6 +321,29 @@ def getsearchresult(request):
         if request.GET.get('keyid', ''):
             recordkey = request.GET.get('keyid', '')
             totalrecords = Flightdata.objects.filter(searchkeyid=recordkey).count()
+    
+    action = ''
+    if request.GET.get('keyid', '') :
+        searchkey = request.GET.get('keyid', '')
+        if request.GET.get('multicity'):
+            allkey = request.GET.get('multicity')
+            multiple_key = allkey.split(',')
+            searchdata = Searchkey.objects.filter(searchid__in=multiple_key)
+        else:
+            searchdata = Searchkey.objects.filter(searchid=searchkey)
+        for s in searchdata:
+            source = s.source
+            destination = s.destination
+        if ('action' in request.GET and request.GET.get('action', '') == 'return') or 'rowid' in request.POST and request.GET.get('action', '') != 'depart':
+            action = request.GET.get('action', '')
+            searchkey = request.GET.get('returnkey', '')
+            returnkey = request.GET.get('keyid', '')
+            
+        
+        querylist = querylist + join + " p1.searchkeyid = '"+searchkey+"'"
+        join = ' AND '
+    
+    
     if 'multicity' in request.GET or 'multicity' in request.POST:
         multicitykey = request.GET.get('multicity', '')
         multicitykey1 = multicitykey.split(',')
@@ -358,7 +352,6 @@ def getsearchresult(request):
             list2 = request.POST.getlist('stoppage')
             list2 = list2[0].split(',')
             if '2 STOPS' in list2:
-                print list2
                 querylist = querylist + join + "p1.stoppage in ('" + "','".join(list2) + "','3 STOPS')"
                 join = ' AND '
             else: 
@@ -413,7 +406,6 @@ def getsearchresult(request):
          join = ' AND '
     if 'depaturemax' in request.POST:
         deptmaxtime = request.REQUEST['depaturemax']
-        # print deptmaxtime
         deptmaxformat = (datetime.datetime.strptime(deptmaxtime, '%I:%M %p'))
         deptmaxformat1 = deptmaxformat.strftime('%H:%M:%S')
         querylist = querylist + join + " p1.departure <= '" + deptmaxformat1 + "'"
@@ -426,7 +418,6 @@ def getsearchresult(request):
          join = ' AND '
     if 'arivalmax' in request.POST:
         arivtmaxtime = request.REQUEST['arivalmax']
-        # print deptmaxtime
         arivtmaxformat = (datetime.datetime.strptime(arivtmaxtime, '%I:%M %p'))
         arivtmaxformat1 = arivtmaxformat.strftime('%H:%M:%S')
         querylist = querylist + join + " p1.arival <= '" + arivtmaxformat1 + "'"
@@ -435,12 +426,12 @@ def getsearchresult(request):
    
     action = ''
     if request.GET.get('keyid', '') :
+        '''
         searchkey = request.GET.get('keyid', '')
         if request.GET.get('multicity'):
             allkey = request.GET.get('multicity')
             multiple_key = allkey.split(',')
             searchdata = Searchkey.objects.filter(searchid__in=multiple_key)
-            print searchdata
         else:
             searchdata = Searchkey.objects.filter(searchid=searchkey)
         for s in searchdata:
@@ -455,7 +446,7 @@ def getsearchresult(request):
         querylist = querylist + join + " p1.searchkeyid = " + searchkey
         join = ' AND '
         
-        
+        '''
        
         
         if cabinclass != '':
@@ -474,7 +465,6 @@ def getsearchresult(request):
         if 'returnkey' in request.GET or 'returnkey' in request.POST:
             returnkey = request.GET.get('returnkey', '')
             returnkeyid1 = returnkey
-            print "returnkeyid1", returnkeyid1
             action = 'depart'
             returndate = Searchkey.objects.values_list('traveldate', flat=True).filter(searchid=returnkey)
             if 'rowid' in request.GET or 'rowid' in request.POST:
@@ -567,6 +557,7 @@ def getsearchresult(request):
         n = 1
         
         if multicitykey1:
+            
             multicity='true' 
             cabintype = " and " + "p1."+cabinclass + " > 0"
             querylist = querylist+cabintype
@@ -580,20 +571,25 @@ def getsearchresult(request):
             newidstring="p1.rowid"
             sep = ",'_',"
             sep1 = ''
+            #print querylist
+            #q = "p1.searchkeyid = '"+searchkey+"' AND" 
+            #print q
+            #querylist = querylist.replace(q,'')
             for keys in multicitykey1:
-                #print "keys",keys
                 if n > 1:
                     totalfare = totalfare+"+p"+str(n)+"." + cabinclass
                     totaltax = totaltax+"+p"+str(n)+"."+taxes
                     newidstring =newidstring+sep+"p"+str(n)+".rowid"
-                    qry2 = qry2+sep1+'p'+str(n)+'.origin as origin'+str(n)+',p'+str(n)+'.rowid as rowid'+str(n)+', p'+str(n)+'.stoppage as stoppage'+str(n)+',p'+str(n)+'.flighno as flighno'+str(n)+', p'+str(n)+'.cabintype1 as cabintype1'+str(n)+',p'+str(n)+'.cabintype2 as cabintype2'+str(n)+',p'+str(n)+'.cabintype3 as cabintype3'+str(n)+', p'+str(n)+'.destination as destination'+str(n)+', p'+str(n)+'.departure as departure'+str(n)+', p'+str(n)+'.arival as arival'+str(n)+', p'+str(n)+'.duration as duration'+str(n)+', p'+str(n)+'.maincabin as maincabin'+str(n)+', p'+str(n)+'.maintax as maintax'+str(n)+', p'+str(n)+'.firsttax as firsttax'+str(n)+', p'+str(n)+'.businesstax as businesstax'+str(n)+',p'+str(n)+'.departdetails as departdetails'+str(n)+',p'+str(n)+'.arivedetails as arivedetails'+str(n)+', p'+str(n)+'.planedetails as planedetails'+str(n)+',p'+str(n)+'.operatedby as operatedby'+str(n)
+                    qry2 = qry2+sep1+'p'+str(n)+'.origin as origin'+str(n)+',p'+str(n)+'.rowid as rowid'+str(n)+', p'+str(n)+'.stoppage as stoppage'+str(n)+', p'+str(n)+'.destination as destination'+str(n)+', p'+str(n)+'.departure as departure'+str(n)+', p'+str(n)+'.arival as arival'+str(n)+', p'+str(n)+'.duration as duration'+str(n)+',p'+str(n)+'.flighno as flighno'+str(n)+', p'+str(n)+'.cabintype1 as cabintype1'+str(n)+',p'+str(n)+'.cabintype2 as cabintype2'+str(n)+',p'+str(n)+'.cabintype3 as cabintype3'+str(n)+', p'+str(n)+'.maincabin as maincabin'+str(n)+', p'+str(n)+'.maintax as maintax'+str(n)+', p'+str(n)+'.firsttax as firsttax'+str(n)+', p'+str(n)+'.businesstax as businesstax'+str(n)+',p'+str(n)+'.departdetails as departdetails'+str(n)+',p'+str(n)+'.arivedetails as arivedetails'+str(n)+', p'+str(n)+'.planedetails as planedetails'+str(n)+',p'+str(n)+'.operatedby as operatedby'+str(n)
                     sep1 = ','
-                    qry3 = qry3+"inner join pexproject_flightdata p"+str(n)+" on p1.datasource = p"+str(n)+".datasource and p"+str(n)+".searchkeyid ='" +keys+"' and p"+str(n)+"."+cabinclass +" > '0' "
+                    qry3 = qry3+"inner join pexproject_flightdata p"+str(n)+" on  p"+str(n)+".searchkeyid ='" +keys+"' and p1.datasource = p"+str(n)+".datasource and p"+str(n)+"."+cabinclass +" > '0'  "
+                    q = ''
                 counter = counter+1
-                n = n+1   
+                n = n+1
+                   
             finalquery = qry1+"CONCAT("+newidstring+") as newid ,"+qry2+ totalfare+" as finalprice "+totaltax+" as totaltax from pexproject_flightdata p1 "+qry3+"where " + querylist + " order by finalprice,totaltax , departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset)
+            print finalquery
             record = Flightdata.objects.raw(finalquery)
-            #print record.query
             for row in record:
                 mainlist1=''
                 multirecordlist = {}
@@ -602,6 +598,7 @@ def getsearchresult(request):
                 multirecordlist[pos] = {"origin":row.origin,"destination":row.destination,"stoppage":row.stoppage,"departure":row.departure,"arival":row.arival,"duration":row.duration}
                 multidetail_list[pos] = {"departdetails":row.departdetails,"arivedetails":row.arivedetails,"planedetails":row.planedetails,"operatedby":row.operatedby}
                 pos = pos+1
+                
                 for i in range(2,len(multicitykey1)+1):
                     org = getattr(row, "origin"+str(i))
                     stop = getattr(row, "stoppage"+str(i))
@@ -613,6 +610,7 @@ def getsearchresult(request):
                     arive_detail = getattr(row,"arivedetails"+str(i))
                     plane_detail = getattr(row,"planedetails"+str(i))
                     operate_detail = getattr(row,"operatedby"+str(i))
+                    
                     data = {"origin":org,"destination":dest,"stoppage":stop,"departure":depart,"arival":arival,"duration":duration}
                     multirecordlist[pos]=data
                     multidetail_list[pos] = {"departdetails":dept_detail,"arivedetails":arive_detail,"planedetails":plane_detail,"operatedby":operate_detail}
