@@ -74,14 +74,14 @@
 			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
 			                <div class="form-group nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="from">From:</label>
-			                  <input type="search" tabindex="1" class=" form_val form-control depart_code" name="from" placeholder="From" autocomplete="off" {% if search %} value="{{search.source}}" {%endif%}>
+			                  <input type="search" class=" form_val form-control depart_code" name="from" placeholder="From" autocomplete="off" {% if search %} value="{{search.source}}" {%endif%}>
 			                  <input type="hidden" id="fromid1" class="fromid" name="fromMain" />
 			                </div>
 			              </div>
 			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
 			                <div class="form-group  nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="to">To:</label>
-			                  <input type="search" tabindex="2" class="form_val form-control arive_code" name="to" placeholder="To" autocomplete="off" {% if search %} value="{{search.destination}}" {%endif%}>
+			                  <input type="search" class="form_val form-control arive_code" name="to" placeholder="To" autocomplete="off" {% if search %} value="{{search.destination}}" {%endif%}>
 			                  <input type="hidden" id="toid1" name="toMain" class="fromid" />
 			                </div>
 			              </div>
@@ -92,7 +92,7 @@
 			                  <label class="sr-only" for="departMain">Departure Date:</label>
 			                  <div class="inner-addon left-addon date" id="dp1">
 			                      <i class="glyphicon glyphicon-calendar"></i>
-			                      <input type="text" tabindex="3" class="form_val form-control calender_class"  placeholder="Depart" name="deptdate" autocomplete="off" >
+			                      <input type="text" class="form_val form-control calender_class"  placeholder="Depart" name="deptdate" autocomplete="off" >
 			                  </div>
 			                  <div class="form-group" id="deptmsg"></div>
 			                </div>
@@ -111,14 +111,14 @@
 			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
 			                <div class="form-group nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="from">From:</label>
-			                  <input type="search" tabindex="4" class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" {% if search %} value="{{search.source}}" {%endif%}>
+			                  <input type="search"  class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" {% if search %} value="{{search.source}}" {%endif%}>
 			                  <input type="hidden" id="fromid2" class="fromid" name="fromMain"/>
 			                </div>
 			              </div>
 			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
 			                <div class="form-group  nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="to">To:</label>
-			                  <input type="search" tabindex="5" class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" {% if search %} value="{{search.destination}}" {%endif%}>
+			                  <input type="search"  class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" {% if search %} value="{{search.destination}}" {%endif%}>
 			                  <input type="hidden" id="toid2" class="fromid" name="toMain"/>
 			                </div>
 			              </div>
@@ -129,7 +129,7 @@
 			                  <label class="sr-only" for="departMain">Departure Date:</label>
 			                  <div class="inner-addon left-addon date" id="dp1">
 			                      <i class="glyphicon glyphicon-calendar"></i>
-			                      <input type="text" tabindex="6" class="form_val form-control calender_class"  placeholder="Depart" name="deptdate" autocomplete="off" {% if search %} value="{{search.traveldate|date:'m/d/Y'}}" {%endif%}>
+			                      <input type="text" class="form_val form-control calender_class"  placeholder="Depart" name="deptdate" autocomplete="off" {% if search %} value="{{search.traveldate|date:'m/d/Y'}}" {%endif%}>
 			                  </div>
 			     
 			                </div>
@@ -147,14 +147,14 @@
 			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
 			                <div class="form-group nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="from">From:</label>
-			                  <input type="search" tabindex="7" class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" >
+			                  <input type="search" class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" >
 			                  <input type="hidden" id="fromid3" class="fromid" name="fromMain"  />
 			                </div>
 			              </div>
 			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
 			                <div class="form-group  nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="to">To:</label>
-			                  <input type="search" tabindex="8" class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" >
+			                  <input type="search"  class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" >
 			                  <input type="hidden" id="toid3" class="fromid" name="toMain" />
 			                </div>
 			              </div>
@@ -165,7 +165,7 @@
 			                  <label class="sr-only" for="departMain">Departure Date:</label>
 			                  <div class="inner-addon left-addon date" id="dp1">
 			                      <i class="glyphicon glyphicon-calendar"></i>
-			                      <input type="text" tabindex="9" class="form_val form-control calender_class"  placeholder="Depart" name="deptdate" autocomplete="off" >
+			                      <input type="text"  class="form_val form-control calender_class"  placeholder="Depart" name="deptdate" autocomplete="off" >
 			                  </div>
 			                  
 			                </div>
@@ -176,7 +176,7 @@
 			              <a href="#" class="remove_field">Remove</a>
 			            </div>
 			            
-			              <div class="col-sm-2 col-xs-12 nopadding for_cabin_class" id="cabintab" tabindex="10">
+			              <div class="col-sm-2 col-xs-12 nopadding for_cabin_class" id="cabintab">
 			                <div class="form-group travelers-dpdn-details no-margin" class="ui-widget">
 			                  <div class="dropdown travelers-holder form-control">
 			                  	<span class="" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="travelar">1 adult, Economy</span> <span class="caret"></span></span>
@@ -497,12 +497,12 @@
 	        	html='';
 	        	html = '<div class="col-xs-12 nopadding"><div class="container xs-nopadding"><div class="col-sm-12 col-xs-12 nopadding pl5 pd-xs custome-pd">';
 	        	html= html+ ' <div class="col-sm-2 col-xs-12 nopl xs-nopadding"><div class="form-group nomr noml" class="ui-widget"><label class="sr-only" for="from">From:</label>';
-	        	html= html+'<input type="search" tabindex="1" class=" form_val form-control depart_code" name="from" placeholder="From" autocomplete="off"><input type="hidden" id="fromid'+newid+'" class="fromid" name="fromMain" /></div></div>';
+	        	html= html+'<input type="search" class=" form_val form-control depart_code" name="from" placeholder="From" autocomplete="off"><input type="hidden" id="fromid'+newid+'" class="fromid" name="fromMain" /></div></div>';
 	        	html= html+'<div class="col-sm-2 col-xs-12 nopl xs-nopadding"> <div class="form-group  nomr noml" class="ui-widget"><label class="sr-only" for="to">To:</label>';
-	        	html=html+'<input type="search" tabindex="2" class="form_val form-control arive_code" name="to" placeholder="To" autocomplete="off"><input type="hidden" id="toid'+newid+'" class="fromid" name="toMain" /></div></div>';
+	        	html=html+'<input type="search" class="form_val form-control arive_code" name="to" placeholder="To" autocomplete="off"><input type="hidden" id="toid'+newid+'" class="fromid" name="toMain" /></div></div>';
 	        	html=html+'<div class="input-daterange"><div class="col-sm-2 col-xs-6 nopl xs-pr5 mobile-wt"><div class="form-group nomr noml nomb">';
 	        	html=html+'<label class="sr-only" for="departMain">Departure Date:</label><div class="inner-addon left-addon date" id="dp1">';
-	        	html=html+'<i class="glyphicon glyphicon-calendar"></i><input type="text" tabindex="3" class="form_val form-control calender_class"';
+	        	html=html+'<i class="glyphicon glyphicon-calendar"></i><input type="text" class="form_val form-control calender_class"';
 	        	html=html+'placeholder="Depart" name="deptdate" autocomplete="off"></div></div></div></div><a href="#" class="remove_field">Remove</a></div></div></div>';
 	        if(x < max_fields){ //max input box allowed
 	            x++; //text box increment

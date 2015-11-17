@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, include, url
 from pexproject.views import *
 from django.views.generic.base import RedirectView
 from django.conf import settings
@@ -9,7 +9,8 @@ import views
 urlpatterns = patterns('',
     url(r'^$', index, name='index'),
     url(r'^login', login, name='login'),
-     url(r'^forgotPassword', forgotPassword, name='forgotPassword'),
+    url(r'^manageAccount', manageAccount, name='manageAccount'),
+    url(r'^forgotPassword', forgotPassword, name='forgotPassword'),
     url(r'^signup', signup, name='signup'),
     url(r'^logout', logout, name='logout'),
     url(r'^flights', flights, name='flights'),
@@ -21,7 +22,7 @@ urlpatterns = patterns('',
     url(r'^multicity', multicity, name='multicity'),
     url(r'^share', share, name='share'),
     url(r'^filter', filter, name='filter'),
-    
+    #url(r'', include('social_auth.urls')),
     
 #    url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT, 'show_indexes':True}),
 )

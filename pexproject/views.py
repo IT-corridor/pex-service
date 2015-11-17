@@ -53,23 +53,54 @@ def flights(request):
     
 def signup(request):
     context = {}
-    if request.method == "POST":
-        email = request.REQUEST['username']
-        user = User.objects.filter(email=email)
-        if len(user) > 0:
-            msg = "Email is already registered"
-            return render_to_response('flightsearch/index.html', {'signup_msg':msg},context_instance=RequestContext(request))
-        password = request.REQUEST['password']
+    if 'username' not in request.session:
+        if request.method == "POST":
+            email = request.REQUEST['username']
+            user = User.objects.filter(email=email)
+            if len(user) > 0:
+                msg = "Email is already registered"
+                return render_to_response('flightsearch/index.html', {'signup_msg':msg},context_instance=RequestContext(request))
+            password = request.REQUEST['password']
+            password1 = hashlib.md5(password).hexdigest()
+            airport = request.REQUEST['home_airport']
+            object = User(email=email, password=password1, home_airport=airport)
+            object.save()
+            request.session['username'] = email
+            request.session['password'] = password1
+            if object.user_id:
+                msg = "Thank you, You have been successfully registered."
+                return render_to_response('flightsearch/index.html',{'welcome_msg':msg}, context_instance=RequestContext(request))   
+        return  render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
+    else:
+        return HttpResponseRedirect(reverse('index'))
+
+def manageAccount(request):
+    context = {}
+    msg = ''
+    email = request.session['username']
+    user1 = User.objects.get(email=email)
+    if request.POST:
+        password = request.REQUEST['current_password']
         password1 = hashlib.md5(password).hexdigest()
-        airport = request.REQUEST['home_airport']
-        object = User(email=email, password=password1, home_airport=airport)
-        object.save()
-        if object.user_id:
-            msg = "Thank you, You have been successfully registered. Please login here"
-            return render_to_response('flightsearch/index.html',{'msg':msg}, context_instance=RequestContext(request))   
-    return  render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
+        print password1,email
+        user = User.objects.get(email=email,password=password1)
+        if user.email :
+            newpassword = request.REQUEST['new_password']
+            home_airport = request.REQUEST['home_airport']
+            newpassword1 = hashlib.md5(newpassword).hexdigest()
+            user.password=newpassword1
+            user.home_airport = home_airport
+            user.save()
+            user1 = user
+            msg = "Your account has been updated  successfully"
+        else:
+            msg = "wrong current password" 
+    
+    return render_to_response('flightsearch/manage_account.html',{'message':msg,'user':user1}, context_instance=RequestContext(request))
+            
 def login(request):
     context = {}
+    
     if request.method == "POST":  # and not request.session.get('username', None)
         username = request.REQUEST['username']
         password = request.REQUEST['password']
@@ -87,8 +118,9 @@ def login(request):
 
 def logout(request):
     context = {}
-    request.session['user'] = ''
-    request.session['password'] = ''
+    #del request.session['your key']
+    del  request.session['username'] 
+    del  request.session['password'] 
     return HttpResponseRedirect(reverse('index'))
 
 def forgotPassword(request):
@@ -153,7 +185,7 @@ def search(request):
             searchdate = dt.strftime('%Y-%m-%d')        
             currentdatetime = datetime.datetime.now()
             time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
-            time1 = datetime.datetime.now() - timedelta(hours=8)
+            time1 = datetime.datetime.now() - timedelta(hours=4)
             time1 = time1.strftime('%Y-%m-%d %H:%M:%S')
             
             #flag1 = 0

@@ -75,7 +75,7 @@
 								{%if signup_msg %}
 									<span class="show-msg">{{signup_msg}}</span>
 								{%endif%}
-								<form action="signup" method="post">
+								<form action="signup" method="post" class="modelform">
 									{% csrf_token %}
 									<div class="form-group">
 										<input type="email" class="form-control" placeholder="Email" name="username" required >
@@ -84,7 +84,7 @@
 										<input type="password" class="form-control" placeholder="Password" name="password" required>
 									</div>
 									<div class="form-group">
-										<input type="text" class="form-control" placeholder="Home Airport" name="home_airport" >
+										<input type="search" class="form-control" placeholder="Home Airport" id="home_airpot" name="home_airport" autocomplete="off">
 									</div>
 									<div class="checkbox">
 										<label><input type="checkbox" name="pexdeals"> Email me PEX+ amazing deals</label>
@@ -95,7 +95,8 @@
 									<hr>
 									<div class="form-group text-center">
 										<h5>Or Login with</h5>
-										<span class="social-login facebook">Facebook</span> <span class="social-login google">Google+</span>
+										<a href="{% url "socialauth_begin" "facebook" %}">	<span class="social-login facebook">Facebook</span> </a> 
+										<span class="social-login google">Google+</span>
 									</div>									
 								</form>
 							</div>
@@ -119,11 +120,13 @@
 										<button type="submit" class="btn btn-info">Log in</button>
 									</div>
 									<hr>
+									</form>
 									<div class="form-group text-center">
 										<h5>Or Login with</h5>
-										<span class="social-login facebook">Facebook</span> <span class="social-login google">Google+</span>
+										<a href="{% url "socialauth_begin" "facebook" %}">	<span class="social-login facebook">Facebook</span> </a>
+										<span class="social-login google">Google+</span>
 									</div>									
-								</form>
+								
 							</div>
 						</div>
 					</div>
@@ -140,9 +143,9 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Enter your registered email</h4>
+        <h4 class="modal-title">{% if welcome_msg %}{{welcome_msg}} {% else %}Enter your registered email{% endif %}</h4>
       </div>
-      <form action="forgotPassword" method="post" class="form-group">
+      <form action="forgotPassword" method="post" class="form-group" id="forgot_password_form">
       	{% csrf_token %}
       <div class="modal-body col-xs-12">
         <input type="email" name="email" class="form-group" required/>
@@ -159,7 +162,7 @@
 
 <script>
 	var resetpassword = "{{fpmsg}}"; 
-	
+	var welcome_msg = "{{welcome_msg}}";
 	var lmsg = "{{msg}}";
 	var smsg = "{{signup_msg}}";
 	$(function(){
@@ -177,6 +180,11 @@
 		  if(resetpassword != ''){
 		  	$('#forgetpassword').modal('show');
 		  	resetpassword='';
+		  }
+		  if(welcome_msg != ''){
+		  	$('#forgetpassword').modal('show');
+		  	$('#forgot_password_form').hide();
+		  	setTimeout(function() {$('#forgetpassword').modal('hide');}, 2000);
 		  }
 		});
 	});
@@ -212,6 +220,16 @@ function activeSignup(){
 	$('#signup').addClass('active');
 	$('#signuptab').addClass('active');
 }	
+
+$( "#home_airpot" ).autocomplete({
+  		 open: function(event, ui) {
+	        	$('.ui-autocomplete').off('menufocus hover mouseover');
+    		},
+		autoFocus: true,
+    	source: "get_airport/",
+    	minLength: 2,
+    	appendTo:".modelform",
+    });
 
 </script>
 	</body>
