@@ -9,7 +9,8 @@ from django.template import RequestContext, loader
 import json
 from django.db.models import Q, Count, Min
 from datetime import timedelta
-
+from social_auth.models import UserSocialAuth
+from django.contrib.auth import login
 from types import *
 import datetime
 from django.shortcuts import get_object_or_404,redirect
@@ -90,22 +91,22 @@ def manageAccount(request):
     email = request.session['username']
     user1 = User.objects.get(username=email)
     if request.POST:
-        password = request.REQUEST['current_password']
-        password1 = hashlib.md5(password).hexdigest()
-        print password1,email
-        user = User.objects.get(username=email,password=password1)
-        if user.username :
+        if 'current_password' in request.POST:
+            password = request.REQUEST['current_password']
+            password1 = hashlib.md5(password).hexdigest()
             newpassword = request.REQUEST['new_password']
-            home_airport = request.REQUEST['home_airport']
             newpassword1 = hashlib.md5(newpassword).hexdigest()
-            user.password=newpassword1
-            user.home_airport = home_airport
-            user.save()
-            user1 = user
+            user1.password=newpassword1
+        else:
+            password1 = request.session['password']
+        if user1.email :
+            home_airport = request.REQUEST['home_airport']
+            user1.home_airport = home_airport
+            user1.save()
             msg = "Your account has been updated  successfully"
         else:
             msg = "wrong current password" 
-    
+    print msg
     return render_to_response('flightsearch/manage_account.html',{'message':msg,'user':user1}, context_instance=RequestContext(request))
 
 def login(request):

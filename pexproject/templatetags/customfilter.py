@@ -24,6 +24,11 @@ def lookup(var,key):
 def increament(val):
     return val+1;
 
+def lower(value):
+    print "test",value.lower()
+    return value.lower()
+
+register.filter('lower', lower)     
 register.filter('increament', increament)            
 register.filter('lookup', lookup)        
 register.filter('floatadd', floatadd)
