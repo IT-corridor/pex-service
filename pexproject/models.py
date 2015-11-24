@@ -1,4 +1,9 @@
+from django.conf import settings
+#from django.contrib.sessions.models import Session
 from django.db import models
+from django.contrib.auth.models import (
+    BaseUserManager, AbstractBaseUser
+)
 
 class Flightdata(models.Model):
     rowid = models.AutoField(primary_key=True)
@@ -59,11 +64,32 @@ class Searchkey(models.Model):
     scrapetime = models.DateTimeField(max_length=50)
     origin_airport_id = models.IntegerField ()
     destination_airport_id = models.IntegerField ()
+class UserManager(BaseUserManager):
+	def create_user(self, username, email=None, password=None):
+		#print username
+		#print "email=",email
+		
+        	#if not email:
+	         #   raise ValueError('Users must have an email address')
+		#return self._create_user(username, email, password)
+		
+        	user = self.model(
+	            email=UserManager.normalize_email(email),
+		    username = username
+		   
+	        )
+        	user.set_password(password)
+	        user.save(using=self._db)
+        	return user
 
-class User(models.Model):
+class User(AbstractBaseUser):
     user_id = models.AutoField(primary_key=True)
-    email = models.EmailField()
-    password = models.CharField(max_length=100)
+    username = models.CharField(max_length=100,unique=True)
+    email = models.EmailField(blank=True, null=True)
+#    password = models.CharField(max_length=100)
     home_airport = models.CharField(max_length=100)
-    
-    #def save(self,):
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email']    
+    objects =  UserManager()
+    def is_authenticated(self):
+        return False

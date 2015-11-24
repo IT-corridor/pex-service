@@ -8,6 +8,8 @@ import views
 
 urlpatterns = patterns('',
     url(r'^$', index, name='index'),
+    url(r'', include('social_auth.urls')),
+    #url(r'^facebooklogin', facebooklogin, name='facebooklogin'),
     url(r'^login', login, name='login'),
     url(r'^manageAccount', manageAccount, name='manageAccount'),
     url(r'^forgotPassword', forgotPassword, name='forgotPassword'),
@@ -22,7 +24,7 @@ urlpatterns = patterns('',
     url(r'^multicity', multicity, name='multicity'),
     url(r'^share', share, name='share'),
     url(r'^filter', filter, name='filter'),
-    #url(r'', include('social_auth.urls')),
+    #url(r'^$','social_auth.urls',namespace='social'),
     
 #    url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT, 'show_indexes':True}),
 )

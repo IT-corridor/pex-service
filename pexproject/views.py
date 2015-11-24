@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 import os, sys
 import hashlib
 from django.shortcuts import render
@@ -22,7 +21,9 @@ from django.core.context_processors import csrf
 from django.views.decorators.csrf import requires_csrf_token
 from pexproject.models import Flightdata, Airports, Searchkey, User
 from pexproject.templatetags.customfilter import floatadd, assign
-
+from social_auth.models import UserSocialAuth
+from django.contrib.auth import login as social_login,authenticate,get_user
+from django.contrib.auth import logout as auth_logout
 from django.conf import settings
 from random import randint
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -35,12 +36,19 @@ from django.db import connection, transaction
 import operator
 import customfunction
 from pexproject.form import LoginForm
-from django.utils import timezone
+#from django.utils import timezone
+#from bson import json_util
+import json
 import logging
 logger = logging.getLogger(__name__)
 
 def index(request):
     context = {}
+    user = User()
+    if request.user.username:
+    	request.session['username'] = request.user.username
+    if 'password'  not in request.session:	
+    	request.session['password'] = "123456" #request.user.password
     return  render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
 
 def flights(request):
@@ -55,15 +63,17 @@ def signup(request):
     context = {}
     if 'username' not in request.session:
         if request.method == "POST":
+	    currentdatetime = datetime.datetime.now()
+            time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
             email = request.REQUEST['username']
-            user = User.objects.filter(email=email)
+            user = User.objects.filter(username=email)
             if len(user) > 0:
                 msg = "Email is already registered"
                 return render_to_response('flightsearch/index.html', {'signup_msg':msg},context_instance=RequestContext(request))
             password = request.REQUEST['password']
             password1 = hashlib.md5(password).hexdigest()
             airport = request.REQUEST['home_airport']
-            object = User(email=email, password=password1, home_airport=airport)
+            object = User(username=email,email=email, password=password1, home_airport=airport,last_login=time)
             object.save()
             request.session['username'] = email
             request.session['password'] = password1
@@ -78,13 +88,13 @@ def manageAccount(request):
     context = {}
     msg = ''
     email = request.session['username']
-    user1 = User.objects.get(email=email)
+    user1 = User.objects.get(username=email)
     if request.POST:
         password = request.REQUEST['current_password']
         password1 = hashlib.md5(password).hexdigest()
         print password1,email
-        user = User.objects.get(email=email,password=password1)
-        if user.email :
+        user = User.objects.get(username=email,password=password1)
+        if user.username :
             newpassword = request.REQUEST['new_password']
             home_airport = request.REQUEST['home_airport']
             newpassword1 = hashlib.md5(newpassword).hexdigest()
@@ -97,15 +107,20 @@ def manageAccount(request):
             msg = "wrong current password" 
     
     return render_to_response('flightsearch/manage_account.html',{'message':msg,'user':user1}, context_instance=RequestContext(request))
-            
+
 def login(request):
     context = {}
-    
+    user = User()
+    user = authenticate()
+    if user is not None:
+        if user.is_active:
+ 		social_login(request,user)
+		
     if request.method == "POST":  # and not request.session.get('username', None)
         username = request.REQUEST['username']
         password = request.REQUEST['password']
         password1 = hashlib.md5(password).hexdigest()
-        user = User.objects.filter(email=username, password=password1)
+        user = User.objects.filter(username=username, password=password1)
         if len(user) > 0:
             request.session['username'] = username
             request.session['password'] = password1
@@ -117,10 +132,11 @@ def login(request):
         return HttpResponseRedirect(reverse('index'))
 
 def logout(request):
-    context = {}
-    #del request.session['your key']
-    del  request.session['username'] 
-    del  request.session['password'] 
+    context = {} 
+    auth_logout(request)
+    if 'username' in request.session:
+    	del  request.session['username'] 
+    	del  request.session['password']  
     return HttpResponseRedirect(reverse('index'))
 
 def forgotPassword(request):
