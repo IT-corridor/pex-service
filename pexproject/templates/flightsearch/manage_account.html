@@ -10,7 +10,7 @@
 	    <div class="container " style="margin:10px;padding-right: 10cm;">
 	    	
 		<div class="col-xs-12 col-sm-12 col-sm-push-3 bkcl">
-			{% if msg %}
+			{% if message %}
 			<div class="alert alert-warning">{{message}}</div>
 			{% endif %}
 		<form action="manageAccount" method="post" class="form-group" id="manageform">
@@ -36,7 +36,7 @@
 		  </div>
 		  <div class="form-group">
 		    <label  for="Home_airport">Home Airport</label>
-		    <input type="search" class="form-control" id="airport" name="confirm_password" value="{{user.home_airport}}"  required>
+		    <input type="search" class="form-control" id="airport" name="home_airport" value="{{user.home_airport}}"  required>
 		  </div>
 		  <!--
 		  <div class="checkbox">
@@ -45,12 +45,17 @@
 		    </label>
 		  </div>
 		  -->
-		  <button type="submit" class="btn btn-pexSearch" id="update">Update</button> <span type="submit" class="btn btn-pexSearch">Cancel</span>
+		  <button type="submit" class="btn btn-pexSearch" id="update">Update</button> <span type="submit" id="back" class="btn btn-pexSearch">Cancel</span>
 		</form>
 		</div>
 		</div>
 	{% include "flightsearch/footer.html" %}
 	<script>
+	$('#back').click(function(){
+		parent.history.back();
+	});
+	
+	
 		$( "#airport" ).autocomplete({
   		 open: function(event, ui) {
 	        	$('.ui-autocomplete').off('menufocus hover mouseover');
@@ -60,10 +65,11 @@
     	minLength: 2,
     });
     $('#update').click(function(){
-		$('#manageform > input:hidden').attr("disabled",true);
-   		$('#manageform').submit();
+		if ($('#newpassword').is(':hidden')){
+			$('#newpassword').prop("disabled", true);
+			$('#confirm_password').prop("disabled", true);
+		}
     });
-    
     
     var activePassword = "{{request.session.password}}";
     $('#password_div').hide();
@@ -93,12 +99,11 @@
 		$('#confirm_password').change(function(e){
 		  if ($('#confirm_password').val() !=  $('#newpassword').val())
 		  {
-		  	e.preventDefault();
+		  	
 		  	alert("password missmatch");
-		  	$('#confirm_password').val('');
 		  	$('#newpassword').val('');
 		  	$('#newpassword').focus();
-		  	
+		  	e.preventDefault();
 		  	
 		  }
 		});
