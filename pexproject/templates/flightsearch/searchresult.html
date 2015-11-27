@@ -19,6 +19,7 @@
 				<div class="jumbotron">
 					<div class="container-fluid">
 						<div class="col-md-12 col-xs-12 nopadding">
+													
 							<div class="col-md-2 col-xs-12 nopadding filters-holder mvb10px ">
 								<div class="col-xs-12 nopadding visible-xs filter-collapse form-side">
 									<p class="pull-left">Filters</p>
@@ -138,7 +139,7 @@
 									<p class="pull-left">Flight Search</p>
 									<p class="pull-right flight-search-show"><span class="glyphicon glyphicon-search"></span></p>
 								</div>
-								<div class="col-xs-12 nopadding xs-collapse flight-search-panel">
+								<div class="col-xs-12 nopadding xs-collapse flight-search-panel mvb10px">
 									<form class="form-inline" method="post" action="searchLoadingPage">
 										{% csrf_token %}
 									{% for searchrow in search %}	
@@ -279,6 +280,38 @@
 									<h4>{% if action == 'return' %}Return : {% endif %}{{searchrow.source}} &#10230; {{searchrow.destination}} </h4>
 									<h4> {{searchrow.traveldate}}<!--<input type="text" id="datepicker" name="date" value="{{searchdate}}"></h4>-->
 								</div>
+								
+								<a class="price-calender" role="button" data-toggle="collapse" href="#pricecalender" aria-expanded="false" aria-controls="pricecalender">
+  								View Price Calender</a>
+  								<div class="collapse" id="pricecalender">
+								  <div class="well">
+								    <section id="graph">
+										<div class="container nopadding">
+										 <div class="div-table">
+								             <div class="div-table-row row">
+								                <div class="div-table-col col col-xs-3 bc-whi" align="center"></div>
+								                <div class="div-table-col col col-xs-3 bc-whi" align="center">Economy</div>
+								                <div  class="div-table-col col col-xs-3 bc-whi">Business</div>
+								                <div  class="div-table-col col col-xs-3 bc-whi">First</div>
+								             </div>
+								            <div class="div-table-row row">
+								                  <div class="div-table-col col-xs-3 bc-whi">Delta</div>
+								                  <div class="div-table-col col-xs-3 color-red-1">50k</div>
+								                <div class="div-table-col col-xs-3 color-green-3">32k</div>
+								                <div class="div-table-col col-xs-3 color-red-1">25k</div>
+								            </div>
+								            <div class="div-table-row row">
+								                <div class="div-table-col col-xs-3 bc-whi">United</div>
+								                <div class="div-table-col col-xs-3 color-green-2">12.5k</div>
+								                <div class="div-table-col col-xs-3 color-red-3">25k</div>
+								                <div class="div-table-col col-xs-3 color-red-1">50k</div>
+								           </div>
+								           
+								      </div>
+										</div>
+									</section>
+								  </div>
+								</div>													
 							</div>
 							
 							{% endif %}
