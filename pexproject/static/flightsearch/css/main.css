@@ -1650,3 +1650,30 @@ display: table-cell;
     font-weight: 400;
 }
 }
+.cheaper>span {
+	color:#baf0cc;
+	padding-right:10px;
+	font-size: 25px;
+	vertical-align: bottom;
+}
+.cheaper:after {
+	content:'Cheaper';
+}
+.expensive>span {
+	color:#f5ddd3;
+	padding-right:10px;
+	font-size: 25px;
+	vertical-align: bottom;
+}
+.expensive:after {
+	content:'Expensive';
+}
+.nodata>span {
+	color:#faede7;
+	padding-right:10px;
+	font-size: 25px;
+	vertical-align: bottom;
+}
+.nodata:after {
+	content:'No Data';
+}
