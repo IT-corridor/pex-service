@@ -1,40 +1,11 @@
-<!doctype html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
-	
-    <head>
+
     	{% include "flightsearch/header.html" %}
     	{% load staticfiles %}
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title> {% block title %}{{ category_name }}{% endblock %}</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <style>
-            body {
-                /*padding-top: 50px;
-                padding-bottom: 20px;*/
-            }
-.add, .minus {
-	    padding: 5px 8px;
-}
-            
-        </style>
-    </head>
 
-    <body itemscope itemtype="http://schema.org/WebPage">
-        <!--[if lt IE 8]>
-            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
-
-<!-- NAVBAR SECTION/-->
-
-        
+       
 	
 <!-- BODY SECTION/-->
-<div class="main-holder">
+<div class="main-holder container-fluid">
     <div class="col-xs-12 nopadding">
       <div class="jumbotron">
         <div class="container">
@@ -49,8 +20,8 @@
             </div>
           </div>
         </div>
-        <div class="col-xs-12 xs-nopadding">
-        	<div class="col-xs-12 xs-nopadding">
+        <div class="col-xs-12 xs-nopadding nopadding">
+        	<div class="col-xs-12 xs-nopadding nopadding">
 				<form class="form-horizontal" role="form" action="searchLoadingPage" method="post" >
 		        	{% csrf_token %}
 			         <div class="col-xs-12 nopadding">
@@ -86,7 +57,7 @@
 			              <div class="input-daterange">
 			              <div class="col-sm-2 col-xs-6 nopl xs-pr5 mobile-wt">
 			
-			                <div class="form-group nomr noml nomb" id="rmv_nomr">
+			                <div class="form-group nomr noml nomb no-margin-md-form" id="rmv_nomr">
 			                  <label class="sr-only" for="departMain">Departure Date:</label>
 			                  <div class="inner-addon left-addon date" id="dp1">
 			                      <i class="glyphicon glyphicon-calendar"></i>
@@ -95,7 +66,7 @@
 			                  <div class="form-group" id="deptmsg"></div>
 			                </div>
 			              </div>
-			              <div class="col-sm-2 col-xs-6 xs-nopadding xs-pl5" id="return">
+			              <div class="col-sm-2 col-xs-6 xs-nopadding xs-pl5 pd-le-md" id="return">
 			                <div class="form-group nomr noml">
 			                  <label class="sr-only" for="returnMain">Return Date:</label>
 			                  <div class="inner-addon left-addon date" id="dp2">
@@ -211,11 +182,12 @@
         	</div>
         </div>
       </div>
+      <!--
       <div class="col-xs-12 nopadding">
 		<div class="container">
 			<div class="col-xs-12 nopadding">
 				<!-- Example row of columns -->
-				<div class="col-xs-12 nopadding ad-images">
+				<!--<div class="col-xs-12 nopadding ad-images">
 					<div class="col-md-3 col-sm-6 col-xs-12 pl5 xs-nopadding">
 						<a href="#"><img src="{% static 'flightsearch/img/specials.jpg' %}"></a>
 					</div>
@@ -231,9 +203,13 @@
 				</div>
 			</div>
 		</div>
-	</div>
-    </div><!-- /container -->
-    <div class="container mvb60px" id="add-section">
+	</div> -->
+    </div>
+    
+    </div>
+    
+    <!-- /container -->
+    <div class="container mvb60px mediaadd" id="add-section">
 			<div class="row">
 				<div class="col-md-6 col-xs-12 padding-add">
 					<div class="col-xs-12 add-pic sngl">
@@ -315,7 +291,7 @@
 				</div>
 			</div>
 		</div>       
-</div>
+
 
 {% include "flightsearch/footer.html" %}
     
