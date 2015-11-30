@@ -1,35 +1,9 @@
-<!--
-    <head>
-    	
-    	{% load staticfiles %}
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-       
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <style>
-	body {
-                /*padding-top: 50px;
-                padding-bottom: 20px;*/
-            }
-.add, .minus {
-	    padding: 5px 8px;
-}
-            
-        </style>
-    </head>
-
-    <body itemscope itemtype="http://schema.org/WebPage">
-        <!--[if lt IE 8]>
-            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
-
-<!-- NAVBAR SECTION/-->
+  	{% load staticfiles %}
 
    {% include "flightsearch/header.html" %}     
 	 <title> {% block title %}{{ category_name }}{% endblock %}</title>
 <!-- BODY SECTION/-->
-<div class="main-holder container-fluid">
+<div class="main-holder container-fluid" style="padding-bottom:1px;">
     <div class="col-xs-12 nopadding">
       <div class="jumbotron">
         <div class="container">
@@ -442,6 +416,7 @@
 	</div> -->
     </div><!-- /container -->  
 </div>
+
 <div class="container mvb60px mediaadd" id="add-section">
 			<div class="row">
 				<div class="col-md-6 col-xs-12 padding-add">
