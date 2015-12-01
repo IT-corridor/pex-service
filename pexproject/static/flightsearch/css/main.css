@@ -1247,6 +1247,13 @@ overflow:hidden;
 }
 
 @media (max-width: 767px) {
+	
+	.rsonsv-img img
+	{
+		height:186px !important;
+	}
+	
+	
 	.no-margin-md-form
 {
 	!margin-right: -15px !important;
