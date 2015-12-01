@@ -1101,7 +1101,8 @@ border:0px solid;
 }
 .color-green-1
 {
-	background:#baf0cc;
+	!background:#baf0cc;
+	background:#70C1EA;
 }
 .color-green-2
 {
@@ -1113,11 +1114,12 @@ border:0px solid;
 }
 .color-red-1
 {
-	background:#faede7;
+	!background:#faede7;
+	background:#FFA500;
 }
-.color-red-2
+.color-grey-1
 {
-	background:#f8e5de;
+	background:#E7E0E0;
 }
 .color-red-3
 {
@@ -1197,7 +1199,7 @@ overflow:hidden;
 }
 
 .cheaper>span {
-	color:#baf0cc;
+	color:#70C1EA;
 	padding-right:10px;
 	font-size: 25px;
 	vertical-align: bottom;
@@ -1206,7 +1208,7 @@ overflow:hidden;
 	content:'Cheaper';
 }
 .expensive>span {
-	color:#f5ddd3;
+	color:#FFA500;
 	padding-right:10px;
 	font-size: 25px;
 	vertical-align: bottom;
@@ -1215,7 +1217,7 @@ overflow:hidden;
 	content:'Expensive';
 }
 .nodata>span {
-	color:#FFF3EE;;
+	color:#E7E0E0;
 	padding-right:10px;
 	font-size: 25px;
 	vertical-align: bottom;
