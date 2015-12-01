@@ -19,6 +19,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from django.db import connection,transaction
 from multiprocessing import Process
 import threading
+import Queue
 from pyvirtualdisplay import Display
 import socket
 import urllib
@@ -74,32 +75,33 @@ def united(origin,destination,searchdate,searchkey):
     def scrapepage(searchkey,soup):
         soup = soup
         
-        fare1 = 0
-        fare2 = 0
-        fare3 = 0
-        maintax = 0
-        businesstax =0
-        firsttax = 0
-        cabintype1 = ''
-        cabintype2 = ''
-        cabintype3 = ''
-        flightno =''
-        stoppage =''
-        searchid = searchkey
-        source=''
-        Destination = ''
-        arivetime2 = ''
-        departdetails=''
-        arivedetails=''
-        planedetails=''
-        departtime =''
-        test1 = ''
-        operatedbytext =''
-        totaltime =''
+        
         #firsttax = 0
         datadiv = soup.findAll("div",{"class":"flight-block"})
         
         for row in datadiv:
+            fare1 = 0
+            fare2 = 0
+            fare3 = 0
+            maintax = 0
+            businesstax =0
+            firsttax = 0
+            cabintype1 = ''
+            cabintype2 = ''
+            cabintype3 = ''
+            flightno =''
+            stoppage =''
+            searchid = searchkey
+            source=''
+            Destination = ''
+            arivetime2 = ''
+            departdetails=''
+            arivedetails=''
+            planedetails=''
+            departtime =''
+            test1 = ''
+            operatedbytext =''
+            totaltime =''
             stoppage = row.find("div",{"class":"flight-connection-container"}).text
             
             if '1' in stoppage:
@@ -234,6 +236,7 @@ def united(origin,destination,searchdate,searchkey):
             priceblock = row.findAll("div",{"class":"flight-block-fares-container"})
             
             for prc in priceblock:
+                
                 if prc.find("div",{"class":"fare-option bg-economy"}):
                     cabintype1 = "Economy"
                     eco = prc.find("div",{"class":"fare-option bg-economy"})
@@ -570,9 +573,9 @@ def scrape(orgn,dest,deltasearchdate, unitedsearchdate,searchkey):
     '''
     print "else"
     print deltasearchdate,unitedsearchdate
-    p1 = Process(target=united, args=(orgn, dest, unitedsearchdate, searchkey))
+    p1 = threading.Thread(target=united, args=(orgn, dest, unitedsearchdate, searchkey))
     p1.start()
-    p2 = Process(target=delta, args=(orgn, dest, deltasearchdate, searchkey))
+    p2 = threading.Thread(target=delta, args=(orgn, dest, deltasearchdate, searchkey))
     p2.start()
     p1.join()
     p2.join()
