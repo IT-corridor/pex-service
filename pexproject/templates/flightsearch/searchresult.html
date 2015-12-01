@@ -279,10 +279,13 @@
 									<a class="price-calender" role="button" data-toggle="collapse" href="#pricecalender" aria-expanded="false" aria-controls="pricecalender">
 	  								View Price Matrix</a>
 	  								<div class="collapse" id="pricecalender">
+	  								<span class="mvt10px"> {{search.0.source}} to {{search.0.destination}}{% if returndate %}: Round Trip{%else%}:  One Way{% endif %}</span>	
 									  <div class="well custom-well text-center">
 									    <section id="">
+									    	
 										<div class="table-responsive">
 										  <table class="table div-table" cellspacing="2">
+										  		
 												<tr class="div-table-row row">
 													<th class="bc-whi left-heading"></th>
 													<th class="bc-whi">Economy</th>
@@ -291,15 +294,20 @@
 												</tr> 
 												<tr class="div-table-row row">
 													<td class="bc-whi left-heading">Delta</td>
-													<td class="color-red-1">25k</td>
+													<td class="color-green-1">25k</td>
+													
 													<td class="color-green-1">50k</td>
 													<td class="color-red-1">50k</td>
 												</tr>
 												<tr class="div-table-row row">
 													<td class="bc-whi left-heading">United</td>
+													
 													<td class="color-green-1">20k</td>
+													
+													
+													<td class="color-grey-1">45k</td>
+													
 													<td class="color-red-1">50k</td>
-													<td class="color-green-1">50k</td>
 												</tr>
 												<tr class="div-table-row row">
 													<td class="bc-whi left-heading">Virgin Atlantic</td>
