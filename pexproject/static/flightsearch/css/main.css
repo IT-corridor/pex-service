@@ -1090,6 +1090,16 @@ border:0px solid;
 	min-height:45px !important;
 	height:auto;
 }
+.custom-well .table-responsive
+{
+	  overflow: hidden;
+}
+
+.custom-well .div-table
+{
+	  float: none;
+  margin: auto;
+}
 #graph
 {
 	margin-bottom:20px;
@@ -1114,12 +1124,12 @@ border:0px solid;
 }
 .color-red-1
 {
-	!background:#faede7;
-	background:#FFA500;
+	
+	background:#F8B951;
 }
 .color-grey-1
 {
-	background:#E7E0E0;
+	background:#CDCDCD;
 }
 .color-red-3
 {
@@ -1208,7 +1218,7 @@ overflow:hidden;
 	content:'Cheaper';
 }
 .expensive>span {
-	color:#FFA500;
+	color:#F8B951;
 	padding-right:10px;
 	font-size: 25px;
 	vertical-align: bottom;
@@ -1217,7 +1227,7 @@ overflow:hidden;
 	content:'Expensive';
 }
 .nodata>span {
-	color:#E7E0E0;
+	color:#CDCDCD;
 	padding-right:10px;
 	font-size: 25px;
 	vertical-align: bottom;
@@ -1625,8 +1635,8 @@ overflow:hidden;
     		display: none!important;
 	}
 	.main-holder {
-    		margin-bottom: -200px;
-    		padding-bottom: 200px;
+    		!margin-bottom: -200px;
+    		!padding-bottom: 200px;
 	}
 	.xs-collapse {
 		display: none;
@@ -1649,15 +1659,15 @@ overflow:hidden;
 
 @media (max-width: 420px) {
 	.main-holder {
-    		margin-bottom: -225px;
-    		padding-bottom: 225px;
+    		!margin-bottom: -225px;
+    		!padding-bottom: 225px;
 	}
 }
 
 @media (max-width: 380px) {
 	.main-holder {
-    		margin-bottom: -240px;
-    		padding-bottom: 240px;
+    		!margin-bottom: -240px;
+    		!padding-bottom: 240px;
 	}
 }
 
