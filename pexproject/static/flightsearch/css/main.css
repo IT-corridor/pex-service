@@ -329,7 +329,7 @@ footer .navbar .navbar-nav {
 	color: #39A8E0;
 	min-height: 150px;
 	clear: both;
-	/*margin-bottom: 0%;
+	margin-bottom: 0%;
 	 width: 100%;
 	 min-height: 75px;
 	 color: #39A8E0;
@@ -342,8 +342,8 @@ footer .navbar .navbar-nav {
 	 display: block;
 	 min-height: 150px;
 	 line-height: 20px;
-	 /*position: absolute;
-	 width: 100%;*/
+	 position: absolute;
+	 !width: 100%;*/
 
 }
 
