@@ -328,6 +328,7 @@ footer .navbar .navbar-nav {
 	background-color: #F0F7FD;
 	color: #39A8E0;
 	min-height: 150px;
+	clear: both;
 	/*margin-bottom: 0%;
 	 width: 100%;
 	 min-height: 75px;
