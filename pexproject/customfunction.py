@@ -220,6 +220,7 @@ def united(origin,destination,searchdate,searchkey):
                      departdlist.append(departtext)
                      arivelist.append(dest_text)
                      flight_number = info.find("div",{"class":"segment-flight-equipment"}).text
+		     flight_number = flight_number.strip()
                      if flight_duration:
                          plane_text = flight_number+" ("+flight_duration+")"
                          planelist.append(plane_text)
@@ -288,7 +289,7 @@ def united(origin,destination,searchdate,searchkey):
     
             departdetails='@'.join(departdlist)
             arivedetails='@'.join(arivelist)
-            planedetails='@'.join(planelist)
+            planedetails=('@'.join(planelist)).strip()
             
             #print "operatedby",operatedby
             
