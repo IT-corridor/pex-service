@@ -165,6 +165,8 @@ def search(request):
         searchdate1 = ''
         multiplekey =''
         seperator = ''
+        #customfunction.etihad()
+        
         if returndate:
             dt1 = datetime.datetime.strptime(returndate, '%Y/%m/%d')
             date1 = dt1.strftime('%m/%d/%Y')
@@ -184,6 +186,8 @@ def search(request):
         departlist = depart.split(',')
         
         for i in range(0,len(departlist)):
+            etihadorigin =''
+            etihaddest = ''
             orgnid = ongnidlist[i]
             destid = destlist[i]
             depart = departlist[i]
@@ -191,10 +195,14 @@ def search(request):
             destobj = Airports.objects.filter(airport_id=destid)
             for row in originobj:
                 orgn = row.cityName + ", " + row.cityCode + ", " + row.countryCode + "  (" + row.code + ")"
+                etihadorigin = row.cityName
+                print "origin",etihadorigin
                 orgncode = row.code
                 origin = row.cityName + " (" + row.code + ")"
             for row1 in destobj:
                 dest = row1.cityName + ", " + row1.cityCode + ", " + row1.countryCode + "  (" + row1.code + ")"
+                etihaddest = row1.cityName
+                print "dest",etihaddest
                 destcode = row1.code
                 destination1 = row1.cityName + " (" + row1.code + ")"
             dt = datetime.datetime.strptime(depart, '%Y/%m/%d')
@@ -204,7 +212,6 @@ def search(request):
             time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
             time1 = datetime.datetime.now() - timedelta(hours=4)
             time1 = time1.strftime('%Y-%m-%d %H:%M:%S')
-            
             #flag1 = 0
             #flag2 = 0
             Searchkey.objects.filter(scrapetime__lte=time1).delete()
@@ -220,6 +227,7 @@ def search(request):
                     searchdata.save()
                     returnkey = searchdata.searchid
                     #flag2 = 1
+                    customfunction.etihad(etihaddest,etihadorigin,date1,returnkey)
                     customfunction.scrape(destcode, orgncode, date1, returndate, returnkey)
             else:
                 obj = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, scrapetime__gte=time1)
@@ -235,6 +243,7 @@ def search(request):
                 searchkeyid = searchdata.searchid 
                 cursor = connection.cursor()
                 #flag1 = 1
+                customfunction.etihad(etihadorigin,etihaddest,date,searchkeyid)
                 customfunction.scrape(orgncode, destcode, date, depart, searchkeyid)
                 returnkey = ''
                 if returndate:
@@ -248,6 +257,7 @@ def search(request):
                         returnkey = searchdata.searchid
                         #flag2 = 1
                         #customfunction.scrape(destcode, orgncode, date1, returndate, returnkey)
+                        customfunction.etihad(etihaddest,etihadorigin,date,returnkey)
                         customfunction.scrape(destcode, orgncode, date, depart, returnkey)
             if len(departlist) >0 :
                 multiplekey = multiplekey+seperator+str(searchkeyid)

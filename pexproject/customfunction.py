@@ -220,7 +220,7 @@ def united(origin,destination,searchdate,searchkey):
                      departdlist.append(departtext)
                      arivelist.append(dest_text)
                      flight_number = info.find("div",{"class":"segment-flight-equipment"}).text
-		     flight_number = flight_number.strip()
+                     flight_number = flight_number.strip()
                      if flight_duration:
                          plane_text = flight_number+" ("+flight_duration+")"
                          planelist.append(plane_text)
@@ -361,7 +361,7 @@ def delta(orgn,dest,searchdate,searchkey):
 	
     try:
         print "test1"
-        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "_fareDisplayContainer_tmplHolder")))
+        WebDriverWait(driver,15).until(EC.presence_of_element_located((By.ID, "_fareDisplayContainer_tmplHolder")))
     except:
         print "exception"
         display.stop()
@@ -535,6 +535,173 @@ def delta(orgn,dest,searchdate,searchkey):
     display.stop()
     driver.quit()
     return searchkey
+
+def etihad(source,destcode,searchdate,searchkey):
+    dt = datetime.datetime.strptime(searchdate, '%m/%d/%Y')
+    date = dt.strftime('%d/%m/%Y')
+    print "final date",date
+    cursor = connection.cursor()
+    currentdatetime = datetime.datetime.now()
+    stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
+    
+    url = "http://www.etihad.com/en-us/plan-and-book/book-redemption-flights/"
+    display = Display(visible=0, size=(800, 600))
+    display.start()
+    driver = webdriver.Chrome()
+    driver.get(url)
+    # normalLayout
+    driver.implicitly_wait(20)
+    time.sleep(5)
+    driver.refresh()
+    WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "frm_2012158061206151234")))
+    time.sleep(10)
+    origin = driver.find_element_by_id("frm_2012158061206151234")
+    origin.click()
+    time.sleep(5)
+    origin.send_keys(str(source))
+    time.sleep(1)
+    origin.send_keys(Keys.TAB)
+    to = driver.find_element_by_id("frm_20121580612061235")
+    time.sleep(3)
+    to.send_keys(str(destcode))
+    time.sleep(2)
+    to.send_keys(Keys.TAB)
+    
+    oneway = driver.find_element_by_id("frm_oneWayFlight")
+    driver.execute_script("arguments[0].click();", oneway)
+    
+    ddate = driver.find_element_by_id("frm_2012158061206151238")
+    ddate.clear()
+    ddate.send_keys(date)
+    ddate.send_keys(Keys.ENTER)
+    
+    flightbutton = driver.find_element_by_name("webform")
+    flightbutton.send_keys(Keys.ENTER)
+    
+    time.sleep(5)
+    html_page = driver.page_source
+    
+    soup = BeautifulSoup(html_page)
+    try:
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "dtcontainer-both")))
+    except:
+        display.stop()
+        driver.quit()
+        return searchkey
+    maincontain = soup.find("div",{"id":"dtcontainer-both"})
+    
+    datatable = maincontain.find("tbody")
+    trblock = datatable.findAll("tr")
+    
+    for tds in trblock:
+        duration = ''
+        pricemiles = 0
+        stoppage = ''
+        fltno = ''
+        departdetailtext = ''
+        arivedetailtext = ''
+        planedetailtext = ''
+        operatortext = ''
+        tax = 0
+        print "======================================================================"
+        
+        airport = tds.findAll("td")
+        from_details = airport[4].findAll("span")
+        from_code = from_details[0].text
+        from_time = from_details[1].text
+        #datetime.datetime.strptime(from_time,'%I:%M %p')
+        print from_code,from_time
+        to_details = airport[5].findAll("span")
+        to_code = to_details[0].text
+        to_time = to_details[1].text
+        print to_code,to_time
+        
+        if airport[6]:
+            duration1 = airport[6].find("p")
+            duration = duration1.text
+        if airport[7]:
+            stop = (airport[7].text).strip()
+            if '1' in stop:
+                stoppage =  "1 STOP"
+            elif '2' in stop:
+                stoppage =  "2 STOPS"
+            elif '3' in stop:
+                stoppage =  "3 STOPS"
+            else:
+                stoppage =  "NONSTOP"
+        if airport[8]:
+            fltno = ''
+            flightno = airport[8].find("p")
+            fltno = flightno.text
+            '''
+            for flt in  flightno:
+                fltno = (flt.text).strip()
+                print "flight no",flt.text
+            '''
+            print "fltno",fltno
+            flt_link = driver.find_element_by_link_text(str(fltno))
+            flt_link.click()
+            time.sleep(0.05)
+            html_page1 = driver.page_source
+            soup1 = BeautifulSoup(html_page1)
+            detailblock = soup1.find("div",{"class":"flight"})
+            detailbody = detailblock.find("tbody")
+            trbody = detailbody.findAll("tr")
+            departdetail = []
+            arivedetail = []
+            planedetail = []
+            operator = []
+            for info in trbody:
+                tdblock = info.findAll("td")
+                operatedby = tdblock[0].text
+                operator.append(operatedby)
+                print "operatedby",operatedby
+                ftno = tdblock[1].text
+                print "ftno",ftno
+                origin  = tdblock[2].text
+                origin_tym2 = tdblock[3].find("span")["data-wl-date"]
+                origin_tym1 = origin_tym2.split(",")
+                origin_tym = origin_tym1[0]
+                departinfo = origin_tym+" from "+origin
+                print "departinfo",departinfo
+                departdetail.append(departinfo)
+                dest  = tdblock[4].text
+                dest_tym2 = tdblock[5].find("span")["data-wl-date"]
+                dest_tym1 = origin_tym2.split(",")
+                dest_tym = dest_tym1[0]
+                arivalinfo = dest_tym+" at "+dest
+                arivedetail.append(arivalinfo)
+                aircraft = tdblock[6].text
+                plane = ftno+" | "+aircraft
+                planedetail.append(plane)
+                print "*************************************************************************"
+            departdetailtext = '@'.join(departdetail)
+            arivedetailtext = '@'.join(arivedetail)
+            planedetailtext = '@'.join(planedetail)
+            operatortext = '@'.join(operator)
+            for j in range(11,15):
+                if airport[j]:
+                    price = airport[j].find("span").text
+                   
+                    if 'Sold out' not in price:
+                        price1 = re.findall("\d+.\d+", price)
+                        print price1
+                        pricemiles  = price1[0]
+                        tax = price1[1]
+                        print "pricemiles",pricemiles
+                        print "Tax",tax
+                        break  
+                    
+        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno,str(searchkey),stime,stoppage,"test",from_code,to_code,from_time,to_time,duration,str(pricemiles),str(tax),"0","0","0","0","Economy","","","etihad",departdetailtext,arivedetailtext,planedetailtext,operatortext))
+        transaction.commit()   
+        print "data inserted"
+    display.stop()
+    driver.quit()
+    
+    
+    
+    
+    
 def scrape(orgn,dest,deltasearchdate, unitedsearchdate,searchkey):
     cursor = connection.cursor()
     '''

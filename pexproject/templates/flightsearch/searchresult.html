@@ -116,6 +116,13 @@
 									UINTED AIRLINES
 									</label>
 									</div>
+									<div class="checkbox" >
+									<label>
+									<input type='checkbox' class="chk-airlines" name="airlines" value="etihad" {% for row in filterkey.datasource %} {% if row == 'etihad'%} checked="checked" {% endif %}{%endfor %}>
+									<span></span>
+									ETIHAD AIRLINES
+									</label>
+									</div>
 									</div>
 									</div>
 									
@@ -345,7 +352,6 @@
 								
 							
 								{% if selectedrow %}
-								
 								<div class="col-xs-12 selected-flights bgclr">
 									<div class="col-xs-12 nopadding visible-xs visible-sm">
 										<div class="col-sm-3 col-xs-5 text-left nopl ">
@@ -353,6 +359,8 @@
 											<img src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
 											{% if selectedrow.datasource == "delta" %}
 											<img src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
+											{% if selectedrow.datasource == "etihad" %}
+											<img src="{% static 'flightsearch/img/etihad.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
 										</div>
 										<div class="col-sm-9 col-xs-7 nopr">
 											<p class="flight-name">
@@ -396,6 +404,9 @@
 										<img src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
 										{% if selectedrow.datasource == "delta" %}
 										<img src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
+										{% if selectedrow.datasource == "etihad" %}
+										<img src="{% static 'flightsearch/img/etihad.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
+										
 										<h5>OUTBOUND</h5>
 									</div>
 											<div class="col-sm-5 col-xs-6 col-xs-12 nopadding hidden-sm hidden-xs for-mobile-view text-right xs-margin-20">
@@ -633,6 +644,9 @@
 											{% if row.datasource == "delta" %}
 												<img itemprop="logo" src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">
 											{% endif %}
+											{% if row.datasource == "etihad" %}
+												<img itemprop="logo" src="{% static 'flightsearch/img/etihad.jpg' %}" class="img-responsive" alt="Responsive image">
+											{% endif %}
 										</div>
 									</div>
 									<div class="col-md-12 col-sm-9 col-xs-7 nopadding" itemscope itemtype ="http://schema.org/Flight">
@@ -684,6 +698,9 @@
 												<img itemprop="logo" src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
 												{% if row.datasource == "delta" %}
 												<img itemprop="logo" src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
+												{% if row.datasource == "etihad" %}
+												<img itemprop="logo" src="{% static 'flightsearch/img/etihad.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
+											
 											</div>
 										</div>
 									</div>
