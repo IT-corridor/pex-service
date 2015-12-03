@@ -61,7 +61,7 @@
 			                  <label class="sr-only" for="departMain">Departure Date:</label>
 			                  <div class="inner-addon left-addon date" id="dp1">
 			                      <i class="glyphicon glyphicon-calendar"></i>
-			                      <input type="text" class="form_val form-control calender_class"  placeholder="Depart" name="deptdate" autocomplete="off" >
+			                      <input type="text" class="form_val form-control calender_class curson"  placeholder="Depart" name="deptdate" autocomplete="off" >
 			                  </div>
 			                  <div class="form-group" id="deptmsg"></div>
 			                </div>
@@ -98,7 +98,7 @@
 			                  <label class="sr-only" for="departMain">Departure Date:</label>
 			                  <div class="inner-addon left-addon date" id="dp1">
 			                      <i class="glyphicon glyphicon-calendar"></i>
-			                      <input type="text" class="form_val form-control calender_class"  placeholder="Depart" name="deptdate" autocomplete="off" {% if search %} value="{{search.traveldate|date:'m/d/Y'}}" {%endif%}>
+			                      <input type="text" class="form_val form-control calender_class curson"  placeholder="Depart" name="deptdate" autocomplete="off" {% if search %} value="{{search.traveldate|date:'m/d/Y'}}" {%endif%}>
 			                  </div>
 			     
 			                </div>
@@ -134,7 +134,7 @@
 			                  <label class="sr-only" for="departMain">Departure Date:</label>
 			                  <div class="inner-addon left-addon date" id="dp1">
 			                      <i class="glyphicon glyphicon-calendar"></i>
-			                      <input type="text"  class="form_val form-control calender_class"  placeholder="Depart" name="deptdate" autocomplete="off" >
+			                      <input type="text"  class="form_val form-control calender_class curson"  placeholder="Depart" name="deptdate" autocomplete="off" >
 			                  </div>
 			                  
 			                </div>
@@ -267,7 +267,7 @@
 			                  <label class="sr-only" for="departMain">Departure Date:</label>
 			                  <div class="inner-addon left-addon date" id="dp1">
 			                      <i class="glyphicon glyphicon-calendar"></i>
-			                      <input type="text" tabindex="3" class="form_val form-control" id="departMain" placeholder="Depart" name="deptdate" autocomplete="off">
+			                      <input type="text" tabindex="3" class="form_val form-control curson" id="departMain" placeholder="Depart" name="deptdate" autocomplete="off">
 			                  </div>
 			                  <div class="form-group" id="deptmsg"></div>
 			                </div>
@@ -277,7 +277,7 @@
 			                  <label class="sr-only" for="returnMain">Return Date:</label>
 			                  <div class="inner-addon left-addon date" id="dp2">
 			                      <i class="glyphicon glyphicon-calendar"></i>
-			                      <input type="text" tabindex="4" class="form_val form-control" id="returnMain" placeholder="Return" name="returndate" autocomplete="off">
+			                      <input type="text" tabindex="4" class="form_val form-control curson" id="returnMain" placeholder="Return" name="returndate" autocomplete="off">
 			                  </div>
 			                </div>
 			              </div>
@@ -285,11 +285,11 @@
 			              <div class="col-sm-2 col-xs-12 nopadding for_cabin_class" id="cabintab" tabindex="5">
 			                <div class="form-group travelers-dpdn-details no-margin" class="ui-widget">
 			                  <div class="dropdown travelers-holder form-control">
-			                  	<span class="" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="travelar">1 adult, Economy</span> <span class="caret"></span></span>
+			                  	<span class="curson" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="travelar">1 adult, Economy</span> <span class="caret"></span></span>
 			                  	<div class="travelers-down-menu dropdown-menu for_cabin_class" aria-labelledby="dropdownMenu1">
 			                  		<div class="col-xs-12 down-menu-block">
 										<span class="col-xs-4 nopadding">Class</span>
-										<span class="col-xs-8 text-right nopr"><select class="custom-field-control " id="cabintype" name="cabintype" tabindex="6">
+										<span class="col-xs-8 text-right nopr"><select class="custom-field-control curson" id="cabintype" name="cabintype" tabindex="6">
 											<option class="cabin" value="maincabin">Economy</option>
 											<option class="cabin" value="firstclass">Business</option>
 											<option  class="cabin" value="business">First</option>
