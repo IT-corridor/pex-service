@@ -552,7 +552,7 @@ def etihad(source,destcode,searchdate,searchkey):
     # normalLayout
     driver.implicitly_wait(20)
     time.sleep(5)
-    driver.refresh()
+    #driver.refresh()
     WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "frm_2012158061206151234")))
     time.sleep(10)
     origin = driver.find_element_by_id("frm_2012158061206151234")
@@ -578,7 +578,7 @@ def etihad(source,destcode,searchdate,searchkey):
     flightbutton = driver.find_element_by_name("webform")
     flightbutton.send_keys(Keys.ENTER)
     
-    time.sleep(5)
+    time.sleep(8)
     html_page = driver.page_source
     
     soup = BeautifulSoup(html_page)
@@ -606,21 +606,38 @@ def etihad(source,destcode,searchdate,searchkey):
         print "======================================================================"
         
         airport = tds.findAll("td")
-        from_details = airport[4].findAll("span")
-        from_code = from_details[0].text
-        from_time = from_details[1].text
+	print len(airport)
+	k = 0
+	for t in airport:
+		print "*****************************"+str(k)+"*********************"
+		print t
+		k=k+1
+	exit()
+	print airport[0]
+ 	from_details = ''
+        from_details = airport[0].findAll("span")
+	if from_details == '': 
+		from_details = airport[0].findAll("div")
+	print from_details
+	if len(from_details) > 1:
+        	from_code = from_details[0].text
+        	from_time = from_details[1].text
         #datetime.datetime.strptime(from_time,'%I:%M %p')
-        print from_code,from_time
-        to_details = airport[5].findAll("span")
-        to_code = to_details[0].text
-        to_time = to_details[1].text
-        print to_code,to_time
+        	print from_code,from_time
+	to_details = ''
+        to_details = airport[1].findAll("span")
+	if to_details == '':
+		to_details =airport[1].findAll("div")
+	if len(to_details)>1:
+        	to_code = to_details[0].text
+        	to_time = to_details[1].text
+        	print to_code,to_time
         
-        if airport[6]:
-            duration1 = airport[6].find("p")
+        if airport[2]:
+            duration1 = airport[2].find("p")
             duration = duration1.text
-        if airport[7]:
-            stop = (airport[7].text).strip()
+        if airport[3]:
+            stop = (airport[3].text).strip()
             if '1' in stop:
                 stoppage =  "1 STOP"
             elif '2' in stop:
@@ -629,9 +646,9 @@ def etihad(source,destcode,searchdate,searchkey):
                 stoppage =  "3 STOPS"
             else:
                 stoppage =  "NONSTOP"
-        if airport[8]:
+        if airport[4]:
             fltno = ''
-            flightno = airport[8].find("p")
+            flightno = airport[4].find("p")
             fltno = flightno.text
             '''
             for flt in  flightno:
@@ -640,11 +657,14 @@ def etihad(source,destcode,searchdate,searchkey):
             '''
             print "fltno",fltno
             flt_link = driver.find_element_by_link_text(str(fltno))
-            flt_link.click()
+            #flt_link.click()
+	    driver.execute_script("arguments[0].click();", flt_link)
             time.sleep(0.05)
             html_page1 = driver.page_source
             soup1 = BeautifulSoup(html_page1)
+	    #print soup1.prettify()
             detailblock = soup1.find("div",{"class":"flight"})
+	    #print detailblock
             detailbody = detailblock.find("tbody")
             trbody = detailbody.findAll("tr")
             departdetail = []
@@ -679,7 +699,7 @@ def etihad(source,destcode,searchdate,searchkey):
             arivedetailtext = '@'.join(arivedetail)
             planedetailtext = '@'.join(planedetail)
             operatortext = '@'.join(operator)
-            for j in range(11,15):
+            for j in range(6,10):
                 if airport[j]:
                     price = airport[j].find("span").text
                    
