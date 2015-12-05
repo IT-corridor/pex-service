@@ -5,14 +5,14 @@
 	<head>
 			<title>Pex Index</title>
 		{% load staticfiles %}
-		{% if request.GET.selectedid %}
+		{% if request.GET.keyid %}
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta property="og:locale" content="en_US" />
 		<meta property="og:type" content="flight" />
 		<meta name="description" content="">
 		<meta name="keywords" content="">
-		<meta property="og:url" content="http://pex.techens.com/share?selectedid={{request.GET.selectedid|urlencode}}&cabin={{request.GET.cabin|urlencode}}&passenger={{request.GET.passenger|urlencode}}{% if request.GET.returnrowid %}&returnrowid={{request.GET.returnrowid|urlencode}}{%endif%}" />
+		<meta property="og:url" content="https://www.facebook.com/sharer/sharer.php?u=http://pex.techens.com/getsearchresult?keyid={{request.GET.keyid}}%26cabin={{request.GET.cabin}}%26passenger={{request.GET.passenger}}{% if request.GET.returnkey %}%26returnkey={{request.GET.returnkey}}{%endif%}" />
 		<meta property="og:title" content="Pex Search Details" />
 		<meta property="og:description" content="Make Your journey Easy" />
 		<meta property="fb:app_id" content="" />
