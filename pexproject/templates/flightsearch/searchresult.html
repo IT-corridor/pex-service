@@ -1578,7 +1578,7 @@
 				    			<textarea rows="2" class="form-control" placeholder="Enter your tweet"></textarea>
 				    		</div>
 				    		<div class="form-group">
-				    			<button type="submit" class="btn btn-pexSearch filter-serch-btn">Tweet</button>
+				    			<a href="https://twitter.com/home?status=http://pex.techens.com/getsearchresult?keyid={{request.GET.keyid}}%26cabin={{request.GET.cabin}}%26passenger={{request.GET.passenger}}{% if request.GET.returnkey %}%26returnkey={{request.GET.returnkey}}{%endif%}" id="social_share"><span class="btn btn-pexSearch filter-serch-btn">Post</span></a>=http://pex.techens.com/getsearchresult?keyid={{request.GET.keyid}}%26cabin={{request.GET.cabin}}%26passenger={{request.GET.passenger}}{% if request.GET.returnkey %}%26returnkey={{request.GET.returnkey}}{%endif%}" id="social_share"><span class="btn btn-pexSearch filter-serch-btn">Tweet</span></a>
 				    		</div>
 				    	</form>
 				    </div>
