@@ -1567,7 +1567,7 @@
 							  </div>
 							</div>
 							<div class="form-group mvt10px">
-							<a href="https://www.facebook.com/sharer/sharer.php?u=http://pex.techens.com/getsearchresult?keyid={{request.GET.keyid}}%26cabin={{request.GET.cabin}}%26passenger={{request.GET.passenger}}{% if request.GET.returnkey %}%26returnkey={{request.GET.returnkey}}{%endif%}"><span class="btn btn-pexSearch filter-serch-btn">Post</span></a>
+							<a href="https://www.facebook.com/sharer/sharer.php?u=http://pex.techens.com/getsearchresult?keyid={{request.GET.keyid}}%26cabin={{request.GET.cabin}}%26passenger={{request.GET.passenger}}{% if request.GET.returnkey %}%26returnkey={{request.GET.returnkey}}{%endif%}" id="social_share"><span class="btn btn-pexSearch filter-serch-btn">Post</span></a>
 							</div>
 				    	</form>
 				    </div>
@@ -2179,9 +2179,19 @@ $(document).ready(function(){
 			});
 		</script>
 <script>
+	var record;
 	$(document.body).on('click','.share',function(){
 		var record = $(this).attr("id");
 		$('#recorid').val(record);
+		
+	});
+	$('.share').click(function(){
+	    record = $(this).attr("id");
+	    console.log(record);
+		$('#social_share').attr('href', function() {
+		
+        return this.href + '%26recordid='+record;
+    });
 	});
 </script>
 
