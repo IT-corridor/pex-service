@@ -739,6 +739,10 @@ p.flight-name {
 	top: 3px;
 	position: relative;
 }
+.auto-crsr
+{
+	cursor:auto;
+}
 .btn-xs {
 	padding: 0px 6px 3px;
 }
@@ -1556,7 +1560,29 @@ overflow:hidden;
 	}
 }
 @media (max-width: 767px) {
-	
+	.xs-pad-with-cross-btn
+	{
+		padding: 30px 23px 20px;
+		background:#f2f2f2;
+	}
+	.cross-btn{
+  display: inline-block !important;
+  position: absolute;
+  font-size: 15px;
+  background: #f2f2f2;
+  height: 30px;
+  width: 30px;
+  line-height: 30px;
+  text-align: center;
+  border-radius: 50%;
+  top: -6px;
+  color:#64B7E7;
+  right: -5px;
+	}
+	.custome-pd-cross
+	{
+		padding:15px;
+	}
 	.xs-fw {
 		width: 100%;
 	}
