@@ -299,8 +299,8 @@
 										<span class="col-xs-4 nopadding">Class</span>
 										<span class="col-xs-8 text-right nopr"><select class="custom-field-control curson" id="cabintype" name="cabintype" tabindex="6">
 											<option class="cabin" value="maincabin">Economy</option>
-											<option class="cabin" value="firstclass">Business</option>
-											<option  class="cabin" value="business">First</option>
+											<option class="cabin" value="firstclass" {% if 'cabin' in request.GET and  request.GET.cabin == 'firstclass'%}selected="selected" {%endif%}>Business</option>
+											<option  class="cabin" value="business" {% if 'cabin' in request.GET and  request.GET.cabin == 'business'%}selected="selected" {%endif%}>First</option>
 											</select></span>                  			
 			                  		</div>
 			                  		<div class="col-xs-12 alert alert-warning"> </div>
@@ -781,8 +781,14 @@ $('#cabintype').on('change',function(){
 });
 
 $(document).ready(function(){
+	var check = "{{request.GET.passenger}}";
+	console.log(check);
 	$('#passenger').val('1');
 	$(".alert-warning").hide();
+	if(check != ''){
+		$('#adults').val('{{request.GET.passenger}}');
+		travelinfo();
+	}
 });
 //@@@Cabin select@@@@
 function travelinfo(){
