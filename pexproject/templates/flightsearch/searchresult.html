@@ -1549,9 +1549,11 @@
 							    </a>
 							  </div>
 							  <div class="media-body">
+							  	<!--
 							    <div class="form-group">
 							    	<textarea rows="3" class="form-control" placeholder="Enter your comment"></textarea>
 							    </div>
+							   -->
 							    <div class="media">
 								  <div class="media-left">
 								    <a href="#">
@@ -2186,12 +2188,11 @@ $(document).ready(function(){
 	var fulltext;
 	$(document.body).on('click','.share',function(){
 		var record = $(this).attr("id");
-		console.log("hello");
 		$('#recorid').val(record);
             tweetcontent = $(this).siblings("input[type='hidden']").val();
 		var flight_price = $(this).siblings("input[type='hidden']").attr('class');
-		console.log(flight_price);
-		//console.log(tweetcontent);
+		var fbtext = "Mies "+flight_price+" from {{search.0.source}} to {{search.0.destination}}.";
+		$('#fbtitle').append(fbtext);
 		$('#social_share').attr('href', function() {
 			return this.href + '%26share_recordid='+record;
                 });
