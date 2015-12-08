@@ -29,7 +29,7 @@
 			                  <label><input type="radio" id="rt" name="trip" value="roundTripBtn"  class="curson" checked="checked"> Round-Trip</label>
 			                </div>
 			                <div class="checkbox-inline mhr10px auto-crsr" >
-			                  <label ><input type="radio" id="ow" name="trip"  class="curson" value="oneWayBtn" {% if 'action' in request.GET and  request.GET.action == 'ow'%}checked="checked" {%endif%}> One-Way</label>
+			                  <label ><input type="radio" id="ow" name="trip"  class="curson" value="oneWayBtn" {% if 'action' in request.GET and  request.GET.action == 'ow' or returndate == '' %}checked="checked" {%endif%}> One-Way</label>
 			                </div>
 			                <div class="checkbox-inline mhr10px auto-crsr" >
 			                  <label ><input type="radio" id="mc" value="multicity"  class="curson" name="trip" {% if 'action' in request.GET and  request.GET.action == 'mc'%}checked="checked" {%endif%}> Multi-City</label>
