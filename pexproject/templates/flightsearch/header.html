@@ -3,8 +3,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	
 	<head>
-			<title>Pex Index</title>
+		<!--title>Pex Index</title-->
 		{% load staticfiles %}
+		{% load humanize %}
 		{% if request.GET.keyid %}
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -12,12 +13,17 @@
 		<meta property="og:type" content="flight" />
 		<meta name="description" content="">
 		<meta name="keywords" content="">
-		<meta property="og:url" content="https://www.facebook.com/sharer/sharer.php?u=http://pex.techens.com/getsearchresult?keyid={{request.GET.keyid}}%26cabin={{request.GET.cabin}}%26passenger={{request.GET.passenger}}{% if request.GET.returnkey %}%26returnkey={{request.GET.returnkey}}{%endif%}" />
-		<meta property="og:title" content="Pex Search Details" />
-		<meta property="og:description" content="Hey, I found a great flight on Pex from ({{search.0.source}}) to ({{search.0.destination}}). Join me." />
+		 {% if request.GET.share_recordid %}
+
+		<meta property="og:url" content="https://www.facebook.com/sharer/sharer.php?u=http://pex.techens.com/getsearchresult?keyid={{request.GET.keyid}}%26cabin={{request.GET.cabin}}%26passenger={{request.GET.passenger}}{% if request.GET.returnkey %}%26returnkey={{request.GET.returnkey}}{%endif%}%26share_recordid={{request.GET.share_recordid}}" />
+		<meta property="og:title" content="Miles {{selectedrow.maincabin|intcomma}}  from {{search.0.source}} to {{search.0.destination}}."/>
+		{%endif%}
+		<meta id="mcontent" property="og:description" content="Hey, I found a great flight on Pex from {{search.0.source}} to {{search.0.destination}}. Join me." />
 		<meta property="fb:app_id" content="" />
 		<meta property="og:site_name" content="pex.techens.com" />
 		<meta property="og:image" content="{% static 'flightsearch/img/logoMain.png' %}" />
+		<meta name="twitter:site" content="pex.techens.com">
+		<meta name="twitter:description" content="Hey, I found a great flight on Pex from ({{search.0.source}}) to ({{search.0.destination}}). Join me.">
 		{% endif %}
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
