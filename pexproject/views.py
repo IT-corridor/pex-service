@@ -180,7 +180,8 @@ def search(request):
         orgnid = request.REQUEST['fromMain']
         destid = request.REQUEST['toMain']
         depart = request.REQUEST['deptdate']
-        
+        cabin = request.REQUEST['cabin']
+        print "cabin",cabin
         ongnidlist =  orgnid.split(',')
         destlist = destid.split(',')
         departlist = depart.split(',')
@@ -191,6 +192,7 @@ def search(request):
             orgnid = ongnidlist[i]
             destid = destlist[i]
             depart = departlist[i]
+            print "orgnid",orgnid,"destid",destid
             originobj = Airports.objects.filter(airport_id=orgnid)
             destobj = Airports.objects.filter(airport_id=destid)
             for row in originobj:
@@ -227,7 +229,7 @@ def search(request):
                     searchdata.save()
                     returnkey = searchdata.searchid
                     #flag2 = 1
-                    customfunction.etihad(etihaddest,etihadorigin,date1,returnkey)
+                    customfunction.etihad(etihaddest,etihadorigin,date1,returnkey,cabin)
                     customfunction.scrape(destcode, orgncode, date1, returndate, returnkey)
             else:
                 obj = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, scrapetime__gte=time1)
@@ -243,7 +245,7 @@ def search(request):
                 searchkeyid = searchdata.searchid 
                 cursor = connection.cursor()
                 #flag1 = 1
-                customfunction.etihad(etihadorigin,etihaddest,date,searchkeyid)
+                customfunction.etihad(etihadorigin,etihaddest,date,searchkeyid,cabin)
                 customfunction.scrape(orgncode, destcode, date, depart, searchkeyid)
                 returnkey = ''
                 if returndate:
@@ -257,7 +259,7 @@ def search(request):
                         returnkey = searchdata.searchid
                         #flag2 = 1
                         #customfunction.scrape(destcode, orgncode, date1, returndate, returnkey)
-                        customfunction.etihad(etihaddest,etihadorigin,date,returnkey)
+                        customfunction.etihad(etihaddest,etihadorigin,date,returnkey,cabin)
                         customfunction.scrape(destcode, orgncode, date, depart, returnkey)
             if len(departlist) >0 :
                 multiplekey = multiplekey+seperator+str(searchkeyid)
@@ -695,10 +697,12 @@ def getsearchresult(request):
         if depttime:
             timeinfo = {'maxdept':deptmaxtime, 'mindept':depttime, 'minarival':arivtime, 'maxarival':arivtmaxtime}
         else:
-            timeinfo = '' 
-	if 'share_recordid' in request.GET:
+            timeinfo = ''
+        if 'share_recordid' in request.GET:
             sharedid = request.GET.get('share_recordid','')
             selectedrow = Flightdata.objects.get(pk=sharedid)
+              
+
         if request.is_ajax():
             return render_to_response('flightsearch/search.html', {'action':action, 'data':mainlist,'multirecod':mainlist, 'multicity':multicity, 'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name}, context_instance=RequestContext(request))
         if totalrecords > 0:

@@ -553,13 +553,20 @@ def delta(orgn, dest, searchdate, searchkey):
     driver.quit()
     return searchkey
 
-def etihad(source, destcode, searchdate, searchkey):
+def etihad(source, destcode, searchdate, searchkey,scabin):
     dt = datetime.datetime.strptime(searchdate, '%m/%d/%Y')
     date = dt.strftime('%d/%m/%Y')
     print "final date", date
     cursor = connection.cursor()
     currentdatetime = datetime.datetime.now()
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
+    search_cabin = ''
+    if scabin == 'maincabin':
+        search_cabin = "Radio1"
+    elif scabin == 'firstclass':
+        search_cabin = "Radio2"
+    else:
+        search_cabin = "Radio3"
     
     url = "http://www.etihad.com/en-us/plan-and-book/book-redemption-flights/"
     display = Display(visible=0, size=(800, 600))
@@ -587,11 +594,13 @@ def etihad(source, destcode, searchdate, searchkey):
     oneway = driver.find_element_by_id("frm_oneWayFlight")
     driver.execute_script("arguments[0].click();", oneway)
     
+    search_cabin1 = driver.find_element_by_id(search_cabin)
+    driver.execute_script("arguments[0].click();", search_cabin1)
+    
     ddate = driver.find_element_by_id("frm_2012158061206151238")
     ddate.clear()
     ddate.send_keys(date)
     ddate.send_keys(Keys.ENTER)
-    
     flightbutton = driver.find_element_by_name("webform")
     flightbutton.send_keys(Keys.ENTER)
     
@@ -614,6 +623,12 @@ def etihad(source, destcode, searchdate, searchkey):
     for tds in trblock:
         duration = ''
         pricemiles = 0
+        fare1 = 0
+        ecotax = 0
+        fare2 = 0
+        businesstax = 0
+        fare3 = 0
+        firsttax = 0
         stoppage = ''
         fltno = ''
         from_code = ''
@@ -629,7 +644,6 @@ def etihad(source, destcode, searchdate, searchkey):
         
         airport = tds.findAll("td")
         flightnoth = tds.findAll("th",{"class":"flightNumber"})
-    	print flightnoth
      	from_details = tds.find("th", {"class":"departureDateAndCode"})
         from_detail = ''
     	if from_details: 
@@ -637,8 +651,8 @@ def etihad(source, destcode, searchdate, searchkey):
         if len(from_detail) > 1:
             from_code = from_detail[0].text
             from_time = from_detail[2].text
-	else:
-	    display.stop()
+    	else:
+    	    display.stop()
             driver.quit()
             print "no data"
             return searchkey
@@ -653,15 +667,15 @@ def etihad(source, destcode, searchdate, searchkey):
             to_time = to_detail[2].text
             print to_code, to_time
         
-	totalduration = tds.find("th",{"class":"totalTripDuration"})
-	if totalduration:
-	    duration =  totalduration.text
-	    print "duration",duration
-	stops = tds.find("th",{"class":"stops"})
-	if stops:
-	    stop = stops.text
-	    if '1' in stop:
-		stoppage = "1 STOP"
+    	totalduration = tds.find("th",{"class":"totalTripDuration"})
+    	if totalduration:
+    	    duration =  totalduration.text
+    	    print "duration",duration
+    	stops = tds.find("th",{"class":"stops"})
+    	if stops:
+    	    stop = stops.text
+    	    if '1' in stop:
+                stoppage = "1 STOP"
             elif '2' in stop:
                 stoppage = "2 STOPS"
             elif '3' in stop:
@@ -721,15 +735,20 @@ def etihad(source, destcode, searchdate, searchkey):
                 pricemiles = price1[0]
                 tax = price1[1]
                 break
-                    
-        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno, str(searchkey), stime, stoppage, "test", from_code, to_code, from_time, to_time, duration, str(pricemiles), str(tax), "0", "0", "0", "0", "Economy", "", "", "etihad", departdetailtext, arivedetailtext, planedetailtext, operatortext))
+        if scabin == 'maincabin':
+            fare1 = pricemiles
+            ecotax = tax
+        elif scabin == 'firstclass':
+            fare2 = pricemiles
+            businesstax = tax
+        else:
+            fare3 = pricemiles
+            firsttax = tax      
+        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno, str(searchkey), stime, stoppage, "test", from_code, to_code, from_time, to_time, duration, str(fare1), str(ecotax), str(fare2),str(businesstax), str(fare3), str(firsttax), "Economy", "Business", "First", "etihad", departdetailtext, arivedetailtext, planedetailtext, operatortext))
         transaction.commit()   
         print "data inserted"
     display.stop()
     driver.quit()
-    
-    
-    
     
     
 def scrape(orgn, dest, deltasearchdate, unitedsearchdate, searchkey):

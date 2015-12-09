@@ -62,7 +62,7 @@ var formdata={"fromMain":$('#from').val(),"csrtoken":CSRF_TOKEN};
 $.ajax({
         type: "POST",
         url: "/search/",
-        data: "returndate="+ encodeURI(returndate)+"&rndtripkey="+encodeURI(rdtrip) +"&triptype="+ encodeURI(trip)+ "&fromMain="+ encodeURI(from)+ "&toMain=" + encodeURI(to)+ "&deptdate=" + encodeURI(depart) + "&csrfmiddlewaretoken=" + encodeURI(CSRF_TOKEN),
+        data: "returndate="+ encodeURI(returndate)+"&rndtripkey="+encodeURI(rdtrip) +"&cabin="+encodeURI(cabintype)+"&triptype="+ encodeURI(trip)+ "&fromMain="+ encodeURI(from)+ "&toMain=" + encodeURI(to)+ "&deptdate=" + encodeURI(depart) + "&csrfmiddlewaretoken=" + encodeURI(CSRF_TOKEN),
     	success: function(data){
         multikey = data[0];
         searchid1 = multikey.split(',');

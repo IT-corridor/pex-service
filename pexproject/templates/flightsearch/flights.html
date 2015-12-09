@@ -119,6 +119,42 @@
 			                <div class="form-group nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="from">From:</label>
 			                  <input type="search"  class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" {% if search %} value="{{search.source}}" {%endif%}>
+			                  <input type="hidden" id="fromid1" class="fromid" name="fromMain"/>
+			                </div>
+			              </div>
+			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
+			                <div class="form-group  nomr noml" class="ui-widget">
+			                  <label class="sr-only" for="to">To:</label>
+			                  <input type="search"  class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" {% if search %} value="{{search.destination}}" {%endif%}>
+			                  <input type="hidden" id="toid1" class="fromid" name="toMain"/>
+			                </div>
+			              </div>
+			              <div class="input-daterange">
+			              <div class="col-sm-2 col-xs-6 nopl xs-pr5 mobile-wt">
+			
+			                <div class="form-group nomr noml nomb">
+			                  <label class="sr-only" for="departMain">Departure Date:</label>
+			                  <div class="inner-addon left-addon date" id="dp1">
+			                      <i class="glyphicon glyphicon-calendar"></i>
+			                      <input type="text" class="form_val form-control calender_class curson"  placeholder="Depart" name="deptdate" autocomplete="off" {% if search %} value="{{search.traveldate|date:'m/d/Y'}}" {%endif%}>
+			                  </div>
+			     
+			                </div>
+			              </div>
+			              </div>
+			  
+			  
+			             	 <a href="#" class="col-sm-2 col-xs-6 xs-nopadding remove_field"> Remove</a>
+			        
+			              </div>
+			              
+			            </div>
+			            <div class="container xs-nopadding hidden-xs">
+			            <div class="col-sm-12 col-xs-12 nopadding pl5 pd-xs custome-pd">
+			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
+			                <div class="form-group nomr noml" class="ui-widget">
+			                  <label class="sr-only" for="from">From:</label>
+			                  <input type="search"  class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" {% if search %} value="{{search.source}}" {%endif%}>
 			                  <input type="hidden" id="fromid2" class="fromid" name="fromMain"/>
 			                </div>
 			              </div>
@@ -153,40 +189,7 @@
 			          <div class="col-xs-12 nopadding custome-pd-cross">
 			            
 			            	<div class="container xs-nopadding">
-			            <div class="col-sm-12 col-xs-12 nopadding pl5 xs-pad-with-cross-btn custome-pd hidden-xs">
-			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
-			                <div class="form-group nomr noml" class="ui-widget">
-			                  <label class="sr-only" for="from">From:</label>
-			                  <input type="search" class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" >
-			                  <input type="hidden" id="fromid3" class="fromid" name="fromMain"  />
-			                </div>
-			              </div>
-			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
-			                <div class="form-group  nomr noml" class="ui-widget">
-			                  <label class="sr-only" for="to">To:</label>
-			                  <input type="search"  class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" >
-			                  <input type="hidden" id="toid3" class="fromid" name="toMain" />
-			                </div>
-			              </div>
-			              <div class="input-daterange">
-			              <div class="col-sm-2 col-xs-12 nopl xs-pr5 mobile-wt">
-			
-			                <div class="form-group nomr noml nomb" >
-			                  <label class="sr-only" for="departMain">Departure Date:</label>
-			                  <div class="inner-addon left-addon date" id="dp1">
-			                      <i class="glyphicon glyphicon-calendar"></i>
-			                      <input type="text"  class="form_val form-control calender_class curson"  placeholder="Depart" name="deptdate" autocomplete="off" >
-			                  </div>
-			                  
-			                </div>
-			                 
-			              </div>
-			              
-			              </div>
-			           
-			             	 <a href="#" class="col-sm-2 col-xs-6 xs-nopadding hidden-xs remove_field">Remove</a>
-			         		<a href="#" class="glyphicon glyphicon-remove visible-xs cross-btn remove_field"></a>
-			            </div>
+			            
 			             <div class="col-xs-12 nopadding pl5">
 			              <div class="col-sm-2 col-xs-12 xs-nopadding nopl pd-xs custome-pd  for_cabin_class" id="cabintab" style="border:0px;">
 			                <div class="form-group travelers-dpdn-details no-margin" class="ui-widget" style="border: 1px solid #ddd; border-radius: 4px;">
