@@ -20,7 +20,7 @@ from django.db import connection, transaction
 from multiprocessing import Process
 import threading
 import Queue
-#from pyvirtualdisplay import Display
+from pyvirtualdisplay import Display
 import socket
 import urllib
 
@@ -33,8 +33,8 @@ def united(origin, destination, searchdate, searchkey):
     searchkey = searchkey
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     url = "https://www.united.com/ual/en/us/flight-search/book-a-flight/results/awd?f=" + origin + "&t=" + destination + "&d=" + date + "&tt=1&at=1&sc=7&px=1&taxng=1&idx=1"
-    # display = Display(visible=0, size=(800, 600))
-    # display.start()
+    display = Display(visible=0, size=(800, 600))
+    display.start()
     driver = webdriver.Chrome()
     driver.get(url)
     time.sleep(2)
@@ -58,7 +58,7 @@ def united(origin, destination, searchdate, searchkey):
     except:
     	
     	print driver.current_url
-        # display.stop
+        display.stop
         driver.quit()
         return searchkey
     time.sleep(2)
@@ -309,7 +309,7 @@ def united(origin, destination, searchdate, searchkey):
         html_page1 = driver.page_source
         soup = BeautifulSoup(html_page1)
         scrapepage(searchkey, soup)
-    # display.stop
+    display.stop
     driver.quit()
     return searchid
 def delta(orgn, dest, searchdate, searchkey):

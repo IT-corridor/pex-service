@@ -215,7 +215,7 @@ def search(request):
             #flag1 = 0
             #flag2 = 0
             Searchkey.objects.filter(scrapetime__lte=time1).delete()
-            Flightdata.objects.filter(scrapetime__lte=time1).delete()
+            #Flightdata.objects.filter(scrapetime__lte=time1).delete()
             if searchdate1:
                 obj = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, scrapetime__gte=time1)
                 returnobj = Searchkey.objects.filter(source=destination1, destination=origin, traveldate=searchdate1, scrapetime__gte=time1)
@@ -696,6 +696,9 @@ def getsearchresult(request):
             timeinfo = {'maxdept':deptmaxtime, 'mindept':depttime, 'minarival':arivtime, 'maxarival':arivtmaxtime}
         else:
             timeinfo = '' 
+	if 'share_recordid' in request.GET:
+            sharedid = request.GET.get('share_recordid','')
+            selectedrow = Flightdata.objects.get(pk=sharedid)
         if request.is_ajax():
             return render_to_response('flightsearch/search.html', {'action':action, 'data':mainlist,'multirecod':mainlist, 'multicity':multicity, 'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name}, context_instance=RequestContext(request))
         if totalrecords > 0:
