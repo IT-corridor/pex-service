@@ -54,7 +54,7 @@ def united(origin, destination, searchdate, searchkey):
     driver.implicitly_wait(20)
     try:
         
-        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "product_MIN-ECONOMY-SURP-OR-DISP")))
+        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "fl-results")))
     except:
     	
     	print driver.current_url
@@ -594,7 +594,8 @@ def etihad(source, destcode, searchdate, searchkey):
     datatable = maincontain.find("tbody")
 
     trblock = datatable.findAll("tr")
-    
+    #print trblock[0]
+    #exit()    
     for tds in trblock:
         duration = ''
         pricemiles = 0
@@ -602,6 +603,8 @@ def etihad(source, destcode, searchdate, searchkey):
         fltno = ''
         from_code = ''
         from_time = ''
+	to_code = ''
+	to_time = ''
         departdetailtext = ''
         arivedetailtext = ''
         planedetailtext = ''
@@ -611,31 +614,30 @@ def etihad(source, destcode, searchdate, searchkey):
         
         airport = tds.findAll("td")
         flightnoth = tds.findAll("th",{"class":"flightNumber"})
-        k = 0
-        
-        for t in airport:
-            print "*********************************"+str(k)+"************************"
-            print t
-            k=k+1
-    	print len(airport)
-    	
-     	from_details = tds.find("td", {"class":"ItinHeaderFrom"})
+    	print flightnoth
+     	from_details = tds.find("th", {"class":"departureDateAndCode"})
         from_detail = ''
     	if from_details: 
-    		from_detail = from_details.findAll("div")
+    		from_detail = from_details.findAll("span")
         if len(from_detail) > 1:
             from_code = from_detail[0].text
-            from_time = from_detail[1].text
+            from_time = from_detail[2].text
+	else:
+	    display.stop()
+            driver.quit()
+            print "no data"
+            return searchkey
+
         print from_code, from_time
-        to_details = tds.find("td", {"class":"ItinHeaderTo"})
+        to_details = tds.find("th", {"class":"arrivalDateAndCode"})
         to_detail = ''
         if to_details:
-    		to_detail = to_details.findAll("div")
+    		to_detail = to_details.findAll("span")
         if len(to_detail) > 1:
             to_code = to_detail[0].text
-            to_time = to_detail[1].text
+            to_time = to_detail[2].text
             print to_code, to_time
-            
+        '''    
         if airport[3]:
             print airport[3]
             durationinfo = airport[3].findAll("div")
@@ -654,6 +656,24 @@ def etihad(source, destcode, searchdate, searchkey):
             if len(durationinfo) > 2:
                 duration = durationinfo[2].text
                 print "duration", duration
+	'''
+	totalduration = tds.find("th",{"class":"totalTripDuration"})
+	if totalduration:
+	    duration =  totalduration.text
+	    print "duration",duration
+	stops = tds.find("th",{"class":"stops"})
+	if stops:
+	    stop = stops.text
+	    if '1' in stop:
+		stoppage = "1 STOP"
+            elif '2' in stop:
+                stoppage = "2 STOPS"
+            elif '3' in stop:
+                stoppage = "3 STOPS"
+            else:
+                stoppage = "NONSTOP"
+            print "stoppage", stoppage
+
         if flightnoth:
             print flightnoth
             fltno = ''
@@ -703,18 +723,21 @@ def etihad(source, destcode, searchdate, searchkey):
             arivedetailtext = '@'.join(arivedetail)
             planedetailtext = '@'.join(planedetail)
             operatortext = '@'.join(operator)
-            for j in range(6, 10):
-                if airport[j]:
-                    price = airport[j].find("span").text
-                   
-                    if 'Sold out' not in price:
-                        price1 = re.findall("\d+.\d+", price)
-                        print price1
-                        pricemiles = price1[0]
-                        tax = price1[1]
-                        print "pricemiles", pricemiles
-                        print "Tax", tax
-                        break  
+	    
+	priceblocks = tds.findAll("td",{"class":"price"})	
+	#print priceblocks 
+        for j in range(0, len(priceblocks)):
+        #if priceblocks[j]:
+ 	    price = priceblocks[j].find("span").text
+            #print "price",price
+            if 'Sold out' not in price:
+		price1 = re.findall("\d+.\d+", price)
+                #print price1
+                pricemiles = price1[0]
+                tax = price1[1]
+                #print "pricemiles", pricemiles
+                #print "Tax", tax
+                break  
                     
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno, str(searchkey), stime, stoppage, "test", from_code, to_code, from_time, to_time, duration, str(pricemiles), str(tax), "0", "0", "0", "0", "Economy", "", "", "etihad", departdetailtext, arivedetailtext, planedetailtext, operatortext))
         transaction.commit()   
