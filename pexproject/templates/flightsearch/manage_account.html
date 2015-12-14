@@ -1,11 +1,7 @@
-<html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title>Manage Account</title>
+
 		{% load staticfiles %}
 		{% include "flightsearch/header.html" %}
-		<link rel="stylesheet" href="{% static 'flightsearch/css/bootstrap.min.css' %}">
-	</head>
+		
 	<body>
 	    <div class="container " style="margin:10px;padding-right: 10cm;">
 	    	
@@ -50,6 +46,9 @@
 		</div>
 		</div>
 	{% include "flightsearch/footer.html" %}
+	<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>');</script>
+	
+    <script src="/static/flightsearch/js/vendor/bootstrap.min.js"></script>
 	<script>
 	$('#back').click(function(){
 		parent.history.back();
