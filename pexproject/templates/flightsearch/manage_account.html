@@ -1,11 +1,8 @@
-
 		{% load staticfiles %}
 		{% include "flightsearch/header.html" %}
-		
-	<body>
-	    <div class="container " style="margin:10px;padding-right: 10cm;">
+	    <div class="container " style="">
 	    	
-		<div class="col-xs-12 col-sm-12 col-sm-push-3 bkcl">
+		<div class="col-xs-12 col-sm-9  bkcl mng-act" style="">
 			{% if message %}
 			<div class="alert alert-warning">{{message}}</div>
 			{% endif %}
@@ -45,7 +42,9 @@
 		</form>
 		</div>
 		</div>
+		<div class="footer-abs">
 	{% include "flightsearch/footer.html" %}
+	</div>
 	<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>');</script>
 	
     <script src="/static/flightsearch/js/vendor/bootstrap.min.js"></script>

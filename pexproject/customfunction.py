@@ -25,7 +25,7 @@ import socket
 import urllib
 
 def united(origin, destination, searchdate, searchkey):
-    return searchkey
+    #return searchkey
     cursor = connection.cursor()
     dt = datetime.datetime.strptime(searchdate, '%Y/%m/%d')
     date = dt.strftime('%Y-%m-%d')
@@ -271,6 +271,7 @@ def united(origin, destination, searchdate, searchkey):
                         fare1 = float(economy) * int('1000')
                     
                     econtax = eco.find("div", {"class":"pp-additional-fare price-point"}).text
+		    print "econtax",econtax
                     if "+$" in econtax:
                         maintax = econtax.replace('+$', '')
                     
@@ -287,6 +288,7 @@ def united(origin, destination, searchdate, searchkey):
                         fare2 = float(business) * int('1000')
                     
                     busstax = buss.find("div", {"class":"pp-additional-fare price-point"}).text
+		    print "busstax",busstax
                     if "+$" in busstax:
                         businesstax = busstax.replace('+$', '')
                     # print "busstax",businesstax
@@ -336,7 +338,7 @@ def united(origin, destination, searchdate, searchkey):
     driver.quit()
     return searchid
 def delta(orgn, dest, searchdate, searchkey):
-    return searchkey
+    #return searchkey
     cursor = connection.cursor()
     url = "http://www.delta.com/"   
     searchid = str(searchkey)
