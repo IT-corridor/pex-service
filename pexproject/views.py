@@ -38,7 +38,6 @@ import operator
 import customfunction
 from pexproject.form import LoginForm
 #from django.utils import timezone
-#from bson import json_util
 import json
 import logging
 logger = logging.getLogger(__name__)
