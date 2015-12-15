@@ -66,8 +66,8 @@ class Searchkey(models.Model):
     destination_airport_id = models.IntegerField ()
 class UserManager(BaseUserManager):
 	def create_user(self, username, email=None, password=None):
-		#print username
-		#print "email=",email
+		print username
+		print "email=",email
 		
         	#if not email:
 	         #   raise ValueError('Users must have an email address')

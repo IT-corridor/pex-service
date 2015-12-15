@@ -53,11 +53,11 @@ def united(origin, destination, searchdate, searchkey):
         print "no alert to accept"
     driver.implicitly_wait(20)
     try:
-        
+        print "data check"
         WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "fl-results")))
+	print "data check complete"
     except:
-    	
-    	print driver.current_url
+    	#print driver.current_url
         display.stop
         driver.quit()
         return searchkey
@@ -77,7 +77,7 @@ def united(origin, destination, searchdate, searchkey):
         
         
         # firsttax = 0
-        datadiv = soup.findAll("div", {"class":"flight-block"})
+        datadiv = soup.findAll("li", {"class":"flight-block"})
         
         for row in datadiv:
             fare1 = 0
@@ -136,8 +136,18 @@ def united(origin, destination, searchdate, searchkey):
                 dateinfo = row.findAll("div", {"class":"date-duration"})
                 dateduration = dateinfo[0].text
             # print dateduration
-            depttime = departtime.replace(dateduration, '').strip()
-            # print depttime
+            depttime1 = departtime.replace(dateduration, '').strip()
+	    if 'Departing' in depttime1:
+		depttime1 = (depttime1.replace('Departing','')).strip()
+            if 'pm' in depttime1:
+		#print depttime1[depttime1.index('pm') + len('pm'):]
+		depttime2 = depttime1.split('pm')
+		depttime = depttime2[0]+" pm"
+	    else:
+		if 'am' in depttime1:
+		    depttime2 = depttime1.split('am')
+		    depttime = (depttime2[0]).strip()+" am"
+		    print depttime
             test = (datetime.datetime.strptime(depttime, '%I:%M %p'))
             test1 = test.strftime('%H:%M')
             # print test1
@@ -148,15 +158,27 @@ def united(origin, destination, searchdate, searchkey):
                 arivedate = dateinfo[1].text
             # print arivedate
             arivaltime = arivetime.replace(arivedate, '').strip()
+	    if 'Arriving' in arivaltime:
+		arivaltime = (arivaltime.replace('Arriving','')).strip()
             if '.' in arivaltime:
                 arivaltime = arivaltime.replace('.', '')
+	    if 'pm' in arivaltime:
+                arivetime4 = arivaltime.split('pm')
+                arivaltime = (arivetime4[0]).strip()+" pm"
+            else:
+                if 'am' in arivaltime:
+                    arivetime4 = arivaltime.split('am')
+                    arivaltime = arivetime4[0]+" am"
+
             arivetime1 = (datetime.datetime.strptime(arivaltime, '%I:%M %p'))
             arivetime2 = arivetime1.strftime('%H:%M')
             # print "arivetime",arivetime2
             
             totaltime = row.find("a", {"class":"flight-duration otp-tooltip-trigger"}).text
             if 'total' in totaltime:
-                totaltime = totaltime.replace('total', '')
+		totaltime1 = totaltime.split('total')
+		if 'Duration' in totaltime1[0]:
+		    totaltime = totaltime1[0].replace('Duration', '')
             flightno = row.find("div", {"class":"segment-flight-number"}).text
             planetype = row.find("div", {"class":"segment-aircraft-type"}).text
             
@@ -198,7 +220,7 @@ def united(origin, destination, searchdate, searchkey):
                          departuretime = timesegmt1[0]
                          timesegmt2 = timesegmt1[1].split('(')
                          desttime = timesegmt2[0]
-                         flight_duration = timesegmt2[1].replace(')', '')
+                         flight_duration = timesegmt2[1].replace(')', '')		
                      if departuretime:
                          departtext = departuretime + " from " + depart
                          if departure_date:
@@ -353,7 +375,8 @@ def delta(orgn, dest, searchdate, searchkey):
     	# driver.find_element_by_id("departureDate").click()
     	# driver.find_elements_by_css_selector("td[data-date='"+date+"']")[0].click()
     
-    	driver.find_element_by_id("milesBtn").send_keys(Keys.ENTER)
+    	milebtn = driver.find_element_by_id("milesBtn")
+	driver.execute_script("arguments[0].click();", milebtn)
     	driver.find_element_by_id("findFlightsSubmit").send_keys(Keys.ENTER)
 	    
     except:
@@ -379,6 +402,8 @@ def delta(orgn, dest, searchdate, searchkey):
     WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
     html_page = driver.page_source
     soup = BeautifulSoup(html_page)
+    pricehead = soup.find("tr",{"class":"tblHeadUp"})
+    pricecol = pricehead.findAll("label",{"class":"tblHeadBigtext"})
     datatable = soup.findAll("table", {"class":"fareDetails"})
     n = 0
     for content in datatable:
@@ -412,18 +437,18 @@ def delta(orgn, dest, searchdate, searchkey):
                     planedetails.append(planedetailinfo)
             k = k + 1
         n = n + 1
-        pricecol = content.findAll("th")
+        #pricecol = content.findAll("th")
         tds = content.findAll("td")
         cabinhead = ''
         detailsblock = tds[0]
-        if  len(pricecol) > 2: 
+        if  len(pricecol) > 1: 
             if tds[1]:
                 economy = tds[1]
             if len(tds) > 2:
                 business = tds[2]
         else:
-            if len(pricecol) < 3:
-                cabinhead = pricecol[1].text
+            if len(pricecol) < 2:
+                cabinhead = pricecol[0].text
                 if 'Business' in cabinhead or 'First' in cabinhead:
                     business = tds[1]
                     economy = ''
@@ -733,7 +758,13 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
             if 'Sold out' not in price:
                 price1 = re.findall("\d+.\d+", price)
                 pricemiles = price1[0]
-                tax = price1[1]
+		currency_symbol = " ".join(re.findall("[a-zA-Z]+", price))
+                currency_symbol1 = currency_symbol.split(' ')
+                currencychange = urllib.urlopen("https://www.exchangerate-api.com/%s/%s/%f?k=e002a7b64cabe2535b57f764"%(currency_symbol1[1],"USD",float(price1[1])))
+                chaged_result = currencychange.read()
+                print "currencychange",chaged_result
+                tax = chaged_result
+                #tax = price1[1]
                 break
         if scabin == 'maincabin':
             fare1 = pricemiles
