@@ -192,7 +192,6 @@ def search(request):
         ongnidlist =  orgnid.split(',')
         destlist = destid.split(',')
         departlist = depart.split(',')
-        
         for i in range(0,len(departlist)):
             etihadorigin =''
             etihaddest = ''
@@ -236,6 +235,7 @@ def search(request):
                     searchdata.save()
                     returnkey = searchdata.searchid
                     #flag2 = 1
+                    customfunction.virgin_atlantic(destcode, orgncode,returndate, returnkey)
                     customfunction.etihad(etihaddest,etihadorigin,date1,returnkey,cabin)
                     customfunction.scrape(destcode, orgncode, date1, returndate, returnkey)
             else:
@@ -252,6 +252,7 @@ def search(request):
                 searchkeyid = searchdata.searchid 
                 cursor = connection.cursor()
                 #flag1 = 1
+                customfunction.virgin_atlantic(orgncode, destcode,depart, searchkeyid)
                 customfunction.etihad(etihadorigin,etihaddest,date,searchkeyid,cabin)
                 customfunction.scrape(orgncode, destcode, date, depart, searchkeyid)
                 returnkey = ''
@@ -266,6 +267,7 @@ def search(request):
                         returnkey = searchdata.searchid
                         #flag2 = 1
                         #customfunction.scrape(destcode, orgncode, date1, returndate, returnkey)
+                        customfunction.virgin_atlantic(destcode, orgncode,depart, returnkey)
                         customfunction.etihad(etihaddest,etihadorigin,date,returnkey,cabin)
                         customfunction.scrape(destcode, orgncode, date, depart, returnkey)
             if len(departlist) >0 :

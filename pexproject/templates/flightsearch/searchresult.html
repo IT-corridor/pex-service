@@ -357,6 +357,8 @@
 										<div class="col-sm-3 col-xs-5 text-left nopl ">
 											{% if selectedrow.datasource == "united" %}
 											<img src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
+											{% if selectedrow.datasource == "virgin_atlantic" %}
+											<img src="{% static 'flightsearch/img/virgin.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
 											{% if selectedrow.datasource == "delta" %}
 											<img src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
 											{% if selectedrow.datasource == "etihad" %}
@@ -643,6 +645,9 @@
 											{% if row.datasource == "united" %}
 												<img itemprop="logo" src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">
 											{% endif %}
+											{% if row.datasource == "virgin_atlantic" %}
+												<img itemprop="logo" src="{% static 'flightsearch/img/virgin.png' %}" class="img-responsive" alt="Responsive image">
+											{% endif %}
 											{% if row.datasource == "delta" %}
 												<img itemprop="logo" src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">
 											{% endif %}
@@ -702,7 +707,8 @@
 												<img itemprop="logo" src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
 												{% if row.datasource == "etihad" %}
 												<img itemprop="logo" src="{% static 'flightsearch/img/etihad.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
-											
+												{% if row.datasource == "virgin_atlantic" %}
+												<img itemprop="logo" src="{% static 'flightsearch/img/virgin.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
 											</div>
 										</div>
 									</div>
