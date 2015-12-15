@@ -25,7 +25,7 @@ import socket
 import urllib
 
 def united(origin, destination, searchdate, searchkey):
-    #return searchkey
+  
     cursor = connection.cursor()
     dt = datetime.datetime.strptime(searchdate, '%Y/%m/%d')
     date = dt.strftime('%Y-%m-%d')
