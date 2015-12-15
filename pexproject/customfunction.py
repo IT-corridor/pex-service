@@ -25,6 +25,7 @@ import socket
 import urllib
 
 def united(origin, destination, searchdate, searchkey):
+    return searchkey
     cursor = connection.cursor()
     dt = datetime.datetime.strptime(searchdate, '%Y/%m/%d')
     date = dt.strftime('%Y-%m-%d')
@@ -335,6 +336,7 @@ def united(origin, destination, searchdate, searchkey):
     driver.quit()
     return searchid
 def delta(orgn, dest, searchdate, searchkey):
+    return searchkey
     cursor = connection.cursor()
     url = "http://www.delta.com/"   
     searchid = str(searchkey)
@@ -677,7 +679,7 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
             from_code = from_detail[0].text
             from_time = from_detail[2].text
     	else:
-    	    display.stop()
+    	    #display.stop()
             driver.quit()
             print "no data"
             return searchkey
@@ -711,8 +713,12 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
 
         if flightnoth:
             fltno = ''
+            opt =''
             flightno = flightnoth[0].find("span",{"class":"flight-number"})
+            if flightno.find('span',{'id':'otp'}):
+                opt = flightno.find('span',{'id':'otp'}).text
             fltno = flightno.text
+            fltno = fltno.replace(opt,'')
             flt_link = driver.find_elements_by_xpath("//*[contains(text(), '"+str(fltno)+"')]")
             driver.execute_script("arguments[0].click();", flt_link[0])
             time.sleep(0.05)
@@ -752,13 +758,17 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
             planedetailtext = '@'.join(planedetail)
             operatortext = '@'.join(operator)
 	    
-	    priceblocks = tds.findAll("td",{"class":"price"})	 
-        for j in range(0, len(priceblocks)):
+	    priceblocks = tds.findAll("td",{"class":"price"})
+        if len(priceblocks) == 4:
+            tmp = 1
+        else:
+            tmp = 0
+        for j in range(tmp, len(priceblocks)):
             price = priceblocks[j].find("span").text
             if 'Sold out' not in price:
                 price1 = re.findall("\d+.\d+", price)
                 pricemiles = price1[0]
-		currency_symbol = " ".join(re.findall("[a-zA-Z]+", price))
+                currency_symbol = " ".join(re.findall("[a-zA-Z]+", price))
                 currency_symbol1 = currency_symbol.split(' ')
                 currencychange = urllib.urlopen("https://www.exchangerate-api.com/%s/%s/%f?k=e002a7b64cabe2535b57f764"%(currency_symbol1[1],"USD",float(price1[1])))
                 chaged_result = currencychange.read()
