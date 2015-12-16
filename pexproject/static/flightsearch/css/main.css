@@ -1583,7 +1583,7 @@ overflow:hidden;
 	.xs-pad-with-cross-btn
 	{
 		padding: 30px 23px 20px;
-		background:#f2f2f2;
+		!background:#f2f2f2;
 	}
 	.cross-btn{
   display: inline-block !important;
