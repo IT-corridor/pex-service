@@ -70,28 +70,44 @@ def virgin_atlantic(origin, dest, searchdate, searchkey):
             economy = row.find("td",{"class":"cellOption economy  hasLowestCostMessage"})
             print "--------------economy--------------------------------"
             economy_price = economy.find("span",{"class":"price"})
-            econprice = economy_price.text
-            econprice = re.findall("\d+.\d+", econprice)
+            econprice1 = economy_price.text
+            
+            econprice = re.findall("\d+.\d+", econprice1)
             if len(econprice) > 0:
                 econo = econprice[0]
                 if ',' in econo:
                     econo = econo.replace(',','')
-                print "econo",econo
             if len(econprice) > 1:
-                econotax = econprice[1]
-                print "econotax",econotax
+                if "USD" not in econprice1:
+                    currency_symbol = (re.findall("[a-zA-Z]+", econprice1))
+                    currencychange = urllib.urlopen("https://www.exchangerate-api.com/%s/%s/%f?k=e002a7b64cabe2535b57f764"%(currency_symbol[1],"USD",float(econprice[1])))
+                    chaged_result = currencychange.read()
+                    econotax = chaged_result
+                else:
+                    econotax = econprice[1]
+        pre_economy =''
         if row.find("td",{"class":"cellOption premEconomy "}):
             pre_economy = row.find("td",{"class":"cellOption premEconomy "})
+        if pre_economy == '' and row.find("td",{"class":"cellOption premEconomy  hasLowestCostMessage"}):
+            pre_economy = row.find("td",{"class":"cellOption premEconomy  hasLowestCostMessage"})
+        if pre_economy:
             print "--------------pre economy--------------------------------"
             pre_economy_price = pre_economy.find("span",{"class":"price"})
             pre_economy = pre_economy_price.text
+            print pre_economy
             pre_econo_price = re.findall("\d+.\d+", pre_economy)
             if len(pre_econo_price) > 0:
                 business = pre_econo_price[0]
                 if ',' in business:
                     business = business.replace(',','')
             if len(pre_econo_price) > 1:
-                busstax = pre_econo_price[1]
+                if "USD" not in pre_economy:
+                    currency_symbol = (re.findall("[a-zA-Z]+", pre_economy))
+                    currencychange = urllib.urlopen("https://www.exchangerate-api.com/%s/%s/%f?k=e002a7b64cabe2535b57f764"%(currency_symbol[1],"USD",float(pre_econo_price[1])))
+                    chaged_result = currencychange.read()
+                    busstax = chaged_result
+                else:
+                    busstax = pre_econo_price[1]
                 print "pre_econotax",busstax
         upper_class = ''
         if row.find("td",{"class":"cellOption upperclass  last"}):
@@ -103,6 +119,7 @@ def virgin_atlantic(origin, dest, searchdate, searchkey):
         if upper_class:
             upper_class_price = upper_class.find("span",{"class":"price"})
             upperclass_price = upper_class_price.text
+            print upperclass_price
             upperprice = re.findall("\d+.\d+", upperclass_price)
             if len(upperprice) > 0:
                 first = upperprice[0]
@@ -110,7 +127,13 @@ def virgin_atlantic(origin, dest, searchdate, searchkey):
                     first = first.replace(',','')
                 print "upper",first
             if len(upperprice) > 1:
-                firsttax = upperprice[1]
+                if "USD" not in upperclass_price:
+                    currency_symbol = (re.findall("[a-zA-Z]+", upperclass_price))
+                    currencychange = urllib.urlopen("https://www.exchangerate-api.com/%s/%s/%f?k=e002a7b64cabe2535b57f764"%(currency_symbol[1],"USD",float(upperprice[1])))
+                    chaged_result = currencychange.read()
+                    firsttax = chaged_result
+                else:
+                    firsttax = upperprice[1]
                 print "uppertax",firsttax
         #============================= end price block =========================================================
         sourcestn = ''
@@ -220,6 +243,7 @@ def virgin_atlantic(origin, dest, searchdate, searchkey):
     return searchkey
 
 def united(origin, destination, searchdate, searchkey):
+    return searchkey
     cursor = connection.cursor()
     dt = datetime.datetime.strptime(searchdate, '%Y/%m/%d')
     date = dt.strftime('%Y-%m-%d')
@@ -228,8 +252,8 @@ def united(origin, destination, searchdate, searchkey):
     searchkey = searchkey
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     url = "https://www.united.com/ual/en/us/flight-search/book-a-flight/results/awd?f=" + origin + "&t=" + destination + "&d=" + date + "&tt=1&at=1&sc=7&px=1&taxng=1&idx=1"
-    #display = Display(visible=0, size=(800, 600))
-    #display.start()
+    display = Display(visible=0, size=(800, 600))
+    display.start()
     driver = webdriver.Chrome()
     driver.get(url)
     time.sleep(2)
@@ -776,6 +800,7 @@ def delta(orgn, dest, searchdate, searchkey):
     return searchkey
 
 def etihad(source, destcode, searchdate, searchkey,scabin):
+    return searchkey
     dt = datetime.datetime.strptime(searchdate, '%m/%d/%Y')
     date = dt.strftime('%d/%m/%Y')
     print "final date", date
