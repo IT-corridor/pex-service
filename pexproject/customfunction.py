@@ -79,8 +79,13 @@ def virgin_atlantic(origin, dest, searchdate, searchkey):
                     econo = econo.replace(',','')
             if len(econprice) > 1:
                 if "USD" not in econprice1:
+                    cprice = 0
+                    if ',' in econprice[1]:
+                        cprice = econprice[1].replace(',','')
+                    else:
+                        cprice = econprice[1]
                     currency_symbol = (re.findall("[a-zA-Z]+", econprice1))
-                    currencychange = urllib.urlopen("https://www.exchangerate-api.com/%s/%s/%f?k=e002a7b64cabe2535b57f764"%(currency_symbol[1],"USD",float(econprice[1])))
+                    currencychange = urllib.urlopen("https://www.exchangerate-api.com/%s/%s/%f?k=e002a7b64cabe2535b57f764"%(currency_symbol[1],"USD",float(cprice)))
                     chaged_result = currencychange.read()
                     econotax = chaged_result
                 else:
@@ -102,8 +107,13 @@ def virgin_atlantic(origin, dest, searchdate, searchkey):
                     business = business.replace(',','')
             if len(pre_econo_price) > 1:
                 if "USD" not in pre_economy:
+                    eprice = 0
+                    if ',' in pre_econo_price[1]:
+                        eprice = pre_econo_price[1].replace(',','')
+                    else:
+                        eprice = pre_econo_price[1]
                     currency_symbol = (re.findall("[a-zA-Z]+", pre_economy))
-                    currencychange = urllib.urlopen("https://www.exchangerate-api.com/%s/%s/%f?k=e002a7b64cabe2535b57f764"%(currency_symbol[1],"USD",float(pre_econo_price[1])))
+                    currencychange = urllib.urlopen("https://www.exchangerate-api.com/%s/%s/%f?k=e002a7b64cabe2535b57f764"%(currency_symbol[1],"USD",float(eprice)))
                     chaged_result = currencychange.read()
                     busstax = chaged_result
                 else:
@@ -128,8 +138,13 @@ def virgin_atlantic(origin, dest, searchdate, searchkey):
                 print "upper",first
             if len(upperprice) > 1:
                 if "USD" not in upperclass_price:
+                    uprice = 0
+                    if ',' in upperprice[1]:
+                        uprice = upperprice[1].replace(',','')
+                    else:
+                        uprice = upperprice[1]
                     currency_symbol = (re.findall("[a-zA-Z]+", upperclass_price))
-                    currencychange = urllib.urlopen("https://www.exchangerate-api.com/%s/%s/%f?k=e002a7b64cabe2535b57f764"%(currency_symbol[1],"USD",float(upperprice[1])))
+                    currencychange = urllib.urlopen("https://www.exchangerate-api.com/%s/%s/%f?k=e002a7b64cabe2535b57f764"%(currency_symbol[1],"USD",float(uprice)))
                     chaged_result = currencychange.read()
                     firsttax = chaged_result
                 else:
@@ -141,7 +156,6 @@ def virgin_atlantic(origin, dest, searchdate, searchkey):
         depttime= ''
         arivaltime=''
         total_duration = ''
-        operatedby =''
         heading = details.find("ul")
         depart = heading.find("li",{"class":"depart"})
         departinfo = depart.findAll("p")
@@ -186,57 +200,102 @@ def virgin_atlantic(origin, dest, searchdate, searchkey):
         if 'Duration' in total_duration:
             total_duration = (total_duration.replace('Duration','')).strip()
         print "total_duration",total_duration
+        '''
         operator = details.find("dl",{"class":"operator"})
         operatedby = (operator.find("dd").text).strip()
         print "operatedby",operatedby
-    
+        '''
         #===============================details block====================================================
         details_block = details.find("div",{"class":"tooltip"})
         details_tr = details_block.findAll("tr")
-        print len(details_tr)
-        from_to = details_tr[0].find("td",{"class":"flightDetails"})
-        from_to1 = from_to.find("span",{"class":"flightFromTo"}).text
-        departing_from = ''
-        ariving_at = ''
-        departing_date =''
-        detaildetptime = ''
-        detailarivetime = ''
-        deptextraday = ''
-        ariveextraday = ''
-        if 'to' in from_to1:
-            from_to1 = from_to1.split('to')
-            departing_from = from_to1[0]
-            ariving_at = from_to1[1]
-        departing_date = from_to.find("span",{"class":"fullDate"}).text
-        if 'Departing' in departing_date:
-            departing_date = (departing_date.replace('Departing','')).strip()
-        departtime = details_tr[1].find("td",{"class":"departs"})
-        fl_dept_time = departtime.find("span",{"class":"flightDeparts"})
-        detaildetptime = fl_dept_time.text
-        if departtime.find("span",{"class":"extraDays"}):
-            extradeptdate = departtime.find("span",{"class":"extraDays"})
-            deptextraday = extradeptdate.text
-        arivetime = details_tr[1].find("td",{"class":"arrives"})
-        fl_arive_time = arivetime.find("span",{"class":"flightArrives"})
-        detailarivetime = fl_arive_time.text
-        if arivetime.find("span",{"class":"extraDays"}):
-            extra_ariveday = arivetime.find("span",{"class":"extraDays"})
-            ariveextraday = extra_ariveday.text
-        duration = details_tr[1].find("td",{"class":"duration"})
-        fl_duration1 = duration.find("span",{"class":"flightDuration"})
-        fl_duration = (fl_duration1.text).strip()
-        print "fl_duration",fl_duration
-        fl_flightno =''
-        planeno = ''
-        flight_no = details_tr[1].find("td",{"class":"number"})
-        fl_flightno1 = flight_no.find("span",{"class":"flightNumber"})
-        planeno = (''.join(fl_flightno1.find('br').next_siblings))
-        fl_flightno = (fl_flightno1.text).replace(planeno,'')
-        deptdetail = departing_date+"|"+detaildetptime+" "+deptextraday+" from "+departing_from
-        arivedetail = departing_date+"|"+detailarivetime+" "+ariveextraday+" at "+ariving_at
-        planetext = fl_flightno+"|"+planeno+"("+fl_duration+")"   
+        counter = 0
+        departdlist = []
+        arivelist = []
+        planelist = []
+        operatedby = []
+        departdetails = ''
+        arivedetails = ''
+        planedetails = ''
+        operatedbytext = ''
+        while (counter < len(details_tr)):
+            print "counter",counter
+            from_to = details_tr[counter].find("td",{"class":"flightDetails"})
+            operator = from_to.find("span",{"class":"operator"}).text
+            operatedby.append(operator)
+            print "operator",operator
+            from_to1 = from_to.find("span",{"class":"flightFromTo"}).text
+            departing_from = ''
+            ariving_at = ''
+            departing_date =''
+            detaildetptime = ''
+            detailarivetime = ''
+            deptextraday = ''
+            ariveextraday = ''
+            if 'to' in from_to1:
+                from_to1 = from_to1.split('to')
+                departing_from = from_to1[0]
+                if '\n' in departing_from:
+                    departing_from1 = departing_from.split("\n")
+                    departing_from = departing_from1[0].strip()+" "+departing_from1[1].strip()
+                print "departing_from",departing_from
+                ariving_at = from_to1[1]
+                if '\n' in ariving_at:
+                    ariving_at1 = ariving_at.split("\n")
+                    ariving_at = ariving_at1[0].strip()+" "+ariving_at1[1].strip()
+                print "ariving_at",ariving_at
+            departing_date = from_to.find("span",{"class":"fullDate"}).text
+            if 'Departing' in departing_date:
+                departing_date = (departing_date.replace('Departing','')).strip()
+            counter = counter+1 
+            departtime = details_tr[counter].find("td",{"class":"departs"})
+            fl_dept_time = departtime.find("span",{"class":"flightDeparts"})
+            detaildetptime = fl_dept_time.text
+            if departtime.find("span",{"class":"extraDays"}):
+                extradeptdate = departtime.find("span",{"class":"extraDays"})
+                deptextraday = extradeptdate.text
+                nod = re.findall("\d+.\d+", deptextraday)
+                print "nod",nod
+                if "+1" in deptextraday:
+                    deptextraday = "+1 day"
+                elif "+2" in deptextraday:
+                    deptextraday = "+2 day"
+                else:
+                    if "+3" in deptextraday:
+                        deptextraday = "+3 day"
+            arivetime = details_tr[counter].find("td",{"class":"arrives"})
+            fl_arive_time = arivetime.find("span",{"class":"flightArrives"})
+            detailarivetime = fl_arive_time.text
+            if arivetime.find("span",{"class":"extraDays"}):
+                extra_ariveday = arivetime.find("span",{"class":"extraDays"})
+                ariveextraday = extra_ariveday.text
+                
+            duration = details_tr[counter].find("td",{"class":"duration"})
+            fl_duration1 = duration.find("span",{"class":"flightDuration"})
+            fl_duration = (fl_duration1.text).strip()
+            print "fl_duration",fl_duration
+            fl_flightno =''
+            planeno = ''
+            flight_no = details_tr[1].find("td",{"class":"number"})
+            fl_flightno1 = flight_no.find("span",{"class":"flightNumber"})
+            planeno = (''.join(fl_flightno1.find('br').next_siblings))
+            print "planeno",planeno
+            fl_flightno = (fl_flightno1.text).replace(planeno,'')
+            deptdetail = departing_date+"|"+detaildetptime+" "+deptextraday+" from "+departing_from
+            departdlist.append(deptdetail)
+            arivedetail = departing_date+"|"+detailarivetime+" "+ariveextraday+" at "+ariving_at
+            arivelist.append(arivedetail)
+            planetext = fl_flightno+"|"+planeno+"("+fl_duration+")" 
+            planelist.append(planetext)
+            counter = counter+1
+        print "departdlist",departdlist  
+        print "arivelist",arivelist 
+        print "planelist",planelist
+        departdetails = '@'.join(departdlist)
+        arivedetails = '@'.join(arivelist)
+        planedetails = ('@'.join(planelist)).strip()
+        operatedbytext = '@'.join(operatedby)  
         print "==============================================================================================="
-        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fl_flightno, str(searchkey), stime, stp, lyover, sourcestn, destinationstn, depttime, arivaltime,total_duration, str(econo), str(econotax), str(business), str(busstax), str(first), str(firsttax),"Economy","Business","First", "virgin_atlantic", deptdetail, arivedetail, planetext, operatedby))
+        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fl_flightno, str(searchkey), stime, stp, lyover, sourcestn, destinationstn, depttime, arivaltime,total_duration, str(econo), str(econotax), str(business), str(busstax), str(first), str(firsttax),"Economy","Business","First", "virgin_atlantic", departdetails, arivedetails, planedetails, operatedbytext))
         transaction.commit()
     display.stop()                                                                                                                                  
     driver.quit()
