@@ -183,7 +183,7 @@ def virgin_atlantic(origin, dest, searchdate, searchkey):
                 if '(' in ariveat:
                     ariveat2 = ariveat.split('(')
                     destinationstn = ariveat2[1].replace(')','')
-            print "ariveat",ariveat
+            #print "ariveat",ariveat
         stop = heading.find("li",{"class":"stops"})
         durations = heading.find("li",{"class":"duration"})
         stoppage = stop.text
@@ -199,8 +199,8 @@ def virgin_atlantic(origin, dest, searchdate, searchkey):
         total_duration = (durations.text).strip()
         if 'Duration' in total_duration:
             total_duration = (total_duration.replace('Duration','')).strip()
-        print "total_duration",total_duration
         '''
+        #print "total_duration",total_duration
         operator = details.find("dl",{"class":"operator"})
         operatedby = (operator.find("dd").text).strip()
         print "operatedby",operatedby
@@ -254,7 +254,7 @@ def virgin_atlantic(origin, dest, searchdate, searchkey):
                 extradeptdate = departtime.find("span",{"class":"extraDays"})
                 deptextraday = extradeptdate.text
                 nod = re.findall("\d+.\d+", deptextraday)
-                print "nod",nod
+                #print "nod",nod
                 if "+1" in deptextraday:
                     deptextraday = "+1 day"
                 elif "+2" in deptextraday:
@@ -272,7 +272,7 @@ def virgin_atlantic(origin, dest, searchdate, searchkey):
             duration = details_tr[counter].find("td",{"class":"duration"})
             fl_duration1 = duration.find("span",{"class":"flightDuration"})
             fl_duration = (fl_duration1.text).strip()
-            print "fl_duration",fl_duration
+            #print "fl_duration",fl_duration
             fl_flightno =''
             planeno = ''
             flight_no = details_tr[1].find("td",{"class":"number"})
@@ -294,6 +294,50 @@ def virgin_atlantic(origin, dest, searchdate, searchkey):
         arivedetails = '@'.join(arivelist)
         planedetails = ('@'.join(planelist)).strip()
         operatedbytext = '@'.join(operatedby)  
+        '''
+        print len(details_tr)
+        from_to = details_tr[0].find("td",{"class":"flightDetails"})
+        from_to1 = from_to.find("span",{"class":"flightFromTo"}).text
+        departing_from = ''
+        ariving_at = ''
+        departing_date =''
+        detaildetptime = ''
+        detailarivetime = ''
+        deptextraday = ''
+        ariveextraday = ''
+        if 'to' in from_to1:
+            from_to1 = from_to1.split('to')
+            departing_from = from_to1[0]
+            ariving_at = from_to1[1]
+        departing_date = from_to.find("span",{"class":"fullDate"}).text
+        if 'Departing' in departing_date:
+            departing_date = (departing_date.replace('Departing','')).strip()
+        departtime = details_tr[1].find("td",{"class":"departs"})
+        fl_dept_time = departtime.find("span",{"class":"flightDeparts"})
+        detaildetptime = fl_dept_time.text
+        if departtime.find("span",{"class":"extraDays"}):
+            extradeptdate = departtime.find("span",{"class":"extraDays"})
+            deptextraday = extradeptdate.text
+        arivetime = details_tr[1].find("td",{"class":"arrives"})
+        fl_arive_time = arivetime.find("span",{"class":"flightArrives"})
+        detailarivetime = fl_arive_time.text
+        if arivetime.find("span",{"class":"extraDays"}):
+            extra_ariveday = arivetime.find("span",{"class":"extraDays"})
+            ariveextraday = extra_ariveday.text
+        duration = details_tr[1].find("td",{"class":"duration"})
+        fl_duration1 = duration.find("span",{"class":"flightDuration"})
+        fl_duration = (fl_duration1.text).strip()
+        #print "fl_duration",fl_duration
+        fl_flightno =''
+        planeno = ''
+        flight_no = details_tr[1].find("td",{"class":"number"})
+        fl_flightno1 = flight_no.find("span",{"class":"flightNumber"})
+        planeno = (''.join(fl_flightno1.find('br').next_siblings))
+        fl_flightno = (fl_flightno1.text).replace(planeno,'')
+        deptdetail = departing_date+"|"+detaildetptime+" "+deptextraday+" from "+departing_from
+        arivedetail = departing_date+"|"+detailarivetime+" "+ariveextraday+" at "+ariving_at
+        planetext = fl_flightno+"|"+planeno+"("+fl_duration+")"   
+        '''
         print "==============================================================================================="
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fl_flightno, str(searchkey), stime, stp, lyover, sourcestn, destinationstn, depttime, arivaltime,total_duration, str(econo), str(econotax), str(business), str(busstax), str(first), str(firsttax),"Economy","Business","First", "virgin_atlantic", departdetails, arivedetails, planedetails, operatedbytext))
         transaction.commit()
@@ -302,7 +346,7 @@ def virgin_atlantic(origin, dest, searchdate, searchkey):
     return searchkey
 
 def united(origin, destination, searchdate, searchkey):
-    return searchkey
+    #return searchkey
     cursor = connection.cursor()
     dt = datetime.datetime.strptime(searchdate, '%Y/%m/%d')
     date = dt.strftime('%Y-%m-%d')
@@ -614,7 +658,7 @@ def united(origin, destination, searchdate, searchkey):
     driver.quit()
     return searchid
 def delta(orgn, dest, searchdate, searchkey):
-    return searchkey
+    #return searchkey
     cursor = connection.cursor()
     url = "http://www.delta.com/"   
     searchid = str(searchkey)
@@ -859,7 +903,7 @@ def delta(orgn, dest, searchdate, searchkey):
     return searchkey
 
 def etihad(source, destcode, searchdate, searchkey,scabin):
-    return searchkey
+    #return searchkey
     dt = datetime.datetime.strptime(searchdate, '%m/%d/%Y')
     date = dt.strftime('%d/%m/%Y')
     print "final date", date

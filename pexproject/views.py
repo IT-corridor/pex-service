@@ -54,9 +54,10 @@ def index(request):
 	    request.session['username'] =user1.email
 	else:
 	    request.session['username'] = request.user.username
- 
-    if 'password'  not in request.session:	
-    	request.session['password'] = "123456" #request.user.password
+	request.session['password'] = user1.password 
+	print request.session['password']
+    #if 'password'  not in request.session:	
+    	#request.session['password'] = "123456" #request.user.password
     return  render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
 
 def flights(request):
