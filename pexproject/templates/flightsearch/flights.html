@@ -581,9 +581,9 @@
 	        	html = '<div class="container xs-nopadding"><div class="col-sm-12 col-xs-12 nopadding pl5 xs-pad-with-cross-btn custome-pd ">';
 html = html+'<div class="col-sm-2 col-xs-12 nopl xs-nopadding"><div class="form-group nomr noml" class="ui-widget"><label class="sr-only" for="from">From:</label>';
 html = html+' <input type="search" class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" >';
-html=html+'<input type="hidden" id="fromid3" class="fromid" name="fromMain"/></div></div><div class="col-sm-2 col-xs-12 nopl xs-nopadding">';
+html=html+'<input type="hidden" id="fromid'+newid+'" class="fromid" name="fromMain" /></div></div><div class="col-sm-2 col-xs-12 nopl xs-nopadding">';
 html=html+'<div class="form-group  nomr noml" class="ui-widget"><label class="sr-only" for="to">To:</label><input type="search"  class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" >';
-html=html+'<input type="hidden" id="toid3" class="fromid" name="toMain"/></div></div><div class="input-daterange"><div class="col-sm-2 col-xs-12 nopl xs-pr5 mobile-wt">';
+html=html+'<input type="hidden" id="toid'+newid+'" class="fromid" name="toMain" /></div></div><div class="input-daterange"><div class="col-sm-2 col-xs-12 nopl xs-pr5 mobile-wt">';
 html=html+'<div class="form-group nomr noml nomb"><label class="sr-only" for="departMain">Departure Date:</label><div class="inner-addon left-addon date" id="dp1">';
 html=html+'<i class="glyphicon glyphicon-calendar"></i><input type="text"  class="form_val form-control calender_class curson"  placeholder="Depart" name="deptdate" autocomplete="off" ></div></div></div></div><a href="#" class="glyphicon glyphicon-remove visible-xs cross-btn remove_field"></a></div></div>'
 	        if(x < max_fields){ //max input box allowed
