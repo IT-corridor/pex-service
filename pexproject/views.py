@@ -187,8 +187,6 @@ def search(request):
         searchdate1 = ''
         multiplekey =''
         seperator = ''
-        #customfunction.etihad()
-        
         if returndate:
             dt1 = datetime.datetime.strptime(returndate, '%Y/%m/%d')
             date1 = dt1.strftime('%m/%d/%Y')
@@ -250,7 +248,7 @@ def search(request):
                     searchdata.save()
                     returnkey = searchdata.searchid
                     #flag2 = 1
-                    customfunction.virgin_atlantic(destcode, orgncode,returndate, returnkey)
+                    #customfunction.virgin_atlantic(destcode, orgncode,returndate, returnkey)
                     customfunction.etihad(etihaddest,etihadorigin,date1,returnkey,cabin)
                     customfunction.scrape(destcode, orgncode, date1, returndate, returnkey)
             else:
@@ -267,7 +265,7 @@ def search(request):
                 searchkeyid = searchdata.searchid 
                 cursor = connection.cursor()
                 #flag1 = 1
-                customfunction.virgin_atlantic(orgncode, destcode,depart, searchkeyid)
+                #customfunction.virgin_atlantic(orgncode, destcode,depart, searchkeyid)
                 customfunction.etihad(etihadorigin,etihaddest,date,searchkeyid,cabin)
                 customfunction.scrape(orgncode, destcode, date, depart, searchkeyid)
                 returnkey = ''
@@ -282,12 +280,17 @@ def search(request):
                         returnkey = searchdata.searchid
                         #flag2 = 1
                         #customfunction.scrape(destcode, orgncode, date1, returndate, returnkey)
-                        customfunction.virgin_atlantic(destcode, orgncode,depart, returnkey)
+                        #customfunction.virgin_atlantic(destcode, orgncode,depart, returnkey)
                         customfunction.etihad(etihaddest,etihadorigin,date,returnkey,cabin)
                         customfunction.scrape(destcode, orgncode, date, depart, returnkey)
+            Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='virgin_atlantic').delete()
+            if returnkey:
+                Flightdata.objects.filter(searchkeyid=returnkey,datasource='virgin_atlantic').delete()            
+            customfunction.virgin_atlantic(orgncode,destcode,depart,returndate,searchkeyid,returnkey)
             if len(departlist) >0 :
                 multiplekey = multiplekey+seperator+str(searchkeyid)
-                seperator = ','             
+                seperator = ',' 
+                    
         mimetype = 'application/json'
         results = []
         results.append(multiplekey)
