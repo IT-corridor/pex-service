@@ -1781,3 +1781,19 @@ display: table-cell;
 }
 
 }
+@media (max-height: 1024px) {
+
+.form-cstm-mng
+{
+	min-height:596px;
+}
+
+}
+@media (max-height: 768px) {
+
+.form-cstm-mng
+{
+	min-height:auto;
+}
+
+}

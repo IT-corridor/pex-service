@@ -65,7 +65,7 @@ class Searchkey(models.Model):
     origin_airport_id = models.IntegerField ()
     destination_airport_id = models.IntegerField ()
 class UserManager(BaseUserManager):
-	def create_user(self, username, email=None, password=None):
+	def create_user(self, username, email, password=None):
 		print username
 		print "email=",email
 		

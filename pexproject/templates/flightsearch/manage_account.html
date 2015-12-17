@@ -1,6 +1,6 @@
 		{% load staticfiles %}
 		{% include "flightsearch/header.html" %}
-	    <div class="container " style="">
+	    <div class="container form-cstm-mng" style="">
 	    	
 		<div class="col-xs-12 col-sm-9  bkcl mng-act" style="">
 			{% if message %}
@@ -10,14 +10,15 @@
 			{% csrf_token %}
 		  <div class="form-group">
 		    <label  for="email">Email address</label> 	
-		    <input type="email" class="form-control" id="email" placeholder="Email" name="email" value="{{request.session.username}}" required>
+		    <input type="text" class="form-control" id="email" placeholder="Email" name="email" value="{{request.session.username}}" required>
 		  </div>
-		 
+		 	{% if issocial == '' %}
 			  <div class="form-group">
 			    <label  for="current_password">Password</label> <a href="#" id="change_password"><span id="change">Change<span></a>
 			    <input type="password" class="form-control" id="password" placeholder="Current Password" name="current_password" value="{{user.password}}" disabled required>
 			  </div>
-			<div id="password_div">
+			{% endif %}
+			<div {% if issocial == '' %}id="password_div" {% endif %}>
 			  <div class="form-group">
 			    <label  for="new_password">New Password</label> 
 			    <input type="password" class="form-control" id="newpassword" placeholder="New Password" name="new_password" required>
@@ -42,7 +43,7 @@
 		</form>
 		</div>
 		</div>
-		<div class="footer-abs">
+		<div class="">
 	{% include "flightsearch/footer.html" %}
 	</div>
 	<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>');</script>

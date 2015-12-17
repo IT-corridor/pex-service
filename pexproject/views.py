@@ -30,6 +30,7 @@ from random import randint
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from datetime import timedelta
 import time
+import MySQLdb
 import threading
 from multiprocessing import Process
 from datetime import date
@@ -47,7 +48,7 @@ def index(request):
     user = User()
     if request.user.username:
 	username = request.user.username
-	print username
+	request.session['userid']= request.user.user_id
 	user1 = User.objects.get(username=username)
 	print user1.email
 	if user1.email:
@@ -55,7 +56,7 @@ def index(request):
 	else:
 	    request.session['username'] = request.user.username
 	request.session['password'] = user1.password 
-	print request.session['password']
+	#print "userid",request.session['userid']
     #if 'password'  not in request.session:	
     	#request.session['password'] = "123456" #request.user.password
     return  render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
@@ -94,28 +95,39 @@ def signup(request):
         return HttpResponseRedirect(reverse('index'))
 
 def manageAccount(request):
+    cursor = connection.cursor()
     context = {}
     msg = ''
-    email = request.session['username']
-    user1 = User.objects.get(username=email)
+    password1 =''
+    userid = ''
+    issocial =''
+    email1 = request.session['username']
+    user1 = User.objects.get(pk =request.session['userid'])
+    #sid =request.session['userid'] 
+    cursor.execute("select provider from social_auth_usersocialauth where user_id ="+str(request.session['userid']))
+    social_id = cursor.fetchone()
+    if social_id:	
+	issocial = 'yes'
     if request.POST:
+	if 'new_password' in request.POST:
+	    newpassword = request.REQUEST['new_password']
+            newpassword1 = hashlib.md5(newpassword).hexdigest()
+            user1.password=newpassword1
         if 'current_password' in request.POST:
             password = request.REQUEST['current_password']
             password1 = hashlib.md5(password).hexdigest()
-            newpassword = request.REQUEST['new_password']
-            newpassword1 = hashlib.md5(newpassword).hexdigest()
-            user1.password=newpassword1
+	    if password1 != request.session['password']:
+		msg = "Wrong current password"
+		password1 = ''
         else:
             password1 = request.session['password']
-        if user1.email :
+        if email1 and password1:
             home_airport = request.REQUEST['home_airport']
             user1.home_airport = home_airport
             user1.save()
-            msg = "Your account has been updated  successfully"
-        else:
-            msg = "wrong current password" 
-    print msg
-    return render_to_response('flightsearch/manage_account.html',{'message':msg,'user':user1}, context_instance=RequestContext(request))
+	    request.session['password'] = newpassword1
+            msg = "Your account has been updated  successfully" 
+    return render_to_response('flightsearch/manage_account.html',{'message':msg,'user':user1,'issocial':issocial}, context_instance=RequestContext(request))
 
 def login(request):
     context = {}
@@ -130,9 +142,11 @@ def login(request):
         password = request.REQUEST['password']
         password1 = hashlib.md5(password).hexdigest()
         user = User.objects.filter(username=username, password=password1)
+	print user[0].user_id
         if len(user) > 0:
             request.session['username'] = username
             request.session['password'] = password1
+	    request.session['userid'] = user[0].user_id
             return HttpResponseRedirect(reverse('index'))
         else:
             msg = "Invalid username or password"
