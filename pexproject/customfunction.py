@@ -70,9 +70,13 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
             stp = ''
             lyover= ''
             details = row.find("th",{"class":"flightSearchDetails"})
+            economy = ''
             #============= price block ================================================================
             if row.find("td",{"class":"cellOption economy  hasLowestCostMessage"}):
                 economy = row.find("td",{"class":"cellOption economy  hasLowestCostMessage"})
+            if economy == '' and row.find("td",{"class":"cellOption economy "}):
+                economy = row.find("td",{"class":"cellOption economy "})
+            if economy:
                 print "--------------economy--------------------------------"
                 economy_price = economy.find("span",{"class":"price"})
                 econprice1 = economy_price.text
@@ -929,7 +933,7 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     try:
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "dtcontainer-both")))
     except:
-        display.stop()
+        #display.stop()
         driver.quit()
         return searchkey
     maincontain = soup.find("div", {"id":"dtcontainer-both"})
