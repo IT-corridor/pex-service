@@ -1490,11 +1490,7 @@
 														 value="{{row.maincabin}}" {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass'%} 
 														 value="{{row.firstclass}}"{% else %}{% if request.GET.cabin == 'business' or cabin == 'business'%} 
 														 value="{{row.business}}"{%endif%}{% endif %}>
-														<input type="hidden" name="tax"
-														{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%} 
-														 value="{{row.maintax}}" {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass'%} 
-														 value="{{row.firsttax}}"{% else %}{% if request.GET.cabin == 'business' or cabin == 'business'%} 
-														 value="{{row.businesstax}}"{%endif%}{% endif %}>
+														<input type="hidden" name="tax">
 														<input type="hidden" name="action"  value="return">
 														<input type="hidden" name="datasource"  value="{{row.datasource}}">
 														<input type="hidden" name="passenger"  value="{{request.GET.passenger}}">
