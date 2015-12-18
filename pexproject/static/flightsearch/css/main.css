@@ -1573,9 +1573,10 @@ overflow:hidden;
 	footer .collapse.in {
 		display: block !important;
 	}
-	.navbar-collapse .nav > .divider-vertical {	.media-width-add
+	.navbar-collapse .nav > .divider-vertical
+	
 	{	clear: both; margin-top:200px;
-}
+
 		display: none;
 	}
 }
@@ -1585,6 +1586,19 @@ overflow:hidden;
 		padding: 30px 23px 20px;
 		!background:#f2f2f2;
 	}
+	.pd-xs-0
+	{
+		padding-left:0px !important;
+	}
+	.pd-xs-r-0
+	{
+		padding-right:0px !important;
+	}
+	.pd-cs-new-xs
+	{
+		padding-left:7px !important;
+	}
+	
 	.cross-btn{
   display: inline-block !important;
   position: absolute;
@@ -1597,7 +1611,11 @@ overflow:hidden;
   border-radius: 50%;
   top: -6px;
   color:#64B7E7;
-  right: -5px;
+  right: 6px;
+	}
+	.pd-tp-0
+	{
+		padding-top:0px !important;
 	}
 	.custome-pd-cross
 	{

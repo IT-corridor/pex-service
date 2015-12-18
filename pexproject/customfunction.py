@@ -399,7 +399,7 @@ def united(origin, destination, searchdate, searchkey):
             elif '3' in stoppage:
                 stoppage = '3 STOPS'
             else :
-                if stoppage.strip() == 'Nonstop':
+                if 'Nonstop' in stoppage:
                     stoppage = 'NONSTOP'
             
             source1 = row.find("div", {"class":"flight-station flight-station-origin"}).text

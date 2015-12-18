@@ -675,7 +675,7 @@ def getsearchresult(request):
                 counter = counter+1
                 n = n+1
                    
-            finalquery = qry1+"CONCAT("+newidstring+") as newid ,"+qry2+ totalfare+" as finalprice "+totaltax+" as totaltaxes from pexproject_flightdata p1 "+qry3+"where " + querylist + " order by finalprice,totaltax , departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset)
+            finalquery = qry1+"CONCAT("+newidstring+") as newid ,"+qry2+ totalfare+" as finalprice "+totaltax+" as totaltaxes from pexproject_flightdata p1 "+qry3+"where " + querylist + " order by finalprice,totaltaxes , departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset)
             print finalquery
             record = Flightdata.objects.raw(finalquery)
             for row in record:
@@ -703,7 +703,7 @@ def getsearchresult(request):
                     multirecordlist[pos]=data
                     multidetail_list[pos] = {"departdetails":dept_detail,"arivedetails":arive_detail,"planedetails":plane_detail,"operatedby":operate_detail}
                     pos=pos+1
-                mainlist1 = {"newid":row.newid,"flighno":row.flighno,"datasource":row.datasource,"cabintype1":row.cabintype1,"cabintype2":row.cabintype2,"cabintype3":row.cabintype3,"finalprice":row.finalprice,"taxes":row.totaltax,"origin":multirecordlist,"multidetail_list":multidetail_list}
+                mainlist1 = {"newid":row.newid,"flighno":row.flighno,"datasource":row.datasource,"cabintype1":row.cabintype1,"cabintype2":row.cabintype2,"cabintype3":row.cabintype3,"finalprice":row.finalprice,"taxes":row.totaltaxes,"origin":multirecordlist,"multidetail_list":multidetail_list}
                 mainlist.append(mainlist1)
         else:
             if (returnkeyid1 and ('rowid' not in request.GET) and 'rowid' not in request.POST) or len(multicitykey1) > 0:
