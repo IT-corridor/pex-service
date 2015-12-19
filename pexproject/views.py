@@ -411,9 +411,12 @@ def getsearchresult(request):
     else:
         if request.GET.get('keyid', ''):
             recordkey = request.GET.get('keyid', '')
+            if request.GET.get('returnkey', ''):
+                roundtripkey = request.GET.get('returnkey', '')
+                pricematrix = Flightdata.objects.raw("select p1.rowid, p2.datasource, (min(if(p1.maincabin > 0,p1.maincabin,NULL))+min(if(p2.maincabin > 0,p2.maincabin,NULL))) as maincabin, (min(if(p1.firstclass>0,p1.firstclass,NULL))+min(if(p2.firstclass>0,p2.firstclass,NULL))) as firstclass ,(min(if(p1.business>0,p1.business,NULL))+min(if(p2.business>0,p2.business,NULL))) as business  from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+roundtripkey+" where p1.searchkeyid="+str(recordkey))
+            else:
+                pricematrix =  Flightdata.objects.raw("select rowid, datasource, min(if(maincabin > 0,maincabin,NULL)) as maincabin, min(if(firstclass>0,firstclass,NULL)) as firstclass ,min(if(business>0,business,NULL)) as business  from pexproject_flightdata where searchkeyid="+str(recordkey)+" group by datasource")
             totalrecords = Flightdata.objects.filter(searchkeyid=recordkey).count()
-            pricematrix =  Flightdata.objects.raw("select rowid, datasource, min(if(maincabin > 0,maincabin,NULL)) as maincabin,min(if(firstclass>0,firstclass,NULL)) as firstclass ,min(if(business>0,business,NULL)) as business  from pexproject_flightdata where searchkeyid="+str(recordkey)+" group by datasource")
-            
     action = ''
     if request.GET.get('keyid', '') :
         searchkey = request.GET.get('keyid', '')
@@ -518,29 +521,6 @@ def getsearchresult(request):
    
     action = ''
     if request.GET.get('keyid', '') :
-        '''
-        searchkey = request.GET.get('keyid', '')
-        if request.GET.get('multicity'):
-            allkey = request.GET.get('multicity')
-            multiple_key = allkey.split(',')
-            searchdata = Searchkey.objects.filter(searchid__in=multiple_key)
-        else:
-            searchdata = Searchkey.objects.filter(searchid=searchkey)
-        for s in searchdata:
-            source = s.source
-            destination = s.destination
-        if ('action' in request.GET and request.GET.get('action', '') == 'return') or 'rowid' in request.POST and request.GET.get('action', '') != 'depart':
-            action = request.GET.get('action', '')
-            searchkey = request.GET.get('returnkey', '')
-            returnkey = request.GET.get('keyid', '')
-            
-        
-        querylist = querylist + join + " p1.searchkeyid = " + searchkey
-        join = ' AND '
-        
-        '''
-       
-        
         if cabinclass != '':
             if cabinclass == 'maincabin':
                 taxes = "maintax"
@@ -549,11 +529,6 @@ def getsearchresult(request):
             else:
                 if cabinclass == 'business':
                     taxes = "businesstax"
-            
-            
-        
-        
-        
         if 'returnkey' in request.GET or 'returnkey' in request.POST:
             returnkey = request.GET.get('returnkey', '')
             returnkeyid1 = returnkey
@@ -722,6 +697,7 @@ def getsearchresult(request):
                 querylist = querylist+cabintype
                 #print taxes
                 record = Flightdata.objects.raw("select p1.*,p1.maintax as maintax1, p1.firsttax as firsttax1, p1.businesstax as businesstax1,p1.rowid as newid ,case when datasource = 'delta' then " + deltaorderprice + "  else " + unitedorderprice + " end as finalprice, "+taxes+" as totaltaxes from pexproject_flightdata as p1 where " + querylist + " order by finalprice ," + taxes + ",departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset))
+            #print record.query
             mainlist = record  
         recordlen = len(multicitykey1)
         timerecord = Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` ")
