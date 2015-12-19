@@ -308,25 +308,84 @@
 												</tr> 
 										{% if pricematrix %}
 											{% for matrix in pricematrix %}
+												
 												<tr class="div-table-row row">
-													<td class="bc-whi left-heading">{{matrix.datasource|title}}</td>
-													{% if matrix.maincabin %}	
+													<td class="bc-whi left-heading">Delta</td>
+													{% if matrix.datasource == "delta" and matrix.maincabin%}	
 														<td class="color-green-1">{{matrix.maincabin|intcomma}}</td>
 													{% else%}
 														<td class="color-grey-1">-</td>
 													{% endif %}
-													{% if matrix.firstclass %}	
+													{% if matrix.datasource == "delta" and matrix.firstclass %}	
 														<td class="color-green-1">{{matrix.firstclass|intcomma}}</td>
 													{% else%}
 														<td class="color-grey-1">-</td>
 													{% endif %}
-													{% if matrix.business %}	
+													{% if matrix.datasource == "delta" and matrix.business %}	
 														<td class="color-green-1">{{matrix.business|intcomma}}</td>
 													{% else%}
 														<td class="color-grey-1">-</td>
 													{% endif %}
 												
 												</tr>
+												<tr class="div-table-row row">
+													<td class="bc-whi left-heading">United</td>
+													{% if matrix.datasource == "united" and matrix.maincabin%}	
+														<td class="color-green-1">{{matrix.maincabin|intcomma}}</td>
+													{% else%}
+														<td class="color-grey-1">-</td>
+													{% endif %}
+													{% if matrix.datasource == "united" and matrix.firstclass %}	
+														<td class="color-green-1">{{matrix.firstclass|intcomma}}</td>
+													{% else%}
+														<td class="color-grey-1">-</td>
+													{% endif %}
+													{% if matrix.datasource == "united" and matrix.business %}	
+														<td class="color-green-1">{{matrix.business|intcomma}}</td>
+													{% else%}
+														<td class="color-grey-1">-</td>
+													{% endif %}
+												
+												</tr>
+												<tr class="div-table-row row">
+													<td class="bc-whi left-heading">Etihad</td>
+													{% if matrix.datasource == "etihad" and matrix.maincabin%}	
+														<td class="color-green-1">{{matrix.maincabin|intcomma}}</td>
+													{% else%}
+														<td class="color-grey-1">-</td>
+													{% endif %}
+													{% if matrix.datasource == "etihad" and matrix.firstclass %}	
+														<td class="color-green-1">{{matrix.firstclass|intcomma}}</td>
+													{% else%}
+														<td class="color-grey-1">-</td>
+													{% endif %}
+													{% if matrix.datasource == "etihad" and matrix.business %}	
+														<td class="color-green-1">{{matrix.business|intcomma}}</td>
+													{% else%}
+														<td class="color-grey-1">-</td>
+													{% endif %}
+												
+												</tr>
+												<tr class="div-table-row row">
+													<td class="bc-whi left-heading">Virgin Atlantic</td>
+													{% if matrix.datasource == "virgin_atlantic" and matrix.maincabin%}	
+														<td class="color-green-1">{{matrix.maincabin|intcomma}}</td>
+													{% else%}
+														<td class="color-grey-1">-</td>
+													{% endif %}
+													{% if matrix.datasource == "virgin_atlantic" and matrix.firstclass %}	
+														<td class="color-green-1">{{matrix.firstclass|intcomma}}</td>
+													{% else%}
+														<td class="color-grey-1">-</td>
+													{% endif %}
+													{% if matrix.datasource == "virgin_atlantic" and matrix.business %}	
+														<td class="color-green-1">{{matrix.business|intcomma}}</td>
+													{% else%}
+														<td class="color-grey-1">-</td>
+													{% endif %}
+												
+												</tr>
+												
 											{% endfor %}
 										{% endif %}
 										<!--
