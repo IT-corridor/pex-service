@@ -306,13 +306,30 @@
 													<th class="bc-whi">Business</th>
 													<th class="bc-whi">First</th>
 												</tr> 
+										{% if pricematrix %}
+											{% for matrix in pricematrix %}
 												<tr class="div-table-row row">
-													<td class="bc-whi left-heading">Delta</td>
-													<td class="color-green-1">25k</td>
-													
-													<td class="color-green-1">50k</td>
-													<td class="color-red-1">50k</td>
+													<td class="bc-whi left-heading">{{matrix.datasource|title}}</td>
+													{% if matrix.maincabin %}	
+														<td class="color-green-1">{{matrix.maincabin|intcomma}}</td>
+													{% else%}
+														<td class="color-grey-1">-</td>
+													{% endif %}
+													{% if matrix.firstclass %}	
+														<td class="color-green-1">{{matrix.firstclass|intcomma}}</td>
+													{% else%}
+														<td class="color-grey-1">-</td>
+													{% endif %}
+													{% if matrix.business %}	
+														<td class="color-green-1">{{matrix.business|intcomma}}</td>
+													{% else%}
+														<td class="color-grey-1">-</td>
+													{% endif %}
+												
 												</tr>
+											{% endfor %}
+										{% endif %}
+										<!--
 												<tr class="div-table-row row">
 													<td class="bc-whi left-heading">United</td>
 													
@@ -340,11 +357,13 @@
 													<td class="color-green-1">50k</td>
 													<td class="color-grey-1">50k</td>
 													<td class="color-red-1">50k</td>
-												</tr>									
+												</tr>
+										
+											-->						
 										  </table>
 										  <div class="color-details">
 										  	<span class="cheaper"><span class="glyphicon glyphicon-stop" aria-hidden="true"></span></span>
-										  	<span class="expensive"><span class="glyphicon glyphicon-stop " aria-hidden="true"></span></span>
+										  	<!--<span class="expensive"><span class="glyphicon glyphicon-stop " aria-hidden="true"></span></span>-->
 										  	<span class="nodata"><span class="glyphicon glyphicon-stop " aria-hidden="true"></span></span>
 										  </div>
 									</div>

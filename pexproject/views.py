@@ -101,6 +101,7 @@ def manageAccount(request):
     password1 =''
     userid = ''
     issocial =''
+    newpassword1 = ''
     email1 = request.session['username']
     user1 = User.objects.get(pk =request.session['userid'])
     #sid =request.session['userid'] 
@@ -109,23 +110,24 @@ def manageAccount(request):
     if social_id:	
 	issocial = 'yes'
     if request.POST:
-	if 'new_password' in request.POST:
-	    newpassword = request.REQUEST['new_password']
+    	if 'new_password' in request.POST:
+    	    newpassword = request.REQUEST['new_password']
             newpassword1 = hashlib.md5(newpassword).hexdigest()
             user1.password=newpassword1
         if 'current_password' in request.POST:
             password = request.REQUEST['current_password']
             password1 = hashlib.md5(password).hexdigest()
-	    if password1 != request.session['password']:
-		msg = "Wrong current password"
-		password1 = ''
+    	    if password1 != request.session['password']:
+        		msg = "Wrong current password"
+        		password1 = ''
         else:
             password1 = request.session['password']
         if email1 and password1:
             home_airport = request.REQUEST['home_airport']
             user1.home_airport = home_airport
             user1.save()
-	    request.session['password'] = newpassword1
+            if newpassword1: 
+                request.session['password'] = newpassword1
             msg = "Your account has been updated  successfully" 
     return render_to_response('flightsearch/manage_account.html',{'message':msg,'user':user1,'issocial':issocial}, context_instance=RequestContext(request))
 
@@ -402,6 +404,7 @@ def getsearchresult(request):
     pageno = 1
     limit = 10
     multicitykey1=''
+    pricematrix =''
     if request.is_ajax():
         pageno = request.REQUEST['page_no']
         offset = (int(pageno) - 1) * limit
@@ -409,7 +412,8 @@ def getsearchresult(request):
         if request.GET.get('keyid', ''):
             recordkey = request.GET.get('keyid', '')
             totalrecords = Flightdata.objects.filter(searchkeyid=recordkey).count()
-    
+            pricematrix =  Flightdata.objects.raw("select rowid, datasource, min(if(maincabin > 0,maincabin,NULL)) as maincabin,min(if(firstclass>0,firstclass,NULL)) as firstclass ,min(if(business>0,business,NULL)) as business  from pexproject_flightdata where searchkeyid="+str(recordkey)+" group by datasource")
+            
     action = ''
     if request.GET.get('keyid', '') :
         searchkey = request.GET.get('keyid', '')
@@ -732,9 +736,9 @@ def getsearchresult(request):
               
 
         if request.is_ajax():
-            return render_to_response('flightsearch/search.html', {'action':action, 'data':mainlist,'multirecod':mainlist, 'multicity':multicity, 'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name}, context_instance=RequestContext(request))
+            return render_to_response('flightsearch/search.html', {'action':action, 'pricematrix':pricematrix, 'data':mainlist,'multirecod':mainlist, 'multicity':multicity, 'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name}, context_instance=RequestContext(request))
         if totalrecords > 0:
-            return render_to_response('flightsearch/searchresult.html', {'action':action,'data':mainlist,'multirecod':mainlist,'multicity':multicity,'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name}, context_instance=RequestContext(request)) 
+            return render_to_response('flightsearch/searchresult.html', {'action':action,'pricematrix':pricematrix,'data':mainlist,'multirecod':mainlist,'multicity':multicity,'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name}, context_instance=RequestContext(request)) 
         else:
             
             if request.is_ajax():
