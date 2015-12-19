@@ -308,26 +308,65 @@
 												</tr> 
 										{% if pricematrix %}
 											{% for matrix in pricematrix %}
+
+													<tr class="div-table-row row">
+														<td class="bc-whi left-heading"> {{matrix.datasource|title }}</td>
+														{% if matrix.maincabin %}	
+															<td class="color-green-1">{{matrix.maincabin|intcomma}}</td>
+														{% else%}
+															<td class="color-grey-1">-</td>
+														{% endif %}
+														{% if matrix.firstclass %}	
+															<td class="color-green-1">{{matrix.firstclass|intcomma}}</td>
+														{% else%}
+															<td class="color-grey-1">-</td>
+														{% endif %}
+														{% if matrix.business %}	
+															<td class="color-green-1">{{matrix.business|intcomma}}</td>
+														{% else%}
+															<td class="color-grey-1">-</td>
+														{% endif %}
+													</tr>
 												
+											{% endfor %}
+											{% if "delta" not in pricesources%}
+											
 												<tr class="div-table-row row">
-													<td class="bc-whi left-heading">Delta</td>
-													{% if matrix.datasource == "delta" and matrix.maincabin%}	
-														<td class="color-green-1">{{matrix.maincabin|intcomma}}</td>
-													{% else%}
-														<td class="color-grey-1">-</td>
-													{% endif %}
-													{% if matrix.datasource == "delta" and matrix.firstclass %}	
-														<td class="color-green-1">{{matrix.firstclass|intcomma}}</td>
-													{% else%}
-														<td class="color-grey-1">-</td>
-													{% endif %}
-													{% if matrix.datasource == "delta" and matrix.business %}	
-														<td class="color-green-1">{{matrix.business|intcomma}}</td>
-													{% else%}
-														<td class="color-grey-1">-</td>
-													{% endif %}
-												
+												<td class="bc-whi left-heading"> Delta </td>
+												<td class="color-grey-1">-</td>
+												<td class="color-grey-1">-</td>
+												<td class="color-grey-1">-</td>
 												</tr>
+											{% endif %}
+											{% if "united" not in pricesources %}
+												<tr class="div-table-row row">
+												<td class="bc-whi left-heading"> United </td>
+												<td class="color-grey-1">-</td>
+												<td class="color-grey-1">-</td>
+												<td class="color-grey-1">-</td>
+												</tr>
+											{% endif %}
+											{% if "etihad" not in pricesources%}
+											
+												<tr class="div-table-row row">
+												<td class="bc-whi left-heading"> Etihad </td>
+												<td class="color-grey-1">-</td>
+												<td class="color-grey-1">-</td>
+												<td class="color-grey-1">-</td>
+												</tr>
+											{% endif %}
+											{% if "virgin_atlantic" not in pricesources%}
+											
+												<tr class="div-table-row row">
+												<td class="bc-whi left-heading"> Virgin Atlantic </td>
+												<td class="color-grey-1">-</td>
+												<td class="color-grey-1">-</td>
+												<td class="color-grey-1">-</td>
+												</tr>
+											{% endif %}
+										{% endif %}	
+										
+											<!--	
 												<tr class="div-table-row row">
 													<td class="bc-whi left-heading">United</td>
 													{% if matrix.datasource == "united" and matrix.maincabin%}	
@@ -347,6 +386,7 @@
 													{% endif %}
 												
 												</tr>
+												
 												<tr class="div-table-row row">
 													<td class="bc-whi left-heading">Etihad</td>
 													{% if matrix.datasource == "etihad" and matrix.maincabin%}	
@@ -366,6 +406,7 @@
 													{% endif %}
 												
 												</tr>
+												
 												<tr class="div-table-row row">
 													<td class="bc-whi left-heading">Virgin Atlantic</td>
 													{% if matrix.datasource == "virgin_atlantic" and matrix.maincabin%}	
@@ -385,40 +426,8 @@
 													{% endif %}
 												
 												</tr>
-												
-											{% endfor %}
-										{% endif %}
-										<!--
-												<tr class="div-table-row row">
-													<td class="bc-whi left-heading">United</td>
-													
-													<td class="color-green-1">20k</td>
-													
-													
-													<td class="color-grey-1">45k</td>
-													
-													<td class="color-red-1">50k</td>
-												</tr>
-												<tr class="div-table-row row">
-													<td class="bc-whi left-heading">Virgin Atlantic</td>
-													<td class="color-red-1">30k</td>
-													<td class="color-green-1">50k</td>
-													<td class="color-grey-1">50k</td>
-												</tr>
-												<tr class="div-table-row row">
-													<td class="bc-whi left-heading">Etihad</td>
-													<td class="color-green-1">50k</td>
-													<td class="color-grey-1">50k</td>
-													<td class="color-red-1">50k</td>
-												</tr>
-												<tr class="div-table-row row">
-													<td class="bc-whi left-heading">Jetblue</td>
-													<td class="color-green-1">50k</td>
-													<td class="color-grey-1">50k</td>
-													<td class="color-red-1">50k</td>
-												</tr>
-										
-											-->						
+											-->
+															
 										  </table>
 										  <div class="color-details">
 										  	<span class="cheaper"><span class="glyphicon glyphicon-stop" aria-hidden="true"></span></span>
