@@ -698,12 +698,12 @@ def getsearchresult(request):
                     arive_detail = getattr(row,"arivedetails"+str(i))
                     plane_detail = getattr(row,"planedetails"+str(i))
                     operate_detail = getattr(row,"operatedby"+str(i))
-                    
+		    #print "totaltaxes",row.totaltaxes                    
                     data = {"origin":org,"destination":dest,"stoppage":stop,"departure":depart,"arival":arival,"duration":duration}
                     multirecordlist[pos]=data
                     multidetail_list[pos] = {"departdetails":dept_detail,"arivedetails":arive_detail,"planedetails":plane_detail,"operatedby":operate_detail}
                     pos=pos+1
-                mainlist1 = {"newid":row.newid,"flighno":row.flighno,"datasource":row.datasource,"cabintype1":row.cabintype1,"cabintype2":row.cabintype2,"cabintype3":row.cabintype3,"finalprice":row.finalprice,"taxes":row.totaltaxes,"origin":multirecordlist,"multidetail_list":multidetail_list}
+                mainlist1 = {"newid":row.newid,"flighno":row.flighno,"datasource":row.datasource,"cabintype1":row.cabintype1,"cabintype2":row.cabintype2,"cabintype3":row.cabintype3,"finalprice":row.finalprice,"totaltaxes":row.totaltaxes,"origin":multirecordlist,"multidetail_list":multidetail_list}
                 mainlist.append(mainlist1)
         else:
             if (returnkeyid1 and ('rowid' not in request.GET) and 'rowid' not in request.POST) or len(multicitykey1) > 0:
