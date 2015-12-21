@@ -1035,9 +1035,8 @@
 														</h5>
 													<div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
 														<p class="flight-rate" itemprop="totalPrice">
-																
-																{{row.finalprice|intcomma}} Miles + {% if returndate %} <span>${{row.maintax|floatadd:row.maintax1|floatformat:2}}</span> {% else%} <span>${{row.maintax|floatformat:2}}</span> {% endif %} 
-															</p>
+															{{row.finalprice|intcomma}} Miles +<span>${{row.totaltaxes|floatformat:2}}</span> 
+														</p>
 														</div>
 													</div>
 																					
