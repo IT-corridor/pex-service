@@ -144,11 +144,11 @@ def login(request):
         password = request.REQUEST['password']
         password1 = hashlib.md5(password).hexdigest()
         user = User.objects.filter(username=username, password=password1)
-	print user[0].user_id
+	
         if len(user) > 0:
             request.session['username'] = username
             request.session['password'] = password1
-	    request.session['userid'] = user[0].user_id
+            request.session['userid'] = user[0].user_id
             return HttpResponseRedirect(reverse('index'))
         else:
             msg = "Invalid username or password"
@@ -414,12 +414,11 @@ def getsearchresult(request):
             recordkey = request.GET.get('keyid', '')
             if request.GET.get('returnkey', ''):
                 roundtripkey = request.GET.get('returnkey', '')
-                pricematrix = Flightdata.objects.raw("select p1.rowid, p2.datasource, (min(if(p1.maincabin > 0,p1.maincabin,NULL))+min(if(p2.maincabin > 0,p2.maincabin,NULL))) as maincabin, (min(if(p1.firstclass>0,p1.firstclass,NULL))+min(if(p2.firstclass>0,p2.firstclass,NULL))) as firstclass ,(min(if(p1.business>0,p1.business,NULL))+min(if(p2.business>0,p2.business,NULL))) as business  from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+roundtripkey+" where p1.searchkeyid="+str(recordkey))
+                pricematrix = Flightdata.objects.raw("select p1.rowid,p2.rowid, p2.datasource, (min(if(p1.maincabin > 0,p1.maincabin,NULL))+min(if(p2.maincabin > 0,p2.maincabin,NULL))) as maincabin, (min(if(p1.firstclass>0,p1.firstclass,NULL))+min(if(p2.firstclass>0,p2.firstclass,NULL))) as firstclass ,(min(if(p1.business>0,p1.business,NULL))+min(if(p2.business>0,p2.business,NULL))) as business  from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+roundtripkey+" where p1.searchkeyid="+str(recordkey)+" group by datasource")
             else:
                 pricematrix =  Flightdata.objects.raw("select rowid, datasource, min(if(maincabin > 0,maincabin,NULL)) as maincabin, min(if(firstclass>0,firstclass,NULL)) as firstclass ,min(if(business>0,business,NULL)) as business  from pexproject_flightdata where searchkeyid="+str(recordkey)+" group by datasource")
             for s in pricematrix:
                  pricesources.append(s.datasource)
-            print pricesources
             totalrecords = Flightdata.objects.filter(searchkeyid=recordkey).count()
             
     action = ''
@@ -643,24 +642,33 @@ def getsearchresult(request):
             newidstring="p1.rowid"
             sep = ",'_',"
             sep1 = ''
+            adding = '+'
+            ecocabin = 'min(if(p1.maincabin > 0,p1.maincabin,NULL))'
+            busscabin = 'min(if(p1.firstclass > 0,p1.firstclass,NULL))'
+            firstcabin = 'min(if(p1.business > 0,p1.business,NULL))'
+            inner_join_on = ''
             #print querylist
             #q = "p1.searchkeyid = '"+searchkey+"' AND" 
             #print q
             #querylist = querylist.replace(q,'')
+            pricematrix_query = ''
             for keys in multicitykey1:
                 if n > 1:
+                    ecocabin = ecocabin+adding+"min(if(p"+str(n)+".maincabin > 0,p"+str(n)+".maincabin,NULL))"
+                    busscabin = busscabin+adding+"min(if(p"+str(n)+".firstclass > 0,p"+str(n)+".firstclass,NULL))"
+                    firstcabin = firstcabin+adding+"min(if(p"+str(n)+".business > 0,p"+str(n)+".business,NULL))"
                     totalfare = totalfare+"+p"+str(n)+"." + cabinclass
                     totaltax = totaltax+"+p"+str(n)+"."+taxes
                     newidstring =newidstring+sep+"p"+str(n)+".rowid"
                     qry2 = qry2+sep1+'p'+str(n)+'.origin as origin'+str(n)+',p'+str(n)+'.rowid as rowid'+str(n)+', p'+str(n)+'.stoppage as stoppage'+str(n)+', p'+str(n)+'.destination as destination'+str(n)+', p'+str(n)+'.departure as departure'+str(n)+', p'+str(n)+'.arival as arival'+str(n)+', p'+str(n)+'.duration as duration'+str(n)+',p'+str(n)+'.flighno as flighno'+str(n)+', p'+str(n)+'.cabintype1 as cabintype1'+str(n)+',p'+str(n)+'.cabintype2 as cabintype2'+str(n)+',p'+str(n)+'.cabintype3 as cabintype3'+str(n)+', p'+str(n)+'.maincabin as maincabin'+str(n)+', p'+str(n)+'.maintax as maintax'+str(n)+', p'+str(n)+'.firsttax as firsttax'+str(n)+', p'+str(n)+'.businesstax as businesstax'+str(n)+',p'+str(n)+'.departdetails as departdetails'+str(n)+',p'+str(n)+'.arivedetails as arivedetails'+str(n)+', p'+str(n)+'.planedetails as planedetails'+str(n)+',p'+str(n)+'.operatedby as operatedby'+str(n)
                     sep1 = ','
+                    inner_join_on = inner_join_on+"inner join pexproject_flightdata p"+str(n)+" on  p"+str(n)+".searchkeyid ='" +keys+"' and p1.datasource = p"+str(n)+".datasource"
                     qry3 = qry3+"inner join pexproject_flightdata p"+str(n)+" on  p"+str(n)+".searchkeyid ='" +keys+"' and p1.datasource = p"+str(n)+".datasource and p"+str(n)+"."+cabinclass +" > '0'  "
                     q = ''
                 counter = counter+1
                 n = n+1
-                   
+            pricematrix =  Flightdata.objects.raw("select p1.rowid, p1.datasource,"+ecocabin+" as maincabin,"+busscabin+"  as firstclass ,"+firstcabin+" as business  from pexproject_flightdata p1 "+inner_join_on+" where p1.searchkeyid="+str(recordkey)+" group by datasource")      
             finalquery = qry1+"CONCAT("+newidstring+") as newid ,"+qry2+ totalfare+" as finalprice "+totaltax+" as totaltaxes from pexproject_flightdata p1 "+qry3+"where " + querylist + " order by finalprice,totaltaxes , departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset)
-            print finalquery
             record = Flightdata.objects.raw(finalquery)
             for row in record:
                 mainlist1=''
@@ -670,7 +678,6 @@ def getsearchresult(request):
                 multirecordlist[pos] = {"origin":row.origin,"destination":row.destination,"stoppage":row.stoppage,"departure":row.departure,"arival":row.arival,"duration":row.duration}
                 multidetail_list[pos] = {"departdetails":row.departdetails,"arivedetails":row.arivedetails,"planedetails":row.planedetails,"operatedby":row.operatedby}
                 pos = pos+1
-                
                 for i in range(2,len(multicitykey1)+1):
                     org = getattr(row, "origin"+str(i))
                     stop = getattr(row, "stoppage"+str(i))
