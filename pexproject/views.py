@@ -404,6 +404,7 @@ def getsearchresult(request):
     pageno = 1
     limit = 10
     multicitykey1=''
+    recordkey=''
     pricematrix =''
     pricesources = []
     if request.is_ajax():
@@ -414,7 +415,7 @@ def getsearchresult(request):
             recordkey = request.GET.get('keyid', '')
             if request.GET.get('returnkey', ''):
                 roundtripkey = request.GET.get('returnkey', '')
-                pricematrix = Flightdata.objects.raw("select p1.rowid,p2.rowid, p2.datasource, (min(if(p1.maincabin > 0,p1.maincabin,NULL))+min(if(p2.maincabin > 0,p2.maincabin,NULL))) as maincabin, (min(if(p1.firstclass>0,p1.firstclass,NULL))+min(if(p2.firstclass>0,p2.firstclass,NULL))) as firstclass ,(min(if(p1.business>0,p1.business,NULL))+min(if(p2.business>0,p2.business,NULL))) as business  from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+roundtripkey+" where p1.searchkeyid="+str(recordkey)+" group by datasource")
+                pricematrix = Flightdata.objects.raw("select p1.rowid,p2.rowid, p2.datasource, (min(if(p1.maincabin > 0,p1.maincabin,NULL))+min(if(p2.maincabin > 0,p2.maincabin,NULL))) as maincabin, (min(if(p1.firstclass>0,p1.firstclass,NULL))+min(if(p2.firstclass>0,p2.firstclass,NULL))) as firstclass ,(min(if(p1.business>0,p1.business,NULL))+min(if(p2.business>0,p2.business,NULL))) as business  from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+roundtripkey+" where p1.searchkeyid="+str(recordkey)+" group by p1.datasource")
             else:
                 pricematrix =  Flightdata.objects.raw("select rowid, datasource, min(if(maincabin > 0,maincabin,NULL)) as maincabin, min(if(firstclass>0,firstclass,NULL)) as firstclass ,min(if(business>0,business,NULL)) as business  from pexproject_flightdata where searchkeyid="+str(recordkey)+" group by datasource")
             for s in pricematrix:
@@ -647,12 +648,15 @@ def getsearchresult(request):
             busscabin = 'min(if(p1.firstclass > 0,p1.firstclass,NULL))'
             firstcabin = 'min(if(p1.business > 0,p1.business,NULL))'
             inner_join_on = ''
+            pricesources =[]
             #print querylist
             #q = "p1.searchkeyid = '"+searchkey+"' AND" 
             #print q
             #querylist = querylist.replace(q,'')
+            recordkey = multicitykey1[0]
             pricematrix_query = ''
             for keys in multicitykey1:
+                
                 if n > 1:
                     ecocabin = ecocabin+adding+"min(if(p"+str(n)+".maincabin > 0,p"+str(n)+".maincabin,NULL))"
                     busscabin = busscabin+adding+"min(if(p"+str(n)+".firstclass > 0,p"+str(n)+".firstclass,NULL))"
@@ -667,9 +671,11 @@ def getsearchresult(request):
                     q = ''
                 counter = counter+1
                 n = n+1
-            pricematrix =  Flightdata.objects.raw("select p1.rowid, p1.datasource,"+ecocabin+" as maincabin,"+busscabin+"  as firstclass ,"+firstcabin+" as business  from pexproject_flightdata p1 "+inner_join_on+" where p1.searchkeyid="+str(recordkey)+" group by datasource")      
+            pricematrix =  Flightdata.objects.raw("select p1.rowid, p1.datasource,"+ecocabin+" as maincabin,"+busscabin+"  as firstclass ,"+firstcabin+" as business  from pexproject_flightdata p1 "+inner_join_on+" where p1.searchkeyid="+str(recordkey)+" group by p1.datasource")      
             finalquery = qry1+"CONCAT("+newidstring+") as newid ,"+qry2+ totalfare+" as finalprice "+totaltax+" as totaltaxes from pexproject_flightdata p1 "+qry3+"where " + querylist + " order by finalprice,totaltaxes , departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset)
             record = Flightdata.objects.raw(finalquery)
+            for s in pricematrix:
+                 pricesources.append(s.datasource)
             for row in record:
                 mainlist1=''
                 multirecordlist = {}
