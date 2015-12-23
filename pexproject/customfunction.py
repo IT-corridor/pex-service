@@ -772,6 +772,10 @@ def delta(orgn, dest, searchdate, searchkey):
         cabintype2 = ''
         fare2 = 0
         timeblock = detailsblock.findAll("div", {"class":"flightDateTime"})
+        operatordiv = detailsblock.find("div", {"class":"summaryMessageWrapper"})
+        if operatordiv.find("span",{"class":"odIndex_1"}):
+            operator = operatordiv.find("span",{"class":"odIndex_1"}).text
+	    operatedbytext = operator
         for info in timeblock:
             temp = info.findAll("span")
             depature = temp[0].text
