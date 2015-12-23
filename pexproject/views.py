@@ -103,9 +103,13 @@ def signup(request):
             if object.user_id:
                 msg = "Thank you, You have been successfully registered."
                 return render_to_response('flightsearch/index.html',{'welcome_msg':msg}, context_instance=RequestContext(request))   
-        return  render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
+        return render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
     else:
         return HttpResponseRedirect(reverse('index'))
+
+def myRewardPoint(request):
+    context = {}
+    return render_to_response('flightsearch/myrewardpoint.html', context_instance=RequestContext(request))
 
 def manageAccount(request):
     cursor = connection.cursor()
@@ -534,9 +538,7 @@ def getsearchresult(request):
         arivtmaxformat = (datetime.datetime.strptime(arivtmaxtime, '%I:%M %p'))
         arivtmaxformat1 = arivtmaxformat.strftime('%H:%M:%S')
         querylist = querylist + join + " p1.arival <= '" + arivtmaxformat1 + "'"
-        join = ' AND ' 
-
-   
+        join = ' AND '   
     action = ''
     if request.GET.get('keyid', '') :
         if cabinclass != '':
