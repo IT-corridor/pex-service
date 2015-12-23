@@ -69,6 +69,19 @@ def flights(request):
         #return  render_to_response('flightsearch/multicity.html', context_instance=RequestContext(request))
     return  render_to_response('flightsearch/flights.html',{'mc':mc}, context_instance=RequestContext(request))
     
+def staticPage(request):
+    context = {}
+    page = ''
+    if "action" in request.GET:
+	page = request.GET.get('action','')
+	if page == 'about':	
+	    return  render_to_response('flightsearch/about.html', context_instance=RequestContext(request))
+    	if page == 'help':
+            return  render_to_response('flightsearch/help.html', context_instance=RequestContext(request))
+    	if page == 'howitwork':
+            return  render_to_response('flightsearch/how_it_work.html', context_instance=RequestContext(request))
+    	if page == "contactus":
+            return  render_to_response('flightsearch/contact_us.html', context_instance=RequestContext(request))
 def signup(request):
     context = {}
     if 'username' not in request.session:

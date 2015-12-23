@@ -720,14 +720,31 @@ def delta(orgn, dest, searchdate, searchkey):
                 for tmp in detailblk:
                     print "----------------------------------"
                     spaninfo = tmp.findAll("p")
-                    departdetails.append((spaninfo[0].text).replace('DEPARTS', ''))
-                    arrivedetails.append(spaninfo[1].text.replace('ARRIVES', ''))
+		    depart_string = (spaninfo[0].text).replace('DEPARTS', '')
+		    if "Opens in a new popup" in depart_string:
+			depart_string = depart_string.replace('Opens in a new popup','')
+                    departdetails.append(depart_string)
+		    arive_string = (spaninfo[1].text.replace('ARRIVES', ''))
+		    if "Opens in a new popup" in arive_string:
+                        arive_string = depart_string.replace('Opens in a new popup','')
+                    arrivedetails.append(arive_string)
                     flight_duration = spaninfo[2].text.replace('FLIGHT', '')
                     flight_duration1 = flight_duration.split("|")
                     flight_no = flight_duration1[0].strip()
                     plane_duration = flight_duration1[1].strip()
+		    extra_string = ''
+		    aircraft =''
+		    #if spaninfo[3].find("span",{"class":"rowLink viewSeatsLinkFlyOut"}):
+		    	#extra_string = spaninfo[3].find("span",{"class":"rowLink viewSeatsLinkFlyOut"}).text
                     aircraft1 = spaninfo[3].text.replace('PLANE', '')
-                    aircraft = aircraft1.replace('- View SeatsOpens in a new window', '')
+		    #if extra_string:
+			#aircraft1 = aircraft1.replace(extra_string,'')
+		    print aircraft1
+		    if "-" in aircraft1:
+                    	aircraft2 = aircraft1.split('-')
+			aircraft = aircraft2[0]
+			if len(aircraft2)>2:
+			    aircraft = aircraft+"-"+aircraft2[1]
                     planedetailinfo = flight_no + " | " + aircraft + " (" + plane_duration + ")"
                     planedetails.append(planedetailinfo)
             k = k + 1
@@ -744,6 +761,7 @@ def delta(orgn, dest, searchdate, searchkey):
         else:
             if len(pricecol) < 2:
                 cabinhead = pricecol[0].text
+		print "cabinhead",cabinhead
                 if 'Business' in cabinhead or 'First' in cabinhead:
                     business = tds[1]
                     economy = ''
