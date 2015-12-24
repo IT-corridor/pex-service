@@ -1335,8 +1335,72 @@ content:'\003e'
     font-weight: 300;
 }
 
+.data-search-area
+{
+	display:inline-block;
+	padding: 0px 5px;
+}
 
 
+.data-search-area p
+{
+	margin:0px;
+	font-weight:400;
+	    font-size: 16px;
+}
+.data-search-area span
+{
+display:inline-block;
+	    font-size: 12px;
+}
+.search-name .arrow-size
+{
+	display:inline-block;
+
+}
+
+.search-name .arrow-size img
+{
+
+	    margin-top: -22px;
+}
+
+.search-name
+{
+	    background: #eee;
+	border-radius:4px;
+	    padding: 20px 20px 10px;
+}
+
+.search-name .name-area
+{
+	display:inline-block;
+
+	
+}
+.name-area p
+{
+	margin:0px;
+	
+	font-weight:400;
+	    font-size: 16px;
+}
+.name-area span
+{
+display:inline-block;
+	    font-size: 12px;
+		color:#555;
+}
+
+.name-area
+{
+		padding:0px 15px;
+}
+
+.main-plc-name
+{
+		display:inline-block;	border-left:1px solid #ddd;margin-left:10px;
+}
 
 
 
@@ -1351,6 +1415,21 @@ content:'\003e'
 }
 
 @media (max-width: 767px) {
+
+.main-plc-name
+{
+		display:block;	border-left:0px solid #ddd;margin-left:0px;margin:20px 0px;
+}
+.main-plc-name .name-area
+{
+	padding:0px;
+	margin-right:20px;
+}
+.search-name .flight-search-xswd
+{
+     width: 100%; 
+     float: left; 
+}
 .about-content h5{font-size:24px;}
 .menu-site-bar a
 {
