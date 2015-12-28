@@ -362,11 +362,11 @@ def united(origin, destination, searchdate, searchkey):
     searchid = searchkey
     page = soup.findAll("a", {"class":"page-link"})
     for p in page:
-       if (p.text).isdigit():
-          pages.append(p.text)
+       if p['href'] not in pages:
+           pages.append(p['href'])
     print pages
-    def scrapepage(searchkey, soup):
-        soup = soup
+    def scrapepage(searchkey, soup3):
+        soup = soup3
         
         
         # firsttax = 0
@@ -475,12 +475,16 @@ def united(origin, destination, searchdate, searchkey):
             planetype = row.find("div", {"class":"segment-aircraft-type"}).text
             
             detaillink = row.find("a", {"class":"toggle-flight-block-details ui-tabs-anchor"})['href']
-            test = driver.find_element_by_xpath("//a[@href='" + detaillink + "']")
+	    print "detaillink",detaillink
+            test = driver.find_element_by_xpath("//a[@href='"+ detaillink +"']")
+	    #test = driver.execute_script("document.getElementById('" +detaillink+ "')")
+	    #print "detail",test 
             dtlid = detaillink.replace('#', '').strip()
             driver.execute_script("arguments[0].click();", test);
             time.sleep(0.05)
-            html_page1 = driver.page_source
-            soup2 = BeautifulSoup(html_page1)
+            html_page4 = driver.page_source
+	    html_page5 = html_page4.encode('utf-8')
+            soup2 = BeautifulSoup(str(html_page5))
             departuretime = ''
             desttime = ''
             flight_duration = ''
@@ -547,7 +551,7 @@ def united(origin, destination, searchdate, searchkey):
                          if 'Operated by' in operateby:
                              operateby = operateby.replace('Operated by', '')
                          operatedby.append(operateby)
-            
+            driver.execute_script("arguments[0].click();", test);
             priceblock = row.findAll("div", {"class":"flight-block-fares-container"})
             
             for prc in priceblock:
@@ -616,9 +620,12 @@ def united(origin, destination, searchdate, searchkey):
             transaction.commit()
             print "row inserted"
     scrapepage(searchkey, soup)
-    for i in range(0, len(pages)):
-        link = driver.find_element_by_link_text(pages[i])
-        print link
+    for i in pages:
+	print i
+	link = driver.find_element_by_xpath("//a[@href='" +i+ "']")
+        #link = driver.find_element_by_link_text(pages[i])
+	#print "page no",pages[i]
+        #print link
         link.send_keys(Keys.ENTER)
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "product_MIN-ECONOMY-SURP-OR-DISP")))
         time.sleep(.5)

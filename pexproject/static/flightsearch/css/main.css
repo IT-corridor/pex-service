@@ -966,6 +966,15 @@ footer {
 .cstm-hw-it .navbar-brand
 {
 	padding-top:0px;
+	line-height: 57px;
+	font-size:24px;
+	color:#333333 !important;
+}
+.cstm-hw-it .glyphicon-search
+{
+
+	font-size:24px;
+	color:#333333 !important;
 }
 .ui-datepicker-calendar {
 	background: #f4f4f4;
