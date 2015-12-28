@@ -26,6 +26,7 @@ import urllib
 
 
 def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
+    #return searchkey
     print origin,dest, searchdate,returndate, searchkey,returnkey
     cursor = connection.cursor()
     dt = datetime.datetime.strptime(searchdate, '%Y/%m/%d')
@@ -348,29 +349,27 @@ def united(origin, destination, searchdate, searchkey):
     try:
         print "data check"
         WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "fl-results")))
-	print "data check complete"
+        print "data check complete"
     except:
-    	#print driver.current_url
         display.stop
         driver.quit()
         return searchkey
-    time.sleep(2)
+    time.sleep(7)
     html_page = driver.page_source
     soup = BeautifulSoup(html_page)
     # datablock = soup.find("section",{"id":"fl-results"})
     pages = []
     searchid = searchkey
     page = soup.findAll("a", {"class":"page-link"})
+    #print page
     for p in page:
        if p['href'] not in pages:
            pages.append(p['href'])
     print pages
     def scrapepage(searchkey, soup3):
         soup = soup3
-        
-        
-        # firsttax = 0
         datadiv = soup.findAll("li", {"class":"flight-block"})
+        print len(datadiv)
         for row in datadiv:
             fare1 = 0
             fare2 = 0
@@ -468,22 +467,21 @@ def united(origin, destination, searchdate, searchkey):
             
             totaltime = row.find("a", {"class":"flight-duration otp-tooltip-trigger"}).text
             if 'total' in totaltime:
-		totaltime1 = totaltime.split('total')
-		if 'Duration' in totaltime1[0]:
-		    totaltime = totaltime1[0].replace('Duration', '')
+                totaltime1 = totaltime.split('total')
+    		if 'Duration' in totaltime1[0]:
+    		    totaltime = totaltime1[0].replace('Duration', '')
             flightno = row.find("div", {"class":"segment-flight-number"}).text
             planetype = row.find("div", {"class":"segment-aircraft-type"}).text
             
-            detaillink = row.find("a", {"class":"toggle-flight-block-details ui-tabs-anchor"})['href']
-	    print "detaillink",detaillink
+            detaillink = row.find("a", {"class":"toggle-flight-block-details ui-tabs-anchor"})['href']	    
             test = driver.find_element_by_xpath("//a[@href='"+ detaillink +"']")
 	    #test = driver.execute_script("document.getElementById('" +detaillink+ "')")
-	    #print "detail",test 
+	
             dtlid = detaillink.replace('#', '').strip()
             driver.execute_script("arguments[0].click();", test);
             time.sleep(0.05)
             html_page4 = driver.page_source
-	    html_page5 = html_page4.encode('utf-8')
+            html_page5 = html_page4.encode('utf-8')
             soup2 = BeautifulSoup(str(html_page5))
             departuretime = ''
             desttime = ''
@@ -566,7 +564,7 @@ def united(origin, destination, searchdate, searchkey):
                         fare1 = float(economy) * int('1000')
                     
                     econtax = eco.find("div", {"class":"pp-additional-fare price-point"}).text
-		    print "econtax",econtax
+                    print "econtax",econtax
                     if "+$" in econtax:
                         maintax = econtax.replace('+$', '')
                     
@@ -621,17 +619,18 @@ def united(origin, destination, searchdate, searchkey):
             print "row inserted"
     scrapepage(searchkey, soup)
     for i in pages:
-	print i
-	link = driver.find_element_by_xpath("//a[@href='" +i+ "']")
+        print "page no",i
+        link = driver.find_element_by_xpath("//a[@href='" +i+ "']")
         #link = driver.find_element_by_link_text(pages[i])
-	#print "page no",pages[i]
-        #print link
-        link.send_keys(Keys.ENTER)
+        print "link",link
+        driver.execute_script("arguments[0].click();", link);
+        #link.send_keys(Keys.ENTER)
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "product_MIN-ECONOMY-SURP-OR-DISP")))
         time.sleep(.5)
         html_page1 = driver.page_source
         soup = BeautifulSoup(html_page1)
         scrapepage(searchkey, soup)
+        
     display.stop
     driver.quit()
     return searchid
@@ -645,16 +644,9 @@ def delta(orgn, dest, searchdate, searchkey):
     print orgn, dest
     display = Display(visible=0, size=(800, 600))
     display.start()
-    chromedriver = "/usr/bin/chromedriver"
-    os.environ["webdriver.chrome.driver"] = chromedriver
-    chrome_options = Options()
-    driver = webdriver.Chrome(chromedriver)
+    driver = webdriver.Chrome()
     try:
-    	
-    	# chrome_options = webdriver.ChromeOptions()
-    	# chrome_options.add_argument('--enable-alternative-services')
-       	
-    	driver.implicitly_wait(20)
+       	driver.implicitly_wait(20)
     	driver.get(url)
         time.sleep(1)
         WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "oneWayBtn")))
@@ -669,16 +661,8 @@ def delta(orgn, dest, searchdate, searchkey):
     
     	ddate = driver.find_element_by_id("departureDate")  # .click()
     	ddate.send_keys(str(searchdate))
-    	'''
-    	if returndate:
-        	returndate = driver.find_element_by_id("returnDate")#.click()
-        	returndate.send_keys(date1)
-    	'''
-    	# driver.find_element_by_id("departureDate").click()
-    	# driver.find_elements_by_css_selector("td[data-date='"+date+"']")[0].click()
-    
     	milebtn = driver.find_element_by_id("milesBtn")
-	driver.execute_script("arguments[0].click();", milebtn)
+        driver.execute_script("arguments[0].click();", milebtn)
     	driver.find_element_by_id("findFlightsSubmit").send_keys(Keys.ENTER)
 	    
     except:
@@ -727,31 +711,27 @@ def delta(orgn, dest, searchdate, searchkey):
                 for tmp in detailblk:
                     print "----------------------------------"
                     spaninfo = tmp.findAll("p")
-		    depart_string = (spaninfo[0].text).replace('DEPARTS', '')
-		    if "Opens in a new popup" in depart_string:
-			depart_string = depart_string.replace('Opens in a new popup','')
+                    depart_string = (spaninfo[0].text).replace('DEPARTS', '')
+                    if "Opens in a new popup" in depart_string:
+                        depart_string = depart_string.replace('Opens in a new popup','')
                     departdetails.append(depart_string)
-		    arive_string = (spaninfo[1].text.replace('ARRIVES', ''))
-		    if "Opens in a new popup" in arive_string:
-                        arive_string = depart_string.replace('Opens in a new popup','')
+                    arive_string = (spaninfo[1].text.replace('ARRIVES', ''))
+                    print "depart_string",departdetails
+                    if "Opens in a new popup" in arive_string:
+                        arive_string = arive_string.replace('Opens in a new popup','')
                     arrivedetails.append(arive_string)
                     flight_duration = spaninfo[2].text.replace('FLIGHT', '')
                     flight_duration1 = flight_duration.split("|")
                     flight_no = flight_duration1[0].strip()
                     plane_duration = flight_duration1[1].strip()
-		    extra_string = ''
-		    aircraft =''
-		    #if spaninfo[3].find("span",{"class":"rowLink viewSeatsLinkFlyOut"}):
-		    	#extra_string = spaninfo[3].find("span",{"class":"rowLink viewSeatsLinkFlyOut"}).text
+                    extra_string = ''
+                    aircraft =''
                     aircraft1 = spaninfo[3].text.replace('PLANE', '')
-		    #if extra_string:
-			#aircraft1 = aircraft1.replace(extra_string,'')
-		    print aircraft1
-		    if "-" in aircraft1:
-                    	aircraft2 = aircraft1.split('-')
-			aircraft = aircraft2[0]
-			if len(aircraft2)>2:
-			    aircraft = aircraft+"-"+aircraft2[1]
+                    if "-" in aircraft1:
+                        aircraft2 = aircraft1.split('-')
+                        aircraft = aircraft2[0]
+                        if len(aircraft2)>2:
+                            aircraft = aircraft+"-"+aircraft2[1]
                     planedetailinfo = flight_no + " | " + aircraft + " (" + plane_duration + ")"
                     planedetails.append(planedetailinfo)
             k = k + 1
@@ -782,7 +762,7 @@ def delta(orgn, dest, searchdate, searchkey):
         operatordiv = detailsblock.find("div", {"class":"summaryMessageWrapper"})
         if operatordiv.find("span",{"class":"odIndex_1"}):
             operator = operatordiv.find("span",{"class":"odIndex_1"}).text
-	    operatedbytext = operator
+            operatedbytext = operator
         for info in timeblock:
             temp = info.findAll("span")
             depature = temp[0].text
@@ -923,10 +903,8 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     display.start()
     driver = webdriver.Chrome()
     driver.get(url)
-    # normalLayout
     driver.implicitly_wait(20)
     time.sleep(5)
-    # driver.refresh()
     WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "frm_2012158061206151234")))
     time.sleep(10)
     origin = driver.find_element_by_id("frm_2012158061206151234")
@@ -962,7 +940,7 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     try:
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "dtcontainer-both")))
     except:
-        #display.stop()
+        display.stop()
         driver.quit()
         return searchkey
     maincontain = soup.find("div", {"id":"dtcontainer-both"})
