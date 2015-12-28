@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load humanize %}
 		{% include "flightsearch/header.html" %}
 	    <div class="form-cstm-mng" style="">
 	    <h3 class="text-center">My Reward Points</h3>
@@ -11,10 +12,16 @@
 			<div class="mvb60px">
 			<div class="col-xs-9">
 				<table>
-				<tr><td class="pr50"><b><u>Airlines</u></b></td><td><b><u>Reward Points</u></b></td></tr>	
-				<tr><td class="pr50">United</td><td>0</td></tr>	
-				<tr><td class="pr50">Delta</td><td>0</td></tr>	
-				<tr><td class="pr50">Virgin Atlantic</td><td>0</td></tr>
+					
+				<tr><td class="pr30"><b><u>Airlines</u></b></td><td><b><u>Reward Points</u></b></td></tr>
+				{% if points %}
+				{% for row in points%}	
+					<tr><td class="pr30">{{row.3|title}}</td><td>{{row.2}} miles</td></tr>
+				{% endfor %}
+				{% endif %}	
+			<!--
+				<tr><td class="pr30">Delta</td><td>0 miles</td></tr>	
+				<tr><td class="pr30">Virgin Atlantic</td><td>0 miles</td></tr> -->
 			</table>
 			
 			</div>
@@ -24,14 +31,25 @@
 			
 			</div>
 				
-		<form class="form-inline" id="addaccount" style="padding-top: 100px">
-		  <div class="form-group pr50">
-		    <label for="username">Username</label>
-		    <input type="text" class="form-control" id="" placeholder="USERNAME">
+		<form class="form-inline" id="addaccount" style="padding-top: 100px" method="post" action="myRewardPoint">
+		  {% csrf_token %}
+		  <div class="form-group pr30">
+		    <label for="username">User Number</label>
+		    <input type="text" name="username" class="form-control" id="" placeholder="USERNAME" required>
+		  </div>
+		  <div class="form-group pr30">
+		    <label for="password">Password</label>
+		    <input type="password" name="password" class="form-control" id="" placeholder="PASSWORD" required>
 		  </div>
 		  <div class="form-group pr50">
-		    <label for="password">Password</label>
-		    <input type="password" class="form-control" id="" placeholder="PASSWORD">
+		    <label for="password">Select Airline</label>
+		    <select name="airline">
+		    	<option value="">Select Airline</option>
+		    	<option value="delta">Delta</option>
+		    	<option value="united">United</option>
+		    	<option value="etihad">Etihad</option>
+		    	<option value="virgin">Virgin Atlantic</option>
+		    </select>
 		  </div>
 		  <button type="submit" class="btn btn-pexSearch">Sync</button>
 		</form>

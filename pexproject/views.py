@@ -36,7 +36,7 @@ from multiprocessing import Process
 from datetime import date
 from django.db import connection, transaction
 import operator
-import customfunction
+import customfunction,rewardScraper
 from pexproject.form import LoginForm
 #from django.utils import timezone
 import json
@@ -115,8 +115,25 @@ def signup(request):
         return HttpResponseRedirect(reverse('index'))
 
 def myRewardPoint(request):
+    cursor = connection.cursor()
     context = {}
-    return render_to_response('flightsearch/myrewardpoint.html', context_instance=RequestContext(request))
+    points = ''
+    userid = request.session['userid']
+    if request.POST:
+        #print request.REQUEST
+        username = request.REQUEST['username']
+        password = request.REQUEST['password']
+        airline = request.REQUEST['airline']
+        if airline == 'delta':
+            rewardScraper.deltaPoints(username,password,userid)
+        elif airline == 'united':
+            rewardScraper.unitedPoints(username,password,userid)
+        else:
+            if airline == 'virgin':
+                rewardScraper.unitedPoints(username,password,userid)
+    cursor.execute("select * from reward_points where user_id="+str(userid))
+    points = cursor.fetchall()
+    return render_to_response('flightsearch/myrewardpoint.html',{'points':points}, context_instance=RequestContext(request))
 
 def manageAccount(request):
     cursor = connection.cursor()
@@ -132,7 +149,7 @@ def manageAccount(request):
     cursor.execute("select provider from social_auth_usersocialauth where user_id ="+str(request.session['userid']))
     social_id = cursor.fetchone()
     if social_id:	
-	issocial = 'yes'
+        issocial = 'yes'
     if request.POST:
     	if 'new_password' in request.POST:
     	    newpassword = request.REQUEST['new_password']
