@@ -159,7 +159,7 @@
 												{% if request.GET.cabin == "maincabin"%}
 												<p>Economy</p>
 												{%else%}
-												<p>{{request.GET.cabin}}</p>
+												<p>{{request.GET.cabin|title}}</p>
 												{% endif %}
 												<span>cabin</span>
 											</div>
@@ -172,7 +172,7 @@
 									<div class="col-md-1 nopadding">
 										<div class="form-group flight-search-xswd">
 
-									 <a href="flights?multicitykeys={{request.GET.multicity}}">  <button class="form_val btn  btn-pexSearch xs-fw" tabindex="13">Change</button> </a>
+									 <a href="flights?multicitykeys={{request.GET.multicity}}&cabin={{request.GET.cabin}}&passenger={{request.GET.passenger}}">  <button class="form_val btn  btn-pexSearch xs-fw" tabindex="13">Change</button> </a>
 									
 									  </div>
 									</div>
