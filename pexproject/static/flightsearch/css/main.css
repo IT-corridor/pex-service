@@ -963,7 +963,10 @@ footer {
 	border-color: #fff;
     	background: #fff;
 }
-
+.cstm-hw-it .navbar-brand
+{
+	padding-top:0px;
+}
 .ui-datepicker-calendar {
 	background: #f4f4f4;
 }
