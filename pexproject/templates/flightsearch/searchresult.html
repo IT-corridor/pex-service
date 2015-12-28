@@ -140,25 +140,31 @@
 								</form>
 							</div>
 							<div class="col-md-8 col-xs-12 xs-nopadding">
-								<!--
+								{% if multisearch and 'multicity' in request.GET %}
 								<div class="col-xs-12 mvb10px nopadding search-name">
 									<div class="col-md-11 nopadding ">
+										{% for searchparam in multisearch %}
 										<div class="data-search-area">
-											<p>DEL</p>
-											<span>26 Dec</span>
+											<p>{{searchparam.source}}</p>
+											<span>{{searchparam.traveldate|date:"d M"}}</span>
 										</div>
 										<h4 class="for-desktop-view arrow-size"><img src="/static/flightsearch/img/summary-arrow.png"  class="img-responsive"></h4>
 										<div class="data-search-area">
-											<p>DEL</p>
-											<span>26 Dec</span>
+											<p>{{searchparam.destination}}</p>
+											<span> .</span> 
 										</div>
+										{% endfor %}
 										<div class="main-plc-name">
 											<div class="name-area">
-												<p>dfgd</p>
-												<span>dfg</span>
+												{% if request.GET.cabin == "maincabin"%}
+												<p>Economy</p>
+												{%else%}
+												<p>{{request.GET.cabin}}</p>
+												{% endif %}
+												<span>cabin</span>
 											</div>
 											<div class="name-area">
-												<p>1</p>
+												<p>{{request.GET.passenger}}</p>
 												<span>Traveller</span>
 											</div>
 										</div>
@@ -166,11 +172,13 @@
 									<div class="col-md-1 nopadding">
 										<div class="form-group flight-search-xswd">
 
-									    <button class="form_val btn  btn-pexSearch xs-fw" tabindex="13">Change</button>
+									 <a href="flights?multicitykeys={{request.GET.multicity}}">  <button class="form_val btn  btn-pexSearch xs-fw" tabindex="13">Change</button> </a>
+									
 									  </div>
 									</div>
-								</div> -->
-								{% if search %}
+								</div> 
+								{% endif %}
+								{% if search and 'multicity' not in request.GET%}
 						
 							<div class="col-xs-12 mvb10px nopadding">
 								<div class="col-xs-12 nopaddig visible-xs form-side">
