@@ -1415,6 +1415,21 @@ display:inline-block;
 }
 
 @media (max-width: 767px) {
+.collapse-cstome-cntrl .navbar-brand
+{
+	padding-top: 15px !important;
+	color:#000  !important;
+	font-size:24px;
+}
+.collapse-cstome-cntrl .glyphicon-search
+{
+
+	font-size:20px  !important;
+}
+.site-bar-menu-css .navbar-default .navbar-toggle .icon-bar
+{
+	    background-color: #000000;
+}
 
 .main-plc-name
 {
