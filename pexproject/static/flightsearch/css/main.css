@@ -64,8 +64,8 @@ margin-top: -8px;
 .pr5 {
 	padding-right: 5px;
 }
-.pr30 {
-	padding-right: 30px;
+.pr50 {
+	padding-right: 50px;
 }
 /*SPACERS*/
 /*<--HORIZONTAL PIXELS-->*/
@@ -1321,7 +1321,11 @@ overflow:hidden;
 
 .content-div p
 {
-	font-size:14px;
+	font-size:17px;
+}
+.team-c p
+{
+	font-size:13px;
 }
 
 .address-data h3
@@ -2009,3 +2013,214 @@ display: table-cell;
 }
 
 }
+
+
+
+/*_-------------------------- tabs --------------*/
+
+
+
+/* custom inclusion of right, left and below tabs */
+
+.tabs-below > .nav-tabs,
+.tabs-right > .nav-tabs,
+.tabs-left > .nav-tabs {
+  border-bottom: 0;
+}
+
+.tab-content > .tab-pane,
+.pill-content > .pill-pane {
+  display: none;
+}
+
+.tab-content > .active,
+.pill-content > .active {
+  display: block;
+}
+
+.tabs-below > .nav-tabs {
+  border-top: 1px solid #ddd;
+}
+
+.tabs-below > .nav-tabs > li {
+  margin-top: -1px;
+  margin-bottom: 0;
+}
+
+.tabs-below > .nav-tabs > li > a {
+  -webkit-border-radius: 0 0 4px 4px;
+     -moz-border-radius: 0 0 4px 4px;
+          border-radius: 0 0 4px 4px;
+}
+
+.tabs-below > .nav-tabs > li > a:hover,
+.tabs-below > .nav-tabs > li > a:focus {
+  border-top-color: #ddd;
+  border-bottom-color: transparent;
+}
+
+.tabs-below > .nav-tabs > .active > a,
+.tabs-below > .nav-tabs > .active > a:hover,
+.tabs-below > .nav-tabs > .active > a:focus {
+  border-color: transparent #ddd #ddd #ddd;
+}
+
+.tabs-left > .nav-tabs > li,
+.tabs-right > .nav-tabs > li {
+  float: none;
+}
+
+.tabs-left > .nav-tabs > li > a,
+.tabs-right > .nav-tabs > li > a {
+  min-width: 74px;
+  margin-right: 0;
+  margin-bottom: 3px;
+}
+
+.tabs-left > .nav-tabs {
+  float: left;
+  margin-right: 19px;
+  border-right: 1px solid #ddd;
+}
+
+.tabs-left > .nav-tabs > li > a {
+  margin-right: -1px;
+  -webkit-border-radius: 4px 0 0 4px;
+     -moz-border-radius: 4px 0 0 4px;
+          border-radius: 4px 0 0 4px;
+}
+
+.tabs-left > .nav-tabs > li > a:hover,
+.tabs-left > .nav-tabs > li > a:focus {
+  border-color: #eeeeee #dddddd #eeeeee #eeeeee;
+}
+
+.tabs-left > .nav-tabs .active > a,
+.tabs-left > .nav-tabs .active > a:hover,
+.tabs-left > .nav-tabs .active > a:focus {
+  border-color: #ddd transparent #ddd #ddd;
+  *border-right-color: #ffffff;
+}
+
+.tabs-right > .nav-tabs {
+  float: right;
+  margin-left: 19px;
+  border-left: 1px solid #ddd;
+}
+
+.tabs-right > .nav-tabs > li > a {
+  margin-left: -1px;
+  -webkit-border-radius: 0 4px 4px 0;
+     -moz-border-radius: 0 4px 4px 0;
+          border-radius: 0 4px 4px 0;
+}
+
+.tabs-right > .nav-tabs > li > a:hover,
+.tabs-right > .nav-tabs > li > a:focus {
+  border-color: #eeeeee #eeeeee #eeeeee #dddddd;
+}
+
+.tabs-right > .nav-tabs .active > a,
+.tabs-right > .nav-tabs .active > a:hover,
+.tabs-right > .nav-tabs .active > a:focus {
+  border-color: #ddd #ddd #ddd transparent;
+  *border-left-color: #ffffff;
+}
+.Only-text
+{
+	height:150px;
+	line-height: 175px;
+}
+.for-center
+{
+	float:none;
+	margin:0px auto;
+}
+
+.team-c a
+{
+	display:inline-block;
+	background:#000;
+	padding:5px;
+	border-radius:50%;
+}
+.team-c .thumbnail
+{
+	    border: 0px;
+    box-shadow: 0px 0px 21px -8px rgba(0,0,0,0.8);
+}
+.team-c h3
+{
+	    margin: 0px;
+    margin-bottom: 8px;
+    font-size: 20px;
+    text-align: center;
+    color: #222;
+}
+.blog-header
+{
+	padding:100px;
+	background:url('/static/flightsearch/img/About-the-Variety-of-Travelers.png');
+}
+
+.blog-header h1
+{
+	    font-size: 50px;
+    color: #fff;
+    text-align: center;
+    text-shadow: 2px 4px 17px #000;
+}
+.blog-box
+{
+	max-height:200px;
+	overflow: hidden;
+}
+.blog-box .info
+{
+font-weight: 300;
+    position: absolute;
+    bottom: 0px;
+	    background: rgba(0,0,0,0.2);
+    width: auto;
+padding: 5px 15px;
+}
+.blog-box .info a
+{
+    display: block;
+    font-size: 20px;
+    color: #fff;
+
+}
+.blog-box .info .blog-time
+{
+    font-size: 15px;
+
+}
+.blog-box img
+{
+    width:100%;
+
+}
+.blog-box 
+{
+       padding: 10px 5px;
+
+}
+.hotel-owners .col-sm-4
+{
+	min-height:150px;
+}
+.Fare-Tips li
+{
+	font-size:16px;
+	margin-bottom:10px;
+}
+
+
+
+/*_-------------------------- tabs --------------*/
+
+
+
+
+/*_-------------------------- tabs --------------*/
