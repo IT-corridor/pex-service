@@ -1779,6 +1779,20 @@ display:inline-block;
 	}
 }
 @media (max-width: 767px) {
+.form-reward 
+{
+	padding:0px 0px !important;
+}
+ .cstm-btn .btn-pexSearch
+ {
+     padding: 4px 7px;
+    font-size: 12px;
+    margin-top: 20px;
+ }
+.pd-fm-btn
+{
+	padding:0px 5px !important;
+}
 	.xs-pad-with-cross-btn
 	{
 		padding: 30px 23px 20px;
@@ -2299,6 +2313,26 @@ display:inline-block;
 {
 	padding:20px 0px;
 	text-align:left;
+}
+.form-reward .col-md-3
+{
+	padding:0px 5px;
+}
+.form-reward label
+{
+	display:block;
+}
+.form-reward .form-control
+{
+	width:100% !important;
+}
+.form-reward 
+{
+	padding:0px 20px;
+}
+.pd-fm-btn
+{
+	padding-left:25px;
 }
 /*_-------------------------- tabs --------------*/
 
