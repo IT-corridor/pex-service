@@ -30,18 +30,25 @@
 			</div>
 			
 			</div>
-				
-		<form class="form-inline" id="addaccount" style="padding-top: 100px" method="post" action="myRewardPoint">
+		<div style="padding-top: 80px">
+		<div class="nopaddig" style="padding-bottom: 20px">
+		<span style="margin-bottom: 40px">{{temp_message}} </span>	
+		</div>
+		<form class="form-inline" id="addaccount"  method="post" action="myRewardPoint">
 		  {% csrf_token %}
-		  <div class="form-group pr30">
-		    <label for="username">User Number</label>
+		  <div class="form-group">
+		    <label for="username">Username</label>
 		    <input type="text" name="username" class="form-control" id="" placeholder="USERNAME" required>
 		  </div>
-		  <div class="form-group pr30">
+		  <div class="form-group">
+		    <label for="username">Skymile Number</label>
+		    <input type="text" name="skymiles_number" class="form-control" id="" placeholder="SKYMILES NUMBER" required>
+		  </div>
+		  <div class="form-group">
 		    <label for="password">Password</label>
 		    <input type="password" name="password" class="form-control" id="" placeholder="PASSWORD" required>
 		  </div>
-		  <div class="form-group pr50">
+		  <div class="form-group">
 		    <label for="password">Select Airline</label>
 		    <select name="airline">
 		    	<option value="">Select Airline</option>
@@ -50,9 +57,13 @@
 		    	<option value="etihad">Etihad</option>
 		    	<option value="virgin">Virgin Atlantic</option>
 		    </select>
-		  </div>
+		    </div>
+		  <div class="form-group">
+
 		  <button type="submit" class="btn btn-pexSearch">Sync</button>
 		</form>
+		</div>
+		</div>	
 		</div>
 		
 			
@@ -63,7 +74,13 @@
 	</div>
 	<script>
 		$(document).ready(function(){
-			$('#addaccount').hide();		
+			var action = '';
+			action ="{{temp_message}}";
+			if (action == '')
+			{
+				$('#addaccount').hide();
+			}
+					
 		});
 		$('#add_account').click(function(){
 			 if ($(this).text() == "Add Account") 

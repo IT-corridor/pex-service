@@ -118,22 +118,39 @@ def myRewardPoint(request):
     cursor = connection.cursor()
     context = {}
     points = ''
+    temp_message = ''
+    resp = ''
     userid = request.session['userid']
     if request.POST:
         #print request.REQUEST
         username = request.REQUEST['username']
         password = request.REQUEST['password']
         airline = request.REQUEST['airline']
+        skymiles_number = request.REQUEST['skymiles_number']
         if airline == 'delta':
-            rewardScraper.deltaPoints(username,password,userid)
+            resp = rewardScraper.deltaPoints(skymiles_number,password,userid)
+            if resp == "fail":
+                temp_message = "Invalid Username or Password"
         elif airline == 'united':
-            rewardScraper.unitedPoints(username,password,userid)
+            resp = rewardScraper.unitedPoints(username,password,userid)
+            if resp == "fail":
+                temp_message = "Invalid Username or Password"
         else:
             if airline == 'virgin':
-                rewardScraper.unitedPoints(username,password,userid)
+                resp = rewardScraper.virginPoints(username,password,userid)
+                if resp == "fail":
+                    temp_message = "Invalid Username or Password"   
+    if resp == 'success':
+        cursor.execute("select * from reward_point_credential where user_id="+str(userid)+" and airline='"+airline+"'")
+        object = cursor.fetchone()
+        if object:
+            cursor.execute("update reward_point_credential set username="+username+", password="+password+", skymiles_number="+skymiles_number+" where airlines='"+airline+"' and user_id="+str(userid))
+        else:
+            cursor.execute ("INSERT INTO reward_point_credential (user_id,username,password,airline,skymiles_number) VALUES (%s,%s,%s,%s,%s);", (str(userid),username,password,airline,skymiles_number))
+        transaction.commit()
     cursor.execute("select * from reward_points where user_id="+str(userid))
     points = cursor.fetchall()
-    return render_to_response('flightsearch/myrewardpoint.html',{'points':points}, context_instance=RequestContext(request))
+    return render_to_response('flightsearch/myrewardpoint.html',{'points':points,'temp_message':temp_message}, context_instance=RequestContext(request))
 
 def manageAccount(request):
     cursor = connection.cursor()
