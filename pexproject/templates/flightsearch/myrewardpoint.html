@@ -13,10 +13,10 @@
 			<div class="col-xs-9">
 				<table>
 					
-				<tr><td class="pr30"><b><u>Airlines</u></b></td><td><b><u>Reward Points</u></b></td></tr>
+				<tr><td class="pr50"><b><u>Airlines</u></b></td><td><b><u>Reward Points</u></b></td></tr>
 				{% if points %}
 				{% for row in points%}	
-					<tr><td class="pr30">{{row.3|title}}</td><td>{{row.2}} miles</td></tr>
+					<tr><td class="pr50">{{row.3|title}}</td><td>{{row.2}} miles</td></tr>
 				{% endfor %}
 				{% endif %}	
 			<!--
@@ -30,10 +30,10 @@
 			</div>
 			
 			</div>
-		<div style="padding-top: 80px">
-		<div class="nopaddig" style="padding-bottom: 20px">
-		<span style="margin-bottom: 40px">{{temp_message}} </span>	
-		</div>
+		<div class="form-group" style="padding-top: 80px">
+			<div class="nopaddig" style="padding-bottom: 20px">
+				<span style="margin-bottom: 40px">{{temp_message}} </span>	
+			</div>
 		<form class="form-inline" id="addaccount"  method="post" action="myRewardPoint">
 		  {% csrf_token %}
 		  <div class="form-group">
