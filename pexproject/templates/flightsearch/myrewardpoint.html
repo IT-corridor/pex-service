@@ -11,18 +11,23 @@
 			{% endif %}
 			<div class="mvb60px">
 			<div class="col-xs-9">
-				<table>
-					
-				<tr><td class="pr50"><b><u>Airlines</u></b></td><td><b><u>Reward Points</u></b></td></tr>
-				{% if points %}
-				{% for row in points%}	
-					<tr><td class="pr50">{{row.3|title}}</td><td>{{row.2}} miles</td></tr>
+			
+			<div class="col-md-12">
+				<div class="col-md-12">
+				<div class="col-md-4 text-center"><b><u>Airlines</u></b></div>
+				<div class="col-md-4 text-center"><b><u>Reward Points</u></b></div>
+				<div class="col-md-4 text-center"><b><u>Action</u></b></div>
+				</div>
+					{% if points %}
+				{% for row in points%}
+					<div class="col-md-12" id ="div_{{row.0}}">	
+					<div class="col-md-4 text-center">{{row.3|title}}</div>
+					<div class="col-md-4 text-center">{{row.2}}</div>
+					<div class="col-md-4 text-center"><a href="#" id="{{row.0}}" class="update"> Update</a></div>
+					</div>
 				{% endfor %}
 				{% endif %}	
-			<!--
-				<tr><td class="pr30">Delta</td><td>0 miles</td></tr>	
-				<tr><td class="pr30">Virgin Atlantic</td><td>0 miles</td></tr> -->
-			</table>
+			</div>
 			
 			</div>
 			<div class="col-xs-3 text-right">
@@ -99,6 +104,13 @@
 			     $('#addaccount').hide();
 			  }; 
 		});
+	
+		$('.update').click(function(){
+			var html= '';
+			var id = ($(this).attr('id'));
+			html = "<form> <input type='text' name='username' placeholder='USERNAME'><input type='password' name='passord' placeholder='PASSWORD'><input type='text' name='skymiles_number' placeholder='SKYMILES NUMBER'></form>";
+			$('#div_'+id).append(html);
+		}); 
 	</script>
 	<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>');</script>
     <script src="/static/flightsearch/js/vendor/bootstrap.min.js"></script>

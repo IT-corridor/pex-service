@@ -291,7 +291,46 @@
 					</div>
 					<div class="col-xs-12 col-md-12 nopadding social-icn"><!--------- map about--------->
 						<h3 class="follow-us" >Locations:</h3>
-						
+						<div class="row">
+			<div class="col-md-4 col-sm-4 col-xs-12 address-data">
+				 <div class="col-md-12 nopadding">
+					<div class="thumbnail">
+					<div id="houstonmap" style="width:100%;height:220px;"></div>
+					  <div class="caption">
+						<h3>Heading</h3>
+						<p class="address"> Awards Search. Find the cheapest airline rewards</p>
+						<a href="#" class="" role="button">Map <span class="glyphicon right" aria-hidden="true"></span></a> <a href="#" class="" role="button">Hotels <span class="glyphicon right" aria-hidden="true"></span></a>
+					  </div>
+					</div>
+				  </div>
+			</div>
+			<div class="col-md-4 col-sm-4 col-xs-12 address-data">
+				 <div class="col-md-12 nopadding">
+					<div class="thumbnail">
+					<div id="miami" style="width:100%;height:220px;"></div>
+					  <div class="caption">
+						<h3>Heading</h3>
+						<p class="address"> Awards Search. Find the cheapest airline rewards</p>
+						<a href="#" class="" role="button">Map <span class="glyphicon right" aria-hidden="true"></span></a> <a href="#" class="" role="button">Hotels <span class="glyphicon right" aria-hidden="true"></span></a>
+					  </div>
+					</div>
+				  </div>
+			</div>
+			<!--
+			<div class="col-md-4 col-sm-4 col-xs-12 address-data">
+				 <div class="col-md-12 nopadding">
+					<div class="thumbnail">
+					<div id="" style="width:100%;height:220px;"></div>
+					  <div class="caption">
+						<h3>Heading</h3>
+						<p class="address"> Awards Search. Find the cheapest airline rewards</p>
+						<a href="#" class="" role="button">Map <span class="glyphicon right" aria-hidden="true"></span></a> <a href="#" class="" role="button">Hotels <span class="glyphicon right" aria-hidden="true"></span></a>
+					  </div>
+					</div>
+				  </div>
+			</div>
+			-->
+	 </div>
 						
 						
 					</div><!--------- map about--------->
@@ -552,7 +591,7 @@
 							rental car company or online travel agency that wants to be
 							listed on PEX+:</p>
 						<p>
-							Visit our <a href="">hotel owner page.</a>
+							Visit our <a href="mailto:info@pexportal.com">info@pexportal.com</a>
 						</p>
 					</div>
 					<div class="col-xs-12 col-sm-4">
@@ -918,3 +957,23 @@ return sum;
     });
     
     </script>
+    <script
+src="http://maps.googleapis.com/maps/api/js">
+</script>
+    <script>
+function initialize() {
+  var houston_mapProp = {
+    center:new google.maps.LatLng(29.984433,-95.341442),
+    zoom:5,
+    mapTypeId:google.maps.MapTypeId.ROADMAP
+  };
+  var miami_mapProp = {
+    center:new google.maps.LatLng(25.79325,-80.290556),
+    zoom:5,
+    mapTypeId:google.maps.MapTypeId.ROADMAP
+  };
+  var map=new google.maps.Map(document.getElementById("miami"), miami_mapProp);
+  var map1=new google.maps.Map(document.getElementById("houstonmap"), houston_mapProp);
+}
+google.maps.event.addDomListener(window, 'load', initialize);
+</script>	
