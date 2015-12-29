@@ -50,12 +50,17 @@
 		  </div>
 		  <div class="form-group">
 		    <label for="password">Select Airline</label>
-		    <select name="airline">
+		    <select name="airline" required>
 		    	<option value="">Select Airline</option>
-		    	<option value="delta">Delta</option>
-		    	<option value="united">United</option>
-		    	<option value="etihad">Etihad</option>
+		    	{% if 'delta' not in datasource%}
+		    		<option value="delta">Delta</option>
+		    	{% endif %}
+		    	{% if 'united' not in datasource%}
+		    		<option value="united">United</option>
+		    	{% endif %}
+		    	{% if 'virgin' not in datasource%}
 		    	<option value="virgin">Virgin Atlantic</option>
+		    	{%endif%}
 		    </select>
 		    </div>
 		  <div class="form-group">

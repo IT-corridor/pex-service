@@ -120,6 +120,7 @@ def myRewardPoint(request):
     points = ''
     temp_message = ''
     resp = ''
+    datasource = []
     userid = request.session['userid']
     if request.POST:
         #print request.REQUEST
@@ -150,7 +151,10 @@ def myRewardPoint(request):
         transaction.commit()
     cursor.execute("select * from reward_points where user_id="+str(userid))
     points = cursor.fetchall()
-    return render_to_response('flightsearch/myrewardpoint.html',{'points':points,'temp_message':temp_message}, context_instance=RequestContext(request))
+    for row in points:
+        print row[3] 
+        datasource.append(row[3])
+    return render_to_response('flightsearch/myrewardpoint.html',{'datasource':datasource,'points':points,'temp_message':temp_message}, context_instance=RequestContext(request))
 
 def manageAccount(request):
     cursor = connection.cursor()
