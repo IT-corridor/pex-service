@@ -2215,9 +2215,91 @@ padding: 5px 15px;
 	font-size:16px;
 	margin-bottom:10px;
 }
+.help-tab
+{
+	    background-color: #74797e;
+		padding: 20px;
+    
+}
+.help-tab .thumbnail
+{
+	    background-color: #74797e;
+    border:0px solid;
+	    text-align: center;
+		    box-shadow: 0 0px 0px rgba(0,0,0,.075);
+}
+.help-tab .thumbnail h3
+{
+	color:#fff;
+	    font-size: 18px;
+    font-weight: 300;
+}
+.help-tab .thumbnail p
+{
+	color: #b8bec3;
+	
+}
 
+.help-tab .thumbnail a
+{
+	color: #fff;
+	font-size: 14px;
+	
+}
 
-
+.help-tab .thumbnail a img
+{
+display:inline-block;
+	
+}
+.press-contact h3
+{
+	border-bottom:1px solid #ddd;
+	padding:10px 5px;
+}
+.press-contact-img h3
+{
+	margin:0px;
+}
+.press-contact .img
+{
+	padding:20px 30px;
+}
+.dwnld-div a, .dwnld-div h3
+{
+	display:inline-block;
+}
+.dwnld-div
+{
+	    padding: 15px 20px;
+}
+.social-icn
+{
+	text-align:center;
+}
+.social-icn img
+{
+	display:inline-block;
+}
+.social-icn span
+{
+	display:block;
+	margin-top:5px;
+}
+.social-icn a
+{
+    display: inline-block;
+    padding: 20px;
+    font-size: 15px;
+    color: #696969;
+    border-radius: 8px;
+    box-shadow: 0px 0px 15px -4px rgba(0,0,0,0.3);
+}
+.follow-us
+{
+	padding:20px 0px;
+	text-align:left;
+}
 /*_-------------------------- tabs --------------*/
 
 
