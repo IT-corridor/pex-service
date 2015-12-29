@@ -132,7 +132,7 @@ def myRewardPoint(request):
             if resp == "fail":
                 temp_message = "Invalid Username or Password"
         elif airline == 'united':
-            resp = rewardScraper.unitedPoints(username,password,userid)
+            resp = rewardScraper.unitedPoints(skymiles_number,password,userid)
             if resp == "fail":
                 temp_message = "Invalid Username or Password"
         else:
