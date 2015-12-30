@@ -121,43 +121,45 @@ def myRewardPoint(request):
     context = {}
     points = ''
     temp_message = ''
+    updatemsg = ''
     resp = ''
     datasource = []
     userid = request.session['userid']
+    
     if request.POST:
-        #print request.REQUEST
         username = request.REQUEST['username']
         password = request.REQUEST['password']
-        airline = request.REQUEST['airline']
         skymiles_number = request.REQUEST['skymiles_number']
-        if airline == 'delta':
-            resp = rewardScraper.deltaPoints(skymiles_number,password,userid)
-            if resp == "fail":
-                temp_message = "Invalid Username or Password"
-        elif airline == 'united':
-            resp = rewardScraper.unitedPoints(skymiles_number,password,userid)
-            if resp == "fail":
-                temp_message = "Invalid Username or Password"
+        
+        if 'rowid' in request.POST:
+            rowid = request.REQUEST['rowid']
+            cursor.execute("update reward_point_credential set username='"+username+"', password='"+password+"', skymiles_number="+skymiles_number+" where airline='"+rowid+"' and user_id="+str(userid))
+            updatemsg = "Your account has been updated successfully"
         else:
-            if airline == 'virgin':
-                resp = rewardScraper.virginPoints(username,password,userid)
+            airline = request.REQUEST['airline']
+            if airline == 'delta':
+                resp = rewardScraper.deltaPoints(skymiles_number,password,userid)
                 if resp == "fail":
-                    temp_message = "Invalid Username or Password"   
-    if resp == 'success':
-        cursor.execute("select * from reward_point_credential where user_id="+str(userid)+" and airline='"+airline+"'")
-        object = cursor.fetchone()
-        if object:
-            cursor.execute("update reward_point_credential set username="+username+", password="+password+", skymiles_number="+skymiles_number+" where airlines='"+airline+"' and user_id="+str(userid))
-        else:
+                    temp_message = "Invalid Username or Password"
+            elif airline == 'united':
+                resp = rewardScraper.unitedPoints(skymiles_number,password,userid)
+                if resp == "fail":
+                    temp_message = "Invalid Username or Password"
+            else:
+                if airline == 'virgin':
+                    resp = rewardScraper.virginPoints(username,password,userid)
+                    if resp == "fail":
+                        temp_message = "Invalid Username or Password"   
+        if resp == 'success':
             cursor.execute ("INSERT INTO reward_point_credential (user_id,username,password,airline,skymiles_number) VALUES (%s,%s,%s,%s,%s);", (str(userid),username,password,airline,skymiles_number))
-        transaction.commit()
-    
+            transaction.commit()
+        
     cursor.execute("select * from reward_points where user_id="+str(userid))
     points = cursor.fetchall()
     for row in points: 
         datasource.append(row[3])
 
-    return render_to_response('flightsearch/myrewardpoint.html',{'datasource':datasource,'points':points,'temp_message':temp_message}, context_instance=RequestContext(request))
+    return render_to_response('flightsearch/myrewardpoint.html',{'updatemsg':updatemsg,'datasource':datasource,'points':points,'temp_message':temp_message}, context_instance=RequestContext(request))
 
 def manageAccount(request):
     cursor = connection.cursor()
