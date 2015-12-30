@@ -82,7 +82,7 @@ def staticPage(request):
     
     if "action" in request.GET:
     	page = request.GET.get('action','')
-        return  render_to_response('flightsearch/'+page, context_instance=RequestContext(request))
+        return  render_to_response('flightsearch/'+page+'.html', context_instance=RequestContext(request))
 	if page == 'about':	
 	    return  render_to_response('flightsearch/about.html', context_instance=RequestContext(request))
     if page == 'help':
