@@ -83,12 +83,14 @@ def staticPage(request):
 	page = request.GET.get('action','')
 	if page == 'about':	
 	    return  render_to_response('flightsearch/about.html', context_instance=RequestContext(request))
-    	if page == 'help':
-            return  render_to_response('flightsearch/help.html', context_instance=RequestContext(request))
-    	if page == 'howitwork':
-            return  render_to_response('flightsearch/how_it_work.html', context_instance=RequestContext(request))
-    	if page == "contactus":
-            return  render_to_response('flightsearch/contact_us.html', context_instance=RequestContext(request))
+    if page == 'help':
+        return  render_to_response('flightsearch/help.html', context_instance=RequestContext(request))
+    if page == 'howitwork':
+        return  render_to_response('flightsearch/how_it_work.html', context_instance=RequestContext(request))
+    if page == "contactus":
+        return  render_to_response('flightsearch/contact_us.html', context_instance=RequestContext(request))
+    if page == "feedback":
+        return  render_to_response('flightsearch/feedback.html', context_instance=RequestContext(request))
 def signup(request):
     context = {}
     if 'username' not in request.session:
@@ -149,11 +151,12 @@ def myRewardPoint(request):
         else:
             cursor.execute ("INSERT INTO reward_point_credential (user_id,username,password,airline,skymiles_number) VALUES (%s,%s,%s,%s,%s);", (str(userid),username,password,airline,skymiles_number))
         transaction.commit()
+    
     cursor.execute("select * from reward_points where user_id="+str(userid))
     points = cursor.fetchall()
-    for row in points:
-        print row[3] 
+    for row in points: 
         datasource.append(row[3])
+
     return render_to_response('flightsearch/myrewardpoint.html',{'datasource':datasource,'points':points,'temp_message':temp_message}, context_instance=RequestContext(request))
 
 def manageAccount(request):
