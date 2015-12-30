@@ -1325,7 +1325,7 @@ overflow:hidden;
 }
 .team-c p
 {
-	font-size:13px;
+	font-size:14px;
 }
 
 .address-data h3
@@ -1779,6 +1779,11 @@ display:inline-block;
 	}
 }
 @media (max-width: 767px) {
+.min-cs-contact
+{
+	min-height:auto !important; 
+}
+
 .form-reward 
 {
 	padding:0px 0px !important;
@@ -2333,6 +2338,53 @@ display:inline-block;
 .pd-fm-btn
 {
 	padding-left:25px;
+}
+.form-feedback
+{
+	background:#f2f2f2;
+	padding:60px 60px;
+}
+.form-feedback label {
+    display: inline-block;
+    max-width: 100%;
+    font-size: 18px;
+    font-weight: 400 !important;
+    margin-bottom: 5px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+.mn-feedback h3
+{
+	padding:20px 0px;
+	font-weight: 500 !important;
+}
+.bc-f2
+{
+	background:#f2f2f2;
+}
+.for-msg-feed
+{
+	background:#ddd;
+	padding:20px;
+	border-radius:4px;
+}
+.message-bx .dtls
+{
+	margin-top:10px;
+}
+.team{
+	 
+}
+.team-c .thumbnail
+{
+	!min-height:250px; 
+}
+.min-cs-contact
+{
+	min-height:115px; 
+}
+.nav-tabs {
+    border-bottom: 0px solid #ddd;
 }
 /*_-------------------------- tabs --------------*/
 
