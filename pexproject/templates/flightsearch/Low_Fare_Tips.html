@@ -1,0 +1,48 @@
+{% load staticfiles %} {% include "flightsearch/header.html" %}
+
+
+<!-- BODY SECTION/-->
+<!-- search form/-->
+
+{% include "flightsearch/top_searchbar.html" %}
+
+<!-- search form/-->
+<div class="container-fluid" style="margin-top: 30px;">
+	<!-- tabs left -->
+
+	<div class="tabbable tabs-left">
+
+		<div class="">
+
+
+						<div
+				class="col-md-10 col-sm-10 tab-pane  col-md-push-2 col-sm-push-2 col-xs-12 about-content nopadding Fare-Tips"
+				id="i">
+				<!----------- Low Fare Tips ------>
+				<h5 class="Only-text">Low Fare Tips</h5>
+				<div class="content-div">
+					<h3>Tips for finding the lowest mileage fare possible:</h3>
+					<ol>
+						<li>It pays to plan ahead. The closer you are to your traveling
+							day the more you pay. Why? Because airlines only allot a certain
+							number of award seats for each flight. Book early or those saver
+							award fares might be sold out.</li>
+						<li>Make sure to <a href="http://pex.techens.com/">search PEX+</a> before you book.
+						</li>
+					</ol>
+				</div>
+			</div>
+			<!----------- Low Fare Tips ------>
+	</div>
+		{% include "flightsearch/sidebar-menu.html" %}
+	</div>
+	<!-- /tabs -->
+
+	<!-- /row -->
+</div>
+
+<!-- /container -->
+
+
+
+{% include "flightsearch/footer.html" %}

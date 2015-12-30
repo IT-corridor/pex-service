@@ -1,0 +1,53 @@
+{% load staticfiles %} {% include "flightsearch/header.html" %}
+
+
+<!-- BODY SECTION/-->
+<!-- search form/-->
+
+{% include "flightsearch/top_searchbar.html" %}
+
+<!-- search form/-->
+<div class="container-fluid" style="margin-top: 30px;">
+	<!-- tabs left -->
+
+	<div class="tabbable tabs-left">
+
+		<div class="">
+
+
+			<div class="col-md-10 col-sm-10 tab-pane col-md-push-2 col-sm-push-2 col-xs-12 about-content nopadding "id="f"><!----------- Hotel Owners ------>
+				
+				<h5 class="Only-text">Hotel Owners</h5>
+				<div class="content-div">
+					<p>Do you own or manage a hotel or another accommodation type that
+						you would like to appear in our search results? Please read below.</p>
+					<h3>Show Your Hotel with Price and Availability</h3>
+					<p>If you want to show award prices and availability in real time,
+						and allow users to book online, your hotel will need to be
+						connected to PEX+ via a technological interface. There are many
+						companies on the market (often called “booking engines”) providing
+						the services necessary to connect your hotel to websites and
+						search engines like PEX+.</p>
+					<p>You can also contact any OTA we work with to be listed with
+						them, and your hotel will show up in PEX+ search results.</p>
+					<p>
+						<strong>Note: </strong>If you wish to delete pictures provided by
+						one of our partners, or if you have any problems or suggestions
+						along the way, <a href="staticPage?action=feedback">kindly let us know.</a>
+					</p>
+				</div>
+			</div>
+			<!----------- Hotel Owners ------>
+	</div>
+		{% include "flightsearch/sidebar-menu.html" %}
+	</div>
+	<!-- /tabs -->
+
+	<!-- /row -->
+</div>
+
+<!-- /container -->
+
+
+
+{% include "flightsearch/footer.html" %}
