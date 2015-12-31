@@ -1,4 +1,3 @@
-
     	{% include "flightsearch/header.html" %}
     	{% load staticfiles %}
        
@@ -205,12 +204,12 @@
 </nav>
 
 <!-- search form/-->
-<div class="container mn-feedback" style="">
+<div class="container mn-feedback" style="padding:15px;">
 <h3 class="text-center">We Love Feedback</h3>
 {% if alert_msg%} <h3 class="text-center">{{alert_msg}}</h3>{%endif%}
 <div class="col-md-12 col-xs-12 bc-f2">
 
-<div class="col-md-6 col-xs-12 form-feedback for-center ">
+<div class="col-md-6 col-xs-12 form-feedback " style="border-right:1px solid #ddd;">
 	<form action="sendFeedBack" method="post">
 		{% csrf_token %}
 	  <div class="form-group">
@@ -234,12 +233,30 @@
 	  <div class="form-group message-bx" id="message">
 		<label for="exampleInputFile">Message</label>
 		<textarea class="form-control" rows="4" name="message"></textarea>
-		<p class="dtls mt10"> While we make every attempt to get accurate data, price and availability are not guaranteed.</p>
+		<p class="dtls mt10"> While we make every attempt to get accurate data,<a href="staticPage?action=Pricing_policy"> price and availability are not guaranteed.</a></p>
 		<p class="">Please note PEX+ may share any portion of the information submitted, including personal data, with travel vendors referenced in feedback submissions. </p>
 	  </div>
 	  
 	  <button type="submit" class="btn btn-default">Submit</button>
 	</form>
+</div>
+<div class="col-md-6 col-xs-12 form-feedback">
+<div class="cntc-info-about">
+<div class="col-md-12 col-xs-12 nopadding">
+	<div class="col-xs-3"><strong>Email:</strong></div>
+	<div class="col-xs-9"><p> info@pexportal.com</p></div>
+</div>
+<div class="col-md-12 col-xs-12 nopadding">
+	<div class="col-xs-3"><strong>Address:</strong> </div>
+	<div class="col-xs-9"><p> 5177 Richmond Avenue, Suite 770 <br/> Houston, TX 77056</p>
+		<p>407 Lincoln Road, Suite 11-B </br>
+Miami Beach, FL 33139</p>
+	</div>
+</div>
+
+
+</div>
+
 </div>
 </div>
 </div>    

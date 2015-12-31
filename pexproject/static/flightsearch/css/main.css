@@ -1198,6 +1198,23 @@ border:0px solid;
 	    height: 382px;
 
 }
+.form-contact
+{
+	margin-bottom:20px;
+	background:#f2f2f2;
+	padding:20px 0px;
+}
+.form-contact .contact, .form-contact .form
+{
+
+	background:#f2f2f2;
+}
+.form-contact .form
+{
+
+	background:#f2f2f2;
+	border-right:1px solid #ddd;
+}
 .padding-add
 {
 	padding:0px
@@ -1357,7 +1374,7 @@ content:'\003e'
 }
 .address-data .address
 {
-	    font-size: 17px;
+	    font-size: 14px;
     color: #797979;
     font-weight: 300;
 }
@@ -1634,32 +1651,32 @@ padding: 5px 15px;
 }
 .help-tab
 {
-	    background-color: #74797e;
+	    background-color: #f2f2f2;
 		padding: 20px;
     
 }
 .help-tab .thumbnail
 {
-	    background-color: #74797e;
+	    background-color: #f2f2f2;
     border:0px solid;
 	    text-align: center;
 		    box-shadow: 0 0px 0px rgba(0,0,0,.075);
 }
 .help-tab .thumbnail h3
 {
-	color:#fff;
+	color:#333;
 	    font-size: 18px;
     font-weight: 300;
 }
 .help-tab .thumbnail p
 {
-	color: #b8bec3;
+	color: #676767;
 	
 }
 
 .help-tab .thumbnail a
 {
-	color: #fff;
+	color: #39AEE7;
 	font-size: 14px;
 	
 }
@@ -1777,7 +1794,7 @@ display:inline-block;
 }
 .min-cs-contact
 {
-	min-height:115px; 
+	min-height:120px; 
 }
 .nav-tabs {
     border-bottom: 0px solid #ddd;
@@ -1825,6 +1842,10 @@ display:inline-block;
 }
 
 @media (max-width: 767px) {
+.form-contact .contact
+{
+	margin-top:20px;
+}
 .mn-feedback h3
 {
 	padding:0px;
