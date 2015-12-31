@@ -64,6 +64,20 @@ class Searchkey(models.Model):
     scrapetime = models.DateTimeField(max_length=50)
     origin_airport_id = models.IntegerField ()
     destination_airport_id = models.IntegerField ()
+
+class Contactus(models.Model):
+    contactid = models.AutoField(primary_key=True)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    email = models.EmailField(blank=True, null=True)
+    phone = models.CharField(max_length=15)
+    title = models.TextField()
+    company = models.CharField(max_length=500)
+    website = models.CharField(max_length=500)
+    message = models.TextField()
+    topic = models.TextField()
+    label_text = models.TextField()
+    
 class UserManager(BaseUserManager):
 	def create_user(self, username, email, password=None):
 		print username

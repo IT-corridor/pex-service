@@ -20,7 +20,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.context_processors import csrf
 from django.views.decorators.csrf import requires_csrf_token
-from pexproject.models import Flightdata, Airports, Searchkey, User
+from pexproject.models import Flightdata, Airports, Searchkey, User, Contactus
 from pexproject.templatetags.customfilter import floatadd, assign
 from social_auth.models import UserSocialAuth
 from django.contrib.auth import login as social_login,authenticate,get_user
@@ -264,6 +264,35 @@ def sendFeedBack(request):
 	print "alert_msg",alert_msg 
     return render_to_response('flightsearch/feedback.html',{'alert_msg':alert_msg}, context_instance=RequestContext(request))
 
+def contactUs(request):
+    context = {}
+    firstname = ''
+    lastname = ''
+    title = ''
+    company = ''
+    phone = ''
+    email = ''
+    websitename = ''
+    labeltext = ''
+    message = ''
+    topic = ''
+    contact_msg = ''
+    if request.POST:
+        firstname = request.REQUEST['first_name']
+        lastname = request.REQUEST['last_name']
+        title = request.REQUEST['title']
+        company = request.REQUEST['company']
+        message = request.REQUEST['message']
+        topic = request.REQUEST['topic']
+        labeltext = request.REQUEST['label_text']
+        phone = request.REQUEST['phone']
+        websitename = request.REQUEST['website']
+        email = request.REQUEST['email']
+        object = Contactus(first_name=firstname,last_name=lastname,email=email,phone=phone,title=title,company=company,website=websitename,message=message,topic=topic,label_text= labeltext)
+        object.save()
+        contact_msg = "Your information has been sent successfully"
+    return render_to_response('flightsearch/contact_us.html',{'contact_msg':contact_msg}, context_instance=RequestContext(request))  
+        
 def search(request):
     context = {}
     if request.is_ajax():
@@ -800,7 +829,6 @@ def getsearchresult(request):
                 querylist = querylist+cabintype
                 #print taxes
                 record = Flightdata.objects.raw("select p1.*,p1.maintax as maintax1, p1.firsttax as firsttax1, p1.businesstax as businesstax1,p1.rowid as newid ,case when datasource = 'delta' then " + deltaorderprice + "  else " + unitedorderprice + " end as finalprice, "+taxes+" as totaltaxes from pexproject_flightdata as p1 where " + querylist + " order by finalprice ," + taxes + ",departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset))
-            #print record.query
             mainlist = record  
         recordlen = len(multicitykey1)
         timerecord = Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` ")
@@ -811,9 +839,7 @@ def getsearchresult(request):
             timeinfo = ''
         if 'share_recordid' in request.GET:
             sharedid = request.GET.get('share_recordid','')
-            selectedrow = Flightdata.objects.get(pk=sharedid)
-              
-
+            selectedrow = Flightdata.objects.get(pk=sharedid)   
         if request.is_ajax():
             return render_to_response('flightsearch/search.html', {'action':action,'pricesources':pricesources, 'pricematrix':pricematrix, 'multisearch':multisearch, 'data':mainlist,'multirecod':mainlist, 'multicity':multicity, 'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name}, context_instance=RequestContext(request))
         if totalrecords > 0:
