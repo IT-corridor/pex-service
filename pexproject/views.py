@@ -26,6 +26,7 @@ from social_auth.models import UserSocialAuth
 from django.contrib.auth import login as social_login,authenticate,get_user
 from django.contrib.auth import logout as auth_logout
 from django.conf import settings
+from django.utils.html import strip_tags
 from random import randint
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from datetime import timedelta
@@ -241,12 +242,12 @@ def forgotPassword(request):
 
 def sendFeedBack(request):
     context = {}
-    
+    alert_msg = ''
     if request.POST:
         body = ''
         topic = ''
-        alert_msg = ''
-        #print request.POST
+        #alert_msg = ''
+        #print settings.mail_to
         topic = request.REQUEST['topic']
         from_emailid = request.REQUEST['emailid']
         if 'message' in request.POST:
@@ -254,11 +255,14 @@ def sendFeedBack(request):
             body = body+message
         if 'text' in request.POST:
             text = request.REQUEST['text']
-            body = body+' \n\n '+text
-            print body,topic
-            send_mail(topic,body,'PEX',['hit.jay1690@gmail.com'])
-            alert_msg = "Thanks for giving us feedback" 
-    return render_to_response('flightsearch/About.html',{'alert_msg':alert_msg}, context_instance=RequestContext(request))
+            text = strip_tags(text)
+            body = body+'\n'+text
+            #print body,topic
+	    #body = strip_tags(body)
+	send_mail(topic,body,'PEX',['info@pexportal.com'])
+	alert_msg = "Thanks for giving us feedback"
+	print "alert_msg",alert_msg 
+    return render_to_response('flightsearch/feedback.html',{'alert_msg':alert_msg}, context_instance=RequestContext(request))
 
 def search(request):
     context = {}
