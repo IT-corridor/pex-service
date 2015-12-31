@@ -83,16 +83,7 @@ def staticPage(request):
     if "action" in request.GET:
     	page = request.GET.get('action','')
         return  render_to_response('flightsearch/'+page+'.html', context_instance=RequestContext(request))
-	if page == 'about':	
-	    return  render_to_response('flightsearch/about.html', context_instance=RequestContext(request))
-    if page == 'help':
-        return  render_to_response('flightsearch/help.html', context_instance=RequestContext(request))
-    if page == 'howitwork':
-        return  render_to_response('flightsearch/how_it_work.html', context_instance=RequestContext(request))
-    if page == "contactus":
-        return  render_to_response('flightsearch/contact_us.html', context_instance=RequestContext(request))
-    if page == "feedback":
-        return  render_to_response('flightsearch/feedback.html', context_instance=RequestContext(request))
+   
 def signup(request):
     context = {}
     if 'username' not in request.session:
@@ -247,6 +238,26 @@ def forgotPassword(request):
     else:
         msg = "forgot password"
     return render_to_response('flightsearch/index.html',{'fpmsg':msg},context_instance=RequestContext(request)) 
+
+def sendFeedBack(request):
+    context = {}
+    
+    if request.POST:
+        body = ''
+        topic = ''
+        #print request.POST
+        topic = request.REQUEST['topic']
+        from_emailid = request.REQUEST['emailid']
+        if 'message' in request.POST:
+            message = request.REQUEST['message']
+            body = body+message
+        if 'text' in request.POST:
+            text = request.REQUEST['text']
+            body = body+' <br><br> '+text
+            print body,topic
+            send_mail(topic,body,'PEX',['hit.jay1690@gmail.com'])
+        
+    return render_to_response('flightsearch/About.html', context_instance=RequestContext(request))
 
 def search(request):
     context = {}

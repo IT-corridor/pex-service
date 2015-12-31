@@ -204,72 +204,44 @@
   </div><!-- /.container-fluid -->
 </nav>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <!-- search form/-->
-
-
-
-
-
-
-
-
-
-
-
 <div class="container mn-feedback" style="">
 <h3 class="text-center">We Love Feedback</h3>
 <div class="col-md-12 col-xs-12 bc-f2">
 
 <div class="col-md-6 col-xs-12 form-feedback for-center ">
-	<form>
+	<form action="sendFeedBack" method="post">
+		{% csrf_token %}
 	  <div class="form-group">
 		<label for="exampleInputEmail1">Your email address</label>
-		<input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email">
+		<input type="email" class="form-control" name="emailid" placeholder="Email" value="{{request.session.username}}">
 	  </div>
 	  <div class="form-group">
 		<label for="exampleInputPassword1">Topic</label>
-		 <select class="form-control">
-		  <option>General</option>
-		  <option>I have a question about a booking</option>
-		  <option>I found a price inaccuracy</option>
-		  <option>I want to add/edit my Hotel or Property</option>
-		  <option>I want to buy an ad</option>
+		 <select class="form-control" id="feedback_option" name="topic">
+		  <option value="General" id="1">General</option>
+		  <option value="I have a question about a booking" id="2">I have a question about a booking</option>
+		  <option value="I found a price inaccuracy" id="3">I found a price inaccuracy</option>
+		  <option value="I want to add/edit my Hotel or Property" id="4">I want to add/edit my Hotel or Property</option>
+		  <option value="I want to buy an ad" id="5">I want to buy an ad</option>
 		</select>
 	  </div>
-	  <div class="form-group message-bx">
+	  <div class="form-group for-msg-feed" id="textarea" >
+		  
+	  </div>
+	  <input type="hidden" name="text" id="text" > 
+	  <div class="form-group message-bx" id="message">
 		<label for="exampleInputFile">Message</label>
-		<textarea class="form-control" rows="4"></textarea>
+		<textarea class="form-control" rows="4" name="message"></textarea>
 		<p class="dtls mt10"> While we make every attempt to get accurate data, price and availability are not guaranteed.</p>
 		<p class="">Please note PEX+ may share any portion of the information submitted, including personal data, with travel vendors referenced in feedback submissions. </p>
 	  </div>
-	  <div class="form-group for-msg-feed">
-		  for message box  for message box  for message box  for message box  for message box  for message box  for message box  for message box  for message box  for message box  for message box  for message box  for message box  for message box  for message box  for message box  for message box  for message box  for message box  for message box  for message box  for message box  for message box  for message box  for message box  for message box  for message box  for message box  for message box  for message box  for message box  for message box
-	  </div>
+	  
 	  <button type="submit" class="btn btn-default">Submit</button>
 	</form>
 </div>
 </div>
-	
-	
-
- </div>    
+</div>    
     
     <!-- /container -->
     
@@ -321,6 +293,53 @@
 	});
 
     </script>
+    
+  	<!-- FeedBack Option text-->   
+  	<script>
+  	$(document).ready(function(){
+  		$('#textarea').hide();
+    	var option1 = "";
+    	var option2 = "<p><b></b>Note you may have booked on another site</p><p>It's possible that you may have searched on PEX+ but booked through another provider. Check your email inbox for your booking receipt. If you completed the booking on another site, contact the provider. You can also find the provider by checking your credit card statement.</p><p>If you did complete your booking through PEX+, you can look-up your booking online by confirmation number or email address.</p>";
+    	var option3 = "<p>We could not find any recent fares from your click history.  Please provide details in the 'Comment' field below.</p>";
+    	var option4 = "<p>Everything you need to know to get started and/or enhance your hotel's listing in PEX+. You can update your hotel's information, learn how to get listed in PEX+ core results, or advertise your hotel as a featured result.</p>";
+    	var option5 = "";
+    	$('#feedback_option').change(function(){
+    		$('#textarea').empty();
+    		$('#textarea').hide();
+    		var val = $(this).children(":selected").attr("id");
+    		if(val == 2)
+    		{
+    			$('#text').val(option2);
+    			$('#textarea').append(option2);
+    			$('#message').hide();
+    			$('#textarea').show();
+    		}
+    		if(val == 1)
+    		{
+    			$('#message').show();
+    			$('#textarea').hide();
+    		}
+    		if(val == 4)
+    		{
+    			$('#text').val(option4);
+    			$('#textarea').append(option4);
+    			$('#message').hide();
+    			$('#textarea').show();
+    		}
+    		if(val == 3)
+    		{
+    			$('#text').val(option3);
+    			$('#textarea').append(option3);
+    			$('#message').show();
+    			$('#textarea').show();
+    		}
+    		
+    	});
+    });	
+    </script>
+    <!-- FeedBack Option text-->  
+    
+    
     <script>
     $("#submitid").click(function(event) {
     	if($('#from').val().length<1)

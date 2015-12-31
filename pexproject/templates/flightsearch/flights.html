@@ -609,7 +609,6 @@
 	});
     </script>
     <script>
-		
 		$(document).ready(function() {
 	    var max_fields      = 6; //maximum input boxes allowed
 	    var add_button      = $(".add_field_button"); //Add button ID
@@ -647,6 +646,7 @@
 	            html=''; //add input box
 	        }
 	    });
+	    
 	    $('.remove_field').on('click',function (e) {
 		  e.preventDefault(); $(this).parent('div').remove(); x--;
 		});
@@ -654,10 +654,12 @@
 	    $('.addmore').on("click",".remove_field", function(e){ //user click on remove text
 	        e.preventDefault(); $(this).parent('div').remove(); x--;
 	    });
+	    
 	    $('.addmore').on("focus",".calender_class", function(e){ //user click on remove text
-	        e.preventDefault(); $(this).datepicker({format: "m/d/Y", minDate: 0 }); x--;
+	        e.preventDefault(); $(this).datepicker({format: "m/d/Y", minDate: 0}); x--;
 	    }); 
 	});
+	
 	</script>
         
     <script>
