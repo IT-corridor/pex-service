@@ -792,11 +792,31 @@
     	
     </script>
     <script>
-    $(function(){
-    	$('.calender_class').datepicker({format: "m/d/Y", minDate: 0 });
+    //$('.calender_class').datepicker({format: "m/d/Y", minDate: 0 });
+    $(document).ready(function(){
+    	var datepickerid = '';
+    	var selected_mindate = 0;
+    	$('.calender_class').on("click focus",function(){
+    		datepickerid = $(this).attr('id');
+    		
+    		console.log(datepickerid);
+    	});
+    	
+    	$('.calender_class').datepicker(
+    		{
+    			minDate : 0,
+		    	onSelect: function() {
+				    datepickerid = ($(this).closest(".inner-addon left-addon date").next().find('.calender_class'));
+				    console.log(datepickerid);
+				  },
+	    		onClose:function(selected_mindate){
+	    		$('#'+datepickerid).datepicker("option", "minDate", selected_mindate);
+	    		}
+	    		
+    		
+    	});
     });
-
-	 $(function(){
+	$(function(){
 	 	/*
 	 		$('#returnMain').datetimepicker({format: "m/d/Y",'timepicker': false,closeOnDateSelect: true,scrollMonth: false});
             $('#departMain').datetimepicker({ format: "m/d/Y",minDate: 0,'timepicker': false,closeOnDateSelect: true,scrollMonth: false,

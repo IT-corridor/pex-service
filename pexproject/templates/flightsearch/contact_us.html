@@ -24,37 +24,38 @@
 						
 							<div class="form col-xs-12 col-md-6 ">
 							<div class=" col-xs-12 col-md-12 nopadding">
-								<form>
+								<form action="contactUs" method="post">
+									{% csrf_token %}
 								  <div class="form-group col-xs-12 col-md-6">
-									<label for="exampleInputEmail1">First Name</label>
-									<input type="text" class="form-control" id="exampleInputEmail1" placeholder="First Name">
+									<label for="first name">First Name</label>
+									<input type="text" class="form-control" name="first_name" placeholder="First Name">
 								  </div>
 								  <div class="form-group col-xs-12 col-md-6">
-									<label for="exampleInputPassword1">Last Name</label>
-									<input type="text" class="form-control" id="exampleInputPassword1" placeholder="Last Name">
+									<label for="last name">Last Name</label>
+									<input type="text" class="form-control" name="last_name" placeholder="Last Name">
 								  </div>
 								  <div class="form-group col-xs-12 col-md-6">
-									<label for="exampleInputPassword1">Email*</label>
-									<input type="email" class="form-control" id="exampleInputPassword1" placeholder="Email">
+									<label for="email">Email*</label>
+									<input type="email" class="form-control" name="email" placeholder="Email" required>
 								  </div>
 								  <div class="form-group col-xs-12 col-md-6">
-									<label for="exampleInputPassword1">Phone</label>
-									<input type="text" class="form-control" id="exampleInputPassword1" placeholder="Phone">
+									<label for="phone">Phone</label>
+									<input type="text" class="form-control" name="phone" placeholder="Phone">
 								  </div>
 								  <div class="form-group col-xs-12 col-md-6">
-									<label for="exampleInputPassword1">Title</label>
-									<input type="text" class="form-control" id="exampleInputPassword1" placeholder="Title">
+									<label for="title">Title</label>
+									<input type="text" class="form-control" name="title" placeholder="Title">
 								  </div>
 								  <div class="form-group  col-xs-12 col-md-6">
 									<label for="exampleInputPassword1">Company</label>
-									<input type="text" class="form-control" id="exampleInputPassword1" placeholder="Company">
+									<input type="text" class="form-control" name="company" placeholder="Company">
 								  </div>
 								  <div class="form-group  col-xs-12 col-md-12">
-									<label for="exampleInputPassword1">Website</label>
-									<input type="text" class="form-control" id="exampleInputPassword1" placeholder="Website">
+									<label for="website">Website</label>
+									<input type="text" class="form-control" name="website" placeholder="Website">
 								  </div>
 								  	  <div class="form-group col-xs-12 col-md-12">
-										<label for="exampleInputPassword1">Subject</label>
+										<label for="subject">Subject</label>
 										 <select class="form-control" id="feedback_option" name="topic">
 										  <option value="General" id="1">General</option>
 										  <option value="I have a question about a booking" id="2">I have a question about a booking</option>
