@@ -24,7 +24,7 @@
 						<div class="form-contact col-xs-12 col-md-12 nopadding" >
 						
 							<div class="form col-xs-12 col-md-6 ">
-								{% if contact_msg %}<h4 class="">{{contact_msg}}</h4>{% endif %}
+								{% if contact_msg %}<div class="alert alert-success alert-dismissible fade in" role="alert">{{contact_msg}}</div>{% endif %}
 							<div class=" col-xs-12 col-md-12 nopadding">
 								<form action="contactUs" method="post">
 									{% csrf_token %}
