@@ -243,7 +243,10 @@
 			<div
 				class="col-md-10 col-sm-10 tab-pane active col-md-push-2 col-sm-push-2 col-xs-12 about-content nopadding "
 				id="a">
+				{% if alert_msg %}<h5>{{alert_msg}}</h5> 
+				{% else %}
 				<h5>About PEX+</h5>
+				{% endif %}
 				<img src="/static/flightsearch/img/banner-about.jpg"
 					class="img-responsive">
 				<div class="content-div">

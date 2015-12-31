@@ -245,6 +245,7 @@ def sendFeedBack(request):
     if request.POST:
         body = ''
         topic = ''
+        alert_msg = ''
         #print request.POST
         topic = request.REQUEST['topic']
         from_emailid = request.REQUEST['emailid']
@@ -253,11 +254,11 @@ def sendFeedBack(request):
             body = body+message
         if 'text' in request.POST:
             text = request.REQUEST['text']
-            body = body+' <br><br> '+text
+            body = body+' \n\n '+text
             print body,topic
             send_mail(topic,body,'PEX',['hit.jay1690@gmail.com'])
-        
-    return render_to_response('flightsearch/About.html', context_instance=RequestContext(request))
+            alert_msg = "Thanks for giving us feedback" 
+    return render_to_response('flightsearch/About.html',{'alert_msg':alert_msg}, context_instance=RequestContext(request))
 
 def search(request):
     context = {}
