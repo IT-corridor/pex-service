@@ -285,12 +285,17 @@ def contactUs(request):
         message = request.REQUEST['message']
         topic = request.REQUEST['topic']
         labeltext = request.REQUEST['label_text']
+        labeltext = strip_tags(labeltext)
         phone = request.REQUEST['phone']
         websitename = request.REQUEST['website']
         email = request.REQUEST['email']
         object = Contactus(first_name=firstname,last_name=lastname,email=email,phone=phone,title=title,company=company,website=websitename,message=message,topic=topic,label_text= labeltext)
         object.save()
+        fullname = firstname+" "+lastname
+        emailbody = message+"\n\n"+labeltext+" \n\n"+fullname+"\n"+company+"\n"+websitename
+        send_mail(topic,emailbody,'PEX',['jk.dhn2010@gmail.com'])
         contact_msg = "Your information has been sent successfully"
+        
     return render_to_response('flightsearch/contact_us.html',{'contact_msg':contact_msg}, context_instance=RequestContext(request))  
         
 def search(request):
