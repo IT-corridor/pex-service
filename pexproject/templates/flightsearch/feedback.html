@@ -205,8 +205,8 @@
 
 <!-- search form/-->
 <div class="container mn-feedback" style="padding:15px;">
-<h3 class="text-center">We Love Feedback</h3>
-{% if alert_msg%} <h3 class="text-center">{{alert_msg}}</h3>{%endif%}
+<h3 class="text-center" style="margin:0px;padding:0px; margin-bottom:10px;">We Love Feedback</h3>
+{% if alert_msg%} <h3 class="text-center" style="font-size:15px; margin:0px;padding:10px; margin-bottom:10px; background:#fcd1c3">{{alert_msg}}</h3>{%endif%}
 <div class="col-md-12 col-xs-12 bc-f2">
 
 <div class="col-md-6 col-xs-12 form-feedback " style="border-right:1px solid #ddd;">
@@ -226,9 +226,35 @@
 		  <option value="I want to buy an ad" id="5">I want to buy an ad</option>
 		</select>
 	  </div>
-	  <div class="form-group for-msg-feed" id="textarea" >
+	  <div class="form-group price-msg">
+		<label for="">Choose a recent result</label>
+			  <div class="form-group for-msg-feed" id="textarea" >
 		  
 	  </div>
+		<div class="price-info-msg"> 
+			<label for="">What went wrong?</label>
+			<div class="radio">
+			  <label>
+				<input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+				your chosen supplier displayed a higher price
+			  </label>
+			</div>
+			<div class="radio">
+			  <label>
+				<input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+				your chosen supplier displayed a lower price
+			  </label>
+			</div>
+			<div class="radio">
+			  <label>
+				<input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+				your chosen supplier did not find the chosen result
+			  </label>
+			</div>
+		</div>
+		
+	  </div>
+
 	  <input type="hidden" name="text" id="text" > 
 	  <div class="form-group message-bx" id="message">
 		<label for="exampleInputFile">Message</label>
