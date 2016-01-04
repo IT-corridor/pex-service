@@ -259,7 +259,7 @@ def sendFeedBack(request):
             body = body+'\n'+text
             #print body,topic
 	    #body = strip_tags(body)
-	send_mail(topic,body,'PEX',['info@pexportal.com'])
+	send_mail(topic,body,from_emailid,['info@pexportal.com'])
 	alert_msg = "Thanks for giving us feedback"
 	print "alert_msg",alert_msg 
     return render_to_response('flightsearch/feedback.html',{'alert_msg':alert_msg}, context_instance=RequestContext(request))
@@ -293,7 +293,7 @@ def contactUs(request):
         object.save()
         fullname = firstname+" "+lastname
         emailbody = message+"\n\n"+labeltext+" \n\n"+fullname+"\n"+company+"\n"+websitename
-        send_mail(topic,emailbody,'PEX',['jk.dhn2010@gmail.com'])
+        send_mail(topic,emailbody,email,['jk.dhn2010@gmail.com'])
         contact_msg = "Your information has been sent successfully"
         
     return render_to_response('flightsearch/contact_us.html',{'contact_msg':contact_msg}, context_instance=RequestContext(request))  
