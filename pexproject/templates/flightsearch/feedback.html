@@ -221,17 +221,17 @@
 		 <select class="form-control" id="feedback_option" name="topic">
 		  <option value="General" id="1">General</option>
 		  <option value="I have a question about a booking" id="2">I have a question about a booking</option>
-		  <option value="I found a price inaccuracy" id="3">I found a price inaccuracy</option>
+		  <option value="I found a price inaccuracy" id="3" {% if 'item' in request.GET and request.GET.item == 'report_problem' %}selected="selected"{% endif %}>I found a price inaccuracy</option>
 		  <option value="I want to add/edit my Hotel or Property" id="4">I want to add/edit my Hotel or Property</option>
 		  <option value="I want to buy an ad" id="5">I want to buy an ad</option>
 		</select>
 	  </div>
 	  <div class="form-group price-msg">
-		<label for="">Choose a recent result</label>
+		<label class="inaccuracy_option" for="">Choose a recent result</label>
 			  <div class="form-group for-msg-feed" id="textarea" >
 		  
 	  </div>
-		<div class="price-info-msg"> 
+		<div class="price-info-msg inaccuracy_option" > 
 			<label for="">What went wrong?</label>
 			<div class="radio">
 			  <label>
@@ -343,6 +343,11 @@ Miami Beach, FL 33139</p>
   	<script>
   	$(document).ready(function(){
   		$('#textarea').hide();
+  		$('.inaccuracy_option').hide();
+  		if($('#feedback_option').children(":selected").attr("id") == 3)
+  		{
+  			$('.inaccuracy_option').show();
+  		}
     	var option1 = "";
     	var option2 = "<p><b></b>Note you may have booked on another site</p><p>It's possible that you may have searched on PEX+ but booked through another provider. Check your email inbox for your booking receipt. If you completed the booking on another site, contact the provider. You can also find the provider by checking your credit card statement.</p><p>If you did complete your booking through PEX+, you can look-up your booking online by confirmation number or email address.</p>";
     	var option3 = "<p>We could not find any recent fares from your click history.  Please provide details in the 'Comment' field below.</p>";
@@ -351,6 +356,7 @@ Miami Beach, FL 33139</p>
     	$('#feedback_option').change(function(){
     		$('#textarea').empty();
     		$('#textarea').hide();
+    		$('.inaccuracy_option').hide();
     		var val = $(this).children(":selected").attr("id");
     		if(val == 2)
     		{
@@ -358,11 +364,13 @@ Miami Beach, FL 33139</p>
     			$('#textarea').append(option2);
     			$('#message').hide();
     			$('#textarea').show();
+    			$('.inaccuracy_option').hide();
     		}
     		if(val == 1)
     		{
     			$('#message').show();
     			$('#textarea').hide();
+    			$('.inaccuracy_option').hide();
     		}
     		if(val == 4)
     		{
@@ -370,6 +378,7 @@ Miami Beach, FL 33139</p>
     			$('#textarea').append(option4);
     			$('#message').hide();
     			$('#textarea').show();
+    			$('.inaccuracy_option').hide();
     		}
     		if(val == 3)
     		{
@@ -377,6 +386,7 @@ Miami Beach, FL 33139</p>
     			$('#textarea').append(option3);
     			$('#message').show();
     			$('#textarea').show();
+    			$('.inaccuracy_option').show();
     		}
     		
     	});
