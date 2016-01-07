@@ -14,13 +14,15 @@ urlpatterns = patterns('',
     #url(r'^google4fcc5c6791037930', include('webmaster_verification.urls')),
     url(r'^google4fcc5c6791037930$', lambda r: HttpResponse("google-site-verification: google4fcc5c6791037930.html")),
    #url(r'^webmaster', webmaster, name='webmaster'),
+
     url(r'^sendFeedBack', sendFeedBack, name='sendFeedBack'),
+    url(r'^checkData', checkData, name='checkData'),
     url(r'^myRewardPoint', myRewardPoint, name='myRewardPoint'),
     url(r'^manageAccount', manageAccount, name='manageAccount'),
     url(r'^forgotPassword', forgotPassword, name='forgotPassword'),
     url(r'^signup', signup, name='signup'),
     url(r'^staticPage', staticPage, name='staticPage'),
-     url(r'^contactUs', contactUs, name='contactUs'),
+    url(r'^contactUs', contactUs, name='contactUs'),
     url(r'^logout', logout, name='logout'),
     url(r'^flights', flights, name='flights'),
     url(r'^index', index, name='index'),
@@ -32,8 +34,7 @@ urlpatterns = patterns('',
     url(r'^share', share, name='share'),
     url(r'^filter', filter, name='filter'),
     #url(r'^$','social_auth.urls',namespace='social'),
-    
-#    url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT, 'show_indexes':True}),
+    #url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT, 'show_indexes':True}),
 )
 
 urlpatterns += staticfiles_urlpatterns()

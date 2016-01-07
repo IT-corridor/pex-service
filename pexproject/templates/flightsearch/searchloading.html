@@ -58,7 +58,8 @@ $.ajaxSetup({
   data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
 });
 var formdata={"fromMain":$('#from').val(),"csrtoken":CSRF_TOKEN};
-
+var searchid = '';
+var returnid = '';
 $.ajax({
         type: "POST",
         url: "/search/",
@@ -73,11 +74,34 @@ $.ajax({
         {
         	returnid = data[1];
         }
-        redirecttosearchpage(searchid,returnid);   
+        //redirecttosearchpage(searchid,returnid); 
+        setInterval(datacheck, 5000,searchid,returnid); 
     },
 	
    });
-     
+ 
+ function datacheck(searchid,returnid)
+ {
+ 	console.log(searchid);
+ 	console.log(returnid);
+ 	if( returnid != '')
+ 	{
+ 		var temp = "&returnkey="+encodeURI(returnid);
+ 	}
+ 	$.ajax({
+ 	type: "POST",
+ 	url: "/checkData/",
+ 	data: "keyid="+ encodeURI(searchid) + "&csrfmiddlewaretoken=" + encodeURI(CSRF_TOKEN),
+ 	success: function(data){
+ 		console.log(data[0]);
+ 		if(data[0] == 'stored')
+ 		{
+ 			redirecttosearchpage(searchid,returnid);
+ 			clearTimeout(datacheck, 5000);
+ 		}
+ 	},
+ 	});
+ }    
  //alert(searchid)  ;  
  function redirecttosearchpage(searchid,returnkey){
  	multicity='';
@@ -85,12 +109,12 @@ $.ajax({
  		multicity = "&multicity="+encodeURI(multikey);
  	}
  	if(searchid != '')
-{  
+	{  
 	$('#searchid').val(searchid);
 	var location = "getsearchresult?keyid="+ encodeURI(searchid)+"&cabin="+encodeURI(cabintype)+"&passenger="+encodeURI(traveller)+multicity;
 	if(returnkey != ''){ location = location+"&returnkey="+encodeURI(returnkey);}
 	window.location.href = location; 
-}
+	}
 }
      
          

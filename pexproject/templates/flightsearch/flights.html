@@ -45,14 +45,14 @@
 			                <div class="form-group nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="from">From:</label>
 			                  <input type="search" class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" {% if searchparams%} value="{{searchparams.0.source}}"{% endif %}>
-			                  <input type="hidden" id="fromid3" class="fromid" name="fromMain" {% if searchparams%} value="{{searchparams.0.origin_airport_id}}"{% endif %} />
+			                  <input type="hidden" id="fromid1" class="fromid" name="fromMain" {% if searchparams%} value="{{searchparams.0.origin_airport_id}}"{% endif %} />
 			                </div>
 			              </div>
 			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
 			                <div class="form-group  nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="to">To:</label>
 			                  <input type="search"  class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" {% if searchparams%} value="{{searchparams.0.destination}}"{% endif %}>
-			                  <input type="hidden" id="toid3" class="fromid" name="toMain" {% if searchparams%} value="{{searchparams.0.destination_airport_id}}"{% endif %}/>
+			                  <input type="hidden" id="toid1" class="fromid" name="toMain" {% if searchparams%} value="{{searchparams.0.destination_airport_id}}"{% endif %}/>
 			                </div>
 			              </div>
 			              <div class="input-daterange">
@@ -62,7 +62,7 @@
 			                  <label class="sr-only" for="departMain">Departure Date:</label>
 			                  <div class="inner-addon left-addon date" id="dp1">
 			                      <i class="glyphicon glyphicon-calendar"></i>
-			                      <input type="text"  class="form_val form-control calender_class curson"  placeholder="Depart" name="deptdate" autocomplete="off" {% if searchparams%} value="{{searchparams.0.traveldate|date:"m/d/Y"}}"{% endif %} >
+			                      <input type="text"  class="form_val form-control calender_class curson"  placeholder="Depart" name="deptdate" autocomplete="off" {% if searchparams%} value="{{searchparams.0.traveldate|date:"m/d/Y"}}"{% endif %} id="calenderid1">
 			                  </div>
 			                  
 			                </div>
@@ -76,40 +76,6 @@
 			             	<!-- <a href="#" class="col-sm-2 col-xs-6 xs-nopadding hidden-xs remove_field">Remove</a> 
 			         		<a href="#" class="glyphicon glyphicon-remove visible-xs cross-btn remove_field"></a>-->
 			            </div>
-			            <!--		
-			            <div class="col-sm-12 col-xs-12 nopadding pl5 pd-xs custome-pd">
-			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
-			                <div class="form-group nomr noml" class="ui-widget">
-			                  <label class="sr-only" for="from">From:</label>
-			                  <input type="search" class=" form_val form-control depart_code" name="from" placeholder="From" autocomplete="off" {% if search %} value="{{search.source}}" {%endif%}>
-			                  <input type="hidden" id="fromid1" class="fromid" name="fromMain" />
-			                </div>
-			              </div>
-			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
-			                <div class="form-group  nomr noml" class="ui-widget">
-			                  <label class="sr-only" for="to">To:</label>
-			                  <input type="search" class="form_val form-control arive_code" name="to" placeholder="To" autocomplete="off" {% if search %} value="{{search.destination}}" {%endif%}>
-			                  <input type="hidden" id="toid1" name="toMain" class="fromid" />
-			                </div>
-			              </div>
-			              <div class="input-daterange">
-			              <div class="col-sm-2 col-xs-6 nopl xs-pr5 mobile-wt">
-			
-			                <div class="form-group nomr noml nomb">
-			                  <label class="sr-only" for="departMain">Departure Date:</label>
-			                  <div class="inner-addon left-addon date" id="dp1">
-			                      <i class="glyphicon glyphicon-calendar"></i>
-			                      <input type="text" class="form_val form-control calender_class curson"  placeholder="Depart" name="deptdate" autocomplete="off" >
-			                  </div>
-			                  <div class="form-group" id="deptmsg"></div>
-			                </div>
-			              </div>
-			              </div>
-			              <div class="col-sm-2 col-xs-12 xs-nopadding" >
-			                <button type="submit" class="form_val btn btn-pexSearch" id="submitid" tabindex="13">Search</button>
-			              </div>
-			            </div>
-			            -->
 			            </div>
 			            
 			            
@@ -123,14 +89,14 @@
 			                <div class="form-group nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="from">From:</label>
 			                  <input type="search"  class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" value="{{d.source}}" >
-			                  <input type="hidden" id="fromid1" class="fromid" name="fromMain" value="{{d.origin_airport_id}}"/>
+			                  <input type="hidden" id="fromid2" class="fromid" name="fromMain" value="{{d.origin_airport_id}}"/>
 			                </div>
 			              </div>
 			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
 			                <div class="form-group  nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="to">To:</label>
 			                  <input type="search"  class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" value="{{d.destination}}" >
-			                  <input type="hidden" id="toid1" class="fromid" name="toMain" value="{{d.destination_airport_id}}"/>
+			                  <input type="hidden" id="toid2" class="fromid" name="toMain" value="{{d.destination_airport_id}}"/>
 			                </div>
 			              </div>
 			              <div class="input-daterange">
@@ -161,40 +127,6 @@
 			                <div class="form-group nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="from">From:</label>
 			                  <input type="search"  class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" {% if search %} value="{{search.source}}" {%endif%}>
-			                  <input type="hidden" id="fromid1" class="fromid" name="fromMain"/>
-			                </div>
-			              </div>
-			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
-			                <div class="form-group  nomr noml" class="ui-widget">
-			                  <label class="sr-only" for="to">To:</label>
-			                  <input type="search"  class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" {% if search %} value="{{search.destination}}" {%endif%}>
-			                  <input type="hidden" id="toid1" class="fromid" name="toMain"/>
-			                </div>
-			              </div>
-			              <div class="input-daterange">
-			              <div class="col-sm-2 col-xs-6 nopl xs-pr5 mobile-wt">
-			
-			                <div class="form-group nomr noml nomb">
-			                  <label class="sr-only" for="departMain">Departure Date:</label>
-			                  <div class="inner-addon left-addon date" id="dp1">
-			                      <i class="glyphicon glyphicon-calendar"></i>
-			                      <input type="text" class="form_val form-control calender_class curson"  placeholder="Depart" name="deptdate" autocomplete="off" {% if search %} value="{{search.traveldate|date:'m/d/Y'}}" {%endif%}>
-			                  </div>
-			     
-			                </div>
-			              </div>
-			              </div>
-			  				<a href="#" class="col-sm-2 col-xs-6 xs-nopadding remove_field"> Remove</a>
-			        
-			              </div>
-			              
-			            </div>
-			            <div class="container xs-nopadding hidden-xs">
-			            <div class="col-sm-12 col-xs-12 nopadding pl5 pd-xs custome-pd">
-			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
-			                <div class="form-group nomr noml" class="ui-widget">
-			                  <label class="sr-only" for="from">From:</label>
-			                  <input type="search"  class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" {% if search %} value="{{search.source}}" {%endif%}>
 			                  <input type="hidden" id="fromid2" class="fromid" name="fromMain"/>
 			                </div>
 			              </div>
@@ -212,17 +144,48 @@
 			                  <label class="sr-only" for="departMain">Departure Date:</label>
 			                  <div class="inner-addon left-addon date" id="dp1">
 			                      <i class="glyphicon glyphicon-calendar"></i>
-			                      <input type="text" class="form_val form-control calender_class curson"  placeholder="Depart" name="deptdate" autocomplete="off" {% if search %} value="{{search.traveldate|date:'m/d/Y'}}" {%endif%}>
+			                      <input type="text" id="calenderid2" class="form_val form-control calender_class curson"  placeholder="Depart" name="deptdate" autocomplete="off" {% if search %} value="{{search.traveldate|date:'m/d/Y'}}" {%endif%}>
 			                  </div>
 			     
 			                </div>
 			              </div>
 			              </div>
-			  
-			  
-			             	 <a href="#" class="col-sm-2 col-xs-6 xs-nopadding remove_field"> Remove</a>
+			  				<a href="#" class="col-sm-2 col-xs-6 xs-nopadding remove_field"> Remove</a>
 			        
 			              </div>
+			              
+			            </div>
+			            <div class="container xs-nopadding hidden-xs">
+			            <div class="col-sm-12 col-xs-12 nopadding pl5 pd-xs custome-pd">
+			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
+			                <div class="form-group nomr noml" class="ui-widget">
+			                  <label class="sr-only" for="from">From:</label>
+			                  <input type="search"  class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" {% if search %} value="{{search.source}}" {%endif%}>
+			                  <input type="hidden" id="fromid3" class="fromid" name="fromMain"/>
+			                </div>
+			              </div>
+			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
+			                <div class="form-group  nomr noml" class="ui-widget">
+			                  <label class="sr-only" for="to">To:</label>
+			                  <input type="search"  class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" {% if search %} value="{{search.destination}}" {%endif%}>
+			                  <input type="hidden" id="toid3" class="fromid" name="toMain"/>
+			                </div>
+			              </div>
+			              <div class="input-daterange">
+			              <div class="col-sm-2 col-xs-6 nopl xs-pr5 mobile-wt">
+			
+			                <div class="form-group nomr noml nomb">
+			                  <label class="sr-only" for="departMain">Departure Date:</label>
+			                  <div class="inner-addon left-addon date" id="dp1">
+			                      <i class="glyphicon glyphicon-calendar"></i>
+			                      <input type="text" id="calenderid3" class="form_val form-control calender_class curson"  placeholder="Depart" name="deptdate" autocomplete="off" {% if search %} value="{{search.traveldate|date:'m/d/Y'}}" {%endif%}>
+			                  </div>
+			     
+			                </div>
+			              </div>
+			              </div>
+			  				<a href="#" class="col-sm-2 col-xs-6 xs-nopadding remove_field"> Remove</a>
+			        	  </div>
 			              
 			            </div>
 			           {% endif %}
@@ -625,7 +588,7 @@
 				html=html+'<div class="form-group  nomr noml" class="ui-widget"><label class="sr-only" for="to">To:</label><input type="search"  class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" >';
 				html=html+'<input type="hidden" id="toid'+newid+'" class="fromid" name="toMain" /></div></div><div class="input-daterange"><div class="col-sm-2 col-xs-12 nopl xs-pr5 mobile-wt pd-xs-r-0">';
 				html=html+'<div class="form-group nomr noml nomb"><label class="sr-only" for="departMain">Departure Date:</label><div class="inner-addon left-addon date" id="dp1">';
-				html=html+'<i class="glyphicon glyphicon-calendar"></i><input type="text"  class="form_val form-control calender_class curson"  placeholder="Depart" name="deptdate" autocomplete="off" ></div></div></div></div><a href="#" class="col-sm-2 col-xs-6 hidden-xs xs-nopadding remove_field"> Remove</a><a href="#" class="glyphicon glyphicon-remove visible-xs cross-btn remove_field"></a></div></div>';
+				html=html+'<i class="glyphicon glyphicon-calendar"></i><input type="text" id="calenderid'+newid+'" class="form_val form-control calender_class curson"  placeholder="Depart" name="deptdate" autocomplete="off" ></div></div></div></div><a href="#" class="col-sm-2 col-xs-6 hidden-xs xs-nopadding remove_field"> Remove</a><a href="#" class="glyphicon glyphicon-remove visible-xs cross-btn remove_field"></a></div></div>';
 
 	        if(x < max_fields){ //max input box allowed
 	            x++; //text box increment
@@ -654,10 +617,11 @@
 	    $('.addmore').on("click",".remove_field", function(e){ //user click on remove text
 	        e.preventDefault(); $(this).parent('div').remove(); x--;
 	    });
-	    
+	    /*
 	    $('.addmore').on("focus",".calender_class", function(e){ //user click on remove text
 	        e.preventDefault(); $(this).datepicker({format: "m/d/Y", minDate: 0}); x--;
 	    }); 
+	    */
 	});
 	
 	</script>
@@ -792,29 +756,46 @@
     	
     </script>
     <script>
-    //$('.calender_class').datepicker({format: "m/d/Y", minDate: 0 });
+    
     $(document).ready(function(){
     	var datepickerid = '';
-    	var selected_mindate = 0;
-    	$('.calender_class').on("click focus",function(){
-    		datepickerid = $(this).attr('id');
+    	var nextid = '';
+    	//var selected_mindate = 0;
+    	$('#calenderid1').datepicker({format: "m/d/Y", minDate: 0 });
+    	$('.calender_class').on('click',function(){
+    		datepickerid = this.id.match(/\d+/);
     		
-    		console.log(datepickerid);
+    		nextid = parseInt(datepickerid)+1;
+    		nextid = 'calenderid'+nextid;
+    		datepickerid = 'calenderid'+datepickerid;
+    		//console.log(nextid);
+    		//console.log(datepickerid);
+    		dynamicdate(datepickerid,nextid);
+    	
     	});
     	
-    	$('.calender_class').datepicker(
-    		{
-    			minDate : 0,
-		    	onSelect: function() {
-				    datepickerid = ($(this).closest(".inner-addon left-addon date").next().find('.calender_class'));
-				    console.log(datepickerid);
-				  },
-	    		onClose:function(selected_mindate){
-	    		$('#'+datepickerid).datepicker("option", "minDate", selected_mindate);
-	    		}
-	    		
-    		
-    	});
+    	function dynamicdate(datepickerid,nextid){
+    		console.log("test");
+    		//$('#'+nextid).datepicker('option', 'minDate', $('#'+datepickerid).datepicker('getDate')); 
+    		$('#'+datepickerid).datepicker(
+               	{
+               		minDate: 0,
+               		onSelect: function()
+               		{
+               			setTimeout(function function_name (argument) {
+							 $('#'+nextid).focus();
+						   },200);
+               			
+               		},
+               		  onClose: function(selectedDate) {
+        					// Set the minDate of 'to' as the selectedDate of 'from'
+        						$('#'+nextid).datepicker("option", "minDate", selectedDate);
+    					}
+               	}
+               	
+               );
+    	};
+    	
     });
 	$(function(){
 	 	/*

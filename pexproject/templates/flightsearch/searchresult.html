@@ -140,6 +140,11 @@
 								</form>
 							</div>
 							<div class="col-md-8 col-xs-12 xs-nopadding">
+								<div class="progress">
+								    <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width:5%" id="progressbar">
+								      
+								    </div>
+								  </div>
 								{% if multisearch and 'multicity' in request.GET %}
 								<div class="col-xs-12 mvb10px nopadding search-name">
 									<div class="col-md-11 nopadding ">
@@ -764,13 +769,14 @@
 											</div>
 										</div>
 								</div>
+						
 							{% endif %}
 							
 							
 							{% if data %}
 								
 								{% for row in data %}
-								<div class="col-md-12 col-xs-12 centr-info responsive-color-img">
+								<div class="col-md-12 col-xs-12 centr-info responsive-color-img" id="resultdiv">
 									<div class="col-sm-3 col-xs-5 visible-xs visible-sm nopl">
 										<div class="col-xs-12 nopadding text-center" itemscope itemtype ="http://schema.org/Airline">
 											{% if row.datasource == "united" %}
@@ -1531,8 +1537,7 @@
 								</div>
 								{% endfor %}
 								
-							{% endif %}
-								
+							{% endif %}	
 							<div id="content"></div>				
 							</div>
 							
@@ -2160,7 +2165,7 @@ return sum;
                         data: "action="+encodeURI('infinite_scroll')+"&page_no="+encodeURI(pageNumber)+ "&loop_file=loop&csrfmiddlewaretoken={{ csrf_token }}&depaturemin="+depaturemin+"&depaturemax="+depaturemax+"&airlines="+airline+"&stoppage="+stoppage+row_val+multicity, 
                         success: function(html){
                         $("#content").append(html);   // This will be the div where our content will be loaded
-				call_sent = "completed";
+							call_sent = "completed";
                             if($("#nodata").length) is_data = 0 ;
                             
                             
@@ -2247,6 +2252,48 @@ $(document).ready(function(){
 		 window.open(fulltext, 'newwindow', 'width=600, height=250');return false;
 
 	});
+</script>
+<script>
+	var dataurls = ("{{request.get_full_path}}");
+	var multicity1 = "{{request.GET.multicity}}";
+	var searchid = "{{request.GET.keyid}}";
+	var returnid = "{{request.GET.returnkey}}";;
+	var refreshIntervalId = setInterval(redirecttosearchpage, 5000);
+	//var progess_width = 10;
+	function redirecttosearchpage(){
+	$.ajax({
+         url:dataurls,
+         type:'POST',
+         data: "csrfmiddlewaretoken={{ csrf_token }}",
+         success: function(html){
+         	isprocess();
+         	$("#resultdiv").empty();
+         	//$("#content").empty();
+         	$("#resultdiv").append(html); 
+         	progess_width = $('#progressbar').width();
+         	progess_width = parseInt(progess_width)+3;
+         	console.log(progess_width);
+         	$('#progressbar').width(progess_width );
+         	
+         }
+	});
+	}
+	function isprocess()
+	{
+		$.ajax({
+	 	type: "POST",
+	 	url: "/checkData/",
+	 	data: "keyid="+ encodeURI(searchid) + "&csrfmiddlewaretoken={{ csrf_token }}",
+	 	success: function(data){
+ 		if(data[1] == 'completed' )
+ 		{
+ 			console.log('stop');
+ 			clearInterval(refreshIntervalId);
+ 			$('#progressbar').width(100 );
+ 		}
+ 	},
+ 	});
+	}
 </script>
 
 

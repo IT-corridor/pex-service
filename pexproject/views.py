@@ -40,6 +40,7 @@ import operator
 import customfunction,rewardScraper
 from pexproject.form import LoginForm
 #from django.utils import timezone
+import subprocess
 import json
 import signal
 import logging
@@ -87,7 +88,7 @@ def flights(request):
         mc = 'mc'
         #return  render_to_response('flightsearch/multicity.html', context_instance=RequestContext(request))
     return  render_to_response('flightsearch/flights.html',{'mc':mc,'searchparams':objects}, context_instance=RequestContext(request))
-    
+        
 def staticPage(request):
     context = {}
     page = ''
@@ -367,6 +368,8 @@ def search(request):
             time1 = time1.strftime('%Y-%m-%d %H:%M:%S')
             #flag1 = 0
             #flag2 = 0
+            
+            
             Searchkey.objects.filter(scrapetime__lte=time1).delete()
             #Flightdata.objects.filter(scrapetime__lte=time1).delete()
             if searchdate1:
@@ -380,9 +383,9 @@ def search(request):
                     searchdata.save()
                     returnkey = searchdata.searchid
                     #flag2 = 1
-                    #customfunction.virgin_atlantic(destcode, orgncode,returndate, returnkey)
-                    customfunction.etihad(etihaddest,etihadorigin,date1,returnkey,cabin)
-                    customfunction.scrape(destcode, orgncode, date1, returndate, returnkey)
+                    subprocess.Popen(["python", "/var/www/html/python/pex_new/pexproject/delta.py",destcode, orgncode, str(date1), str(returndate), str(returnkey)])
+                    #customfunction.etihad(etihaddest,etihadorigin,date1,returnkey,cabin)
+                    #customfunction.scrape(destcode, orgncode, date1, returndate, returnkey)
             else:
                 obj = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, scrapetime__gte=time1)
             if len(obj) > 0:
@@ -398,8 +401,10 @@ def search(request):
                 cursor = connection.cursor()
                 #flag1 = 1
                 #customfunction.virgin_atlantic(orgncode, destcode,depart, searchkeyid)
-                customfunction.etihad(etihadorigin,etihaddest,date,searchkeyid,cabin)
-                customfunction.scrape(orgncode, destcode, date, depart, searchkeyid)
+                myList = [orgncode, destcode, date, searchkeyid]
+                subprocess.Popen(["python", "/var/www/html/python/pex_new/pexproject/delta.py",orgncode,destcode,str(date),str(depart),str(searchkeyid),etihadorigin,etihaddest,cabin])
+                #customfunction.etihad(etihadorigin,etihaddest,date,searchkeyid,cabin)
+                #customfunction.scrape(orgncode, destcode, date, depart, searchkeyid)
                 returnkey = ''
                 if returndate:
                     retunobj = Searchkey.objects.filter(source=destination1, destination=origin, traveldate=searchdate1, scrapetime__gte=time1)
@@ -411,16 +416,16 @@ def search(request):
                         searchdata.save()
                         returnkey = searchdata.searchid
                         #flag2 = 1
-                        #customfunction.scrape(destcode, orgncode, date1, returndate, returnkey)
-                        #customfunction.virgin_atlantic(destcode, orgncode,depart, returnkey)
-                        customfunction.etihad(etihaddest,etihadorigin,date,returnkey,cabin)
-                        customfunction.scrape(destcode, orgncode, date, depart, returnkey)
+                        subprocess.Popen(["python", "/var/www/html/python/pex_new/pexproject/delta.py",destcode, orgncode, str(date1), str(returndate), str(returnkey),etihaddest,etihadorigin,cabin])
+                        #customfunction.etihad(etihaddest,etihadorigin,date,returnkey,cabin)
+                        #customfunction.scrape(destcode, orgncode, date, depart, returnkey)
             Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='virgin_atlantic').delete()
             if returnkey:
                 Flightdata.objects.filter(searchkeyid=returnkey,datasource='virgin_atlantic').delete()            
-	    #print "virgin"
-            customfunction.virgin_atlantic(orgncode,destcode,depart,returndate,searchkeyid,returnkey)
-            if len(departlist) >0 :
+
+            #customfunction.virgin_atlantic(orgncode,destcode,depart,returndate,searchkeyid,returnkey)
+            subprocess.Popen(["python", "/var/www/html/python/pex_new/pexproject/virgin.py",orgncode,destcode, str(depart), str(returndate), str(searchkeyid),str(returnkey)])
+            if len(departlist) > 0 :
                 multiplekey = multiplekey+seperator+str(searchkeyid)
                 seperator = ',' 
                     
@@ -501,7 +506,43 @@ def searchLoading(request):
         return render_to_response('flightsearch/searchloading.html', {'searchdate':date, 'sname':orgn, 'dname':dest, 'returndate':date1, 'triptype':trip, 'roundtripkey':roundtripkey, 'cabintype':cabintype, 'passenger':passenger}, context_instance=RequestContext(request))
     else:
         return render_to_response('flightsearch/index.html')
-    
+
+def checkData(request):
+    context = {}
+    data1 = ''
+    iscomplete =''
+    print "comes"
+    totalrecords = 0
+    if request.is_ajax():
+        
+        #cabinclass = request.GET.get('cabin', '')
+        #passenger = request.GET.get('passenger', '')
+        if 'keyid' in request.POST:
+            recordkey = request.REQUEST['keyid']
+            print "recordkey",recordkey
+            if 'returnkey' in request.POST:
+                returnkey = request.REQUEST['returnkey']
+                totalrecords = Flightdata.objects.raw("select count(*) from pexproject_flightdata where searchkeyid="+str(recordkey)+" and searchkeyid="+str(returnkey))
+                
+            else:
+                totalrecords = Flightdata.objects.filter(searchkeyid=recordkey).count()  
+                boj = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(recordkey)+" and flighno = 'flag' ")
+                boj1 = len(list(boj))
+                if boj1 > 0:
+                     iscomplete = "completed"   
+            #pricematrix = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(recordkey))
+            if totalrecords > 0:
+                data1 = "stored"
+            else:
+                data1 = "onprocess"
+            mimetype = 'application/json'
+        results = []
+        results.append(data1)
+        results.append(iscomplete)
+        data = json.dumps(results)
+        return HttpResponse(data, mimetype)    
+        
+        
 def getsearchresult(request):
     context = {}
     
@@ -539,7 +580,9 @@ def getsearchresult(request):
     pricematrix =''
     pricesources = []
     if request.is_ajax():
-        pageno = request.REQUEST['page_no']
+        if 'page_no' in request.POST:
+            pageno = request.REQUEST['page_no']
+        print "pageno",pageno
         offset = (int(pageno) - 1) * limit
     else:
         if request.GET.get('keyid', ''):
@@ -551,10 +594,13 @@ def getsearchresult(request):
                 pricematrix =  Flightdata.objects.raw("select rowid, datasource, min(if(maincabin > 0,maincabin,NULL)) as maincabin, min(if(firstclass>0,firstclass,NULL)) as firstclass ,min(if(business>0,business,NULL)) as business  from pexproject_flightdata where searchkeyid="+str(recordkey)+" group by datasource")
             for s in pricematrix:
                  pricesources.append(s.datasource)
-            totalrecords = Flightdata.objects.filter(searchkeyid=recordkey).count()        
+               
     action = ''
     if request.GET.get('keyid', '') :
         searchkey = request.GET.get('keyid', '')
+        totalrecords1 = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(searchkey)+" and flighno != 'flag' ")
+        totalrecords = len(list(totalrecords1)) 
+        
         if request.GET.get('multicity'):
             allkey = request.GET.get('multicity')
             multiple_key = allkey.split(',')
@@ -846,7 +892,8 @@ def getsearchresult(request):
                 querylist = querylist+cabintype
                 #print taxes
                 record = Flightdata.objects.raw("select p1.*,p1.maintax as maintax1, p1.firsttax as firsttax1, p1.businesstax as businesstax1,p1.rowid as newid ,case when datasource = 'delta' then " + deltaorderprice + "  else " + unitedorderprice + " end as finalprice, "+taxes+" as totaltaxes from pexproject_flightdata as p1 where " + querylist + " order by finalprice ," + taxes + ",departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset))
-            mainlist = record  
+            mainlist = record 
+            #print record.query 
         recordlen = len(multicitykey1)
         timerecord = Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` ")
         filterkey = {'stoppage':list2, 'datasource':list1, 'cabin':cabin} 
@@ -857,7 +904,7 @@ def getsearchresult(request):
         if 'share_recordid' in request.GET:
             sharedid = request.GET.get('share_recordid','')
             selectedrow = Flightdata.objects.get(pk=sharedid)   
-        if request.is_ajax():
+        if request.is_ajax() :
             return render_to_response('flightsearch/search.html', {'action':action,'pricesources':pricesources, 'pricematrix':pricematrix, 'multisearch':multisearch, 'data':mainlist,'multirecod':mainlist, 'multicity':multicity, 'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name}, context_instance=RequestContext(request))
         if totalrecords > 0:
             return render_to_response('flightsearch/searchresult.html', {'action':action,'pricesources':pricesources, 'pricematrix':pricematrix,'multisearch':multisearch,'data':mainlist,'multirecod':mainlist,'multicity':multicity,'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name}, context_instance=RequestContext(request)) 
