@@ -141,7 +141,7 @@
 							</div>
 							<div class="col-md-8 col-xs-12 xs-nopadding">
 								<div class="progress">
-								    <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width:5%" id="progressbar">
+								    <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width:40%" id="progressbar">
 								      
 								    </div>
 								  </div>
@@ -2259,7 +2259,7 @@ $(document).ready(function(){
 	var searchid = "{{request.GET.keyid}}";
 	var returnid = "{{request.GET.returnkey}}";;
 	var refreshIntervalId = setInterval(redirecttosearchpage, 5000);
-	//var progess_width = 10;
+	var progess_width = 10;
 	function redirecttosearchpage(){
 	$.ajax({
          url:dataurls,
@@ -2287,9 +2287,10 @@ $(document).ready(function(){
 	 	success: function(data){
  		if(data[1] == 'completed' )
  		{
+ 			progess_width = 100;
  			console.log('stop');
  			clearInterval(refreshIntervalId);
- 			$('#progressbar').width(100 );
+ 			$('#progressbar').css("width", "100%");
  		}
  	},
  	});
