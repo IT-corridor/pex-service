@@ -41,9 +41,20 @@ import customfunction,rewardScraper
 from pexproject.form import LoginForm
 #from django.utils import timezone
 import json
+import signal
 import logging
 logger = logging.getLogger(__name__)
+'''
+def signal_handler(signum, frame):
+    raise Exception("Timed out!")
 
+    signal.signal(signal.SIGALRM, signal_handler)
+    signal.alarm(10)   # Ten seconds
+    try:
+	search()
+    except Exception, msg:
+	print "Timed out!"
+'''
 def index(request):
     context = {}
     user = User()
@@ -293,7 +304,7 @@ def contactUs(request):
         object.save()
         fullname = firstname+" "+lastname
         emailbody = message+"\n\n"+labeltext+" \n\n"+fullname+"\n"+company+"\n"+websitename
-        send_mail(topic,emailbody,email,['jk.dhn2010@gmail.com'])
+        send_mail(topic,emailbody,email,['info@pexportal.com'])
         contact_msg = "Your information has been sent successfully"
         
     return render_to_response('flightsearch/contact_us.html',{'contact_msg':contact_msg}, context_instance=RequestContext(request))  
@@ -322,7 +333,7 @@ def search(request):
         destid = request.REQUEST['toMain']
         depart = request.REQUEST['deptdate']
         cabin = request.REQUEST['cabin']
-        print "cabin",cabin
+        #print "cabin",cabin
         ongnidlist =  orgnid.split(',')
         destlist = destid.split(',')
         departlist = depart.split(',')
@@ -407,6 +418,7 @@ def search(request):
             Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='virgin_atlantic').delete()
             if returnkey:
                 Flightdata.objects.filter(searchkeyid=returnkey,datasource='virgin_atlantic').delete()            
+	    #print "virgin"
             customfunction.virgin_atlantic(orgncode,destcode,depart,returndate,searchkeyid,returnkey)
             if len(departlist) >0 :
                 multiplekey = multiplekey+seperator+str(searchkeyid)
