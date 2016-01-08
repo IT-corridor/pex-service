@@ -2259,13 +2259,26 @@ $(document).ready(function(){
 	var searchid = "{{request.GET.keyid}}";
 	var returnid = "{{request.GET.returnkey}}";
 	var cabin = "{{request.GET.cabin}}";
+	var airline =new Array();
+    var stoppage = new Array();
+    var row_val = "";
+    if($('#rowid').length)
+    {
+       row_val = "&rowid="+$('#rowid').val() ;
+     }
+     $(".chk-airlines:checked").each(function(){
+	       airline.push($(this).val());
+	  });
+	  $(".chk-stoppage:checked").each(function(){
+	        stoppage.push($(this).val());
+	   });
 	var refreshIntervalId = setInterval(redirecttosearchpage, 5000);
 	var progess_width = 10;
 	function redirecttosearchpage(){
 	$.ajax({
          url:dataurls,
          type:'POST',
-         data: "csrfmiddlewaretoken={{ csrf_token }}",
+         data: "csrfmiddlewaretoken={{ csrf_token }}&airlines="+airline+"&stoppage="+stoppage+row_val,
          success: function(html){
          	isprocess();
          	$("#content1").empty();
