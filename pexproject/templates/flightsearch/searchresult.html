@@ -776,7 +776,7 @@
 							{% if data %}
 								
 								{% for row in data %}
-								<div class="col-md-12 col-xs-12 centr-info responsive-color-img" id="resultdiv">
+								<div class="col-md-12 col-xs-12 centr-info responsive-color-img contentdiv">
 									<div class="col-sm-3 col-xs-5 visible-xs visible-sm nopl">
 										<div class="col-xs-12 nopadding text-center" itemscope itemtype ="http://schema.org/Airline">
 											{% if row.datasource == "united" %}
@@ -1538,7 +1538,9 @@
 								{% endfor %}
 								
 							{% endif %}	
-							<div id="content"></div>				
+							<div id="content1"></div>
+							<div id="content"></div>
+											
 							</div>
 							
 							<div class="col-md-2 col-xs-12 nopadding "><img src="{% static 'flightsearch/img/ad.jpg' %}"  alt="Responsive image" class="img-responsive">
@@ -2119,8 +2121,6 @@ return sum;
             	var doch =($(document).height()-200);
             	var winh = ($(window).height() + 200);
                     if  ($(window).scrollTop() >= doch - winh){
-        //            if(parseInt($(window).scrollTop()) >= parseInt( $("footer").offset().top - $("footer").outerHeight() - 200) ){	
-//		alert("1");
                     	if(is_data > 0)
                     	{
 			if(call_sent == "completed") {
@@ -2132,7 +2132,7 @@ return sum;
             }); 
  			var urls = ("{{request.get_full_path}}");
             function loadArticle(pageNumber){   
-		call_sent = "in_progress"; 
+			call_sent = "in_progress"; 
             	var airline =new Array();
             	var stoppage = new Array();
             	var row_val = "";
@@ -2268,8 +2268,9 @@ $(document).ready(function(){
          data: "csrfmiddlewaretoken={{ csrf_token }}",
          success: function(html){
          	isprocess();
-         	$("#resultdiv").empty();
-         	$("#resultdiv").append(html); 
+         	$("#content1").empty();
+         	$(".contentdiv").remove();
+         	$("#content1").append(html); 
          	progess_width = $('#progressbar').width();
          	progess_width = parseInt(progess_width)+5;
          	$('#progressbar').width(progess_width );
@@ -2289,6 +2290,7 @@ $(document).ready(function(){
 	 	url: "/checkData/",
 	 	data: "keyid="+ encodeURI(searchid) + "&csrfmiddlewaretoken={{ csrf_token }}"+"&cabin="+encodeURI(cabin)+temp,
 	 	success: function(data){
+	 		console.log(data);
  		if(data[1] == 'completed' )
  		{
  			console.log('stop');
