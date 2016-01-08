@@ -2257,7 +2257,8 @@ $(document).ready(function(){
 	var dataurls = ("{{request.get_full_path}}");
 	var multicity1 = "{{request.GET.multicity}}";
 	var searchid = "{{request.GET.keyid}}";
-	var returnid = "{{request.GET.returnkey}}";;
+	var returnid = "{{request.GET.returnkey}}";
+	var cabin = "{{request.GET.cabin}}";
 	var refreshIntervalId = setInterval(redirecttosearchpage, 5000);
 	var progess_width = 10;
 	function redirecttosearchpage(){
@@ -2268,11 +2269,9 @@ $(document).ready(function(){
          success: function(html){
          	isprocess();
          	$("#resultdiv").empty();
-         	//$("#content").empty();
          	$("#resultdiv").append(html); 
          	progess_width = $('#progressbar').width();
-         	progess_width = parseInt(progess_width)+3;
-         	console.log(progess_width);
+         	progess_width = parseInt(progess_width)+5;
          	$('#progressbar').width(progess_width );
          	
          }
@@ -2280,17 +2279,22 @@ $(document).ready(function(){
 	}
 	function isprocess()
 	{
+		var temp = '';
+	 	if( returnid != '')
+	 	{
+	 		var temp = "&returnkey="+encodeURI(returnid);
+	 	}
 		$.ajax({
 	 	type: "POST",
 	 	url: "/checkData/",
-	 	data: "keyid="+ encodeURI(searchid) + "&csrfmiddlewaretoken={{ csrf_token }}",
+	 	data: "keyid="+ encodeURI(searchid) + "&csrfmiddlewaretoken={{ csrf_token }}"+"&cabin="+encodeURI(cabin)+temp,
 	 	success: function(data){
  		if(data[1] == 'completed' )
  		{
- 			progess_width = 100;
  			console.log('stop');
- 			clearInterval(refreshIntervalId);
  			$('#progressbar').css("width", "100%");
+ 			clearInterval(refreshIntervalId);
+ 			
  		}
  	},
  	});

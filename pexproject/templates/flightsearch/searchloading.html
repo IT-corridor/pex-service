@@ -83,7 +83,8 @@ $.ajax({
  function datacheck(searchid,returnid)
  {
  	console.log(searchid);
- 	console.log(returnid);
+ 	console.log(cabintype);
+ 	var temp = '';
  	if( returnid != '')
  	{
  		var temp = "&returnkey="+encodeURI(returnid);
@@ -91,7 +92,7 @@ $.ajax({
  	$.ajax({
  	type: "POST",
  	url: "/checkData/",
- 	data: "keyid="+ encodeURI(searchid) + "&csrfmiddlewaretoken=" + encodeURI(CSRF_TOKEN),
+ 	data: "keyid="+ encodeURI(searchid) + "&csrfmiddlewaretoken=" + encodeURI(CSRF_TOKEN)+"&cabin="+encodeURI(cabintype)+temp,
  	success: function(data){
  		console.log(data[0]);
  		if(data[0] == 'stored')

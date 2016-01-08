@@ -511,7 +511,6 @@ def checkData(request):
     context = {}
     data1 = ''
     iscomplete =''
-    print "comes"
     totalrecords = 0
     if request.is_ajax():
         
@@ -519,13 +518,22 @@ def checkData(request):
         #passenger = request.GET.get('passenger', '')
         if 'keyid' in request.POST:
             recordkey = request.REQUEST['keyid']
-            print "recordkey",recordkey
+            cabin = request.REQUEST['cabin']
             if 'returnkey' in request.POST:
                 returnkey = request.REQUEST['returnkey']
-                totalrecords = Flightdata.objects.raw("select count(*) from pexproject_flightdata where searchkeyid="+str(recordkey)+" and searchkeyid="+str(returnkey))
-                
+                returnfare = "p2." + cabin
+                departfare = "p1." + cabin
+        
+                totalrecords1 = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and "+returnfare+" > 0 where p1.searchkeyid="+str(recordkey)+" and "+departfare+" > 0")
+                totalrecords = len(list(totalrecords1)) 
+                boj = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and p2.flighno = 'flag' where p1.searchkeyid="+str(recordkey)+" and p1.flighno = 'flag'")
+                boj1 = len(list(boj))
+                if boj1 > 0:
+                     iscomplete = "completed"  
             else:
-                totalrecords = Flightdata.objects.filter(searchkeyid=recordkey).count()  
+                totalrecords1 = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(recordkey)+" and "+cabin+"> 0")
+                totalrecords = len(list(totalrecords1))
+                #totalrecords = Flightdata.objects.filter(searchkeyid=recordkey).count()  
                 boj = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(recordkey)+" and flighno = 'flag' ")
                 boj1 = len(list(boj))
                 if boj1 > 0:
