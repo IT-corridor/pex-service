@@ -20,7 +20,7 @@ from django.db import connection, transaction
 from multiprocessing import Process
 import threading
 import Queue
-from pyvirtualdisplay import Display
+#from pyvirtualdisplay import Display
 import socket
 import urllib
 
@@ -35,8 +35,8 @@ def delta(orgn, dest, searchdate, searchkey):
     currentdatetime = datetime.datetime.now()
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
    
-    display = Display(visible=0, size=(800, 600))
-    display.start()
+    #display = Display(visible=0, size=(800, 600))
+    #display.start()
     driver = webdriver.Chrome()
     try:
         driver.implicitly_wait(20)
@@ -59,7 +59,7 @@ def delta(orgn, dest, searchdate, searchkey):
         driver.find_element_by_id("findFlightsSubmit").send_keys(Keys.ENTER)
         
     except:
-        display.stop
+        #display.stop
         driver.quit()
         return searchkey
     
@@ -68,7 +68,7 @@ def delta(orgn, dest, searchdate, searchkey):
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
     except:
         print "exception"
-        display.stop()
+        #display.stop()
         driver.quit()
         return searchkey
     
@@ -270,7 +270,7 @@ def delta(orgn, dest, searchdate, searchkey):
 
 
     
-    display.stop()
+    #display.stop()
     driver.quit()
     return searchkey
 
@@ -284,8 +284,8 @@ def united(origin, destination, searchdate, searchkey):
     searchkey = searchkey
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     url = "https://www.united.com/ual/en/us/flight-search/book-a-flight/results/awd?f=" + origin + "&t=" + destination + "&d=" + date + "&tt=1&at=1&sc=7&px=1&taxng=1&idx=1"
-    display = Display(visible=0, size=(800, 600))
-    display.start()
+    #display = Display(visible=0, size=(800, 600))
+    #display.start()
     driver = webdriver.Chrome()
     driver.get(url)
     time.sleep(2)
@@ -308,7 +308,7 @@ def united(origin, destination, searchdate, searchkey):
         WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "fl-results")))
         print "data check complete"
     except:
-        display.stop
+        #display.stop
         driver.quit()
         return searchkey
     time.sleep(7)
@@ -588,7 +588,7 @@ def united(origin, destination, searchdate, searchkey):
         soup = BeautifulSoup(html_page1)
         scrapepage(searchkey, soup)
         
-    display.stop
+    #display.stop
     driver.quit()
     return searchid
 
@@ -609,8 +609,8 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
         search_cabin = "Radio3"
     
     url = "http://www.etihad.com/en-us/plan-and-book/book-redemption-flights/"
-    display = Display(visible=0, size=(800, 600))
-    display.start()
+    #display = Display(visible=0, size=(800, 600))
+    #display.start()
     driver = webdriver.Chrome()
     driver.get(url)
     driver.implicitly_wait(20)
@@ -650,7 +650,7 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     try:
         WebDriverWait(driver, 7).until(EC.presence_of_element_located((By.ID, "dtcontainer-both")))
     except:
-        display.stop()
+        #display.stop()
         driver.quit()
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
         transaction.commit()
@@ -693,7 +693,7 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
             from_code = from_detail[0].text
             from_time = from_detail[2].text
         else:
-            display.stop()
+            #display.stop()
             driver.quit()
             print "no data"
             cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
@@ -806,14 +806,12 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
         transaction.commit()   
         print "data inserted"
      
-    display.stop()
+    #display.stop()
     driver.quit()
     cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
     transaction.commit()
     print "flag inserted" 
     return searchkey
-origin =  sys.argv[1]
-dest = sys.argv[2]
 
 delta(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[5])
 united(sys.argv[1],sys.argv[2],sys.argv[4],sys.argv[5])

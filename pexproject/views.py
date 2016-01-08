@@ -383,7 +383,8 @@ def search(request):
                     searchdata.save()
                     returnkey = searchdata.searchid
                     #flag2 = 1
-                    subprocess.Popen(["python", "/var/www/html/python/pex/pexproject/pexproject/delta.py",destcode, orgncode, str(date1), str(returndate), str(returnkey)])
+
+                    subprocess.Popen(["python", "/var/www/html/python/pex_new/pexproject/delta.py",destcode, orgncode, str(date1), str(returndate), str(returnkey),etihaddest,etihadorigin,cabin])
                     #customfunction.etihad(etihaddest,etihadorigin,date1,returnkey,cabin)
                     #customfunction.scrape(destcode, orgncode, date1, returndate, returnkey)
             else:
@@ -525,11 +526,9 @@ def checkData(request):
                 departfare = "p1." + cabin
         
                 totalrecords1 = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and "+returnfare+" > 0 where p1.searchkeyid="+str(recordkey)+" and "+departfare+" > 0")
-                totalrecords = len(list(totalrecords1)) 
-                print "select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and p2.flighno = 'flag' where p1.searchkeyid="+str(recordkey)+" and p1.flighno = 'flag'"
+                totalrecords = len(list(totalrecords1))                 
                 obj = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and p2.flighno = 'flag' where p1.searchkeyid="+str(recordkey)+" and p1.flighno = 'flag'")
                 obj1 = len(list(obj))
-                print obj1
                 if obj1 > 0:
                      iscomplete = "completed"  
             else:

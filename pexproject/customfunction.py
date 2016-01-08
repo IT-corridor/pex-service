@@ -20,7 +20,7 @@ from django.db import connection, transaction
 from multiprocessing import Process
 import threading
 import Queue
-from pyvirtualdisplay import Display
+#from pyvirtualdisplay import Display
 import socket
 import urllib
 
@@ -40,8 +40,8 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
         url = "http://www.virgin-atlantic.com/us/en/book-your-travel/book-your-flight/flight-search-results.html?departure="+origin+"&arrival="+dest+"&adult=1&departureDate="+str(date)+"&search_type=redeemMiles&classType=10&classTypeReturn=10&bookingPanelLocation=Undefined&isreturn=yes&returnDate="+str(retdate)
     else:
         url = "http://www.virgin-atlantic.com/us/en/book-your-travel/book-your-flight/flight-search-results.html?departure="+origin+"&arrival="+dest+"&adult=1&departureDate="+str(date)+"&search_type=redeemMiles&classType=10&classTypeReturn=10&bookingPanelLocation=BookYourFlight&isreturn=no"
-    display = Display(visible=0, size=(800, 600))
-    display.start()
+    #display = Display(visible=0, size=(800, 600))
+    #display.start()
     driver = webdriver.Chrome()
     driver.get(url)
     # normalLayout
@@ -58,7 +58,7 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
                 if tbody.findAll("tr",{"class":"indirectRoute "}):
                     trbody = tbody.findAll("tr",{"class":"indirectRoute "})
         except:
-            display.stop()
+            #display.stop()
             driver.quit()
             return keyid
         for row in trbody:
@@ -313,7 +313,7 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
         virgindata(tbody[0],searchkey)
     if len(tbody)> 1 :
         virgindata(tbody[1],returnkey)
-    display.stop()                                                                                                                                  
+    #display.stop()                                                                                                                                  
     driver.quit()
     return searchkey
 
@@ -327,8 +327,8 @@ def united(origin, destination, searchdate, searchkey):
     searchkey = searchkey
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     url = "https://www.united.com/ual/en/us/flight-search/book-a-flight/results/awd?f=" + origin + "&t=" + destination + "&d=" + date + "&tt=1&at=1&sc=7&px=1&taxng=1&idx=1"
-    display = Display(visible=0, size=(800, 600))
-    display.start()
+    #display = Display(visible=0, size=(800, 600))
+    #display.start()
     driver = webdriver.Chrome()
     driver.get(url)
     time.sleep(2)
@@ -351,7 +351,7 @@ def united(origin, destination, searchdate, searchkey):
         WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "fl-results")))
         print "data check complete"
     except:
-        display.stop
+        #display.stop
         driver.quit()
         return searchkey
     time.sleep(7)
@@ -428,17 +428,17 @@ def united(origin, destination, searchdate, searchkey):
                 dateduration = dateinfo[0].text
             # print dateduration
             depttime1 = departtime.replace(dateduration, '').strip()
-	    if 'Departing' in depttime1:
-		depttime1 = (depttime1.replace('Departing','')).strip()
+            if 'Departing' in depttime1:
+                depttime1 = (depttime1.replace('Departing','')).strip()
             if 'pm' in depttime1:
-		#print depttime1[depttime1.index('pm') + len('pm'):]
-		depttime2 = depttime1.split('pm')
-		depttime = depttime2[0]+" pm"
-	    else:
-		if 'am' in depttime1:
-		    depttime2 = depttime1.split('am')
-		    depttime = (depttime2[0]).strip()+" am"
-		    print depttime
+        		#print depttime1[depttime1.index('pm') + len('pm'):]
+        		depttime2 = depttime1.split('pm')
+        		depttime = depttime2[0]+" pm"
+    	    else:
+        		if 'am' in depttime1:
+        		    depttime2 = depttime1.split('am')
+        		    depttime = (depttime2[0]).strip()+" am"
+        		    print depttime
             test = (datetime.datetime.strptime(depttime, '%I:%M %p'))
             test1 = test.strftime('%H:%M')
             # print test1
@@ -449,11 +449,11 @@ def united(origin, destination, searchdate, searchkey):
                 arivedate = dateinfo[1].text
             # print arivedate
             arivaltime = arivetime.replace(arivedate, '').strip()
-	    if 'Arriving' in arivaltime:
-		arivaltime = (arivaltime.replace('Arriving','')).strip()
+            if 'Arriving' in arivaltime:
+                arivaltime = (arivaltime.replace('Arriving','')).strip()
             if '.' in arivaltime:
                 arivaltime = arivaltime.replace('.', '')
-	    if 'pm' in arivaltime:
+            if 'pm' in arivaltime:
                 arivetime4 = arivaltime.split('pm')
                 arivaltime = (arivetime4[0]).strip()+" pm"
             else:
@@ -475,7 +475,7 @@ def united(origin, destination, searchdate, searchkey):
             
             detaillink = row.find("a", {"class":"toggle-flight-block-details ui-tabs-anchor"})['href']	    
             test = driver.find_element_by_xpath("//a[@href='"+ detaillink +"']")
-	    #test = driver.execute_script("document.getElementById('" +detaillink+ "')")
+	        #test = driver.execute_script("document.getElementById('" +detaillink+ "')")
 	
             dtlid = detaillink.replace('#', '').strip()
             driver.execute_script("arguments[0].click();", test);
@@ -581,7 +581,7 @@ def united(origin, destination, searchdate, searchkey):
                         fare2 = float(business) * int('1000')
                     
                     busstax = buss.find("div", {"class":"pp-additional-fare price-point"}).text
-		    print "busstax",busstax
+                    print "busstax",busstax
                     if "+$" in busstax:
                         businesstax = busstax.replace('+$', '')
                     # print "busstax",businesstax
@@ -631,7 +631,7 @@ def united(origin, destination, searchdate, searchkey):
         soup = BeautifulSoup(html_page1)
         scrapepage(searchkey, soup)
         
-    display.stop
+    #display.stop
     driver.quit()
     return searchid
 def delta(orgn, dest, searchdate, searchkey):
@@ -642,8 +642,8 @@ def delta(orgn, dest, searchdate, searchkey):
     currentdatetime = datetime.datetime.now()
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     print orgn, dest
-    display = Display(visible=0, size=(800, 600))
-    display.start()
+    #display = Display(visible=0, size=(800, 600))
+    #display.start()
     driver = webdriver.Chrome()
     try:
        	driver.implicitly_wait(20)
@@ -666,7 +666,7 @@ def delta(orgn, dest, searchdate, searchkey):
     	driver.find_element_by_id("findFlightsSubmit").send_keys(Keys.ENTER)
 	    
     except:
-        display.stop
+        #display.stop
     	driver.quit()
     	return searchkey
 	
@@ -675,7 +675,7 @@ def delta(orgn, dest, searchdate, searchkey):
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
     except:
         print "exception"
-        display.stop()
+        #display.stop()
         driver.quit()
         return searchkey
     
@@ -716,7 +716,6 @@ def delta(orgn, dest, searchdate, searchkey):
                         depart_string = depart_string.replace('Opens in a new popup','')
                     departdetails.append(depart_string)
                     arive_string = (spaninfo[1].text.replace('ARRIVES', ''))
-                    print "depart_string",departdetails
                     if "Opens in a new popup" in arive_string:
                         arive_string = arive_string.replace('Opens in a new popup','')
                     arrivedetails.append(arive_string)
@@ -878,7 +877,7 @@ def delta(orgn, dest, searchdate, searchkey):
 
 
     
-    display.stop()
+    #display.stop()
     driver.quit()
     return searchkey
 
@@ -899,8 +898,8 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
         search_cabin = "Radio3"
     
     url = "http://www.etihad.com/en-us/plan-and-book/book-redemption-flights/"
-    display = Display(visible=0, size=(800, 600))
-    display.start()
+    #display = Display(visible=0, size=(800, 600))
+    #display.start()
     driver = webdriver.Chrome()
     driver.get(url)
     driver.implicitly_wait(20)
@@ -940,7 +939,7 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     try:
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "dtcontainer-both")))
     except:
-        display.stop()
+        #display.stop()
         driver.quit()
         return searchkey
     maincontain = soup.find("div", {"id":"dtcontainer-both"})
@@ -980,7 +979,7 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
             from_code = from_detail[0].text
             from_time = from_detail[2].text
     	else:
-    	    display.stop()
+    	    #display.stop()
             driver.quit()
             print "no data"
             return searchkey
@@ -1089,7 +1088,7 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno, str(searchkey), stime, stoppage, "test", from_code, to_code, from_time, to_time, duration, str(fare1), str(ecotax), str(fare2),str(businesstax), str(fare3), str(firsttax), "Economy", "Business", "First", "etihad", departdetailtext, arivedetailtext, planedetailtext, operatortext))
         transaction.commit()   
         print "data inserted"
-    display.stop()
+    #display.stop()
     driver.quit()
     
     
