@@ -17,7 +17,7 @@
 													
 							<div class="col-md-2 col-xs-12 nopadding filters-holder mvb10px ">
 								<div class="progress">
-								    <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width:40%" id="progressbar">
+								    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:10%" id="progressbar">
 								      Loading
 								    </div>
 							</div>
@@ -2274,7 +2274,7 @@ $(document).ready(function(){
 	        stoppage.push($(this).val());
 	   });
 	var refreshIntervalId = setInterval(redirecttosearchpage, 5000);
-	var progess_width = 10;
+	var progess_width = 0;
 	function redirecttosearchpage(){
 	$.ajax({
          url:dataurls,
@@ -2286,8 +2286,12 @@ $(document).ready(function(){
          	$(".contentdiv").remove();
          	$("#content1").append(html); 
          	progess_width = $('#progressbar').width();
-         	progess_width = parseInt(progess_width)+5;
-         	$('#progressbar').width(progess_width );
+         	console.log(progess_width);
+         	if(progess_width < 190){
+         		progess_width = parseInt(progess_width)+5;
+         	}
+         	console.log(progess_width);
+         	$('#progressbar').width(progess_width);
          	
          }
 	});
