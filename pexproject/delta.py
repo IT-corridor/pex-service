@@ -19,17 +19,23 @@ from selenium.webdriver.support import expected_conditions as EC
 from django.db import connection, transaction
 from multiprocessing import Process
 import threading
+from threading import Thread
 import Queue
 #from pyvirtualdisplay import Display
 import socket
 import urllib
+#from pexproject import settings
 
 
 
 
 def delta(orgn, dest, searchdate, searchkey):
     #return searchkey
-    cursor = connection.cursor()
+    db = MySQLdb.connect(host="localhost",  
+                     user="pex",           
+                      passwd="pex@1234",        
+                      db="pex")  
+    cursor = db.cursor()
     url = "http://www.delta.com/"   
     searchid = str(searchkey)
     currentdatetime = datetime.datetime.now()
@@ -265,7 +271,7 @@ def delta(orgn, dest, searchdate, searchkey):
         # print 'arivedetail',arrivedetails
         # print 'plane', planedetails
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno, searchid, stime, stp, lyover, sourcestn, destinationstn, test1, arivalformat1, duration, str(fare1), str(economytax), str(fare2), str(businesstax), str(fare3), str(firsttax), cabintype1.strip(), cabintype2.strip(), cabintype3, "delta", deptdetail, arivedetail, planetext, operatedbytext))
-        transaction.commit()
+        db.commit()
         print "data inserted"
 
 
@@ -276,7 +282,13 @@ def delta(orgn, dest, searchdate, searchkey):
 
 def united(origin, destination, searchdate, searchkey):
     #return searchkey
-    cursor = connection.cursor()
+    db = MySQLdb.connect(host="localhost",  #server 
+                     user="pex",           # flyfoodies
+                      passwd="pex@1234",        # flyfoodies
+                      db="pex")
+    cursor = db.cursor()
+
+    #cursor = connection.cursor()
     dt = datetime.datetime.strptime(searchdate, '%Y/%m/%d')
     date = dt.strftime('%Y-%m-%d')
     date_format = dt.strftime('%a, %b %-d')
@@ -572,7 +584,7 @@ def united(origin, destination, searchdate, searchkey):
                 operatedbytext = '@'.join(operatedby)
             
             cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (flightno, str(searchid), stime, stoppage, "test", source, Destination, test1, arivetime2, totaltime, str(fare1), str(maintax), str(fare2), str(businesstax), str(fare3), str(firsttax), cabintype1, cabintype2, cabintype3, "united", departdetails, arivedetails, planedetails, operatedbytext))
-            transaction.commit()
+            db.commit()
             print "row inserted"
     scrapepage(searchkey, soup)
     for i in pages:
@@ -597,7 +609,13 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     dt = datetime.datetime.strptime(searchdate, '%m/%d/%Y')
     date = dt.strftime('%d/%m/%Y')
     print "final date", date
-    cursor = connection.cursor()
+    db = MySQLdb.connect(host="localhost",   
+                     user="pex",          
+                      passwd="pex@1234",        
+                      db="pex")
+    cursor = db.cursor()
+
+    #cursor = connection.cursor()
     currentdatetime = datetime.datetime.now()
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     search_cabin = ''
@@ -626,7 +644,7 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     to = driver.find_element_by_id("frm_20121580612061235")
     time.sleep(3)
     to.send_keys(str(destcode))
-    time.sleep(2)
+    time.sleep(4)
     to.send_keys(Keys.TAB)
     
     oneway = driver.find_element_by_id("frm_oneWayFlight")
@@ -646,19 +664,23 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     html_page = driver.page_source
     
     soup = BeautifulSoup(html_page)
-    
+    datatable = ''
     try:
-        WebDriverWait(driver, 7).until(EC.presence_of_element_located((By.ID, "dtcontainer-both")))
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "dtcontainer-both")))
+	maincontain = soup.find("div", {"id":"dtcontainer-both"})
+	print "maincontain",maincontain
+    	datatable = maincontain.find("tbody")
+
     except:
         #display.stop()
         driver.quit()
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
-        transaction.commit()
+        db.commit()
         print "flag inserted" 
         return searchkey
-    maincontain = soup.find("div", {"id":"dtcontainer-both"})
-    
-    datatable = maincontain.find("tbody")
+    #maincontain = soup.find("div", {"id":"dtcontainer-both"})
+    #print "maincontain",maincontain 
+    #datatable = maincontain.find("tbody")
 
     trblock = datatable.findAll("tr")   
     for tds in trblock:
@@ -697,7 +719,7 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
             driver.quit()
             print "no data"
             cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
-            transaction.commit()
+            db.commit()
             print "flag inserted" 
             return searchkey
 
@@ -803,15 +825,18 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
             fare3 = pricemiles
             firsttax = tax      
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno, str(searchkey), stime, stoppage, "test", from_code, to_code, from_time, to_time, duration, str(fare1), str(ecotax), str(fare2),str(businesstax), str(fare3), str(firsttax), "Economy", "Business", "First", "etihad", departdetailtext, arivedetailtext, planedetailtext, operatortext))
-        transaction.commit()   
+        db.commit()   
         print "data inserted"
      
     #display.stop()
     driver.quit()
     cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
-    transaction.commit()
+    db.commit()
     print "flag inserted" 
     return searchkey
+
+print "in delta"
+print "origin",sys.argv[6],sys.argv[7],sys.argv[3],sys.argv[5],sys.argv[8]
 
 delta(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[5])
 united(sys.argv[1],sys.argv[2],sys.argv[4],sys.argv[5])

@@ -19,6 +19,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from django.db import connection, transaction
 from multiprocessing import Process
 import threading
+from threading import Thread
 import Queue
 #from pyvirtualdisplay import Display
 import socket
@@ -327,11 +328,13 @@ def united(origin, destination, searchdate, searchkey):
     searchkey = searchkey
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     url = "https://www.united.com/ual/en/us/flight-search/book-a-flight/results/awd?f=" + origin + "&t=" + destination + "&d=" + date + "&tt=1&at=1&sc=7&px=1&taxng=1&idx=1"
-    #display = Display(visible=0, size=(800, 600))
-    #display.start()
-    driver = webdriver.Chrome()
+    display = Display(visible=0, size=(800, 600))
+    display.start()
+    chromedriver = "/usr/bin/chromedriver"
+    os.environ["webdriver.chrome.driver"] = chromedriver
+    driver = webdriver.Chrome(chromedriver)
     driver.get(url)
-    time.sleep(2)
+    time.sleep(1)
     driver.implicitly_wait(20)
     try:
     	change = driver.find_element_by_link_text("Change").click()
@@ -348,13 +351,13 @@ def united(origin, destination, searchdate, searchkey):
     driver.implicitly_wait(20)
     try:
         print "data check"
-        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "fl-results")))
+        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "fl-results")))
         print "data check complete"
     except:
         #display.stop
         driver.quit()
         return searchkey
-    time.sleep(7)
+    time.sleep(1)
     html_page = driver.page_source
     soup = BeautifulSoup(html_page)
     # datablock = soup.find("section",{"id":"fl-results"})
@@ -474,12 +477,13 @@ def united(origin, destination, searchdate, searchkey):
             planetype = row.find("div", {"class":"segment-aircraft-type"}).text
             
             detaillink = row.find("a", {"class":"toggle-flight-block-details ui-tabs-anchor"})['href']	    
+	    print "detaillink",detaillink
             test = driver.find_element_by_xpath("//a[@href='"+ detaillink +"']")
 	        #test = driver.execute_script("document.getElementById('" +detaillink+ "')")
 	
             dtlid = detaillink.replace('#', '').strip()
             driver.execute_script("arguments[0].click();", test);
-            time.sleep(0.05)
+            time.sleep(0.01)
             html_page4 = driver.page_source
             html_page5 = html_page4.encode('utf-8')
             soup2 = BeautifulSoup(str(html_page5))
@@ -549,7 +553,7 @@ def united(origin, destination, searchdate, searchkey):
                          if 'Operated by' in operateby:
                              operateby = operateby.replace('Operated by', '')
                          operatedby.append(operateby)
-            driver.execute_script("arguments[0].click();", test);
+            #driver.execute_script("arguments[0].click();", test);
             priceblock = row.findAll("div", {"class":"flight-block-fares-container"})
             
             for prc in priceblock:
@@ -622,7 +626,7 @@ def united(origin, destination, searchdate, searchkey):
         print "page no",i
         link = driver.find_element_by_xpath("//a[@href='" +i+ "']")
         #link = driver.find_element_by_link_text(pages[i])
-        print "link",link
+        
         driver.execute_script("arguments[0].click();", link);
         #link.send_keys(Keys.ENTER)
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "product_MIN-ECONOMY-SURP-OR-DISP")))
@@ -716,6 +720,7 @@ def delta(orgn, dest, searchdate, searchkey):
                         depart_string = depart_string.replace('Opens in a new popup','')
                     departdetails.append(depart_string)
                     arive_string = (spaninfo[1].text.replace('ARRIVES', ''))
+
                     if "Opens in a new popup" in arive_string:
                         arive_string = arive_string.replace('Opens in a new popup','')
                     arrivedetails.append(arive_string)
@@ -747,7 +752,7 @@ def delta(orgn, dest, searchdate, searchkey):
         else:
             if len(pricecol) < 2:
                 cabinhead = pricecol[0].text
-		print "cabinhead",cabinhead
+		#print "cabinhead",cabinhead
                 if 'Business' in cabinhead or 'First' in cabinhead:
                     business = tds[1]
                     economy = ''
@@ -905,7 +910,7 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     driver.implicitly_wait(20)
     time.sleep(5)
     WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "frm_2012158061206151234")))
-    time.sleep(10)
+    time.sleep(5)
     origin = driver.find_element_by_id("frm_2012158061206151234")
     origin.click()
     time.sleep(5)
@@ -1129,18 +1134,24 @@ def scrape(orgn, dest, deltasearchdate, unitedsearchdate, searchkey):
         
     else:
     '''
-    print "else"
-    print deltasearchdate, unitedsearchdate
-    p1 = threading.Thread(target=united, args=(orgn, dest, unitedsearchdate, searchkey))
+    
+    #threadLock = threading.Lock()
+    threads = []
+    #print deltasearchdate, unitedsearchdate
+    p1 = Thread(target=united, args=(orgn, dest, unitedsearchdate, searchkey))
     p1.start()
-    p2 = threading.Thread(target=delta, args=(orgn, dest, deltasearchdate, searchkey))
+    p2 = Thread(target=delta, args=(orgn, dest, deltasearchdate, searchkey))
     p2.start()
-    p1.join()
-    p2.join()
-    '''
-    delta(orgn,dest,deltasearchdate,searchkey)
-    united(origin,unitedsearchdate,searchdate,searchkey)
-    '''
+    threads.append(p1)
+    threads.append(p2)
+    for t in threads:
+    	t.join()
+    #p1.join()
+    #p2.join()
+    
+    #delta(orgn,dest,deltasearchdate,searchkey)
+    #united(orgn, dest, unitedsearchdate, searchkey)
+   
     
     
 

@@ -28,7 +28,13 @@ import urllib
 def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
     #return searchkey
     print origin,dest, searchdate,returndate, searchkey,returnkey
-    cursor = connection.cursor()
+    db = MySQLdb.connect(host="localhost", 
+                     user="pex",           
+                      passwd="pex@1234",      
+                      db="pex")
+    cursor = db.cursor()
+
+    #cursor = connection.cursor()
     dt = datetime.datetime.strptime(searchdate, '%Y/%m/%d')
     date = dt.strftime('%d/%m/%Y')
     if returndate:
@@ -109,7 +115,7 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
                 print "--------------pre economy--------------------------------"
                 pre_economy_price = pre_economy.find("span",{"class":"price"})
                 pre_economy = pre_economy_price.text
-                print pre_economy
+                #print pre_economy
                 pre_econo_price = re.findall("\d+.\d+", pre_economy)
                 if len(pre_econo_price) > 0:
                     business = pre_econo_price[0]
@@ -128,7 +134,7 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
                         busstax = chaged_result
                     else:
                         busstax = pre_econo_price[1]
-                    print "pre_econotax",busstax
+                    #print "pre_econotax",busstax
             upper_class = ''
             if row.find("td",{"class":"cellOption upperclass  last"}):
                 print "--------------upper class--------------------------------"
@@ -159,7 +165,7 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
                         firsttax = chaged_result
                     else:
                         firsttax = upperprice[1]
-                    print "uppertax",firsttax
+                    #print "uppertax",firsttax
             #============================= end price block =========================================================
             sourcestn = ''
             destinationstn=''
@@ -171,14 +177,14 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
             departinfo = depart.findAll("p")
             if len(departinfo) > 0:
                 depttime = departinfo[0].text
-                print "depttime",depttime
+                #print "depttime",depttime
                 departfrom1 = departinfo[1].text
                 if 'from' in departfrom1:
                     departfrom = (departfrom1.replace('from','')).strip()
                     if '(' in departfrom:
                         departfrom1 = departfrom.split('(')
                         sourcestn = departfrom1[1].replace(')','')
-                    print "sourcestn",sourcestn
+                    #print "sourcestn",sourcestn
             arive = heading.find("li",{"class":"arrive"})
             ariveinfo = arive.findAll("p")
             if len(ariveinfo) > 0:
@@ -228,11 +234,11 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
             planedetails = ''
             operatedbytext = ''
             while (counter < len(details_tr)):
-                print "counter",counter
+                #print "counter",counter
                 from_to = details_tr[counter].find("td",{"class":"flightDetails"})
                 operator = from_to.find("span",{"class":"operator"}).text
                 operatedby.append(operator)
-                print "operator",operator
+                #print "operator",operator
                 from_to1 = from_to.find("span",{"class":"flightFromTo"}).text
                 departing_from = ''
                 ariving_at = ''
@@ -247,12 +253,12 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
                     if '\n' in departing_from:
                         departing_from1 = departing_from.split("\n")
                         departing_from = departing_from1[0].strip()+" "+departing_from1[1].strip()
-                    print "departing_from",departing_from
+                    #print "departing_from",departing_from
                     ariving_at = from_to1[1]
                     if '\n' in ariving_at:
                         ariving_at1 = ariving_at.split("\n")
                         ariving_at = ariving_at1[0].strip()+" "+ariving_at1[1].strip()
-                    print "ariving_at",ariving_at
+                    #print "ariving_at",ariving_at
                 departing_date = from_to.find("span",{"class":"fullDate"}).text
                 if 'Departing' in departing_date:
                     departing_date = (departing_date.replace('Departing','')).strip()
@@ -288,7 +294,7 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
                 flight_no = details_tr[1].find("td",{"class":"number"})
                 fl_flightno1 = flight_no.find("span",{"class":"flightNumber"})
                 planeno = (''.join(fl_flightno1.find('br').next_siblings))
-                print "planeno",planeno
+                #print "planeno",planeno
                 fl_flightno = (fl_flightno1.text).replace(planeno,'')
                 deptdetail = departing_date+"|"+detaildetptime+" "+deptextraday+" from "+departing_from
                 departdlist.append(deptdetail)
@@ -297,16 +303,16 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
                 planetext = fl_flightno+"|"+planeno+"("+fl_duration+")" 
                 planelist.append(planetext)
                 counter = counter+1
-            print "departdlist",departdlist  
-            print "arivelist",arivelist 
-            print "planelist",planelist
+            #print "departdlist",departdlist  
+            #print "arivelist",arivelist 
+            #print "planelist",planelist
             departdetails = '@'.join(departdlist)
             arivedetails = '@'.join(arivelist)
             planedetails = ('@'.join(planelist)).strip()
             operatedbytext = '@'.join(operatedby)  
             print "==============================================================================================="
             cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fl_flightno, str(keyid), stime, stp, lyover, sourcestn, destinationstn, depttime, arivaltime,total_duration, str(econo), str(econotax), str(business), str(busstax), str(first), str(firsttax),"Economy","Business","First", "virgin_atlantic", departdetails, arivedetails, planedetails, operatedbytext))
-            transaction.commit()
+            db.commit()
     
     tbody = soup.findAll("tbody",{"class":"flightStatusTbody"})
     if len(tbody) > 0:
@@ -317,5 +323,5 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
     driver.quit()
     return searchkey
 
-
+print "virgin"
 virgin_atlantic(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5],sys.argv[6])
