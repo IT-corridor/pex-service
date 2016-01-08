@@ -16,6 +16,11 @@
 						<div class="col-md-12 col-xs-12 nopadding">
 													
 							<div class="col-md-2 col-xs-12 nopadding filters-holder mvb10px ">
+								<div class="progress">
+								    <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width:40%" id="progressbar">
+								      Loading
+								    </div>
+							</div>
 								<div class="col-xs-12 nopadding visible-xs filter-collapse form-side">
 									<p class="pull-left">Filters</p>
 									<p class="pull-right show-filter"><span class="glyphicon glyphicon-th-large"></span></p>
@@ -140,11 +145,7 @@
 								</form>
 							</div>
 							<div class="col-md-8 col-xs-12 xs-nopadding">
-								<div class="progress">
-								    <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width:40%" id="progressbar">
-								      
-								    </div>
-								  </div>
+								
 								{% if multisearch and 'multicity' in request.GET %}
 								<div class="col-xs-12 mvb10px nopadding search-name">
 									<div class="col-md-11 nopadding ">
@@ -2278,7 +2279,7 @@ $(document).ready(function(){
 	$.ajax({
          url:dataurls,
          type:'POST',
-         data: "csrfmiddlewaretoken={{ csrf_token }}&airlines="+airline+"&stoppage="+stoppage+row_val,
+         data: "csrfmiddlewaretoken={{ csrf_token }}&depaturemin="+depaturemin+"&depaturemax="+depaturemax+"&airlines="+airline+"&stoppage="+stoppage+row_val,
          success: function(html){
          	isprocess();
          	$("#content1").empty();
@@ -2309,7 +2310,7 @@ $(document).ready(function(){
  			console.log('stop');
  			$('#progressbar').css("width", "100%");
  			clearInterval(refreshIntervalId);
- 			
+ 			$('#progressbar').text('');
  		}
  	},
  	});

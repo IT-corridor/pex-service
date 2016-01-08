@@ -199,7 +199,9 @@ margin-top: -8px;
 	color: #181818;
 	border-color: transparent;
 }
-
+.progress-bar{
+	background: #F8B951;
+}
 /*NAVBAR*/
 
 .navbar {
