@@ -383,7 +383,7 @@ def search(request):
                     searchdata.save()
                     returnkey = searchdata.searchid
                     #flag2 = 1
-                    subprocess.Popen(["python", "/var/www/html/python/pex_new/pexproject/delta.py",destcode, orgncode, str(date1), str(returndate), str(returnkey)])
+                    subprocess.Popen(["python", "/var/www/html/python/pex/pexproject/pexproject/delta.py",destcode, orgncode, str(date1), str(returndate), str(returnkey)])
                     #customfunction.etihad(etihaddest,etihadorigin,date1,returnkey,cabin)
                     #customfunction.scrape(destcode, orgncode, date1, returndate, returnkey)
             else:
@@ -402,7 +402,7 @@ def search(request):
                 #flag1 = 1
                 #customfunction.virgin_atlantic(orgncode, destcode,depart, searchkeyid)
                 myList = [orgncode, destcode, date, searchkeyid]
-                subprocess.Popen(["python", "/var/www/html/python/pex_new/pexproject/delta.py",orgncode,destcode,str(date),str(depart),str(searchkeyid),etihadorigin,etihaddest,cabin])
+                subprocess.Popen(["python", "/var/www/html/python/pex/pexproject/pexproject/delta.py",orgncode,destcode,str(date),str(depart),str(searchkeyid),etihadorigin,etihaddest,cabin])
                 #customfunction.etihad(etihadorigin,etihaddest,date,searchkeyid,cabin)
                 #customfunction.scrape(orgncode, destcode, date, depart, searchkeyid)
                 returnkey = ''
@@ -416,7 +416,7 @@ def search(request):
                         searchdata.save()
                         returnkey = searchdata.searchid
                         #flag2 = 1
-                        subprocess.Popen(["python", "/var/www/html/python/pex_new/pexproject/delta.py",destcode, orgncode, str(date1), str(returndate), str(returnkey),etihaddest,etihadorigin,cabin])
+                        subprocess.Popen(["python","/var/www/html/python/pex/pexproject/pexproject/delta.py",destcode, orgncode, str(date1), str(returndate), str(returnkey),etihaddest,etihadorigin,cabin])
                         #customfunction.etihad(etihaddest,etihadorigin,date,returnkey,cabin)
                         #customfunction.scrape(destcode, orgncode, date, depart, returnkey)
             Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='virgin_atlantic').delete()
@@ -424,7 +424,7 @@ def search(request):
                 Flightdata.objects.filter(searchkeyid=returnkey,datasource='virgin_atlantic').delete()            
 
             #customfunction.virgin_atlantic(orgncode,destcode,depart,returndate,searchkeyid,returnkey)
-            subprocess.Popen(["python", "/var/www/html/python/pex_new/pexproject/virgin.py",orgncode,destcode, str(depart), str(returndate), str(searchkeyid),str(returnkey)])
+            subprocess.Popen(["python", "/var/www/html/python/pex/pexproject/pexproject/virgin.py",orgncode,destcode, str(depart), str(returndate), str(searchkeyid),str(returnkey)])
             if len(departlist) > 0 :
                 multiplekey = multiplekey+seperator+str(searchkeyid)
                 seperator = ',' 
