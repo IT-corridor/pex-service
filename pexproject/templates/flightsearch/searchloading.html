@@ -95,7 +95,7 @@ $.ajax({
  	data: "keyid="+ encodeURI(searchid) + "&csrfmiddlewaretoken=" + encodeURI(CSRF_TOKEN)+"&cabin="+encodeURI(cabintype)+temp,
  	success: function(data){
  		console.log(data[0]);
- 		if(data[0] == 'stored')
+ 		if(data[0] == 'stored' || data[1] == 'completed')
  		{
  			redirecttosearchpage(searchid,returnid);
  			clearTimeout(datacheck, 5000);
