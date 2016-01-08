@@ -526,17 +526,19 @@ def checkData(request):
         
                 totalrecords1 = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and "+returnfare+" > 0 where p1.searchkeyid="+str(recordkey)+" and "+departfare+" > 0")
                 totalrecords = len(list(totalrecords1)) 
-                boj = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and p2.flighno = 'flag' where p1.searchkeyid="+str(recordkey)+" and p1.flighno = 'flag'")
-                boj1 = len(list(boj))
-                if boj1 > 0:
+                print "select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and p2.flighno = 'flag' where p1.searchkeyid="+str(recordkey)+" and p1.flighno = 'flag'"
+                obj = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and p2.flighno = 'flag' where p1.searchkeyid="+str(recordkey)+" and p1.flighno = 'flag'")
+                obj1 = len(list(obj))
+                print obj1
+                if obj1 > 0:
                      iscomplete = "completed"  
             else:
                 totalrecords1 = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(recordkey)+" and "+cabin+"> 0")
                 totalrecords = len(list(totalrecords1))
                 #totalrecords = Flightdata.objects.filter(searchkeyid=recordkey).count()  
-                boj = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(recordkey)+" and flighno = 'flag' ")
-                boj1 = len(list(boj))
-                if boj1 > 0:
+                obj = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(recordkey)+" and flighno = 'flag' ")
+                obj1 = len(list(obj))
+                if obj1 > 0:
                      iscomplete = "completed"   
             #pricematrix = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(recordkey))
             if totalrecords > 0:
