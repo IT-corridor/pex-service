@@ -46,7 +46,6 @@ def united(origin, destination, searchdate, searchkey):
     driver = webdriver.Chrome("/usr/bin/chromedriver")
     driver.get(url)
     time.sleep(2)
-    driver.implicitly_wait(20)
     try:
         change = driver.find_element_by_link_text("Change").click()
     except:
@@ -59,10 +58,9 @@ def united(origin, destination, searchdate, searchkey):
 
     except:
         print "no alert to accept"
-    driver.implicitly_wait(20)
     try:
         print "data check"
-        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "fl-results")))
+        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "fl-results")))
         print "data check complete"
     except:
         display.stop
@@ -85,6 +83,16 @@ def united(origin, destination, searchdate, searchkey):
     def scrapepage(searchkey, soup3):
         soup = soup3
         datadiv = soup.findAll("li", {"class":"flight-block"})
+        detaillinks = soup.findAll("a", {"class":"toggle-flight-block-details ui-tabs-anchor"})
+        for dtlink in detaillinks:
+            detaillink = dtlink['href'] 
+            #print "detaillink",detaillink      
+            test = driver.find_element_by_xpath("//a[@href='"+ detaillink +"']")
+            driver.execute_script("arguments[0].click();", test);
+        time.sleep(0.05)
+        html_page4 = driver.page_source
+        html_page5 = html_page4.encode('utf-8')
+        soup2 = BeautifulSoup(str(html_page5))
         print len(datadiv)
         for row in datadiv:
             fare1 = 0
@@ -109,6 +117,7 @@ def united(origin, destination, searchdate, searchkey):
             test1 = ''
             operatedbytext = ''
             totaltime = ''
+            
             stoppage = row.find("div", {"class":"flight-connection-container"}).text
             
             if '1' in stoppage:
@@ -188,17 +197,13 @@ def united(origin, destination, searchdate, searchkey):
                 totaltime = totaltime1[0].replace('Duration', '')
             flightno = row.find("div", {"class":"segment-flight-number"}).text
             planetype = row.find("div", {"class":"segment-aircraft-type"}).text
-            
             detaillink = row.find("a", {"class":"toggle-flight-block-details ui-tabs-anchor"})['href']        
             test = driver.find_element_by_xpath("//a[@href='"+ detaillink +"']")
             #test = driver.execute_script("document.getElementById('" +detaillink+ "')")
     
             dtlid = detaillink.replace('#', '').strip()
-            driver.execute_script("arguments[0].click();", test);
-            time.sleep(0.05)
-            html_page4 = driver.page_source
-            html_page5 = html_page4.encode('utf-8')
-            soup2 = BeautifulSoup(str(html_page5))
+            #driver.execute_script("arguments[0].click();", test);
+            
             departuretime = ''
             desttime = ''
             flight_duration = ''
@@ -253,6 +258,7 @@ def united(origin, destination, searchdate, searchkey):
                      arivelist.append(dest_text)
                      flight_number = info.find("div", {"class":"segment-flight-equipment"}).text
                      flight_number = flight_number.strip()
+                     #print flight_number
                      if flight_duration:
                          plane_text = flight_number + " (" + flight_duration + ")"
                          planelist.append(plane_text)
