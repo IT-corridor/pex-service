@@ -20,7 +20,7 @@ from django.db import connection, transaction
 from multiprocessing import Process
 import threading
 import Queue
-#from pyvirtualdisplay import Display
+from pyvirtualdisplay import Display
 import socket
 import urllib
 
@@ -29,8 +29,8 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
     #return searchkey
     print origin,dest, searchdate,returndate, searchkey,returnkey
     db = MySQLdb.connect(host="localhost", 
-                     user="pex",           
-                      passwd="pex@1234",      
+                     user="root",           
+                      passwd="1jyT382PWzYP",      
                       db="pex")
     cursor = db.cursor()
 
@@ -46,8 +46,8 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
         url = "http://www.virgin-atlantic.com/us/en/book-your-travel/book-your-flight/flight-search-results.html?departure="+origin+"&arrival="+dest+"&adult=1&departureDate="+str(date)+"&search_type=redeemMiles&classType=10&classTypeReturn=10&bookingPanelLocation=Undefined&isreturn=yes&returnDate="+str(retdate)
     else:
         url = "http://www.virgin-atlantic.com/us/en/book-your-travel/book-your-flight/flight-search-results.html?departure="+origin+"&arrival="+dest+"&adult=1&departureDate="+str(date)+"&search_type=redeemMiles&classType=10&classTypeReturn=10&bookingPanelLocation=BookYourFlight&isreturn=no"
-    #display = Display(visible=0, size=(800, 600))
-    #display.start()
+    display = Display(visible=0, size=(800, 600))
+    display.start()
     driver = webdriver.Chrome()
     driver.get(url)
     # normalLayout
@@ -64,7 +64,7 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
                 if tbody.findAll("tr",{"class":"indirectRoute "}):
                     trbody = tbody.findAll("tr",{"class":"indirectRoute "})
         except:
-            #display.stop()
+            display.stop()
             driver.quit()
             return keyid
         for row in trbody:
@@ -319,7 +319,7 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
         virgindata(tbody[0],searchkey)
     if len(tbody)> 1 :
         virgindata(tbody[1],returnkey)
-    #display.stop()                                                                                                                                  
+    display.stop()                                                                                                                                  
     driver.quit()
     return searchkey
 
