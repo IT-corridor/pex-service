@@ -59,10 +59,11 @@ def signal_handler(signum, frame):
 def index(request):
     context = {}
     user = User()
+    print settings.BASE_DIR
     if request.user.username:
-	username = request.user.username
-	request.session['userid']= request.user.user_id
-	user1 = User.objects.get(username=username)
+    	username = request.user.username
+    	request.session['userid']= request.user.user_id
+    	user1 = User.objects.get(username=username)
 	print user1.email
 	if user1.email:
 	    request.session['username'] =user1.email
@@ -384,7 +385,8 @@ def search(request):
                     returnkey = searchdata.searchid
                     #flag2 = 1
 
-                    subprocess.Popen(["python", "/var/www/html/python/pex/pexproject/pexproject/delta.py",destcode, orgncode, str(date1), str(returndate), str(returnkey),etihaddest,etihadorigin,cabin])
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/delta.py",destcode, orgncode, str(date1), str(returndate), str(returnkey),etihaddest,etihadorigin,cabin])
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",destcode, orgncode, str(returndate), str(returnkey)])
                     #customfunction.etihad(etihaddest,etihadorigin,date1,returnkey,cabin)
                     #customfunction.scrape(destcode, orgncode, date1, returndate, returnkey)
             else:
@@ -402,8 +404,8 @@ def search(request):
                 cursor = connection.cursor()
                 #flag1 = 1
                 #customfunction.virgin_atlantic(orgncode, destcode,depart, searchkeyid)
-                myList = [orgncode, destcode, date, searchkeyid]
-                subprocess.Popen(["python", "/var/www/html/python/pex/pexproject/pexproject/delta.py",orgncode,destcode,str(date),str(depart),str(searchkeyid),etihadorigin,etihaddest,cabin])
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/delta.py",orgncode,destcode,str(date),str(depart),str(searchkeyid),etihadorigin,etihaddest,cabin])
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",orgncode,destcode,str(depart),str(searchkeyid)])
                 #customfunction.etihad(etihadorigin,etihaddest,date,searchkeyid,cabin)
                 #customfunction.scrape(orgncode, destcode, date, depart, searchkeyid)
                 returnkey = ''
@@ -417,7 +419,8 @@ def search(request):
                         searchdata.save()
                         returnkey = searchdata.searchid
                         #flag2 = 1
-                        subprocess.Popen(["python","/var/www/html/python/pex/pexproject/pexproject/delta.py",destcode, orgncode, str(date1), str(returndate), str(returnkey),etihaddest,etihadorigin,cabin])
+                        subprocess.Popen(["python",settings.BASE_DIR+"/pexproject/delta.py",destcode, orgncode, str(date1), str(returndate), str(returnkey),etihaddest,etihadorigin,cabin])
+                        subprocess.Popen(["python",settings.BASE_DIR+"/pexproject/united.py",destcode, orgncode, str(returndate), str(returnkey)])
                         #customfunction.etihad(etihaddest,etihadorigin,date,returnkey,cabin)
                         #customfunction.scrape(destcode, orgncode, date, depart, returnkey)
             Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='virgin_atlantic').delete()
@@ -425,7 +428,7 @@ def search(request):
                 Flightdata.objects.filter(searchkeyid=returnkey,datasource='virgin_atlantic').delete()            
 
             #customfunction.virgin_atlantic(orgncode,destcode,depart,returndate,searchkeyid,returnkey)
-            subprocess.Popen(["python", "/var/www/html/python/pex/pexproject/pexproject/virgin.py",orgncode,destcode, str(depart), str(returndate), str(searchkeyid),str(returnkey)])
+            subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/virgin.py",orgncode,destcode, str(depart), str(returndate), str(searchkeyid),str(returnkey)])
             if len(departlist) > 0 :
                 multiplekey = multiplekey+seperator+str(searchkeyid)
                 seperator = ',' 
@@ -902,10 +905,11 @@ def getsearchresult(request):
                 #print taxes
                 record = Flightdata.objects.raw("select p1.*,p1.maintax as maintax1, p1.firsttax as firsttax1, p1.businesstax as businesstax1,p1.rowid as newid ,case when datasource = 'delta' then " + deltaorderprice + "  else " + unitedorderprice + " end as finalprice, "+taxes+" as totaltaxes from pexproject_flightdata as p1 where " + querylist + " order by finalprice ," + taxes + ",departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset))
             mainlist = record 
-            #print record.query
-	progress_value = '' 
+            #print record.quer
+        progress_value = '' 
         if 'progress_value' in request.POST:
-            progress_value = request.REQUEST['progress_value'] 
+            progress_value = request.REQUEST['progress_value']
+            
         recordlen = len(multicitykey1)
         timerecord = Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` ")
         filterkey = {'stoppage':list2, 'datasource':list1, 'cabin':cabin} 
@@ -917,9 +921,9 @@ def getsearchresult(request):
             sharedid = request.GET.get('share_recordid','')
             selectedrow = Flightdata.objects.get(pk=sharedid)   
         if request.is_ajax() :
-            return render_to_response('flightsearch/search.html', {'action':action,'pricesources':pricesources,'progress_value':progress_value, 'pricematrix':pricematrix, 'multisearch':multisearch, 'data':mainlist,'multirecod':mainlist, 'multicity':multicity, 'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name}, context_instance=RequestContext(request))
+            return render_to_response('flightsearch/search.html', {'action':action,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value, 'multisearch':multisearch, 'data':mainlist,'multirecod':mainlist, 'multicity':multicity, 'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name}, context_instance=RequestContext(request))
         if totalrecords > 0:
-            return render_to_response('flightsearch/searchresult.html', {'action':action,'pricesources':pricesources,'progress_value':progress_value, 'pricematrix':pricematrix,'multisearch':multisearch,'data':mainlist,'multirecod':mainlist,'multicity':multicity,'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name}, context_instance=RequestContext(request)) 
+            return render_to_response('flightsearch/searchresult.html', {'action':action,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value,'multisearch':multisearch,'data':mainlist,'multirecod':mainlist,'multicity':multicity,'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name}, context_instance=RequestContext(request)) 
         else:
             
             if request.is_ajax():

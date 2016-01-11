@@ -285,7 +285,7 @@ def delta(orgn, dest, searchdate, searchkey):
     cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "delta", "flag", "flag", "flag", "flag"))
     db.commit()
     return searchkey
-
+'''
 def united(origin, destination, searchdate, searchkey):
     #return searchkey
     db = MySQLdb.connect(host="localhost",  
@@ -613,7 +613,7 @@ def united(origin, destination, searchdate, searchkey):
     cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "united", "flag", "flag", "flag", "flag"))
     db.commit()
     return searchid
-
+'''
 def etihad(source, destcode, searchdate, searchkey,scabin):
     #return searchkey
     dt = datetime.datetime.strptime(searchdate, '%m/%d/%Y')
@@ -849,15 +849,15 @@ print "in delta"
 
 def threadcall():
     threads = []
-    p1 = Thread(target=united, args=(sys.argv[1],sys.argv[2],sys.argv[4],sys.argv[5]))
+    #p1 = Thread(target=united, args=(sys.argv[1],sys.argv[2],sys.argv[4],sys.argv[5]))
     p2 = Thread(target=delta, args=(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[5]))
-    #p3 = Thread(target=etihad, args=(sys.argv[6],sys.argv[7],sys.argv[3],sys.argv[5],sys.argv[8]))
-    p1.start()
+    p3 = Thread(target=etihad, args=(sys.argv[6],sys.argv[7],sys.argv[3],sys.argv[5],sys.argv[8]))
+    #p1.start()
     p2.start()
-    #p3.start()
-    threads.append(p1)
+    p3.start()
+    #threads.append(p1)
     threads.append(p2)
-    #threads.append(p3)
+    threads.append(p3)
     for t in threads:
 	t.join
     	if t.is_alive():
@@ -865,20 +865,6 @@ def threadcall():
 	    print "Thead",t.is_alive()
 if __name__=='__main__':
     threadcall()
-    print "not waiting"    
-    db = MySQLdb.connect(host="localhost",
-		 user ="root",
-		 passwd="1jyT382PWzYP",
-		 db = "pex")
-    cursor = db.cursor()
     #delta(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[5])
     #united(sys.argv[1],sys.argv[2],sys.argv[4],sys.argv[5])
-    etihad(sys.argv[6],sys.argv[7],sys.argv[3],sys.argv[5],sys.argv[8])
-    '''
-    searchkey = sys.argv[5]
-    currentdatetime = datetime.datetime.now()
-    stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
-    print stime
-    cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
-    db.commit()
-    '''
+    #etihad(sys.argv[6],sys.argv[7],sys.argv[3],sys.argv[5],sys.argv[8])
