@@ -2319,9 +2319,10 @@ $(document).ready(function(){
  		{
  			console.log('stop');
  			$('#progressbar').css("width", "100%");
+			$('#progress_hidden_val').val('195');
  			clearInterval(refreshIntervalId);
  			$('#progressbar').text('');
- 			$('#progressbar').hide();
+ 			$('.progress').hide();
  		}
  	},
  	});
