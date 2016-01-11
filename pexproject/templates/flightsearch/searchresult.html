@@ -2288,8 +2288,14 @@ $(document).ready(function(){
          	$("#content1").append(html); 
          	progess_width = $('#progressbar').width();
          	$('#progress_hidden_val').val(progess_width);
-         	if(progess_width < 185){
+         	if(progess_width < 125)
+         	{
          		progess_width = parseInt(progess_width)+5;
+         	}
+         	else{
+         		if(progess_width < 185){
+         			progess_width = parseInt(progess_width)+2;
+         		}
          	}
          	$('#progressbar').width(progess_width);
          	
