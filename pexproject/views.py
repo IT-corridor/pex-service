@@ -59,7 +59,6 @@ def signal_handler(signum, frame):
 def index(request):
     context = {}
     user = User()
-    print settings.BASE_DIR
     if request.user.username:
     	username = request.user.username
     	request.session['userid']= request.user.user_id
@@ -444,7 +443,7 @@ def search(request):
 def get_airport(request):
     if request.is_ajax():
         q = request.GET.get('term', '')
-        airport = Airports.objects.filter(Q(cityName__istartswith=q) | Q(code__istartswith=q))[:20]
+        airport = Airports.objects.filter(Q(code__istartswith=q) | Q(cityName__istartswith=q)).order_by('code','cityName')[:20]
         # airport.query.group_by = ['code']
         results = []
         airportcode = []
@@ -453,7 +452,7 @@ def get_airport(request):
 	            airportcode.append(airportdata.code)
         	    airport_json = {}
 	            airport_json['id'] = airportdata.airport_id
-        	    airport_json['label'] = airportdata.cityName + ", " + airportdata.cityCode + ", " + airportdata.countryCode + "  (" + airportdata.code + " )"
+        	    airport_json['label'] = airportdata.cityName + ", " + airportdata.name + ", " + airportdata.countryCode + "  (" + airportdata.code + " )"
 	            airport_json['value'] = airportdata.cityName + " (" + airportdata.code + ")"
         	    results.append(airport_json)
         data = json.dumps(results)
