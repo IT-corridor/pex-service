@@ -2261,6 +2261,10 @@ div.ui-datepicker{
 		max-height: 40px;
 		overflow: hidden;
 	}
+	.xs-filters-holder-ht {
+		max-height: 85px;
+		overflow: hidden;
+	}
 	button.close {
 		left: 94%;
 	}
