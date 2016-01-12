@@ -1854,6 +1854,9 @@ display:inline-block;
 	    min-width: 90px !important;
     min-height: 45px !important;
 }
+div.ui-datepicker{
+   font-size:12px;
+}
 .div-table .row
 {
 	margin:0px;
