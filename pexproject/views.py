@@ -443,8 +443,9 @@ def search(request):
 def get_airport(request):
     if request.is_ajax():
         q = request.GET.get('term', '')
-        airport = Airports.objects.filter(Q(code__istartswith=q) | Q(cityName__istartswith=q)).order_by('code','cityName')[:20]
-        # airport.query.group_by = ['code']
+        airport = Airports.objects.filter(Q(code__istartswith=q)).order_by('code','cityName')[:20]    
+        if len(list(airport)) < 1:
+            airport = Airports.objects.filter(Q(cityName__istartswith=q)).order_by('code','cityName')[:20]
         results = []
         airportcode = []
         for airportdata in airport:
