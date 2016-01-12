@@ -173,6 +173,7 @@ margin-top: -8px;
 	background-color: #64B7E7;
 	border-color: #64B7E7;
 }
+
 .btn-pexSearch:hover, .btn-pexSearch:focus, .btn-pexSearch.focus, .btn-pexSearch:active, .btn-pexSearch.active, .open > .dropdown-toggle.btn-pexSearch {
 	color: #fff;
 	background-color: #64B7E7;
@@ -1922,7 +1923,7 @@ display:inline-block;
 }
 .btn-pexSearch
 {
-	margin-top:10px;
+	!margin-top:10px;
 	width:100%;
 }
 .collapse-cstome-cntrl .navbar-brand
