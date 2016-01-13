@@ -2269,6 +2269,7 @@ $(document).ready(function(){
 	var airline =new Array();
     var stoppage = new Array();
     var row_val = "";
+    var refreshIntervalId = '';
     $('#progress_hidden_val').val('{{progress_value}}');
     if($('#rowid').length)
     {
@@ -2280,16 +2281,18 @@ $(document).ready(function(){
 	  $(".chk-stoppage:checked").each(function(){
 	        stoppage.push($(this).val());
 	   });
-	var refreshIntervalId = setInterval(redirecttosearchpage, 5000);
+	   
+	
 	var progess_width = 0;
 	if(parseInt($('#progress_hidden_val').val()) > 185 )
 	{
 		$('.progress').hide();
 		$('.filters-holder').removeClass('xs-filters-holder-ht');
-	
+		
 	}
 	else{
 		$('.filters-holder').addClass('xs-filters-holder-ht');
+		refreshIntervalId = setInterval(redirecttosearchpage, 5000);
 	}
 	
 	function redirecttosearchpage(){
