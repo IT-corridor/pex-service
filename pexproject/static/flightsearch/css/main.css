@@ -641,6 +641,10 @@ p.flight-name {
 	width: 32%;
 	left: 70px;
 }
+.fb-share-img{
+	max-width: 100%;
+  	max-height: 100%;
+}
 
 .travelers-holder span span.caret {
 	position: relative;
