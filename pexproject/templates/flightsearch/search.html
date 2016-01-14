@@ -480,6 +480,35 @@
 													                            </tr>
 													                    {% endif %}
 													                    {% endif %}
+													                    
+													                    {% if mylist.4 %}
+													                    <tr>
+													                            <td></td>
+													                            <td>
+													                                    <h5><b>Change planes </b></h5>
+													                            </td>
+													                    </tr>
+													                    <tr itemscope itemtype="http://schema.org/Flight">
+													                            <td><b>Departs: </b></td>
+													                            <td><time itemprop="departureTime">{{mylist.4}}</time></td>
+													                    </tr>
+													
+													
+													                    <tr itemscope itemtype="http://schema.org/Flight">
+													                            <td><b>Arrives:</b></td>
+													                            <td><time itemprop="arrivalTime">{{mylist1.4}}</time></td>
+													                    </tr>
+													                    <tr>
+													                            <td><b>Flight:</b></td>
+													                            <td>{{mylist2.4}}</td>
+													                    </tr>
+													                    {% if mylist3.4 %}
+													                            <tr>
+													                                    <td><b>Operated By:</b></td>
+													                                    <td>{{mylist3.4}}</td>
+													                            </tr>
+													                    {% endif %}
+													                    {% endif %}
 													
 													
 													                    {% endwith %}
@@ -531,7 +560,7 @@
 																	<td>{{mylist3.0}}</td>
 																</tr>
 															{% endif %}
-															{% if row.stoppage == '1 STOP' or row.stoppage == '2 STOPS' or row.stoppage == '3 STOPS'%}
+															{% if row.stoppage == '1 STOP' or row.stoppage == '2 STOPS' or row.stoppage == '3 STOPS' or row.stoppage == '4 STOPS'%}
 															<tr>
 																<td></td>
 																<td>
@@ -560,7 +589,7 @@
 															{% endif %}
 															
 															{% endif %}
-															{% if row.stoppage == '2 STOPS' or row.stoppage == '3 STOPS' %}
+															{% if row.stoppage == '2 STOPS' or row.stoppage == '3 STOPS' or row.stoppage == '4 STOPS' %}
 															<tr>
 																<td></td>
 																<td>
@@ -588,7 +617,7 @@
 																</tr>
 															{% endif %}
 															{% endif %}
-															{% if row.stoppage == '3 STOPS' and mylist.3 %}
+															{% if row.stoppage == '3 STOPS' or row.stoppage == '4 STOPS' and mylist.3 %}
 															<tr>
 																<td></td>
 																<td>
@@ -613,6 +642,35 @@
 																<tr>
 																	<td><b>Operated By:</b></td>
 																	<td>{{mylist3.3}}</td>
+																</tr>
+															{% endif %}
+															{% endif %}
+															
+															{% if row.stoppage == '4 STOPS' and mylist.4 %}
+															<tr>
+																<td></td>
+																<td>
+																	<h5><b>Change planes </b></h5>
+																</td>
+															</tr>
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Departs: </b></td>
+																<td><time itemprop="departureTime">{{mylist.4}}</time></td>
+															</tr>
+															
+															
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Arrives:</b></td>
+																<td><time itemprop="arrivalTime">{{mylist1.4}}</time></td>
+															</tr>
+															<tr>
+																<td><b>Flight:</b></td>
+																<td>{{mylist2.4}}</td>
+															</tr>
+															{% if mylist3.4 %}
+																<tr>
+																	<td><b>Operated By:</b></td>
+																	<td>{{mylist3.4}}</td>
 																</tr>
 															{% endif %}
 															{% endif %}
@@ -663,7 +721,7 @@
 																<td>{{mylist3.0}}</td>
 															</tr>
 															{%endif%}
-															{% if row.stoppage1 == '1 STOP' or row.stoppage1 == '2 STOPS' or row.stoppage1 == '3 STOPS'%}
+															{% if row.stoppage1 == '1 STOP' or row.stoppage1 == '2 STOPS' or row.stoppage1 == '3 STOPS' or row.stoppage1 == '4 STOPS'%}
 															<tr>
 																<td></td>
 																<td>
@@ -692,7 +750,7 @@
 															{% endif%}
 															
 															{% endif %}
-															{% if row.stoppage1 == '2 STOPS' or row.stoppage1 == '3 STOPS'%}
+															{% if row.stoppage1 == '2 STOPS' or row.stoppage1 == '3 STOPS' or row.stoppage1 == '4 STOPS'%}
 															<tr>
 																<td></td>
 																<td>
@@ -720,7 +778,7 @@
 																</tr>
 															{% endif %}
 														{% endif %}
-														{% if row.stoppage1 == '3 STOPS' and mylist.3 %}
+														{% if row.stoppage1 == '3 STOPS' or row.stoppage1 == '4 STOPS' and mylist.3 %}
 															<tr>
 																<td></td>
 																<td>
@@ -745,6 +803,35 @@
 																<tr>
 																	<td><b>Operated By:</b></td>
 																	<td>{{mylist3.3}}</td>
+																</tr>
+															{% endif %}
+															{% endif %}
+															
+														{% if row.stoppage1 == '4 STOPS' and mylist.4 %}
+															<tr>
+																<td></td>
+																<td>
+																	<h5><b>Change planes </b></h5>
+																</td>
+															</tr>
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Departs: </b></td>
+																<td><time itemprop="departureTime">{{mylist.4}}</time></td>
+															</tr>
+															
+															
+															<tr itemscope itemtype="http://schema.org/Flight">
+																<td><b>Arrives:</b></td>
+																<td><time itemprop="arrivalTime">{{mylist1.4}}</time></td>
+															</tr>
+															<tr>
+																<td><b>Flight:</b></td>
+																<td>{{mylist2.4}}</td>
+															</tr>
+															{% if mylist3.4 %}
+																<tr>
+																	<td><b>Operated By:</b></td>
+																	<td>{{mylist3.4}}</td>
 																</tr>
 															{% endif %}
 															{% endif %}
