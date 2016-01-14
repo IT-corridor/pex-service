@@ -59,9 +59,6 @@ def index(request):
 	else:
 	    request.session['username'] = request.user.username
 	request.session['password'] = user1.password 
-	#print "userid",request.session['userid']
-    #if 'password'  not in request.session:	
-    	#request.session['password'] = "123456" #request.user.password
     return  render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
 
 def flights(request):
@@ -76,7 +73,7 @@ def flights(request):
         objects = Searchkey.objects.filter(searchid__in=allkeys)
         
         mc = 'mc'
-        #return  render_to_response('flightsearch/multicity.html', context_instance=RequestContext(request))
+        
     return  render_to_response('flightsearch/flights.html',{'mc':mc,'searchparams':objects}, context_instance=RequestContext(request))
         
 def staticPage(request):
@@ -349,6 +346,7 @@ def search(request):
                 print "dest",etihaddest
                 destcode = row1.code
                 destination1 = row1.cityName + " (" + row1.code + ")"
+            
             dt = datetime.datetime.strptime(depart, '%Y/%m/%d')
             date = dt.strftime('%m/%d/%Y')
             searchdate = dt.strftime('%Y-%m-%d')        
@@ -626,7 +624,7 @@ def getsearchresult(request):
             list2 = request.POST.getlist('stoppage')
             list2 = list2[0].split(',')
             if '2 STOPS' in list2:
-                querylist = querylist + join + "p1.stoppage in ('" + "','".join(list2) + "','3 STOPS')"
+                querylist = querylist + join + "p1.stoppage in ('" + "','".join(list2) + "','3 STOPS','4 STOPS')"
                 join = ' AND '
             else: 
                 if list2[0] != '':
@@ -640,6 +638,7 @@ def getsearchresult(request):
             if len(list2) > 1:
                 if '2 STOPS' in list2:
                     list2.append('3 STOPS')
+                    list2.append('4 STOPS')
                 querylist = querylist + join + "p1.stoppage IN ('" + "','".join(list2) + "')"
                 join = ' AND '
             else:
@@ -770,7 +769,7 @@ def getsearchresult(request):
                         unitedminval = unitedmin['firstclass']
                         unitedtax = unitedmin['firsttax']
                         unitedcabin_name = unitedmin['cabintype2']
-                        returnunited = Flightdata.objects.filter(searchkeyid=returnkey, datasource='united', firstclass=unitedminval)
+                        returnunited = Flightdata.objects.firow.stoppage == '3 STOPS' or lter(searchkeyid=returnkey, datasource='united', firstclass=unitedminval)
                 else:
                     if cabinclass == "business":
                         unitedmin1 = Flightdata.objects.filter(searchkeyid=returnkey, datasource='united', business__gt=0).values('business', 'businesstax', 'cabintype3').annotate(Min('business')).order_by('business')
