@@ -354,8 +354,7 @@ def search(request):
             time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
             time1 = datetime.datetime.now() - timedelta(hours=4)
             time1 = time1.strftime('%Y-%m-%d %H:%M:%S')
-            #flag1 = 0
-            #flag2 = 0
+            
             
             
             Searchkey.objects.filter(scrapetime__lte=time1).delete()
@@ -370,7 +369,6 @@ def search(request):
                     searchdata = Searchkey(source=destination1, destination=origin, traveldate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid)
                     searchdata.save()
                     returnkey = searchdata.searchid
-                    #flag2 = 1
 
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/delta.py",destcode, orgncode, str(date1), str(returndate), str(returnkey),etihaddest,etihadorigin,cabin])
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",destcode, orgncode, str(returndate), str(returnkey)])
@@ -389,7 +387,6 @@ def search(request):
                 searchdata.save()
                 searchkeyid = searchdata.searchid 
                 cursor = connection.cursor()
-                #flag1 = 1
                 #customfunction.virgin_atlantic(orgncode, destcode,depart, searchkeyid)
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/delta.py",orgncode,destcode,str(date),str(depart),str(searchkeyid),etihadorigin,etihaddest,cabin])
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",orgncode,destcode,str(depart),str(searchkeyid)])
@@ -579,6 +576,7 @@ def getsearchresult(request):
     recordkey=''
     pricematrix =''
     pricesources = []
+    roundtripkey = ''
     if request.is_ajax():
         if 'page_no' in request.POST:
             pageno = request.REQUEST['page_no']
@@ -598,9 +596,14 @@ def getsearchresult(request):
     action = ''
     if request.GET.get('keyid', '') :
         searchkey = request.GET.get('keyid', '')
-        totalrecords1 = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(searchkey)+" and flighno != 'flag' ")
+        totalrecords1 = ''
+        if roundtripkey:
+            return_cabin_fare = "p2." + cabinclass
+            depart_cabin_fare = "p1." + cabinclass
+            totalrecords1 = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(roundtripkey)+" and "+return_cabin_fare+" > 0 where p1.searchkeyid="+str(searchkey)+" and "+depart_cabin_fare+" > 0")
+        else:
+            totalrecords1 = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(searchkey)+" and flighno != 'flag' and "+cabinclass+"> 0")
         totalrecords = len(list(totalrecords1)) 
-        
         if request.GET.get('multicity'):
             allkey = request.GET.get('multicity')
             multiple_key = allkey.split(',')
@@ -630,8 +633,6 @@ def getsearchresult(request):
                 if list2[0] != '':
                     querylist = querylist + join + "p1.stoppage in ('" + "','".join(list2) + "')"
                     join = ' AND ' 
-                
-                   
         
         else:
             list2 = request.POST.getlist('stoppage')
@@ -916,7 +917,6 @@ def getsearchresult(request):
         else:
             
             if request.is_ajax():
-                
                 return render_to_response('flightsearch/search.html', {'action':action, 'data':record, 'minprice':minprice, 'tax':tax, 'timedata':timeinfo,'progress_value':progress_value, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name}, context_instance=RequestContext(request))
             #msg = "Sorry, No flight found  from " + source + " To " + destination + ".  Please search for another date or city !"
             msg = "Oops, looks like there aren't any flight results for your filtered search. Try to broaden your search criteria for better results."
