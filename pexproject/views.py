@@ -769,7 +769,7 @@ def getsearchresult(request):
                         unitedminval = unitedmin['firstclass']
                         unitedtax = unitedmin['firsttax']
                         unitedcabin_name = unitedmin['cabintype2']
-                        returnunited = Flightdata.objects.firow.stoppage == '3 STOPS' or lter(searchkeyid=returnkey, datasource='united', firstclass=unitedminval)
+                        returnunited = Flightdata.objects.filter(searchkeyid=returnkey, datasource='united', firstclass=unitedminval)
                 else:
                     if cabinclass == "business":
                         unitedmin1 = Flightdata.objects.filter(searchkeyid=returnkey, datasource='united', business__gt=0).values('business', 'businesstax', 'cabintype3').annotate(Min('business')).order_by('business')
