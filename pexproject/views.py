@@ -25,7 +25,7 @@ from pexproject.templatetags.customfilter import floatadd, assign
 from social_auth.models import UserSocialAuth
 from django.contrib.auth import login as social_login,authenticate,get_user
 from django.contrib.auth import logout as auth_logout
-from django.conf import settings
+import settings
 from django.utils.html import strip_tags
 from random import randint
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -39,7 +39,7 @@ from django.db import connection, transaction
 import operator
 import customfunction,rewardScraper
 from pexproject.form import LoginForm
-#from django.utils import timezone
+#from djnago.conf import settings
 import subprocess
 import json
 import signal
@@ -331,19 +331,16 @@ def search(request):
             orgnid = ongnidlist[i]
             destid = destlist[i]
             depart = departlist[i]
-            print "orgnid",orgnid,"destid",destid
             originobj = Airports.objects.filter(airport_id=orgnid)
             destobj = Airports.objects.filter(airport_id=destid)
             for row in originobj:
                 orgn = row.cityName + ", " + row.cityCode + ", " + row.countryCode + "  (" + row.code + ")"
                 etihadorigin = row.cityName
-                print "origin",etihadorigin
                 orgncode = row.code
                 origin = row.cityName + " (" + row.code + ")"
             for row1 in destobj:
                 dest = row1.cityName + ", " + row1.cityCode + ", " + row1.countryCode + "  (" + row1.code + ")"
                 etihaddest = row1.cityName
-                print "dest",etihaddest
                 destcode = row1.code
                 destination1 = row1.cityName + " (" + row1.code + ")"
             
@@ -358,7 +355,9 @@ def search(request):
             
             
             Searchkey.objects.filter(scrapetime__lte=time1).delete()
-            #Flightdata.objects.filter(scrapetime__lte=time1).delete()
+            Flightdata.objects.raw("insert into arcade_flight_data select * from pexproject_flightdata where scrapetime < '"+str(time1)+"'")
+            Flightdata.objects.filter(scrapetime__lte=time1).delete()
+            transaction.commit()
             if searchdate1:
                 obj = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, scrapetime__gte=time1)
                 returnobj = Searchkey.objects.filter(source=destination1, destination=origin, traveldate=searchdate1, scrapetime__gte=time1)
@@ -522,7 +521,6 @@ def checkData(request):
             else:
                 totalrecords1 = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(recordkey)+" and "+cabin+"> 0")
                 totalrecords = len(list(totalrecords1))
-                #totalrecords = Flightdata.objects.filter(searchkeyid=recordkey).count()  
                 obj = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(recordkey)+" and flighno = 'flag' ")
                 obj1 = len(list(obj))
                 if obj1 > 2:
@@ -542,7 +540,6 @@ def checkData(request):
         
 def getsearchresult(request):
     context = {}
-    
     cabin = []
     taxes = ''
     cabinclass = request.GET.get('cabin', '')

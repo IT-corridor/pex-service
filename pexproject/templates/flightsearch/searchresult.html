@@ -13,8 +13,7 @@
 			<div class="col-xs-12 nopadding">
 				<div class="jumbotron">
 					<div class="container-fluid">
-						<div class="col-md-12 col-xs-12 nopadding">
-													
+						<div class="col-md-12 col-xs-12 nopadding">						
 							<div class="col-md-2 col-xs-12 nopadding filters-holder mvb10px ">
 								
 								<div class="col-xs-12 nopadding">
@@ -1726,7 +1725,7 @@
 							  </div>
 							</div>
 							<div class="form-group mvt10px">
-							<a href="https://www.facebook.com/sharer/sharer.php?u=http://pexportal.com/getsearchresult?keyid={{request.GET.keyid}}%26cabin={{request.GET.cabin}}%26passenger={{request.GET.passenger}}{% if request.GET.returnkey %}%26returnkey={{request.GET.returnkey}}{%endif%}" id="social_share"><span class="btn btn-pexSearch filter-serch-btn">Post</span></a>
+							<a href="https://www.facebook.com/sharer/sharer.php?u=http://"+{{request.get_host}}+"/getsearchresult?keyid={{request.GET.keyid}}%26cabin={{request.GET.cabin}}%26passenger={{request.GET.passenger}}{% if request.GET.returnkey %}%26returnkey={{request.GET.returnkey}}{%endif%}" id="social_share"><span class="btn btn-pexSearch filter-serch-btn">Post</span></a>
 							</div>
 				    	</form>
 				    </div>
@@ -1737,7 +1736,7 @@
 				    			<textarea id="twitter_content" rows="2" class="form-control" placeholder="Enter your tweet"></textarea>
 				    		</div>
 				    		<div class="form-group">
-				    		<a href="https://twitter.com/home?status=http://pexportal.com/getsearchresult?keyid={{request.GET.keyid}}%26cabin={{request.GET.cabin}}%26passenger={{request.GET.passenger}}{% if request.GET.returnkey %}%26returnkey={{request.GET.returnkey}}{%endif%}" id="twitter_share" ><span class="btn btn-pexSearch filter-serch-btn">Tweet</span></a>
+				    		<a href="https://twitter.com/home?status=http://"+{{request.get_host}}+"/getsearchresult?keyid={{request.GET.keyid}}%26cabin={{request.GET.cabin}}%26passenger={{request.GET.passenger}}{% if request.GET.returnkey %}%26returnkey={{request.GET.returnkey}}{%endif%}" id="twitter_share" ><span class="btn btn-pexSearch filter-serch-btn">Tweet</span></a>
 				    		</div>
 				    	</form>
 				    </div>
@@ -1752,15 +1751,6 @@
 		
 	<script type="text/javascript">
 	$(function(){
-		/*
-	 		$('#return').datetimepicker({format: "m/d/Y",'timepicker': false,closeOnDateSelect: true,scrollMonth: false});
-            $('#departuredate').datetimepicker({ format: "m/d/Y",minDate: 0,'timepicker': false,closeOnDateSelect: true,scrollMonth: false,
-                        onSelectDate: function(selectedDate)
-                        {
-                                $("#return").focus();
-                                $( "#return" ).datetimepicker({format: "m/d/Y", minDate: selectedDate,scrollMonth: false });
-                        }
-              }); */
              $('#departuredate').datepicker(
                	{
                		minDate: 0,
