@@ -54,6 +54,7 @@ var rdtrip = $('#rdtrip').val();
 var traveller = $('#passenger').val();
 var multikey ='';
 var searchid = '';
+var refreshIntervalId = '';
 $.ajaxSetup({
   data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
 });
@@ -75,7 +76,7 @@ $.ajax({
         	returnid = data[1];
         }
         //redirecttosearchpage(searchid,returnid); 
-        setInterval(datacheck, 5000,searchid,returnid); 
+         refreshIntervalId = setInterval(datacheck, 5000,searchid,returnid); 
     },
 	
    });
@@ -95,8 +96,10 @@ $.ajax({
  		
  		if(data[0] == 'stored' || data[1] == 'completed')
  		{
+ 			clearInterval(refreshIntervalId);
+ 			//clearTimeout(datacheck, 5000);
  			redirecttosearchpage(searchid,returnid);
- 			clearTimeout(datacheck, 5000);
+ 			
  		}
  	},
  	});
