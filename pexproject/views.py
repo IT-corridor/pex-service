@@ -302,7 +302,7 @@ def search(request):
     if request.is_ajax():
         context = {}
         cursor = connection.cursor()
-        returndate = request.REQUEST['returndate']
+        returndate = request.POST['returndate']
         dt1 = ''
         searchdate1 = ''
         multiplekey =''
@@ -311,16 +311,16 @@ def search(request):
             dt1 = datetime.datetime.strptime(returndate, '%Y/%m/%d')
             date1 = dt1.strftime('%m/%d/%Y')
             searchdate1 = dt1.strftime('%Y-%m-%d')
-        triptype = request.REQUEST['triptype']
+        triptype = request.POST['triptype']
         ongnidlist=''
         destlist = ''
         departlist =''
         searchkeyid = ''
         returnkey = ''
-        orgnid = request.REQUEST['fromMain']
-        destid = request.REQUEST['toMain']
-        depart = request.REQUEST['deptdate']
-        cabin = request.REQUEST['cabin']
+        orgnid = request.POST['fromMain']
+        destid = request.POST['toMain']
+        depart = request.POST['deptdate']
+        cabin = request.POST['cabin']
         #print "cabin",cabin
         ongnidlist =  orgnid.split(',')
         destlist = destid.split(',')
@@ -355,8 +355,8 @@ def search(request):
             
             
             Searchkey.objects.filter(scrapetime__lte=time1).delete()
-            Flightdata.objects.raw("insert into arcade_flight_data select * from pexproject_flightdata where scrapetime < '"+str(time1)+"'")
-            Flightdata.objects.filter(scrapetime__lte=time1).delete()
+            cursor.execute("insert into arcade_flight_data select * from pexproject_flightdata where scrapetime < '"+str(time1)+"'")
+            #Flightdata.objects.filter(scrapetime__lte=time1).delete()
             transaction.commit()
             if searchdate1:
                 obj = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, scrapetime__gte=time1)
@@ -458,26 +458,26 @@ def searchLoading(request):
             originlist = request.POST.getlist('fromMain')
             destinationlist = request.POST.getlist('toMain')
             datelist = request.POST.getlist('deptdate')
-            passenger = request.REQUEST['passenger']
-            cabintype = request.REQUEST['cabintype']
+            passenger = request.POST['passenger']
+            cabintype = request.POST['cabintype']
             orgn = ','.join(originlist)
             dest = ','.join(destinationlist)
             
         else:
-            orgn = request.REQUEST['fromMain'] 
-            dest = request.REQUEST['toMain'] 
-            depart = request.REQUEST['deptdate']
-            passenger = request.REQUEST['passenger']
+            orgn = request.POST['fromMain'] 
+            dest = request.POST['toMain'] 
+            depart = request.POST['deptdate']
+            passenger = request.POST['passenger']
             cabintype = ''
-            if 'cabintype' in request.REQUEST:
-                cabintype = request.REQUEST['cabintype']
+            if 'cabintype' in request.POST:
+                cabintype = request.POST['cabintype']
             roundtripkey = ''
-            if 'keyid' in request.REQUEST:
-                roundtripkey = request.REQUEST['keyid']
-            if 'trip' in request.REQUEST:
-                trip = request.REQUEST['trip']
-            if 'returndate' in  request.REQUEST:
-                retdate = request.REQUEST['returndate']
+            if 'keyid' in request.POST:
+                roundtripkey = request.POST['keyid']
+            if 'trip' in request.POST:
+                trip = request.POST['trip']
+            if 'returndate' in  request.POST:
+                retdate = request.POST['returndate']
                 if retdate:
                     returndate = datetime.datetime.strptime(retdate, '%m/%d/%Y')
                     date1 = returndate.strftime('%Y/%m/%d')
@@ -505,10 +505,10 @@ def checkData(request):
         #cabinclass = request.GET.get('cabin', '')
         #passenger = request.GET.get('passenger', '')
         if 'keyid' in request.POST:
-            recordkey = request.REQUEST['keyid']
-            cabin = request.REQUEST['cabin']
+            recordkey = request.POST['keyid']
+            cabin = request.POST['cabin']
             if 'returnkey' in request.POST:
-                returnkey = request.REQUEST['returnkey']
+                returnkey = request.POST['returnkey']
                 returnfare = "p2." + cabin
                 departfare = "p1." + cabin
         
@@ -670,25 +670,25 @@ def getsearchresult(request):
     arivtmaxtime = datetime.time(0, 0, 0)
     
     if 'depaturemin' in request.POST:
-         depttime = request.REQUEST['depaturemin']
+         depttime = request.POST['depaturemin']
          deptformat = (datetime.datetime.strptime(depttime, '%I:%M %p'))
          deptformat1 = deptformat.strftime('%H:%M:%S')
          querylist = querylist + join + " p1.departure >= '" + deptformat1 + "'"
          join = ' AND '
     if 'depaturemax' in request.POST:
-        deptmaxtime = request.REQUEST['depaturemax']
+        deptmaxtime = request.POST['depaturemax']
         deptmaxformat = (datetime.datetime.strptime(deptmaxtime, '%I:%M %p'))
         deptmaxformat1 = deptmaxformat.strftime('%H:%M:%S')
         querylist = querylist + join + " p1.departure <= '" + deptmaxformat1 + "'"
         join = ' AND '
     if 'arivalmin' in request.POST:
-         arivtime = request.REQUEST['arivalmin']
+         arivtime = request.POST['arivalmin']
          arivformat = (datetime.datetime.strptime(arivtime, '%I:%M %p'))
          arivformat1 = arivformat.strftime('%H:%M:%S')
          querylist = querylist + join + " p1.arival >= '" + arivformat1 + "'"
          join = ' AND '
     if 'arivalmax' in request.POST:
-        arivtmaxtime = request.REQUEST['arivalmax']
+        arivtmaxtime = request.POST['arivalmax']
         arivtmaxformat = (datetime.datetime.strptime(arivtmaxtime, '%I:%M %p'))
         arivtmaxformat1 = arivtmaxformat.strftime('%H:%M:%S')
         querylist = querylist + join + " p1.arival <= '" + arivtmaxformat1 + "'"
@@ -712,7 +712,7 @@ def getsearchresult(request):
                 cabintype = ''
                 recordid = request.GET.get('rowid', '')
                 if 'rowid' in request.POST:
-                    recordid = request.REQUEST['rowid']
+                    recordid = request.POST['rowid']
                  
                 datasources = request.GET.get('datasource', '')
                 if recordid != "undefined":

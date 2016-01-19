@@ -68,7 +68,7 @@ $.ajax({
         multikey = data[0];
         searchid1 = multikey.split(',');
         searchid = searchid1[0];
-        console.log(searchid);
+        //console.log(searchid);
         var returnid='';
         if(data[1])
         {
@@ -82,8 +82,6 @@ $.ajax({
  
  function datacheck(searchid,returnid)
  {
- 	console.log(searchid);
- 	console.log(cabintype);
  	var temp = '';
  	if( returnid != '')
  	{
@@ -94,7 +92,7 @@ $.ajax({
  	url: "/checkData/",
  	data: "keyid="+ encodeURI(searchid) + "&csrfmiddlewaretoken=" + encodeURI(CSRF_TOKEN)+"&cabin="+encodeURI(cabintype)+temp,
  	success: function(data){
- 		console.log(data[0]);
+ 		
  		if(data[0] == 'stored' || data[1] == 'completed')
  		{
  			redirecttosearchpage(searchid,returnid);
@@ -103,7 +101,6 @@ $.ajax({
  	},
  	});
  }    
- //alert(searchid)  ;  
  function redirecttosearchpage(searchid,returnkey){
  	multicity='';
  	if(multikey.indexOf(",") >= 0){
