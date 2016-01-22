@@ -21,10 +21,12 @@
 				</div>
 					{% if points %}
 				{% for row in points%}
-					<div class="col-xs-12 nopadding" style="padding-bottom: 10px">	
+					<div class="col-xs-12 nopadding rewardpoint" style="padding-bottom: 10px" id="{{row.3}}_div">	
 					<div class="col-xs-4 text-center">{{row.3|title}}</div>
 					<div class="col-xs-4 text-center">{{row.2}} Miles</div>
-					<div class="col-xs-4 text-center"><a href="#" id="{{row.3}}" class="update"> Update</a></div>
+					<div class="col-xs-4 text-center"><a href="#" id="{{row.3}}" class="update"> Update</a>
+						| <a href="#" id="{{row.3}}_{{ request.session.userid }}" class="deactivate">Deactivate</a>
+					</div>
 					</div>
 					<div class="col-xs-12 nopadding" style="padding-bottom: 10px" id ="div_{{row.3}}"></div>
 				{% endfor %}
@@ -125,6 +127,26 @@
 				$(this).text("Update");
 			}
 			
+		});
+		$('.deactivate').click(function(){
+			var airline = $(this).attr('id');
+			airlines = airline.split('_');
+			$("#"+airlines[0]+"_div").hide();
+		
+			var r = confirm("Are You sure, you want to deactivate your account!");
+			if (r == true) 
+			{	
+				//$("#"+airline).parent('.rewardpoint').hide();
+				$.ajax({
+		       	type: "POST",
+		       	dataType: "text",
+		       	url: "/myRewardPoint/",
+		        data: "act="+encodeURI("deactive")+"&csrfmiddlewaretoken="+encodeURI("{{csrf_token}}")+"&acct="+encodeURI(airlines[0])
+		        }).done(function(data){
+			      	$("#"+airlines[0]+"_div").remove();
+			      }) ;
+			    
+			} 
 		});
 		/*
 		$('.updatebtn').on("click", function(){

@@ -121,7 +121,14 @@ def myRewardPoint(request):
     resp = ''
     datasource = []
     userid = request.session['userid']
-    
+    if request.is_ajax():
+        airline_name = request.REQUEST['acct']
+        cursor.execute("delete from reward_point_credential where user_id="+str(userid)+" and airline = '"+airline_name+"'")
+        cursor.execute("delete from reward_points where user_id="+str(userid)+" and airlines = '"+airline_name+"'")
+        mimetype = 'application/json'
+        data = "success"
+        json.dumps(data)
+    	return HttpResponse(data, mimetype)
     if request.POST:
         username = request.REQUEST['username']
         password = request.REQUEST['password']
@@ -264,6 +271,7 @@ def sendFeedBack(request):
 	    #body = strip_tags(body)
 	send_mail(topic,body,from_emailid,['info@pexportal.com'])
 	#send_mail('Subject here', 'Here is the message.', 'hit.jay1690@gmail.com',['jk.dhn2010@gmail.com'], fail_silently=False)
+
 	alert_msg = "Thanks for giving us feedback"
 	#print "alert_msg",alert_msg 
     return render_to_response('flightsearch/feedback.html',{'alert_msg':alert_msg}, context_instance=RequestContext(request))
@@ -516,7 +524,7 @@ def checkData(request):
                 returnkey = request.POST['returnkey']
                 returnfare = "p2." + cabin
                 departfare = "p1." + cabin
-        
+                #pricematrix = Flightdata.objects.raw("select p1.rowid,p2.rowid, p2.datasource, (min(if(p1.maincabin > 0,p1.maincabin,NULL))+min(if(p2.maincabin > 0,p2.maincabin,NULL))) as maincabin, (min(if(p1.firstclass>0,p1.firstclass,NULL))+min(if(p2.firstclass>0,p2.firstclass,NULL))) as firstclass ,(min(if(p1.business>0,p1.business,NULL))+min(if(p2.business>0,p2.business,NULL))) as business  from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+returnkey+" where p1.searchkeyid="+str(recordkey)+" group by p1.datasource")
                 totalrecords1 = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and "+returnfare+" > 0 where p1.searchkeyid="+str(recordkey)+" and "+departfare+" > 0")
                 totalrecords = len(list(totalrecords1))                 
                 obj = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and p2.flighno = 'flag' where p1.searchkeyid="+str(recordkey)+" and p1.flighno = 'flag'")
@@ -524,6 +532,7 @@ def checkData(request):
                 if obj1 > 2:
                      iscomplete = "completed"  
             else:
+                #pricematrix =  Flightdata.objects.raw("select rowid, datasource, min(if(maincabin > 0,maincabin,NULL)) as maincabin, min(if(firstclass>0,firstclass,NULL)) as firstclass ,min(if(business>0,business,NULL)) as business  from pexproject_flightdata where searchkeyid="+str(recordkey)+" group by datasource")
                 totalrecords1 = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(recordkey)+" and "+cabin+"> 0")
                 totalrecords = len(list(totalrecords1))
                 obj = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(recordkey)+" and flighno = 'flag' ")
@@ -584,7 +593,7 @@ def getsearchresult(request):
             pageno = request.REQUEST['page_no']
         print "pageno",pageno
         offset = (int(pageno) - 1) * limit
-    else:
+    if pageno == 1:
         if request.GET.get('keyid', ''):
             recordkey = request.GET.get('keyid', '')
             if request.GET.get('returnkey', ''):
@@ -593,8 +602,7 @@ def getsearchresult(request):
             else:
                 pricematrix =  Flightdata.objects.raw("select rowid, datasource, min(if(maincabin > 0,maincabin,NULL)) as maincabin, min(if(firstclass>0,firstclass,NULL)) as firstclass ,min(if(business>0,business,NULL)) as business  from pexproject_flightdata where searchkeyid="+str(recordkey)+" group by datasource")
             for s in pricematrix:
-                 pricesources.append(s.datasource)
-               
+                 pricesources.append(s.datasource)      
     action = ''
     if request.GET.get('keyid', '') :
         searchkey = request.GET.get('keyid', '')
