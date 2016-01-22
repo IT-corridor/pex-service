@@ -344,7 +344,7 @@
 									    <section id="">
 									    	
 										<div class="table-responsive">
-										  <table class="table div-table" cellspacing="2">
+										  <table class="table div-table" cellspacing="2" id="pricematrix">
 										  		
 												<tr class="div-table-row row">
 													<th class="bc-whi left-heading"></th>
@@ -411,70 +411,7 @@
 												</tr>
 											{% endif %}
 										{% endif %}	
-										
-											<!--	
-												<tr class="div-table-row row">
-													<td class="bc-whi left-heading">United</td>
-													{% if matrix.datasource == "united" and matrix.maincabin%}	
-														<td class="color-green-1">{{matrix.maincabin|intcomma}}</td>
-													{% else%}
-														<td class="color-grey-1">-</td>
-													{% endif %}
-													{% if matrix.datasource == "united" and matrix.firstclass %}	
-														<td class="color-green-1">{{matrix.firstclass|intcomma}}</td>
-													{% else%}
-														<td class="color-grey-1">-</td>
-													{% endif %}
-													{% if matrix.datasource == "united" and matrix.business %}	
-														<td class="color-green-1">{{matrix.business|intcomma}}</td>
-													{% else%}
-														<td class="color-grey-1">-</td>
-													{% endif %}
-												
-												</tr>
-												
-												<tr class="div-table-row row">
-													<td class="bc-whi left-heading">Etihad</td>
-													{% if matrix.datasource == "etihad" and matrix.maincabin%}	
-														<td class="color-green-1">{{matrix.maincabin|intcomma}}</td>
-													{% else%}
-														<td class="color-grey-1">-</td>
-													{% endif %}
-													{% if matrix.datasource == "etihad" and matrix.firstclass %}	
-														<td class="color-green-1">{{matrix.firstclass|intcomma}}</td>
-													{% else%}
-														<td class="color-grey-1">-</td>
-													{% endif %}
-													{% if matrix.datasource == "etihad" and matrix.business %}	
-														<td class="color-green-1">{{matrix.business|intcomma}}</td>
-													{% else%}
-														<td class="color-grey-1">-</td>
-													{% endif %}
-												
-												</tr>
-												
-												<tr class="div-table-row row">
-													<td class="bc-whi left-heading">Virgin Atlantic</td>
-													{% if matrix.datasource == "virgin_atlantic" and matrix.maincabin%}	
-														<td class="color-green-1">{{matrix.maincabin|intcomma}}</td>
-													{% else%}
-														<td class="color-grey-1">-</td>
-													{% endif %}
-													{% if matrix.datasource == "virgin_atlantic" and matrix.firstclass %}	
-														<td class="color-green-1">{{matrix.firstclass|intcomma}}</td>
-													{% else%}
-														<td class="color-grey-1">-</td>
-													{% endif %}
-													{% if matrix.datasource == "virgin_atlantic" and matrix.business %}	
-														<td class="color-green-1">{{matrix.business|intcomma}}</td>
-													{% else%}
-														<td class="color-grey-1">-</td>
-													{% endif %}
-												
-												</tr>
-											-->
-															
-										  </table>
+										</table>
 										  <!--<div class="color-details">
 										  	<span class="cheaper"><span class="glyphicon glyphicon-stop" aria-hidden="true"></span></span>
 										  	<span class="expensive"><span class="glyphicon glyphicon-stop " aria-hidden="true"></span></span>
@@ -1726,7 +1663,9 @@
 							  </div>
 							</div>
 							<div class="form-group mvt10px">
-							<a href="https://www.facebook.com/sharer/sharer.php?u=http://pexportal.com/getsearchresult?keyid={{request.GET.keyid}}%26cabin={{request.GET.cabin}}%26passenger={{request.GET.passenger}}{% if request.GET.returnkey %}%26returnkey={{request.GET.returnkey}}{%endif%}" id="social_share"><span class="btn btn-pexSearch filter-serch-btn">Post</span></a>
+							<a href="https://www.facebook.com/sharer/sharer.php?u=http://pexportal.com/getsearchresult?keyid={{request.GET.keyid}}%26cabin={{request.GET.cabin}}%26passenger={{request.GET.passenger}}{% if request.GET.returnkey %}%26returnkey={{request.GET.returnkey}}{%endif%}" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=http://pexportal.com/getsearchresult?keyid={{request.GET.keyid}}%26cabin={{request.GET.cabin}}%26passenger={{request.GET.passenger}}{% if request.GET.returnkey %}%26returnkey={{request.GET.returnkey}}{%endif%}', 'newwindow', 'width=600, height=250'); return false;" id="social_share">
+								<span class="btn btn-pexSearch filter-serch-btn">Post</span>
+								</a>
 							</div>
 				    	</form>
 				    </div>
