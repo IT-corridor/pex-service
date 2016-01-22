@@ -38,7 +38,10 @@ from datetime import date
 from django.db import connection, transaction
 import operator
 import customfunction,rewardScraper
-from pexproject.form import LoginForm
+import smtplib
+from email.mime.text import MIMEText
+import socket
+from email.mime.multipart import MIMEMultipart
 #from djnago.conf import settings
 import subprocess
 import json
@@ -234,7 +237,8 @@ def forgotPassword(request):
         obj = User.objects.get(email=user_email)
         obj.password=password1
         obj.save()
-        send_mail('Forgot Your Password', 'Your password has been reset. Please login with your new password '+str(password), 'PEX', ['jk.dhn2010@gmail.com'])
+        send_mail('Forgot Your Password', 'Your password has been reset. Please login with your new password '+str(password), 'PEX', [user_email])
+	msg = "Your password has been reset. please check your registered email"
     else:
         msg = "forgot password"
     return render_to_response('flightsearch/index.html',{'fpmsg':msg},context_instance=RequestContext(request)) 
@@ -259,8 +263,9 @@ def sendFeedBack(request):
             #print body,topic
 	    #body = strip_tags(body)
 	send_mail(topic,body,from_emailid,['info@pexportal.com'])
+	#send_mail('Subject here', 'Here is the message.', 'hit.jay1690@gmail.com',['jk.dhn2010@gmail.com'], fail_silently=False)
 	alert_msg = "Thanks for giving us feedback"
-	print "alert_msg",alert_msg 
+	#print "alert_msg",alert_msg 
     return render_to_response('flightsearch/feedback.html',{'alert_msg':alert_msg}, context_instance=RequestContext(request))
 
 def contactUs(request):
@@ -292,7 +297,7 @@ def contactUs(request):
         object.save()
         fullname = firstname+" "+lastname
         emailbody = message+"\n\n"+labeltext+" \n\n"+fullname+"\n"+company+"\n"+websitename
-        send_mail(topic,emailbody,email,['info@pexportal.com'])
+        send_mail(topic,emailbody,email,['hit.jay1690@gmail.com'])
         contact_msg = "Your information has been sent successfully"
         
     return render_to_response('flightsearch/contact_us.html',{'contact_msg':contact_msg}, context_instance=RequestContext(request))  
