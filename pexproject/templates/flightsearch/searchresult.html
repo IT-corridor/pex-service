@@ -1663,7 +1663,7 @@
 							  </div>
 							</div>
 							<div class="form-group mvt10px">
-							<a href="https://www.facebook.com/sharer/sharer.php?u=http://pexportal.com/getsearchresult?keyid={{request.GET.keyid}}%26cabin={{request.GET.cabin}}%26passenger={{request.GET.passenger}}{% if request.GET.returnkey %}%26returnkey={{request.GET.returnkey}}{%endif%}" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=http://pexportal.com/getsearchresult?keyid={{request.GET.keyid}}%26cabin={{request.GET.cabin}}%26passenger={{request.GET.passenger}}{% if request.GET.returnkey %}%26returnkey={{request.GET.returnkey}}{%endif%}', 'newwindow', 'width=600, height=250'); return false;" id="social_share">
+							<a href="https://www.facebook.com/sharer/sharer.php?u=http://pexportal.com/getsearchresult?keyid={{request.GET.keyid}}%26cabin={{request.GET.cabin}}%26passenger={{request.GET.passenger}}{% if request.GET.returnkey %}%26returnkey={{request.GET.returnkey}}{%endif%}"  id="social_share">
 								<span class="btn btn-pexSearch filter-serch-btn">Post</span>
 								</a>
 							</div>
@@ -2211,7 +2211,6 @@ $('#loading_img').hide();
 	            	{
 	            		multicity = "&multicity="+multicity1;
 	            	}
-	            	console.log(multicity);
 	            	var stoplenght = stoppage.length;
 	            	var airlinelenght = airline.length;
                     $.ajax({
@@ -2273,6 +2272,7 @@ $(document).ready(function(){
 	var tweet1;
 	var tweetcontent;
 	var fulltext;
+	var fbcontent;
 	$(document.body).on('click','.share',function(){
 		var record = $(this).attr("id");
 		$('#recorid').val(record);
@@ -2282,7 +2282,7 @@ $(document).ready(function(){
 		$('#fbtitle').empty();
 		$('#fbtitle').append(fbtext);
 		$('#social_share').attr('href', function() {
-			return this.href + '%26share_recordid='+record;
+			fbcontent = this.href + '%26share_recordid='+record;
                 });
 		$('#twitter_share').attr('href', function() {
 		   var tweet = this.href;
@@ -2294,6 +2294,10 @@ $(document).ready(function(){
 		return this.href = tweet1[0]+'status='+tweetcontent+'%26url='+tweeturl+ '%26share_recordid='+record;
     		});
 	});
+	$('#social_share').click(function(){
+		window.open(fbcontent, 'newwindow', 'width=600, height=250');return false;
+		
+	});
 	$('#twitter_content').change(function(){
 		var text = $('#twitter_content').val();
 		$('#twitter_share').attr('href',function(){
@@ -2304,7 +2308,6 @@ $(document).ready(function(){
 		
 	});
 	$('#twitter_share').click(function(){
-		
 		 window.open(fulltext, 'newwindow', 'width=600, height=250');return false;
 
 	});
