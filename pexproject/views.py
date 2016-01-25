@@ -105,7 +105,9 @@ def signup(request):
             object.save()
             request.session['username'] = email
             request.session['password'] = password1
+            
             if object.user_id:
+                request.session['userid'] = object.user_id
                 msg = "Thank you, You have been successfully registered."
                 return render_to_response('flightsearch/index.html',{'welcome_msg':msg}, context_instance=RequestContext(request))   
         return render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
