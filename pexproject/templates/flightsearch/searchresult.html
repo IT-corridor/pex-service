@@ -2289,6 +2289,7 @@ $(document).ready(function(){
 		   tweet1 = tweet.split('status=');
 		   var tweeturl = tweet1[1];
 		   console.log(tweeturl);
+		   $('#twitter_content').val('');
 		   $('#twitter_content').val(tweetcontent+tweeturl+'%26share_recordid='+record);
         	fulltext = tweet1[0]+'status='+tweetcontent+'%26url='+tweeturl+ '%26share_recordid='+record;   
 		return this.href = tweet1[0]+'status='+tweetcontent+'%26url='+tweeturl+ '%26share_recordid='+record;
