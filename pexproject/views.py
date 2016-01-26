@@ -105,10 +105,10 @@ def signup(request):
             object.save()
             request.session['username'] = email
             request.session['password'] = password1
-            
             if object.user_id:
                 request.session['userid'] = object.user_id
                 msg = "Thank you, You have been successfully registered."
+                send_mail('Welcome to PEX+', 'You have successfully registered on Pex+. You can search numerous travel sites for your rewards flight', 'PEX+', [email])
                 return render_to_response('flightsearch/index.html',{'welcome_msg':msg}, context_instance=RequestContext(request))   
         return render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
     else:
