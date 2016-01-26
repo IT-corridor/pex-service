@@ -1676,7 +1676,9 @@
 				    			<textarea id="twitter_content" rows="2" class="form-control" placeholder="Enter your tweet"></textarea>
 				    		</div>
 				    		<div class="form-group">
-				    		<a href="https://twitter.com/home?status=http://pexportal.com/getsearchresult?keyid={{request.GET.keyid}}%26cabin={{request.GET.cabin}}%26passenger={{request.GET.passenger}}{% if request.GET.returnkey %}%26returnkey={{request.GET.returnkey}}{%endif%}" id="twitter_share" ><span class="btn btn-pexSearch filter-serch-btn">Tweet</span></a>
+				    		<a href="https://twitter.com/home?status=http://pexportal.com/getsearchresult?keyid={{request.GET.keyid}}%26cabin={{request.GET.cabin}}%26passenger={{request.GET.passenger}}{% if request.GET.returnkey %}%26returnkey={{request.GET.returnkey}}{%endif%}" id="twitter_share">
+				    			<span class="btn btn-pexSearch filter-serch-btn">Tweet</span>
+				    		</a>
 				    		</div>
 				    	</form>
 				    </div>
@@ -2276,35 +2278,35 @@ $(document).ready(function(){
 	$(document.body).on('click','.share',function(){
 		var record = $(this).attr("id");
 		$('#recorid').val(record);
-            tweetcontent = $(this).siblings("input[type='hidden']").val();
+        tweetcontent = $(this).siblings("input[type='hidden']").val();
 		var flight_price = $(this).siblings("input[type='hidden']").attr('class');
 		var fbtext = "Miles "+flight_price+" from {{search.0.source}} to {{search.0.destination}}.";
 		$('#fbtitle').empty();
 		$('#fbtitle').append(fbtext);
 		$('#social_share').attr('href', function() {
 			fbcontent = this.href + '%26share_recordid='+record;
+			
                 });
 		$('#twitter_share').attr('href', function() {
+			var fbcontent1 = fbcontent.split("?u=");
+			fbcontent1 = tweetcontent+fbcontent1[1];
 		   var tweet = this.href;
 		   tweet1 = tweet.split('status=');
 		   var tweeturl = tweet1[1];
-		   console.log(tweeturl);
-		   $('#twitter_content').val('');
-		   $('#twitter_content').val(tweetcontent+tweeturl+'%26share_recordid='+record);
-        	fulltext = tweet1[0]+'status='+tweetcontent+'%26url='+tweeturl+ '%26share_recordid='+record;   
-		return this.href = tweet1[0]+'status='+tweetcontent+'%26url='+tweeturl+ '%26share_recordid='+record;
+		   $('#twitter_content').val(fbcontent1);
+        	fulltext = tweet1[0]+'status='+fbcontent1;   
+			return this.href = tweet1[0]+'status='+fbcontent1;
     		});
 	});
 	$('#social_share').click(function(){
 		window.open(fbcontent, 'newwindow', 'width=600, height=250');return false;
-		
 	});
+	
 	$('#twitter_content').change(function(){
 		var text = $('#twitter_content').val();
 		$('#twitter_share').attr('href',function(){
+			fulltext='';
 			fulltext = tweet1[0]+'status='+text;
-			//return this.href =  tweet1[0]+'status='+text;
-		
 		});
 		
 	});
