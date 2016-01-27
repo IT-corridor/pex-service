@@ -741,8 +741,6 @@
 								</div>
 						
 							{% endif %}
-							
-							
 							{% if data %}
 								
 								{% for row in data %}
@@ -2343,7 +2341,7 @@ $(document).ready(function(){
 	{
 		$('.progress').hide();
 		$('.filters-holder').removeClass('xs-filters-holder-ht');
-		
+		redirecttosearchpage();
 	}
 	else{
 		$('.filters-holder').addClass('xs-filters-holder-ht');
@@ -2361,7 +2359,6 @@ $(document).ready(function(){
          		type:'POST',
          		data:"actionfor=prc_matrix&csrfmiddlewaretoken={{csrf_token }}&depaturemin="+depaturemin+"&depaturemax="+depaturemax+"&airlines="+airline+"&stoppage="+stoppage+row_val,
          		success:function(html){
-         			console.log("test");
          			$('#price_matrix').empty();
          			$('#price_matrix').append(html);
          		}
@@ -2399,7 +2396,6 @@ $(document).ready(function(){
 	 	url: "/checkData/",
 	 	data: "keyid="+ encodeURI(searchid) + "&csrfmiddlewaretoken={{ csrf_token }}"+"&cabin="+encodeURI(cabin)+temp,
 	 	success: function(data){
-	 		console.log(data);
  		if(data[1] == 'completed' )
  		{
  			console.log('stop');
