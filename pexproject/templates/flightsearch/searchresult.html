@@ -343,7 +343,7 @@
 									  <div class="well custom-well text-center">
 									    <section id="">
 									    	
-										<div class="table-responsive">
+										<div class="table-responsive" id="price_matrix">
 										  <table class="table div-table" cellspacing="2" id="pricematrix">
 										  		
 												<tr class="div-table-row row">
@@ -2356,6 +2356,16 @@ $(document).ready(function(){
          type:'POST',
          data: "csrfmiddlewaretoken={{ csrf_token }}&depaturemin="+depaturemin+"&depaturemax="+depaturemax+"&airlines="+airline+"&stoppage="+stoppage+row_val,
          success: function(html){
+         	$.ajax({
+         		url:dataurls,
+         		type:'POST',
+         		data:"actionfor=prc_matrix&csrfmiddlewaretoken={{csrf_token }}&depaturemin="+depaturemin+"&depaturemax="+depaturemax+"&airlines="+airline+"&stoppage="+stoppage+row_val,
+         		success:function(html){
+         			console.log("test");
+         			$('#price_matrix').empty();
+         			$('#price_matrix').append(html);
+         		}
+         	});
          	isprocess();
          	$('.filters-holder').addClass('xs-filters-holder-ht');
          	$("#content1").empty();

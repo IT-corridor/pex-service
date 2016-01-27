@@ -108,7 +108,7 @@ def signup(request):
             if object.user_id:
                 request.session['userid'] = object.user_id
                 msg = "Thank you, You have been successfully registered."
-                send_mail('Welcome to PEX+', 'You have successfully registered on Pex+. You can search numerous travel sites for your rewards flight', 'PEX+', [email])
+                send_mail('Welcome to PEX+', 'You have successfully created a Pex+ account. You can search numerous travel sites for your rewards flight', 'PEX+', [email])
                 return render_to_response('flightsearch/index.html',{'welcome_msg':msg}, context_instance=RequestContext(request))   
         return render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
     else:
@@ -921,8 +921,11 @@ def getsearchresult(request):
             timeinfo = ''
         if 'share_recordid' in request.GET:
             sharedid = request.GET.get('share_recordid','')
-            selectedrow = Flightdata.objects.get(pk=sharedid)   
+            selectedrow = Flightdata.objects.get(pk=sharedid)
+        if 'actionfor' in request.POST:
+            return render_to_response('flightsearch/pricematrix.html',{'pricesources':pricesources, 'pricematrix':pricematrix},context_instance=RequestContext(request))      
         if request.is_ajax() :
+            
             return render_to_response('flightsearch/search.html', {'action':action,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value, 'multisearch':multisearch, 'data':mainlist,'multirecod':mainlist, 'multicity':multicity, 'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name}, context_instance=RequestContext(request))
         if totalrecords > 0:
             return render_to_response('flightsearch/searchresult.html', {'action':action,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value,'multisearch':multisearch,'data':mainlist,'multirecod':mainlist,'multicity':multicity,'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name}, context_instance=RequestContext(request)) 

@@ -1,0 +1,71 @@
+{% load customfilter %}
+{% load staticfiles %}
+{% load humanize %}
+<table class="table div-table" cellspacing="2" id="pricematrix">
+										  		
+	<tr class="div-table-row row">
+		<th class="bc-whi left-heading"></th>
+		<th class="bc-whi">Economy</th>
+		<th class="bc-whi">Business</th>
+		<th class="bc-whi">First</th>
+	</tr>
+	{% if pricematrix %}
+	{% for matrix in pricematrix %}
+
+	<tr class="div-table-row row">
+		<td class="bc-whi left-heading"> {{matrix.datasource|title }}</td>
+		{% if matrix.maincabin %}
+		<td class="color-grey-1">{{matrix.maincabin|intcomma}}</td>
+		{% else%}
+		<td class="color-grey-1">-</td>
+		{% endif %}
+		{% if matrix.firstclass %}
+		<td class="color-grey-1">{{matrix.firstclass|intcomma}}</td>
+		{% else%}
+		<td class="color-grey-1">-</td>
+		{% endif %}
+		{% if matrix.business %}
+		<td class="color-grey-1">{{matrix.business|intcomma}}</td>
+		{% else%}
+		<td class="color-grey-1">-</td>
+		{% endif %}
+	</tr>
+
+	{% endfor %}
+	{% if "delta" not in pricesources%}
+
+	<tr class="div-table-row row">
+		<td class="bc-whi left-heading"> Delta </td>
+		<td class="color-grey-1">-</td>
+		<td class="color-grey-1">-</td>
+		<td class="color-grey-1">-</td>
+	</tr>
+	{% endif %}
+	{% if "united" not in pricesources %}
+	<tr class="div-table-row row">
+		<td class="bc-whi left-heading"> United </td>
+		<td class="color-grey-1">-</td>
+		<td class="color-grey-1">-</td>
+		<td class="color-grey-1">-</td>
+	</tr>
+	{% endif %}
+	{% if "etihad" not in pricesources%}
+
+	<tr class="div-table-row row">
+		<td class="bc-whi left-heading"> Etihad </td>
+		<td class="color-grey-1">-</td>
+		<td class="color-grey-1">-</td>
+		<td class="color-grey-1">-</td>
+	</tr>
+	{% endif %}
+	{% if "virgin_atlantic" not in pricesources%}
+
+	<tr class="div-table-row row">
+		<td class="bc-whi left-heading"> Virgin Atlantic </td>
+		<td class="color-grey-1">-</td>
+		<td class="color-grey-1">-</td>
+		<td class="color-grey-1">-</td>
+	</tr>
+	{% endif %}
+	{% endif %}
+	</table>
