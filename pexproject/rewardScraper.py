@@ -7,13 +7,13 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 import MySQLdb
 from django.db import connection, transaction
-#from pyvirtualdisplay import Display
+from pyvirtualdisplay import Display
 
 def deltaPoints(username,password,userid):
     cursor = connection.cursor()
     url ="https://www.delta.com/custlogin/loginPage.action"
-    #display = Display(visible=0, size=(800, 600))
-    #display.start()
+    display = Display(visible=0, size=(800, 600))
+    display.start()
     driver = webdriver.Chrome()
     driver.get(url)
     driver.implicitly_wait(5)
@@ -32,7 +32,7 @@ def deltaPoints(username,password,userid):
    
         WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "sky-miles")))
     except:
-        #display.stop
+        display.stop
         driver.quit()
         return "fail"
     totalmiles = soup.find("span",{"id":"sky-miles"}).text
@@ -45,14 +45,14 @@ def deltaPoints(username,password,userid):
     else:
         cursor.execute ("INSERT INTO reward_points (user_id,reward_points,airlines) VALUES (%s,%s,%s);", (str(userid),str(totalmiles),"delta"))
     transaction.commit()
-    #display.stop()                                                                                                                                  
+    display.stop()                                                                                                                                  
     driver.quit()
     return "success"
 
 def unitedPoints(usernumber,password,userid):
     cursor = connection.cursor()
-    #isplay = Display(visible=0, size=(800, 600))
-    #display.start()
+    display = Display(visible=0, size=(800, 600))
+    display.start()
     url = "https://www.united.com/web/en-US/apps/account/signout.aspx"
     driver = webdriver.Chrome()
     driver.get(url)
@@ -65,7 +65,7 @@ def unitedPoints(usernumber,password,userid):
     try:
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "ctl00_ContentInfo_AccountSummary_pnlSummaryNew"))) 
     except:
-        #display.stop()                                                                                                                                  
+        display.stop()                                                                                                                                  
         driver.quit()
         return "fail"
     driver.implicitly_wait(40)
@@ -82,19 +82,18 @@ def unitedPoints(usernumber,password,userid):
     else:
         cursor.execute ("INSERT INTO reward_points (user_id,reward_points,airlines) VALUES (%s,%s,%s);", (str(userid),str(point),"united"))
     transaction.commit()
-    #display.stop()                                                                                                                                  
+    display.stop()                                                                                                                                  
     driver.quit()
     return "success"
     
 def virginPoints(username,password,userid):
     cursor = connection.cursor()
     url = "http://www.virgin-atlantic.com/us/en.html"
-    #display = Display(visible=0, size=(800, 600))
-    #display.start()
+    display = Display(visible=0, size=(800, 600))
+    display.start()
     driver = webdriver.Chrome()
     driver.get(url)
     user = driver.find_element_by_id("login_uname")
-    print "username",user
     driver.execute_script("document.getElementById('login_uname').setAttribute('value', '"+username+"')");
     driver.execute_script("document.getElementById('login_pwd').setAttribute('value', '"+password+"')");
     
@@ -106,7 +105,7 @@ def virginPoints(username,password,userid):
     soup = BeautifulSoup(html_page)
     try:
         mileage = soup.find("td",{"class":"mileageValue"})
-        point = mileage.text
+        point = (mileage.text).strip()
         print point
         cursor.execute("select * from reward_points where user_id="+str(userid)+" and airlines='virgin'")
         object = cursor.fetchone()
@@ -116,11 +115,11 @@ def virginPoints(username,password,userid):
             cursor.execute ("INSERT INTO reward_points (user_id,reward_points,airlines) VALUES (%s,%s,%s);", (str(userid),str(point),"virgin"))
         transaction.commit()
     except:
-        #display.stop()                                                                                                                                  
+        display.stop()                                                                                                                                  
         driver.quit()
         return "fail"
     
-    #display.stop()                                                                                                                                  
+    display.stop()                                                                                                                                  
     driver.quit()
     return "success"
 
