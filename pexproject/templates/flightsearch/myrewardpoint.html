@@ -15,16 +15,18 @@
 			
 			<div class="col-xs-12 nopadding">
 				<div class="col-xs-12 nopadding">
-				<div class="col-xs-4 text-center"><b><u>Airlines</u></b></div>
-				<div class="col-xs-4 text-center"><b><u>Points</u></b></div>
-				<div class="col-xs-4 text-center"><b><u>Action</u></b></div>
+				<div class="col-xs-3 text-center"><b><u>Airlines</u></b></div>
+				<div class="col-xs-3 text-center"><b><u>Points</u></b></div>
+				<div class="col-xs-3 text-center"><b><u>Last Updated</u></b></div>
+				<div class="col-xs-3 text-center"><b><u>Action</u></b></div>
 				</div>
 					{% if points %}
 				{% for row in points%}
 					<div class="col-xs-12 nopadding rewardpoint" style="padding-bottom: 10px" id="{{row.3}}_div">	
-					<div class="col-xs-4 text-center">{{row.3|title}}</div>
-					<div class="col-xs-4 text-center">{{row.2}} Miles</div>
-					<div class="col-xs-4 text-center"><a href="#" id="{{row.3}}" class="update"> Update</a>
+					<div class="col-xs-3 text-center">{{row.3|title}}</div>
+					<div class="col-xs-3 text-center">{{row.2}} Miles</div>
+					<div class="col-xs-3 text-center nopadding">{{row.4}}</div>
+					<div class="col-xs-3 text-center"><a href="#" id="{{row.3}}" class="update"> Update</a>
 						| <a href="#" id="{{row.3}}_{{ request.session.userid }}" class="deactivate">Deactivate</a>
 					</div>
 					</div>
@@ -51,8 +53,8 @@
 		    <input type="text" name="username" class="form-control" id="" placeholder="USERNAME" required>
 		  </div>
 		  <div class="col-md-3 form-group">
-		    <label for="username">Skymiles Number</label>
-		    <input type="text" name="skymiles_number" class="form-control" id="" placeholder="SKYMILES NUMBER" required>
+		    <label for="username">Account Number</label>
+		    <input type="text" name="skymiles_number" class="form-control" id="" placeholder="ACCOUNT NUMBER" required>
 		  </div>
 		  <div class="col-md-3 form-group">
 		    <label for="password">Password</label>
@@ -76,7 +78,7 @@
 			</div>
 		  <div class="form-group pd-fm-btn" style="margin-top:15px;">
 
-		  <button type="submit" class="btn btn-pexSearch">Sync</button>
+		  <button type="submit" id="syncdata" class="btn btn-pexSearch">Sync</button>
 		</form>
 		</div>
 		</div>	
@@ -89,6 +91,9 @@
 	{% include "flightsearch/footer.html" %}
 	</div>
 	<script>
+		$('#syncdata').click(function(){
+			//$('#syncdata').prop('disabled', true);
+		});
 		$(document).ready(function(){
 			var action = '';
 			action ="{{temp_message}}";
