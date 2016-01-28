@@ -10,7 +10,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta property="og:locale" content="en_US" />
-		<meta property="og:type" content="flight" />
+		<meta property="og:type" content="flights" />
 		<meta name="description" content="">
 		<meta name="keywords" content="">
 		 {% if request.GET.share_recordid %}
@@ -19,7 +19,6 @@
 		<meta property="og:title" content="Miles {{selectedrow.maincabin|intcomma}}  from {{search.0.source}} to {{search.0.destination}}."/>
 		{%endif%}
 		<meta id="mcontent" property="og:description" content="Hey, I found a great flight on Pex from {{search.0.source}} to {{search.0.destination}}. Join me." />
-		<meta property="fb:app_id" content="" />
 		<meta property="og:site_name" content="pexportal.com" />
 		<meta property="fb:app_id" content="423944854478305"/>
 		<meta property="og:image" content="{% static 'flightsearch/img/logoMain.png' %}" />
