@@ -6,10 +6,14 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 import MySQLdb
+import datetime
 from django.db import connection, transaction
 from pyvirtualdisplay import Display
 
 def deltaPoints(username,password,userid):
+    currentdatetime = datetime.datetime.now()
+    stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
+    
     cursor = connection.cursor()
     url ="https://www.delta.com/custlogin/loginPage.action"
     display = Display(visible=0, size=(800, 600))
@@ -43,7 +47,7 @@ def deltaPoints(username,password,userid):
     if object:
         cursor.execute("update reward_points set reward_points="+str(totalmiles)+" where airlines='delta' and user_id="+str(userid))
     else:
-        cursor.execute ("INSERT INTO reward_points (user_id,reward_points,airlines) VALUES (%s,%s,%s);", (str(userid),str(totalmiles),"delta"))
+        cursor.execute ("INSERT INTO reward_points (user_id,reward_points,airlines,update_time) VALUES (%s,%s,%s,%s);", (str(userid),str(totalmiles),"delta",str(stime)))
     transaction.commit()
     display.stop()                                                                                                                                  
     driver.quit()
@@ -53,6 +57,8 @@ def unitedPoints(usernumber,password,userid):
     cursor = connection.cursor()
     display = Display(visible=0, size=(800, 600))
     display.start()
+    currentdatetime = datetime.datetime.now()
+    stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     url = "https://www.united.com/web/en-US/apps/account/signout.aspx"
     driver = webdriver.Chrome()
     driver.get(url)
@@ -80,7 +86,7 @@ def unitedPoints(usernumber,password,userid):
     if object:
         cursor.execute("update reward_points set reward_points="+str(point)+" where airlines='united' and user_id="+str(userid))
     else:
-        cursor.execute ("INSERT INTO reward_points (user_id,reward_points,airlines) VALUES (%s,%s,%s);", (str(userid),str(point),"united"))
+        cursor.execute ("INSERT INTO reward_points (user_id,reward_points,airlines,update_time) VALUES (%s,%s,%s,%s);", (str(userid),str(point),"united",str(stime)))
     transaction.commit()
     display.stop()                                                                                                                                  
     driver.quit()
@@ -88,6 +94,8 @@ def unitedPoints(usernumber,password,userid):
     
 def virginPoints(username,password,userid):
     cursor = connection.cursor()
+    currentdatetime = datetime.datetime.now()
+    stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     url = "http://www.virgin-atlantic.com/us/en.html"
     display = Display(visible=0, size=(800, 600))
     display.start()
@@ -118,6 +126,21 @@ def virginPoints(username,password,userid):
         display.stop()                                                                                                                                  
         driver.quit()
         return "fail"
+        
+    mileage = soup.find("td",{"class":"mileageValue"})
+    point = (mileage.text).strip()
+    print point
+    cursor.execute("select * from reward_points where user_id="+str(userid)+" and airlines='virgin'")
+    object = cursor.fetchone()
+    if object:
+        print "update"
+        cursor.execute("update reward_points set reward_points="+str(point)+" where airlines='virgin' and user_id="+str(userid))
+    else:
+        print "insert"
+        cursor.execute ("INSERT INTO reward_points (user_id,reward_points,airlines,update_time) VALUES (%s,%s,%s,%s);", (str(userid),str(point),"virgin",str(stime)))
+    print "complete"
+    transaction.commit()
+    
     
     display.stop()                                                                                                                                  
     driver.quit()
