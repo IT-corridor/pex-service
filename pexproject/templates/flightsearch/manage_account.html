@@ -1,51 +1,96 @@
 		{% load staticfiles %}
 		{% include "flightsearch/header.html" %}
-	    <div class="container form-cstm-mng" style="">
-	    	
-		<div class="col-xs-12 col-sm-9  bkcl mng-act" style="">
-			{% if message %}
-			<div class="alert alert-warning">{{message}}</div>
-			{% endif %}
-		<form action="manageAccount" method="post" class="form-group" id="manageform">
-			{% csrf_token %}
-		  <div class="form-group">
-		    <label  for="email">Email address</label> 	
-		    <input type="text" class="form-control" id="email" placeholder="Email" name="email" value="{{request.session.username}}" required>
-		  </div>
-		 	{% if issocial == '' %}
-			  <div class="form-group">
-			    <label  for="current_password">Password</label> <a href="#" id="change_password"><span id="change">Change<span></a>
-			    <input type="password" class="form-control" id="password" placeholder="Current Password" name="current_password" value="{{user.password}}" disabled required>
-			  </div>
-			{% endif %}
-			<div {% if issocial == '' %}id="password_div" {% endif %}>
-			  <div class="form-group">
-			    <label  for="new_password">New Password</label> 
-			    <input type="password" class="form-control" id="newpassword" placeholder="New Password" name="new_password" required>
-			  </div>
-			  <div class="form-group">
-			    <label  for="new_password">Confirm Password</label>
-			    <input type="password" class="form-control" id="confirm_password" placeholder="confirm Password" name="confirm_password" required>
-			  </div>
-		  </div>
-		  <div class="form-group">
-		    <label  for="Home_airport">Home Airport</label>
-		    <input type="search" class="form-control" id="airport" name="home_airport" value="{{user.home_airport}}"  required>
-		  </div>
-		  <!--
-		  <div class="checkbox">
-		    <label>
-		      <input type="checkbox" name="active"> Active
-		    </label>
-		  </div>
-		  -->
-		  <button type="submit" class="btn btn-pexSearch" id="update">Update</button> <a href="index"> <span type="submit"  class="btn btn-pexSearch">Cancel</span></a>
-		</form>
+	    <div class="col-xs-12 nopadding">
+		<div class="container">
+			<div class="col-xs-12 account-block-bg">
+				<h2 class="title">Account Information</h2>
+				<hr>
+				<div class="col-sm-4 col-sm-push-8 col-xs-12 text-right nopr">
+					<p><a href="#"><span class="glyphicon glyphicon-chevron-right"></span> View All Travelers</a></p>
+					<p><a href="#"><span class="glyphicon glyphicon-chevron-right"></span> View All Pets</a></p>
+				</div>
+				<div class="col-sm-8 col-sm-pull-4 col-xs-12 nopadding">
+					<info>
+						<strong>MileagePlus Member/Primary Traveler</strong><br>
+						<!--Ms. Jessica Berriman (Default)-->{{user.username}}<br>
+						<strong>Date of Birth: </strong>{{user.date_of_birth}}<br>
+						<strong>Gender: </strong>{{user.gender}}<br>
+					</info>
+					<a hrerf="#">Edit Traveler Information</a>
+				</div>
+				<div class="col-xs-12 account-inner-block nopadding">
+					<hr>
+					<div class="col-sm-4 col-xs-12 nopl">
+						<email><strong>Email: </strong>{{request.session.username}}<br>
+						<a href="#">Edit</a> | <a href="#">New</a> | <a href="#">View All</a></email>
+					</div>
+					<div class="col-sm-4 col-xs-12">
+						<username><strong>Username: </strong> {{user.username}}<br>
+						<a href="#">Edit</a> | <a href="#">Set Password</a> | <a href="#">Change Pin</a></username>
+					</div>
+					<div class="col-sm-4 col-xs-12 text-right nopr">
+						<p><a href="#"><span class="glyphicon glyphicon-chevron-right"></span> Change Pin/Password Reminder</a></p>
+					</div>
+				</div>
+				<div class="col-xs-12 nopadding">
+					<div class="col-sm-4 col-xs-12 nopl">
+						<address><strong>Address: </strong><br>
+							{{user.address}}
+							<!--
+						5100 San Felipe St.<br>
+						Apt.56E<br>
+						Houston, Texas 77056<br>
+						United States<br>--></br>
+						<a href="#">Edit</a> | <a href="#">New</a> | <a href="#">View All</a> | <a href="#">Privacy</a></address>
+					</div>
+					<div class="col-sm-4 col-xs-12">
+						<phone><strong>Phone: </strong><br>
+							{{user.phone}}
+						<!--(408) 256-1836-United states --><br>
+						<a href="#">Edit</a> | <a href="#">New</a> | <a href="#">View All</a> | <a href="#">Privacy</a></phone>
+					</div>
+				</div>
+			</div>
+			<div class="col-xs-12 account-block-bg">
+				<h2 class="title">Prefrences</h2>
+				<hr>
+				<div class="col-xs-12 nopadding">
+					<div class="col-sm-4 col-xs-12 nopl">
+						<country>
+							<strong>Country: </strong><br>
+							{{user.country}}
+						</country>
+					</div>
+					<div class="col-sm-4 col-xs-12">
+						<language>
+							<strong>Language Prefrence: </strong><br>
+							{{user.language}}
+						</language>
+					</div>
+					<div class="col-sm-4 col-xs-12 text-right nopr">
+						<p><a href="#"><span class="glyphicon glyphicon-chevron-right"></span> View All Regional Prefrences</a></p>
+					</div>
+				</div>
+				<div class="col-xs-12 nopadding">
+					<hr>
+					<div class="col-sm-8 col-xs-12 nopl">
+						<flight>
+							<strong>Flight Search Prefrences: </strong><br>
+							Home Airport: {{user.home_airport}}<br>
+							Fare Type: <br>
+							Lowest Available Fare - Most Restrictions<br>
+							Search by: <br>
+							Price: 
+						</flight>
+					</div>
+					<div class="col-sm-4 col-xs-12 text-right nopr">
+						<p><a href="#"><span class="glyphicon glyphicon-chevron-right"></span> View All Flight Search Prefrences</a></p>
+					</div>
+				</div>
+			</div>
 		</div>
-		</div>
-		<div class="">
-	{% include "flightsearch/footer.html" %}
 	</div>
+	{% include "flightsearch/footer.html" %}
 	<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>');</script>
 	
     <script src="/static/flightsearch/js/vendor/bootstrap.min.js"></script>
