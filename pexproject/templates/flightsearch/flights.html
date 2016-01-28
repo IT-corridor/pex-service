@@ -63,6 +63,7 @@
 			                  <div class="inner-addon left-addon date" id="dp1">
 			                      <i class="glyphicon glyphicon-calendar"></i>
 			                      <input type="text"  class="form_val form-control calender_class curson"  placeholder="Depart" name="deptdate" autocomplete="off" {% if searchparams%} value="{{searchparams.0.traveldate|date:"m/d/Y"}}"{% endif %} id="calenderid1">
+			                  		<input type="hidden" id="dateval" value="">
 			                  </div>
 			                  
 			                </div>
@@ -408,7 +409,7 @@
 											<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="seatinfants" tabindex="11">								
 											<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
 											
-										</span>
+								5		</span>
 										<span class="col-xs-3 nopr">under 2</span>  
 										</p>                			
 			                  		</div>
@@ -442,13 +443,10 @@
 			            </div>
 			            {% endif %}
 			          </div>
-			           
+			          </div>
+			          </div>
 			        </form>	        		
-        	</div>
-        </div>
-      </div>
-    </div><!-- /container -->  
-</div>
+        	
 
 <div class="container mvb60px mediaadd" id="add-section">
 	<h1 style="margin-left: 5px;"><b> Search numerous travel sites for your rewards flight.  Fly to: </b></h1>
@@ -533,6 +531,11 @@
 				</div>
 			</div>
 		</div>
+	</div>
+        </div>
+      </div>
+    </div><!-- /container -->  
+</div>
       {% include "flightsearch/footer.html" %}
 
       
@@ -575,8 +578,8 @@
     </script>
     <script>
 		$(document).ready(function() {
-	    var max_fields      = 6; //maximum input boxes allowed
-	    var add_button      = $(".add_field_button"); //Add button ID
+	    var max_fields = 6; //maximum input boxes allowed
+	    var add_button = $(".add_field_button"); //Add button ID
 	    var x = 3; //initlal text box count
 	    var newid = 4;
 	    $(add_button).click(function(e){ 
@@ -613,13 +616,16 @@
 	    });
 	    
 	    $('.remove_field').on('click',function (e) {
+	    	
 		  e.preventDefault(); $(this).parent('div').remove(); x--;
+		  
 		});
 	   
 	    $('.addmore').on("click",".remove_field", function(e){ //user click on remove text
 	        e.preventDefault(); $(this).parent('div').remove(); x--;
+	        newid = newid-1;
 	    });
-	    
+	   
 	    $('.addmore').on("focus",".calender_class", function(e){ //user click on remove text
 	        e.preventDefault(); $(this).datepicker({format: "m/d/Y", minDate: 0}); x--;
 	    }); 
@@ -762,56 +768,60 @@
     $(document).ready(function(){
     	var datepickerid = '';
     	var nextid = '';
+    	var curdate = $.datepicker.formatDate('mm/dd/yy', new Date());
+    	$('#dateval').val(curdate);
     	//var selected_mindate = 0;
     	$('#calenderid1').datepicker({format: "m/d/Y", minDate: 0 });
     	$('.calender_class').on('click',function(){
     		datepickerid = this.id.match(/\d+/);
-    		
     		nextid = parseInt(datepickerid)+1;
     		nextid = 'calenderid'+nextid;
     		datepickerid = 'calenderid'+datepickerid;
-    		//console.log(nextid);
-    		//console.log(datepickerid);
-    		dynamicdate(datepickerid,nextid);
+    		
+    		//$('#'+nextid).datepicker({format: "m/d/Y", minDate: 0});
+    		//dynamicdate(datepickerid,nextid);
     	
     	});
     	
     	function dynamicdate(datepickerid,nextid){
-    		console.log("test");
+    		
+    		$("#"+datepickerid).datepicker({
+			        onClose: function() {
+			            $("#"+nextid).datepicker(
+			                    "change",
+			                    { minDate: new Date($('#'+datepickerid).val()) }
+			            );
+			        }
+			    });
+			    $("#"+nextid).datepicker({
+			        onClose: function() {
+			            $("#"+datepickerid).datepicker(
+			                    "change",
+			                    { maxDate: new Date($('#'+nextid).val()) }
+			            );
+			        }
+			    });
+			/*
     		//$('#'+nextid).datepicker('option', 'minDate', $('#'+datepickerid).datepicker('getDate')); 
+    		 
     		$('#'+datepickerid).datepicker(
                	{
-               		minDate: 0,
-               		onSelect: function()
-               		{
-               			setTimeout(function function_name (argument) {
-							 $('#'+nextid).focus();
-						   },200);
-               			
-               		},
-               		  onClose: function(selectedDate) {
+               		  onSelect: function(selectedDate) {
         					// Set the minDate of 'to' as the selectedDate of 'from'
         						$('#'+nextid).datepicker("option", "minDate", selectedDate);
+    					},
+    					onClose: function(){
+    						$('#'+datepickerid).removeClass("hasDatepicker");
     					}
                	}
                	
                );
+               */
     	};
     	
     });
-     $(function(){
-    	$('.calender_class').datepicker({format: "m/d/Y", minDate: 0 });
-    });
+     
 	$(function(){
-	 	/*
-	 		$('#returnMain').datetimepicker({format: "m/d/Y",'timepicker': false,closeOnDateSelect: true,scrollMonth: false});
-            $('#departMain').datetimepicker({ format: "m/d/Y",minDate: 0,'timepicker': false,closeOnDateSelect: true,scrollMonth: false,
-                        onSelectDate: function(selectedDate)
-                        {
-                                $("#returnMain").focus();
-                                $( "#returnMain" ).datetimepicker({format: "m/d/Y", minDate: selectedDate });
-                        }
-               });*/
               $('#departMain').datepicker(
                	{
                		minDate: 0,
