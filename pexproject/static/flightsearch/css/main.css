@@ -1854,6 +1854,10 @@ info, email, username, phone, flight, language, country {
 	margin-top: 10px;
 	font-weight: 700;
 }
+.account-block-bg>h4{
+	font-size: 17px;
+	font-weight: 700;
+}
 .account-block-bg dl dt {
 	text-align: left;
 	padding: 5px 0;
@@ -1872,6 +1876,10 @@ info, email, username, phone, flight, language, country {
 .account-inner-block {
 	margin-bottom: 10px;
 }
+.account-block-bg .btn-pexSearch {
+  margin-right: 15px;
+}
+
 
 
 
@@ -1907,11 +1915,17 @@ info, email, username, phone, flight, language, country {
 	.account-block-bg dl dt {
 		display: inline-block;
 		float: left;
-		width: 40%;
+		width: 43%;
 	}
 	.account-block-bg dl dd {
 		display: inline-block;
-		width: 60%;
+		width: 57%;
+	}
+	.account-block-bg>h4{
+		float:none !important;
+		display: block;
+		font-size: 15px;
+		margin-left: 0;
 	}
 .left-heading
 {
@@ -2372,6 +2386,10 @@ div.ui-datepicker{
 	.cstm-pd-another-field
 	{
 		padding-bottom:0px;
+	}
+	.account-block-bg .btn-pexSearch {
+	  width: initial;
+	  margin-right: 15px;
 	}
 }
 
