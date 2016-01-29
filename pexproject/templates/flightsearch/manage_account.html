@@ -44,7 +44,7 @@
 				</div>
 				<div class="col-xs-12 account-block-bg edit" id="edit_infodiv">
 				<form method="post" action="manageAccount">
-				<h2 class="title">Your Account Information <span class="hidden-xs"> <span class="btn btn-pexSearch pull-right cancel_info" id="">Cancel</span> <button type="submit" class="btn btn-pexSearch pull-right">Save</button></span></h2>
+				<h2 class="title">Your Account Information <span class="hidden-xs"> <span class="btn btn-pexSearch pull-right cancel_info" id="">Cancel</span> <button type="submit" class="btn btn-pexSearch pull-right saveinfo">Save</button></span></h2>
 				<div class="col-xs-12 nopadding" >
 				
 					{% csrf_token %}
@@ -80,11 +80,22 @@
 							<dt>Phone:</dt>
 							<dd><input type="text" class="form-control" name="phone" {%if user.phone%} value="{{user.phone}}" {%endif%}></dd>
 							<dt>Email:</dt>
-							<dd><input type="email" class="form-control" name="email" {%if user.email%} value="{{user.email}}" {%endif%}><br><a href="#">Change Password</a></dd>
+							<dd><input type="email" class="form-control" name="email" {%if user.email%} value="{{user.email}}" {%endif%}><br><a href="#" id="password_change">Change Password</a></dd>
+						</dl>
+						
+						<dl class="dl-horizontal password_block edit">
+							
+							<dt>Current Password:</dt>
+							<dd><input type="password" class="form-control pass" name="current_password"/></dd>
+							<dt>New Password:</dt>
+							<dd><input type="password" class="form-control pass" name="new_password"/></dd>
+							<dt>confirm Password:</dt>
+							<dd><input type="password" class="form-control pass" name="new_password"/></dd>
 						</dl>
 					</div>
+					
 					<div class="col-xs-12 nopadding visible-xs">
-						<button type="submit" class="btn btn-pexSearch">Save</button>
+						<button type="submit" class="btn btn-pexSearch saveinfo">Save</button>
 						<span class="btn btn-pexSearch cancel_info" id="">Cancel</span>
                    </div>
 
@@ -153,6 +164,16 @@
 			$('#edit_prefrenceinfo').hide();
 			$('#prefrenceinfo').show();
 			
+		});
+		$('#password_change').click(function(){
+			$(".password_block").show();
+			
+		});
+		$('.saveinfo').click(function(){
+			if ($('.password_block').is(':hidden')){
+			$('.pass').prop("disabled", true);
+			//$('#confirm_password').prop("disabled", true);
+		}
 		});
 	</script>
 	<script>
