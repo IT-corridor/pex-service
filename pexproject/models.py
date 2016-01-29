@@ -89,7 +89,7 @@ class UserManager(BaseUserManager):
 		
         	user = self.model(
 	            email=UserManager.normalize_email(email),
-		    username = username
+		        username = username
 		   
 	        )
         	user.set_password(password)
@@ -98,10 +98,19 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser):
     user_id = models.AutoField(primary_key=True)
+    firstname = models.CharField(max_length=100)
+    middlename = models.CharField(max_length=100)
+    lastname = models.CharField(max_length=100)
     username = models.CharField(max_length=100,unique=True)
     email = models.EmailField(blank=True, null=True)
-#    password = models.CharField(max_length=100)
+    #password = models.CharField(max_length=100)
+    gender = models.CharField(max_length=20)
+    date_of_birth = models.DateField(null=True, blank=True)
+    language = models.CharField(max_length=100)
+    country = models.CharField(max_length=100)
+    phone = models.CharField(max_length=20)
     home_airport = models.CharField(max_length=100)
+    address = models.CharField(max_length=512)
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']    
     objects =  UserManager()

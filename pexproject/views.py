@@ -91,7 +91,7 @@ def signup(request):
     context = {}
     if 'username' not in request.session:
         if request.method == "POST":
-	    currentdatetime = datetime.datetime.now()
+            currentdatetime = datetime.datetime.now()
             time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
             email = request.REQUEST['username']
             user = User.objects.filter(username=email)
@@ -163,7 +163,6 @@ def myRewardPoint(request):
     points = cursor.fetchall()
     for row in points: 
         datasource.append(row[3])
-
     return render_to_response('flightsearch/myrewardpoint.html',{'updatemsg':updatemsg,'datasource':datasource,'points':points,'temp_message':temp_message}, context_instance=RequestContext(request))
 
 def manageAccount(request):
@@ -182,6 +181,25 @@ def manageAccount(request):
     if social_id:	
         issocial = 'yes'
     if request.POST:
+        if 'home_ariport' in request.POST:
+            user1.home_airport = request.REQUEST['home_ariport']
+        
+            isupdated  = user1.save()
+            print isupdated
+        if 'home_ariport' not in request.POST:
+            user1.firstname = request.REQUEST['firstname']
+            user1.middlename = request.REQUEST['middlename']
+            user1.lastname = request.REQUEST['lastname']
+            user1.gender = request.REQUEST['gender']
+            if request.REQUEST['dateofbirth']:
+                user1.date_of_birth = request.REQUEST['dateofbirth']
+            else:
+                user1.date_of_birth = None
+            user1.address = request.REQUEST['address']
+            user1.country = request.REQUEST['country']
+            user1.phone = request.REQUEST['phone']
+            user1.save()
+        '''
     	if 'new_password' in request.POST:
     	    newpassword = request.REQUEST['new_password']
             newpassword1 = hashlib.md5(newpassword).hexdigest()
@@ -201,6 +219,7 @@ def manageAccount(request):
             if newpassword1: 
                 request.session['password'] = newpassword1
             msg = "Your account has been updated  successfully" 
+        '''
     return render_to_response('flightsearch/manage_account.html',{'message':msg,'user':user1,'issocial':issocial}, context_instance=RequestContext(request))
 
 def login(request):

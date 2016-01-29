@@ -470,7 +470,7 @@ footer .navbar-footer .navbar-toggle .icon-bar {
     top: -2px;
 }
 .footer-abs{position:absolute;width:100%;bottom:0;}
-.mng-act{padding:30px !important;background:#f5f5f5 !important;!float:none; !margin:auto;}
+.mng-act{padding:30px !important;background-color: #F0F7FD !important;!float:none; !margin:auto;}
 /*----------- search css gk */
 
 .na-ra p {
@@ -1772,11 +1772,11 @@ display:inline-block;
 }
 .form-reward 
 {
-	padding:0px 20px;
+	padding:0px 10px;
 }
 .pd-fm-btn
 {
-	padding-left:25px;
+	padding-left:15px;
 }
 .form-feedback
 {
@@ -1835,16 +1835,31 @@ display:inline-block;
 info, email, username, phone, flight, language, country {
 	display: block;
 }
+.manage-account>.container {
+	text-align: center;
+}
+.manage-account .div-center {
+	float: none;
+	margin: auto;
+}
 .account-block-bg {
-	border: 1px solid #797979;
+	!border: 1px solid #797979;
+	background-color: #F0F7FD;
 	padding: 0 15px 10px;
 	margin-bottom: 10px;
 }
 .account-block-bg .title {
-	color: darkblue;
-	font-size: 18px;
+	!color: darkblue;
+	font-size: 17px;
 	margin-top: 10px;
 	font-weight: 700;
+}
+.account-block-bg dl dt {
+	text-align: left;
+	padding: 5px 0;
+}
+.account-block-bg dl dd {
+	padding: 5px 0;
 }
 .account-block-bg hr {
 	border-color: #797979;
@@ -1889,6 +1904,15 @@ info, email, username, phone, flight, language, country {
 }
 
 @media (max-width: 767px) {
+	.account-block-bg dl dt {
+		display: inline-block;
+		float: left;
+		width: 40%;
+	}
+	.account-block-bg dl dd {
+		display: inline-block;
+		width: 60%;
+	}
 .left-heading
 {
 	    min-width: 90px !important;
@@ -2007,7 +2031,7 @@ div.ui-datepicker{
 }
 .xs-nopadding
 {
-	
+	padding: 0;
 }
 .fr-blk
 {

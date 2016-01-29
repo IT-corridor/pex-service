@@ -1,105 +1,134 @@
 		{% load staticfiles %}
+		{% load humanize %}
 		{% include "flightsearch/header.html" %}
-	    <div class="col-xs-12 nopadding">
+		{% include "flightsearch/top_searchbar.html" %}
+	    <div class="col-xs-12 nopadding manage-account">
 		<div class="container">
-			<div class="col-xs-12 account-block-bg">
-				<h2 class="title">Account Information</h2>
-				<hr>
-				<div class="col-sm-4 col-sm-push-8 col-xs-12 text-right nopr">
-					<p><a href="#"><span class="glyphicon glyphicon-chevron-right"></span> View All Travelers</a></p>
-					<p><a href="#"><span class="glyphicon glyphicon-chevron-right"></span> View All Pets</a></p>
-				</div>
-				<div class="col-sm-8 col-sm-pull-4 col-xs-12 nopadding">
-					<info>
-						<strong>MileagePlus Member/Primary Traveler</strong><br>
-						<!--Ms. Jessica Berriman (Default)-->{{user.username}}<br>
-						<strong>Date of Birth: </strong>{{user.date_of_birth}}<br>
-						<strong>Gender: </strong>{{user.gender}}<br>
-					</info>
-					<a hrerf="#">Edit Traveler Information</a>
-				</div>
-				<div class="col-xs-12 account-inner-block nopadding">
-					<hr>
-					<div class="col-sm-4 col-xs-12 nopl">
-						<email><strong>Email: </strong>{{request.session.username}}<br>
-						<a href="#">Edit</a> | <a href="#">New</a> | <a href="#">View All</a></email>
+			<div class="col-sm-11 col-xs-12 div-center text-left nopadding">
+				<div class="col-xs-12 account-block-bg">
+					<h2 class="title">Your Account Information <span class="pull-right"><span><a href="#" class="editinfo" id="accountinfo">Edit</a></span></span></h2>
+					<div class="col-xs-12 nopadding" id="infodiv">
+					<div class="col-sm-6 col-xs-12 nopadding">
+						<dl class="dl-horizontal">
+							<dt>First Name:</dt>
+							<dd>{%if user.firstname%} {{user.firstname|title}} {%endif%}</dd>
+							<dt>Middle Name:</dt>
+							<dd>{%if user.middlename%} {{user.middlename|title}} {%endif%}</dd>
+							<dt>Last Name:</dt>
+							<dd>{%if user.lastname%} {{user.lastname|title}} {%endif%}</dd>
+							<dt>Date of Birth:</dt>
+							<dd>{%if user.date_of_birth%} {{user.date_of_birth}} {%endif%}</dd>
+							<dt>Gender:</dt>
+							<dd>{%if user.gender%} {{user.gender|title}} {%endif%}</dd>
+						</dl>
 					</div>
-					<div class="col-sm-4 col-xs-12">
-						<username><strong>Username: </strong> {{user.username}}<br>
-						<a href="#">Edit</a> | <a href="#">Set Password</a> | <a href="#">Change Pin</a></username>
-					</div>
-					<div class="col-sm-4 col-xs-12 text-right nopr">
-						<p><a href="#"><span class="glyphicon glyphicon-chevron-right"></span> Change Pin/Password Reminder</a></p>
-					</div>
-				</div>
-				<div class="col-xs-12 nopadding">
-					<div class="col-sm-4 col-xs-12 nopl">
-						<address><strong>Address: </strong><br>
-							{{user.address}}
-							<!--
-						5100 San Felipe St.<br>
-						Apt.56E<br>
-						Houston, Texas 77056<br>
-						United States<br>--></br>
-						<a href="#">Edit</a> | <a href="#">New</a> | <a href="#">View All</a> | <a href="#">Privacy</a></address>
-					</div>
-					<div class="col-sm-4 col-xs-12">
-						<phone><strong>Phone: </strong><br>
-							{{user.phone}}
-						<!--(408) 256-1836-United states --><br>
-						<a href="#">Edit</a> | <a href="#">New</a> | <a href="#">View All</a> | <a href="#">Privacy</a></phone>
+					<div class="col-sm-6 col-xs-12 nopr xs-nopadding">
+						<dl class="dl-horizontal">
+							<dt>Address:</dt>
+							<dd>{%if user.address%}{{user.address|title}}{%endif%}</dd>
+							<dt>Country:</dt>
+							<dd>{%if user.country%}{{user.country|title}}{%endif%}</dd>
+							<dt>Phone:</dt>
+							<dd>{%if user.phone%}{{user.phone}}{%endif%}</dd>
+							<dt>Email:</dt>
+							<dd>{%if user.email%}{{user.email}}{%endif%}</dd>
+						</dl>
+						
 					</div>
 				</div>
-			</div>
-			<div class="col-xs-12 account-block-bg">
-				<h2 class="title">Prefrences</h2>
-				<hr>
-				<div class="col-xs-12 nopadding">
-					<div class="col-sm-4 col-xs-12 nopl">
-						<country>
-							<strong>Country: </strong><br>
-							{{user.country}}
-						</country>
+				<div class="col-xs-12 nopadding edit" id="edit_infodiv">
+				<form method="post" action="manageAccount">
+					{% csrf_token %}
+					<div class="col-sm-6 col-xs-12 nopadding">
+						<dl class="dl-horizontal" >
+							<dt>First Name:</dt>
+							<dd><input type="text" name="firstname" {%if user.firstname%} value="{{user.firstname|title}}" {%endif%}></dd>
+							<dt>Middle Name:</dt>
+							<dd><input type="text" name="middlename" {%if user.middlename%} value="{{user.middlename|title}}" {%endif%}></dd>
+							<dt>Last Name:</dt>
+							<dd><input type="text" name="lastname" {%if user.lastname%} value="{{user.lastname|title}}" {%endif%}></dd>
+							<dt>Date of Birth:</dt>
+							<dd><input type="text" id="dob" name="dateofbirth" {%if user.date_of_birth%} value="{{user.date_of_birth}}" {%endif%}></dd>
+							<dt>Gender:</dt>
+							<dd><input type="text" name="gender" {%if user.gender%} value="{{user.gender|title}}" {%endif%}></dd>
+							
+						</dl>
 					</div>
-					<div class="col-sm-4 col-xs-12">
-						<language>
-							<strong>Language Prefrence: </strong><br>
-							{{user.language}}
-						</language>
+					<div class="col-sm-6 col-xs-12 nopadding">
+						<dl class="dl-horizontal">
+							<dt>Address:</dt>
+							<dd><textarea rows="4" cols="30" name="address">{%if user.address%} {{user.address}} {%endif%}</textarea> </dd>
+							<dt>Country:</dt>
+							<dd><input type="text" name="country" {%if user.country%} value="{{user.country|title}}" {%endif%}></dd>
+							<dt>Phone:</dt>
+							<dd><input type="text" name="phone" {%if user.phone%} value="{{user.phone}}" {%endif%}></dd>
+							<dt>Email:</dt>
+							<dd><input type="email" name="email" {%if user.email%} value="{{user.email}}" {%endif%}></dd>
+						</dl>
 					</div>
-					<div class="col-sm-4 col-xs-12 text-right nopr">
-						<p><a href="#"><span class="glyphicon glyphicon-chevron-right"></span> View All Regional Prefrences</a></p>
+					<div class="col-xs-12 nopadding ">
+					
+					<button type="submit" class="btn btn-pexSearch"> Update</button>
+					
+					<span class="btn btn-pexSearch" id="cancel_info"> Cancel</span>
 					</div>
+				</form>
 				</div>
-				<div class="col-xs-12 nopadding">
-					<hr>
-					<div class="col-sm-8 col-xs-12 nopl">
-						<flight>
-							<strong>Flight Search Prefrences: </strong><br>
-							Home Airport: {{user.home_airport}}<br>
-							Fare Type: <br>
-							Lowest Available Fare - Most Restrictions<br>
-							Search by: <br>
-							Price: 
-						</flight>
-					</div>
-					<div class="col-sm-4 col-xs-12 text-right nopr">
-						<p><a href="#"><span class="glyphicon glyphicon-chevron-right"></span> View All Flight Search Prefrences</a></p>
+				</div>
+				<div class="col-xs-12 account-block-bg">
+					<h2 class="title">Your Account Prefrences <a href="#" class="pull-right" id="prefrence">Edit</a></h2>
+					<div class="col-xs-12 nopadding">
+						<div class="col-xs-12 nopl">
+							<dl class="dl-horizontal" id="prefrenceinfo">
+								<dt>Home Airport:</dt>
+								<dd>{%if user.home_airport%}{{user.home_airport}}{%endif%}</dd>
+								<dt>Subscriptions:</dt>
+								<dd>None<br><a href="#">Sign-up for PEX+updates</a></dd>
+							</dl>
+							<dl class="dl-horizontal edit" id="edit_prefrenceinfo">
+								<form action="manageAccount" method="post">
+									{% csrf_token %}
+									<dt>Home Airport:</dt>
+									<dd><input type="text" id="airport" name="home_ariport" {%if user.home_airport%} value="{{user.home_airport|title}}" {%endif%}></dd>
+									<dt>Subscriptions:</dt>
+									<dd><input type="text" value=""><br></dd>
+									<button type="submit" class="btn btn-pexSearch"> Update</button>
+									<span class="btn btn-pexSearch" id="cancel_preference"> Cancel</span>
+								</form>
+							</dl>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	{% include "flightsearch/footer.html" %}
-	<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>');</script>
-	
-    <script src="/static/flightsearch/js/vendor/bootstrap.min.js"></script>
 	<script>
-	$('#back').click(function(){
-		parent.history.back();
-	});
-	
-	
+		$(document).ready(function(){
+			$('.edit').hide();
+		});
+		$('#prefrence').click(function(){
+			$('#edit_prefrenceinfo').show();
+			$('#prefrenceinfo').hide();
+			
+		});
+		$('#accountinfo').click(function(){
+			$('#edit_infodiv').show();
+			$('#infodiv').hide();
+			
+		});
+		$('#cancel_info').click(function(){
+			$('#edit_infodiv').hide();
+			$('#infodiv').show();
+			
+		});
+		$('#cancel_preference').click(function(){
+			$('#edit_prefrenceinfo').hide();
+			$('#prefrenceinfo').show();
+			
+		});
+	</script>
+	<script>
+		$('#dob').datepicker({ dateFormat: 'yy-mm-dd' });
 		$( "#airport" ).autocomplete({
   		 open: function(event, ui) {
 	        	$('.ui-autocomplete').off('menufocus hover mouseover');
@@ -107,51 +136,11 @@
 		autoFocus: true,
     	source: "get_airport/",
     	minLength: 2,
-    });
-    $('#update').click(function(){
-		if ($('#newpassword').is(':hidden')){
-			$('#newpassword').prop("disabled", true);
-			$('#confirm_password').prop("disabled", true);
-		}
-    });
-    
-    var activePassword = "{{request.session.password}}";
-    $('#password_div').hide();
-    $('#change_password').click(function(){
-    	$('#password_div').toggle();
-    	
-    	if($('#change_password').text() == "Change")
-    	{
-    		$('#change_password').text('Cancel');
-    		$('#password').val('');
-    		$('#password').prop("disabled", false);
-    	}  
-    	else{
-    		$('#change_password').text('Change');
-    		$('#password').val(activePassword);
-    		$('#password').prop("disabled", true);
-    	}
-    	/*
-    	$('#password_div').show();
-    	$('#password').val('');
-    	$('#password').prop("disabled", false);
-    	*/
-    	
+    	appendTo:".modelform",
     });
 	</script>
-	<script>
-		$('#confirm_password').change(function(e){
-		  if ($('#confirm_password').val() !=  $('#newpassword').val())
-		  {
-		  	
-		  	alert("password missmatch");
-		  	$('#newpassword').val('');
-		  	$('#newpassword').focus();
-		  	e.preventDefault();
-		  	
-		  }
-		});
-		
-	</script>
+	{% include "flightsearch/footer.html" %}
+	
+	
 	
 	

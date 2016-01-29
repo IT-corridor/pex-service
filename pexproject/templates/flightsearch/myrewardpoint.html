@@ -11,22 +11,22 @@
 			<div class="alert alert-warning">{{message}}</div>
 			{% endif %}
 			<div class="">
-			<div class="col-xs-12 col-md-9 nopadding">
+			<div class="col-xs-12 col-md-10 nopadding">
 			
 			<div class="col-xs-12 nopadding">
-				<div class="col-xs-12 nopadding">
-				<div class="col-xs-3 text-center"><b><u>Airlines</u></b></div>
-				<div class="col-xs-3 text-center"><b><u>Points</u></b></div>
-				<div class="col-xs-3 text-center"><b><u>Last Updated</u></b></div>
-				<div class="col-xs-3 text-center"><b><u>Action</u></b></div>
+				<div class="col-xs-12 nopadding mvb10px">
+				<div class="col-xs-3"><b><u>Airlines</u></b></div>
+				<div class="col-xs-3"><b><u>Points</u></b></div>
+				<div class="col-xs-3 pl5"><b><u>Last Updated</u></b></div>
+				<div class="col-xs-3 nopadding"><b><u>Action</u></b></div>
 				</div>
 					{% if points %}
 				{% for row in points%}
 					<div class="col-xs-12 nopadding rewardpoint" style="padding-bottom: 10px" id="{{row.3}}_div">	
-					<div class="col-xs-3 text-center">{{row.3|title}}</div>
-					<div class="col-xs-3 text-center">{{row.2}} Miles</div>
-					<div class="col-xs-3 text-center nopadding">{{row.4}}</div>
-					<div class="col-xs-3 text-center"><a href="#" id="{{row.3}}" class="update"> Update</a>
+					<div class="col-xs-3">{{row.3|title}}</div>
+					<div class="col-xs-3">{{row.2}} Miles</div>
+					<div class="col-xs-3 pl5">{{row.4}}</div>
+					<div class="col-xs-3 nopadding"><a href="#" id="{{row.3}}" class="update"> Update</a>
 						| <a href="#" id="{{row.3}}_{{ request.session.userid }}" class="deactivate">Deactivate</a>
 					</div>
 					</div>
@@ -77,8 +77,10 @@
 		    </div>
 			</div>
 		  <div class="form-group pd-fm-btn" style="margin-top:15px;">
-
-		  <button type="submit" id="syncdata" class="btn btn-pexSearch">Sync</button></div>
+			<button type="submit" id="syncdata" class="btn btn-pexSearch">Sync</button>
+			<span type="submit" id="cancel" class="btn btn-pexSearch">Cancel</span>
+		  </div>
+		  
 		</form>
 		</div>
 		</div>	
@@ -106,16 +108,13 @@
 					
 		});
 		$('#add_account').click(function(){
-			 if ($(this).text() == "Add Account") 
-			  { 
-			  	$('#addaccount').show();
-			     $(this).text("Cancel"); 
-			  } 
-			  else 
-			  { 
-			     $(this).text("Add Account"); 
-			     $('#addaccount').hide();
-			  }; 
+			 $('#addaccount').show();
+			 $(this).hide();
+		});
+		$("#cancel").click(function(){		
+			 $('#addaccount').hide();
+			 $('#add_account').show();
+			 
 		});
 		
 		
