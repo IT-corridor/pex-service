@@ -110,7 +110,11 @@ class User(AbstractBaseUser):
     country = models.CharField(max_length=100)
     phone = models.CharField(max_length=20)
     home_airport = models.CharField(max_length=100)
-    address = models.CharField(max_length=512)
+    address1 = models.CharField(max_length=512)
+    address2 = models.CharField(max_length=512)
+    city = models.CharField(max_length=512)
+    state = models.CharField(max_length=512)
+    zipcode = models.CharField(max_length=20)
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']    
     objects =  UserManager()

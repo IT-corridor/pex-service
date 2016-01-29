@@ -104,6 +104,7 @@ def signup(request):
             object = User(username=email,email=email, password=password1, home_airport=airport,last_login=time)
             object.save()
             request.session['username'] = email
+            request.session['homeairpot'] = airport
             request.session['password'] = password1
             if object.user_id:
                 request.session['userid'] = object.user_id
@@ -195,7 +196,11 @@ def manageAccount(request):
                 user1.date_of_birth = request.REQUEST['dateofbirth']
             else:
                 user1.date_of_birth = None
-            user1.address = request.REQUEST['address']
+            user1.address1 = request.REQUEST['address1']
+            user1.address2 = request.REQUEST['address2']
+            user1.city = request.REQUEST['city']
+            user1.state = request.REQUEST['state']
+            user1.zipcode = request.REQUEST['zipcode']
             user1.country = request.REQUEST['country']
             user1.phone = request.REQUEST['phone']
             user1.save()
@@ -239,6 +244,7 @@ def login(request):
         if len(user) > 0:
             request.session['username'] = username
             request.session['password'] = password1
+            request.session['homeairpot'] = user.home_airport
             request.session['userid'] = user[0].user_id
             return HttpResponseRedirect(reverse('index'))
         else:
@@ -251,8 +257,9 @@ def logout(request):
     context = {} 
     auth_logout(request)
     if 'username' in request.session:
-    	del  request.session['username'] 
-    	del  request.session['password']  
+    	del request.session['username']
+        del request.session['homeairpot']
+    	del request.session['password']  
     return HttpResponseRedirect(reverse('index'))
 
 def forgotPassword(request):
