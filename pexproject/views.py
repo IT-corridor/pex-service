@@ -244,7 +244,8 @@ def login(request):
         if len(user) > 0:
             request.session['username'] = username
             request.session['password'] = password1
-            request.session['homeairpot'] = user.home_airport
+            if user.home_airport:
+                request.session['homeairpot'] = user.home_airport
             request.session['userid'] = user[0].user_id
             return HttpResponseRedirect(reverse('index'))
         else:

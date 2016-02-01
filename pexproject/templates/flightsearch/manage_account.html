@@ -4,7 +4,7 @@
 		{% include "flightsearch/top_searchbar.html" %}
 	    <div class="col-xs-12 nopadding manage-account">
 		<div class="container">
-			<div class="col-sm-11 col-xs-12 div-center text-left nopadding">
+			<div class="col-xs-12 nopadding">
 				<div class="col-xs-12 account-block-bg" id="infodiv">
 				<!--	<h4 class="pull-right mhl15px"><a href="#">Change Password</a></h4> -->
 					<h2 class="title">Your Account Information <a href="#" class="pull-right editinfo" id="accountinfo">Edit</a></h2>
@@ -44,11 +44,11 @@
 				</div>
 				<div class="col-xs-12 account-block-bg edit" id="edit_infodiv">
 				<form method="post" action="manageAccount">
-				<h2 class="title">Your Account Information <span class="hidden-xs"> <span class="btn btn-pexSearch pull-right cancel_info" id="">Cancel</span> <button type="submit" class="btn btn-pexSearch pull-right saveinfo">Save</button></span></h2>
+				<h2 class="title">Your Account Information <span class="hidden-xs"> <span class="btn btn-link pull-right cancel_info" id="">Cancel</span> <button type="submit" class="btn btn-link pull-right saveinfo">Save</button></span></h2>
 				<div class="col-xs-12 nopadding" >
 				
 					{% csrf_token %}
-					<div class="col-sm-6 col-xs-12 nopl xs-nopadding">
+					<div class="col-sm-5 col-xs-12 nopl xs-nopadding">
 						<dl class="dl-horizontal" >
 							<dt>First Name:</dt>
 							<dd><input type="text" class="form-control" name="firstname" {%if user.firstname%} value="{{user.firstname|title}}" {%endif%}></dd>
@@ -63,7 +63,7 @@
 							
 						</dl>
 					</div>
-					<div class="col-sm-6 col-xs-12 nopr xs-nopadding">
+					<div class="col-sm-5 col-sm-push-1 col-xs-12 nopr xs-nopadding">
 						<dl class="dl-horizontal">
 							<dt>Address1:</dt>
 							<dd><input type="text" class="form-control" name="address1" {%if user.address1%} value="{{user.address1}}"{%endif%}> </dd>
@@ -118,9 +118,9 @@
 				</div>
 				<div class="col-xs-12 account-block-bg edit" id="edit_prefrenceinfo">
 					<form action="manageAccount" method="post">
-					<h2 class="title">Your Account Prefrences <span class="hidden-xs"><span class="btn btn-pexSearch pull-right cancel_preference">Cancel</span> <button type="submit" class="btn btn-pexSearch pull-right">Save</button></span> </h2>
+					<h2 class="title">Your Account Prefrences <span class="hidden-xs"><span class="btn btn-link pull-right cancel_preference">Cancel</span> <button type="submit" class="btn btn-link pull-right">Save</button></span> </h2>
 					<div class="col-xs-12 nopadding">
-						<div class="col-sm-6 col-xs-12 nopl">
+						<div class="col-sm-5 col-xs-12 nopl">
 							<dl class="dl-horizontal" >
 								
 									{% csrf_token %}

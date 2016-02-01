@@ -1835,13 +1835,7 @@ display:inline-block;
 info, email, username, phone, flight, language, country {
 	display: block;
 }
-.manage-account>.container {
-	text-align: center;
-}
-.manage-account .div-center {
-	float: none;
-	margin: auto;
-}
+
 .account-block-bg {
 	!border: 1px solid #797979;
 	background-color: #F0F7FD;
@@ -1879,8 +1873,15 @@ info, email, username, phone, flight, language, country {
 .account-block-bg .btn-pexSearch {
   margin-right: 15px;
 }
-
-
+.account-block-bg>form>h2 button:after {
+	content:'|';
+	position: absolute;
+	right: 0;
+	color: #000;
+}
+.account-block-bg>form>h2 button {
+	position: relative;
+}
 
 
 
