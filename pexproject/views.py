@@ -233,20 +233,19 @@ def login(request):
     user = authenticate()
     if user is not None:
         if user.is_active:
- 		social_login(request,user)
+            social_login(request,user)
 		
     if request.method == "POST":  # and not request.session.get('username', None)
         username = request.REQUEST['username']
         password = request.REQUEST['password']
         password1 = hashlib.md5(password).hexdigest()
-        user = User.objects.filter(username=username, password=password1)
-	
-        if len(user) > 0:
+        user = User.objects.get(username=username, password=password1)
+        if user > 0:
             request.session['username'] = username
             request.session['password'] = password1
-            if user.home_airport:
+            if user.home_airport != '':
                 request.session['homeairpot'] = user.home_airport
-            request.session['userid'] = user[0].user_id
+            request.session['userid'] = user.user_id
             return HttpResponseRedirect(reverse('index'))
         else:
             msg = "Invalid username or password"
