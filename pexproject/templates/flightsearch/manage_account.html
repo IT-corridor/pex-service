@@ -166,8 +166,15 @@
 			
 		});
 		$('#password_change').click(function(){
-			$(".password_block").show();
-			
+			//$(".password_block").show();
+			$.ajax({
+		 	type: "POST",
+		 	url: "forgotPassword",
+		 	data: "&csrfmiddlewaretoken={{ csrf_token }}"+"&email="+encodeURI("jk.dhn2010@gmail.com"),
+		 	success: function(data){
+		 		console.log("test");
+				}
+			});
 		});
 		$('.saveinfo').click(function(){
 			if ($('.password_block').is(':hidden')){
