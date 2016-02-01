@@ -27,9 +27,8 @@
 						<dl class="dl-horizontal">
 							<dt>Address:</dt>
 							<dd>
-								{%if user.address1%}{{user.address1|title}}{%endif%}<br>{%if user.address2%}{{user.address2|title}}{%endif%}<br>
-								{%if user.city%}{{user.city|title}}{%endif%}, {%if user.state%}{{user.state|title}}{%endif%}<br>
-								{%if user.zipcode%}{{user.zipcode|title}}{%endif%}
+								{%if user.address1%}{{user.address1|title}}{%endif%}{%if user.address2%},<br>{{user.address2|title}}{%endif%}
+								{%if user.city%}, {{user.city|title}}{%endif%}{%if user.state%}<br> {{user.state|title}}{%endif%}{%if user.zipcode%} - {{user.zipcode|title}}{%endif%}
 							</dd>
 							<dt>Country:</dt>
 							<dd>{%if user.country%}{{user.country|title}}{%endif%}</dd>
@@ -82,7 +81,7 @@
 							<dt>Email:</dt>
 							<dd><input type="email" class="form-control" name="email" {%if user.email%} value="{{user.email}}" {%endif%}><br><a href="#" id="password_change">Change Password</a></dd>
 						</dl>
-						
+						<!--
 						<dl class="dl-horizontal password_block edit">
 							
 							<dt>Current Password:</dt>
@@ -92,6 +91,7 @@
 							<dt>confirm Password:</dt>
 							<dd><input type="password" class="form-control pass" name="new_password"/></dd>
 						</dl>
+						-->
 					</div>
 					
 					<div class="col-xs-12 nopadding visible-xs">
