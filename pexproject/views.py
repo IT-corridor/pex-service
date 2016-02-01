@@ -272,7 +272,13 @@ def forgotPassword(request):
         obj = User.objects.get(email=user_email)
         obj.password=password1
         obj.save()
-        send_mail('Forgot Your Password', 'Your password has been reset. Please login with your new password '+str(password)+' <a href="http://pexportal.com/index?action=reset">click here</a>', 'PEX', [user_email])
+        subject = "Forgot Your Password"
+        text_content = "Your password has been reset. Please login with your new password "+str(password)
+        html_content = '<a href="pexportal.com/forgotPassword?action=password_reset">Click here</a>'
+        mailcontent = EmailMultiAlternatives(subject,text_content,'PEX',[user_email])
+        mailcontent.attach_alternative(html_content, "text/html")
+        mailcontent.send()
+        #send_mail('Forgot Your Password', 'Your password has been reset. Please login with your new password '+str(password), 'PEX', [user_email])
 	msg = "Your password has been reset. please check your registered email"
     else:
         msg = "forgot password"
