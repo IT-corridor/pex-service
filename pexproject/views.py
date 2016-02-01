@@ -14,7 +14,7 @@ from django.contrib.auth import login
 from types import *
 import datetime
 from django.shortcuts import get_object_or_404,redirect
-from django.core.mail import send_mail
+from django.core.mail import send_mail,EmailMultiAlternatives
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -272,7 +272,7 @@ def forgotPassword(request):
         obj = User.objects.get(email=user_email)
         obj.password=password1
         obj.save()
-        send_mail('Forgot Your Password', 'Your password has been reset. Please login with your new password '+str(password), 'PEX', [user_email])
+        send_mail('Forgot Your Password', 'Your password has been reset. Please login with your new password '+str(password)+' <a href="http://pexportal.com/index?action=reset">click here</a>', 'PEX', [user_email])
 	msg = "Your password has been reset. please check your registered email"
     else:
         msg = "forgot password"
