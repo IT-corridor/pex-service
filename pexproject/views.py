@@ -227,6 +227,8 @@ def manageAccount(request):
         '''
     return render_to_response('flightsearch/manage_account.html',{'message':msg,'user':user1,'issocial':issocial}, context_instance=RequestContext(request))
 
+    
+
 def login(request):
     context = {}
     user = User()
@@ -264,7 +266,7 @@ def logout(request):
 
 def forgotPassword(request):
     context = {}
-    msg =''
+    msg =''    
     if request.POST:
         user_email =  request.REQUEST['email']
         password = randint(100000,999999)
@@ -274,15 +276,25 @@ def forgotPassword(request):
         obj.save()
         subject = "Forgot Your Password"
         text_content = "Your password has been reset. Please login with your new password "+str(password)
-        html_content = '<a href="pexportal.com/forgotPassword?action=password_reset">Click here</a>'
+        html_content = '<a href="pexportal.com/createPassword?action=create_password">Click here</a>'
         mailcontent = EmailMultiAlternatives(subject,text_content,'PEX',[user_email])
         mailcontent.attach_alternative(html_content, "text/html")
         mailcontent.send()
         #send_mail('Forgot Your Password', 'Your password has been reset. Please login with your new password '+str(password), 'PEX', [user_email])
-	msg = "Your password has been reset. please check your registered email"
+        msg = "Your password has been reset. please check your registered email"
+        if request.is_ajax():
+            mimetype = 'application/json'
+            data = "Please check your registered email id."
+            json.dumps(data)
+            return HttpResponse(data, mimetype)
+        
     else:
         msg = "forgot password"
     return render_to_response('flightsearch/index.html',{'fpmsg':msg},context_instance=RequestContext(request)) 
+def createPassword(request):
+    context = {}
+    if 'action' in request.GET:
+        return render_to_response('flightsearch/create_password.html',context_instance=RequestContext(request))
 
 def sendFeedBack(request):
     context = {}
