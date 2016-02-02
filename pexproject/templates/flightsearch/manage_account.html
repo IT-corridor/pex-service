@@ -82,7 +82,7 @@
 							<dt>Phone:</dt>
 							<dd><input type="text" class="form-control" name="phone" {%if user.phone%} value="{{user.phone}}" {%endif%}></dd>
 							<dt>Email:</dt>
-							<dd><input type="email" class="form-control" name="email" {%if user.email%} value="{{user.email}}" {%endif%}><br><a href="#" id="password_change">Change Password</a></dd>
+							<dd><input type="email" id="email" class="form-control" name="email" {%if user.email%} value="{{user.email}}" {%endif%}><br><a href="#" id="password_change">Change Password</a></dd>
 						</dl>
 						<!--
 						<dl class="dl-horizontal password_block edit">
@@ -170,13 +170,13 @@
 		});
 		
 		$('#password_change').click(function(){
-			
+			var user_email = "{{{user.email}}}";
 			//$(".password_block").show();
 			$.ajax({
 		 	type: "POST",
 		 	dataType: "text",
 		 	url: "forgotPassword",
-		 	data: "&csrfmiddlewaretoken={{ csrf_token }}"+"&email="+encodeURI("jk.dhn2010@gmail.com"),
+		 	data: "&csrfmiddlewaretoken={{ csrf_token }}"+"&email="+encodeURI(user_email),
 		 	success: function(data){
 				console.log(data);
 				$("hello").addClass("alert-success");
