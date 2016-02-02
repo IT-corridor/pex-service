@@ -277,15 +277,18 @@ def forgotPassword(request):
         text = ''
         try:
             subject = "Manage Your Password"
-            html_content = '"To manage Your password  <a href="http://98.158.184.156:8001/createPassword?action=create_password">Click here</a>'
-            mailcontent = EmailMultiAlternatives(subject,text_content,'PEX',[user_email])
+            html_content = '"To manage Your password  <a href="http://pexportal.com/createPassword?action=create_password">Click here</a>'
+            mailcontent = EmailMultiAlternatives(subject,text,'PEX',[user_email])
             mailcontent.attach_alternative(html_content, "text/html")
             mailcontent.send()
             text = "Please check your registered email id to create new password"
         except:
             text = "There is some technical problem. Please try again"
-        print text
-        #send_mail('Forgot Your Password', 'Your password has been reset. Please login with your new password '+str(password), 'PEX', [user_email])
+        #print text
+        #send_mail('Forgot Your Password', 'Your password has been reset. Please login with your new password '+str(password), 'PEX', [user_email])'
+	if 'pagetype' in request.REQUEST:	
+	    return render(request, 'flightsearch/index.html', {'welcome_msg': text})
+	    #return render_to_response('flightsearch/index.html',{'welcome_msg':text}, context_instance=RequestContext(request))
         if request.is_ajax():
             mimetype = 'application/json'
             data = text
