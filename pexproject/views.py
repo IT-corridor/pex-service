@@ -274,31 +274,21 @@ def forgotPassword(request):
     msg =''    
     if request.POST:
         user_email =  request.REQUEST['email']
-        password = randint(100000,999999)
-        password1 = hashlib.md5(str(password)).hexdigest()
-        #obj = User.objects.get(email=user_email)
-        #obj.password=password1
-        #obj.save()
-	text = ''
-	#urlpath = request.get_host
-	#print '<a href="'+str(urlpath)+'/createPassword?action=create_password">Click here</a>'
-	try:
-            subject = "Forgot Your Password"
-            text_content = "Your password has been reset. Please login with your new password "+str(password)
-            html_content = '"Your password has been reset. Please login with your new password '+str(password)+' <a href="http://98.158.184.156:8001/createPassword?action=create_password">Click here</a>'
+        text = ''
+        try:
+            subject = "Manage Your Password"
+            html_content = '"To manage Your password  <a href="http://98.158.184.156:8001/createPassword?action=create_password">Click here</a>'
             mailcontent = EmailMultiAlternatives(subject,text_content,'PEX',[user_email])
             mailcontent.attach_alternative(html_content, "text/html")
             mailcontent.send()
-	    text = "Please check your registered email id."
-	except:
-	    text = "There is some technical problem. Please try again"
-	print text
+            text = "Please check your registered email id to create new password"
+        except:
+            text = "There is some technical problem. Please try again"
+        print text
         #send_mail('Forgot Your Password', 'Your password has been reset. Please login with your new password '+str(password), 'PEX', [user_email])
-        msg = "Your password has been reset. please check your registered email"
         if request.is_ajax():
             mimetype = 'application/json'
             data = text
-	    #print data
             json.dumps(data)
             return HttpResponse(data, mimetype)
         
@@ -307,9 +297,28 @@ def forgotPassword(request):
     return render_to_response('flightsearch/index.html',{'fpmsg':msg},context_instance=RequestContext(request)) 
 def createPassword(request):
     context = {}
-    if 'action' in request.GET:
-        return render_to_response('flightsearch/create_password.html',context_instance=RequestContext(request))
-
+    #if 'action' in request.GET:
+    try:
+        userid = request.session['userid']
+    except:
+        return HttpResponseRedirect(reverse('index'))
+    msg = ''
+    if request.POST:
+        user = User.objects.get(pk = userid)
+        #oldpassword = request.REQUEST['current_password']
+        if 'current_password' in request.POST:
+            oldpassword = request.REQUEST['current_password']
+            oldpassword1 = hashlib.md5(oldpassword).hexdigest()
+            if oldpassword1 != user.password:
+                msg = "Wrong current password"
+            else:    
+                if 'new_password' in request.POST:
+                    newpassword = request.REQUEST['new_password']
+                    newpassword1 = hashlib.md5(newpassword).hexdigest()
+                    user.password=newpassword1
+                    user.save()
+                    msg = "Your password has been reset successfully."
+    return render_to_response('flightsearch/create_password.html',{'message':msg},context_instance=RequestContext(request))    
 def sendFeedBack(request):
     context = {}
     alert_msg = ''
