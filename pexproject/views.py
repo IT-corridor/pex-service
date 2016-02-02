@@ -241,16 +241,21 @@ def login(request):
         username = request.REQUEST['username']
         password = request.REQUEST['password']
         password1 = hashlib.md5(password).hexdigest()
-        user = User.objects.get(username=username, password=password1)
-        if user > 0:
-            request.session['username'] = username
-            request.session['password'] = password1
-            if user.home_airport != '':
-                request.session['homeairpot'] = user.home_airport
-            request.session['userid'] = user.user_id
-            return HttpResponseRedirect(reverse('index'))
-        else:
-            msg = "Invalid username or password"
+	try:
+            user = User.objects.get(username=username, password=password1)
+	    print user
+            if user > 0:
+            	request.session['username'] = username
+            	request.session['password'] = password1
+            	if user.home_airport != '':
+                    request.session['homeairpot'] = user.home_airport
+                request.session['userid'] = user.user_id
+                return HttpResponseRedirect(reverse('index'))
+            else:
+            	msg = "Invalid username or password"
+            	return render_to_response('flightsearch/index.html', {'msg':msg}, context_instance=RequestContext(request))
+	except:
+	    msg = "Invalid username or password"
             return render_to_response('flightsearch/index.html', {'msg':msg}, context_instance=RequestContext(request))
     else:
         return HttpResponseRedirect(reverse('index'))
@@ -271,20 +276,29 @@ def forgotPassword(request):
         user_email =  request.REQUEST['email']
         password = randint(100000,999999)
         password1 = hashlib.md5(str(password)).hexdigest()
-        obj = User.objects.get(email=user_email)
-        obj.password=password1
-        obj.save()
-        subject = "Forgot Your Password"
-        text_content = "Your password has been reset. Please login with your new password "+str(password)
-        html_content = '<a href="pexportal.com/createPassword?action=create_password">Click here</a>'
-        mailcontent = EmailMultiAlternatives(subject,text_content,'PEX',[user_email])
-        mailcontent.attach_alternative(html_content, "text/html")
-        mailcontent.send()
+        #obj = User.objects.get(email=user_email)
+        #obj.password=password1
+        #obj.save()
+	text = ''
+	#urlpath = request.get_host
+	#print '<a href="'+str(urlpath)+'/createPassword?action=create_password">Click here</a>'
+	try:
+            subject = "Forgot Your Password"
+            text_content = "Your password has been reset. Please login with your new password "+str(password)
+            html_content = '"Your password has been reset. Please login with your new password '+str(password)+' <a href="http://98.158.184.156:8001/createPassword?action=create_password">Click here</a>'
+            mailcontent = EmailMultiAlternatives(subject,text_content,'PEX',[user_email])
+            mailcontent.attach_alternative(html_content, "text/html")
+            mailcontent.send()
+	    text = "Please check your registered email id."
+	except:
+	    text = "There is some technical problem. Please try again"
+	print text
         #send_mail('Forgot Your Password', 'Your password has been reset. Please login with your new password '+str(password), 'PEX', [user_email])
         msg = "Your password has been reset. please check your registered email"
         if request.is_ajax():
             mimetype = 'application/json'
-            data = "Please check your registered email id."
+            data = text
+	    #print data
             json.dumps(data)
             return HttpResponse(data, mimetype)
         
