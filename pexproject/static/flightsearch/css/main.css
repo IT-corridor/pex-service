@@ -1888,6 +1888,16 @@ nav.cstm-hw-it {
 .static-page-jumbo .jumbotron {
 	padding: 0 30px;
 }
+.feedback-btn {
+	position: fixed;
+	bottom: 110px;
+	right: -32px;
+	-webkit-transform: rotate(-90deg);
+	-moz-transform: rotate(-90deg);
+	-ms-transform: rotate(-90deg);
+	-o-transform: rotate(-90deg);
+	transform: rotate(-90deg);
+}
 
 
 
