@@ -113,8 +113,10 @@
 								{% if msg %}
 									<div class="show-msg">{{msg}} </div>
 								{% endif %}
+								<div class="show-msg" id="loginmsg"></div>
 								<form action="login" method="post">
 									{% csrf_token %}
+									<input type="hidden" name="curl" value="{{request.get_full_path}}" id="curl">
 									<div class="form-group">
 										<input type="email" class="form-control" placeholder="Email" name="username" required>
 									</div>

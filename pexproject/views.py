@@ -42,6 +42,7 @@ import smtplib
 from email.mime.text import MIMEText
 import socket
 from email.mime.multipart import MIMEMultipart
+import base64
 #from djnago.conf import settings
 import subprocess
 import json
@@ -176,7 +177,6 @@ def manageAccount(request):
     newpassword1 = ''
     email1 = request.session['username']
     user1 = User.objects.get(pk =request.session['userid'])
-    #sid =request.session['userid'] 
     cursor.execute("select provider from social_auth_usersocialauth where user_id ="+str(request.session['userid']))
     social_id = cursor.fetchone()
     if social_id:	
@@ -204,27 +204,7 @@ def manageAccount(request):
             user1.country = request.REQUEST['country']
             user1.phone = request.REQUEST['phone']
             user1.save()
-        '''
-    	if 'new_password' in request.POST:
-    	    newpassword = request.REQUEST['new_password']
-            newpassword1 = hashlib.md5(newpassword).hexdigest()
-            user1.password=newpassword1
-        if 'current_password' in request.POST:
-            password = request.REQUEST['current_password']
-            password1 = hashlib.md5(password).hexdigest()
-    	    if password1 != request.session['password']:
-        		msg = "Wrong current password"
-        		password1 = ''
-        else:
-            password1 = request.session['password']
-        if email1 and password1:
-            home_airport = request.REQUEST['home_airport']
-            user1.home_airport = home_airport
-            user1.save()
-            if newpassword1: 
-                request.session['password'] = newpassword1
-            msg = "Your account has been updated  successfully" 
-        '''
+        
     return render_to_response('flightsearch/manage_account.html',{'message':msg,'user':user1,'issocial':issocial}, context_instance=RequestContext(request))
 
     
@@ -233,29 +213,32 @@ def login(request):
     context = {}
     user = User()
     user = authenticate()
+    currentpath = ''
     if user is not None:
         if user.is_active:
-            social_login(request,user)
-		
+            social_login(request,user)	
     if request.method == "POST":  # and not request.session.get('username', None)
         username = request.REQUEST['username']
         password = request.REQUEST['password']
+        if "curl" in request.POST:
+            currentpath = request.REQUEST['curl']
         password1 = hashlib.md5(password).hexdigest()
-	try:
+    	try:
             user = User.objects.get(username=username, password=password1)
-	    print user
             if user > 0:
-            	request.session['username'] = username
-            	request.session['password'] = password1
-            	if user.home_airport != '':
+                request.session['username'] = username
+                request.session['password'] = password1
+                if user.home_airport != '':
                     request.session['homeairpot'] = user.home_airport
                 request.session['userid'] = user.user_id
+                if currentpath:
+                    return HttpResponseRedirect(currentpath)
                 return HttpResponseRedirect(reverse('index'))
             else:
-            	msg = "Invalid username or password"
-            	return render_to_response('flightsearch/index.html', {'msg':msg}, context_instance=RequestContext(request))
-	except:
-	    msg = "Invalid username or password"
+                msg = "Invalid username or password"
+                return render_to_response('flightsearch/index.html', {'msg':msg}, context_instance=RequestContext(request))
+    	except:
+    	    msg = "Invalid username or password"
             return render_to_response('flightsearch/index.html', {'msg':msg}, context_instance=RequestContext(request))
     else:
         return HttpResponseRedirect(reverse('index'))
@@ -274,18 +257,21 @@ def forgotPassword(request):
     msg =''    
     if request.POST:
         user_email =  request.REQUEST['email']
+        randomcode = randint(100000000000,999999999999)
+        usercode =  base64.b64encode(str(randomcode))
+        #ucode = base64.b64decode(usercode)
+        user = User.objects.get(pk = request.session['userid'])
+        exit()
         text = ''
         try:
             subject = "Manage Your Password"
-            html_content = '"To manage Your password  <a href="http://pexportal.com/createPassword?action=create_password">Click here</a>'
+            html_content = '"To manage Your password  <a href="http://pexportal.com/createPassword?usercode='+usercode+'">Click here</a>'
             mailcontent = EmailMultiAlternatives(subject,text,'PEX',[user_email])
             mailcontent.attach_alternative(html_content, "text/html")
             mailcontent.send()
             text = "Please check your registered email id to create new password"
         except:
             text = "There is some technical problem. Please try again"
-        #print text
-        #send_mail('Forgot Your Password', 'Your password has been reset. Please login with your new password '+str(password), 'PEX', [user_email])'
 	if 'pagetype' in request.REQUEST:	
 	    return render(request, 'flightsearch/index.html', {'welcome_msg': text})
 	    #return render_to_response('flightsearch/index.html',{'welcome_msg':text}, context_instance=RequestContext(request))
