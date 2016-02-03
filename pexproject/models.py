@@ -115,6 +115,8 @@ class User(AbstractBaseUser):
     city = models.CharField(max_length=512)
     state = models.CharField(max_length=512)
     zipcode = models.CharField(max_length=20)
+    usercode = models.CharField(max_length=20)
+    user_code_time = models.DateTimeField()
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']    
     objects =  UserManager()
