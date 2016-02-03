@@ -1882,6 +1882,12 @@ info, email, username, phone, flight, language, country {
 .account-block-bg>form>h2 button {
 	position: relative;
 }
+nav.cstm-hw-it {
+	z-index: inherit;
+}
+.static-page-jumbo .jumbotron {
+	padding: 0 30px;
+}
 
 
 
@@ -1917,10 +1923,12 @@ info, email, username, phone, flight, language, country {
 		display: inline-block;
 		float: left;
 		width: 43%;
+		clear: left;
 	}
 	.account-block-bg dl dd {
 		display: inline-block;
 		width: 57%;
+		min-height: 30px;
 	}
 	.account-block-bg>h4{
 		float:none !important;
