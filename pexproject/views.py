@@ -310,18 +310,12 @@ def createPassword(request):
     except:
         msg = "Invalid or expired your password management code."     
     if request.POST:
-        if 'current_password' in request.POST:
-            oldpassword = request.REQUEST['current_password']
-            oldpassword1 = hashlib.md5(oldpassword).hexdigest()
-            if oldpassword1 != user.password:
-                msg = "Wrong current password"
-            else:    
-                if 'new_password' in request.POST:
-                    newpassword = request.REQUEST['new_password']
-                    newpassword1 = hashlib.md5(newpassword).hexdigest()
-                    user.password=newpassword1
-                    user.save()
-                    msg = "Your password has been reset successfully."
+        if 'new_password' in request.POST:
+            newpassword = request.REQUEST['new_password']
+            newpassword1 = hashlib.md5(newpassword).hexdigest()
+            user.password=newpassword1
+            user.save()
+            msg = "Your password has been reset successfully."
     return render_to_response('flightsearch/create_password.html',{'message':msg},context_instance=RequestContext(request))    
 def sendFeedBack(request):
     context = {}
