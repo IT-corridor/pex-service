@@ -254,24 +254,36 @@ def logout(request):
 
 def forgotPassword(request):
     context = {}
-    msg =''    
+    msg =''   
+    
     if request.POST:
         user_email =  request.REQUEST['email']
         randomcode = randint(100000000000,999999999999)
         usercode =  base64.b64encode(str(randomcode))
         #ucode = base64.b64decode(usercode)
-        user = User.objects.get(pk = request.session['userid'])
-        exit()
+        if 'userid' in request.session:
+            user = User.objects.get(pk = request.session['userid'])
+        else:
+            try:
+                user = User.objects.get(email=user_email)
+            except:
+                return render_to_response('flightsearch/index.html', {'msg':"Invalid username"}, context_instance=RequestContext(request))
         text = ''
-        try:
-            subject = "Manage Your Password"
-            html_content = '"To manage Your password  <a href="http://pexportal.com/createPassword?usercode='+usercode+'">Click here</a>'
-            mailcontent = EmailMultiAlternatives(subject,text,'PEX',[user_email])
-            mailcontent.attach_alternative(html_content, "text/html")
-            mailcontent.send()
-            text = "Please check your registered email id to create new password"
-        except:
-            text = "There is some technical problem. Please try again"
+        if user > 0:
+            try: 
+                subject = "Manage Your Password"
+                html_content = '"To manage Your password  <a href="http://pexportal.com/createPassword?usercode='+usercode+'">Click here</a>'
+                mailcontent = EmailMultiAlternatives(subject,text,'PEX',[user_email])
+                mailcontent.attach_alternative(html_content, "text/html")
+                mailcontent.send()
+                user.usercode = usercode
+                currentdatetime = datetime.datetime.now()
+                time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
+                user.user_code_time = time
+                user.save()
+                text = "Please check your registered email id to create new password"
+            except:
+                text = "There is some technical problem. Please try again"
 	if 'pagetype' in request.REQUEST:	
 	    return render(request, 'flightsearch/index.html', {'welcome_msg': text})
 	    #return render_to_response('flightsearch/index.html',{'welcome_msg':text}, context_instance=RequestContext(request))
@@ -287,14 +299,17 @@ def forgotPassword(request):
 def createPassword(request):
     context = {}
     #if 'action' in request.GET:
-    try:
-        userid = request.session['userid']
-    except:
-        return HttpResponseRedirect(reverse('index'))
     msg = ''
+    currentdatetime = datetime.datetime.now()
+    time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
+    time1 = datetime.datetime.now() - timedelta(hours=2)
+    time1 = time1.strftime('%Y-%m-%d %H:%M:%S') 
+    code = request.GET.get('usercode','')
+    try:
+       user = User.objects.get(usercode=code,user_code_time__gte=time1)
+    except:
+        msg = "Invalid or expired your password management code."     
     if request.POST:
-        user = User.objects.get(pk = userid)
-        #oldpassword = request.REQUEST['current_password']
         if 'current_password' in request.POST:
             oldpassword = request.REQUEST['current_password']
             oldpassword1 = hashlib.md5(oldpassword).hexdigest()
