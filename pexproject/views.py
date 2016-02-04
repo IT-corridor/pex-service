@@ -273,14 +273,13 @@ def forgotPassword(request):
             try: 
                 subject = "Manage Your Password"
                 html_content = '"To manage Your password  <a href="http://pexportal.com/createPassword?usercode='+usercode+'">Click here</a>'
+		'''
+		mailcontent = EmailMultiAlternatives(subject,text,'PEX',[user_email])
+                mailcontent.attach_alternative(html_content, "text/html")
+                mailcontent.send()
+		'''
                 resp = customfunction.sendMail('PEX',user_email,subject,text,html_content)
                 if resp == "sent":
-                    
-                    '''
-                    mailcontent = EmailMultiAlternatives(subject,text,'PEX',[user_email])
-                    mailcontent.attach_alternative(html_content, "text/html")
-                    mailcontent.send()
-                    '''
                     user.usercode = usercode
                     currentdatetime = datetime.datetime.now()
                     time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
@@ -313,15 +312,18 @@ def createPassword(request):
     time1 = time1.strftime('%Y-%m-%d %H:%M:%S') 
     code = request.GET.get('usercode','')
     try:
+       
        user = User.objects.get(usercode=code,user_code_time__gte=time1)
     except:
         msg = "Invalid or expired your password management code."     
     if request.POST:
+	code = request.REQUEST['ucode']
+	user1 = User.objects.get(usercode=code)
         if 'new_password' in request.POST:
             newpassword = request.REQUEST['new_password']
             newpassword1 = hashlib.md5(newpassword).hexdigest()
-            user.password=newpassword1
-            user.save()
+            user1.password=newpassword1
+            user1.save()
             msg = "Your password has been reset successfully."
     return render_to_response('flightsearch/create_password.html',{'message':msg},context_instance=RequestContext(request))    
 def sendFeedBack(request):
