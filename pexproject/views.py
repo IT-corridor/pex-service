@@ -212,7 +212,7 @@ def login(request):
     if user is not None:
         if user.is_active:
             social_login(request,user)	
-    if request.method == "POST":  # and not request.session.get('username', None)
+    if request.method == "POST": 
         username = request.REQUEST['username']
         password = request.REQUEST['password']
         if "curl" in request.POST:

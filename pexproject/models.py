@@ -80,19 +80,18 @@ class Contactus(models.Model):
     
 class UserManager(BaseUserManager):
 	def create_user(self, username, email, password=None):
-		print username
-		print "email=",email
-		
-        	#if not email:
-	         #   raise ValueError('Users must have an email address')
-		#return self._create_user(username, email, password)
-		
-        	user = self.model(
-	            email=UserManager.normalize_email(email),
+		#print username
+		#print "email=",email
+		try:			
+		    user = self.model.objects.get(email=email)
+		except:
+		#if len(userobj) < 1:
+        	    user = self.model(
+	                email=UserManager.normalize_email(email),
 		        username = username
 		   
-	        )
-        	user.set_password(password)
+	            )
+        	    user.set_password(password)
 	        user.save(using=self._db)
         	return user
 
