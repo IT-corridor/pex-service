@@ -273,15 +273,22 @@ def forgotPassword(request):
             try: 
                 subject = "Manage Your Password"
                 html_content = '"To manage Your password  <a href="http://pexportal.com/createPassword?usercode='+usercode+'">Click here</a>'
-                mailcontent = EmailMultiAlternatives(subject,text,'PEX',[user_email])
-                mailcontent.attach_alternative(html_content, "text/html")
-                mailcontent.send()
-                user.usercode = usercode
-                currentdatetime = datetime.datetime.now()
-                time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
-                user.user_code_time = time
-                user.save()
-                text = "Please check your registered email id to create new password"
+                resp = customfunction.sendMail('PEX',user_email,subject,text,html_content)
+                if resp == "sent":
+                    
+                    '''
+                    mailcontent = EmailMultiAlternatives(subject,text,'PEX',[user_email])
+                    mailcontent.attach_alternative(html_content, "text/html")
+                    mailcontent.send()
+                    '''
+                    user.usercode = usercode
+                    currentdatetime = datetime.datetime.now()
+                    time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
+                    user.user_code_time = time
+                    user.save()
+                    text = "Please check your registered email id to create new password"
+                else:
+                    text = "There is some technical problem. Please try again"
             except:
                 text = "There is some technical problem. Please try again"
 	if 'pagetype' in request.REQUEST:	

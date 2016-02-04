@@ -1897,6 +1897,7 @@ nav.cstm-hw-it {
 	-ms-transform: rotate(-90deg);
 	-o-transform: rotate(-90deg);
 	transform: rotate(-90deg);
+	z-index: 1000;
 }
 
 
