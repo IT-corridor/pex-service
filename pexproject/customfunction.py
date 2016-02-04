@@ -14,7 +14,6 @@ from django.core.mail import send_mail,EmailMultiAlternatives
 
 def sendMail(from_email,to_email,subject,bodytext,html_comtent=None):
     try:
-        print from_email,to_email,subject,bodytext,html_comtent
         mailcontent = EmailMultiAlternatives(subject,"test",from_email,[to_email])
         mailcontent.attach_alternative(html_comtent, "text/html")
         mailcontent.send()

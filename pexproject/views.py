@@ -57,7 +57,6 @@ def index(request):
     	username = request.user.username
     	request.session['userid']= request.user.user_id
     	user1 = User.objects.get(username=username)
-	print user1.email
 	if user1.email:
 	    request.session['username'] =user1.email
 	else:
@@ -75,15 +74,12 @@ def flights(request):
         keys = request.GET.get('multicitykeys','')
         allkeys =  keys.split(',')
         objects = Searchkey.objects.filter(searchid__in=allkeys)
-        
-        mc = 'mc'
-        
+        mc = 'mc'  
     return  render_to_response('flightsearch/flights.html',{'mc':mc,'searchparams':objects}, context_instance=RequestContext(request))
         
 def staticPage(request):
     context = {}
     page = ''
-    
     if "action" in request.GET:
     	page = request.GET.get('action','')
         return  render_to_response('flightsearch/'+page+'.html', context_instance=RequestContext(request))
@@ -110,7 +106,10 @@ def signup(request):
             if object.user_id:
                 request.session['userid'] = object.user_id
                 msg = "Thank you, You have been successfully registered."
-                send_mail('Welcome to PEX+', 'You have successfully created a Pex+ account. You can search numerous travel sites for your rewards flight', 'PEX+', [email])
+                #send_mail('Welcome to PEX+', 'You have successfully created a Pex+ account. You can search numerous travel sites for your rewards flight', 'PEX+', [email])
+                emailtext = "You have successfully created a Pex+ account. You can search numerous travel sites for your rewards flight"
+                html_content=''
+                resp = customfunction.sendMail('PEX+',email,'Welcome to PEX+',emailtext,html_content)
                 return render_to_response('flightsearch/index.html',{'welcome_msg':msg}, context_instance=RequestContext(request))   
         return render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
     else:
@@ -137,7 +136,6 @@ def myRewardPoint(request):
         username = request.REQUEST['username']
         password = request.REQUEST['password']
         skymiles_number = request.REQUEST['skymiles_number']
-        
         if 'rowid' in request.POST:
             rowid = request.REQUEST['rowid']
             cursor.execute("update reward_point_credential set username='"+username+"', password='"+password+"', skymiles_number="+skymiles_number+" where airline='"+rowid+"' and user_id="+str(userid))
@@ -203,11 +201,8 @@ def manageAccount(request):
             user1.zipcode = request.REQUEST['zipcode']
             user1.country = request.REQUEST['country']
             user1.phone = request.REQUEST['phone']
-            user1.save()
-        
+            user1.save()   
     return render_to_response('flightsearch/manage_account.html',{'message':msg,'user':user1,'issocial':issocial}, context_instance=RequestContext(request))
-
-    
 
 def login(request):
     context = {}
@@ -255,12 +250,10 @@ def logout(request):
 def forgotPassword(request):
     context = {}
     msg =''   
-    
     if request.POST:
         user_email =  request.REQUEST['email']
         randomcode = randint(100000000000,999999999999)
         usercode =  base64.b64encode(str(randomcode))
-        #ucode = base64.b64decode(usercode)
         if 'userid' in request.session:
             user = User.objects.get(pk = request.session['userid'])
         else:
@@ -270,25 +263,17 @@ def forgotPassword(request):
                 return render_to_response('flightsearch/index.html', {'msg':"Invalid username"}, context_instance=RequestContext(request))
         text = ''
         if user > 0:
-            try: 
-                subject = "Manage Your Password"
-                html_content = '"To manage Your password  <a href="http://pexportal.com/createPassword?usercode='+usercode+'">Click here</a>'
-		'''
-		mailcontent = EmailMultiAlternatives(subject,text,'PEX',[user_email])
-                mailcontent.attach_alternative(html_content, "text/html")
-                mailcontent.send()
-		'''
-                resp = customfunction.sendMail('PEX',user_email,subject,text,html_content)
-                if resp == "sent":
-                    user.usercode = usercode
-                    currentdatetime = datetime.datetime.now()
-                    time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
-                    user.user_code_time = time
-                    user.save()
-                    text = "Please check your registered email id to create new password"
-                else:
-                    text = "There is some technical problem. Please try again"
-            except:
+            subject = "Manage Your Password"
+            html_content = '"To manage Your password  <a href="http://pexportal.com/createPassword?usercode='+usercode+'">Click here</a>'
+            resp = customfunction.sendMail('PEX',user_email,subject,text,html_content)
+            if resp == "sent":
+                user.usercode = usercode
+                currentdatetime = datetime.datetime.now()
+                time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
+                user.user_code_time = time
+                user.save()
+                text = "Please check your registered email id to create new password"
+            else:
                 text = "There is some technical problem. Please try again"
 	if 'pagetype' in request.REQUEST:	
 	    return render(request, 'flightsearch/index.html', {'welcome_msg': text})
@@ -304,7 +289,6 @@ def forgotPassword(request):
     return render_to_response('flightsearch/index.html',{'fpmsg':msg},context_instance=RequestContext(request)) 
 def createPassword(request):
     context = {}
-    #if 'action' in request.GET:
     msg = ''
     currentdatetime = datetime.datetime.now()
     time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
@@ -312,13 +296,12 @@ def createPassword(request):
     time1 = time1.strftime('%Y-%m-%d %H:%M:%S') 
     code = request.GET.get('usercode','')
     try:
-       
        user = User.objects.get(usercode=code,user_code_time__gte=time1)
     except:
         msg = "Invalid or expired your password management code."     
     if request.POST:
-	code = request.REQUEST['ucode']
-	user1 = User.objects.get(usercode=code)
+    	code = request.REQUEST['ucode']
+    	user1 = User.objects.get(usercode=code)
         if 'new_password' in request.POST:
             newpassword = request.REQUEST['new_password']
             newpassword1 = hashlib.md5(newpassword).hexdigest()
@@ -330,10 +313,9 @@ def sendFeedBack(request):
     context = {}
     alert_msg = ''
     if request.POST:
+        html_content=''
         body = ''
         topic = ''
-        #alert_msg = ''
-        #print settings.mail_to
         topic = request.REQUEST['topic']
         from_emailid = request.REQUEST['emailid']
         if 'message' in request.POST:
@@ -343,13 +325,12 @@ def sendFeedBack(request):
             text = request.REQUEST['text']
             text = strip_tags(text)
             body = body+'\n'+text
-            #print body,topic
-	    #body = strip_tags(body)
-	send_mail(topic,body,from_emailid,['info@pexportal.com'])
-	#send_mail('Subject here', 'Here is the message.', 'hit.jay1690@gmail.com',['jk.dhn2010@gmail.com'], fail_silently=False)
-
-	alert_msg = "Thanks for giving us feedback"
-	#print "alert_msg",alert_msg 
+    #send_mail(topic,body,from_emailid,['info@pexportal.com'])
+    resp = customfunction.sendMail(from_emailid,'info@pexportal.com',topic,body,html_content)
+    if resp == "sent":
+        alert_msg = "Thanks for giving us feedback"
+    else:
+        alert_msg = "There is some technical problem. Please try again"
     return render_to_response('flightsearch/feedback.html',{'alert_msg':alert_msg}, context_instance=RequestContext(request))
 
 def contactUs(request):
@@ -365,6 +346,7 @@ def contactUs(request):
     message = ''
     topic = ''
     contact_msg = ''
+    html_content = ''
     if request.POST:
         firstname = request.REQUEST['first_name']
         lastname = request.REQUEST['last_name']
@@ -381,9 +363,12 @@ def contactUs(request):
         object.save()
         fullname = firstname+" "+lastname
         emailbody = message+"\n\n"+labeltext+" \n\n"+fullname+"\n"+company+"\n"+websitename
-        send_mail(topic,emailbody,email,['hit.jay1690@gmail.com'])
-        contact_msg = "Your information has been sent successfully"
-        
+        #send_mail(topic,emailbody,email,['hit.jay1690@gmail.com'])
+        resp = customfunction.sendMail(email,'info@pexportal.com',topic,emailbody,html_content)
+        if resp == "sent":
+            contact_msg = "Your information has been sent successfully"
+        else:
+            contact_msg = "There is some technical problem. Please try again"    
     return render_to_response('flightsearch/contact_us.html',{'contact_msg':contact_msg}, context_instance=RequestContext(request))  
         
 def search(request):
@@ -561,7 +546,7 @@ def searchLoading(request):
             if 'cabintype' in request.POST:
                 cabintype = request.POST['cabintype']
             roundtripkey = ''
-            if 'keyid' in request.POST:
+            if 'keyid' in reqalert_msguest.POST:
                 roundtripkey = request.POST['keyid']
             if 'trip' in request.POST:
                 trip = request.POST['trip']
