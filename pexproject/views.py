@@ -442,7 +442,7 @@ def search(request):
                     searchdata = Searchkey(source=destination1, destination=origin, traveldate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid)
                     searchdata.save()
                     returnkey = searchdata.searchid
-
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/jetblue.py",etihaddest,etihadorigin, str(returndate), str(returnkey)])
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/delta.py",destcode, orgncode, str(date1), str(returndate), str(returnkey),etihaddest,etihadorigin,cabin])
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",destcode, orgncode, str(returndate), str(returnkey)])
                     #customfunction.etihad(etihaddest,etihadorigin,date1,returnkey,cabin)
@@ -460,11 +460,9 @@ def search(request):
                 searchdata.save()
                 searchkeyid = searchdata.searchid 
                 cursor = connection.cursor()
-                #customfunction.virgin_atlantic(orgncode, destcode,depart, searchkeyid)
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/jetblue.py",etihadorigin, etihaddest,str(depart),str(searchkeyid)])
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/delta.py",orgncode,destcode,str(date),str(depart),str(searchkeyid),etihadorigin,etihaddest,cabin])
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",orgncode,destcode,str(depart),str(searchkeyid)])
-                #customfunction.etihad(etihadorigin,etihaddest,date,searchkeyid,cabin)
-                #customfunction.scrape(orgncode, destcode, date, depart, searchkeyid)
                 returnkey = ''
                 if returndate:
                     retunobj = Searchkey.objects.filter(source=destination1, destination=origin, traveldate=searchdate1, scrapetime__gte=time1)
@@ -475,7 +473,7 @@ def search(request):
                         searchdata = Searchkey(source=destination1, destination=origin, traveldate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid)
                         searchdata.save()
                         returnkey = searchdata.searchid
-                        #flag2 = 1
+                        subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/jetblue.py",etihaddest,etihadorigin, str(returndate), str(returnkey)])
                         subprocess.Popen(["python",settings.BASE_DIR+"/pexproject/delta.py",destcode, orgncode, str(date1), str(returndate), str(returnkey),etihaddest,etihadorigin,cabin])
                         subprocess.Popen(["python",settings.BASE_DIR+"/pexproject/united.py",destcode, orgncode, str(returndate), str(returnkey)])
                         #customfunction.etihad(etihaddest,etihadorigin,date,returnkey,cabin)
@@ -546,7 +544,7 @@ def searchLoading(request):
             if 'cabintype' in request.POST:
                 cabintype = request.POST['cabintype']
             roundtripkey = ''
-            if 'keyid' in reqalert_msguest.POST:
+            if 'keyid' in request.POST:
                 roundtripkey = request.POST['keyid']
             if 'trip' in request.POST:
                 trip = request.POST['trip']

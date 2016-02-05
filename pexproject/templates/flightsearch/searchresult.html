@@ -117,6 +117,13 @@
 									DELTA AIRLINES
 									</label>
 									</div>
+									<div class="checkbox">
+									<label>
+									<input type='checkbox' class="chk-airlines" name="airlines" value="jetblue" {% for row in filterkey.datasource %} {% if row == 'jetblue'%} checked="checked" {% endif %}{%endfor %}>
+									<span></span>
+									JETBLUE AIRLINES
+									</label>
+									</div>
 									<div class="checkbox" >
 									<label>
 									<input type='checkbox' class="chk-airlines" name="airlines" value="united" {% for row in filterkey.datasource %} {% if row == 'united'%} checked="checked" {% endif %}{%endfor %}>
@@ -485,6 +492,8 @@
 										<img src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
 										{% if selectedrow.datasource == "etihad" %}
 										<img src="{% static 'flightsearch/img/etihad.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
+										{% if selectedrow.datasource == "jetblue" %}
+										<img src="{% static 'flightsearch/img/jetblue.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
 										
 										<h5>OUTBOUND</h5>
 									</div>
@@ -759,6 +768,9 @@
 											{% if row.datasource == "etihad" %}
 												<img itemprop="logo" src="{% static 'flightsearch/img/etihad.jpg' %}" class="img-responsive" alt="Responsive image">
 											{% endif %}
+											{% if row.datasource == "jetblue" %}
+												<img itemprop="logo" src="{% static 'flightsearch/img/jetblue.jpg' %}" class="img-responsive" alt="Responsive image">
+											{% endif %}
 										</div>
 									</div>
 									<div class="col-md-12 col-sm-9 col-xs-7 nopadding" itemscope itemtype ="http://schema.org/Flight">
@@ -789,6 +801,8 @@
 												<img itemprop="logo" src="{% static 'flightsearch/img/etihad.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
 												{% if row.datasource == "virgin_atlantic" %}
 												<img itemprop="logo" src="{% static 'flightsearch/img/virgin.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
+												{% if row.datasource == "virgin_atlantic" %}
+												<img itemprop="logo" src="{% static 'flightsearch/img/jetblue.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
 											</div>
 										</div>
 									</div>
