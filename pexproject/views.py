@@ -442,7 +442,7 @@ def search(request):
                     searchdata = Searchkey(source=destination1, destination=origin, traveldate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid)
                     searchdata.save()
                     returnkey = searchdata.searchid
-                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/jetblue.py",etihaddest,etihadorigin, str(returndate), str(returnkey)])
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/jetblue.py",destcode, orgncode, str(returndate), str(returnkey)])
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/delta.py",destcode, orgncode, str(date1), str(returndate), str(returnkey),etihaddest,etihadorigin,cabin])
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",destcode, orgncode, str(returndate), str(returnkey)])
                     #customfunction.etihad(etihaddest,etihadorigin,date1,returnkey,cabin)
@@ -460,7 +460,7 @@ def search(request):
                 searchdata.save()
                 searchkeyid = searchdata.searchid 
                 cursor = connection.cursor()
-                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/jetblue.py",etihadorigin, etihaddest,str(depart),str(searchkeyid)])
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/jetblue.py",orgncode,destcode,str(depart),str(searchkeyid)])
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/delta.py",orgncode,destcode,str(date),str(depart),str(searchkeyid),etihadorigin,etihaddest,cabin])
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",orgncode,destcode,str(depart),str(searchkeyid)])
                 returnkey = ''
@@ -473,7 +473,7 @@ def search(request):
                         searchdata = Searchkey(source=destination1, destination=origin, traveldate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid)
                         searchdata.save()
                         returnkey = searchdata.searchid
-                        subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/jetblue.py",etihaddest,etihadorigin, str(returndate), str(returnkey)])
+                        subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/jetblue.py",destcode, orgncode, str(returndate), str(returnkey)])
                         subprocess.Popen(["python",settings.BASE_DIR+"/pexproject/delta.py",destcode, orgncode, str(date1), str(returndate), str(returnkey),etihaddest,etihadorigin,cabin])
                         subprocess.Popen(["python",settings.BASE_DIR+"/pexproject/united.py",destcode, orgncode, str(returndate), str(returnkey)])
                         #customfunction.etihad(etihaddest,etihadorigin,date,returnkey,cabin)
