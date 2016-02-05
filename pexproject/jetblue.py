@@ -28,12 +28,13 @@ import urllib
 def jetblue(from_airport,to_airport,searchdate,searchid):
     dt = datetime.datetime.strptime(searchdate, '%Y/%m/%d')
     date = dt.strftime('%m-%d-%Y')
-    #date = curdate.strftime('%m-%d-%Y')
+   
     db = MySQLdb.connect(host="localhost",  
                      user="root",          
                       passwd="1jyT382PWzYP",       
                       db="pex")
     cursor = db.cursor()
+    
     url = "https://www.jetblue.com/flights/#/"
     #cursor = connection.cursor()
     currentdatetime = datetime.datetime.now()
@@ -230,8 +231,8 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                         
                         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (str(fltno), str(searchid), stime, stoppage, "test", origin_code, dest_code, depttime2, arivetime2, totaltime, str(economy_miles), str(econ_tax), str(business_miles), str(businesstax), str(first_miles), str(firsttax),"Economy", "Business", "First", "jetblue", departtexts, arivetexts, plaiintexts, operatedtexts))
                         print "row inserted"
-                        db.commit()
-                        #transaction.commit()
+                        #db.commit()
+                        transaction.commit()
                         print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
                     else:
                         if n < 2:
@@ -260,8 +261,8 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                             print "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
                             cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (str(flightno), str(searchid), stime, stoppage, "test", orgncode, dest_code, depttime2, arivetime2, totaltime, str(economy_miles), str(econ_tax), str(business_miles), str(businesstax), str(first_miles), str(firsttax), "Economy", "Business", "First", "jetblue", departtexts, arivetexts, plaiintexts, operatedtexts))
                             print "row inserted"
-                            db.commit()
-                            #transaction.commit()
+                            #db.commit()
+                            transaction.commit()
                     n = n-1
     #return searchid
     except:
