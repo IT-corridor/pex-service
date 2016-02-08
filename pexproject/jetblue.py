@@ -26,25 +26,31 @@ import socket
 import urllib
 
 def jetblue(from_airport,to_airport,searchdate,searchid):
+    from_airport = from_airport.strip()
+    to_airport = to_airport.strip()
     dt = datetime.datetime.strptime(searchdate, '%Y/%m/%d')
-    date = dt.strftime('%m-%d-%Y')
-   
+    date = dt.strftime('%d-%m-%Y')
+    #date  = dt.strftime('%m-%d-%Y')
     db = MySQLdb.connect(host="localhost",  
                      user="root",          
                       passwd="1jyT382PWzYP",       
                       db="pex")
     cursor = db.cursor()
     
-    url = "https://www.jetblue.com/flights/#/"
+    #url = "https://www.jetblue.com/flights/#/"
+    url = "https://book.jetblue.com/shop/search/#/book/from/"+from_airport+"/to/"+to_airport+"/depart/"+str(date)+"/return/false/pax/ADT-1/redemption/true/promo/false"
     #cursor = connection.cursor()
     currentdatetime = datetime.datetime.now()
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     display = Display(visible=0, size=(800, 600))
     display.start()
     driver = webdriver.Chrome()
+    
     driver.get(url)
     driver.implicitly_wait(50)
+    
     try:
+	'''
         oneway = driver.find_element_by_id("jbBookerItinOW")
         driver.execute_script("arguments[0].click();", oneway)
         time.sleep(2)
@@ -54,22 +60,24 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
         origin.send_keys(Keys.ARROW_DOWN)
         origin.send_keys(Keys.ENTER)
         destination = driver.find_element_by_id("jbBookerArrive")
-        destination.send_keys(to_airport)  #("Seattle, WA (SEA)")
-        #driver.find_element_by_css_selector("css selector that matches all the auto complete suggestions")
-        #driver.find_element_by_id("ui-active-menuitem").send_keys(Keys.ENTER)
-        destination.send_keys(Keys.ARROW_DOWN)
+	destination.clear()
+        destination.send_keys(to_airport) 
+	time.sleep(1) 
+        destination.click() #send_keys(Keys.ARROW_DOWN)
+	time.sleep(1)
         destination.send_keys(Keys.ENTER)
-        doj = driver.find_element_by_id("jbBookerCalendarDepart")
-        doj.send_keys(date)
-        doj.send_keys(Keys.ENTER)
-        
+	time.sleep(1)
+	#print "airport complete"
+        #doj = driver.find_element_by_id("jbBookerCalendarDepart")
+        #doj.send_keys(date)
+        #doj.send_keys(Keys.ENTER)
+        '''
         milestype = driver.find_elements_by_xpath("//*[contains(text(), 'TrueBlue Points')]")
         
         driver.execute_script("arguments[0].click();", milestype[0]);
         driver.find_elements_by_css_selector("input[type='submit'][value='Find it']")[0].click()
         time.sleep(2)
-        print "searchid",searchid
-        WebDriverWait(driver,5).until(EC.presence_of_element_located((By.ID, "AIR_SEARCH_RESULT_CONTEXT_ID0")))
+        WebDriverWait(driver,10).until(EC.presence_of_element_located((By.ID, "AIR_SEARCH_RESULT_CONTEXT_ID0")))
     except:
         print "nodata on jetblue"
         display.stop
@@ -81,9 +89,6 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
         html_page = driver.page_source
         soup = BeautifulSoup(html_page)
         maintable = soup.find("table",{"id":"AIR_SEARCH_RESULT_CONTEXT_ID0"})
-        #print soup.prettify()
-        #print soup.findAll("div",{"class":"popupBlockFlightDetails"})
-        #exit()
         databody =  maintable.findAll("tbody")
         print "databody",len(databody)
         for trs in databody:
@@ -231,8 +236,8 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                         
                         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (str(fltno), str(searchid), stime, stoppage, "test", origin_code, dest_code, depttime2, arivetime2, totaltime, str(economy_miles), str(econ_tax), str(business_miles), str(businesstax), str(first_miles), str(firsttax),"Economy", "Business", "First", "jetblue", departtexts, arivetexts, plaiintexts, operatedtexts))
                         print "row inserted"
-                        #db.commit()
-                        transaction.commit()
+                        db.commit()
+                        #transaction.commit()
                         print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
                     else:
                         if n < 2:
@@ -261,8 +266,8 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                             print "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
                             cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (str(flightno), str(searchid), stime, stoppage, "test", orgncode, dest_code, depttime2, arivetime2, totaltime, str(economy_miles), str(econ_tax), str(business_miles), str(businesstax), str(first_miles), str(firsttax), "Economy", "Business", "First", "jetblue", departtexts, arivetexts, plaiintexts, operatedtexts))
                             print "row inserted"
-                            #db.commit()
-                            transaction.commit()
+                            db.commit()
+                            #transaction.commit()
                     n = n-1
     #return searchid
     except:
