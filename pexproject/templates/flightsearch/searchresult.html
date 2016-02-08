@@ -1713,30 +1713,7 @@
 		  </div>
 		</div>
 		
-	<script>
-	var userid = "{{request.session.userid}}";
-	var session_user = "{{request.session.username}}";
-	console.log(userid);
-	console.log(session_user);
-	$('.feedback').click(function(){
-		if(userid != '' && session_user != '')
-		{
-			alert("test");
-		}
-		else{
-			$('#login-modal').modal('show');
-			$('#signup').removeClass('active');
-			$('#signuptab').removeClass('active');
-			$('#login').addClass('active');
-			$('#logintab').addClass('active');
-			$('#loginmsg').empty();
-			$('#loginmsg').append("Please login here");
-			$('#curl').val("staticPage?action=feedback");
-			return false;
-		}
 		
-	});
-</script>	
 	<script type="text/javascript">
 	$(function(){
 		
