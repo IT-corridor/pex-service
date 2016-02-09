@@ -57,11 +57,11 @@ def index(request):
     	username = request.user.username
     	request.session['userid']= request.user.user_id
     	user1 = User.objects.get(username=username)
-	if user1.email:
-	    request.session['username'] =user1.email
-	else:
-	    request.session['username'] = request.user.username
-	request.session['password'] = user1.password 
+        if user1.email:
+    	    request.session['username'] =user1.email
+        if user1.firstname:
+            request.session['firstname'] =user1.firstname
+    	request.session['password'] = user1.password 
     return  render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
 
 def flights(request):
@@ -98,18 +98,29 @@ def signup(request):
             password = request.REQUEST['password']
             password1 = hashlib.md5(password).hexdigest()
             airport = request.REQUEST['home_airport']
-            object = User(username=email,email=email, password=password1, home_airport=airport,last_login=time)
+            firstname = ''
+            lastname = ''
+            if 'firstname' in request.POST:
+                firstname = request.REQUEST['firstname']
+            if 'lastname' in request.POST:
+                lastname = request.REQUEST['lastname']
+            object = User(username=email,email=email, password=password1,firstname=firstname,lastname=lastname, home_airport=airport,last_login=time)
             object.save()
             request.session['username'] = email
             request.session['homeairpot'] = airport
             request.session['password'] = password1
+            if firstname != '':
+                request.session['firstname'] = firstname
             if object.user_id:
                 request.session['userid'] = object.user_id
                 msg = "Thank you, You have been successfully registered."
                 #send_mail('Welcome to PEX+', 'You have successfully created a Pex+ account. You can search numerous travel sites for your rewards flight', 'PEX+', [email])
                 emailtext = "You have successfully created a Pex+ account. You can search numerous travel sites for your rewards flight"
                 html_content=''
-                resp = customfunction.sendMail('PEX+',email,'Welcome to PEX+',emailtext,html_content)
+                try:
+                    resp = customfunction.sendMail('PEX+',email,'Welcome to PEX+',emailtext,html_content)
+                except:
+                    print "something wrong"
                 return render_to_response('flightsearch/index.html',{'welcome_msg':msg}, context_instance=RequestContext(request))   
         return render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
     else:
@@ -223,6 +234,8 @@ def login(request):
             if user > 0:
                 request.session['username'] = username
                 request.session['password'] = password1
+                if user.firstname != '':
+                    request.session['firstname'] = user.firstname
                 if user.home_airport != '':
                     request.session['homeairpot'] = user.home_airport
                 request.session['userid'] = user.user_id
