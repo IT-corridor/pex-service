@@ -161,13 +161,17 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                         planeinfo = fltno+" | "+planetype
                     if arivetd:
                         arivetime = arivetd.find("div",{"class":"time"}).text
+			arival_time = arivetime
+			if '+' in arivetime:
+			    arive_time = arivetime.split("+")
+			    arivetime = arive_time[0]	
                         arive_fullname = arivetd.find("b").text
                         dest_code = arivetd.find("span",{"class":"location-code"}).text
                         if '(' in dest_code:
                             dest_code = dest_code.replace('(','')
                         if ')' in dest_code:
                             dest_code = dest_code.replace(')','')
-                        arivedetail = str(date)+" | "+arivetime+" at "+arive_fullname
+                        arivedetail = str(date)+" | "+arival_time+" at "+arive_fullname
                         arivedetails.append(arivedetail)
                     if content.findAll("td",{"class":"colDuration"}):
                         duration = content.findAll("td",{"class":"colDuration"})
@@ -182,7 +186,7 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                             else:
                                 planetime = totaltime
                             planeinfo = planeinfo+"("+planetime+")"
-                    plaindetails.append(planeinfo)
+	                    plaindetails.append(planeinfo)
                        
                     if content.findAll("td",{"class":"colCost"}):
                         priceblock = content.findAll("td",{"class":"colCost"})
