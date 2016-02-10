@@ -289,20 +289,24 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid):
         time.sleep(2)
         lgn = driver.find_element_by_link_text("Close")
         lgn.click()
-        time.sleep(4)
+        time.sleep(5)
         html_page = driver.page_source
         soup = BeautifulSoup(html_page)
         datadiv = soup.findAll("div",{"class":"fare-map-row ng-scope"})
+	#print datadiv
     except:
         print "no flights found"
         display.stop()
         driver.quit()
         return searchid
-    try:
+    #try:
+    if searchid:
         for data in datadiv:
             trblock = data.findAll("tr")
+	    print trblock
             for content in trblock:
                 detailblock =  content.find("div",{"class":"fare-map__flight-details"})
+		print detailblock
                 deptinfo = detailblock.findAll("li",{"class":"flight-details__flight-info--dep"})
                 durationinfo = detailblock.findAll("li",{"class":"flight-details__flight-dur"})
                 ariveinfo = detailblock.findAll("li",{"class":"flight-details__flight-info--arr"})
@@ -418,7 +422,8 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid):
                     db.commit()
                     print "row inserted"
                 print "---------------------------- End ---------------------------"
-    except:
+    #except:
+    else:
         print "somethinf wrong"
     display.stop()
     driver.quit()
@@ -428,3 +433,4 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid):
 if __name__=='__main__':
     #jetblue(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
     virginAmerica(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
+    jetblue(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
