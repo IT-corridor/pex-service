@@ -303,125 +303,124 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid):
     if searchid:
         for data in datadiv:
             trblock = data.findAll("tr")
-	    print trblock
             for content in trblock:
                 detailblock =  content.find("div",{"class":"fare-map__flight-details"})
-		print detailblock
-                deptinfo = detailblock.findAll("li",{"class":"flight-details__flight-info--dep"})
-                durationinfo = detailblock.findAll("li",{"class":"flight-details__flight-dur"})
-                ariveinfo = detailblock.findAll("li",{"class":"flight-details__flight-info--arr"})
-                flightnum = ''
-                totalduration=''
-                departfrom=''
-                arriveat = ''
-                departtime=''
-                arivetime = ''
-                stop = ''
-                deptdetail=[]
-                arivedetail=[]
-                plaindetail=[]
-                maincabin =0
-                maintax = 0
-                business = 0
-                businesstax = 0
-                First = 0
-                Firsttax = 0
-                for a in range(0,len(deptinfo)):
-                    flight_duration=''
-                    origin = deptinfo[a].find("span",{"class":"flight-info__time ng-binding"})
-                    flight = deptinfo[a].find("span",{"bo-text":"leg.flightNum"}).text
-                    flight = "Flight "+str(flight)
-                    origin_airport = origin.find("span").text
-                    origin_time = (origin.text).replace(origin_airport,'')
-                    origin_time = origin_time.strip()
-                    if '()' in  origin_time:
-                        origin_time = origin_time.replace('()','').strip()
-                    origin_time1 = (datetime.datetime.strptime(origin_time, '%I:%M%p'))
-                    dept_time = origin_time1.strftime('%H:%M')
-                    origin_airport = origin_airport.replace('(','').replace(')','')
-                    
-                    departinfo = str(date)+" | "+origin_time+" from "+origin_airport
-                    deptdetail.append(departinfo)
-                    if a < 1:
-                        departtime = dept_time
-                        departfrom = origin_airport
-                        flightnum = flight
-                    
-                    duration = durationinfo[a].findAll("span")
-                    if len(duration)>0:
-                       stop = (duration[0].text).replace('Leg','')
-                       flight_duration = duration[1].text
-                    
-                    destination = ariveinfo[a].find("span",{"class":"flight-info__time--arr ng-binding"})
-                    
-                    if ariveinfo[a].find("span",{"class":"flight-info__total ng-scope"}):
-                        totalduration = ariveinfo[a].find("span",{"class":"flight-info__total ng-scope"}).text
+                if detailblock:
+                    deptinfo = detailblock.findAll("li",{"class":"flight-details__flight-info--dep"})
+                    durationinfo = detailblock.findAll("li",{"class":"flight-details__flight-dur"})
+                    ariveinfo = detailblock.findAll("li",{"class":"flight-details__flight-info--arr"})
+                    flightnum = ''
+                    totalduration=''
+                    departfrom=''
+                    arriveat = ''
+                    departtime=''
+                    arivetime = ''
+                    stop = ''
+                    deptdetail=[]
+                    arivedetail=[]
+                    plaindetail=[]
+                    maincabin =0
+                    maintax = 0
+                    business = 0
+                    businesstax = 0
+                    First = 0
+                    Firsttax = 0
+                    for a in range(0,len(deptinfo)):
+                        flight_duration=''
+                        origin = deptinfo[a].find("span",{"class":"flight-info__time ng-binding"})
+                        flight = deptinfo[a].find("span",{"bo-text":"leg.flightNum"}).text
+                        flight = "Flight "+str(flight)
+                        origin_airport = origin.find("span").text
+                        origin_time = (origin.text).replace(origin_airport,'')
+                        origin_time = origin_time.strip()
+                        if '()' in  origin_time:
+                            origin_time = origin_time.replace('()','').strip()
+                        origin_time1 = (datetime.datetime.strptime(origin_time, '%I:%M%p'))
+                        dept_time = origin_time1.strftime('%H:%M')
+                        origin_airport = origin_airport.replace('(','').replace(')','')
                         
-                    else:
-                        totalduration = flight_duration
-                    planeinfo =  flight+"("+flight_duration+")"
-                    plaindetail.append(planeinfo)
-                    dest_airport = destination.find("span").text
-                    dest_airport = dest_airport.replace('(','').replace(')','')
-                    dest_time = (destination.text).replace(dest_airport,'')
-                    dest_time = dest_time.strip()
-                    if '()' in  dest_time:
-                        dest_time = dest_time.replace('()','').strip()
-                    dest_time1 = (datetime.datetime.strptime(dest_time, '%I:%M%p'))
-                    dest_time2 = dest_time1.strftime('%H:%M')
-                    
-                    arivetime = dest_time2
-                    arriveat = dest_airport
-                    arivalinfo = str(date)+" | "+dest_time+" at "+dest_airport
-                    arivedetail.append(arivalinfo)
-                    
-                maincabinfare = content.findAll("div",{"class":"fare-map__price-details ng-scope"})
-                count = 0
-                for fare in maincabinfare:
-                    if fare.find("a"):
-                        fareblock = (fare.find("a").text).strip()
-                        fareblock1 = re.findall("\d+.\d+", fareblock)
-                        miles = fareblock1[0]
-                        tax = fareblock1[1]
-                        if ',' in miles:
-                            miles = miles.replace(',','')
-                        if miles:
-                            if count == 0:
-                                maincabin = miles
-                                maintax = tax
-                                
-                            elif count == 1:
-                                business = miles
-                                businesstax = tax
-                                
-                            else:
-                                if count == 2:
-                                    First = miles
-                                    Firsttax = tax
+                        departinfo = str(date)+" | "+origin_time+" from "+origin_airport
+                        deptdetail.append(departinfo)
+                        if a < 1:
+                            departtime = dept_time
+                            departfrom = origin_airport
+                            flightnum = flight
+                        
+                        duration = durationinfo[a].findAll("span")
+                        if len(duration)>0:
+                           stop = (duration[0].text).replace('Leg','')
+                           flight_duration = duration[1].text
+                        
+                        destination = ariveinfo[a].find("span",{"class":"flight-info__time--arr ng-binding"})
+                        
+                        if ariveinfo[a].find("span",{"class":"flight-info__total ng-scope"}):
+                            totalduration = ariveinfo[a].find("span",{"class":"flight-info__total ng-scope"}).text
                             
-                    count = count+1
-                if 'stop' in stop:
-                    stop = "NONSTOP"
-                if (stop.strip()).isdigit():
-                    stop = int(stop)-1
-                    if int(stop) > 1:
-                        stop = stop+" STOPS"
-                    else:
-                        stop = str(stop)+" STOP"
-                    
-            
-                if 'total travel time' in totalduration:
-                    totalduration = totalduration.replace('total travel time','')
-                if maincabin > 0 or business > 0 or First > 0:
-                    departdetailtext= '@'.join(deptdetail)
-                    arivedetailtext = '@'.join(arivedetail)
-                    planedetailtext = '@'.join(plaindetail)
-                    operatortext = ''                                                                                                                                                                                                                                                                                                                     
-                    cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (str(flightnum), str(searchid), stime, stop, "test", departfrom, arriveat, departtime, arivetime, totalduration, str(maincabin), str(maintax), str(business),str(businesstax), str(First), str(Firsttax), "Economy", "Business", "First", "Virgin America", departdetailtext, arivedetailtext, planedetailtext, operatortext))
-                    #transaction.commit()
-                    db.commit()
-                    print "row inserted"
-                print "---------------------------- End ---------------------------"
+                        else:
+                            totalduration = flight_duration
+                        planeinfo =  flight+"("+flight_duration+")"
+                        plaindetail.append(planeinfo)
+                        dest_airport = destination.find("span").text
+                        dest_airport = dest_airport.replace('(','').replace(')','')
+                        dest_time = (destination.text).replace(dest_airport,'')
+                        dest_time = dest_time.strip()
+                        if '()' in  dest_time:
+                            dest_time = dest_time.replace('()','').strip()
+                        dest_time1 = (datetime.datetime.strptime(dest_time, '%I:%M%p'))
+                        dest_time2 = dest_time1.strftime('%H:%M')
+                        
+                        arivetime = dest_time2
+                        arriveat = dest_airport
+                        arivalinfo = str(date)+" | "+dest_time+" at "+dest_airport
+                        arivedetail.append(arivalinfo)
+                        
+                    maincabinfare = content.findAll("div",{"class":"fare-map__price-details ng-scope"})
+                    count = 0
+                    for fare in maincabinfare:
+                        if fare.find("a"):
+                            fareblock = (fare.find("a").text).strip()
+                            fareblock1 = re.findall("\d+.\d+", fareblock)
+                            miles = fareblock1[0]
+                            tax = fareblock1[1]
+                            if ',' in miles:
+                                miles = miles.replace(',','')
+                            if miles:
+                                if count == 0:
+                                    maincabin = miles
+                                    maintax = tax
+                                    
+                                elif count == 1:
+                                    business = miles
+                                    businesstax = tax
+                                    
+                                else:
+                                    if count == 2:
+                                        First = miles
+                                        Firsttax = tax
+                                
+                        count = count+1
+                    if 'stop' in stop:
+                        stop = "NONSTOP"
+                    if (stop.strip()).isdigit():
+                        stop = int(stop)-1
+                        if int(stop) > 1:
+                            stop = stop+" STOPS"
+                        else:
+                            stop = str(stop)+" STOP"
+                        
+                
+                    if 'total travel time' in totalduration:
+                        totalduration = totalduration.replace('total travel time','')
+                    if maincabin > 0 or business > 0 or First > 0:
+                        departdetailtext= '@'.join(deptdetail)
+                        arivedetailtext = '@'.join(arivedetail)
+                        planedetailtext = '@'.join(plaindetail)
+                        operatortext = ''                                                                                                                                                                                                                                                                                                                     
+                        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (str(flightnum), str(searchid), stime, stop, "test", departfrom, arriveat, departtime, arivetime, totalduration, str(maincabin), str(maintax), str(business),str(businesstax), str(First), str(Firsttax), "Economy", "Business", "First", "Virgin America", departdetailtext, arivedetailtext, planedetailtext, operatortext))
+                        #transaction.commit()
+                        db.commit()
+                        print "row inserted"
+                    print "---------------------------- End ---------------------------"
     #except:
     else:
         print "somethinf wrong"
