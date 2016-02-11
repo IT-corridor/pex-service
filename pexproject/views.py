@@ -34,6 +34,8 @@ import time
 import MySQLdb
 import threading
 from multiprocessing import Process
+import threading
+from threading import Thread
 from datetime import date
 from django.db import connection, transaction
 import operator
@@ -135,6 +137,27 @@ def myRewardPoint(request):
     resp = ''
     datasource = []
     userid = request.session['userid']
+    if 'account' in request.GET:
+        cursor.execute("select * from reward_point_credential where user_id="+str(userid))
+        user_account = cursor.fetchall()
+        threads = []
+        for obj in user_account:
+            p = Thread(target=customfunction.syncPoints, args=(obj[4],userid,obj[2],obj[5],obj[3]))
+            p.start()
+            threads.append(p)
+        for t in threads:
+            t.join()
+            #customfunction.syncPoints(obj[4],userid,obj[2],obj[5],obj[3])
+        
+    if 'userid' in request.GET and 'airline' in request.GET:
+        pointsource = request.REQUEST['airline']
+        cursor.execute("select * from reward_point_credential where user_id="+str(userid)+" and airline = '"+pointsource+"'")
+        user = cursor.fetchone()
+        resp = customfunction.syncPoints(pointsource,userid,user[2],user[5],user[3])
+        if resp == "fail":
+            updatemsg = "There is some technical problem, please try after some time"
+        else:
+            updatemsg = "Your account has been updated successfully"
     if request.is_ajax():
         airline_name = request.REQUEST['acct']
         cursor.execute("delete from reward_point_credential where user_id="+str(userid)+" and airline = '"+airline_name+"'")
@@ -147,28 +170,24 @@ def myRewardPoint(request):
         username = request.REQUEST['username']
         password = request.REQUEST['password']
         skymiles_number = request.REQUEST['skymiles_number']
-        if 'rowid' in request.POST:
-            rowid = request.REQUEST['rowid']
-            cursor.execute("update reward_point_credential set username='"+username+"', password='"+password+"', skymiles_number="+skymiles_number+" where airline='"+rowid+"' and user_id="+str(userid))
-            updatemsg = "Your account has been updated successfully"
-        else:
-            airline = request.REQUEST['airline']
-            if airline == 'delta':
-                resp = rewardScraper.deltaPoints(skymiles_number,password,userid)
-                if resp == "fail":
-                    temp_message = "Invalid Username or Password"
-            elif airline == 'united':
-                resp = rewardScraper.unitedPoints(skymiles_number,password,userid)
-                if resp == "fail":
-                    temp_message = "Invalid Username or Password"
+        airline = request.REQUEST['airline']
+        action = request.REQUEST['action']
+        if action == 'update' :
+                 
+            resp = customfunction.syncPoints(airline,userid,username,skymiles_number,password)
+            if resp == "fail":
+                updatemsg = "Invalid account credentials"
             else:
-                if airline == 'virgin':
-                    resp = rewardScraper.virginPoints(username,password,userid)
-                    if resp == "fail":
-                        temp_message = "Invalid Username or Password"   
-        if resp == 'success':
-            cursor.execute ("INSERT INTO reward_point_credential (user_id,username,password,airline,skymiles_number) VALUES (%s,%s,%s,%s,%s);", (str(userid),username,password,airline,skymiles_number))
-            transaction.commit()
+                cursor.execute("update reward_point_credential set username='"+username+"', password='"+password+"', skymiles_number="+skymiles_number+" where airline='"+airline+"' and user_id="+str(userid))
+                transaction.commit()
+                updatemsg = "Your account has been updated successfully"
+        else:
+            resp = customfunction.syncPoints(airline,userid,username,skymiles_number,password)
+            if resp == "fail":
+                temp_message = "Invalid Username or Password"  
+            if resp == 'success':
+                cursor.execute ("INSERT INTO reward_point_credential (user_id,username,password,airline,skymiles_number) VALUES (%s,%s,%s,%s,%s);", (str(userid),username,password,airline,skymiles_number))
+                transaction.commit()
         
     cursor.execute("select * from reward_points where user_id="+str(userid))
     points = cursor.fetchall()
@@ -193,7 +212,6 @@ def manageAccount(request):
     if request.POST:
         if 'home_ariport' in request.POST:
             user1.home_airport = request.REQUEST['home_ariport']
-        
             isupdated  = user1.save()
             print isupdated
         if 'home_ariport' not in request.POST:

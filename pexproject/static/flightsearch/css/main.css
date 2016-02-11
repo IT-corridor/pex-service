@@ -1899,6 +1899,9 @@ nav.cstm-hw-it {
 	transform: rotate(-90deg);
 	z-index: 1000;
 }
+#add_account, #sync_all_points,#cstm_update, #syncdata, span.cancel {
+	width: initial;
+}
 
 
 
