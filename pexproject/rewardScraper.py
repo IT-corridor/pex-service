@@ -45,7 +45,7 @@ def deltaPoints(username,password,userid):
     cursor.execute("select * from reward_points where user_id="+str(userid)+" and airlines='delta'")
     object = cursor.fetchone()
     if object:
-        cursor.execute("update reward_points set reward_points="+str(totalmiles)+" where airlines='delta' and user_id="+str(userid))
+        cursor.execute("update reward_points set reward_points="+str(totalmiles)+",update_time='"+str(stime)+"' where airlines='delta' and user_id="+str(userid))
     else:
         cursor.execute ("INSERT INTO reward_points (user_id,reward_points,airlines,update_time) VALUES (%s,%s,%s,%s);", (str(userid),str(totalmiles),"delta",str(stime)))
     transaction.commit()
@@ -84,7 +84,7 @@ def unitedPoints(usernumber,password,userid):
     cursor.execute("select * from reward_points where user_id="+str(userid)+" and airlines='united'")
     object = cursor.fetchone()
     if object:
-        cursor.execute("update reward_points set reward_points="+str(point)+" where airlines='united' and user_id="+str(userid))
+        cursor.execute("update reward_points set reward_points="+str(point)+",update_time='"+str(stime)+"' where airlines='united' and user_id="+str(userid))
     else:
         cursor.execute ("INSERT INTO reward_points (user_id,reward_points,airlines,update_time) VALUES (%s,%s,%s,%s);", (str(userid),str(point),"united",str(stime)))
     transaction.commit()
@@ -114,11 +114,10 @@ def virginPoints(username,password,userid):
     try:
         mileage = soup.find("td",{"class":"mileageValue"})
         point = (mileage.text).strip()
-        print point
         cursor.execute("select * from reward_points where user_id="+str(userid)+" and airlines='virgin'")
         object = cursor.fetchone()
         if object:
-            cursor.execute("update reward_points set reward_points="+str(point)+" where airlines='virgin' and user_id="+str(userid))
+            cursor.execute("update reward_points set reward_points="+str(point)+",update_time='"+str(stime)+"' where airlines='virgin' and user_id="+str(userid))
         else:
             cursor.execute ("INSERT INTO reward_points (user_id,reward_points,airlines) VALUES (%s,%s,%s);", (str(userid),str(point),"virgin"))
         transaction.commit()
@@ -126,22 +125,6 @@ def virginPoints(username,password,userid):
         display.stop()                                                                                                                                  
         driver.quit()
         return "fail"
-        
-    mileage = soup.find("td",{"class":"mileageValue"})
-    point = (mileage.text).strip()
-    print point
-    cursor.execute("select * from reward_points where user_id="+str(userid)+" and airlines='virgin'")
-    object = cursor.fetchone()
-    if object:
-        print "update"
-        cursor.execute("update reward_points set reward_points="+str(point)+" where airlines='virgin' and user_id="+str(userid))
-    else:
-        print "insert"
-        cursor.execute ("INSERT INTO reward_points (user_id,reward_points,airlines,update_time) VALUES (%s,%s,%s,%s);", (str(userid),str(point),"virgin",str(stime)))
-    print "complete"
-    transaction.commit()
-    
-    
     display.stop()                                                                                                                                  
     driver.quit()
     return "success"
