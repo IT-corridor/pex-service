@@ -46,7 +46,10 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     display = Display(visible=0, size=(800, 600))
     display.start()
-    driver = webdriver.Chrome()
+    chromedriver = "/usr/bin/chromedriver"
+    os.environ["webdriver.chrome.driver"] = chromedriver
+    driver = webdriver.Chrome(chromedriver)
+    #driver = webdriver.Chrome()
     
     driver.get(url)
     driver.implicitly_wait(50)
@@ -62,6 +65,8 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
         print "nodata on jetblue"
         display.stop
         driver.quit()
+	cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "jetblue", "flag", "flag", "flag", "flag"))
+        db.commit()
         return searchid
         
     try:
@@ -70,7 +75,7 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
         soup = BeautifulSoup(html_page)
         maintable = soup.find("table",{"id":"AIR_SEARCH_RESULT_CONTEXT_ID0"})
         databody =  maintable.findAll("tbody")
-        print "databody",len(databody)
+        #print "databody",len(databody)
         for trs in databody:
             
             maintr = trs.findAll("tr")
@@ -86,7 +91,7 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                         stoppage = str(n-1)+" STOPS"
                     else:
                         stoppage = str(n-1)+" STOP"
-                print "stop=",n
+                #print "stop=",n
             departdetails = []
             arivedetails = []
             plaindetails = []
@@ -142,10 +147,10 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                     if arivetd:
                         arivetime = arivetd.find("div",{"class":"time"}).text
                         arival_time = arivetime 
-                        print "arival_time",arivetime
+                        #print "arival_time",arivetime
                         if '+' in arivetime:
                             arive_time = arivetime.split("+")
-                            print arive_time
+                            #print arive_time
                             arivetime = arive_time[0]
                             
                         arive_fullname = arivetd.find("b").text
@@ -160,7 +165,7 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                         duration = content.findAll("td",{"class":"colDuration"})
                         if duration:
                             totaltime = duration[0].text.strip()
-                            print "Flight Duration",totaltime
+                            #print "Flight Duration",totaltime
                             planetime = ''
                             if "Total:" in totaltime:
                                 totaltime1 = totaltime.split('Total:')
@@ -212,7 +217,7 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                         arivetime1 = (datetime.datetime.strptime(arivetime, '%I:%M %p'))
                         
                         arivetime2 = arivetime1.strftime('%H:%M')
-                        print "arivetime2",arivetime2
+                        #print "arivetime2",arivetime2
                         if len(departdetails) > 0:
                             departtexts = '@'.join(departdetails)
                             arivetexts = '@'.join(arivedetails) 
@@ -226,28 +231,28 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                         print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
                     else:
                         if n < 2:
-                            print "ogign stn=",orgncode
-                            print "ogign time=",orgntime
+                            #print "ogign stn=",orgncode
+                            #print "ogign time=",orgntime
                             depttime1 = (datetime.datetime.strptime(orgntime, '%I:%M %p'))
-                            print "depttime1",depttime1
+                            #print "depttime1",depttime1
                             depttime2 = depttime1.strftime('%H:%M')
-                            print "depttime2",depttime2
+                            #print "depttime2",depttime2
                             
-                            print "dest=",dest_code
-                            print "desttime=",arivetime
+                            #print "dest=",dest_code
+                            #print "desttime=",arivetime
                             arivetime1 = (datetime.datetime.strptime(arivetime, '%I:%M %p'))
-                            print "arivetime1",arivetime1
+                            #print "arivetime1",arivetime1
                             arivetime2 = arivetime1.strftime('%H:%M')
-                            print "arivetime2",arivetime2
+                            #print "arivetime2",arivetime2
                             if len(departdetails) > 0:
                                 departtexts = '@'.join(departdetails)
                                 arivetexts = '@'.join(arivedetails) 
                                 plaiintexts = '@'.join(plaindetails) 
                                 operatedtexts = '@'.join(operatedby)
-                                print departtexts
-                                print arivetexts
-                                print plaiintexts
-                                print operatedtexts
+                                #print departtexts
+                                #print arivetexts
+                                #print plaiintexts
+                                #print operatedtexts
                             print "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
                             cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (str(flightno), str(searchid), stime, stoppage, "test", orgncode, dest_code, depttime2, arivetime2, totaltime, str(economy_miles), str(econ_tax), str(business_miles), str(businesstax), str(first_miles), str(firsttax), "Economy", "Business", "First", "jetblue", departtexts, arivetexts, plaiintexts, operatedtexts))
                             print "row inserted"
@@ -280,7 +285,10 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid):
     url = "https://www.virginamerica.com/book/ow/a1/"+airport+"/"+str(searchdate)
     display = Display(visible=0, size=(800, 600))
     display.start()
-    driver = webdriver.Chrome()
+    chromedriver = "/usr/bin/chromedriver"
+    os.environ["webdriver.chrome.driver"] = chromedriver
+    driver = webdriver.Chrome(chromedriver)
+    #driver = webdriver.Chrome()
     driver.get(url)
     try:
         time.sleep(7)
@@ -299,8 +307,8 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid):
         display.stop()
         driver.quit()
         return searchid
-    #try:
-    if searchid:
+    try:
+    #if searchid:
         for data in datadiv:
             trblock = data.findAll("tr")
             for content in trblock:
@@ -421,11 +429,13 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid):
                         db.commit()
                         print "row inserted"
                     print "---------------------------- End ---------------------------"
-    #except:
-    else:
+    except:
+    #else:
         print "somethinf wrong"
     display.stop()
     driver.quit()
+    cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "jetblue", "flag", "flag", "flag", "flag"))
+    db.commit()
     return searchid
 
 

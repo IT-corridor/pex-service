@@ -619,7 +619,7 @@ def checkData(request):
                 totalrecords = len(list(totalrecords1))                 
                 obj = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and p2.flighno = 'flag' where p1.searchkeyid="+str(recordkey)+" and p1.flighno = 'flag'")
                 obj1 = len(list(obj))
-                if obj1 > 2:
+                if obj1 > 3:
                      iscomplete = "completed"  
             else:
                 #pricematrix =  Flightdata.objects.raw("select rowid, datasource, min(if(maincabin > 0,maincabin,NULL)) as maincabin, min(if(firstclass>0,firstclass,NULL)) as firstclass ,min(if(business>0,business,NULL)) as business  from pexproject_flightdata where searchkeyid="+str(recordkey)+" group by datasource")
@@ -627,7 +627,7 @@ def checkData(request):
                 totalrecords = len(list(totalrecords1))
                 obj = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(recordkey)+" and flighno = 'flag' ")
                 obj1 = len(list(obj))
-                if obj1 > 2:
+                if obj1 > 3:
                      iscomplete = "completed"   
             #pricematrix = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(recordkey))
             if totalrecords > 0:
