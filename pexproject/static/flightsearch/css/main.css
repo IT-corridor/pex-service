@@ -1903,11 +1903,24 @@ nav.cstm-hw-it {
 	width: initial;
 }
 
+.form-side-2 p {
+  font-size: 13px;
+  margin-bottom: 5px;
+  color: #fff;
+  font-weight: bold;
+}
 
+	.form-side-2 {
+background: #39A8E0;
+  padding: 10px 7px 0px;
+  margin-bottom: 10px;
+}
 
-
-
-
+.cutom-ui-mil
+{
+  border-bottom: 1px solid #D8E1E8;
+  padding: 5px 0px;
+}
 
 
 
@@ -1933,6 +1946,21 @@ nav.cstm-hw-it {
 }
 
 @media (max-width: 767px) {
+	.form-side-2 {
+	background: #E9F2FA;
+	padding: 10px 10px 0px;
+	margin-bottom: 10px;
+}
+.form-side-2 p {
+  font-weight: 300;
+  font-size: 15px;
+  color:#333;
+  margin-bottom: 5px;
+}
+		.xs-filters-holder-ht {
+		max-height: 40px !important;
+		overflow: hidden;
+	}
 	.account-block-bg dl dt {
 		display: inline-block;
 		float: left;
