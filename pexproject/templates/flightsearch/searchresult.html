@@ -1173,6 +1173,10 @@
 													                    {% with details.arivedetails|split:'@' as mylist1%}
 													                    {% with details.planedetails|split:'@' as mylist2%}
 													                    {% with details.operatedby|split:'@' as mylist3%}
+													                    
+													                    {% with details.economy_code|split:'@' as mylist4%}
+													                    {% with details.business_code|split:'@' as mylist5%}
+													                    {% with details.fisrt_code|split:'@' as mylist6%}
 													                    <tr itemscope itemtype="http://schema.org/Flight">
 													                            <td><b>Departs: </b></td>
 													                            <td><time itemprop="departureTime">{{mylist.0}}</time></td>
@@ -1188,6 +1192,24 @@
 													                            <td itemprop="flightNumber"><b>Flight:</b></td>
 													                            <td>{{mylist2.0}}</td>
 													                    </tr>
+													                    {% if request.GET.cabin == 'maincabin' and mylist4.0 %}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                               <td>{{mylist4.0}}</td>
+													                        </tr>
+													                    {% elif request.GET.cabin == 'firstclass' and mylist5.0%}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist5.0}}</td>
+													                        </tr>
+													                    {% else %}
+													                    	{% if mylist6.0%}
+													                    		<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist6.0}}</td>
+													                        </tr>
+													                    	{% endif%}
+													                    {% endif %}
 													                    {% if mylist3.0 %}
 													                            <tr>
 													                                    <td><b>Operated By:</b></td>
@@ -1215,6 +1237,24 @@
 													                            <td><b>Flight:</b></td>
 													                            <td>{{mylist2.1}}</td>
 													                    </tr>
+													                    {% if request.GET.cabin == 'maincabin' and mylist4.1 %}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                               <td>{{mylist4.1}}</td>
+													                        </tr>
+													                    {% elif request.GET.cabin == 'firstclass' and mylist5.1%}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist5.1}}</td>
+													                        </tr>
+													                    {% else %}
+													                    	{% if mylist6.1%}
+													                    		<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist6.1}}</td>
+													                        </tr>
+													                    	{% endif%}
+													                    {% endif %}
 													                    {% if mylist3.1 %}
 													                            <tr>
 													                                    <td><b>Operated By:</b></td>
@@ -1244,6 +1284,25 @@
 													                            <td><b>Flight:</b></td>
 													                            <td>{{mylist2.2}}</td>
 													                    </tr>
+													                    {% if request.GET.cabin == 'maincabin' and mylist4.2 %}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                               <td>{{mylist4.2}}</td>
+													                        </tr>
+													                    {% elif request.GET.cabin == 'firstclass' and mylist5.2%}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist5.2}}</td>
+													                        </tr>
+													                    {% else %}
+													                    	{% if mylist6.2%}
+													                    		<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist6.2}}</td>
+													                        </tr>
+													                    	{% endif%}
+													                    {% endif %}
+													                    
 													                    {% if mylist3.2 %}
 													                            <tr>
 													                                    <td><b>Operated By:</b></td>
@@ -1272,6 +1331,24 @@
 													                            <td><b>Flight:</b></td>
 													                            <td>{{mylist2.3}}</td>
 													                    </tr>
+													                    {% if request.GET.cabin == 'maincabin' and mylist4.3 %}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                               <td>{{mylist4.3}}</td>
+													                        </tr>
+													                    {% elif request.GET.cabin == 'firstclass' and mylist5.3%}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist5.3}}</td>
+													                        </tr>
+													                    {% else %}
+													                    	{% if mylist6.3%}
+													                    		<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist6.3}}</td>
+													                        </tr>
+													                    	{% endif%}
+													                    {% endif %}
 													                    {% if mylist3.3 %}
 													                            <tr>
 													                                    <td><b>Operated By:</b></td>
@@ -1301,6 +1378,24 @@
 													                            <td><b>Flight:</b></td>
 													                            <td>{{mylist2.4}}</td>
 													                    </tr>
+													                    {% if request.GET.cabin == 'maincabin' and mylist4.4 %}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                               <td>{{mylist4.4}}</td>
+													                        </tr>
+													                    {% elif request.GET.cabin == 'firstclass' and mylist5.4%}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist5.4}}</td>
+													                        </tr>
+													                    {% else %}
+													                    	{% if mylist6.4%}
+													                    		<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist6.4}}</td>
+													                        </tr>
+													                    	{% endif%}
+													                    {% endif %}
 													                    {% if mylist3.4 %}
 													                            <tr>
 													                                    <td><b>Operated By:</b></td>
@@ -1314,6 +1409,9 @@
 													                    {% endwith %}
 													                    {% endwith %}
 													                    {% endwith %}
+													                    {% endwith %}
+																		{% endwith %}
+																		{% endwith %}
 													            </table>
 													    </div>
 																									
@@ -1334,10 +1432,14 @@
 													<div class="table-responsive table-date-search">
 														
 														<table class="table">
+															{{row.fisrt_code}}
 															{% with row.departdetails|split:'@' as mylist%}
 															{% with row.arivedetails|split:'@' as mylist1%}
 															{% with row.planedetails|split:'@' as mylist2%}
 															{% with row.operatedby|split:'@' as mylist3%}
+															{% with row.economy_code|split:'@' as mylist4%}
+													        {% with row.business_code|split:'@' as mylist5%}
+													        {% with row.fisrt_code|split:'@' as mylist6%} 
 															<tr itemscope itemtype="http://schema.org/Flight">
 																<td><b>Departs: </b></td>
 																<td><time itemprop="departureTime">{{mylist.0}}</time></td>
@@ -1353,6 +1455,24 @@
 																<td itemprop="flightNumber"><b>Flight:</b></td>
 																<td>{{mylist2.0}}</td>
 															</tr>
+															{% if request.GET.cabin == 'maincabin' and mylist4.0 %}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                               <td>{{mylist4.0}}</td>
+													                        </tr>
+													                    {% elif request.GET.cabin == 'firstclass' and mylist5.0%}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist5.0}}</td>
+													                        </tr>
+													                    {% else %}
+													                    	{% if mylist6.0%}
+													                    		<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist6.0}}</td>
+													                        </tr>
+													                    	{% endif%}
+													                    {% endif %}
 															{% if mylist3.0 %}
 																<tr>
 																	<td><b>Operated By:</b></td>
@@ -1380,6 +1500,24 @@
 																<td><b>Flight:</b></td>
 																<td>{{mylist2.1}}</td>
 															</tr>
+															{% if request.GET.cabin == 'maincabin' and mylist4.1 %}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                               <td>{{mylist4.1}}</td>
+													                        </tr>
+													                    {% elif request.GET.cabin == 'firstclass' and mylist5.1%}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist5.1}}</td>
+													                        </tr>
+													                    {% else %}
+													                    	{% if mylist6.1%}
+													                    		<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist6.1}}</td>
+													                        </tr>
+													                    	{% endif%}
+													                    {% endif %}
 															{% if mylist3.1 %}
 																<tr>
 																	<td><b>Operated By:</b></td>
@@ -1409,6 +1547,24 @@
 																<td><b>Flight:</b></td>
 																<td>{{mylist2.2}}</td>
 															</tr>
+															{% if request.GET.cabin == 'maincabin' and mylist4.2 %}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                               <td>{{mylist4.2}}</td>
+													                        </tr>
+													                    {% elif request.GET.cabin == 'firstclass' and mylist5.2%}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist5.2}}</td>
+													                        </tr>
+													                    {% else %}
+													                    	{% if mylist6.2%}
+													                    		<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist6.2}}</td>
+													                        </tr>
+													                    	{% endif%}
+													                    {% endif %}
 															{% if mylist3.2 %}
 																<tr>
 																	<td><b>Operated By:</b></td>
@@ -1437,6 +1593,24 @@
 																<td><b>Flight:</b></td>
 																<td>{{mylist2.3}}</td>
 															</tr>
+															{% if request.GET.cabin == 'maincabin' and mylist4.3 %}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                               <td>{{mylist4.3}}</td>
+													                        </tr>
+													                    {% elif request.GET.cabin == 'firstclass' and mylist5.3%}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist5.3}}</td>
+													                        </tr>
+													                    {% else %}
+													                    	{% if mylist6.3%}
+													                    		<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist6.3}}</td>
+													                        </tr>
+													                    	{% endif%}
+													                    {% endif %}
 															{% if mylist3.3 %}
 																<tr>
 																	<td><b>Operated By:</b></td>
@@ -1444,6 +1618,7 @@
 																</tr>
 															{% endif %}
 															{% endif %}
+															
 															{% if row.stoppage == '4 STOPS' and mylist.4 %}
 															<tr>
 																<td></td>
@@ -1465,6 +1640,24 @@
 																<td><b>Flight:</b></td>
 																<td>{{mylist2.4}}</td>
 															</tr>
+															{% if request.GET.cabin == 'maincabin' and mylist4.4 %}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                               <td>{{mylist4.4}}</td>
+													                        </tr>
+													                    {% elif request.GET.cabin == 'firstclass' and mylist5.4%}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist5.4}}</td>
+													                        </tr>
+													                    {% else %}
+													                    	{% if mylist6.4%}
+													                    		<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist6.4}}</td>
+													                        </tr>
+													                    	{% endif%}
+													                    {% endif %}
 															{% if mylist3.4 %}
 																<tr>
 																	<td><b>Operated By:</b></td>
@@ -1474,7 +1667,9 @@
 															{% endif %}
 															
 															
-															
+															{% endwith %}
+															{% endwith %}
+															{% endwith %}
 															{% endwith %}
 															{% endwith %}
 															{% endwith %}
@@ -1495,10 +1690,14 @@
 													<div class="table-responsive table-date-search">
 														
 														<table class="table">
+						
 															{% with row.departdetails1|split:'@' as mylist%}
 															{% with row.arivedetails1|split:'@' as mylist1%}
 															{% with row.planedetails1|split:'@' as mylist2%}
 															{% with row.operatedby1|split:'@' as mylist3%}
+															{% with row.economy_code|split:'@' as mylist4%}
+													        {% with row.business_code|split:'@' as mylist5%}
+													        {% with row.fisrt_code|split:'@' as mylist6%} 
 															<tr itemscope itemtype="http://schema.org/Flight">
 																<td><b>Departs: </b></td>
 																<td><time itemprop="departureTime">{{mylist.0}}</time></td>
@@ -1514,13 +1713,31 @@
 																<td itemprop="flightNumber"><b>Flight:</b></td>
 																<td>{{mylist2.0}}</td>
 															</tr>
+															{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'  and mylist4.0 %}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                               <td>{{mylist4.0}}</td>
+													                        </tr>
+													                    {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' and mylist5.0%}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist5.0}}</td>
+													                        </tr>
+													                    {% else %}
+													                    	{% if mylist6.0%}
+													                    		<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist6.0}}</td>
+													                        </tr>
+													                    	{% endif%}
+													                    {% endif %}
 															{% if mylist3.0 %}
 															<tr>
 																<td><b>Operated By:</b></td>
 																<td>{{mylist3.0}}</td>
 															</tr>
 															{%endif%}
-															{% if row.stoppage1 == '1 STOP' or row.stoppage1 == '2 STOPS' or row.stoppage1 == '3 STOPS' or row.stoppage1 == '4 STOPS' %}
+															{% if row.stoppage1 == '1 STOP' or row.stoppage1 == '2 STOPS' or row.stoppage1 == '3 STOPS' or row.stoppage1 == '4 STOPS'%}
 															<tr>
 																<td></td>
 																<td>
@@ -1541,6 +1758,24 @@
 																<td><b>Flight:</b></td>
 																<td>{{mylist2.1}}</td>
 															</tr>
+															{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' and mylist4.1 %}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                               <td>{{mylist4.1}}</td>
+													                        </tr>
+													                    {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' and mylist5.1%}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist5.1}}</td>
+													                        </tr>
+													                    {% else %}
+													                    	{% if mylist6.1%}
+													                    		<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist6.1}}</td>
+													                        </tr>
+													                    	{% endif%}
+													                    {% endif %}
 															{% if mylist3.1 %}
 																<tr>
 																	<td><b>Operated By:</b></td>
@@ -1570,6 +1805,24 @@
 																<td><b>Flight:</b></td>
 																<td>{{mylist2.2}}</td>
 															</tr>
+															{% if request.GET.cabin == 'maincabin' and mylist4.2 %}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                               <td>{{mylist4.3}}</td>
+													                        </tr>
+													                    {% elif request.GET.cabin == 'firstclass' and mylist5.2%}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist5.2}}</td>
+													                        </tr>
+													                    {% else %}
+													                    	{% if mylist6.2%}
+													                    		<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist6.2}}</td>
+													                        </tr>
+													                    	{% endif%}
+													                    {% endif %}
 															{% if mylist3.2 %}
 																<tr>
 																	<td><b>Operated By:</b></td>
@@ -1598,6 +1851,24 @@
 																<td><b>Flight:</b></td>
 																<td>{{mylist2.3}}</td>
 															</tr>
+															{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' and mylist4.3 %}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                               <td>{{mylist4.3}}</td>
+													                        </tr>
+													                    {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' and mylist5.3%}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist5.3}}</td>
+													                        </tr>
+													                    {% else %}
+													                    	{% if mylist6.3%}
+													                    		<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist6.3}}</td>
+													                        </tr>
+													                    	{% endif%}
+													                    {% endif %}
 															{% if mylist3.3 %}
 																<tr>
 																	<td><b>Operated By:</b></td>
@@ -1627,6 +1898,24 @@
 																<td><b>Flight:</b></td>
 																<td>{{mylist2.4}}</td>
 															</tr>
+															{% if request.GET.cabin == 'maincabin' and mylist4.4 %}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                               <td>{{mylist4.4}}</td>
+													                        </tr>
+													                    {% elif request.GET.cabin == 'firstclass' and mylist5.4%}
+													                    	<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist5.4}}</td>
+													                        </tr>
+													                    {% else %}
+													                    	{% if mylist6.4%}
+													                    		<tr>
+													                              <td><b>Fare Class:</b></td>
+													                              <td>{{mylist6.4}}</td>
+													                        </tr>
+													                    	{% endif%}
+													                    {% endif %}
 															{% if mylist3.4 %}
 																<tr>
 																	<td><b>Operated By:</b></td>
@@ -1636,6 +1925,9 @@
 															{% endif %}
 													
 													
+													{% endwith %}
+													{% endwith %}
+													{% endwith %}
 													{% endwith %}
 													{% endwith %}
 													{% endwith %}
