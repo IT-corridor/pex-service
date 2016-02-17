@@ -388,7 +388,7 @@
 													                    
 													                    {% with details.economy_code|split:'@' as mylist4%}
 													                    {% with details.business_code|split:'@' as mylist5%}
-													                    {% with details.fisrt_code|split:'@' as mylist6%}
+													                    {% with details.first_code|split:'@' as mylist6%}
 													                    <tr itemscope itemtype="http://schema.org/Flight">
 													                            <td><b>Departs: </b></td>
 													                            <td><time itemprop="departureTime">{{mylist.0}}</time></td>
@@ -415,7 +415,7 @@
 													                              <td>{{mylist5.0}}</td>
 													                        </tr>
 													                    {% else %}
-													                    	{% if mylist6.0%}
+													                    	{% if request.GET.cabin == 'business' and mylist6.0%}
 													                    		<tr>
 													                              <td><b>Fare Class:</b></td>
 													                              <td>{{mylist6.0}}</td>
@@ -644,14 +644,14 @@
 													<div class="table-responsive table-date-search">
 														
 														<table class="table">
-															{{row.fisrt_code}}
+															{{row.first_code}}
 															{% with row.departdetails|split:'@' as mylist%}
 															{% with row.arivedetails|split:'@' as mylist1%}
 															{% with row.planedetails|split:'@' as mylist2%}
 															{% with row.operatedby|split:'@' as mylist3%}
 															{% with row.economy_code|split:'@' as mylist4%}
 													        {% with row.business_code|split:'@' as mylist5%}
-													        {% with row.fisrt_code|split:'@' as mylist6%} 
+													        {% with row.first_code|split:'@' as mylist6%} 
 															<tr itemscope itemtype="http://schema.org/Flight">
 																<td><b>Departs: </b></td>
 																<td><time itemprop="departureTime">{{mylist.0}}</time></td>
@@ -909,7 +909,7 @@
 															{% with row.operatedby1|split:'@' as mylist3%}
 															{% with row.economy_code|split:'@' as mylist4%}
 													        {% with row.business_code|split:'@' as mylist5%}
-													        {% with row.fisrt_code|split:'@' as mylist6%} 
+													        {% with row.first_code|split:'@' as mylist6%} 
 															<tr itemscope itemtype="http://schema.org/Flight">
 																<td><b>Departs: </b></td>
 																<td><time itemprop="departureTime">{{mylist.0}}</time></td>
