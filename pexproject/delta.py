@@ -379,7 +379,6 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     	soup = BeautifulSoup(html_page)
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "dtcontainer-both")))
 	maincontain = soup.find("div", {"id":"dtcontainer-both"})
-	#print "maincontain",maincontain
     	datatable = maincontain.find("tbody")
 
     except:
