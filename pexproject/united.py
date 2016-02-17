@@ -43,7 +43,9 @@ def united(origin, destination, searchdate, searchkey):
     url = "https://www.united.com/ual/en/us/flight-search/book-a-flight/results/awd?f=" + origin + "&t=" + destination + "&d=" + date + "&tt=1&at=1&sc=7&px=1&taxng=1&idx=1"
     display = Display(visible=0, size=(800, 600))
     display.start()
-    driver = webdriver.Chrome("/usr/bin/chromedriver")
+    chromedriver = "/usr/bin/chromedriver"
+    os.environ["webdriver.chrome.driver"] = chromedriver
+    driver = webdriver.Chrome(chromedriver)
     driver.get(url)
     time.sleep(2)
     try:
@@ -59,16 +61,16 @@ def united(origin, destination, searchdate, searchkey):
     except:
         print "no alert to accept"
     try:
-        print "data check"
-        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "fl-results")))
-        print "data check complete"
+        #print "data check"
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "fl-results")))
+        #print "data check complete"
     except:
         display.stop
         driver.quit()
-        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "united", "flag", "flag", "flag", "flag"))
+        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "united", "flag", "flag", "flag", "flag"))
         db.commit()
         return searchkey
-    #time.sleep(7)
+    time.sleep(7)
     html_page = driver.page_source
     soup = BeautifulSoup(html_page)
     # datablock = soup.find("section",{"id":"fl-results"})
@@ -93,7 +95,7 @@ def united(origin, destination, searchdate, searchkey):
         html_page4 = driver.page_source
         html_page5 = html_page4.encode('utf-8')
         soup2 = BeautifulSoup(str(html_page5))
-        print len(datadiv)
+        #print len(datadiv)
         for row in datadiv:
             fare1 = 0
             fare2 = 0
@@ -126,6 +128,8 @@ def united(origin, destination, searchdate, searchkey):
                 stoppage = '2 STOPS'
             elif '3' in stoppage:
                 stoppage = '3 STOPS'
+	    elif '4' in stoppage:
+                stoppage = '4 STOPS'
             else :
                 if 'Nonstop' in stoppage:
                     stoppage = 'NONSTOP'
@@ -144,7 +148,8 @@ def united(origin, destination, searchdate, searchkey):
             arivelist = []
             planelist = []
             operatedby = []
-            
+	    depttime = ''
+	    arivaltime = ''            
             departtime = row.find("div", {"class":"flight-time flight-time-depart"}).text
             dateduration = ''
             dateinfo = ''
@@ -163,7 +168,7 @@ def united(origin, destination, searchdate, searchkey):
                 if 'am' in depttime1:
                     depttime2 = depttime1.split('am')
                     depttime = (depttime2[0]).strip()+" am"
-                    print depttime
+                    #print depttime
             test = (datetime.datetime.strptime(depttime, '%I:%M %p'))
             test1 = test.strftime('%H:%M')
             # print test1
@@ -198,6 +203,7 @@ def united(origin, destination, searchdate, searchkey):
             flightno = row.find("div", {"class":"segment-flight-number"}).text
             planetype = row.find("div", {"class":"segment-aircraft-type"}).text
             detaillink = row.find("a", {"class":"toggle-flight-block-details ui-tabs-anchor"})['href']        
+	    #print "detaillink",detaillink
             test = driver.find_element_by_xpath("//a[@href='"+ detaillink +"']")
             #test = driver.execute_script("document.getElementById('" +detaillink+ "')")
     
@@ -244,7 +250,7 @@ def united(origin, destination, searchdate, searchkey):
                              departtext = date_format + " | " + departuretime + " from " + depart
                              
                      else:
-                         departtext = date_format + " | " + departtime + " from " + depart
+                         departtext = date_format + " | " + depttime + " from " + depart
                      if desttime:
                          dest_text = desttime + " at " + dest
                          if arival_date:
@@ -253,7 +259,7 @@ def united(origin, destination, searchdate, searchkey):
                              dest_text = date_format + " | " + desttime + " at " + dest
                               
                      else:
-                         dest_text = date_format + " | " + arivetime + " at " + dest
+                         dest_text = date_format + " | " + arivaltime + " at " + dest
                      departdlist.append(departtext)
                      arivelist.append(dest_text)
                      flight_number = info.find("div", {"class":"segment-flight-equipment"}).text
@@ -271,7 +277,7 @@ def united(origin, destination, searchdate, searchkey):
                          if 'Operated by' in operateby:
                              operateby = operateby.replace('Operated by', '')
                          operatedby.append(operateby)
-            driver.execute_script("arguments[0].click();", test);
+            #driver.execute_script("arguments[0].click();", test);
             priceblock = row.findAll("div", {"class":"flight-block-fares-container"})
             
             for prc in priceblock:
@@ -286,12 +292,12 @@ def united(origin, destination, searchdate, searchkey):
                         fare1 = float(economy) * int('1000')
                     
                     econtax = eco.find("div", {"class":"pp-additional-fare price-point"}).text
-                    print "econtax",econtax
+                    #print "econtax",econtax
                     if "+$" in econtax:
                         maintax = econtax.replace('+$', '')
                     
-                else:
-                    print "economy not available"
+                #else:
+                    #print " "
                     
                 if prc.find("div", {"class":"fare-option bg-business"}):
                     cabintype2 = 'Business'
@@ -303,13 +309,13 @@ def united(origin, destination, searchdate, searchkey):
                         fare2 = float(business) * int('1000')
                     
                     busstax = buss.find("div", {"class":"pp-additional-fare price-point"}).text
-                    print "busstax",busstax
+                    #print "busstax",busstax
                     if "+$" in busstax:
                         businesstax = busstax.replace('+$', '')
                     # print "busstax",businesstax
                     
-                else:
-                    print "business not available"
+                #else:
+                    #print " "
         
                 if prc.find("div", {"class":"fare-option bg-first"}):
                     cabintype3 = 'First'
@@ -324,8 +330,8 @@ def united(origin, destination, searchdate, searchkey):
                     if "+$" in firsttax:
                         firsttax = firsttax.replace('+$', '')
                     
-                else:
-                    print "first not available"
+                #else:
+                    #print " "
     
             departdetails = '@'.join(departdlist)
             arivedetails = '@'.join(arivelist)
@@ -338,16 +344,15 @@ def united(origin, destination, searchdate, searchkey):
             
             cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (flightno, str(searchid), stime, stoppage, "test", source, Destination, test1, arivetime2, totaltime, str(fare1), str(maintax), str(fare2), str(businesstax), str(fare3), str(firsttax), cabintype1, cabintype2, cabintype3, "united", departdetails, arivedetails, planedetails, operatedbytext))
             db.commit()
-            print "row inserted"
     scrapepage(searchkey, soup)
     for i in pages:
         print "page no",i
         link = driver.find_element_by_xpath("//a[@href='" +i+ "']")
         #link = driver.find_element_by_link_text(pages[i])
-        print "link",link
+        #print "link",link
         driver.execute_script("arguments[0].click();", link);
         #link.send_keys(Keys.ENTER)
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "product_MIN-ECONOMY-SURP-OR-DISP")))
+        #WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "product_MIN-ECONOMY-SURP-OR-DISP")))
         time.sleep(.5)
         html_page1 = driver.page_source
         soup = BeautifulSoup(html_page1)
@@ -355,7 +360,7 @@ def united(origin, destination, searchdate, searchkey):
         
     display.stop
     driver.quit()
-    cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "united", "flag", "flag", "flag", "flag"))
+    cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "united", "flag", "flag", "flag", "flag"))
     db.commit()
     return searchid
 
