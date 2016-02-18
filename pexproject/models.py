@@ -1,5 +1,7 @@
 from django.conf import settings
 #from django.contrib.sessions.models import Session
+from social_auth.signals import pre_update, socialauth_registered
+from social_auth.backends.steam import SteamBackend
 from django.db import models
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
@@ -79,8 +81,22 @@ class Contactus(models.Model):
     label_text = models.TextField()
     
 class UserManager(BaseUserManager):
-	def create_user(self, username, email, password=None):
-		#print username
+	'''
+	def user_update_handler(sender, user, response, details, **kwargs):
+        	print details
+        	user.username = details['username']
+        	user.firstname = details['player']['personaname']
+        	#user.avatar_small = details['player']['avatar']
+        	#user.avatar_medium = details['player']['avatarmedium']
+        	#user.avatar_full = details['player']['avatarfull']
+        	user.save()
+        	return True
+	'''
+	def create_user(self, username, email, password=None, **kwargs):
+		print username
+		print kwargs
+		for arg in kwargs:
+		    print "extraparam",kwargs[arg]
 		#print "email=",email
 		try:			
 		    user = self.model.objects.get(email=email)
@@ -88,7 +104,7 @@ class UserManager(BaseUserManager):
 		#if len(userobj) < 1:
         	    user = self.model(
 	                email=UserManager.normalize_email(email),
-		        username = username
+		        username = username,
 		   
 	            )
         	    user.set_password(password)
@@ -117,7 +133,28 @@ class User(AbstractBaseUser):
     usercode = models.CharField(max_length=20)
     user_code_time = models.DateTimeField()
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email']    
+    REQUIRED_FIELD = ['username']    
     objects =  UserManager()
     def is_authenticated(self):
         return False
+    '''
+    def save_profile(backend, user, response, *args, **kwargs):
+    	if backend.name == 'facebook':
+            profile = user.get_profile()
+            if profile is None:
+            	profile = Profile(user_id=user.id)
+            profile.gender = response.get('gender')
+            profile.link = response.get('link')
+            profile.timezone = response.get('timezone')
+            profile.save()
+   
+    def user_update_handler(sender, user, response, details, **kwargs):
+	print details
+        user.username = details['username']
+        user.firstname = details['player']['personaname']
+        #user.avatar_small = details['player']['avatar']
+        #user.avatar_medium = details['player']['avatarmedium']
+        #user.avatar_full = details['player']['avatarfull']
+        user.save()
+        return True
+    '''
