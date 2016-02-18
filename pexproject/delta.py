@@ -315,7 +315,7 @@ def delta(orgn, dest, searchdate, searchkey):
     return searchkey
 
 def etihad(source, destcode, searchdate, searchkey,scabin):
-    return searchkey
+    #return searchkey
     #dt = datetime.datetime.strptime(searchdate, '%m/%d/%Y')
     #date = dt.strftime('%d/%m/%Y')
     date = searchdate
