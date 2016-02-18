@@ -55,9 +55,10 @@ logger = logging.getLogger(__name__)
 def index(request):
     context = {}
     user = User()
-    if request.user.username:
+    if request.user.username and 'user_id' in request.session:
     	username = request.user.username
-    	request.session['userid']= request.user.user_id
+        if request.user.user_id:
+    	       request.session['userid']= request.user.user_id
     	user1 = User.objects.get(username=username)
         if user1.email:
     	    request.session['username'] =user1.email
@@ -461,7 +462,7 @@ def search(request):
             
             Searchkey.objects.filter(scrapetime__lte=time1).delete()
             cursor.execute("insert into arcade_flight_data select * from pexproject_flightdata where scrapetime < '"+str(time1)+"'")
-            #Flightdata.objects.filter(scrapetime__lte=time1).delete()
+            Flightdata.objects.filter(scrapetime__lte=time1).delete()
             transaction.commit()
             if searchdate1:
                 obj = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, scrapetime__gte=time1)

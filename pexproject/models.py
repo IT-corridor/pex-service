@@ -3,6 +3,7 @@ from django.conf import settings
 from social_auth.signals import pre_update, socialauth_registered
 from social_auth.backends.steam import SteamBackend
 from django.db import models
+from django.contrib import admin
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
@@ -33,7 +34,9 @@ class Flightdata(models.Model):
     departdetails = models.TextField()
     planedetails = models.TextField()
     operatedby = models.TextField()
-    
+    economy_code = models.TextField(blank=True, null=True)
+    business_code = models.TextField(blank=True, null=True)
+    first_code = models.TextField(blank=True, null=True)
     '''
     def arive_list(self):
         return self.arivedetails.split('@')
@@ -107,9 +110,9 @@ class UserManager(BaseUserManager):
 		        username = username,
 		   
 	            )
-        	    user.set_password(password)
-	        user.save(using=self._db)
-        	return user
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
 class User(AbstractBaseUser):
     user_id = models.AutoField(primary_key=True)
@@ -137,24 +140,25 @@ class User(AbstractBaseUser):
     objects =  UserManager()
     def is_authenticated(self):
         return False
-    '''
-    def save_profile(backend, user, response, *args, **kwargs):
-    	if backend.name == 'facebook':
-            profile = user.get_profile()
-            if profile is None:
-            	profile = Profile(user_id=user.id)
-            profile.gender = response.get('gender')
-            profile.link = response.get('link')
-            profile.timezone = response.get('timezone')
-            profile.save()
-   
-    def user_update_handler(sender, user, response, details, **kwargs):
-	print details
-        user.username = details['username']
-        user.firstname = details['player']['personaname']
-        #user.avatar_small = details['player']['avatar']
-        #user.avatar_medium = details['player']['avatarmedium']
-        #user.avatar_full = details['player']['avatarfull']
-        user.save()
-        return True
+
+    
+class EmailTemplate(models.Model):
+    template_id = models.AutoField(primary_key=True)
+    email_code = models.CharField(max_length=100)
+    subject = models.CharField(max_length=512)
+    body = models.TextField()
+    placeholder = models.TextField()
+    
+'''        
+class Custompage(admin.ModelAdmin):
+    
+    fieldsets = (
+        (None, {
+            'fields': ('url', 'title', 'content', 'sites')
+        }),
+        ('Advanced options', {
+            'classes': ('collapse',),
+            'fields': ('enable_comments', 'registration_required', 'template_name')
+        }),
+    )
     '''
