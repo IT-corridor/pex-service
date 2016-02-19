@@ -437,8 +437,18 @@ def sendFeedBack(request):
             text = strip_tags(text)
             body = body+'\n'+text
     #send_mail(topic,body,from_emailid,['info@pexportal.com'])
-        resp = customfunction.sendMail(from_emailid,'info@pexportal.com',topic,body,html_content)
+        obj = EmailTemplate.objects.get(email_code='feedback')
+        email_sub = obj.subject
+        emailbody = obj.body
+        emailbody = emailbody.replace('[USERNAME]',user_email)
+        emailbody = emailbody.replace('[FEEDBACK_MESSAGE]',body)
+        resp = customfunction.sendMail(from_emailid,'info@pexportal.com',topic,emailbody,html_content)
         if resp == "sent":
+            obj1 = EmailTemplate.objects.get(email_code='feedback_reply')
+            email_sub1 = obj1.subject
+            emailbody1 = obj1.body
+            emailbody1 = emailbody1.replace('[USERNAME]',user_email)
+            customfunction.sendMail('info@pexportal.com',from_emailid,email_sub1,emailbody1,html_content)
             alert_msg = "Thanks for giving us feedback"
         else:
             alert_msg = "There is some technical problem. Please try again"
