@@ -4,19 +4,30 @@ from django.views.generic.base import RedirectView
 from django.conf import settings
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.static import static
-from django.contrib import admin
-admin.autodiscover()
+#from django.contrib import admin
+#admin.autodiscover()
 import views
 
 urlpatterns = patterns('',
-    url(r'^admin/', include(admin.site.urls)),
+    #url(r'^admin/', include(admin.site.urls)),
+    
     url(r'^$', index, name='index'),
     url(r'', include('social_auth.urls')),
     #url(r'^facebooklogin', facebooklogin, name='facebooklogin'),
+    
     url(r'^login', login, name='login'),
     #url(r'^google4fcc5c6791037930', include('webmaster_verification.urls')),
     url(r'^google4fcc5c6791037930$', lambda r: HttpResponse("google-site-verification: google4fcc5c6791037930.html")),
    #url(r'^webmaster', webmaster, name='webmaster'),
+   
+    url(r'^Admin/$', Admin, name='Admin'),
+    url(r'^Admin/adminlogin', adminlogin, name='adminlogin'),
+    url(r'^Admin/adminlogout', adminlogout, name='adminlogout'),
+    url(r'^Admin/dashboard', dashboard, name='dashboard'),
+    url(r'^Admin/emailtemplate', emailtemplate, name='emailtemplate'),
+    
+    
+    #url(r'^admin',lambda r: HttpResponse("admin_index.html")),
     url(r'^sendFeedBack', sendFeedBack, name='sendFeedBack'),
     url(r'^createPassword', createPassword, name='createPassword'),
     url(r'^checkData', checkData, name='checkData'),

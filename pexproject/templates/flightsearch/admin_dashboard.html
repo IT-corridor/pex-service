@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		{% load staticfiles %}
+		{% load humanize %}
+		<link rel="apple-touch-icon" href="{% static 'flightsearch' %}/apple-touch-icon.png">
+        <link rel="shortcut icon" type="image/ico" href="{% static 'flightsearch' %}/favicon.ico"/>
+        <link rel="stylesheet" href="{% static 'flightsearch/css/bootstrap-theme.min.css' %}">
+        <link rel="stylesheet" href="{% static 'flightsearch/js/jquery-ui.css' %}">
+        <link rel="stylesheet" href="{% static 'flightsearch/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'flightsearch/css/main.css' %}">
+		<script src="{% static 'flightsearch/js/jquery-2.1.4.min.js' %}"></script>
+
+	</head>
+	<body>
+		
+		<div class="container-fluid" >
+			<div class="col-xs-12 nopadding" style="margin-top: 10px;">
+				<div class="col-xs-12 text-right" >
+				{% if 'admin' in request.session %}		
+					<a href="#">{{request.session.admin}}</a> |
+					<a  href="adminlogout">Logout</a>
+					
+				{%endif%}
+				</div>
+			</div>
+		</div>
+		<div class="container">
+			<div class="col-x-12 col-md-12" style="margin-top: 50px">
+				<div>
+				<h4><b><u>Email Template Listing </u></b></h4>
+				
+				</div>
+				{%if 'msg' in request.GET %}
+				<h5 class="alert alert-success">{{request.GET.msg}}</h5>
+				{% endif %}
+				<div class="table-responsive">
+				<table class="table table-responsive">
+					<thead>
+						<tr>
+						<th>Email code</th>
+						<th>Subject</th>
+						<th>Body</th>
+						<th>Placeholder</th>
+						<th>Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						{%if emaillist %}
+						{%for obj in emaillist %}
+						<tr>
+							<td>{{obj.email_code}}</td>
+							<td>{{obj.subject}}</td>
+							<td>{{obj.body}}</td>
+							<td>{{obj.placeholder}}</td>
+							<td><a href="emailtemplate?templateid={{obj.template_id}}">Edit </a></td>
+						</tr>
+						{%endfor%}
+						{%endif%}
+					</tbody>
+				</table>
+			</div>
+		</div>
+		
+	</div>
+	</body>
+</html>

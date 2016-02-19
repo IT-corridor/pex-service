@@ -20,7 +20,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.context_processors import csrf
 from django.views.decorators.csrf import requires_csrf_token
-from pexproject.models import Flightdata, Airports, Searchkey, User, Contactus
+from pexproject.models import Flightdata, Airports, Searchkey, User, Contactus,Adminuser,EmailTemplate
 from pexproject.templatetags.customfilter import floatadd, assign
 from social_auth.models import UserSocialAuth
 from django.contrib.auth import login as social_login,authenticate,get_user
@@ -52,7 +52,81 @@ import signal
 import logging
 logger = logging.getLogger(__name__)
 
+
+def Admin(request):
+    context = {}
+    return  render_to_response('flightsearch/admin_index.html', context_instance=RequestContext(request))
+
+def adminlogin(request):
+    
+    context = {}
+    if request.POST:
+        username = request.REQUEST['admin_user']
+        password = request.REQUEST['admin_password']
+        print username,password
+        try:
+        
+            print "aaya"
+            adminuser = Adminuser.objects.get(username=username, password=password)
+            print "founrd"
+            request.session['admin'] = username
+            
+            return HttpResponseRedirect('dashboard')
+            
+        except:
+            currentpage = "/Admin?message=invalid"
+            return HttpResponseRedirect(currentpage)
+    else:
+        return render_to_response('flightsearch/admin_dashboard.html', context_instance=RequestContext(request))
+        
+def adminlogout(request):
+    context = {}
+    if 'admin' in request.session:
+        del request.session['admin']  
+    return HttpResponseRedirect(reverse('Admin'))
+
+def dashboard(request):
+    context = {}
+    if 'admin' in request.session:
+        emailtemplate = EmailTemplate.objects.filter()
+        print emailtemplate
+        return  render_to_response('flightsearch/admin_dashboard.html',{'emaillist':emailtemplate}, context_instance=RequestContext(request))
+    else:
+        return HttpResponseRedirect(reverse('/Admin'))
+
+def emailtemplate(request):
+    context = {}
+    if request.POST:
+        subject = request.REQUEST['subject']
+        body = request.REQUEST['body']
+        placeholder = request.REQUEST['palceholder']
+        email = EmailTemplate()
+        email.subject = subject
+        email.body = body
+        email.email_code = request.REQUEST['emailcode']
+        email.template_id = request.REQUEST['templateid']
+        email.placeholder = placeholder
+        try:
+            email.save()
+            page = '/Admin/dashboard?msg=Record Edited Successfully'
+            return HttpResponseRedirect(page)
+        except:
+            page = '/Admin/dashboard?msg=There is some technical problem'
+            return HttpResponseRedirect(page)        
+    templateid = request.GET.get('templateid','')
+    templateobj = EmailTemplate.objects.get(pk=templateid)
+    
+    return  render_to_response('flightsearch/email_template.html',{'templateobj':templateobj}, context_instance=RequestContext(request))
+
+    
+    
+        
+        
+    
+        
+
 def index(request):
+
     context = {}
     user = User()
     if request.user.username and 'user_id' in request.session:
