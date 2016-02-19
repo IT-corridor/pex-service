@@ -2,11 +2,15 @@ from django.conf import settings
 #from django.contrib.sessions.models import Session
 from social_auth.signals import pre_update, socialauth_registered
 from social_auth.backends.steam import SteamBackend
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.contrib import admin
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
+
+#class User(AbstractUser):
+    #pass
 
 class Flightdata(models.Model):
     rowid = models.AutoField(primary_key=True)
@@ -84,18 +88,7 @@ class Contactus(models.Model):
     label_text = models.TextField()
     
 class UserManager(BaseUserManager):
-	'''
-	def user_update_handler(sender, user, response, details, **kwargs):
-        	print details
-        	user.username = details['username']
-        	user.firstname = details['player']['personaname']
-        	#user.avatar_small = details['player']['avatar']
-        	#user.avatar_medium = details['player']['avatarmedium']
-        	#user.avatar_full = details['player']['avatarfull']
-        	user.save()
-        	return True
-	'''
-	def create_user(self, username, email, password=None, **kwargs):
+	def create_user(self, username,email=None, password=None, **kwargs):
 		print username
 		print kwargs
 		for arg in kwargs:
@@ -114,6 +107,7 @@ class UserManager(BaseUserManager):
                 user.save(using=self._db)
                 return user
 
+		
 class User(AbstractBaseUser):
     user_id = models.AutoField(primary_key=True)
     firstname = models.CharField(max_length=100)
@@ -135,12 +129,16 @@ class User(AbstractBaseUser):
     zipcode = models.CharField(max_length=20)
     usercode = models.CharField(max_length=20)
     user_code_time = models.DateTimeField()
+    is_staff = models.BooleanField(default=True)
     USERNAME_FIELD = 'username'
     REQUIRED_FIELD = ['username']    
     objects =  UserManager()
     def is_authenticated(self):
         return False
 
+#class User(AbstractUser):
+    #pass
+    #objects = UserManager()
     
 class EmailTemplate(models.Model):
     template_id = models.AutoField(primary_key=True)
