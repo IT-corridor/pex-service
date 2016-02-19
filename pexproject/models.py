@@ -110,9 +110,9 @@ class UserManager(BaseUserManager):
 		        username = username,
 		   
 	            )
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
+                user.set_password(password)
+                user.save(using=self._db)
+                return user
 
 class User(AbstractBaseUser):
     user_id = models.AutoField(primary_key=True)
@@ -148,6 +148,11 @@ class EmailTemplate(models.Model):
     subject = models.CharField(max_length=512)
     body = models.TextField()
     placeholder = models.TextField()
+    
+class Adminuser(models.Model):
+    admin_id = models.AutoField(primary_key=True)
+    username = models.CharField(max_length=100)
+    password = models.CharField(max_length=100)
     
 '''        
 class Custompage(admin.ModelAdmin):
