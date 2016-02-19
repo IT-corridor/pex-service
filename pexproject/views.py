@@ -369,9 +369,14 @@ def forgotPassword(request):
                 return render_to_response('flightsearch/index.html', {'msg':"Invalid username"}, context_instance=RequestContext(request))
         text = ''
         if user > 0:
-            subject = "Manage Your Password"
-            html_content = '"To manage Your password  <a href="http://pexportal.com/createPassword?usercode='+usercode+'">Click here</a>'
-            resp = customfunction.sendMail('PEX',user_email,subject,text,html_content)
+            #subject = "Manage Your Password"
+            obj = EmailTemplate.objects.get(email_code='forgotPassword')
+            email_sub = obj.subject
+            emailbody = obj.body
+            emailbody = emailbody.replace('[USER_NAME]',user_email)
+            emailbody = emailbody.replace('[RESET-LINK]','<a href="http://pexportal.com/createPassword?usercode='+usercode+'">Click here</a>')
+            #html_content = '"To manage Your password  <a href="http://pexportal.com/createPassword?usercode='+usercode+'">Click here</a>'
+            resp = customfunction.sendMail('PEX',user_email,email_sub,emailbody,text)
             if resp == "sent":
                 user.usercode = usercode
                 currentdatetime = datetime.datetime.now()
@@ -432,11 +437,11 @@ def sendFeedBack(request):
             text = strip_tags(text)
             body = body+'\n'+text
     #send_mail(topic,body,from_emailid,['info@pexportal.com'])
-    resp = customfunction.sendMail(from_emailid,'info@pexportal.com',topic,body,html_content)
-    if resp == "sent":
-        alert_msg = "Thanks for giving us feedback"
-    else:
-        alert_msg = "There is some technical problem. Please try again"
+        resp = customfunction.sendMail(from_emailid,'info@pexportal.com',topic,body,html_content)
+        if resp == "sent":
+            alert_msg = "Thanks for giving us feedback"
+        else:
+            alert_msg = "There is some technical problem. Please try again"
     return render_to_response('flightsearch/feedback.html',{'alert_msg':alert_msg}, context_instance=RequestContext(request))
 
 def contactUs(request):
