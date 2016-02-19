@@ -17,6 +17,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
 from django.db import connection, transaction
 from multiprocessing import Process
 import threading
@@ -52,7 +53,7 @@ def delta(orgn, dest, searchdate, searchkey):
     os.environ["webdriver.chrome.driver"] = chromedriver
     driver = webdriver.Chrome(chromedriver)
     
-    driver = webdriver.Chrome()
+    #driver = webdriver.Chrome()
     try:
         driver.implicitly_wait(20)
         driver.get(url)
@@ -108,6 +109,10 @@ def delta(orgn, dest, searchdate, searchkey):
     pricehead = soup.find("tr",{"class":"tblHeadUp"})
     pricecol = pricehead.findAll("label",{"class":"tblHeadBigtext"})
     datatable = soup.findAll("table", {"class":"fareDetails"})
+    
+    
+    
+    fare_flag = 0
     soup2 = ''
     try:
     	detailids = soup.findAll("div", {"class":"detailLinkHldr"})
@@ -128,8 +133,11 @@ def delta(orgn, dest, searchdate, searchkey):
         #transaction.commit()
     	return searchkey
     n = 0
+    
     htmlpage = driver.page_source
     soup2 = BeautifulSoup(htmlpage)
+    cabin_ele = driver.find_elements_by_xpath("//*[@class='miscCabin']")
+    print "cabin_ele",cabin_ele
     for content in datatable:
         #if soup2:
         #time.sleep(0.06)
@@ -142,6 +150,9 @@ def delta(orgn, dest, searchdate, searchkey):
         arrivedetails = []
         planedetails = []
         operatedbytext = ''
+        efare_class = []
+        bfare_class=[]
+        ffare_class = []
         for cnt in datatable1:
             if cnt.find("div", {"class":"detailsRow" }) and k == n:
                 detailblk = cnt.findAll("div", {"class":"detailsRow"})
@@ -175,10 +186,12 @@ def delta(orgn, dest, searchdate, searchkey):
         tds = content.findAll("td")
         cabinhead = ''
         detailsblock = tds[0]
+        print len(pricecol)
+        print len(tds)
         if  len(pricecol) > 1:
             if tds[1]:
                 economy = tds[1]
-            if  'Business' in cabinhead or 'First' in pricecol[1].text:
+            if  'Business' in pricecol[1].text or 'First' in pricecol[1].text:
                 cabinhead = pricecol[1].text
                 if len(tds) > 2:
                     business = tds[2]
@@ -200,7 +213,6 @@ def delta(orgn, dest, searchdate, searchkey):
                     if 'Main Cabin' in cabinhead:
                        economy =  tds[1]
                        business = ''
-        
         cabintype2 = ''
         fare2 = 0
         timeblock = detailsblock.findAll("div", {"class":"flightDateTime"})
@@ -264,16 +276,33 @@ def delta(orgn, dest, searchdate, searchkey):
                     economytax = ecotax[0]
                 if economy.findAll("div", {"class":"frmTxtHldr flightCabinClass"}):
                     cabintype1 = economy.find("div", {"class":"frmTxtHldr flightCabinClass"}).text
+
                     if 'Main Cabin' in cabintype1:
                         cabintype1 = cabintype1.replace('Main Cabin', 'Economy')
                     if 'Multiple Cabins' in cabintype1:
+                        #hover_element =  economy.find("div", {"class":"frmTxtHldr flightCabinClass"})
+                        #hover_link = hover_element.find("a")['class']
+                        hover = ActionChains(driver).move_to_element(cabin_ele[fare_flag])
+                        hover.perform()
+                        time.sleep(.2)
+                        html_page2 = driver.page_source
+                        soup = BeautifulSoup(html_page2)
+                        hover_string = soup.find("tr",{"class","cabinClass_fly_bodyWrap"})
+                        alltd = hover_string.findAll("td",{"class":"subheaderMsg"})
+                        for tdtext in alltd:
+                            print "flt no ",tdtext.find("div",{"class":"cabinContainerLeft"}).text
+                            fare_class = tdtext.find("div",{"class":"cabinContainerRight"}).text
+                            efare_class.append(fare_class)
+                        
+                        
+                        
                         cabintype1 = cabintype1.replace('Multiple Cabins', 'Economy')
             else:
                 fare1 = 0 
                 cabintype1 = ''
             
         if business:
-
+            alltd = ''
             if business.findAll("div", {"class":"priceHolder"}):
                 fare2 = business.find("span", {"class":"tblCntBigTxt mileage"}).text
                 fare2 = fare2.replace(",", "")
@@ -284,23 +313,53 @@ def delta(orgn, dest, searchdate, searchkey):
                        
                 if business.findAll("div", {"class":"frmTxtHldr flightCabinClass"}):
                     cabintype2 = business.find("div", {"class":"frmTxtHldr flightCabinClass"}).text
+                    print "cabintype2" ,cabintype2
+                    if 'Multiple Cabins' in cabintype2:
+                        print "fare_flag",fare_flag
+                        hover = ActionChains(driver).move_to_element(cabin_ele[fare_flag])
+                        hover.perform()
+                        #get_html  = ele.get_attribute("innerHTML")
+                        time.sleep(1)
+                        #time.sleep(.2)
+                        html_page2 = driver.page_source
+                        soup = BeautifulSoup(html_page2)
+                        hover_string = soup.find("tr",{"class","cabinClass_fly_bodyWrap"})
+                        alltd = hover_string.findAll("td",{"class":"subheaderMsg"})
+                        fare_flag = fare_flag+1
                     
             else:
                 fare2 = 0 
                 cabintype2 = ''
+            
             if 'First' in cabintype2 or ('First' in cabinhead and 'Business' not in cabinhead):
                 fare3 = fare2
                 fare2 = 0
                 cabintype3 = cabintype2
                 firsttax = businesstax
                 cabintype2 = ''
+                if alltd:
+                    for tdtext in alltd:
+                        print "flt no ",tdtext.find("div",{"class":"cabinContainerLeft"}).text
+                        fare_class = tdtext.find("div",{"class":"cabinContainerRight"}).text
+                        ffare_class.append(fare_class)
+                        print "--------------------------- ----------------------------------------"
             else:
                 cabintype2 = "Business"
+                if alltd:
+                    for tdtext in alltd:
+                        print "flt no ",tdtext.find("div",{"class":"cabinContainerLeft"}).text
+                        fare_class = tdtext.find("div",{"class":"cabinContainerRight"}).text
+                        bfare_class.append(fare_class)
 
         deptdetail = '@'.join(departdetails)
         arivedetail = '@'.join(arrivedetails)
         planetext = '@'.join(planedetails)
-        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno, searchid, stime, stp, lyover, sourcestn, destinationstn, test1, arivalformat1, duration, str(fare1), str(economytax), str(fare2), str(businesstax), str(fare3), str(firsttax), cabintype1.strip(), cabintype2.strip(), cabintype3, "delta", deptdetail, arivedetail, planetext, operatedbytext))
+        efare_class_text = '@'.join(efare_class)
+        bfare_class_text = '@'.join(bfare_class)
+        ffare_class_text = '@'.join(ffare_class)
+        #print "bfare_class_text",bfare_class_text
+        #print "ffare_class_text",ffare_class_text
+        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno, searchid, stime, stp, lyover, sourcestn, destinationstn, test1, arivalformat1, duration, str(fare1), str(economytax), str(fare2), str(businesstax), str(fare3), str(firsttax), cabintype1.strip(), cabintype2.strip(), cabintype3, "delta", deptdetail, arivedetail, planetext, operatedbytext,efare_class_text,bfare_class_text,ffare_class_text))
         db.commit()
         #transaction.commit()
         print "data inserted"
@@ -320,14 +379,14 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     #date = dt.strftime('%d/%m/%Y')
     date = searchdate
     print "final date", date
-    
+   
     db = MySQLdb.connect(host="localhost",   
                      user="root",          
                       passwd="1jyT382PWzYP",        
                       db="pex")
     db.set_character_set('utf8')
     cursor = db.cursor()
-   
+    
     #cursor = connection.cursor()
     currentdatetime = datetime.datetime.now()
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
@@ -356,7 +415,8 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
         db.commit()
         #transaction.commit()
         print "etihad flag inserted"
-
+        display.stop()
+        driver.quit()
         return searchkey
     time.sleep(2)
     origin = driver.find_element_by_id("frm_2012158061206151234")
