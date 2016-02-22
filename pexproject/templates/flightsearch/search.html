@@ -47,6 +47,9 @@
 											{% if row.datasource == "Virgin America" %}
 												<img itemprop="logo" src="{% static 'flightsearch/img/va.jpg' %}" class="img-responsive" alt="Responsive image">
 											{% endif %}
+											{% if row.datasource == "american airlines" %}
+												<img itemprop="logo" src="{% static 'flightsearch/img/aa.jpg' %}" class="img-responsive" alt="Responsive image">
+											{% endif %}
 											{% if row.datasource == "delta" %}
 												<img itemprop="logo" src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">
 											{% endif %}
@@ -88,6 +91,8 @@
 												<img itemprop="logo" src="{% static 'flightsearch/img/virgin.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
 												{% if row.datasource == "Virgin America" %}
 												<img itemprop="logo" src="{% static 'flightsearch/img/va.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
+												{% if row.datasource == "american airlines" %}
+												<img itemprop="logo" src="{% static 'flightsearch/img/aa.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
 												{% if row.datasource == "jetblue" %}
 												<img itemprop="logo" src="{% static 'flightsearch/img/jetblue.jpg' %}" class="img-responsive" alt="Responsive image">
 											{% endif %}

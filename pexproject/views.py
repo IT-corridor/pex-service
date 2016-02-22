@@ -566,7 +566,7 @@ def search(request):
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/jetblue.py",destcode, orgncode, str(returndate), str(returnkey)])
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/delta.py",destcode, orgncode, str(date1), str(returndate), str(returnkey),etihaddest,etihadorigin,cabin])
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",destcode, orgncode, str(returndate), str(returnkey)])
-                    #subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aa.py",destcode, orgncode, str(returndate), str(returnkey)])
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aa.py",destcode, orgncode, str(returndate), str(returnkey)])
                     #customfunction.etihad(etihaddest,etihadorigin,date1,returnkey,cabin)
                     #customfunction.scrape(destcode, orgncode, date1, returndate, returnkey)
             else:
@@ -585,7 +585,7 @@ def search(request):
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/jetblue.py",orgncode,destcode,str(depart),str(searchkeyid)])
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/delta.py",orgncode,destcode,str(date),str(depart),str(searchkeyid),etihadorigin,etihaddest,cabin])
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",orgncode,destcode,str(depart),str(searchkeyid)])
-                #subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aa.py",orgncode,destcode,str(depart),str(searchkeyid)])
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aa.py",orgncode,destcode,str(depart),str(searchkeyid)])
                 returnkey = ''
                 if returndate:
                     retunobj = Searchkey.objects.filter(source=destination1, destination=origin, traveldate=searchdate1, scrapetime__gte=time1)
@@ -599,7 +599,7 @@ def search(request):
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/jetblue.py",destcode, orgncode, str(returndate), str(returnkey)])
                         subprocess.Popen(["python",settings.BASE_DIR+"/pexproject/delta.py",destcode, orgncode, str(date1), str(returndate), str(returnkey),etihaddest,etihadorigin,cabin])
                         subprocess.Popen(["python",settings.BASE_DIR+"/pexproject/united.py",destcode, orgncode, str(returndate), str(returnkey)])
-                        #subprocess.Popen(["python",settings.BASE_DIR+"/pexproject/aa.py",destcode, orgncode, str(returndate), str(returnkey)])
+                        subprocess.Popen(["python",settings.BASE_DIR+"/pexproject/aa.py",destcode, orgncode, str(returndate), str(returnkey)])
                         #customfunction.etihad(etihaddest,etihadorigin,date,returnkey,cabin)
                         #customfunction.scrape(destcode, orgncode, date, depart, returnkey)
             Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='virgin_atlantic').delete()
