@@ -1060,7 +1060,8 @@ footer {
   width: 45px;
   display: block;
   text-align: center;
-  background: #f5f5f5;
+  !background: #f5f5f5;
+  background: rgba(245,245,245,0.5);
   padding: 5px;
   font: 12px/100% Arial, Helvetica, sans-serif;
   text-transform: uppercase;
@@ -1072,7 +1073,8 @@ footer {
   transition: 1s;
   bottom: 10px;
   position: fixed;
-  right: 10px;
+  right: 2px;
+  border-radius: 7px;
 }
 #back-top a:hover, #back-top a:focus {
 	background: #39A8E0;
@@ -1899,6 +1901,13 @@ nav.cstm-hw-it {
 	transform: rotate(-90deg);
 	z-index: 1000;
 }
+.feedback-btn .btn{
+	background: rgba(240,173,78,0.7);
+}
+.feedback-btn:hover  .btn {
+	background: rgba(240,173,78,1) !important;
+}
+
 #add_account, #sync_all_points,#cstm_update, #syncdata, span.cancel {
 	width: initial;
 }
