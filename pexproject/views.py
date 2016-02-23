@@ -121,8 +121,15 @@ def emailtemplate(request):
 def index(request):
     context = {}
     user = User()
+    if request.is_ajax() and 'pexdeals' in request.REQUEST:
+        request.session['pexdeal'] = request.REQUEST['pexdeals']
+        print request.session['pexdeal']
+        mimetype = 'application/json'
+        data = "success"
+        json.dumps(data)
+        return HttpResponse(data, mimetype)
+        
     if request.user.username:
-	#print request.session.pexdeals
     	username = request.user.username
         if 'user_id' in request.session and request.user.user_id:
     	       request.session['userid']= request.user.user_id
@@ -131,7 +138,9 @@ def index(request):
     	    request.session['username'] =user1.email
         if user1.firstname:
             request.session['firstname'] =user1.firstname
-    	request.session['password'] = user1.password 
+    	request.session['password'] = user1.password
+        if 'pexdeal' in request.session:
+            print request.session['pexdeal'] 
     return  render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
 
 def flights(request):

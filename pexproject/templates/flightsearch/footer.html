@@ -102,8 +102,9 @@
 									<hr>
 									<div class="form-group text-center">
 										<h5>Or Login with</h5>
-										<a href="{% url 'socialauth_begin' 'facebook' %}" id="fb"><span class="social-login facebook">Facebook</span></a> 
-										<a href="{% url 'socialauth_begin' 'google-oauth2' %}?next={{ request.path   }}"><span class="social-login google">Google+</span></a>
+
+										<a href="{% url 'socialauth_begin' 'facebook' %}" class="pexdeal"><span class="social-login facebook">Facebook</span></a> 
+										<a href="{% url 'socialauth_begin' 'google-oauth2' %}?next={{ request.path   }}" class="pexdeal"><span class="social-login google">Google+</span></a>
 									</div>									
 								</form>
 							</div>
@@ -154,6 +155,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title">{% if welcome_msg %}{{welcome_msg}} {% else %}Enter your registered email{% endif %}</h4>
       </div>
+      
       <form action="forgotPassword" method="post" class="form-group" id="forgot_password_form">
       	{% csrf_token %}
       <div class="modal-body col-xs-12">
@@ -250,10 +252,24 @@ $( "#home_airpot" ).autocomplete({
     	appendTo:".modelform",
     });
 
-$('#fb').click(function(){
-	fullurl = $(this).attr('href')+'?pexdeals=true';
-//	alert(fullurl);
-	//return false;
+ 
+$(".pexdeal").click(function(){
+	var pex_option = confirm("Do you want to subscribe, to receive PEX+ amazing deals?");
+	
+	if (pex_option == true) 
+		{	
+				$.ajax({
+		       	type: "POST",
+		       	dataType: "text",
+		       	url: "/index/",
+		        data: "pexdeals=1&csrfmiddlewaretoken="+encodeURI("{{csrf_token}}")
+		        }).done(function(data){
+			      	console.log(data);
+	
+			      }) ;
+			    
+			} 
+
 });
 </script>
 	</body>
