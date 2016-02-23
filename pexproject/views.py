@@ -122,6 +122,7 @@ def index(request):
     context = {}
     user = User()
     if request.user.username:
+	#print request.session.pexdeals
     	username = request.user.username
         if 'user_id' in request.session and request.user.user_id:
     	       request.session['userid']= request.user.user_id
@@ -181,7 +182,6 @@ def signup(request):
 
             object = User(username=email,email=email, password=password1,firstname=firstname,lastname=lastname, home_airport=airport,last_login=time,pexdeals=pexdeals)
             object.save()
-            print pexdeals
             if pexdeals == '1':
                 subscriber = Mailchimp(customfunction.mailchimp_api_key)
                 subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':email}, merge_vars={'FNAME':firstname,'LNAME':lastname})
@@ -193,16 +193,13 @@ def signup(request):
             if object.user_id:
                 request.session['userid'] = object.user_id
                 msg = "Thank you, You have been successfully registered."
-                #send_mail('Welcome to PEX+', 'You have successfully created a Pex+ account. You can search numerous travel sites for your rewards flight', 'PEX+', [email])
                 emailbody=''
                 obj = EmailTemplate.objects.get(email_code='signup')
                 email_sub = obj.subject
                 emailbody = obj.body
                 emailbody = emailbody.replace('[USER_NAME]',firstname)
                 emailbody = emailbody.replace('[SITE-LINK]','<a href="http://pexportal.com/">pexportal</a>')
-                print "emailbody",emailbody
-                print "subject",email_sub
-                #emailtext = "You have successfully created a Pex+ account. You can search numerous travel sites for your rewards flight"
+                
                 html_content=''
                 try:
                     resp = customfunction.sendMail('PEX+',email,email_sub,emailbody,html_content)
