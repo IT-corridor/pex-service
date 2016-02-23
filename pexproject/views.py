@@ -137,10 +137,7 @@ def index(request):
     	    request.session['username'] =user1.email
         if user1.firstname:
             request.session['firstname'] =user1.firstname
-    	request.session['password'] = user1.password
-        if 'pexdeal' in request.session:
-	    subscriber = Mailchimp(customfunction.mailchimp_api_key)
-            subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':email}, merge_vars={'FNAME':firstname,'LNAME':lastname})
+    	request.session['password'] = user1.password        
     return  render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
 
 def flights(request):

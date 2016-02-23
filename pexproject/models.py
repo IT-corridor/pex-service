@@ -1,5 +1,6 @@
 from django.conf import settings
 #from django.contrib.sessions.models import Session
+import customfunction
 from social_auth.signals import pre_update, socialauth_registered
 from social_auth.backends.steam import SteamBackend
 from django.contrib.auth.models import AbstractUser
@@ -90,6 +91,12 @@ class Contactus(models.Model):
 class UserManager(BaseUserManager):
     
     def create_user(self, username,email, password=None, **kwargs):
+        fname = ''
+        lname = ''
+        if kwargs['profile']['first_name']:
+            fname = kwargs['profile']['first_name']
+        if kwargs['profile']['last_name']:
+            lname = kwargs['profile']['last_name']
         try:			
 		    user = self.model.objects.get(email=email)
         except:
@@ -98,10 +105,14 @@ class UserManager(BaseUserManager):
 		          username = username,
 		   	
 	            )
-        if user.firstname == '' and kwargs['profile']['first_name']:
-			user.firstname = kwargs['profile']['first_name']
-        if user.lastname == '' and kwargs['profile']['last_name']:
-			user.lastname = kwargs['profile']['last_name']
+            if 'pexdeal' in request.session:
+                subscriber = Mailchimp(customfunction.mailchimp_api_key)
+                subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':email}, merge_vars={'FNAME':fname,'LNAME':lname})
+                del request.session['pexdeal']
+        
+		user.firstname = fname
+        
+		user.lastname = lname
         user.set_password(password)
         user.save(using=self._db)
         return user
