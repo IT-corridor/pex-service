@@ -1,5 +1,6 @@
 from django.conf import settings
 #from django.contrib.sessions.models import Session
+from django.contrib.sessions.backends.db import SessionStore
 import customfunction
 from social_auth.signals import pre_update, socialauth_registered
 from social_auth.backends.steam import SteamBackend
@@ -105,14 +106,11 @@ class UserManager(BaseUserManager):
 		          username = username,
 		   	
 	            )
-            if 'pexdeal' in request.session:
-                subscriber = Mailchimp(customfunction.mailchimp_api_key)
-                subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':email}, merge_vars={'FNAME':fname,'LNAME':lname})
-                del request.session['pexdeal']
+	   
         
-		user.firstname = fname
+	user.firstname = fname
         
-		user.lastname = lname
+	user.lastname = lname
         user.set_password(password)
         user.save(using=self._db)
         return user

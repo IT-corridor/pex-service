@@ -133,11 +133,21 @@ def index(request):
         if 'user_id' in request.session and request.user.user_id:
     	       request.session['userid']= request.user.user_id
     	user1 = User.objects.get(username=username)
+	fname=''
+	lname=''
         if user1.email:
     	    request.session['username'] =user1.email
         if user1.firstname:
             request.session['firstname'] =user1.firstname
+	    fname = user1.firstname
+	if user1.lastname:
+	    lname = user1.lastname
     	request.session['password'] = user1.password        
+	if 'pexdeal' in request.session:
+	    #print "in pex deal"
+	    subscriber = Mailchimp(customfunction.mailchimp_api_key)
+            subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':username}, merge_vars={'FNAME':fname,'LNAME':lname})
+	   	   
     return  render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
 
 def flights(request):
