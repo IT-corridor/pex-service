@@ -130,7 +130,7 @@ def index(request):
         
     if request.user.username:
     	username = request.user.username
-        if 'user_id' in request.session and request.user.user_id:
+        if request.user.user_id:
     	       request.session['userid']= request.user.user_id
     	user1 = User.objects.get(username=username)
 	fname=''
