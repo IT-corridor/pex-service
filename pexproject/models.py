@@ -88,22 +88,23 @@ class Contactus(models.Model):
     label_text = models.TextField()
     
 class UserManager(BaseUserManager):
-	def create_user(self, username,email, password=None, **kwargs):
-		try:			
+    
+    def create_user(self, username,email, password=None, **kwargs):
+        try:			
 		    user = self.model.objects.get(email=email)
-		except:
-        	    user = self.model(
-	                email=UserManager.normalize_email(email),
-		        username = username,
+        except:
+            user = self.model(
+                  email=UserManager.normalize_email(email),
+		          username = username,
 		   	
 	            )
-		if user.firstname == '' and kwargs['profile']['first_name']:
+        if user.firstname == '' and kwargs['profile']['first_name']:
 			user.firstname = kwargs['profile']['first_name']
-		if user.lastname == '' and kwargs['profile']['last_name']:
+        if user.lastname == '' and kwargs['profile']['last_name']:
 			user.lastname = kwargs['profile']['last_name']
-                user.set_password(password)
-                user.save(using=self._db)
-                return user
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
 		
 class User(AbstractBaseUser):
@@ -127,7 +128,7 @@ class User(AbstractBaseUser):
     zipcode = models.CharField(max_length=20)
     usercode = models.CharField(max_length=20)
     user_code_time = models.DateTimeField()
-    is_staff = models.BooleanField(default=True)
+    pexdeals = models.BooleanField(default=False)
     USERNAME_FIELD = 'username'
     REQUIRED_FIELD = ['username']    
     objects =  UserManager()

@@ -50,6 +50,7 @@ import subprocess
 import json
 import signal
 import logging
+from mailchimp import Mailchimp
 logger = logging.getLogger(__name__)
 
 
@@ -156,6 +157,7 @@ def signup(request):
     context = {}
     if 'username' not in request.session:
         if request.method == "POST":
+             
             
             currentdatetime = datetime.datetime.now()
             time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
@@ -169,12 +171,20 @@ def signup(request):
             airport = request.REQUEST['home_airport']
             firstname = ''
             lastname = ''
+            pexdeals = 0
             if 'firstname' in request.POST:
                 firstname = request.REQUEST['firstname']
             if 'lastname' in request.POST:
                 lastname = request.REQUEST['lastname']
-            object = User(username=email,email=email, password=password1,firstname=firstname,lastname=lastname, home_airport=airport,last_login=time)
+            if 'pexdeals' in request.REQUEST:
+                pexdeals = request.REQUEST['pexdeals']
+
+            object = User(username=email,email=email, password=password1,firstname=firstname,lastname=lastname, home_airport=airport,last_login=time,pexdeals=pexdeals)
             object.save()
+            print pexdeals
+            if pexdeals == '1':
+                subscriber = Mailchimp(customfunction.mailchimp_api_key)
+                subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':email}, merge_vars={'FNAME':firstname,'LNAME':lastname})
             request.session['username'] = email
             request.session['homeairpot'] = airport
             request.session['password'] = password1

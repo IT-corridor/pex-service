@@ -15,39 +15,36 @@ import rewardScraper
 import sendgrid
 
 sendgrid_api_key = "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"
-
-
+mailchimp_api_key = "def631e53845c0b9f251db8fdd8d2ae6-us12"
+mailchiml_List_ID = "bda2a62002"
+mailchimp_username = "pradeep@techencephalon.com"
 
 def sendMail(from_email,to_email,subject,bodytext,html_content=None):
-    if to_email:
-    #try:
-	print from_email,to_email,subject
-	print "html_content",html_content
-	client = sendgrid.SendGridClient(sendgrid_api_key)
-	message = sendgrid.Mail()
-
-	message.add_to(to_email)
-	message.set_from(from_email)
-	message.set_subject(subject)
-	if bodytext:
-	    message.set_html(bodytext)
-	else:
-	    if html_content:
-		message.set_html(html_content)
-	resp = client.send(message)
-	print "resp",resp
-	print "sent mail"
-	return  "sent"
-	'''
-        mailcontent = EmailMultiAlternatives(subject,bodytext,from_email,[to_email])
-    	if html_content:
-            mailcontent.attach_alternative(html_content, "text/html")
-        mailcontent.send()
-    	print "success"
-        return "sent"
-	'''
-    #except:
-    else:
+    
+    try:
+    	client = sendgrid.SendGridClient(sendgrid_api_key)
+    	message = sendgrid.Mail()
+    
+    	message.add_to(to_email)
+    	message.set_from(from_email)
+    	message.set_subject(subject)
+    	if bodytext:
+    	    message.set_html(bodytext)
+        else:
+            if html_content:
+                message.set_html(html_content)
+    	resp = client.send(message)
+    	print "resp",resp
+    	return  "sent"
+    	'''
+            mailcontent = EmailMultiAlternatives(subject,bodytext,from_email,[to_email])
+        	if html_content:
+                mailcontent.attach_alternative(html_content, "text/html")
+            mailcontent.send()
+        	print "success"
+            return "sent"
+    	'''
+    except:
         return "fail"
     
 
