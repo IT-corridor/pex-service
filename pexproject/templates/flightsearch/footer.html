@@ -253,7 +253,9 @@ $( "#home_airpot" ).autocomplete({
     });
 
  
-$(".pexdeal").click(function(){
+$(".pexdeal").click(function(e){
+	e.preventDefault();
+	$link = $(this);
 	var pex_option = confirm("Do you want to subscribe, to receive PEX+ amazing deals?");
 	
 	if (pex_option == true) 
@@ -264,7 +266,7 @@ $(".pexdeal").click(function(){
 		       	url: "/index/",
 		        data: "pexdeals=1&csrfmiddlewaretoken="+encodeURI("{{csrf_token}}")
 		        }).done(function(data){
-			      	console.log(data);
+			      	 window.location.href = $link.attr('href');
 	
 			      }) ;
 			    
