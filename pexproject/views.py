@@ -120,9 +120,9 @@ def emailtemplate(request):
 def index(request):
     context = {}
     user = User()
-    if request.user.username and 'user_id' in request.session:
+    if request.user.username:
     	username = request.user.username
-        if request.user.user_id:
+        if 'user_id' in request.session and request.user.user_id:
     	       request.session['userid']= request.user.user_id
     	user1 = User.objects.get(username=username)
         if user1.email:
@@ -440,14 +440,14 @@ def sendFeedBack(request):
         obj = EmailTemplate.objects.get(email_code='feedback')
         email_sub = obj.subject
         emailbody = obj.body
-        emailbody = emailbody.replace('[USERNAME]',user_email)
+        emailbody = emailbody.replace('[USERNAME]',from_emailid)
         emailbody = emailbody.replace('[FEEDBACK_MESSAGE]',body)
         resp = customfunction.sendMail(from_emailid,'info@pexportal.com',topic,emailbody,html_content)
         if resp == "sent":
             obj1 = EmailTemplate.objects.get(email_code='feedback_reply')
             email_sub1 = obj1.subject
             emailbody1 = obj1.body
-            emailbody1 = emailbody1.replace('[USERNAME]',user_email)
+            emailbody1 = emailbody1.replace('[USERNAME]',from_emailid)
             customfunction.sendMail('info@pexportal.com',from_emailid,email_sub1,emailbody1,html_content)
             alert_msg = "Thanks for giving us feedback"
         else:
