@@ -123,7 +123,6 @@ def index(request):
     user = User()
     if request.is_ajax() and 'pexdeals' in request.REQUEST:
         request.session['pexdeal'] = request.REQUEST['pexdeals']
-        print request.session['pexdeal']
         mimetype = 'application/json'
         data = "success"
         json.dumps(data)
@@ -140,7 +139,8 @@ def index(request):
             request.session['firstname'] =user1.firstname
     	request.session['password'] = user1.password
         if 'pexdeal' in request.session:
-            print request.session['pexdeal'] 
+	    subscriber = Mailchimp(customfunction.mailchimp_api_key)
+            subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':email}, merge_vars={'FNAME':firstname,'LNAME':lastname})
     return  render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
 
 def flights(request):
