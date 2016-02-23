@@ -88,21 +88,19 @@ class Contactus(models.Model):
     label_text = models.TextField()
     
 class UserManager(BaseUserManager):
-	def create_user(self, username,email=None, password=None, **kwargs):
-		print username
-		print kwargs
-		for arg in kwargs:
-		    print "extraparam",kwargs[arg]
-		#print "email=",email
+	def create_user(self, username,email, password=None, **kwargs):
 		try:			
 		    user = self.model.objects.get(email=email)
 		except:
-		#if len(userobj) < 1:
         	    user = self.model(
 	                email=UserManager.normalize_email(email),
 		        username = username,
-		   
+		   	
 	            )
+		if user.firstname == '' and kwargs['profile']['first_name']:
+			user.firstname = kwargs['profile']['first_name']
+		if user.lastname == '' and kwargs['profile']['last_name']:
+			user.lastname = kwargs['profile']['last_name']
                 user.set_password(password)
                 user.save(using=self._db)
                 return user
