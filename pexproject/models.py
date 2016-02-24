@@ -106,11 +106,10 @@ class UserManager(BaseUserManager):
 		          username = username,
 		   	
 	            )
-	   
+
+        user.firstname = fname
         
-	user.firstname = fname
-        
-	user.lastname = lname
+        user.lastname = lname
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -160,16 +159,10 @@ class Adminuser(models.Model):
     username = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
     
-'''        
-class Custompage(admin.ModelAdmin):
+class GoogleAd(models.Model):
+    ad_id = models.AutoField(primary_key=True)
+    ad_code = models.CharField(max_length=100)
+    image_path = models.ImageField(upload_to='/static/flightsearch/img', blank=True, null=True)
+    google_code = models.CharField(max_length=512)
     
-    fieldsets = (
-        (None, {
-            'fields': ('url', 'title', 'content', 'sites')
-        }),
-        ('Advanced options', {
-            'classes': ('collapse',),
-            'fields': ('enable_comments', 'registration_required', 'template_name')
-        }),
-    )
-    '''
+    
