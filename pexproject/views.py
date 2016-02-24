@@ -20,7 +20,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.context_processors import csrf
 from django.views.decorators.csrf import requires_csrf_token
-from pexproject.models import Flightdata, Airports, Searchkey, User, Contactus,Adminuser,EmailTemplate
+from pexproject.models import Flightdata, Airports, Searchkey, User, Contactus,Adminuser,EmailTemplate,GoogleAd
 from pexproject.templatetags.customfilter import floatadd, assign
 from social_auth.models import UserSocialAuth
 from django.contrib.auth import login as social_login,authenticate,get_user
@@ -90,11 +90,25 @@ def dashboard(request):
     context = {}
     if 'admin' in request.session:
         emailtemplate = EmailTemplate.objects.filter()
-        print emailtemplate
         return  render_to_response('flightsearch/admin_dashboard.html',{'emaillist':emailtemplate}, context_instance=RequestContext(request))
     else:
         return HttpResponseRedirect(reverse('/Admin'))
 
+def adimage(request):
+    context = {}
+    image_list = GoogleAd.objects.filter()
+    return  render_to_response('flightsearch/ad_image.html',{'imagelist':image_list}, context_instance=RequestContext(request))
+
+def manage_adimage(request):
+    context = {}
+    image_list = GoogleAd.objects.filter()
+    if 'action' in request.GET:
+        action = request.GET.get('action','')
+        if action == 'add':
+            return render_to_response('flightsearch/manage_image.html', context_instance=RequestContext(request))
+    
+    return  render_to_response('flightsearch/ad_image.html',{'imagelist':image_list}, context_instance=RequestContext(request))
+    
 def emailtemplate(request):
     context = {}
     if request.POST:
@@ -133,20 +147,20 @@ def index(request):
         if request.user.user_id:
     	       request.session['userid']= request.user.user_id
     	user1 = User.objects.get(username=username)
-	fname=''
-	lname=''
+        fname=''
+        lname=''
         if user1.email:
     	    request.session['username'] =user1.email
         if user1.firstname:
             request.session['firstname'] =user1.firstname
-	    fname = user1.firstname
-	if user1.lastname:
-	    lname = user1.lastname
+            fname = user1.firstname
+        if user1.lastname:
+            lname = user1.lastname
     	request.session['password'] = user1.password        
 	if 'pexdeal' in request.session:
 	    #print "in pex deal"
 	    subscriber = Mailchimp(customfunction.mailchimp_api_key)
-            subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':username}, merge_vars={'FNAME':fname,'LNAME':lname})
+        subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':username}, merge_vars={'FNAME':fname,'LNAME':lname})
 	   	   
     return  render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
 
@@ -174,8 +188,6 @@ def signup(request):
     context = {}
     if 'username' not in request.session:
         if request.method == "POST":
-             
-            
             currentdatetime = datetime.datetime.now()
             time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
             email = request.REQUEST['username']
@@ -301,7 +313,14 @@ def manageAccount(request):
     userid = ''
     issocial =''
     newpassword1 = ''
+    #member = mailchimp_user.lists.member_info(customfunction.mailchiml_List_ID,{'email_address':'B.jessica822@gmail.com'})
+    subscription = ''
     email1 = request.session['username']
+    mailchimp_user = Mailchimp(customfunction.mailchimp_api_key)
+    m = mailchimp_user.lists.member_info(customfunction.mailchiml_List_ID,[{'email':email1}])['data']
+    print len(m)
+    if len(m) > 0 and 'subscribed' in m[0]['status']:
+        subscription = 'subscribed'
     user1 = User.objects.get(pk =request.session['userid'])
     cursor.execute("select provider from social_auth_usersocialauth where user_id ="+str(request.session['userid']))
     social_id = cursor.fetchone()
@@ -329,7 +348,25 @@ def manageAccount(request):
             user1.country = request.REQUEST['country']
             user1.phone = request.REQUEST['phone']
             user1.save()   
-    return render_to_response('flightsearch/manage_account.html',{'message':msg,'user':user1,'issocial':issocial}, context_instance=RequestContext(request))
+    return render_to_response('flightsearch/manage_account.html',{'message':msg,'user':user1,'issocial':issocial,'subscription':subscription}, context_instance=RequestContext(request))
+
+def mailchimp(request):
+    context = {}
+    if request.is_ajax():
+        useremail = request.REQUEST['email']
+        fname = request.REQUEST['fname']
+        lname = request.REQUEST['lname']
+        data = ''
+        try:
+            subscriber = Mailchimp(customfunction.mailchimp_api_key)
+            subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':useremail}, merge_vars={'FNAME':fname,'LNAME':lname})
+            data = "Please check you email to PEX+ update"
+        except:
+            data = useremail + " is an invalid email address"    
+        mimetype = 'application/json'
+        
+        json.dumps(data)
+        return HttpResponse(data, mimetype)
 
 def login(request):
     context = {}

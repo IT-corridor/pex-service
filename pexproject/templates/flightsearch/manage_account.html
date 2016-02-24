@@ -5,7 +5,7 @@
 	    <div class="col-xs-12 nopadding manage-account">
 		<div class="container">
 			<div class="col-xs-12 nopadding">
-
+				<div id="hello1" class="text-center alert"></div>
 				<div class="col-xs-12 account-block-bg" id="infodiv">
 					<h2 class="title">Your Account Information <a href="#" class="pull-right editinfo" id="accountinfo">Edit</a></h2>
 					<div class="col-xs-12 nopadding">
@@ -110,8 +110,14 @@
 							<dl class="dl-horizontal">
 								<dt>Home Airport:</dt>
 								<dd>{%if user.home_airport%}{{user.home_airport}}{%endif%}</dd>
+								
+								
 								<dt>Subscriptions:</dt>
-								<dd>None<br><a href="#">Sign-up for PEX+updates</a></dd>
+								{% if subscription != '' %}
+								<dd>You have subscribed for mailchimp emails</dd>
+								{%else%}
+								<dd>None<br><a href="#" id="mailchimp">Sign-up for PEX+updates</a></dd>
+								{%endif%}
 							</dl>
 							
 						</div>
@@ -128,7 +134,13 @@
 									<dt>Home Airport:</dt>
 									<dd><input type="text" class="form-control" id="airport" name="home_ariport" {%if user.home_airport%} value="{{user.home_airport|title}}" {%endif%}></dd>
 									<dt>Subscriptions:</dt>
-									<dd>None<br><a href="#">Sign-up for PEX+updates</a></dd>
+									
+									{% if subscription != '' %}
+								<dd>You have subscribed for mailchimp emails</dd>
+								{%else%}
+								<dd>None<br><a href="#">Sign-up for PEX+updates</a></dd>
+								{%endif%}
+									
 									
 							</dl>
 							<span class="visible-xs">
@@ -166,7 +178,26 @@
 			$('#prefrenceinfo').show();
 			
 		});
-		
+		$('#mailchimp').click(function(){
+			var user_email = "{{user.email}}";
+			var fname = "{{user.firstname}}";
+			var lname = "{{user.lastname}}";
+			
+			$.ajax({
+		 	type: "POST",
+		 	dataType: "text",
+		 	url: "mailchimp",
+		 	data: "&csrfmiddlewaretoken={{ csrf_token }}"+"&email="+encodeURI(user_email)+"&fname="+encodeURI(fname)+"&lname="+encodeURI(lname),
+		 	success: function(data){
+				console.log(data);
+				$("#hello1").addClass("alert-warning");
+		 		$( "#hello1" ).empty();
+		 		$( "#hello1" ).append(data);
+				setTimeout(function(){$('#hello1').fadeOut();},8000);
+				}
+			});
+			
+		});
 		$('#password_change').click(function(){
 			var user_email = "{{user.email}}";
 			//$(".password_block").show();
@@ -177,7 +208,7 @@
 		 	data: "&csrfmiddlewaretoken={{ csrf_token }}"+"&email="+encodeURI(user_email),
 		 	success: function(data){
 				console.log(data);
-				$("hello").addClass("alert-success");
+				$("#hello").addClass("alert-success");
 		 		$( "#hello" ).empty();
 		 		$( "#hello" ).append(data);
 				setTimeout(function(){$('#hello').fadeOut();},5000);

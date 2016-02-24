@@ -25,10 +25,13 @@ urlpatterns = patterns('',
     url(r'^Admin/adminlogout', adminlogout, name='adminlogout'),
     url(r'^Admin/dashboard', dashboard, name='dashboard'),
     url(r'^Admin/emailtemplate', emailtemplate, name='emailtemplate'),
+    url(r'^Admin/adimage', adimage, name='adimage'),
+    url(r'^Admin/manage_adimage', manage_adimage, name='manage_adimage'),
     
     
     #url(r'^admin',lambda r: HttpResponse("admin_index.html")),
     url(r'^sendFeedBack', sendFeedBack, name='sendFeedBack'),
+    url(r'^mailchimp', mailchimp, name='mailchimp'),
     url(r'^createPassword', createPassword, name='createPassword'),
     url(r'^checkData', checkData, name='checkData'),
     url(r'^myRewardPoint', myRewardPoint, name='myRewardPoint'),
