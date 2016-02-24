@@ -116,7 +116,7 @@
 								{% if subscription != '' %}
 								<dd>You have subscribed for mailchimp emails</dd>
 								{%else%}
-								<dd>None<br><a href="#" id="mailchimp">Sign-up for PEX+updates</a></dd>
+								<dd>None<br><a href="#" class="mailchimp">Sign-up for PEX+updates</a></dd>
 								{%endif%}
 							</dl>
 							
@@ -138,7 +138,7 @@
 									{% if subscription != '' %}
 								<dd>You have subscribed for mailchimp emails</dd>
 								{%else%}
-								<dd>None<br><a href="#">Sign-up for PEX+updates</a></dd>
+								<dd>None<br><a href="#" class="mailchimp">Sign-up for PEX+updates</a></dd>
 								{%endif%}
 									
 									
@@ -178,7 +178,7 @@
 			$('#prefrenceinfo').show();
 			
 		});
-		$('#mailchimp').click(function(){
+		$('.mailchimp').click(function(){
 			var user_email = "{{user.email}}";
 			var fname = "{{user.firstname}}";
 			var lname = "{{user.lastname}}";
