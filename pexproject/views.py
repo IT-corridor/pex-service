@@ -20,7 +20,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.context_processors import csrf
 from django.views.decorators.csrf import requires_csrf_token
-from pexproject.models import Flightdata, Airports, Searchkey, User, Contactus,Adminuser,EmailTemplate,GoogleAd
+from pexproject.models import Flightdata, Airports, Searchkey, User, Contactus,Adminuser,EmailTemplate
 from pexproject.templatetags.customfilter import floatadd, assign
 from social_auth.models import UserSocialAuth
 from django.contrib.auth import login as social_login,authenticate,get_user
@@ -160,7 +160,7 @@ def index(request):
 	if 'pexdeal' in request.session:
 	    #print "in pex deal"
 	    subscriber = Mailchimp(customfunction.mailchimp_api_key)
-        subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':username}, merge_vars={'FNAME':fname,'LNAME':lname})
+            subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':username}, merge_vars={'FNAME':fname,'LNAME':lname})
 	   	   
     return  render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
 

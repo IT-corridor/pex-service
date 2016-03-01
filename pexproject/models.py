@@ -1,6 +1,6 @@
 from django.conf import settings
 #from django.contrib.sessions.models import Session
-from django.contrib.sessions.backends.db import SessionStore
+#from django.contrib.sessions.backends.db import SessionStore
 import customfunction
 from social_auth.signals import pre_update, socialauth_registered
 from social_auth.backends.steam import SteamBackend
@@ -158,11 +158,11 @@ class Adminuser(models.Model):
     admin_id = models.AutoField(primary_key=True)
     username = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
-    
+'''    
 class GoogleAd(models.Model):
     ad_id = models.AutoField(primary_key=True)
     ad_code = models.CharField(max_length=100)
     image_path = models.ImageField(upload_to='/static/flightsearch/img', blank=True, null=True)
     google_code = models.CharField(max_length=512)
     
-    
+''' 
