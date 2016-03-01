@@ -12,7 +12,7 @@ from email.mime.multipart import MIMEMultipart
 from django.db import connection, transaction
 from django.core.mail import send_mail,EmailMultiAlternatives
 import rewardScraper
-import sendgrid
+#import sendgrid
 
 sendgrid_api_key = "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"
 mailchimp_api_key = "def631e53845c0b9f251db8fdd8d2ae6-us12"

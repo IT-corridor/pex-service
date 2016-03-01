@@ -1,7 +1,6 @@
-
-		{% load staticfiles %}
+{% load staticfiles %}
 		{% load humanize %}
-		<title>Admin|Dashboard</title>
+		<title>Admin|Ad-image</title>
 		
 		{% include "flightsearch/admin-header.html" %}
 		<div class="container nopadding">
@@ -9,33 +8,35 @@
 			{% include "flightsearch/admin-sidebar.html" %}
 			<div class="col-xs-12 col-md-10 content-block" >
 				<div>
-				<h4><b><u>Email Template Listing </u></b></h4>
+				<h4><b><u>Ad Images Listing </u></b></h4>
 				
 				</div>
 				{%if 'msg' in request.GET %}
 				<h5 class="alert alert-success">{{request.GET.msg}}</h5>
-				
 				{% endif %}
 				<div class="table-responsive">
+				<!--	
+				<a href="manage_adimage?action=add" class="pull-right pr10"><button class="btn btn-pexSearch"> Add Image </button></a>
+				-->
 				<table class="table table-responsive table-striped">
 					<thead>
 						<tr>
-						<th>Email code</th>
-						<th>Subject</th>
-						<th>Body</th>
-						<th>Placeholder</th>
+						<th>Page Name</th>
+						<th>Page Url</th>
+						<th>Top Content</th>
+						<th>Content</th>
 						<th>Action</th>
 						</tr>
 					</thead>
 					<tbody>
-						{%if emaillist %}
-						{%for obj in emaillist %}
+						{%if pagelist %}
+						{%for obj in pagelist %}
 						<tr>
-							<td>{{obj.email_code}}</td>
-							<td>{{obj.subject}}</td>
-							<td>{{obj.body}}</td>
-							<td>{{obj.placeholder}}</td>
-							<td><a href="emailtemplate?templateid={{obj.template_id}}">Edit </a></td>
+							<td>{{obj.page_name}}</td>
+							<td>http://pexportal.com/staticPage?action={{obj.page_path}}</td>
+							<td>{{obj.top_content}}</td>
+							<td>{{obj.page_text}}</td>
+							<td><a href="manage_page?pageid={{obj.pageid}}&action=edit">Edit</a></td>
 						</tr>
 						{%endfor%}
 						{%endif%}
@@ -45,5 +46,6 @@
 		</div>
 	</div>
 	</div>
+	
 	</body>
 </html>

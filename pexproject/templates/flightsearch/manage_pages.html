@@ -1,39 +1,42 @@
-
-	{% load staticfiles %}
+{% load staticfiles %}
 		{% load humanize %}
-		<title>Admin|Email-Template</title>
+		<title>Admin|Manage-Page</title>
 		
 		{% include "flightsearch/admin-header.html" %}
 		<div class="container">
 			<div class="col-x-12 col-md-8" style="margin-top: 50px">
+				<a href="https://testingapi.30k.com/">Testing</a>
 				<div>
 					<h4><b><u>Edit Your Email Template</u></b></h4>
 				</div>
-				<form class="form-horizontal" action="emailtemplate" method="post">
+				<form class="form-horizontal" action="manage_page" method="post">
 					{% csrf_token %}
-					<input type="hidden" name="emailcode" {% if templateobj %} value="{{templateobj.email_code}}" {%endif%}>
-				  <input type="hidden" name="templateid" {% if templateobj %} value="{{templateobj.template_id}}" {%endif%}>
+					<input type="hidden" name="pageid" {% if page %} value="{{page.pageid}}" {%endif%}>
+				  <input type="hidden" name="pagename" {% if page %} value="{{page.page_name}}" {%endif%}>
+				  
 				  <div class="form-group">
-				    <label for="subject" class="col-sm-2 control-label">Subject</label>
+				    <label for="top_content" class="col-sm-2 control-label">Top Content</label>
 				    <div class="col-sm-10">
-				      <input type="text" class="form-control" name="subject" placeholder="Subject" 
-				      {% if templateobj %} value="{{templateobj.subject}}" {%endif%}
-				      required>
+				      <input type="text" class="form-control" name="top_content"
+				      {% if page and page.top_content %} value="{{page.top_content}}" {%endif%}
+				      placeholder="palceholder" />
+				      
 				    </div>
 				  </div>
 				  <div class="form-group">
-				    <label for="body" class="col-sm-2 control-label">Email Body</label>
+				    <label for="body" class="col-sm-2 control-label">Page Content</label>
 				    <div class="col-sm-10">
-				      <textarea cols="73" rows="4" class="tinymce" name="body">
-				      	{% if templateobj %} {{templateobj.body}} {%endif%}
+				      <textarea cols="73" rows="4" class="tinymce" name="page_content">
+				      	{% if page %} {{page.page_text}} {%endif%}
 				      </textarea>
 				    </div>
 				  </div>
+				  
 				  <div class="form-group">
 				    <label for="placeholder" class="col-sm-2 control-label">Placeholder</label>
 				    <div class="col-sm-10">
 				      <input type="text" class="form-control" name="palceholder"
-				      {% if templateobj %} value="{{templateobj.placeholder}}" {%endif%}
+				      {% if page %} value="{{page.placeholder}}" {%endif%}
 				      placeholder="palceholder" />
 				      
 				    </div>
@@ -73,7 +76,7 @@ $('textarea.tinymce').tinymce({
 	theme_advanced_resizing : true,
 
 	// Example content CSS (should be your site CSS)
-	content_css : "css/main.css",
+	content_css : "{% static 'flightsearch/css/main.css' %}",
 
 	// Drop lists for link/image/media/template dialogs
 	template_external_list_url : "lists/template_list.js",

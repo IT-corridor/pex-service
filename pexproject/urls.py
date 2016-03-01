@@ -27,6 +27,8 @@ urlpatterns = patterns('',
     url(r'^Admin/emailtemplate', emailtemplate, name='emailtemplate'),
     url(r'^Admin/adimage', adimage, name='adimage'),
     url(r'^Admin/manage_adimage', manage_adimage, name='manage_adimage'),
+    url(r'^Admin/pages', pages, name='pages'),
+    url(r'^Admin/manage_page', manage_page, name='manage_page'),
     
     
     #url(r'^admin',lambda r: HttpResponse("admin_index.html")),

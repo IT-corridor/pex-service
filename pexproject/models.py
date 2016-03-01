@@ -163,6 +163,19 @@ class GoogleAd(models.Model):
     ad_id = models.AutoField(primary_key=True)
     ad_code = models.CharField(max_length=100)
     image_path = models.ImageField(upload_to='/static/flightsearch/img', blank=True, null=True)
+    google_code = models.CharField(max_length=512)'''
+class GoogleAd(models.Model):
+    ad_id = models.AutoField(primary_key=True)
+    ad_code = models.CharField(max_length=100)
+    image_path = models.CharField(max_length=512)
     google_code = models.CharField(max_length=512)
     
-''' 
+
+class Pages(models.Model):
+    pageid = models.AutoField(primary_key=True)
+    page_name=models.CharField(max_length=100)
+    page_path=models.CharField(max_length=100)
+    top_content=models.TextField()
+    page_text=models.TextField()
+    placeholder=models.CharField(max_length=512)
+ 

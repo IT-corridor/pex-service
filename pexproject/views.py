@@ -20,7 +20,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.context_processors import csrf
 from django.views.decorators.csrf import requires_csrf_token
-from pexproject.models import Flightdata, Airports, Searchkey, User, Contactus,Adminuser,EmailTemplate
+from pexproject.models import Flightdata, Airports, Searchkey, User,Pages, Contactus,Adminuser,EmailTemplate,GoogleAd
 from pexproject.templatetags.customfilter import floatadd, assign
 from social_auth.models import UserSocialAuth
 from django.contrib.auth import login as social_login,authenticate,get_user
@@ -86,6 +86,26 @@ def adminlogout(request):
         del request.session['admin']  
     return HttpResponseRedirect(reverse('Admin'))
 
+def pages(request):
+    pagelist = Pages.objects.filter()
+    return render_to_response('flightsearch/pages.html',{'pagelist':pagelist}, context_instance=RequestContext(request))
+def manage_page(request):
+    if 'pageid' in request.GET:
+        page = Pages.objects.get(pk=request.GET.get('pageid',''))
+    if request.POST and 'pageid' in request.REQUEST:
+        page = Pages()
+        #page = Pages.objects.get(pk=request.REQUEST['pageid'])
+        page.pageid = request.REQUEST['pageid']
+        page.page_name = request.REQUEST['pagename']
+        page.page_path = request.REQUEST['pagename']
+        page.top_content = request.REQUEST['top_content']
+        page.page_text = request.REQUEST['page_content']
+        page.placeholder = request.REQUEST['palceholder']
+        page.save()
+        return HttpResponseRedirect(reverse('pages'))
+    return render_to_response('flightsearch/manage_pages.html',{'page':page}, context_instance=RequestContext(request))
+    
+
 def dashboard(request):
     context = {}
     if 'admin' in request.session:
@@ -102,11 +122,56 @@ def adimage(request):
 def manage_adimage(request):
     context = {}
     image_list = GoogleAd.objects.filter()
+    image_path_list=[]
+    if request.is_ajax():
+        i= 0
+        for file in request.FILES.getlist('image[]'):
+            print "file",file
+            
+            t = time.time()
+            if '.' in str(t):
+                t = str(t).replace('.','')
+            directory = os.path.join(os.path.dirname(os.path.abspath(__file__)))
+            img = str(t)+str(file)
+            img_fol = '/static/flightsearch/uploads/'
+            path = directory+img_fol+img
+            print path
+            dest = open(path, 'wb+')
+            if file.multiple_chunks:
+                for c in file.chunks():
+                    dest.write(c)
+                    dbpath = img
+                    image_path_list.append(dbpath)
+            #obj = GoogleAd()
+            #obj.image_path = img_fol+img
+            #obj.save()
+            dest.close()
+        mimetype = 'application/json'
+        data = json.dumps(image_path_list)
+        return HttpResponse(data, mimetype)
+    if request.POST and not request.is_ajax():
+        image_path = request.REQUEST['img_path']
+        img_path_arr = image_path.split('|')
+        for i in range(0,len(img_path_arr)):
+            obj = GoogleAd()
+            obj.image_path = img_path_arr[i]
+            if 'imageid' in request.REQUEST:
+               obj.ad_id =  request.REQUEST['imageid']
+            obj.google_code = request.REQUEST['google_code']
+            obj.ad_code = request.REQUEST['ad_code']
+            obj.save()
+        return HttpResponseRedirect(reverse('adimage'))
     if 'action' in request.GET:
         action = request.GET.get('action','')
-        if action == 'add':
-            return render_to_response('flightsearch/manage_image.html', context_instance=RequestContext(request))
-    
+        if action == 'add' or action == 'edit':
+            imageobj=''
+            if 'imageid' in request.GET:
+                imageobj = GoogleAd.objects.get(pk=request.GET.get('imageid',''))
+            return render_to_response('flightsearch/manage_image.html',{'imageobj':imageobj}, context_instance=RequestContext(request))
+        else:
+            if action == 'delete' and 'imageid' in request.GET:
+                GoogleAd.objects.get(pk=request.GET.get('imageid','')).delete()
+                return HttpResponseRedirect(reverse('adimage'))
     return  render_to_response('flightsearch/ad_image.html',{'imagelist':image_list}, context_instance=RequestContext(request))
     
 def emailtemplate(request):
