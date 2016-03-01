@@ -200,13 +200,15 @@ def emailtemplate(request):
 def index(request):
     context = {}
     user = User()
+    image = ''
+    image = GoogleAd.objects.filter(ad_code="index")
+    print image
     if request.is_ajax() and 'pexdeals' in request.REQUEST:
         request.session['pexdeal'] = request.REQUEST['pexdeals']
         mimetype = 'application/json'
         data = "success"
         json.dumps(data)
         return HttpResponse(data, mimetype)
-        
     if request.user.username:
     	username = request.user.username
         if request.user.user_id:
@@ -226,8 +228,8 @@ def index(request):
 	    #print "in pex deal"
 	    subscriber = Mailchimp(customfunction.mailchimp_api_key)
             subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':username}, merge_vars={'FNAME':fname,'LNAME':lname})
-	   	   
-    return  render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
+       	   
+    return  render_to_response('flightsearch/index.html',{'image':image}, context_instance=RequestContext(request))
 
 def flights(request):
     context = {}
