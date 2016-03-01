@@ -2003,7 +2003,18 @@
 											
 							</div>
 							
-							<div class="col-md-2 col-xs-12 nopadding "><img src="{% static 'flightsearch/img/ad.jpg' %}"  alt="Responsive image" class="img-responsive">
+							<div class="col-md-2 col-xs-12 nopadding ">
+					{% if adimages %}
+					{% for images in adimages %}
+					{% if images.image_path %}
+						<img src="{%static images.image_path %}"  alt="Responsive image" class="img-responsive">	
+					{% elif images.google_code %}
+						{{images.google_code|safe}}
+					{% endif %}
+					{% endfor %}
+					{% else %}
+							<img src="{% static 'flightsearch/img/ad.jpg' %}"  alt="Responsive image" class="img-responsive">
+						{% endif %}
 
 							</div>
 							

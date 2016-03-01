@@ -36,21 +36,13 @@
 				</div>
 				<form class="form-horizontal" id="imageform" action="manage_adimage" method="post" enctype="multipart/form-data">
 					{% csrf_token %}
-				 <div class="form-group">
-				 	{%if imageobj.ad_id %}
+					{%if imageobj.ad_id %}
 				 		<input type="hidden" name="imageid"  value="{{imageobj.ad_id}}">
 				 	{%endif%}
-				    <label for="ad_code" class="col-sm-2 control-label">Page Option</label>
-				    <div class="col-sm-10">
-				    	<select name="ad_code" class="form-control">
-				    		<option value="global" {%if imageobj.ad_code and imageobj.ad_code == 'global' %} selected='selected' {%endif%}>Global</option>
-				    		<option value="index" {%if imageobj.ad_code and imageobj.ad_code == 'index' %} selected='selected' {%endif%}>Index</option>
-				    		<option value="blog" {%if imageobj.ad_code and imageobj.ad_code == 'blog' %} selected='selected' {%endif%}>Blog </option>
-				    		<option value="flight result" {%if imageobj.ad_code and imageobj.ad_code == 'flight result' %} selected='selected' {%endif%}>Flight Result</option>
-				    	</select>
-				      
-				    </div>
-				  </div>	
+				<input type="hidden" name="ad_code" {% if imageobj.ad_code %} value="{{imageobj.ad_code}}" {% endif %} /> 
+				 <div class="form-group">
+				 	
+				    
 				  <div class="form-group">
 				    <label for="image" class="col-sm-2 control-label">Google Code</label>
 				    <div class="col-sm-10">
