@@ -56,10 +56,9 @@ logger = logging.getLogger(__name__)
 
 def Admin(request):
     context = {}
-    return  render_to_response('flightsearch/admin_index.html', context_instance=RequestContext(request))
+    return  render_to_response('flightsearch/admin/index.html', context_instance=RequestContext(request))
 
 def adminlogin(request):
-    
     context = {}
     if request.POST:
         username = request.REQUEST['admin_user']
@@ -67,7 +66,6 @@ def adminlogin(request):
         print username,password
         try:
         
-            print "aaya"
             adminuser = Adminuser.objects.get(username=username, password=password)
             print "founrd"
             request.session['admin'] = username
@@ -78,7 +76,7 @@ def adminlogin(request):
             currentpage = "/Admin?message=invalid"
             return HttpResponseRedirect(currentpage)
     else:
-        return render_to_response('flightsearch/admin_dashboard.html', context_instance=RequestContext(request))
+        return render_to_response('flightsearch/admin/admin_dashboard.html', context_instance=RequestContext(request))
         
 def adminlogout(request):
     context = {}
@@ -88,7 +86,7 @@ def adminlogout(request):
 
 def pages(request):
     pagelist = Pages.objects.filter()
-    return render_to_response('flightsearch/pages.html',{'pagelist':pagelist}, context_instance=RequestContext(request))
+    return render_to_response('flightsearch/admin/pages.html',{'pagelist':pagelist}, context_instance=RequestContext(request))
 def manage_page(request):
     if 'pageid' in request.GET:
         page = Pages.objects.get(pk=request.GET.get('pageid',''))
@@ -103,21 +101,22 @@ def manage_page(request):
         page.placeholder = request.REQUEST['palceholder']
         page.save()
         return HttpResponseRedirect(reverse('pages'))
-    return render_to_response('flightsearch/manage_pages.html',{'page':page}, context_instance=RequestContext(request))
-    
-
+    return render_to_response('flightsearch/admin/manage_pages.html',{'page':page}, context_instance=RequestContext(request))
 def dashboard(request):
+    context = {}  
+    return  render_to_response('flightsearch/admin/admin_dashboard.html', context_instance=RequestContext(request))
+def emailTemplate(request):
     context = {}
     if 'admin' in request.session:
         emailtemplate = EmailTemplate.objects.filter()
-        return  render_to_response('flightsearch/admin_dashboard.html',{'emaillist':emailtemplate}, context_instance=RequestContext(request))
+        return  render_to_response('flightsearch/admin/email_template.html',{'emaillist':emailtemplate}, context_instance=RequestContext(request))
     else:
         return HttpResponseRedirect(reverse('/Admin'))
 
 def adimage(request):
     context = {}
     image_list = GoogleAd.objects.filter()
-    return  render_to_response('flightsearch/ad_image.html',{'imagelist':image_list}, context_instance=RequestContext(request))
+    return  render_to_response('flightsearch/admin/ad_image.html',{'imagelist':image_list}, context_instance=RequestContext(request))
 
 def manage_adimage(request):
     context = {}
@@ -167,14 +166,14 @@ def manage_adimage(request):
             imageobj=''
             if 'imageid' in request.GET:
                 imageobj = GoogleAd.objects.get(pk=request.GET.get('imageid',''))
-            return render_to_response('flightsearch/manage_image.html',{'imageobj':imageobj}, context_instance=RequestContext(request))
+            return render_to_response('flightsearch/admin/manage_image.html',{'imageobj':imageobj}, context_instance=RequestContext(request))
         else:
             if action == 'delete' and 'imageid' in request.GET:
                 GoogleAd.objects.get(pk=request.GET.get('imageid','')).delete()
                 return HttpResponseRedirect(reverse('adimage'))
-    return  render_to_response('flightsearch/ad_image.html',{'imagelist':image_list}, context_instance=RequestContext(request))
+    return  render_to_response('flightsearch/admin/ad_image.html',{'imagelist':image_list}, context_instance=RequestContext(request))
     
-def emailtemplate(request):
+def manageEmailTemplate(request):
     context = {}
     if request.POST:
         subject = request.REQUEST['subject']
@@ -188,14 +187,14 @@ def emailtemplate(request):
         email.placeholder = placeholder
         try:
             email.save()
-            page = '/Admin/dashboard?msg=Record Edited Successfully'
+            page = '/Admin/emailTemplate?msg=Record Edited Successfully'
             return HttpResponseRedirect(page)
         except:
             page = '/Admin/dashboard?msg=There is some technical problem'
             return HttpResponseRedirect(page)        
     templateid = request.GET.get('templateid','')
     templateobj = EmailTemplate.objects.get(pk=templateid)
-    return  render_to_response('flightsearch/email_template.html',{'templateobj':templateobj}, context_instance=RequestContext(request))
+    return  render_to_response('flightsearch/admin/manage_email_template.html',{'templateobj':templateobj}, context_instance=RequestContext(request))
 
 def index(request):
     context = {}
