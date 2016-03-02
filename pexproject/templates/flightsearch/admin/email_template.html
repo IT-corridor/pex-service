@@ -1,0 +1,128 @@
+<div class="page-container">
+		{% load staticfiles %}
+		{% load humanize %}
+		<title>Admin|Dashboard</title>
+		{% include "flightsearch/admin/admin-header.html" %}
+		
+			{% include "flightsearch/admin/admin-sidebar.html" %}
+		<div class="main-content">
+			<div class="row">
+
+		<!-- Profile Info and Notifications -->
+		<div class="col-md-6 col-sm-8 clearfix">
+
+			<ul class="user-info pull-left pull-none-xsm">
+
+				
+			</ul>
+
+
+		</div>
+
+		<!-- Raw Links -->
+			<div class="col-md-6 col-sm-4 clearfix hidden-xs">
+		{% if 'admin' in request.session %}
+				<ul class="list-inline links-list pull-right">
+		
+					
+		
+					
+					<li class="profile-info dropdown">
+					
+						<ul class="user-info pull-left pull-none-xsm">
+
+						<!-- Profile Info -->
+						<li class="profile-info dropdown">
+							<!-- add class "pull-right" if you want to place this from right -->
+						
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+							{{request.session.admin}}							<i class="entypo-down-open"></i>
+							</a>
+							<!--  
+							<ul class="dropdown-menu">
+								<li class="caret"></li>
+								<li><a href="/easy-detaxt/admin/manageprofile">
+										<i class="entypo-user"></i> Edit profile
+								</a></li>
+								<li><a href="/easy-detaxt/admin/changepassword">
+										<i class="entypo-user"></i> Change password
+								</a></li>
+
+							</ul>
+							-->
+						</li>
+						
+
+					</ul> 
+					</li>
+		
+					<li class="sep"></li>
+		
+					<li>
+						<a href="adminlogout">
+						Log out
+						<i class="entypo-logout right"></i>
+						</a>
+					</li>
+					
+				</ul>
+				{%endif%}
+		
+			</div>
+		
+		</div>
+
+<h3>Image Listing</h3>
+		<br />
+		
+<div class="table-responsive">
+		<table class="table table-bordered datatable" id="table-4">
+			<thead>
+				<tr>
+						
+						<th>Email code</th>
+						<th>Subject</th>
+						<th>Body</th>
+						<th>Placeholder</th>
+						<th>Action</th>
+						
+					</tr>
+			</thead>
+			<tbody>
+				{%if emaillist %}
+						{%for obj in emaillist %}
+						<tr>
+							<td>{{obj.email_code}}</td>
+							<td>{{obj.subject}}</td>
+							<td>{{obj.body}}</td>
+							<td>{{obj.placeholder}}</td>
+							<td><a href="manageEmailTemplate?templateid={{obj.template_id}}" class="btn btn-default btn-sm btn-icon icon-left"><i class="entypo-pencil"></i>Edit </a></td>
+						</tr>
+						{%endfor%}
+						{%endif%}
+			</tbody>
+			
+		</table>
+</div>
+		
+		<script type="text/javascript">
+			jQuery(document).ready(function($)
+			{
+				var table = $("#table-4").dataTable({
+					"sPaginationType": "bootstrap",
+					//"sDom": "<'row'<'col-xs-6 col-left'l><'col-xs-6 col-right'<'export-data'T>f>r>t<'row'<'col-xs-6 col-left'i><'col-xs-6 col-right'p>>",
+					"oTableTools": {
+					},
+					
+				});
+			});
+			
+		</script>
+		
+	</div>
+	</div>	
+			 
+			
+	
+	</body>
+</html>
