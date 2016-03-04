@@ -75,38 +75,72 @@
 
 <div class="row">
 	<div class="col-md-12">
-			
+	{%if blog%}
+		<h3>Edit Your Blog</h3>	
+	{%else%}
+		<h3>Add Blog</h3>	
+	{%endif%}
 		<div class="panel panel-primary" data-collapsed="0">
 
 
 			<div class="panel-body">
 
-				<form class="form-horizontal" action="manageEmailTemplate" method="post">
+				<form class="form-horizontal" action="manageBlog" method="post">
 					{% csrf_token %}
-					<input type="hidden" name="emailcode" {% if templateobj %} value="{{templateobj.email_code}}" {%endif%}>
-				  <input type="hidden" name="templateid" {% if templateobj %} value="{{templateobj.template_id}}" {%endif%}>
+					{% if blog and blog.blog_id%}
+					<input type="hidden" name="blogid"  value="{{blog.blog_id}}" >
+					{%endif%}
+				    
 				  <div class="form-group">
-				    <label for="subject" class="col-sm-2 control-label">Subject</label>
+				    <label for="blog_url" class="col-sm-2 control-label">Blog Url</label>
 				    <div class="col-sm-10">
-				      <input type="text" class="form-control" name="subject" placeholder="Subject" 
-				      {% if templateobj %} value="{{templateobj.subject}}" {%endif%}
-				      required>
+				    <p>pexportl/blog<span id="show_blog_url">{%if blog and blog.blog_url%}?title={{blog.blog_url}}{%endif%}</span></p>
+				      <input type="hidden" class="form-control" name="blog_url" id="blog_name_id"
+				      {% if blog and blog.blog_url %} value="{{blog.blog_url}}" {%endif%} />
+				    </div>
+				  </div>
+				  
+				  <div class="form-group">
+				    <label for="blog_title" class="col-sm-2 control-label">Blog Title</label>
+				    <div class="col-sm-10">
+				      <input type="text" class="form-control" name="blog_title" id="blog_title_id"
+				      {% if blog and blog.blog_title %} value="{{blog.blog_title}}" {%endif%} placeholder="BLOG TITLE" />
+				      
 				    </div>
 				  </div>
 				  <div class="form-group">
-				    <label for="body" class="col-sm-2 control-label">Email Body</label>
+				    <label for="blog_content" class="col-sm-2 control-label">Blog Content</label>
 				    <div class="col-sm-10">
-				      <textarea rows="15" class="form-control" name="body" id="ckeditor1">
-				      	{% if templateobj %} {{templateobj.body}} {%endif%}
+				      <textarea  rows="15" class="tinymce form-control" id="ckeditor1" name="blog_content">
+				      	{% if blog %} {{blog.blog_content}} {%endif%}
 				      </textarea>
 				    </div>
 				  </div>
+				  
 				  <div class="form-group">
-				    <label for="placeholder" class="col-sm-2 control-label">Placeholder</label>
+				    <label for="placeholder" class="col-sm-2 control-label">Meta Key</label>
 				    <div class="col-sm-10">
-				      <input type="text" class="form-control" name="palceholder"
-				      {% if templateobj %} value="{{templateobj.placeholder}}" {%endif%}
-				      placeholder="palceholder" />
+				      <input type="text" class="form-control" name="metakey"
+				      {% if blog and blog.blog_meta_key %} value="{{blog.blog_meta_key}}" {%endif%}
+				      placeholder="META KEY" />
+				      
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label for="meta_description" class="col-sm-2 control-label">Meta Description</label>
+				    <div class="col-sm-10">
+				      <input type="text" class="form-control" name="meta_description"
+				      {% if blog and blog.blog_meta_Description %} value="{{blog.blog_meta_Description}}" {%endif%}
+				      placeholder="META DESCRIPTION" />
+				      
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label for="is_active" class="col-sm-2 control-label">Is Active</label>
+				    <div class="col-sm-10">
+				      <input type="checkbox" class="" name="status" value="1"
+				      {% if blog and blog.blog_status == True %} checked {%endif%}
+				       />
 				      
 				    </div>
 				  </div>
@@ -146,9 +180,26 @@
 	   height : 600
 	});
 </script>
+	
+<script>
 
-			 
-			
+	$("#blog_title_id").keyup(function(){
+	    blogurlmaker();
+
+	});
+	function blogurlmaker(){
+
+	        var bloggivenurl=$("#blog_title_id").val();
+	        var bloggivenurl1=bloggivenurl.replace(/[^a-z0-9\s]/gi, '').replace(/[_\s]/g, '-');
+	        var blog_url_string=bloggivenurl1.replace(/\s+/g, '-');
+	        var blog_url="?titile="+blog_url_string.toLowerCase();
+	        $("#show_blog_url").empty();
+	        $("#show_blog_url").append(blog_url);
+	        $("#blog_name_id").val('');
+	        $("#blog_name_id").val(blog_url);
+	}
+</script>			 
+
 	
 	</body>
 </html>
