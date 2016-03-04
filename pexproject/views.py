@@ -21,6 +21,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.context_processors import csrf
 from django.views.decorators.csrf import requires_csrf_token
 from pexproject.models import Flightdata, Airports, Searchkey, User,Pages, Contactus,Adminuser,EmailTemplate,GoogleAd
+from pexproject.models import Blogs
 from pexproject.templatetags.customfilter import floatadd, assign
 from social_auth.models import UserSocialAuth
 from django.contrib.auth import login as social_login,authenticate,get_user
@@ -172,7 +173,55 @@ def manage_adimage(request):
                 GoogleAd.objects.get(pk=request.GET.get('imageid','')).delete()
                 return HttpResponseRedirect(reverse('adimage'))
     return  render_to_response('flightsearch/admin/ad_image.html',{'imagelist':image_list}, context_instance=RequestContext(request))
-    
+
+def bloglist(request):
+    context = {}
+    if 'admin' in request.session:
+    	bloglist=''
+    	bloglist = Blogs.objects.filter()
+    	return render_to_response('flightsearch/admin/bloglist.html',{'bloglist':bloglist}, context_instance=RequestContext(request))
+    else:
+	return HttpResponseRedirect(reverse('Admin'))
+
+def manageblogImage(request):
+    print "test"
+def manageBlog(request):
+    context = {}
+    if request.POST:
+	currentdatetime = datetime.datetime.now()
+    	curr_time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
+        blog = Blogs()
+	if 'blogid' in request.POST:
+	    blog.blog_id = request.POST['blogid']
+	blog.blog_url = request.POST['blog_url']
+	blog.blog_title = request.POST['blog_title']
+	blog.blog_content = request.POST['blog_content']
+	blog.blog_meta_key = request.POST['metakey']
+	blog.blog_meta_Description = request.POST['meta_description']
+	blog.blog_created_time = str(curr_time)
+	if 'admin' in request.session:
+	    blog.blog_creator = request.session['admin']
+	if 'status' in request.POST:
+	    blog.blog_status = request.POST['status']
+        try:
+            blog.save()
+	    page = ''
+	    if "blogid" in request.POST:
+            	page = '/Admin/bloglist?msg=Blog Edited Successfully'
+	    else:
+	   	page = '/Admin/bloglist?msg=Blog Added Successfully'
+            return HttpResponseRedirect(page)
+        except:
+            page = '/Admin/bloglist?msg=There is some technical problem'
+            return HttpResponseRedirect(page)
+    blog = ''
+    if 'blogid' in request.GET:       
+    	blogid = request.GET.get('blogid','')
+    	blog = Blogs.objects.get(pk=blogid)
+    return  render_to_response('flightsearch/admin/manageblog.html',{'blog':blog}, context_instance=RequestContext(request))
+
+
+
 def manageEmailTemplate(request):
     context = {}
     if request.POST:
@@ -249,7 +298,11 @@ def staticPage(request):
     if "action" in request.GET:
     	page = request.GET.get('action','')
         return  render_to_response('flightsearch/'+page+'.html', context_instance=RequestContext(request))
-   
+
+def blog(request):
+    context = {}
+    return  render_to_response('flightsearch/Blog.html', context_instance=RequestContext(request))
+
 def signup(request):
     context = {}
     if 'username' not in request.session:

@@ -178,4 +178,16 @@ class Pages(models.Model):
     top_content=models.TextField()
     page_text=models.TextField()
     placeholder=models.CharField(max_length=512)
+
+class Blogs(models.Model):
+    blog_id = models.AutoField(primary_key=True)
+    blog_title = models.CharField(max_length=512)
+    blog_url = models.CharField(max_length=100)
+    blog_content = models.TextField()
+    blog_image_path = models.CharField(max_length=512)
+    blog_meta_key = models.CharField(max_length=512)
+    blog_meta_Description = models.TextField()
+    blog_creator = models.CharField(max_length=100)
+    blog_created_time = models.DateTimeField()
+    blog_status = models.BooleanField(default=False)
  
