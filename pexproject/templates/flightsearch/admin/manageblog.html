@@ -2,6 +2,7 @@
 	<div class="page-container">
 		{% load staticfiles %}
 		{% load humanize %}
+		
 		<title>Admin|Dashboard</title>
 		{% include "flightsearch/admin/admin-header.html" %}
 		
@@ -85,7 +86,7 @@
 
 			<div class="panel-body">
 
-				<form class="form-horizontal" action="manageBlog" method="post">
+				<form class="form-horizontal" action="manageBlog" method="post" enctype="multipart/form-data">
 					{% csrf_token %}
 					{% if blog and blog.blog_id%}
 					<input type="hidden" name="blogid"  value="{{blog.blog_id}}" >
@@ -160,25 +161,23 @@
 </div>
 	
 	<script>
-
-    CKEDITOR.env.isCompatible = true;
+	CKEDITOR.env.isCompatible = true;
     CKEDITOR.replace( 'ckeditor1', {
-	  toolbar : [
-		{ name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Strike','-','RemoveFormat'] },
-		{ name: 'paragraph', items: ['NumberedList','BulletedList','-','Outdent','Indent', '-','Blockquote'] },
-		{ name: 'font', items: [ 'Font', 'FontSize','BasicStyle' ] },
-		{ name: 'styles', items: [ 'Styles', 'Format' ] },
-		{ name: 'links', items: ['Link','Unlink','Anchor'] },
-		//{ name: 'colors', groups: ['colors'] }
-		{ name: 'insert', items:['Image','Table','Youtube'] }
-	  ],
-	  // "filebrowserImageUploadUrl": "manageblogImage",
-	  "filebrowserBrowseUrl": "manageblogImage",
-	   //extraPlugins : 'manageblogImage',
-	   ploadUrl :  "manageblogImage",
-	   //removeDialogTabs : 'image:advanced',
-	   height : 400
-	});
+          toolbar : [
+                { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Strike','-','RemoveFormat'] },
+                { name: 'paragraph', items: ['NumberedList','BulletedList','-','Outdent','Indent', '-','Blockquote'] },
+                { name: 'links', items: ['Link','Unlink','Anchor'] },
+                { name: 'insert', items:['Image','Table','Youtube','Source'] }
+          ],
+           "filebrowserImageUploadUrl": "manageblogImage",
+           "filebrowserBrowseUrl": "manageblogImage?userid=1",
+           "extraPlugins" : "uploadimage,sourcearea",
+           extraAllowedContent: 'iframe[*]',
+           uploadUrl :  "manageblogImage",
+           removeDialogTabs : 'image:advanced',
+//  removePlugins : 'sourcearea',
+           height : 500
+        });
 </script>
 	
 <script>
