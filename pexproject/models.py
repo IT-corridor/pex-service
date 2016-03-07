@@ -190,4 +190,9 @@ class Blogs(models.Model):
     blog_creator = models.CharField(max_length=100)
     blog_created_time = models.DateTimeField()
     blog_status = models.BooleanField(default=False)
+
+class BlogImages(models.Model):
+    image_id = models.AutoField(primary_key=True)
+    user_id = models.IntegerField()
+    image_path = models.CharField(max_length=100)
  
