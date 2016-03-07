@@ -21,14 +21,16 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.context_processors import csrf
 from django.views.decorators.csrf import requires_csrf_token
 from pexproject.models import Flightdata, Airports, Searchkey, User,Pages, Contactus,Adminuser,EmailTemplate,GoogleAd
-from pexproject.models import Blogs
+from pexproject.models import Blogs,BlogImages
 from pexproject.templatetags.customfilter import floatadd, assign
 from social_auth.models import UserSocialAuth
 from django.contrib.auth import login as social_login,authenticate,get_user
 from django.contrib.auth import logout as auth_logout
 import settings
+from django.views.decorators.csrf import csrf_exempt
 from django.utils.html import strip_tags
 from random import randint
+from bs4 import BeautifulSoup
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from datetime import timedelta
 import time
@@ -183,8 +185,49 @@ def bloglist(request):
     else:
 	return HttpResponseRedirect(reverse('Admin'))
 
+@csrf_exempt
 def manageblogImage(request):
-    print "test"
+    if 'userid' in request.POST:
+	print request.REQUEST['userid']
+    for file in request.FILES.getlist('upload'):
+	print "file",file
+          
+        t = time.time()
+        if '.' in str(t):
+            t = str(t).replace('.','')
+        directory = os.path.join(os.path.dirname(os.path.abspath(__file__)))
+        img = str(t)+str(file)
+        img_fol = '/static/flightsearch/uploads/'
+        path = directory+img_fol+img
+        print path
+        dest = open(path, 'wb+')
+  	CKEditorFuncNum =''
+	print "post",request.GET
+	if 'CKEditorFuncNum' in request.GET: 
+            CKEditorFuncNum = request.REQUEST['CKEditorFuncNum'];
+	
+                           
+        if file.multiple_chunks:
+            dbpath = ''
+            for c in file.chunks():
+                dest.write(c)
+                dbpath = img
+                image = BlogImages()
+                image.user_id = "1"
+		image.image_path = dbpath
+		imgpath1 = img_fol+dbpath
+		image.save()
+	    message = '' ;
+          
+            #: 'var cke_ob = window.parent.CKEDITOR; for(var ckid in cke_ob.instances) { if(cke_ob.instances[ckid].focusManager.hasFocus) break;} cke_ob.instances[ckid].insertHtml(\'<audio src="'+ $url .'" controls></audio>\', \'unfiltered_html\'); alert("'. $msg .'"); var dialog = cke_ob.dialog.getCurrent();  dialog.hide();';
+	    return render_to_response('flightsearch/admin/ajaxresponse.html',{"CKEditorFuncNum":CKEditorFuncNum,"message":message,"imgpath":imgpath1})
+	    
+            #mimetype = 'application/html'
+    
+            #return HttpResponse( '<script>'+re +';</script>', mimetype)
+
+    
+    
 def manageBlog(request):
     context = {}
     if request.POST:
@@ -301,7 +344,26 @@ def staticPage(request):
 
 def blog(request):
     context = {}
-    return  render_to_response('flightsearch/Blog.html', context_instance=RequestContext(request))
+    blog = Blogs.objects.filter()
+    bloglist = []
+   
+    for content in blog:
+	
+	blog_title = content.blog_title
+	blog_content = content.blog_content
+	#blog_url = content.blog_url
+	#metakey = content.blog_meta_key
+	#meta_desc = content.blog_meta_Description
+	#blog_creator = content.blog_creator
+	tree = BeautifulSoup(blog_content)
+	
+	img_link = ''
+	if tree.find('img'):
+	    img_link = tree.find('img')['src']
+	bloglist.append({"blog_title":content.blog_title,'img_link':img_link,'postedon':content.blog_created_time})
+	
+    
+    return  render_to_response('flightsearch/Blog.html',{"blog":bloglist}, context_instance=RequestContext(request))
 
 def signup(request):
     context = {}
