@@ -95,7 +95,7 @@
 				  <div class="form-group">
 				    <label for="blog_url" class="col-sm-2 control-label">Blog Url</label>
 				    <div class="col-sm-10">
-				    <p>pexportl/blog<span id="show_blog_url">{%if blog and blog.blog_url%}?title={{blog.blog_url}}{%endif%}</span></p>
+				    <p>pexportl/blog/<span id="show_blog_url">{%if blog and blog.blog_url%}{{blog.blog_url}}{%endif%}</span></p>
 				      <input type="hidden" class="form-control" name="blog_url" id="blog_name_id"
 				      {% if blog and blog.blog_url %} value="{{blog.blog_url}}" {%endif%} />
 				    </div>
@@ -191,7 +191,7 @@
 	        var bloggivenurl=$("#blog_title_id").val();
 	        var bloggivenurl1=bloggivenurl.replace(/[^a-z0-9\s]/gi, '').replace(/[_\s]/g, '-');
 	        var blog_url_string=bloggivenurl1.replace(/\s+/g, '-');
-	        var blog_url="?titile="+blog_url_string.toLowerCase();
+	        var blog_url=blog_url_string.toLowerCase();
 	        $("#show_blog_url").empty();
 	        $("#show_blog_url").append(blog_url);
 	        $("#blog_name_id").val('');

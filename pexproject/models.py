@@ -158,6 +158,7 @@ class Adminuser(models.Model):
     admin_id = models.AutoField(primary_key=True)
     username = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
 '''    
 class GoogleAd(models.Model):
     ad_id = models.AutoField(primary_key=True)

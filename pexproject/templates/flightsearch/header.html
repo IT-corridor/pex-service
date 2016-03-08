@@ -57,13 +57,13 @@
               <span class="icon-bar"></span> 
             </button>
 
-            <a class="navbar-brand brandmedia custome-brand" href="index"><img src="{% static 'flightsearch/img/logoMain.png' %}" alt="" class="img-responsive"></a>
+            <a class="navbar-brand brandmedia custome-brand" href="/index"><img src="{% static 'flightsearch/img/logoMain.png' %}" alt="" class="img-responsive"></a>
           </div>
 
           <div class="collapse navbar-collapse" id="pexMainNavbar">
 		                
             <ul class="nav navbar-nav mainNav mvt10px">
-              <li class=""><a href="flights">Flights</a></li>
+              <li class=""><a href="/flights">Flights</a></li>
               <!--
               <li class=""><a href="#">Hotels</a></li> 
               <li class=""><a href="#">Cars</a></li>
@@ -83,9 +83,9 @@
 					  </a>
 					
 					  <ul class="dropdown-menu" aria-labelledby="dLabel">
-					  	 <li ><a href="manageAccount"><span>Manage Account</span></a></li>
-					  	 <li ><a href="myRewardPoint"><span>My Reward Points</span></a></li>
-					    <li ><a href="logout"><span>Logout</span></a></li>
+					  	 <li ><a href="/manageAccount"><span>Manage Account</span></a></li>
+					  	 <li ><a href="/myRewardPoint"><span>My Reward Points</span></a></li>
+					    <li ><a href="/logout"><span>Logout</span></a></li>
 					  </ul>
 					</div>
 					</li>
@@ -94,7 +94,7 @@
               	<li class="signuplogin" id="signupbtn" ><a href="#" data-toggle="modal" data-target="#login-modal" > SIGN UP</a></li>
               	<li class="signuplogin" id="loginbtn"><a href="#" data-toggle="modal" data-target="#login-modal"> LOGIN</a></li>
               	{%endif%}
-              	<li class=""><a href="staticPage?action=Help" class="help"><!-- <span class="glyphicon glyphicon-info-sign"></span> --> HELP</a></li>
+              	<li class=""><a href="/staticPage?action=Help" class="help"><!-- <span class="glyphicon glyphicon-info-sign"></span> --> HELP</a></li>
            
             </ul>  
             <div class="col-xs-12 text-left for-mobile-view">

@@ -70,9 +70,9 @@ def adminlogin(request):
         try:
         
             adminuser = Adminuser.objects.get(username=username, password=password)
-            print "founrd"
+            print "founrd",adminuser.name
             request.session['admin'] = username
-            
+            request.session['admin_name'] = adminuser.name
             return HttpResponseRedirect('dashboard')
             
         except:
@@ -243,7 +243,7 @@ def manageBlog(request):
 	blog.blog_meta_Description = request.POST['meta_description']
 	blog.blog_created_time = str(curr_time)
 	if 'admin' in request.session:
-	    blog.blog_creator = request.session['admin']
+	    blog.blog_creator = request.session['admin_name']
 	if 'status' in request.POST:
 	    blog.blog_status = request.POST['status']
         try:
@@ -346,17 +346,21 @@ def staticPage(request):
     	page = request.GET.get('action','')
         return  render_to_response('flightsearch/'+page+'.html', context_instance=RequestContext(request))
 
-def blog(request):
+def blog(request, title=None):
     context = {}
-    if 'title' in request.GET:
-	blog_title = request.GET.get('title','').strip()
-	print blog_title
-	blog = Blogs.objects.filter(blog_url="test-blog")
-	print blog
+    curr_path = request.get_full_path()
+    if 'blog/' in curr_path:
+	blog_title1 = curr_path.split('blog/')
+	print len(blog_title1)
+	if len(blog_title1)>1:
+	    blog_title = blog_title1[1].strip()
+	    blog = Blogs.objects.get(blog_url=blog_title)
+	    title = blog.blog_title
+	    return render_to_response('flightsearch/blog_details.html',{'blog':blog}, context_instance=RequestContext(request))
 	
     blogs = Blogs.objects.filter()
     bloglist = []
-   
+  
     for content in blogs:
 	blog_title = content.blog_title
 	blog_content = content.blog_content
@@ -368,7 +372,7 @@ def blog(request):
 	img_link = ''
 	if tree.find('img'):
 	    img_link = tree.find('img')['src']
-	bloglist.append({"blog_title":content.blog_title,'img_link':img_link,'postedon':content.blog_created_time,'blog_url':content.blog_url})
+	bloglist.append({"blog_title":content.blog_title,'img_link':img_link,'postedon':content.blog_created_time,'blog_url':content.blog_url,'blogid':content.blog_id})
 	
     
     return  render_to_response('flightsearch/Blog.html',{"blog":bloglist}, context_instance=RequestContext(request))
