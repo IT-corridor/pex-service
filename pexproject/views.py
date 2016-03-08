@@ -261,6 +261,10 @@ def manageBlog(request):
     if 'blogid' in request.GET:       
     	blogid = request.GET.get('blogid','')
     	blog = Blogs.objects.get(pk=blogid)
+	if 'action' in request.GET and request.GET.get('action','') == 'delete':
+	    blog.delete()
+	    page = '/Admin/bloglist?msg=Blog Deleted Successfully'
+	    return HttpResponseRedirect(page)
     return  render_to_response('flightsearch/admin/manageblog.html',{'blog':blog}, context_instance=RequestContext(request))
 
 
@@ -344,11 +348,16 @@ def staticPage(request):
 
 def blog(request):
     context = {}
-    blog = Blogs.objects.filter()
+    if 'title' in request.GET:
+	blog_title = request.GET.get('title','').strip()
+	print blog_title
+	blog = Blogs.objects.filter(blog_url="test-blog")
+	print blog
+	
+    blogs = Blogs.objects.filter()
     bloglist = []
    
-    for content in blog:
-	
+    for content in blogs:
 	blog_title = content.blog_title
 	blog_content = content.blog_content
 	#blog_url = content.blog_url
@@ -356,11 +365,10 @@ def blog(request):
 	#meta_desc = content.blog_meta_Description
 	#blog_creator = content.blog_creator
 	tree = BeautifulSoup(blog_content)
-	
 	img_link = ''
 	if tree.find('img'):
 	    img_link = tree.find('img')['src']
-	bloglist.append({"blog_title":content.blog_title,'img_link':img_link,'postedon':content.blog_created_time})
+	bloglist.append({"blog_title":content.blog_title,'img_link':img_link,'postedon':content.blog_created_time,'blog_url':content.blog_url})
 	
     
     return  render_to_response('flightsearch/Blog.html',{"blog":bloglist}, context_instance=RequestContext(request))
