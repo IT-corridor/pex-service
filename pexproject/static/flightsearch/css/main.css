@@ -1707,6 +1707,9 @@ padding: 5px 15px;
     margin-bottom: 15px;
 	
 }
+.blog-data-edit img{
+	max-width:100%;
+}
 .about-content .blog_title{
 	font-size: 36px;
     margin: 0px;
@@ -2503,6 +2506,9 @@ div.ui-datepicker{
 	.account-block-bg .btn-pexSearch {
 	  width: initial;
 	  margin-right: 15px;
+	}
+	.blog-data-edit img{
+		!width:100%;
 	}
 }
 
