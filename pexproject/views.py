@@ -1377,8 +1377,11 @@ def getsearchresult(request):
                 return render_to_response('flightsearch/search.html', {'action':action, 'data':record, 'minprice':minprice, 'tax':tax, 'timedata':timeinfo,'progress_value':progress_value, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request))
             #msg = "Sorry, No flight found  from " + source + " To " + destination + ".  Please search for another date or city !"
             msg = "Oops, looks like there aren't any flight results for your filtered search. Try to broaden your search criteria for better results."
-            return  render_to_response('flightsearch/flights.html', {'message':msg, 'search':searchdata[0],'returndate':returndate}, context_instance=RequestContext(request))
-            
+	    if len(searchdata) > 0:
+		return  render_to_response('flightsearch/flights.html', {'message':msg, 'search':searchdata[0],'returndate':returndate}, context_instance=RequestContext(request))
+	    else:
+		return HttpResponseRedirect(reverse('index'))
+
 def share(request):
     context = {}
     if 'selectedid' in request.GET:
