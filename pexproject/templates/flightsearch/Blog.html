@@ -33,10 +33,15 @@
 					{% if data.img_link%}
 						<img src="{{data.img_link|safe}}" class="img-responsive"
 							alt="blog">
-						{%endif%}
+						
 						<div class="info">
-							<a href="/blog/{{data.blog_url}}" class="blog-name">{{data.blog_title}} <p>{{data.postedon}}</p></a>
+							<a href="/blog/{{data.blog_url}}" class="blog-name">{{data.blog_title|title}} <p>{{data.postedon}}</p></a>
 						</div>
+					{%else%}
+					<div class="col-md-6 col-sm-6 col-xs-12 blog-box text-center">
+					<a href="/blog/{{data.blog_url}}" class="blog-name">{{data.blog_title|title}} <p>{{data.postedon}}</p></a>
+					</div>
+					{%endif%}
 					</div>
 					{%endfor%}
 				{% endif%}

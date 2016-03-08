@@ -351,7 +351,6 @@ def blog(request, title=None):
     curr_path = request.get_full_path()
     if 'blog/' in curr_path:
 	blog_title1 = curr_path.split('blog/')
-	print len(blog_title1)
 	if len(blog_title1)>1:
 	    blog_title = blog_title1[1].strip()
 	    blog = Blogs.objects.get(blog_url=blog_title)
