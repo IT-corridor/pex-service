@@ -23,7 +23,7 @@
 				<!-------- blog --------->
 				<!--h5 class="Only-text">About PEX+</h5-->
 				{% if top_banner%}
-				<div class="blog-header cstm-pd-blog" style="background: url('{{top_banner.img_link|safe}}');">
+				<div class="blog-header cstm-pd-blog" style="background: url('{{top_banner.img_link|safe}}') no-repeat;background-size:cover;background-position:center;">
 					<a href="/blog/{{top_banner.blog_url}}">
 					<h1>{{top_banner.blog_title|title}}</h1>
 					</a>
