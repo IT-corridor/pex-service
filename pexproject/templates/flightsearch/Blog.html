@@ -22,10 +22,13 @@
 				id="d">
 				<!-------- blog --------->
 				<!--h5 class="Only-text">About PEX+</h5-->
-				<div class="blog-header cstm-pd-blog">
-					<h1>Find the best way to travel using your rewards points and
-						miles.</h1>
+				{% if top_banner%}
+				<div class="blog-header cstm-pd-blog" style="background: url('{{top_banner.img_link|safe}}');">
+					<a href="/blog/{{top_banner.blog_url}}">
+					<h1>{{top_banner.blog_title|title}}</h1>
+					</a>
 				</div>
+				{%endif%}
 				<div class="content-div row">
 				{% if blog %}
 					{% for  data in blog %}

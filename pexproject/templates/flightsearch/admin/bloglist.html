@@ -92,6 +92,7 @@
 						<th>Blog Title</th>
 						<th>Written By</th>
 						<th>Last Updated</th>
+						<th>Position</th>
 						<th>Status</th>
 						<th>Action</th>
 						
@@ -101,9 +102,10 @@
 				{%if bloglist %}
 						{%for obj in bloglist %}
 						<tr>
-							<td>{{obj.blog_title}}</td>
-							<td>{{obj.blog_creator}}</td>
+							<td>{{obj.blog_title|title}}</td>
+							<td>{{obj.blog_creator|title}}</td>
 							<td>{{obj.blog_created_time}}</td>
+							<td>{% if obj.blog_position == True%}Top Banner {%else%}Normal{%endif%}</td>
 							<td>{% if obj.blog_status == True%}Active {%else%}Inactive{%endif%}</td>
 							<td><a href="manageBlog?blogid={{obj.blog_id}}&act=edit" class="btn btn-default btn-sm btn-icon icon-left"><i class="entypo-pencil"></i>Edit</a>
 							     | <a  href="manageBlog?blogid={{obj.blog_id}}&action=delete" class="btn btn-danger btn-sm btn-icon icon-left delt">
