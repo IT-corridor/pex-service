@@ -233,6 +233,8 @@ def manageBlog(request):
     if request.POST:
 	currentdatetime = datetime.datetime.now()
     	curr_time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
+	url_date = currentdatetime.strftime('%m-%Y')
+	
         blog = Blogs()
 	
 	if 'blogid' in request.POST:

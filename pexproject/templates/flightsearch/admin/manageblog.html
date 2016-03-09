@@ -196,11 +196,21 @@
 
 	});
 	function blogurlmaker(){
-
+		var monthNames = [
+		                  "Jan", "Feb", "Mar",
+		                  "Apr", "May", "Jun", "Jul",
+		                  "Aug", "Sep", "Oct",
+		                  "Nov", "Dec"
+		                ];
+			cdate = new Date()
+			var month = cdate.getMonth();
+			var year = cdate.getFullYear();
+			var url_date = monthNames[month]+"-"+year;
+			
 	        var bloggivenurl=$("#blog_title_id").val();
 	        var bloggivenurl1=bloggivenurl.replace(/[^a-z0-9\s]/gi, '').replace(/[_\s]/g, '-');
 	        var blog_url_string=bloggivenurl1.replace(/\s+/g, '-');
-	        var blog_url=blog_url_string.toLowerCase();
+	        var blog_url=url_date+"/"+blog_url_string.toLowerCase();
 	        $("#show_blog_url").empty();
 	        $("#show_blog_url").append(blog_url);
 	        $("#blog_name_id").val('');
