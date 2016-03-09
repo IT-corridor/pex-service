@@ -234,6 +234,7 @@ def manageBlog(request):
 	currentdatetime = datetime.datetime.now()
     	curr_time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
         blog = Blogs()
+	
 	if 'blogid' in request.POST:
 	    blog.blog_id = request.POST['blogid']
 	blog.blog_url = request.POST['blog_url']
@@ -248,6 +249,7 @@ def manageBlog(request):
 	    blog.blog_status = request.POST['status']
 	if 'position' in request.POST:
 	    blog.blog_position = request.POST['position']
+	    Blogs.objects.filter(blog_created_time__lte = str(curr_time)).update(blog_position=False)
         try:
             blog.save()
 	    page = ''
