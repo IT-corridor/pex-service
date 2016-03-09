@@ -246,6 +246,8 @@ def manageBlog(request):
 	    blog.blog_creator = request.session['admin_name']
 	if 'status' in request.POST:
 	    blog.blog_status = request.POST['status']
+	if 'position' in request.POST:
+	    blog.blog_position = request.POST['position']
         try:
             blog.save()
 	    page = ''
@@ -357,9 +359,9 @@ def blog(request, title=None):
 	    title = blog.blog_title
 	    return render_to_response('flightsearch/blog_details.html',{'blog':blog}, context_instance=RequestContext(request))
 	
-    blogs = Blogs.objects.filter()
+    blogs = Blogs.objects.filter(blog_status=1)
     bloglist = []
-  
+    top_banner = ''
     for content in blogs:
 	blog_title = content.blog_title
 	blog_content = content.blog_content
@@ -371,10 +373,13 @@ def blog(request, title=None):
 	img_link = ''
 	if tree.find('img'):
 	    img_link = tree.find('img')['src']
-	bloglist.append({"blog_title":content.blog_title,'img_link':img_link,'postedon':content.blog_created_time,'blog_url':content.blog_url,'blogid':content.blog_id})
+	if content.blog_position == True:
+	    top_banner = {"blog_title":content.blog_title,'img_link':img_link,'postedon':content.blog_created_time,'blog_url':content.blog_url,'blogid':content.blog_id}
+	else: 
+	    bloglist.append({"blog_title":content.blog_title,'img_link':img_link,'postedon':content.blog_created_time,'blog_url':content.blog_url,'blogid':content.blog_id})
 	
     
-    return  render_to_response('flightsearch/Blog.html',{"blog":bloglist}, context_instance=RequestContext(request))
+    return  render_to_response('flightsearch/Blog.html',{"blog":bloglist,"top_banner":top_banner}, context_instance=RequestContext(request))
 
 def signup(request):
     context = {}
@@ -1388,7 +1393,6 @@ def share(request):
         selectedid = request.GET.get('selectedid', '')
         cabin = request.GET.get('cabin', '')
         traveler = request.GET.get('passenger', '')
-        # record = Flightdata.objects.get(pk=selectedid)
         record = get_object_or_404(Flightdata, pk=selectedid)
         returnrecord = ''
         price = 0

@@ -184,6 +184,7 @@ class Blogs(models.Model):
     blog_id = models.AutoField(primary_key=True)
     blog_title = models.CharField(max_length=512)
     blog_url = models.CharField(max_length=100)
+    blog_position = models.BooleanField(default=False)
     blog_content = models.TextField()
     blog_image_path = models.CharField(max_length=512)
     blog_meta_key = models.CharField(max_length=512)
