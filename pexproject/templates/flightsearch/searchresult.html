@@ -2031,6 +2031,50 @@
 			<a href="staticPage?action=feedback"  class="feedback-btn feedback"><button type="button" class="btn btn-warning text-uppercase">Feedback</button></a>
 		</div>
 		
+		<!--   Loading Model -->
+		<div class="modal fade" id="loading-model" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content col-xs-12 nopadding">
+		      <div class="modal-header">
+		        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
+		        <h4 class="modal-title" id="myModalLabel"></h4>
+		      </div>
+		      <!-- 
+		      <div class="pl15">
+		       <p> Want an email for PEX+ amaizing deals</p>
+		      
+		      <form class="form-inline">
+				  
+				  <div class="form-group">
+				    <label for="Email">Email</label>
+				    <input type="email" name="email" class="form-control" id="" placeholder="Email address">
+				  </div>
+				  <button type="submit" class="btn btn-default">Subscribe</button>
+				</form>
+			</div>  -->
+		      <div class="modal-body text-center">
+		      
+		       <b> {{search.0.source}}  to  {{search.0.destination}} 
+		       <p>{{search.0.traveldate}} {%if returndate %} To {{returndate}} {%endif%} </p></b>
+		        
+		      
+		      	<img alt="" src="{% static 'flightsearch/img/processing_bar.gif' %}">
+		      
+		     
+		      
+		      </div>
+		      <!-- 
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		        <button type="button" class="btn btn-primary">Save changes</button>
+		      </div>
+		       -->
+		    </div>
+		  </div>
+		</div>
+				
+		
+		<!-- End loading Model -->
 		<!-- Modal -->
 		<div class="modal fade" id="share-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 		  <div class="modal-dialog" role="document">
@@ -2151,6 +2195,7 @@
 		</script>
 		<script>
 		$(document).ready(function(){
+			
 			if("{{request.GET.returnkey}}"==''){
 				//$('.travelers-down-menu').addClass('full-width-res');
 				$('.travelers-down-menu').css("left", "-=122");
@@ -2734,6 +2779,8 @@ $(document).ready(function(){
 	});
 </script>
 <script>
+
+	
 	var dataurls = ("{{request.get_full_path}}");
 	var multicity1 = "{{request.GET.multicity}}";
 	var searchid = "{{request.GET.keyid}}";
@@ -2757,8 +2804,10 @@ $(document).ready(function(){
 	   
 	
 	var progess_width = 0;
+	$("#loading-model").modal('show');
 	if(parseInt($('#progress_hidden_val').val()) > 185 )
 	{
+		$("#loading-model").modal('hide');
 		$('.progress').hide();
 		$('.filters-holder').removeClass('xs-filters-holder-ht');
 		redirecttosearchpage();
@@ -2824,12 +2873,14 @@ $(document).ready(function(){
  			clearInterval(refreshIntervalId);
  			$('#progressbar').text('');
  			$('.progress').hide();
+ 			$("#loading-model").modal('hide');
  			$('.filters-holder').removeClass('xs-filters-holder-ht');
  		}
  	},
  	});
 	}
 </script>
+
 
 
 
