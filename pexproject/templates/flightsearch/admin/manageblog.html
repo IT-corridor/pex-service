@@ -86,7 +86,7 @@
 
 			<div class="panel-body">
 
-				<form class="form-horizontal" action="manageBlog" method="post" enctype="multipart/form-data">
+				<form class="form-horizontal" id="imageform" action="manageBlog" method="post" enctype="multipart/form-data">
 					{% csrf_token %}
 					{% if blog and blog.blog_id%}
 					<input type="hidden" name="blogid"  value="{{blog.blog_id}}" >
@@ -107,6 +107,13 @@
 				      <input type="text" class="form-control" name="blog_title" id="blog_title_id"
 				      {% if blog and blog.blog_title %} value="{{blog.blog_title}}" {%endif%} placeholder="BLOG TITLE" />
 				      
+				    </div>
+				  </div>
+				   <div class="form-group">
+				    <label for="blog_title" class="col-sm-2 control-label">Blog Featured Image</label>
+				    <div class="col-sm-10">
+				      <input id="file-1" type="file" multiple="true" data-preview-file-type="any" name="image[]" />
+				      <input type="hidden" name="img_path" id="doc" />
 				    </div>
 				  </div>
 				  <div class="form-group">
@@ -157,7 +164,7 @@
 				  
 				  <div class="form-group">
 				    <div class="col-sm-offset-2 col-sm-10">
-				      <button type="submit" class="btn btn-pexSearch">Save</button>
+				      <button id="uploadid" type="submit" class="btn btn-pexSearch">Save</button>
 				    </div>
 				  </div>
 				</form>
@@ -217,7 +224,70 @@
 	        $("#blog_name_id").val(blog_url);
 	}
 </script>			 
+<script src="{% static 'flightsearch/js/jquery.form.js' %}"></script>
+	<script src="{% static 'flightsearch/js/fileinput.js' %}"></script>
+	<script>
+$(function(){
+$("#file-1").change(function() { 
+	uploadfile();
+});
+});
+//class="close 
+$( document ).on( 'click', '.fileinput-remove', function () {
 
+	$("#data_uploader").hide();
+	$("#uploadid").removeAttr("disabled") ;
+	$("#doc").val('');
+});
+
+
+$("#file-1").fileinput({
+    overwriteInitial: false,
+    maxFileSize: 1000,
+    maxFilesNum: 1,
+    allowedFileTypes: ['image']
+});
+</script>
+<script>
+function uploadfile()
+{ 
+	$("#data_uploader").show();
+	$("#uploadid").attr("disabled","disabled");
+	$("#imageform").ajaxSubmit({
+		url : 'manage_adimage/',
+		type : 'post',
+		success : function(response) {
+			console.log(response.length);
+			var imagePath='';
+			var staticpath = '/static/flightsearch/uploads/';
+			var seperater='';
+			for(var i = 0 ; i < response.length ; i++)
+		    {
+	               imagePath +=seperater+staticpath+ response[i];
+	               seperater='|';
+	        }
+			$("#doc").val(imagePath);
+			$("#data_uploader").hide();
+			$("#uploadid").removeAttr("disabled") ;
+		}
+	});
+}
+
+
+</script>
+
+<script>
+
+$("#uploadid").click(function(event){
+	if($("#doc").val() == '')
+	{
+		bootbox.alert("Please select image");
+		event.preventDefault();
+		return false;
+	}
+});
+
+</script>
 	
 	</body>
 </html>

@@ -88,7 +88,7 @@
 		<table class="table table-bordered datatable" id="table-4">
 			<thead>
 				<tr>
-						
+						<th>Featured Image</th>
 						<th>Blog Title</th>
 						<th>Written By</th>
 						<th>Last Updated</th>
@@ -101,7 +101,8 @@
 			<tbody>
 				{%if bloglist %}
 						{%for obj in bloglist %}
-						<tr>
+						<tr style="height:100px;" class="text-center">
+							<td class="text-center">{% if obj.blog_image_path %}<img src="{{obj.blog_image_path}}" style="width:60px; height:60px;" />{%endif%}</td>
 							<td>{{obj.blog_title|title}}</td>
 							<td>{{obj.blog_creator|title}}</td>
 							<td>{{obj.blog_created_time}}</td>

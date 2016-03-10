@@ -2031,50 +2031,65 @@
 			<a href="staticPage?action=feedback"  class="feedback-btn feedback"><button type="button" class="btn btn-warning text-uppercase">Feedback</button></a>
 		</div>
 		
-		<!--   Loading Model -->
-		<div class="modal fade" id="loading-model" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-		  <div class="modal-dialog" role="document">
-		    <div class="modal-content col-xs-12 nopadding">
-		      <div class="modal-header">
-		        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
-		        <h4 class="modal-title" id="myModalLabel"></h4>
-		      </div>
-		      <!-- 
-		      <div class="pl15">
-		       <p> Want an email for PEX+ amaizing deals</p>
-		      
-		      <form class="form-inline">
-				  
-				  <div class="form-group">
-				    <label for="Email">Email</label>
-				    <input type="email" name="email" class="form-control" id="" placeholder="Email address">
-				  </div>
-				  <button type="submit" class="btn btn-default">Subscribe</button>
-				</form>
-			</div>  -->
-		      <div class="modal-body text-center">
-		      
-		       <b> {{search.0.source}}  to  {{search.0.destination}} 
-		       <p>{{search.0.traveldate}} {%if returndate %} To {{returndate}} {%endif%} </p></b>
-		        
-		      
-		      	<img alt="" src="{% static 'flightsearch/img/processing_bar.gif' %}">
-		      
-		     
-		      
-		      </div>
-		      <!-- 
-		      <div class="modal-footer">
-		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-		        <button type="button" class="btn btn-primary">Save changes</button>
-		      </div>
-		       -->
-		    </div>
-		  </div>
-		</div>
-				
 		
-		<!-- End loading Model -->
+		
+		
+		<div class="modal fade" id="loading-model" tabindex="-1" role="dialog"
+	aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				
+				<div class="row">
+					<div class="col-sm-6 col-sm-push-6 col-xs-12 login-section">
+					<center>
+					<b><sapn class="pr5"> {{search.0.source}} </sapn> to  <span class="pl5">{{search.0.destination}} </span>
+		       <p>{{search.0.traveldate}} {%if returndate %} To {{returndate}} {%endif%} </p></b>
+					</center>	
+						<p> Want an email for PEX+ amaizing deals </p>
+						
+						
+						<div class="tab-content">
+							<div role="tabpanel" class="tab-pane active">
+								<p id="subs_msg"></p>
+								
+								<form class="modelform">
+									{% csrf_token %}
+									
+									<div class="form-group">
+										<input type="email" id="subscription_email" class="form-control" placeholder="Email" name="username" required >
+									</div>
+									
+									<div class="form-group text-center">
+										<span type="submit" class="btn btn-info" id="subscribe">Subscribe</span>
+									</div>
+									<hr>
+																	
+								</form>
+							</div>
+							
+						</div>
+					</div>
+					<div class="col-sm-6 col-sm-pull-6 col-xs-12">
+					<div id="loading" align="center">
+					<p class="mvt10px"><h4>Hang on a minute while we fetch your search results...</h4></p>
+			 <img id="loading-image" src="{% static 'flightsearch/js/images/loading.gif' %}" alt="Loading..." />
+			 
+		</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+		
+		
+		
+		
+		
+		
+		<!--   Loading Model -->
+		
 		<!-- Modal -->
 		<div class="modal fade" id="share-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 		  <div class="modal-dialog" role="document">
@@ -2814,7 +2829,7 @@ $(document).ready(function(){
 	}
 	else{
 		$('.filters-holder').addClass('xs-filters-holder-ht');
-		refreshIntervalId = setInterval(redirecttosearchpage, 5000);
+		refreshIntervalId = setInterval(redirecttosearchpage, 10000);
 	}
 	
 	function redirecttosearchpage(){
@@ -2873,12 +2888,36 @@ $(document).ready(function(){
  			clearInterval(refreshIntervalId);
  			$('#progressbar').text('');
  			$('.progress').hide();
- 			$("#loading-model").modal('hide');
+ 			//$("#loading-model").modal('hide');
  			$('.filters-holder').removeClass('xs-filters-holder-ht');
  		}
  	},
  	});
 	}
+</script>
+<script>
+
+$('#subscribe').click(function(){
+	var subscription_email = $('#subscription_email').val();
+	console.log(subscription_email);
+	$.ajax({
+		
+	type:"POST",
+	dataType: "text",
+	url:"/mailchimp/",
+	data:"email="+encodeURI(subscription_email)+"&csrfmiddlewaretoken={{ csrf_token }}",
+	success:function(resp){
+		$('#subs_msg').empty();
+		$('#subs_msg').append(resp);
+		setTimeout(function(){$('#subs_msg').fadeOut();},8000);
+	}
+	});
+	
+
+});
+
+
+
 </script>
 
 

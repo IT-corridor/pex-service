@@ -66,11 +66,11 @@ def adminlogin(request):
     if request.POST:
         username = request.REQUEST['admin_user']
         password = request.REQUEST['admin_password']
-        print username,password
+        
         try:
         
             adminuser = Adminuser.objects.get(username=username, password=password)
-            print "founrd",adminuser.name
+            
             request.session['admin'] = username
             request.session['admin_name'] = adminuser.name
             return HttpResponseRedirect('dashboard')
@@ -128,8 +128,6 @@ def manage_adimage(request):
     if request.is_ajax():
         i= 0
         for file in request.FILES.getlist('image[]'):
-            print "file",file
-            
             t = time.time()
             if '.' in str(t):
                 t = str(t).replace('.','')
@@ -189,9 +187,7 @@ def bloglist(request):
 def manageblogImage(request):
     if 'userid' in request.POST:
 	print request.REQUEST['userid']
-    for file in request.FILES.getlist('upload'):
-	print "file",file
-          
+    for file in request.FILES.getlist('upload'):        
         t = time.time()
         if '.' in str(t):
             t = str(t).replace('.','')
@@ -244,6 +240,8 @@ def manageBlog(request):
 	blog.blog_content = request.POST['blog_content']
 	blog.blog_meta_key = request.POST['metakey']
 	blog.blog_meta_Description = request.POST['meta_description']
+	if 'img_path' in request.POST:
+	    blog.blog_image_path = request.REQUEST['img_path']
 	blog.blog_created_time = str(curr_time)
 	if 'admin' in request.session:
 	    blog.blog_creator = request.session['admin_name']
@@ -359,9 +357,12 @@ def blog(request, title=None):
 	blog_title1 = curr_path.split('blog/')
 	if len(blog_title1)>1:
 	    blog_title = blog_title1[1].strip()
-	    blog = Blogs.objects.get(blog_url=blog_title)
-	    title = blog.blog_title
-	    return render_to_response('flightsearch/blog_details.html',{'blog':blog}, context_instance=RequestContext(request))
+	    try:
+	    	blog = Blogs.objects.get(blog_url=blog_title)
+	    	title = blog.blog_title
+		return render_to_response('flightsearch/blog_details.html',{'blog':blog}, context_instance=RequestContext(request))
+	    except:
+		return render_to_response('flightsearch/blog_details.html', context_instance=RequestContext(request))
 	
     blogs = Blogs.objects.filter(blog_status=1)
     bloglist = []
@@ -378,9 +379,9 @@ def blog(request, title=None):
 	if tree.find('img'):
 	    img_link = tree.find('img')['src']
 	if content.blog_position == True:
-	    top_banner = {"blog_title":content.blog_title,'img_link':img_link,'postedon':content.blog_created_time,'blog_url':content.blog_url,'blogid':content.blog_id}
+	    top_banner = {"blog_title":content.blog_title,'img_link':img_link,'postedon':content.blog_created_time,'featured_image':content.blog_image_path,'blog_url':content.blog_url,'blogid':content.blog_id}
 	else: 
-	    bloglist.append({"blog_title":content.blog_title,'img_link':img_link,'postedon':content.blog_created_time,'blog_url':content.blog_url,'blogid':content.blog_id})
+	    bloglist.append({"blog_title":content.blog_title,'img_link':img_link,'postedon':content.blog_created_time,'featured_image':content.blog_image_path,'blog_url':content.blog_url,'blogid':content.blog_id})
 	
     
     return  render_to_response('flightsearch/Blog.html',{"blog":bloglist,"top_banner":top_banner}, context_instance=RequestContext(request))
@@ -518,7 +519,6 @@ def manageAccount(request):
     subscription = ''
     email1 = request.session['username']
     mailchimp_user = Mailchimp(customfunction.mailchimp_api_key)
-    m = mailchimp_user.lists.member_info(customfunction.mailchiml_List_ID,[{'email':email1}])['data']
     print len(m)
     if len(m) > 0 and 'subscribed' in m[0]['status']:
         subscription = 'subscribed'
@@ -554,16 +554,20 @@ def manageAccount(request):
 def mailchimp(request):
     context = {}
     if request.is_ajax():
+	lname=''
+	fname=''
         useremail = request.REQUEST['email']
-        fname = request.REQUEST['fname']
-        lname = request.REQUEST['lname']
+	if 'fname' in request.POST:
+            fname = request.REQUEST['fname']
+	if 'lname' in request.POST:
+            lname = request.REQUEST['lname']
         data = ''
         try:
             subscriber = Mailchimp(customfunction.mailchimp_api_key)
             subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':useremail}, merge_vars={'FNAME':fname,'LNAME':lname})
             data = "Please check you email to PEX+ update"
         except:
-            data = useremail + " is an invalid email address"    
+            data = useremail + " is an invalid email address"   
         mimetype = 'application/json'
         
         json.dumps(data)
@@ -697,7 +701,7 @@ def sendFeedBack(request):
             text = request.REQUEST['text']
             text = strip_tags(text)
             body = body+'\n'+text
-    #send_mail(topic,body,from_emailid,['info@pexportal.com'])
+    
         obj = EmailTemplate.objects.get(email_code='feedback')
         email_sub = obj.subject
         emailbody = obj.body
@@ -745,7 +749,7 @@ def contactUs(request):
         object.save()
         fullname = firstname+" "+lastname
         emailbody = message+"\n\n"+labeltext+" \n\n"+fullname+"\n"+company+"\n"+websitename
-        #send_mail(topic,emailbody,email,['hit.jay1690@gmail.com'])
+        
         resp = customfunction.sendMail(email,'info@pexportal.com',topic,emailbody,html_content)
         if resp == "sent":
             contact_msg = "Your information has been sent successfully"
@@ -828,8 +832,7 @@ def search(request):
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/delta.py",destcode, orgncode, str(date1), str(returndate), str(returnkey),etihaddest,etihadorigin,cabin])
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",destcode, orgncode, str(returndate), str(returnkey)])
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aa.py",destcode, orgncode, str(returndate), str(returnkey)])
-                    #customfunction.etihad(etihaddest,etihadorigin,date1,returnkey,cabin)
-                    #customfunction.scrape(destcode, orgncode, date1, returndate, returnkey)
+                   
             else:
                 obj = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, scrapetime__gte=time1)
             if len(obj) > 0:
@@ -861,8 +864,7 @@ def search(request):
                         subprocess.Popen(["python",settings.BASE_DIR+"/pexproject/delta.py",destcode, orgncode, str(date1), str(returndate), str(returnkey),etihaddest,etihadorigin,cabin])
                         subprocess.Popen(["python",settings.BASE_DIR+"/pexproject/united.py",destcode, orgncode, str(returndate), str(returnkey)])
                         subprocess.Popen(["python",settings.BASE_DIR+"/pexproject/aa.py",destcode, orgncode, str(returndate), str(returnkey)])
-                        #customfunction.etihad(etihaddest,etihadorigin,date,returnkey,cabin)
-                        #customfunction.scrape(destcode, orgncode, date, depart, returnkey)
+                        
             Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='virgin_atlantic').delete()
             if returnkey:
                 Flightdata.objects.filter(searchkeyid=returnkey,datasource='virgin_atlantic').delete()            
@@ -1064,9 +1066,15 @@ def getsearchresult(request):
             return_cabin_fare = "p2." + cabinclass
             depart_cabin_fare = "p1." + cabinclass
             totalrecords1 = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(roundtripkey)+" and "+return_cabin_fare+" > 0 where p1.searchkeyid="+str(searchkey)+" and "+depart_cabin_fare+" > 0")
+
+	    flag_count1 = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(roundtripkey)+" and p2.flighno = 'flag' where p1.searchkeyid="+str(searchkey)+" and p1.flighno = 'flag'")
         else:
             totalrecords1 = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(searchkey)+" and flighno != 'flag' and "+cabinclass+"> 0")
-        totalrecords = len(list(totalrecords1)) 
+	    flag_count1 = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(searchkey)+" and flighno = 'flag' ")
+	#print flag_count1.query
+        totalrecords = len(list(totalrecords1))
+	flag_count = len(list(flag_count1))
+	
         if request.GET.get('multicity'):
             allkey = request.GET.get('multicity')
             multiple_key = allkey.split(',')
@@ -1378,18 +1386,17 @@ def getsearchresult(request):
         if request.is_ajax() :
             
             return render_to_response('flightsearch/search.html', {'action':action,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value, 'multisearch':multisearch, 'data':mainlist,'multirecod':mainlist, 'multicity':multicity, 'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request))
-        if totalrecords > 0:
-            return render_to_response('flightsearch/searchresult.html', {'action':action,'pointlist':pointlist,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value,'multisearch':multisearch,'data':mainlist,'multirecod':mainlist,'multicity':multicity,'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request)) 
-        else:
-            
-            if request.is_ajax():
-                return render_to_response('flightsearch/search.html', {'action':action, 'data':record, 'minprice':minprice, 'tax':tax, 'timedata':timeinfo,'progress_value':progress_value, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request))
+        if totalrecords <= 0 and flag_count > 3:
+	    return render_to_response('flightsearch/search.html', {'action':action, 'data':record, 'minprice':minprice, 'tax':tax, 'timedata':timeinfo,'progress_value':progress_value, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request))
             #msg = "Sorry, No flight found  from " + source + " To " + destination + ".  Please search for another date or city !"
             msg = "Oops, looks like there aren't any flight results for your filtered search. Try to broaden your search criteria for better results."
 	    if len(searchdata) > 0:
 		return  render_to_response('flightsearch/flights.html', {'message':msg, 'search':searchdata[0],'returndate':returndate}, context_instance=RequestContext(request))
 	    else:
 		return HttpResponseRedirect(reverse('index'))
+	else:
+            return render_to_response('flightsearch/searchresult.html', {'action':action,'pointlist':pointlist,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value,'multisearch':multisearch,'data':mainlist,'multirecod':mainlist,'multicity':multicity,'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request)) 
+        
 
 def share(request):
     context = {}
@@ -1420,7 +1427,12 @@ def share(request):
                     returncabin = returnrecord.cabintype3
         return render_to_response('flightsearch/share.html', {'record':record, 'cabin':cabin, 'traveler':traveler, 'returnrecord':returnrecord, "price":price, "tax":tax, 'returncabin':returncabin}, context_instance=RequestContext(request))
 
-
+def subscribe(request):
+    if request.is_ajax:
+	email = request.POST['emailid']
+	subscriber = Mailchimp(customfunction.mailchimp_api_key)
+        subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':email})
+    exit()
 
 def multicity(request):
     context = {}

@@ -1984,7 +1984,7 @@ background: #39A8E0;
 	padding: 0;
 }
 .blog-content-div {
-	border: 1px solid #aaa;
+	!border: 1px solid #aaa;
 	padding: 0px 8px;
 	margin: 15px 0;
 }
