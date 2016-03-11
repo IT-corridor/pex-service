@@ -2037,27 +2037,24 @@
 		
 		
 		<div class="modal fade" id="loading-model" tabindex="-1" role="dialog"
-	aria-labelledby="myModalLabel">
+	aria-labelledby="myModalLabel"  data-backdrop="static"> 
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
-			<div class="modal-body">
-			<div class="nopadding">
-				<div class="progress">
-					<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" {% if progress_value %} style="width:{{progress_value}}px"{% else%}style="width:5%" {%endif%} id="model_progressbar">
-					 Loading
-				 	</div>
-				</div>									
+		<div class="nopadding text-center loading-text" id="">
+				<span id="loading-info" style="font-size: 20px;"></span>								
 			</div>
+			<div class="modal-body">
+			
 				
 				<div class="row">
-					<div class="col-sm-6 col-sm-push-6 col-xs-12 login-section">
+					<div class="col-sm-7 col-sm-push-5 col-xs-12 login-section">
 					<center>
 					<b><sapn class="pr5"> {{search.0.source}} </sapn> to  <span class="pl5">{{search.0.destination}} </span>
-		       <p>{{search.0.traveldate}} {%if returndate %} To {{returndate}} {%endif%} </p></b>
-					</center>	
-						<p> Want an email for PEX+ amaizing deals </p>
-						
-						
+		       <p>{{search.0.traveldate}} {%if returndate %} To {{returndate.0}} {%endif%} </p></b>
+					
+							<br>
+						<h4><strong>Want an email when the price tanks?</strong><br><small>This will not interfere with your search.</small> </h4>
+				</center>
 						<div class="tab-content">
 							<div role="tabpanel" class="tab-pane active">
 								<p id="subs_msg"></p>
@@ -2067,6 +2064,9 @@
 									
 									<div class="form-group">
 										<input type="email" id="subscription_email" class="form-control" placeholder="Email" name="username" required >
+									</div>
+									<div class="checkbox">
+										<label><input type="checkbox" id="pexdeals" name="pexdeals" value="1"> Email me news and deals from PEX+</label>
 									</div>
 									
 									<div class="form-group text-center">
@@ -2079,7 +2079,7 @@
 							
 						</div>
 					</div>
-					<div class="col-sm-6 col-sm-pull-6 col-xs-12">
+					<div class="col-sm-5 col-sm-pull-7 col-xs-12">
 					<div id="loading" align="center">
 					<p class="mvt10px"><h4>Hang on a minute while we fetch your search results...</h4></p>
 			 <img id="loading-image" src="{% static 'flightsearch/js/images/loading.gif' %}" alt="Loading..." />
@@ -2826,9 +2826,28 @@ $(document).ready(function(){
 	        stoppage.push($(this).val());
 	   });
 	   
-	
+	  refresh_airline = setInterval(loading, 3000);
+	  var airlines = [
+	                  "Delta", "United", "Etihad",
+	                  "Virgin Atlantic", "Virgin America", "Jetblues", "American",
+	                ];
+	  i = 0;
+	  function loading(){
+			
+		  $('#loading-info').empty();
+				$('#loading-info').append('Searching  '+airlines[i]+' Airlines ...');
+				if(i < 6)
+				{
+				i = i+1;
+				}
+				else{
+					i=0;
+				}
+				
+			}
+	  
 	var progess_width = 0;
-	var model_process = 0;
+	
 	$("#loading-model").modal('show');
 	if(parseInt($('#progress_hidden_val').val()) > 185 )
 	{
@@ -2840,6 +2859,7 @@ $(document).ready(function(){
 	else{
 		$('.filters-holder').addClass('xs-filters-holder-ht');
 		refreshIntervalId = setInterval(redirecttosearchpage, 6000);
+		
 	}
 	
 	function redirecttosearchpage(){
@@ -2863,22 +2883,24 @@ $(document).ready(function(){
          	$(".contentdiv").remove();
          	$("#content1").append(html); 
          	progess_width = $('#progressbar').width();
-         	model_process = $('#model_progressbar').width();
+         	
          	
          	$('#progress_hidden_val').val(progess_width);
          	if(progess_width < 125)
          	{
          		progess_width = parseInt(progess_width)+5;
-         		model_process = parseInt(progess_width)+25;
+         		
          	}
          	else{
          		if(progess_width < 185){
          			progess_width = parseInt(progess_width)+2;
-         			model_process = parseInt(progess_width)+5;
+         		
          		}
          	}
          	$('#progressbar').width(progess_width);
-         	$('#model_progressbar').width(model_process);
+         	
+         	
+         	
          }
 	});
 	}
@@ -2898,11 +2920,10 @@ $(document).ready(function(){
  		{
  			console.log('stop');
  			$('#progressbar').css("width", "100%");
- 			$('#model_progressbar').css("width", "100%");
 			$('#progress_hidden_val').val('195');
  			clearInterval(refreshIntervalId);
  			$('#progressbar').text('');
- 			$('#model_progressbar').text('');
+ 			
  			$('.progress').hide();
  			$("#loading-model").modal('hide');
  			$('.filters-holder').removeClass('xs-filters-holder-ht');
@@ -2914,23 +2935,36 @@ $(document).ready(function(){
 <script>
 
 $('#subscribe').click(function(){
+	var is_checked = '';
 	var subscription_email = $('#subscription_email').val();
-	$.ajax({
-		
-	type:"POST",
-	dataType: "text",
-	url:"/mailchimp/",
-	data:"email="+encodeURI(subscription_email)+"&csrfmiddlewaretoken={{ csrf_token }}",
-	success:function(resp){
-		$('#subs_msg').empty();
-		$('#subs_msg').append(resp);
-		setTimeout(function(){$('#subs_msg').fadeOut();},8000);
+	if(subscription_email != ''){
+		if($('#pexdeals').is(':checked') )
+		{
+			
+			$.ajax({
+				
+			type:"POST",
+			dataType: "text",
+			url:"/mailchimp/",
+			data:"email="+encodeURI(subscription_email)+"&csrfmiddlewaretoken={{ csrf_token }}",
+			success:function(resp){
+				$('#subs_msg').empty();
+				$('#subs_msg').append(resp);
+				setTimeout(function(){$('#subs_msg').fadeOut();},8000);
+			}
+			});
+		}
+		else
+		{
+			alert("please click on news and deals from PEX+");
+		}
 	}
-	});
+	else{
+		alert("please enter your valid email");
+	}
 	
 
 });
-
 
 
 </script>
