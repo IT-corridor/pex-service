@@ -301,7 +301,14 @@ def index(request):
     user = User()
     image = ''
     image = GoogleAd.objects.filter(ad_code="index")
-    print image
+
+    ''' Fetch recent results'''
+
+    recent_searches = Flightdata.objects.raw("select p1.*,p2.searchid, (min(if(p1.maincabin > 0,p1.maincabin,NULL))) as maincabin, (min(if(p1.firstclass>0,p1.firstclass,NULL))) as firstclass ,(min(if(p1.business>0,p1.business,NULL))) as business  from pexproject_flightdata p1 inner join pexproject_searchkey p2 on p2.searchid = p1.searchkeyid where p1.origin != 'flag' group by p1.datasource order by p2.searchid desc limit 10 ")
+    
+
+
+    
     if request.is_ajax() and 'pexdeals' in request.REQUEST:
         request.session['pexdeal'] = request.REQUEST['pexdeals']
         mimetype = 'application/json'
@@ -328,7 +335,7 @@ def index(request):
 	    subscriber = Mailchimp(customfunction.mailchimp_api_key)
             subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':username}, merge_vars={'FNAME':fname,'LNAME':lname})
        	   
-    return  render_to_response('flightsearch/index.html',{'image':image}, context_instance=RequestContext(request))
+    return  render_to_response('flightsearch/index.html',{'image':image,'searchObj':recent_searches}, context_instance=RequestContext(request))
 
 def flights(request):
     context = {}
