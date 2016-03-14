@@ -303,9 +303,11 @@ def index(request):
 
     ''' Fetch recent results'''
     searches = []
-    recent_searches = Flightdata.objects.raw("select p1.*,p2.searchid,p2.destination as final_dest, (min(if(p1.maincabin > 0,p1.maincabin,NULL))) as maincabin from pexproject_flightdata p1 inner join pexproject_searchkey p2 on p2.searchid = p1.searchkeyid where p1.origin != 'flag' and p2.returndate is null group by final_dest order by p2.searchid desc limit 10 ")
+    recent_searches = Searchkey.objects.raw("select p1.*,p2.scrapetime,p2.searchid,p2.destination as final_dest, (min(if(p1.maincabin > 0,p1.maincabin,NULL))) as maincabin from pexproject_flightdata p1 inner join pexproject_searchkey p2 on p2.searchid = p1.searchkeyid where p1.origin != 'flag' group by p2.searchid, final_dest order by p2.scrapetime desc limit 8")
+    #print recent_searches.query
     for s in recent_searches:
     	dest = s.final_dest.split('(')
+	#print dest
         if dest[0] not in searches:
     	   searches.append({'final_dest':dest[0],'maintax':s.maintax,'searchkeyid':s.searchkeyid,'maincabin':s.maincabin})  
     if request.is_ajax() and 'pexdeals' in request.REQUEST:
@@ -341,7 +343,8 @@ def flights(request):
     mc = ''
     objects = ''
     searches = []
-    recent_searches = Flightdata.objects.raw("select p1.*,p2.searchid,p2.destination as final_dest, (min(if(p1.maincabin > 0,p1.maincabin,NULL))) as maincabin from pexproject_flightdata p1 inner join pexproject_searchkey p2 on p2.searchid = p1.searchkeyid where p1.origin != 'flag' and p2.returndate is null group by final_dest order by p2.searchid desc limit 10 ")
+    recent_searches = Searchkey.objects.raw("select p1.*,p2.scrapetime,p2.searchid,p2.destination as final_dest, (min(if(p1.maincabin > 0,p1.maincabin,NULL))) as maincabin from pexproject_flightdata p1 inner join pexproject_searchkey p2 on p2.searchid = p1.searchkeyid where p1.origin != 'flag' group by p2.searchid, final_dest order by p2.scrapetime desc limit 8")
+
     for s in recent_searches:
     	dest = s.final_dest.split('(')
         if dest[0] not in searches:
