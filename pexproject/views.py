@@ -227,37 +227,36 @@ def manageblogImage(request):
 def manageBlog(request):
     context = {}
     if request.POST:
-	currentdatetime = datetime.datetime.now()
+        currentdatetime = datetime.datetime.now()
     	curr_time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
-	url_date = currentdatetime.strftime('%m-%Y')
-	
+        url_date = currentdatetime.strftime('%m-%Y')
         blog = Blogs()
 	
-	if 'blogid' in request.POST:
-	    blog.blog_id = request.POST['blogid']
-	blog.blog_url = request.POST['blog_url']
-	blog.blog_title = request.POST['blog_title']
-	blog.blog_content = request.POST['blog_content']
-	blog.blog_meta_key = request.POST['metakey']
-	blog.blog_meta_Description = request.POST['meta_description']
-	if 'img_path' in request.POST:
-	    blog.blog_image_path = request.REQUEST['img_path']
-	blog.blog_created_time = str(curr_time)
-	if 'admin' in request.session:
-	    blog.blog_creator = request.session['admin_name']
-	if 'status' in request.POST:
-	    blog.blog_status = request.POST['status']
-	if 'position' in request.POST:
-	    blog.blog_position = request.POST['position']
-	    Blogs.objects.filter(blog_created_time__lte = str(curr_time)).update(blog_position=False)
+    	if 'blogid' in request.POST:
+    	    blog.blog_id = request.POST['blogid']
+    	blog.blog_url = request.POST['blog_url']
+    	blog.blog_title = request.POST['blog_title']
+    	blog.blog_content = request.POST['blog_content']
+    	blog.blog_meta_key = request.POST['metakey']
+    	blog.blog_meta_Description = request.POST['meta_description']
+    	if 'img_path' in request.POST:
+    	    blog.blog_image_path = request.REQUEST['img_path']
+    	blog.blog_created_time = str(curr_time)
+    	if 'admin' in request.session:
+    	    blog.blog_creator = request.session['admin_name']
+    	if 'status' in request.POST:
+    	    blog.blog_status = request.POST['status']
+    	if 'position' in request.POST:
+    	    blog.blog_position = request.POST['position']
+    	    Blogs.objects.filter(blog_created_time__lte = str(curr_time)).update(blog_position=False)
         try:
             blog.save()
-	    page = ''
-	    if "blogid" in request.POST:
-            	page = '/Admin/bloglist?msg=Blog Edited Successfully'
-	    else:
-	   	page = '/Admin/bloglist?msg=Blog Added Successfully'
-            return HttpResponseRedirect(page)
+    	    page = ''
+    	    if "blogid" in request.POST:
+                	page = '/Admin/bloglist?msg=Blog Edited Successfully'
+    	    else:
+    	   	page = '/Admin/bloglist?msg=Blog Added Successfully'
+                return HttpResponseRedirect(page)
         except:
             page = '/Admin/bloglist?msg=There is some technical problem'
             return HttpResponseRedirect(page)
@@ -304,12 +303,10 @@ def index(request):
 
     ''' Fetch recent results'''
     searches = []
-    recent_searches = Flightdata.objects.raw("select p1.*,p2.searchid,p2.destination as final_dest, (min(if(p1.maincabin > 0,p1.maincabin,NULL))) as maincabin from pexproject_flightdata p1 inner join pexproject_searchkey p2 on p2.searchid = p1.searchkeyid where p1.origin != 'flag' group by p1.datasource order by p2.searchid desc limit 10 ")
+    recent_searches = Flightdata.objects.raw("select p1.*,p2.searchid,p2.destination as final_dest, (min(if(p1.maincabin > 0,p1.maincabin,NULL))) as maincabin from pexproject_flightdata p1 inner join pexproject_searchkey p2 on p2.searchid = p1.searchkeyid where p1.origin != 'flag' group by final_dest order by p2.searchid desc limit 10 ")
     for s in recent_searches:
-	dest = s.final_dest.split('(')
-	searches.append({'final_dest':dest[0],'maintax':s.maintax,'searchkeyid':s.searchkeyid,'maincabin':s.maincabin})  
-
-    
+    	dest = s.final_dest.split('(')
+    	searches.append({'final_dest':dest[0],'maintax':s.maintax,'searchkeyid':s.searchkeyid,'maincabin':s.maincabin})  
     if request.is_ajax() and 'pexdeals' in request.REQUEST:
         request.session['pexdeal'] = request.REQUEST['pexdeals']
         mimetype = 'application/json'
