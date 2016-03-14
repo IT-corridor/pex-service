@@ -309,7 +309,6 @@ def index(request):
 	dest = s.final_dest.split('(')
 	searches.append({'final_dest':dest[0],'maintax':s.maintax,'searchkeyid':s.searchkeyid,'maincabin':s.maincabin})  
 
-
     
     if request.is_ajax() and 'pexdeals' in request.REQUEST:
         request.session['pexdeal'] = request.REQUEST['pexdeals']
