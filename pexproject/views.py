@@ -526,7 +526,7 @@ def manageAccount(request):
     subscription = ''
     email1 = request.session['username']
     mailchimp_user = Mailchimp(customfunction.mailchimp_api_key)
-    print len(m)
+    m = mailchimp_user.lists.member_info(customfunction.mailchiml_List_ID,[{'email':email1}])['data']
     if len(m) > 0 and 'subscribed' in m[0]['status']:
         subscription = 'subscribed'
     user1 = User.objects.get(pk =request.session['userid'])
@@ -821,9 +821,9 @@ def search(request):
             
             
             
-            Searchkey.objects.filter(scrapetime__lte=time1).delete()
+            Searchkey.objects.filter(scrapetime__lte=time1)#.delete()
             cursor.execute("insert into arcade_flight_data select * from pexproject_flightdata where scrapetime < '"+str(time1)+"'")
-            Flightdata.objects.filter(scrapetime__lte=time1).delete()
+            Flightdata.objects.filter(scrapetime__lte=time1)#.delete()
             transaction.commit()
             if searchdate1:
                 obj = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, scrapetime__gte=time1)
