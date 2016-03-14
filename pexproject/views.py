@@ -303,7 +303,7 @@ def index(request):
 
     ''' Fetch recent results'''
     searches = []
-    recent_searches = Flightdata.objects.raw("select p1.*,p2.searchid,p2.destination as final_dest, (min(if(p1.maincabin > 0,p1.maincabin,NULL))) as maincabin from pexproject_flightdata p1 inner join pexproject_searchkey p2 on p2.searchid = p1.searchkeyid where p1.origin != 'flag' group by final_dest order by p2.searchid desc limit 10 ")
+    recent_searches = Flightdata.objects.raw("select p1.*,p2.searchid,p2.destination as final_dest, (min(if(p1.maincabin > 0,p1.maincabin,NULL))) as maincabin from pexproject_flightdata p1 inner join pexproject_searchkey p2 on p2.searchid = p1.searchkeyid where p1.origin != 'flag' and p2.returndate is null group by final_dest order by p2.searchid desc limit 10 ")
     for s in recent_searches:
     	dest = s.final_dest.split('(')
         if dest[0] not in searches:
@@ -332,7 +332,7 @@ def index(request):
 	if 'pexdeal' in request.session:
 	    #print "in pex deal"
 	    subscriber = Mailchimp(customfunction.mailchimp_api_key)
-        subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':username}, merge_vars={'FNAME':fname,'LNAME':lname})
+            subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':username}, merge_vars={'FNAME':fname,'LNAME':lname})
        	   
     return  render_to_response('flightsearch/index.html',{'image':image,'searchObj':searches}, context_instance=RequestContext(request))
 
@@ -341,7 +341,7 @@ def flights(request):
     mc = ''
     objects = ''
     searches = []
-    recent_searches = Flightdata.objects.raw("select p1.*,p2.searchid,p2.destination as final_dest, (min(if(p1.maincabin > 0,p1.maincabin,NULL))) as maincabin from pexproject_flightdata p1 inner join pexproject_searchkey p2 on p2.searchid = p1.searchkeyid where p1.origin != 'flag' group by final_dest order by p2.searchid desc limit 10 ")
+    recent_searches = Flightdata.objects.raw("select p1.*,p2.searchid,p2.destination as final_dest, (min(if(p1.maincabin > 0,p1.maincabin,NULL))) as maincabin from pexproject_flightdata p1 inner join pexproject_searchkey p2 on p2.searchid = p1.searchkeyid where p1.origin != 'flag' and p2.returndate is null group by final_dest order by p2.searchid desc limit 10 ")
     for s in recent_searches:
     	dest = s.final_dest.split('(')
         if dest[0] not in searches:
