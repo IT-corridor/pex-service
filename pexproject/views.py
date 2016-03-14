@@ -303,9 +303,11 @@ def index(request):
     image = GoogleAd.objects.filter(ad_code="index")
 
     ''' Fetch recent results'''
-
-    recent_searches = Flightdata.objects.raw("select p1.*,p2.searchid, (min(if(p1.maincabin > 0,p1.maincabin,NULL))) as maincabin, (min(if(p1.firstclass>0,p1.firstclass,NULL))) as firstclass ,(min(if(p1.business>0,p1.business,NULL))) as business  from pexproject_flightdata p1 inner join pexproject_searchkey p2 on p2.searchid = p1.searchkeyid where p1.origin != 'flag' group by p1.datasource order by p2.searchid desc limit 10 ")
-    
+    searches = []
+    recent_searches = Flightdata.objects.raw("select p1.*,p2.searchid,p2.destination as final_dest, (min(if(p1.maincabin > 0,p1.maincabin,NULL))) as maincabin from pexproject_flightdata p1 inner join pexproject_searchkey p2 on p2.searchid = p1.searchkeyid where p1.origin != 'flag' group by p1.datasource order by p2.searchid desc limit 10 ")
+    for s in recent_searches:
+	dest = s.final_dest.split('(')
+	searches.append({'final_dest':dest[0],'maintax':s.maintax,'searchkeyid':s.searchkeyid,'maincabin':s.maincabin})  
 
 
     
@@ -335,12 +337,17 @@ def index(request):
 	    subscriber = Mailchimp(customfunction.mailchimp_api_key)
             subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':username}, merge_vars={'FNAME':fname,'LNAME':lname})
        	   
-    return  render_to_response('flightsearch/index.html',{'image':image,'searchObj':recent_searches}, context_instance=RequestContext(request))
+    return  render_to_response('flightsearch/index.html',{'image':image,'searchObj':searches}, context_instance=RequestContext(request))
 
 def flights(request):
     context = {}
     mc = ''
     objects = ''
+    searches = []
+    recent_searches = Flightdata.objects.raw("select p1.*,p2.searchid,p2.destination as final_dest, (min(if(p1.maincabin > 0,p1.maincabin,NULL))) as maincabin from pexproject_flightdata p1 inner join pexproject_searchkey p2 on p2.searchid = p1.searchkeyid where p1.origin != 'flag' group by p1.datasource order by p2.searchid desc limit 10 ")
+    for s in recent_searches:
+	dest = s.final_dest.split('(')
+	searches.append({'final_dest':dest[0],'maintax':s.maintax,'searchkeyid':s.searchkeyid,'maincabin':s.maincabin})  
     if 'action' in request.GET:
         mc = request.GET.get('action','')
     if 'multicitykeys' in request.GET:
@@ -348,7 +355,7 @@ def flights(request):
         allkeys =  keys.split(',')
         objects = Searchkey.objects.filter(searchid__in=allkeys)
         mc = 'mc'  
-    return  render_to_response('flightsearch/flights.html',{'mc':mc,'searchparams':objects}, context_instance=RequestContext(request))
+    return  render_to_response('flightsearch/flights.html',{'mc':mc,'searchparams':objects,'searchObj':searches}, context_instance=RequestContext(request))
         
 def staticPage(request):
     context = {}

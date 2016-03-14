@@ -1,5 +1,6 @@
   	{% load staticfiles %}
-
+	{% load customfilter %}
+       {% load humanize %}
    {% include "flightsearch/header.html" %}     
 	 <title> {% block title %}{{ category_name }}{% endblock %}</title>
 <!-- BODY SECTION/-->
@@ -449,14 +450,18 @@
         	
 
 <div class="container mvb60px mediaadd" id="add-section">
-	<h1 style="margin-left: 5px;"><b> Search numerous travel sites for your rewards flight.  Fly to: </b></h1>
+    		<h1 style="margin-left: 5px;"> <b>Search numerous travel sites for your rewards flight.  Fly to:</b></h1>
+			
 			<div class="row">
 				<div class="col-md-6 col-xs-12 padding-add">
 					<div class="col-xs-12 add-pic sngl">
-						<a href="#"><img src="{% static 'flightsearch/img/ad.jpg' %}" class="img-responsive">
+						<a href="{%if searchObj.0 %}getsearchresult?keyid={{searchObj.0.searchkeyid}}&cabin=maincabin&passenger=1{%else%}#{%endif%}"><img src="{% static 'flightsearch/img/ad.jpg' %}" class="img-responsive">
 							<div class="add-info">
 								<span class="place"><span class="glyphicon glyphicon-map-marker"
-									aria-hidden="true"></span>India</span> <span class="rate">$2561</span>
+									aria-hidden="true">
+									{%if searchObj.0 %}
+									</span>{{searchObj.0.final_dest}}</span> <span class="rate">${{searchObj.0.maintax}} + {{searchObj.0.maincabin|divisition}}K Miles </span>
+									{%endif%}
 							</div> </a>
 					</div>
 				</div>
@@ -464,35 +469,45 @@
 				<div class="col-md-6 col-xs-12 padding-add doble-img" >
 					<div class="row">
 						<div class="col-md-6 col-xs-12 add-pic">
-							<a href="#"><img src="{% static 'flightsearch/img/ad1.jpg' %}" class="img-responsive">
+						
+							<a href="{%if searchObj.1 %}getsearchresult?keyid={{searchObj.1.searchkeyid}}&cabin=maincabin&passenger=1{%else%}#{%endif%}"><img src="{% static 'flightsearch/img/ad1.jpg' %}" class="img-responsive">
 								<div class="add-info">
 									<span class="place"><span
-										class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>Singapore</span>
-									<span class="rate">$2561</span>
+										class="glyphicon glyphicon-map-marker" aria-hidden="true">
+									{%if searchObj.1 %}
+									</span>{{searchObj.1.final_dest}} </span> <span class="rate">${{searchObj.1.maintax}} + {{searchObj.1.maincabin|divisition}}K Miles</span>
+									{%endif%}
 								</div> </a>
+							
 						</div>
 						<div class="col-md-6 col-xs-12 add-pic">
-							<a href="#"><img src="{% static 'flightsearch/img/ad2.jpg' %}" class="img-responsive">
+							<a href="{%if searchObj.5 %}getsearchresult?keyid={{searchObj.4.searchkeyid}}&cabin=maincabin&passenger=1{%else%}#{%endif%}"><img src="{% static 'flightsearch/img/ad2.jpg' %}" class="img-responsive">
 								<div class="add-info">
 									<span class="place"><span
-										class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>India</span>
-									<span class="rate">$2561</span>
+										class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>
+										{%if searchObj.4 %}
+									</span>{{searchObj.1.final_dest}}</span> <span class="rate">${{searchObj.4.maintax}} + {{searchObj.4.maincabin|divisition}}K Miles  </span>
+									{%endif%}
 								</div></a>
 						</div>
 						<div class="col-md-6 col-xs-12 add-pic">
 							<a href="#"><img src="{% static 'flightsearch/img/ad3.jpg' %}" class="img-responsive">
 								<div class="add-info">
 									<span class="place"><span
-										class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>India</span>
-									<span class="rate">$2561</span>
+										class="glyphicon glyphicon-map-marker" aria-hidden="true">
+										{%if searchObj.5 %}
+									</span>{{searchObj.5.final_dest}}</span> <span class="rate">${{searchObj.5.maintax}} + {{searchObj.5.maincabin|divisition}}K Miles</span>
+									{%endif%}
 								</div></a>
 						</div>
 						<div class="col-md-6 col-xs-12 add-pic">
-							<a href="#"><img src="{% static 'flightsearch/img/ad4.png' %}" class="img-responsive">
+							<a href="{%if searchObj.2 %}getsearchresult?keyid={{searchObj.2.searchkeyid}}&cabin=maincabin&passenger=1{%else%}#{%endif%}"><img src="{% static 'flightsearch/img/ad4.png' %}" class="img-responsive">
 								<div class="add-info">
 									<span class="place"><span
-										class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>India</span>
-									<span class="rate">$2561</span>
+										class="glyphicon glyphicon-map-marker" aria-hidden="true">
+										{%if searchObj.2 %}
+									</span>{{searchObj.2.final_dest}}</span> <span class="rate">${{searchObj.2.maintax}} + {{searchObj.2.maincabin|divisition}}K Miles </span>
+									{%endif%}
 								</div></a>
 						</div>
 					</div>
@@ -502,19 +517,23 @@
 				<div class="col-md-6 col-xs-12 padding-add doble-img">
 					<div class="row">
 						<div class="col-md-6 col-xs-12 add-pic">
-							<a href="#"><img src="{% static 'flightsearch/img/ad5.jpg' %}" class="img-responsive">
+							<a href="{%if searchObj.3 %}getsearchresult?keyid={{searchObj.3.searchkeyid}}&cabin=maincabin&passenger=1{%else%}#{%endif%}"><img src="{% static 'flightsearch/img/ad5.jpg' %}" class="img-responsive">
 								<div class="add-info">
 									<span class="place"><span
-										class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>India</span>
-									<span class="rate">$2561</span>
+										class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>
+											{%if searchObj.3 %}
+									</span>{{searchObj.3.final_dest}}</span> <span class="rate">${{searchObj.3.maintax}} + {{searchObj.3.maincabin|divisition}}K Miles </span>
+									{%endif%}
 								</div></a>
 						</div>
 						<div class="col-md-6 col-xs-12 add-pic">
-							<a href="#"><img src="{% static 'flightsearch/img/ad.jpg' %}" class="img-responsive">
+							<a href="{%if searchObj.7 %}getsearchresult?keyid={{searchObj.7.searchkeyid}}&cabin=maincabin&passenger=1{%else%}#{%endif%}"><img src="{% static 'flightsearch/img/ad.jpg' %}" class="img-responsive">
 								<div class="add-info">
 									<span class="place"><span
-										class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>India</span>
-									<span class="rate">$2561</span>
+										class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>
+										{%if searchObj.7 %}
+									</span>{{searchObj.7.final_dest}}</span> <span class="rate">${{searchObj.7.maintax}} + {{searchObj.7.maincabin|divisition}}K Miles </span>
+									{%endif%}
 								</div></a>	
 						</div>
 						
@@ -522,10 +541,13 @@
 				</div>
 				<div class="col-md-6 col-xs-12 padding-add single-g">
 					<div class="col-xs-12 add-pic sngl rsonsv-img">
-						<a href="#"><img src="{% static 'flightsearch/img/ad7.jpg' %}" class="img-responsive">
+						<a href="{%if searchObj.6 %}getsearchresult?keyid={{searchObj.6.searchkeyid}}&cabin=maincabin&passenger=1{%else%}#{%endif%}"><img src="{% static 'flightsearch/img/ad7.jpg' %}" class="img-responsive">
 							<div class="add-info">
 								<span class="place"><span class="glyphicon glyphicon-map-marker"
-									aria-hidden="true"></span>Paris</span> <span class="rate">50k Miles</span>
+									aria-hidden="true"></span>
+									{%if searchObj.6 %}
+									</span>{{searchObj.6.final_dest}}</span> <span class="rate"><sub> ${{searchObj.6.maintax}}</sub>{{searchObj.6.maincabin|divisition}}K Miles </span>
+									{%endif%}
 							</div></a>
 					</div>
 				</div>
