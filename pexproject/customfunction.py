@@ -18,6 +18,11 @@ sendgrid_api_key = "SG.68Zcrl5NQ56XwSn3gbgmGQ.NoYD5_4T8nLZhg9eCbIxboO3_IRjOUGFEM
 mailchimp_api_key = "def631e53845c0b9f251db8fdd8d2ae6-us12"
 mailchiml_List_ID = "bda2a62002"
 mailchimp_username = "pradeep@techencephalon.com"
+is_scrape_delta = 1
+is_scrape_united = 1
+is_scrape_virgin_atlantic = 1
+is_scrape_jetblue = 1
+is_scrape_aa = 1
 
 def sendMail(from_email,to_email,subject,bodytext,html_content=None):
     
@@ -36,14 +41,7 @@ def sendMail(from_email,to_email,subject,bodytext,html_content=None):
     	resp = client.send(message)
     	print "resp",resp
     	return  "sent"
-    	'''
-            mailcontent = EmailMultiAlternatives(subject,bodytext,from_email,[to_email])
-        	if html_content:
-                mailcontent.attach_alternative(html_content, "text/html")
-            mailcontent.send()
-        	print "success"
-            return "sent"
-    	'''
+    	
     except:
         return "fail"
     
