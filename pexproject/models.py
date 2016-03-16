@@ -197,4 +197,11 @@ class BlogImages(models.Model):
     image_id = models.AutoField(primary_key=True)
     user_id = models.IntegerField()
     image_path = models.CharField(max_length=100)
+    
+class CityImages(models.Model):
+    city_image_id = models.AutoField(primary_key=True)
+    image_path = models.CharField(max_length=100)
+    city_name = models.CharField(max_length=512)
+    status = models.BooleanField(default=False)
+    last_updated = models.DateTimeField()
  

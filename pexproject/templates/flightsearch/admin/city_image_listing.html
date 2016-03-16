@@ -1,0 +1,141 @@
+<div class="page-container">
+		{% load staticfiles %}
+		{% load humanize %}
+		<title>Admin|Dashboard</title>
+		{% include "flightsearch/admin/admin-header.html" %}
+		
+			{% include "flightsearch/admin/admin-sidebar.html" %}
+		<div class="main-content">
+			<div class="row">
+
+		<!-- Profile Info and Notifications -->
+		<div class="col-md-6 col-sm-8 clearfix">
+
+			<ul class="user-info pull-left pull-none-xsm">
+
+				
+			</ul>
+
+
+		</div>
+
+		<!-- Raw Links -->
+			<div class="col-md-6 col-sm-4 clearfix hidden-xs">
+		{% if 'admin' in request.session %}
+				<ul class="list-inline links-list pull-right">
+		
+					
+		
+					
+					<li class="profile-info dropdown">
+					
+						<ul class="user-info pull-left pull-none-xsm">
+
+						<!-- Profile Info -->
+						<li class="profile-info dropdown">
+							<!-- add class "pull-right" if you want to place this from right -->
+						
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+							{{request.session.admin}}							<i class="entypo-down-open"></i>
+							</a>
+							<!--  
+							<ul class="dropdown-menu">
+								<li class="caret"></li>
+								<li><a href="/easy-detaxt/admin/manageprofile">
+										<i class="entypo-user"></i> Edit profile
+								</a></li>
+								<li><a href="/easy-detaxt/admin/changepassword">
+										<i class="entypo-user"></i> Change password
+								</a></li>
+
+							</ul>
+							-->
+						</li>
+						
+
+					</ul> 
+					</li>
+		
+					<li class="sep"></li>
+		
+					<li>
+						<a href="adminlogout">
+						Log out
+						<i class="entypo-logout right"></i>
+						</a>
+					</li>
+					
+				</ul>
+				{%endif%}
+		
+			</div>
+		
+		</div>
+
+<h3>City Image Listing</h3>
+{% if request.GET.msg %}
+<h3>{{request.GET.msg}}</h3>
+{%endif%}
+<br />
+<a href="manageCityImage?act=add" class="btn btn-primary mb10">
+	<i class="entypo-plus"></i>
+	Add Image
+</a>
+</br>
+</br>
+		
+<div class="table-responsive">
+		<table class="table table-bordered datatable" id="table-4">
+			<thead>
+				<tr class="text-center">
+						<th class="text-center">City Image</th>
+						<th class="text-center">City</th>
+						<th class="text-center">Last Updated</th>
+						<th class="text-center">Status</th>
+						<th class="text-center">Action</th>
+						
+					</tr>
+			</thead>
+			<tbody>
+				{%if city_image_list %}
+						{%for obj in city_image_list %}
+						<tr style="height:100px;" class="text-center">
+							<td>{% if obj.image_path %}<img src="{{obj.image_path}}" style="width:60px; height:60px;" />{%endif%}</td>
+							<td>{{obj.city_name|title}}</td>
+							<td>{{obj.last_updated}}</td>
+							<td>{% if obj.status == True%}Active {%else%}Inactive{%endif%}</td>
+							<td><a href="manageCityImage?cityimageid={{obj.city_image_id}}&act=edit" class="btn btn-default btn-sm btn-icon icon-left"><i class="entypo-pencil"></i>Edit</a>
+							     
+							
+						</a>
+							
+							</td>
+						</tr>
+						{%endfor%}
+						{%endif%}
+			</tbody>
+			
+		</table>
+</div>
+		
+		<script type="text/javascript">
+			jQuery(document).ready(function($)
+			{
+				var table = $("#table-4").dataTable({
+					"sPaginationType": "bootstrap",
+					//"sDom": "<'row'<'col-xs-6 col-left'l><'col-xs-6 col-right'<'export-data'T>f>r>t<'row'<'col-xs-6 col-left'i><'col-xs-6 col-right'p>>",
+					"oTableTools": {
+					},
+					
+				});
+			});
+			
+		</script>
+		
+	</div>
+	</div>	
+			 
+			
+	
+	</body>
+</html>

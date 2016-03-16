@@ -21,7 +21,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.context_processors import csrf
 from django.views.decorators.csrf import requires_csrf_token
 from pexproject.models import Flightdata, Airports, Searchkey, User,Pages, Contactus,Adminuser,EmailTemplate,GoogleAd
-from pexproject.models import Blogs,BlogImages
+from pexproject.models import Blogs,BlogImages,CityImages
 from pexproject.templatetags.customfilter import floatadd, assign
 from social_auth.models import UserSocialAuth
 from django.contrib.auth import login as social_login,authenticate,get_user
@@ -88,6 +88,7 @@ def adminlogout(request):
         del request.session['admin']  
     return HttpResponseRedirect(reverse('Admin'))
 
+
 def pages(request):
     pagelist = Pages.objects.filter()
     return render_to_response('flightsearch/admin/pages.html',{'pagelist':pagelist}, context_instance=RequestContext(request))
@@ -117,10 +118,49 @@ def emailTemplate(request):
     else:
         return HttpResponseRedirect(reverse('/Admin'))
 
+def cityimages(request):
+    context = {}
+    if 'admin' in request.session:
+        city_image_list = CityImages.objects.filter()
+        return  render_to_response('flightsearch/admin/city_image_listing.html',{'city_image_list':city_image_list}, context_instance=RequestContext(request))
+
+def manageCityImage(request):
+    context = {}
+    cityimage = ''
+    citylist = Airports.objects.filter()
+    currentdatetime = datetime.datetime.now()
+    curr_time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
+    if 'cityimageid' in request.GET:
+        imageid = request.GET['cityimageid']
+        cityimage = CityImages.objects.get(pk = imageid)
+    if request.POST :
+        print "test"
+        cityimage = CityImages()
+        if 'img_path' in request.POST:
+            cityimage.image_path = request.POST['img_path']
+        if 'cityname' in request.POST:
+            cityimage.city_name = request.POST['cityname']
+        if 'status' in request.POST:
+            cityimage.status = request.POST['status']
+        cityimage.last_updated = str(curr_time) 
+        page = ''
+        if 'imageid' in request.POST:
+            cityimage.city_image_id = request.POST['imageid']
+            page = '/Admin/cityimages?msg=Record Updated Successfully'
+            
+        else:
+            page = '/Admin/cityimages?msg=Record Added Successfully'
+            
+        cityimage.save()
+        return HttpResponseRedirect(page)
+       
+    return render_to_response('flightsearch/admin/managecityimage.html',{'cityimage':cityimage,'citylist':citylist}, context_instance=RequestContext(request))
+        
+    
 def adimage(request):
     context = {}
     image_list = GoogleAd.objects.filter()
-    return  render_to_response('flightsearch/admin/ad_image.html',{'imagelist':image_list}, context_instance=RequestContext(request))
+    return  render_to_response('flightsearch/admin/ad_image.html',{'cityimage':cityimage}, context_instance=RequestContext(request))
 
 def manage_adimage(request):
     context = {}
@@ -187,7 +227,7 @@ def bloglist(request):
 @csrf_exempt
 def manageblogImage(request):
     if 'userid' in request.POST:
-	print request.REQUEST['userid']
+        print request.REQUEST['userid']
     for file in request.FILES.getlist('upload'):        
         t = time.time()
         if '.' in str(t):
