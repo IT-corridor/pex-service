@@ -367,14 +367,10 @@ def index(request):
 
     ''' Fetch recent results'''
     searches = []
-    tempdest = []
-    recent_searches = Searchkey.objects.raw("select ps.searchid,ps.destination,ps.destination as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from pexproject_flightdata as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from pexproject_flightdata as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin)  as pfs1 on pfs1.searchkeyid = ps.searchid group by final_dest order by ps.scrapetime desc limit 10")
-    #print recent_searches.query
+    recent_searches = Searchkey.objects.raw("select ps.searchid,ps.destination,ps.destination_city as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from pexproject_flightdata as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from pexproject_flightdata as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin)  as pfs1 on pfs1.searchkeyid = ps.searchid group by final_dest order by ps.scrapetime desc limit 10")
     for s in recent_searches:
-    	dest = s.final_dest.split('(')
-        if dest[0] not in tempdest:
-            tempdest.append(dest[0])
-            searches.append({'final_dest':dest[0],'maintax':s.maintax,'searchkeyid':s.searchid,'maincabin':s.maincabin})  
+        if s.final_dest:
+            searches.append({'final_dest':s.final_dest,'maintax':s.maintax,'searchkeyid':s.searchid,'maincabin':s.maincabin})  
     if request.is_ajax() and 'pexdeals' in request.REQUEST:
         request.session['pexdeal'] = request.REQUEST['pexdeals']
         mimetype = 'application/json'
@@ -408,13 +404,11 @@ def flights(request):
     mc = ''
     objects = ''
     searches = []
-    tempdest = []
-    recent_searches = Searchkey.objects.raw("select ps.searchid,ps.destination,ps.destination as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from pexproject_flightdata as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from pexproject_flightdata as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin)  as pfs1 on pfs1.searchkeyid = ps.searchid group by final_dest order by ps.scrapetime desc limit 10")
+    recent_searches = Searchkey.objects.raw("select ps.searchid,ps.destination,ps.destination_city as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from pexproject_flightdata as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from pexproject_flightdata as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin)  as pfs1 on pfs1.searchkeyid = ps.searchid group by final_dest order by ps.scrapetime desc limit 10")
+    #print recent_searches.query
     for s in recent_searches:
-        dest = s.final_dest.split('(')
-        if dest[0] not in tempdest:
-            tempdest.append(dest[0])
-            searches.append({'final_dest':dest[0],'maintax':s.maintax,'searchkeyid':s.searchid,'maincabin':s.maincabin})  
+        if s.final_dest:
+            searches.append({'final_dest':s.final_dest,'maintax':s.maintax,'searchkeyid':s.searchid,'maincabin':s.maincabin})  
     if 'action' in request.GET:
         mc = request.GET.get('action','')
     if 'multicitykeys' in request.GET:
@@ -906,14 +900,14 @@ def search(request):
                     for retkey in returnobj:
                          returnkey = retkey.searchid
                 else:
-                    searchdata = Searchkey(source=destination1, destination=origin, traveldate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid)
+                    searchdata = Searchkey(source=destination1, destination=origin, destination_city=etihadorigin,traveldate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid)
                     searchdata.save()
                     returnkey = searchdata.searchid
                     if is_scrape_jetblue == 1:
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/jetblue.py",destcode, orgncode, str(returndate), str(returnkey)])
                     if is_scrape_delta == 1:
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/delta.py",destcode, orgncode, str(date1), str(returndate), str(returnkey),etihaddest,etihadorigin,cabin])
-                    if is_scrape_united:
+                    if is_scrape_united == 1:
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",destcode, orgncode, str(returndate), str(returnkey)])
                     if is_scrape_aa == 1:
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aa.py",destcode, orgncode, str(returndate), str(returnkey)])
@@ -925,9 +919,9 @@ def search(request):
                     searchkeyid = keyid.searchid
             else:
                 if dt1:
-                    searchdata = Searchkey(source=origin, destination=destination1, traveldate=dt, returndate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid) 
+                    searchdata = Searchkey(source=origin, destination=destination1,destination_city=etihaddest, traveldate=dt, returndate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid) 
                 else:
-                    searchdata = Searchkey(source=origin, destination=destination1, traveldate=dt, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid)
+                    searchdata = Searchkey(source=origin, destination=destination1,destination_city=etihaddest, traveldate=dt, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid)
                 searchdata.save()
                 searchkeyid = searchdata.searchid 
                 cursor = connection.cursor()
@@ -941,12 +935,12 @@ def search(request):
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aa.py",orgncode,destcode,str(depart),str(searchkeyid)])
                 returnkey = ''
                 if returndate:
-                    retunobj = Searchkey.objects.filter(source=destination1, destination=origin, traveldate=searchdate1, scrapetime__gte=time1)
+                    retunobj = Searchkey.objects.filter(source=destination1, destination=origin, destination_city=etihadorigin, traveldate=searchdate1, scrapetime__gte=time1)
                     if len(retunobj) > 0:
                         for keyid in retunobj:
                             returnkey = keyid.searchid
                     else:
-                        searchdata = Searchkey(source=destination1, destination=origin, traveldate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid)
+                        searchdata = Searchkey(source=destination1, destination=origin, destination_city=etihadorigin, traveldate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid)
                         searchdata.save()
                         returnkey = searchdata.searchid
                         if is_scrape_jetblue == 1:

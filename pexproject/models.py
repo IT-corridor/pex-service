@@ -70,6 +70,7 @@ class Searchkey(models.Model):
     searchid = models.AutoField(primary_key=True)
     source = models.CharField(max_length=50)
     destination = models.CharField(max_length=50)
+    destination_city = models.CharField(max_length=512)
     traveldate = models.DateField(max_length=50)
     returndate = models.DateField(null=True)
     scrapetime = models.DateTimeField(max_length=50)
