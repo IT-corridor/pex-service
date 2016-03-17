@@ -118,6 +118,29 @@ def emailTemplate(request):
     else:
         return HttpResponseRedirect(reverse('/Admin'))
 
+def get_cityname(request):
+    print "test"
+    if request.is_ajax():
+        q = request.GET.get('term', '')
+        airport = Airports.objects.filter(Q(code__istartswith=q)).order_by('code','cityName')[:20]    
+        if len(list(airport)) < 1:
+            airport = Airports.objects.filter(Q(cityName__istartswith=q)|Q(name__istartswith=q)).order_by('code','cityName')[:20]
+        results = []
+        airportcode = []
+        for airportdata in airport:
+            if airportdata.code not in airportcode:
+                airportcode.append(airportdata.code)
+                airport_json = {}
+                airport_json['id'] = airportdata.airport_id
+                airport_json['label'] = airportdata.cityName + ", " + airportdata.name + ", " + airportdata.countryCode + "  (" + airportdata.code + " )"
+                airport_json['value'] = airportdata.cityName + " (" + airportdata.code + ")"
+                results.append(airport_json)
+        data = json.dumps(results)
+    else:
+        data = 'fail'
+    mimetype = 'application/json'
+    return HttpResponse(data, mimetype)
+
 def cityimages(request):
     context = {}
     if 'admin' in request.session:
@@ -160,7 +183,7 @@ def manageCityImage(request):
 def adimage(request):
     context = {}
     image_list = GoogleAd.objects.filter()
-    return  render_to_response('flightsearch/admin/ad_image.html',{'cityimage':cityimage}, context_instance=RequestContext(request))
+    return  render_to_response('flightsearch/admin/ad_image.html',{'imagelist':image_list}, context_instance=RequestContext(request))
 
 def manage_adimage(request):
     context = {}
@@ -344,13 +367,14 @@ def index(request):
 
     ''' Fetch recent results'''
     searches = []
-    recent_searches = Searchkey.objects.raw("select p1.*,p2.scrapetime,p2.searchid,p2.destination as final_dest, (min(if(p1.maincabin > 0,p1.maincabin,NULL))) as maincabin from pexproject_flightdata p1 inner join pexproject_searchkey p2 on p2.searchid = p1.searchkeyid where p1.origin != 'flag' group by p2.searchid, final_dest order by p2.scrapetime desc limit 8")
+    tempdest = []
+    recent_searches = Searchkey.objects.raw("select ps.searchid,ps.destination,ps.destination as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from pexproject_flightdata as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from pexproject_flightdata as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin)  as pfs1 on pfs1.searchkeyid = ps.searchid group by final_dest order by ps.scrapetime desc limit 10")
     #print recent_searches.query
     for s in recent_searches:
     	dest = s.final_dest.split('(')
-	#print dest
-        if dest[0] not in searches:
-    	   searches.append({'final_dest':dest[0],'maintax':s.maintax,'searchkeyid':s.searchkeyid,'maincabin':s.maincabin})  
+        if dest[0] not in tempdest:
+            tempdest.append(dest[0])
+            searches.append({'final_dest':dest[0],'maintax':s.maintax,'searchkeyid':s.searchid,'maincabin':s.maincabin})  
     if request.is_ajax() and 'pexdeals' in request.REQUEST:
         request.session['pexdeal'] = request.REQUEST['pexdeals']
         mimetype = 'application/json'
@@ -384,12 +408,13 @@ def flights(request):
     mc = ''
     objects = ''
     searches = []
-    recent_searches = Searchkey.objects.raw("select p1.*,p2.scrapetime,p2.searchid,p2.destination as final_dest, (min(if(p1.maincabin > 0,p1.maincabin,NULL))) as maincabin from pexproject_flightdata p1 inner join pexproject_searchkey p2 on p2.searchid = p1.searchkeyid where p1.origin != 'flag' group by p2.searchid, final_dest order by p2.scrapetime desc limit 8")
-
+    tempdest = []
+    recent_searches = Searchkey.objects.raw("select ps.searchid,ps.destination,ps.destination as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from pexproject_flightdata as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from pexproject_flightdata as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin)  as pfs1 on pfs1.searchkeyid = ps.searchid group by final_dest order by ps.scrapetime desc limit 10")
     for s in recent_searches:
-    	dest = s.final_dest.split('(')
-        if dest[0] not in searches:
-    	   searches.append({'final_dest':dest[0],'maintax':s.maintax,'searchkeyid':s.searchkeyid,'maincabin':s.maincabin})  
+        dest = s.final_dest.split('(')
+        if dest[0] not in tempdest:
+            tempdest.append(dest[0])
+            searches.append({'final_dest':dest[0],'maintax':s.maintax,'searchkeyid':s.searchid,'maincabin':s.maincabin})  
     if 'action' in request.GET:
         mc = request.GET.get('action','')
     if 'multicitykeys' in request.GET:
