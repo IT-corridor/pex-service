@@ -119,7 +119,6 @@ def emailTemplate(request):
         return HttpResponseRedirect(reverse('/Admin'))
 
 def get_cityname(request):
-    print "test"
     if request.is_ajax():
         q = request.GET.get('term', '')
         airport = Airports.objects.filter(Q(code__istartswith=q)).order_by('code','cityName')[:20]    
@@ -133,7 +132,7 @@ def get_cityname(request):
                 airport_json = {}
                 airport_json['id'] = airportdata.airport_id
                 airport_json['label'] = airportdata.cityName + ", " + airportdata.name + ", " + airportdata.countryCode + "  (" + airportdata.code + " )"
-                airport_json['value'] = airportdata.cityName + " (" + airportdata.code + ")"
+                airport_json['value'] = airportdata.cityName
                 results.append(airport_json)
         data = json.dumps(results)
     else:
@@ -367,10 +366,16 @@ def index(request):
 
     ''' Fetch recent results'''
     searches = []
+    img_path =''
     recent_searches = Searchkey.objects.raw("select ps.searchid,ps.destination,ps.destination_city as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from pexproject_flightdata as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from pexproject_flightdata as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin)  as pfs1 on pfs1.searchkeyid = ps.searchid group by final_dest order by ps.scrapetime desc limit 10")
     for s in recent_searches:
         if s.final_dest:
-            searches.append({'final_dest':s.final_dest,'maintax':s.maintax,'searchkeyid':s.searchid,'maincabin':s.maincabin})  
+            try:
+                cityobj = CityImages.objects.get(city_name=s.final_dest)
+                img_path = cityobj.image_path
+            except:
+                img_path = ''
+            searches.append({'final_dest':s.final_dest,'maintax':s.maintax,'searchkeyid':s.searchid,'maincabin':s.maincabin,'image_path':img_path})  
     if request.is_ajax() and 'pexdeals' in request.REQUEST:
         request.session['pexdeal'] = request.REQUEST['pexdeals']
         mimetype = 'application/json'
@@ -380,7 +385,7 @@ def index(request):
     if request.user.username:
     	username = request.user.username
         if request.user.user_id:
-    	       request.session['userid']= request.user.user_id
+            request.session['userid']= request.user.user_id
     	user1 = User.objects.get(username=username)
         fname=''
         lname=''
@@ -406,9 +411,16 @@ def flights(request):
     searches = []
     recent_searches = Searchkey.objects.raw("select ps.searchid,ps.destination,ps.destination_city as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from pexproject_flightdata as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from pexproject_flightdata as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin)  as pfs1 on pfs1.searchkeyid = ps.searchid group by final_dest order by ps.scrapetime desc limit 10")
     #print recent_searches.query
+    img_path =''
+    recent_searches = Searchkey.objects.raw("select ps.searchid,ps.destination,ps.destination_city as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from pexproject_flightdata as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from pexproject_flightdata as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin)  as pfs1 on pfs1.searchkeyid = ps.searchid group by final_dest order by ps.scrapetime desc limit 10")
     for s in recent_searches:
         if s.final_dest:
-            searches.append({'final_dest':s.final_dest,'maintax':s.maintax,'searchkeyid':s.searchid,'maincabin':s.maincabin})  
+            try:
+                cityobj = CityImages.objects.get(city_name=s.final_dest)
+                img_path = cityobj.image_path
+            except:
+                img_path = ''
+            searches.append({'final_dest':s.final_dest,'maintax':s.maintax,'searchkeyid':s.searchid,'maincabin':s.maincabin,'image_path':img_path})  
     if 'action' in request.GET:
         mc = request.GET.get('action','')
     if 'multicitykeys' in request.GET:
