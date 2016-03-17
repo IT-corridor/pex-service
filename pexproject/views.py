@@ -176,7 +176,7 @@ def manageCityImage(request):
         cityimage.save()
         return HttpResponseRedirect(page)
        
-    return render_to_response('flightsearch/admin/managecityimage.html',{'cityimage':cityimage,'citylist':citylist}, context_instance=RequestContext(request))
+    return render_to_response('flightsearch/admin/manage_cityimage.html',{'cityimage':cityimage,'citylist':citylist}, context_instance=RequestContext(request))
         
     
 def adimage(request):
