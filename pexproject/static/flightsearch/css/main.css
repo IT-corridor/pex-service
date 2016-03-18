@@ -1221,17 +1221,22 @@ border:0px solid;
 	padding:5px;
 	overflow:hidden;
 }
-.add-pic  img
+.add-pic>a>span
 {
 	!height:100%;
 	width:100%;
-
+	display: inline-block;
 }
-.sngl  img
+.sngl>a>span
 {
 
 	    height: 382px;
 
+}
+.sngl>a>span>img {
+	    width: 100%;
+    height: auto;
+	max-width:100%;
 }
 .form-contact
 {
@@ -1285,10 +1290,15 @@ overflow:hidden;
 	display: inline-block;
     float: left;
 }
-.doble-img img{
+.doble-img a>span{
  height:186px;
 }
-.single-g img
+.doble-img a>span>img {
+ max-width:100%;
+ !width:100%;
+ !height:auto;
+}
+.single-g a>span
 {
     height: 187px;
 	!overflow:hidden;
