@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!usr/bin/env python
 import os, sys
 import hashlib
 from django.shortcuts import render
@@ -176,7 +176,7 @@ def manageCityImage(request):
         cityimage.save()
         return HttpResponseRedirect(page)
        
-    return render_to_response('flightsearch/admin/manage_cityimage.html',{'cityimage':cityimage,'citylist':citylist}, context_instance=RequestContext(request))
+    return render_to_response('flightsearch/admin/manage_city_image.html',{'cityimage':cityimage,'citylist':citylist}, context_instance=RequestContext(request))
         
     
 def adimage(request):
@@ -367,12 +367,14 @@ def index(request):
     ''' Fetch recent results'''
     searches = []
     img_path =''
-    recent_searches = Searchkey.objects.raw("select ps.searchid,ps.destination,ps.destination_city as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from pexproject_flightdata as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from pexproject_flightdata as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin)  as pfs1 on pfs1.searchkeyid = ps.searchid group by final_dest order by ps.scrapetime desc limit 10")
+    recent_searches = Searchkey.objects.raw("select ps.searchid,ps.destination,ps.destination_city as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from pexproject_flightdata as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from pexproject_flightdata as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin)  as pfs1 on pfs1.searchkeyid = ps.searchid group by ps.searchid, final_dest order by ps.scrapetime desc limit 8")
     for s in recent_searches:
+	print s.final_dest
         if s.final_dest:
             try:
-                cityobj = CityImages.objects.get(city_name=s.final_dest)
-                img_path = cityobj.image_path
+		
+                cityobj = CityImages.objects.filter(city_name=s.final_dest,status=1)[:1]
+                img_path = cityobj[0].image_path
             except:
                 img_path = ''
             searches.append({'final_dest':s.final_dest,'maintax':s.maintax,'searchkeyid':s.searchid,'maincabin':s.maincabin,'image_path':img_path})  
@@ -409,15 +411,14 @@ def flights(request):
     mc = ''
     objects = ''
     searches = []
-    recent_searches = Searchkey.objects.raw("select ps.searchid,ps.destination,ps.destination_city as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from pexproject_flightdata as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from pexproject_flightdata as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin)  as pfs1 on pfs1.searchkeyid = ps.searchid group by final_dest order by ps.scrapetime desc limit 10")
-    #print recent_searches.query
     img_path =''
-    recent_searches = Searchkey.objects.raw("select ps.searchid,ps.destination,ps.destination_city as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from pexproject_flightdata as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from pexproject_flightdata as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin)  as pfs1 on pfs1.searchkeyid = ps.searchid group by final_dest order by ps.scrapetime desc limit 10")
+    recent_searches = Searchkey.objects.raw("select ps.searchid,ps.destination,ps.destination_city as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from pexproject_flightdata as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from pexproject_flightdata as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin)  as pfs1 on pfs1.searchkeyid = ps.searchid group by ps.searchid, final_dest order by ps.scrapetime desc limit 8")
     for s in recent_searches:
         if s.final_dest:
             try:
-                cityobj = CityImages.objects.get(city_name=s.final_dest)
-                img_path = cityobj.image_path
+                cityobj = CityImages.objects.filter(city_name=s.final_dest,status=1)[:1]
+                img_path = cityobj[0].image_path
+
             except:
                 img_path = ''
             searches.append({'final_dest':s.final_dest,'maintax':s.maintax,'searchkeyid':s.searchid,'maincabin':s.maincabin,'image_path':img_path})  
