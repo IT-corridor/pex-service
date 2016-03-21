@@ -19,8 +19,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from django.db import connection, transaction
 from multiprocessing import Process
 import threading
+import customfunction
 import Queue
-from pyvirtualdisplay import Display
+#from pyvirtualdisplay import Display
 import socket
 import urllib
 
@@ -28,12 +29,13 @@ import urllib
 def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
     #return searchkey
     print origin,dest, searchdate,returndate, searchkey,returnkey
+    '''
     db = MySQLdb.connect(host="localhost", 
                      user="root",           
-                      passwd="1jyT382PWzYP",      
-                      db="pex")
+                      passwd="root",      
+                      db="pex")'''
+    db = customfunction.dbconnection()
     cursor = db.cursor()
-
     #cursor = connection.cursor()
     dt = datetime.datetime.strptime(searchdate, '%Y/%m/%d')
     date = dt.strftime('%d/%m/%Y')
@@ -46,13 +48,15 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
         url = "http://www.virgin-atlantic.com/us/en/book-your-travel/book-your-flight/flight-search-results.html?departure="+origin+"&arrival="+dest+"&adult=1&departureDate="+str(date)+"&search_type=redeemMiles&classType=10&classTypeReturn=10&bookingPanelLocation=Undefined&isreturn=yes&returnDate="+str(retdate)
     else:
         url = "http://www.virgin-atlantic.com/us/en/book-your-travel/book-your-flight/flight-search-results.html?departure="+origin+"&arrival="+dest+"&adult=1&departureDate="+str(date)+"&search_type=redeemMiles&classType=10&classTypeReturn=10&bookingPanelLocation=BookYourFlight&isreturn=no"
-    display = Display(visible=0, size=(800, 600))
-    display.start()
-    driver = webdriver.Chrome()
+    #display = Display(visible=0, size=(800, 600))
+    #display.start()
+    #driver = webdriver.Chrome()
+    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
+    driver.set_window_size(1120, 1080)
     driver.get(url)
     # normalLayout
-    driver.implicitly_wait(20)
-    
+    #driver.implicitly_wait(20)
+    time.sleep(2)
     html_page = driver.page_source
     
     soup = BeautifulSoup(html_page)
@@ -64,7 +68,7 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
                 if tbody.findAll("tr",{"class":"indirectRoute "}):
                     trbody = tbody.findAll("tr",{"class":"indirectRoute "})
         except:
-            display.stop()
+            #display.stop()
             driver.quit()
             return keyid
         for row in trbody:
@@ -319,7 +323,7 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
         virgindata(tbody[0],searchkey)
     if len(tbody)> 1 :
         virgindata(tbody[1],returnkey)
-    display.stop()                                                                                                                                  
+    #display.stop()                                                                                                                                  
     driver.quit()
     return searchkey
 
