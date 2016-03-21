@@ -7,7 +7,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import mechanize
 import urllib
 import time
 import MySQLdb
@@ -16,17 +15,19 @@ import datetime
 from datetime import timedelta
 from selenium.webdriver.support.ui import Select
 import re
+import customfunction
 from pyvirtualdisplay import Display
 
 def scrapeFlight(page_contents,searchid):
     '''
     db = MySQLdb.connect(host="localhost",  
-                     user="root",          
-                      passwd="1jyT382PWzYP",       
-                      db="pex")
+                     user="pex",          
+                      passwd="pex@1234",       
+                      db="pex")'''
+    db = customfunction.dbconnection()
     cursor = db.cursor()
-    '''
-    cursor = connection.cursor()
+    
+    #cursor = connection.cursor()
     currentdatetime = datetime.datetime.now()
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     flightcontainer = page_contents.findAll("div",{"class":"aa_flightListContainer"})
@@ -184,9 +185,12 @@ if __name__=='__main__':
     
     display = Display(visible=0, size=(800, 600))
     display.start()
+    '''
     chromedriver = "/usr/bin/chromedriver"
     os.environ["webdriver.chrome.driver"] = chromedriver
-    driver = webdriver.Chrome(chromedriver)
+    driver = webdriver.Chrome(chromedriver)'''
+    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
+    driver.set_window_size(1120, 1080)
     
     #driver = webdriver.Chrome()
     driver.get(url)
@@ -201,10 +205,12 @@ if __name__=='__main__':
 
     # oneway  = driver.find_element_by_id("flightSearchForm.tripType.oneWay")
     oneway = driver.find_element_by_id("awardFlightSearchForm.tripType.oneWay")
-    driver.execute_script("arguments[0].click();", oneway);
+    oneway.click()
+    #driver.execute_script("arguments[0].click();", oneway);
 
     exactdate = driver.find_element_by_id("awardFlightSearchForm.datesFlexible.false")
-    driver.execute_script("arguments[0].click();", exactdate);
+    exactdate.click()
+    #driver.execute_script("arguments[0].click();", exactdate);
 
 
 
@@ -230,10 +236,11 @@ if __name__=='__main__':
         print "No flights found on american airlines"
         display.stop()
         driver.quit()
-        return searchid
+	exit()
+        #return searchid
         
         
-    time.sleep(2)
+    time.sleep(1)
     html_page = driver.page_source
     pagecontent = BeautifulSoup(html_page)
     datadiv = pagecontent.find("div",{"id":"selectedPanel"})
@@ -248,8 +255,9 @@ if __name__=='__main__':
         if "NotAvailable" not in is_available:
             cabin = link['href']
             cabin_ele = driver.find_element_by_xpath("//a[@href='" +cabin+ "']")
-            driver.execute_script("arguments[0].click();", cabin_ele)
-            time.sleep(2)
+	    cabin_ele.click()
+            #driver.execute_script("arguments[0].click();", cabin_ele)
+            time.sleep(1)
             html_page = driver.page_source
             pagecontent = BeautifulSoup(html_page)
             flightblock = pagecontent.find("div",{"id":"flightListBox"})
@@ -267,14 +275,14 @@ if __name__=='__main__':
                     pageObj.click()
                     time.sleep(1)
                     html_page1 = driver.page_source
-                    html = BeautifulSoup(html_page)
+                    html = BeautifulSoup(html_page1)
                     data_container = html.find("div",{"id":"flightListContainer"})
                     scrapeFlight(data_container,searchid)
                     #print "++++++++++++++++++"+link_text+"+++++++++++++++++++++++++++++++++++"
                 page1_Obj = driver.find_element_by_link_text("Page 1")
-                print "page1_Obj", page1_Obj
-                driver.execute_script("arguments[0].click();", page1_Obj);
+		page1_Obj.click()
+                #driver.execute_script("arguments[0].click();", page1_Obj);
                 
     driver.quit()
     display.stop()
-    return searchid
+    #return searchid
