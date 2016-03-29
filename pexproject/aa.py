@@ -19,15 +19,9 @@ import customfunction
 from pyvirtualdisplay import Display
 
 def scrapeFlight(page_contents,searchid):
-    '''
-    db = MySQLdb.connect(host="localhost",  
-                     user="pex",          
-                      passwd="pex@1234",       
-                      db="pex")'''
     db = customfunction.dbconnection()
     cursor = db.cursor()
     
-    #cursor = connection.cursor()
     currentdatetime = datetime.datetime.now()
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     flightcontainer = page_contents.findAll("div",{"class":"aa_flightListContainer"})
@@ -170,9 +164,6 @@ def scrapeFlight(page_contents,searchid):
 if __name__=='__main__':
     
     searchid = sys.argv[4]
-    
-    
-    
     dt = datetime.datetime.strptime(sys.argv[3], '%Y/%m/%d')
     date = dt.strftime('%m/%d/%Y')
     selectdate = dt.strftime('X%m-X%d-%Y').replace('X0','X').replace('X','')
@@ -180,24 +171,35 @@ if __name__=='__main__':
     day = dt.strftime("X%d").replace('X0','X').replace('X','')
     year = dt.strftime("%Y")
 
-    print month,day,year
-    url = "https://www.aa.com/reservation/awardFlightSearchAccess.do"
     
+    url = "https://www.aa.com/reservation/awardFlightSearchAccess.do"
+   
     display = Display(visible=0, size=(800, 600))
     display.start()
-    '''
+    '''  
     chromedriver = "/usr/bin/chromedriver"
     os.environ["webdriver.chrome.driver"] = chromedriver
-    driver = webdriver.Chrome(chromedriver)'''
+    driver = webdriver.Chrome(chromedriver)
+    '''
     driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
     driver.set_window_size(1120, 1080)
-    
     #driver = webdriver.Chrome()
     driver.get(url)
     driver.implicitly_wait(5)
+    time.sleep(5)
+    print "url called"
+    #time.sleep(20)
+    #WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "awardFlightSearchForm.originAirport")))
+        
+    #origin  = driver.find_element_by_name("originAirport")
+    html_page = driver.page_source
+    pagecontent = BeautifulSoup(html_page)
+    print pagecontent
     origin  = driver.find_element_by_id("awardFlightSearchForm.originAirport")
+    print "origin",origin
     origin.clear()
     origin.send_keys(sys.argv[1]) 
+    print origin.get_attribute('value')
     destination = driver.find_element_by_id("awardFlightSearchForm.destinationAirport")
 
     destination.send_keys(sys.argv[2])

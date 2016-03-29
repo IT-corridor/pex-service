@@ -33,7 +33,6 @@ import urllib
 
 def delta(orgn, dest, searchdate, searchkey):
     #return searchkey
-    
     db = MySQLdb.connect(host="localhost",  
                      user="root",           
                       passwd="1jyT382PWzYP",        
@@ -107,7 +106,7 @@ def delta(orgn, dest, searchdate, searchkey):
     html_page = driver.page_source
     soup = BeautifulSoup(html_page)
     pricehead = soup.find("tr",{"class":"tblHeadUp"})
-    pricecol = pricehead.findAll("label",{"class":"tblHeadBigtext"})
+    pricecol = pricehead.findAll("label",{"class":["nextGenHiddenFieldWindow","tblHeadBigtext"]})
     datatable = soup.findAll("table", {"class":"fareDetails"})
     
     
@@ -137,7 +136,7 @@ def delta(orgn, dest, searchdate, searchkey):
     htmlpage = driver.page_source
     soup2 = BeautifulSoup(htmlpage)
     cabin_ele = driver.find_elements_by_xpath("//*[@class='miscCabin']")
-    print "cabin_ele",cabin_ele
+    #print "cabin_ele",cabin_ele
     for content in datatable:
         #if soup2:
         #time.sleep(0.06)
@@ -290,10 +289,10 @@ def delta(orgn, dest, searchdate, searchkey):
                         hover_string = soup.find("tr",{"class","cabinClass_fly_bodyWrap"})
                         alltd = hover_string.findAll("td",{"class":"subheaderMsg"})
                         for tdtext in alltd:
-                            print "flt no ",tdtext.find("div",{"class":"cabinContainerLeft"}).text
+                            #print "flt no ",tdtext.find("div",{"class":"cabinContainerLeft"}).text
                             fare_class = tdtext.find("div",{"class":"cabinContainerRight"}).text
                             efare_class.append(fare_class)
-                        
+			    fare_flag = fare_flag+1                        
                         
                         
                         cabintype1 = cabintype1.replace('Multiple Cabins', 'Economy')
@@ -313,9 +312,9 @@ def delta(orgn, dest, searchdate, searchkey):
                        
                 if business.findAll("div", {"class":"frmTxtHldr flightCabinClass"}):
                     cabintype2 = business.find("div", {"class":"frmTxtHldr flightCabinClass"}).text
-                    print "cabintype2" ,cabintype2
+                    #print "cabintype2" ,cabintype2
                     if 'Multiple Cabins' in cabintype2:
-                        print "fare_flag",fare_flag
+                        #print "fare_flag",fare_flag
                         hover = ActionChains(driver).move_to_element(cabin_ele[fare_flag])
                         hover.perform()
                         #get_html  = ele.get_attribute("innerHTML")
@@ -339,15 +338,15 @@ def delta(orgn, dest, searchdate, searchkey):
                 cabintype2 = ''
                 if alltd:
                     for tdtext in alltd:
-                        print "flt no ",tdtext.find("div",{"class":"cabinContainerLeft"}).text
+                        #print "flt no ",tdtext.find("div",{"class":"cabinContainerLeft"}).text
                         fare_class = tdtext.find("div",{"class":"cabinContainerRight"}).text
                         ffare_class.append(fare_class)
-                        print "--------------------------- ----------------------------------------"
+                        #print "--------------------------- ----------------------------------------"
             else:
                 cabintype2 = "Business"
                 if alltd:
                     for tdtext in alltd:
-                        print "flt no ",tdtext.find("div",{"class":"cabinContainerLeft"}).text
+                        #print "flt no ",tdtext.find("div",{"class":"cabinContainerLeft"}).text
                         fare_class = tdtext.find("div",{"class":"cabinContainerRight"}).text
                         bfare_class.append(fare_class)
 
@@ -406,6 +405,9 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     os.environ["webdriver.chrome.driver"] = chromedriver
     driver = webdriver.Chrome(chromedriver)
     driver = webdriver.Chrome()
+    '''
+    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
+    driver.set_window_size(1120, 550)'''
     driver.get(url)
     time.sleep(3)
     try:
@@ -432,10 +434,12 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     to.send_keys(Keys.TAB)
     
     oneway = driver.find_element_by_id("frm_oneWayFlight")
-    driver.execute_script("arguments[0].click();", oneway)
+    oneway.click()
+    #driver.execute_script("arguments[0].click();", oneway)
     
     search_cabin1 = driver.find_element_by_id(search_cabin)
-    driver.execute_script("arguments[0].click();", search_cabin1)
+    search_cabin1.click()
+    #driver.execute_script("arguments[0].click();", search_cabin1)
     
     ddate = driver.find_element_by_id("frm_2012158061206151238")
     ddate.clear()
@@ -499,7 +503,7 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
             from_time = from_detail[1].text
 	    #print "from info", from_code,from_time
         else:
-            display.stop()
+            #display.stop()
             driver.quit()
             print "etihad has no data"
             cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "etihad", "flag", "flag", "flag", "flag"))
@@ -636,8 +640,8 @@ def threadcall():
 	t.join
 
 if __name__=='__main__':
-    #threadcall()
+    threadcall()
     date1 = datetime.datetime.strptime(sys.argv[3], '%m/%d/%Y')
     date = date1.strftime('%d/%m/%Y')
-    delta(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[5])
+    #delta(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[5])
     etihad(sys.argv[6],sys.argv[7],date,sys.argv[5],sys.argv[8])

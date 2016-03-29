@@ -29,7 +29,6 @@ def united(origin, destination, searchdate, searchkey):
     db = customfunction.dbconnection()
     cursor = db.cursor()
     url = "https://www.united.com/ual/en/us/flight-search/book-a-flight/results/awd?f=" + origin + "&t=" + destination + "&d=" + date + "&tt=1&at=1&sc=7&px=1&taxng=1&idx=1"
-    
     display = Display(visible=0, size=(800, 600))
     display.start()
     chromedriver = "/usr/bin/chromedriver"
@@ -39,7 +38,11 @@ def united(origin, destination, searchdate, searchkey):
     
     driver = webdriver.Chrome(chromedriver)
     
-
+    '''
+    driver=webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true', '--ssl-protocol=any'])
+    driver.set_window_size(1120, 550)
+    #driver = webdriver.Chrome("/usr/bin/chromedriver")
+    '''
     driver.get(url)
     time.sleep(2)
     try:
@@ -110,7 +113,6 @@ def united(origin, destination, searchdate, searchkey):
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "united", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
         db.commit()
         return searchkey
-
     html_page = driver.page_source
     soup = BeautifulSoup(html_page,"xml")
     maindata = soup.findAll("div",{"id":"interceptedResponse"})
@@ -183,7 +185,6 @@ def united(origin, destination, searchdate, searchkey):
         DestinationDateTime = flightDetails[i]["DestinationDateTime"]
         lastdestdatetime =  flightDetails[i]["LastDestinationDateTime"]
         #print "******** Extra Info *******************\n"
-
         
         FlightSegmentJson = flightDetails[i]["FlightSegmentJson"]
         segmentJsonObj = json.loads(FlightSegmentJson)
@@ -327,7 +328,7 @@ def united(origin, destination, searchdate, searchkey):
            firstFareCode = '@'.join(firtFareClassCode)
         
 
-        
+
         '''
         print "stoppage",stoppage
         print "totaltime",totaltime
@@ -361,11 +362,6 @@ def united(origin, destination, searchdate, searchkey):
     driver.quit()              
     return searchkey              
         
-    #maindata1 = soup.findAll("div",{"id":"interceptedResponse1"})
-    '''
-    maindata2 = soup.findAll("span",{"id":"interceptedResponse2"})
-    maindata3 = soup.findAll("span",{"id":"interceptedResponse3"})
-    '''
 
 if __name__=='__main__':
     print "in united"

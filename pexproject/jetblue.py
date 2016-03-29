@@ -30,8 +30,6 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
     to_airport = to_airport.strip()
     dt = datetime.datetime.strptime(searchdate, '%Y/%m/%d')
     date = dt.strftime('%d-%m-%Y')
-    #date  = dt.strftime('%m-%d-%Y')
-    
     
     db = MySQLdb.connect(host="localhost",  
                      user="root",          
@@ -39,17 +37,18 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                       db="pex")
     cursor = db.cursor()
     
-    #url = "https://www.jetblue.com/flights/#/"
     url = "https://book.jetblue.com/shop/search/#/book/from/"+from_airport+"/to/"+to_airport+"/depart/"+str(date)+"/return/false/pax/ADT-1/redemption/true/promo/false"
     #cursor = connection.cursor()
     currentdatetime = datetime.datetime.now()
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
-    display = Display(visible=0, size=(800, 600))
-    display.start()
-    chromedriver = "/usr/bin/chromedriver"
-    os.environ["webdriver.chrome.driver"] = chromedriver
-    driver = webdriver.Chrome(chromedriver)
+    #display = Display(visible=0, size=(800, 600))
+    #display.start()
+    #chromedriver = "/usr/bin/chromedriver"
+    #os.environ["webdriver.chrome.driver"] = chromedriver
+    #driver = webdriver.Chrome(chromedriver)
     #driver = webdriver.Chrome()
+    driver=webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true', '--ssl-protocol=any'])
+    driver.set_window_size(1120, 550)
     
     driver.get(url)
     driver.implicitly_wait(50)
@@ -57,13 +56,14 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
     try:
 	    
         milestype = driver.find_elements_by_xpath("//*[contains(text(), 'TrueBlue Points')]")
-        driver.execute_script("arguments[0].click();", milestype[0]);
+	milestype[0].click()
+        #driver.execute_script("arguments[0].click();", milestype[0]);
         driver.find_elements_by_css_selector("input[type='submit'][value='Find it']")[0].click()
         time.sleep(4)
         WebDriverWait(driver,10).until(EC.presence_of_element_located((By.ID, "AIR_SEARCH_RESULT_CONTEXT_ID0")))
     except:
         print "nodata on jetblue"
-        display.stop
+        #display.stop
         driver.quit()
 	cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "jetblue", "flag", "flag", "flag", "flag"))
         db.commit()
@@ -217,7 +217,6 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                         arivetime1 = (datetime.datetime.strptime(arivetime, '%I:%M %p'))
                         
                         arivetime2 = arivetime1.strftime('%H:%M')
-                        #print "arivetime2",arivetime2
                         if len(departdetails) > 0:
                             departtexts = '@'.join(departdetails)
                             arivetexts = '@'.join(arivedetails) 
@@ -231,28 +230,15 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                         print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
                     else:
                         if n < 2:
-                            #print "ogign stn=",orgncode
-                            #print "ogign time=",orgntime
                             depttime1 = (datetime.datetime.strptime(orgntime, '%I:%M %p'))
-                            #print "depttime1",depttime1
                             depttime2 = depttime1.strftime('%H:%M')
-                            #print "depttime2",depttime2
-                            
-                            #print "dest=",dest_code
-                            #print "desttime=",arivetime
                             arivetime1 = (datetime.datetime.strptime(arivetime, '%I:%M %p'))
-                            #print "arivetime1",arivetime1
                             arivetime2 = arivetime1.strftime('%H:%M')
-                            #print "arivetime2",arivetime2
                             if len(departdetails) > 0:
                                 departtexts = '@'.join(departdetails)
                                 arivetexts = '@'.join(arivedetails) 
                                 plaiintexts = '@'.join(plaindetails) 
                                 operatedtexts = '@'.join(operatedby)
-                                #print departtexts
-                                #print arivetexts
-                                #print plaiintexts
-                                #print operatedtexts
                             print "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
                             cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (str(flightno), str(searchid), stime, stoppage, "test", orgncode, dest_code, depttime2, arivetime2, totaltime, str(economy_miles), str(econ_tax), str(business_miles), str(businesstax), str(first_miles), str(firsttax), "Economy", "Business", "First", "jetblue", departtexts, arivetexts, plaiintexts, operatedtexts))
                             print "row inserted"
@@ -262,7 +248,9 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
     
     except:
         print "please change your seach filter"
-    display.stop
+    cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "jetblue", "flag", "flag", "flag", "flag"))
+    db.commit()
+    #display.stop
     driver.quit()
     return searchid
 
@@ -301,7 +289,6 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid):
         html_page = driver.page_source
         soup = BeautifulSoup(html_page)
         datadiv = soup.findAll("div",{"class":"fare-map-row ng-scope"})
-	#print datadiv
     except:
         print "no flights found"
         display.stop()
@@ -427,8 +414,6 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid):
                         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (str(flightnum), str(searchid), stime, stop, "test", departfrom, arriveat, departtime, arivetime, totalduration, str(maincabin), str(maintax), str(business),str(businesstax), str(First), str(Firsttax), "Economy", "Business", "First", "Virgin America", departdetailtext, arivedetailtext, planedetailtext, operatortext))
                         #transaction.commit()
                         db.commit()
-                        print "row inserted"
-                    print "---------------------------- End ---------------------------"
     except:
     #else:
         print "somethinf wrong"
@@ -440,6 +425,5 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid):
 
 
 if __name__=='__main__':
-    #jetblue(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
     virginAmerica(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
     jetblue(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])

@@ -24,7 +24,7 @@ import Queue
 #from pyvirtualdisplay import Display
 import socket
 import urllib
-
+#import settings
 
 def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
     #return searchkey
@@ -53,6 +53,10 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
     #driver = webdriver.Chrome()
     driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
     driver.set_window_size(1120, 1080)
+    #chromedriver = "/usr/bin/chromedriver"
+    #os.environ["webdriver.chrome.driver"] = chromedriver
+    #driver = webdriver.Chrome(chromedriver)
+    #driver = webdriver.Chrome()
     driver.get(url)
     # normalLayout
     #driver.implicitly_wait(20)
@@ -149,13 +153,11 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
             if upper_class:
                 upper_class_price = upper_class.find("span",{"class":"price"})
                 upperclass_price = upper_class_price.text
-                print upperclass_price
                 upperprice = re.findall("\d+.\d+", upperclass_price)
                 if len(upperprice) > 0:
                     first = upperprice[0]
                     if ',' in first:
                         first = first.replace(',','')
-                    print "upper",first
                 if len(upperprice) > 1:
                     if "USD" not in upperclass_price:
                         uprice = 0
@@ -169,7 +171,7 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
                         firsttax = chaged_result
                     else:
                         firsttax = upperprice[1]
-                    #print "uppertax",firsttax
+                    
             #============================= end price block =========================================================
             sourcestn = ''
             destinationstn=''
@@ -181,14 +183,12 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
             departinfo = depart.findAll("p")
             if len(departinfo) > 0:
                 depttime = departinfo[0].text
-                #print "depttime",depttime
                 departfrom1 = departinfo[1].text
                 if 'from' in departfrom1:
                     departfrom = (departfrom1.replace('from','')).strip()
                     if '(' in departfrom:
                         departfrom1 = departfrom.split('(')
                         sourcestn = departfrom1[1].replace(')','')
-                    #print "sourcestn",sourcestn
             arive = heading.find("li",{"class":"arrive"})
             ariveinfo = arive.findAll("p")
             if len(ariveinfo) > 0:
@@ -203,7 +203,6 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
                     if '(' in ariveat:
                         ariveat2 = ariveat.split('(')
                         destinationstn = ariveat2[1].replace(')','')
-                #print "ariveat",ariveat
             stop = heading.find("li",{"class":"stops"})
             durations = heading.find("li",{"class":"duration"})
             stoppage = stop.text
@@ -292,13 +291,11 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
                 duration = details_tr[counter].find("td",{"class":"duration"})
                 fl_duration1 = duration.find("span",{"class":"flightDuration"})
                 fl_duration = (fl_duration1.text).strip()
-                #print "fl_duration",fl_duration
                 fl_flightno =''
                 planeno = ''
                 flight_no = details_tr[1].find("td",{"class":"number"})
                 fl_flightno1 = flight_no.find("span",{"class":"flightNumber"})
                 planeno = (''.join(fl_flightno1.find('br').next_siblings))
-                #print "planeno",planeno
                 fl_flightno = (fl_flightno1.text).replace(planeno,'')
                 deptdetail = departing_date+"|"+detaildetptime+" "+deptextraday+" from "+departing_from
                 departdlist.append(deptdetail)
@@ -307,9 +304,6 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
                 planetext = fl_flightno+"|"+planeno+"("+fl_duration+")" 
                 planelist.append(planetext)
                 counter = counter+1
-            #print "departdlist",departdlist  
-            #print "arivelist",arivelist 
-            #print "planelist",planelist
             departdetails = '@'.join(departdlist)
             arivedetails = '@'.join(arivelist)
             planedetails = ('@'.join(planelist)).strip()
@@ -327,5 +321,4 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
     driver.quit()
     return searchkey
 
-print "virgin"
 virgin_atlantic(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5],sys.argv[6])
