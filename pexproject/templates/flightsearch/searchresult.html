@@ -255,7 +255,7 @@
 									<p class="pull-right flight-search-show"><span class="glyphicon glyphicon-search"></span></p>
 								</div>
 								<div class="col-xs-12 nopadding xs-collapse flight-search-panel mvb10px">
-									<form class="form-inline" method="post" action="searchLoadingPage">
+									<form class="form-inline" method="post" action="">
 										{% csrf_token %}
 									{% for searchrow in search %}	
 									  <div class="form-group date-wd flight-search-xswd xs-pr5">
@@ -388,7 +388,7 @@
 						              
 									  <div class="form-group flight-search-xswd xs-pl5">
 
-									    <button class="form_val btn  btn-pexSearch xs-fw" tabindex="13">Change</button>
+									    <button id="changebtnid" class="form_val btn  btn-pexSearch xs-fw" tabindex="13">Change</button>
 									  </div>
 									</form>
 									<!--
@@ -2965,10 +2965,71 @@ $('#subscribe').click(function(){
 	
 
 });
-
-
 </script>
+<script>
+  var CSRF_TOKEN = "{{ csrf_token }}";
+  var triptype = '';
+  var destinationid = '';
+  var sourceid = '';
+  var returndateval = '';
+  var departdateval = '';
+  var rdtrip = '';
+  var trip = '';
+  var cabintypeval = '';
+  var searchidval ='';
+  var returnidval = '';
+$("#changebtnid").click(function(event) {
+    	event.preventDefault();	
+    	//triptype = $("input[type='radio'][name='trip']:checked");
+		
+		sourceid = $('#fromid').val();
+		destinationid = $('#toid').val();
+		var isReturndate = '';
+		isReturndate = "{{returndate}}"	;
+		if(isReturndate != '' ){
+			returndateval = $('#return').val();
+		}
+		departdateval = $('#departuredate').val();
+		cabintypeval = $('#cabintype option:selected').val();
+		searchData();
+    });
+  function searchData(){
+  	$('#changebtnid').prop('disabled', true);
+  	$.ajax({
+        type: "POST",
+        url: "/search/",
+        data: "returndate="+ encodeURI(returndateval)+"&rndtripkey="+encodeURI(rdtrip) +"&cabin="+encodeURI(cabintypeval)+"&triptype="+ encodeURI(trip)+ "&fromMain="+ encodeURI(sourceid)+ "&toMain=" + encodeURI(destinationid)+ "&deptdate=" + encodeURI(departdateval) + "&csrfmiddlewaretoken=" + encodeURI(CSRF_TOKEN),
+    	success: function(data){
+        multikey = data[0];
+        searchid1 = multikey.split(',');
+        searchidval = searchid1[0];
+        if(data[1])
+        {
+        	returnidval = data[1];
+        }
+        getsearchresult(searchidval,returnidval); 
+         //refreshIntervalId = setInterval(datacheck, 5000,searchid,returnid); 
+    },
+	
+   });
+ 
+  }	
+  function getsearchresult(searchidval,returnidval){
+ 	multicity='';
+ 	if(multikey.indexOf(",") >= 0){
+ 		multicity = "&multicity="+encodeURI(multikey);
+ 	}
+ 	if(searchidval != '')
+	{  
+	$('#searchid').val(searchid);
+	var location = "getsearchresult?keyid="+ encodeURI(searchidval)+"&cabin="+encodeURI(cabintypeval)+"&passenger="+encodeURI($('#passenger').val())+multicity;
+	if(searchidval != ''){ location = location+"&returnkey="+encodeURI(returnidval);}
+	window.location.href = location; 
+	}
+}
+  	
+  </script>
 
 
-
+  
 

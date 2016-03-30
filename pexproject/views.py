@@ -156,7 +156,7 @@ def manageCityImage(request):
         imageid = request.GET['cityimageid']
         cityimage = CityImages.objects.get(pk = imageid)
     if request.POST :
-        print "test"
+        
         cityimage = CityImages()
         if 'img_path' in request.POST:
             cityimage.image_path = request.POST['img_path']
@@ -369,14 +369,14 @@ def index(request):
     img_path =''
     recent_searches = Searchkey.objects.raw("select ps.destination, ps.searchid,ps.destination,ps.destination_city as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from pexproject_flightdata as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from pexproject_flightdata as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin order by pf1.scrapetime desc)  as pfs1 on pfs1.searchkeyid = ps.searchid group by destination order by ps.scrapetime desc limit 8")
     for s in recent_searches:
-	#print s.final_dest
         if s.final_dest:
             try:
-		
-                cityobj = CityImages.objects.filter(city_name=s.final_dest,status=1)[:1]
+
+                cityobj =  CityImages.objects.filter(city_name=s.final_dest,status=1)[:1]
                 img_path = cityobj[0].image_path
             except:
                 img_path = ''
+            
             searches.append({'final_dest':s.final_dest,'maintax':s.maintax,'searchkeyid':s.searchid,'maincabin':s.maincabin,'image_path':img_path})  
     if request.is_ajax() and 'pexdeals' in request.REQUEST:
         request.session['pexdeal'] = request.REQUEST['pexdeals']
@@ -418,7 +418,6 @@ def flights(request):
             try:
                 cityobj = CityImages.objects.filter(city_name=s.final_dest,status=1)[:1]
                 img_path = cityobj[0].image_path
-
             except:
                 img_path = ''
             searches.append({'final_dest':s.final_dest,'maintax':s.maintax,'searchkeyid':s.searchid,'maincabin':s.maincabin,'image_path':img_path})  
@@ -856,10 +855,10 @@ def search(request):
         multiplekey =''
         seperator = ''
         if returndate:
-            dt1 = datetime.datetime.strptime(returndate, '%Y/%m/%d')
+            dt1 = datetime.datetime.strptime(returndate, '%m/%d/%Y')
             date1 = dt1.strftime('%m/%d/%Y')
             searchdate1 = dt1.strftime('%Y-%m-%d')
-        triptype = request.POST['triptype']
+        #triptype = request.POST['triptype']
         ongnidlist=''
         destlist = ''
         departlist =''
@@ -868,8 +867,8 @@ def search(request):
         orgnid = request.POST['fromMain']
         destid = request.POST['toMain']
         depart = request.POST['deptdate']
+        
         cabin = request.POST['cabin']
-        #print "cabin",cabin
         ongnidlist =  orgnid.split(',')
         destlist = destid.split(',')
         departlist = depart.split(',')
@@ -879,31 +878,31 @@ def search(request):
             orgnid = ongnidlist[i]
             destid = destlist[i]
             depart = departlist[i]
-            originobj = Airports.objects.filter(airport_id=orgnid)
-            destobj = Airports.objects.filter(airport_id=destid)
-            for row in originobj:
-                orgn = row.cityName + ", " + row.cityCode + ", " + row.countryCode + "  (" + row.code + ")"
-                etihadorigin = row.cityName
-                orgncode = row.code
-                origin = row.cityName + " (" + row.code + ")"
-            for row1 in destobj:
-                dest = row1.cityName + ", " + row1.cityCode + ", " + row1.countryCode + "  (" + row1.code + ")"
-                etihaddest = row1.cityName
-                destcode = row1.code
-                destination1 = row1.cityName + " (" + row1.code + ")"
+            # todo get onle single row and remove for look for origin and destination
+            originobj = Airports.objects.get(airport_id=orgnid)
+            destobj = Airports.objects.get(airport_id=destid)
+           
+            orgn = originobj.cityName + ", " + originobj.cityCode + ", " + originobj.countryCode + "  (" + originobj.code + ")"
+            etihadorigin = originobj.cityName
+            orgncode = originobj.code
+            origin = originobj.cityName + " (" + originobj.code + ")"
+          
+            dest = destobj.cityName + ", " + destobj.cityCode + ", " + destobj.countryCode + "  (" + destobj.code + ")"
+            etihaddest = destobj.cityName
+            destcode = destobj.code
+            destination1 = destobj.cityName + " (" + destobj.code + ")"
             
-            dt = datetime.datetime.strptime(depart, '%Y/%m/%d')
+            dt = datetime.datetime.strptime(depart, '%m/%d/%Y')
             date = dt.strftime('%m/%d/%Y')
             searchdate = dt.strftime('%Y-%m-%d')        
             currentdatetime = datetime.datetime.now()
             time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
             time1 = datetime.datetime.now() - timedelta(hours=4)
             time1 = time1.strftime('%Y-%m-%d %H:%M:%S')
-            
-            
-            
+                                   
             Searchkey.objects.filter(scrapetime__lte=time1)#.delete()
-            cursor.execute("insert into arcade_flight_data select * from pexproject_flightdata where scrapetime < '"+str(time1)+"'")
+            # remove archive data query from here and move it a separate cron file 
+            #cursor.execute("insert into arcade_flight_data select * from pexproject_flightdata where scrapetime < '"+str(time1)+"'")
             Flightdata.objects.filter(scrapetime__lte=time1)#.delete()
             transaction.commit()
             if searchdate1:
@@ -946,6 +945,9 @@ def search(request):
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",orgncode,destcode,str(depart),str(searchkeyid)])
                 if is_scrape_aa == 1:
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aa.py",orgncode,destcode,str(depart),str(searchkeyid)])
+                    
+                # return key process already done then why duplicate code
+                '''
                 returnkey = ''
                 if returndate:
                     retunobj = Searchkey.objects.filter(source=destination1, destination=origin, destination_city=etihadorigin, traveldate=searchdate1, scrapetime__gte=time1)
@@ -964,13 +966,11 @@ def search(request):
                             subprocess.Popen(["python",settings.BASE_DIR+"/pexproject/united.py",destcode, orgncode, str(returndate), str(returnkey)])
                         if s_scrape_aa == 1:
                             subprocess.Popen(["python",settings.BASE_DIR+"/pexproject/aa.py",destcode, orgncode, str(returndate), str(returnkey)])
-                        
-            Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='virgin_atlantic').delete()
-            if returnkey:
-                Flightdata.objects.filter(searchkeyid=returnkey,datasource='virgin_atlantic').delete()            
-
-            #customfunction.virgin_atlantic(orgncode,destcode,depart,returndate,searchkeyid,returnkey)
+                   '''     
             if is_scrape_virgin_atlantic == 1:
+                Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='virgin_atlantic').delete()
+                if returnkey:
+                    Flightdata.objects.filter(searchkeyid=returnkey,datasource='virgin_atlantic').delete()            
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/virgin.py",orgncode,destcode, str(depart), str(returndate), str(searchkeyid),str(returnkey)])
             if len(departlist) > 0 :
                 multiplekey = multiplekey+seperator+str(searchkeyid)
@@ -1076,7 +1076,7 @@ def checkData(request):
                 totalrecords = len(list(totalrecords1))                 
                 obj = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and p2.flighno = 'flag' where p1.searchkeyid="+str(recordkey)+" and p1.flighno = 'flag'")
                 obj1 = len(list(obj))
-                if obj1 > 3:
+                if obj1 > 0:
                      iscomplete = "completed"  
             else:
                 #pricematrix =  Flightdata.objects.raw("select rowid, datasource, min(if(maincabin > 0,maincabin,NULL)) as maincabin, min(if(firstclass>0,firstclass,NULL)) as firstclass ,min(if(business>0,business,NULL)) as business  from pexproject_flightdata where searchkeyid="+str(recordkey)+" group by datasource")
@@ -1084,7 +1084,7 @@ def checkData(request):
                 totalrecords = len(list(totalrecords1))
                 obj = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(recordkey)+" and flighno = 'flag' ")
                 obj1 = len(list(obj))
-                if obj1 > 3:
+                if obj1 > 0:
                      iscomplete = "completed"   
             #pricematrix = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(recordkey))
             if totalrecords > 0:
@@ -1258,6 +1258,7 @@ def getsearchresult(request):
         join = ' AND '
     if 'arivalmin' in request.POST:
          arivtime = request.POST['arivalmin']
+         
          arivformat = (datetime.datetime.strptime(arivtime, '%I:%M %p'))
          arivformat1 = arivformat.strftime('%H:%M:%S')
          querylist = querylist + join + " p1.arival >= '" + arivformat1 + "'"
@@ -1267,7 +1268,8 @@ def getsearchresult(request):
         arivtmaxformat = (datetime.datetime.strptime(arivtmaxtime, '%I:%M %p'))
         arivtmaxformat1 = arivtmaxformat.strftime('%H:%M:%S')
         querylist = querylist + join + " p1.arival <= '" + arivtmaxformat1 + "'"
-        join = ' AND '   
+        join = ' AND ' 
+          
     action = ''
     if request.GET.get('keyid', '') :
         if cabinclass != '':
@@ -1424,6 +1426,7 @@ def getsearchresult(request):
             pricematrix =  Flightdata.objects.raw("select p1.rowid, p1.datasource,"+ecocabin+" as maincabin,"+busscabin+"  as firstclass ,"+firstcabin+" as business  from pexproject_flightdata p1 "+inner_join_on+" where p1.searchkeyid="+str(recordkey)+" group by p1.datasource")      
             finalquery = qry1+"CONCAT("+newidstring+") as newid ,"+qry2+ totalfare+" as finalprice "+totaltax+" as totaltaxes from pexproject_flightdata p1 "+qry3+"where " + querylist + " order by finalprice,totaltaxes , departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset)
             record = Flightdata.objects.raw(finalquery)
+            
 	    #print pricematrix.query
             for s in pricematrix:
                  pricesources.append(s.datasource)
@@ -1487,7 +1490,7 @@ def getsearchresult(request):
         if request.is_ajax() :
             
             return render_to_response('flightsearch/search.html', {'action':action,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value, 'multisearch':multisearch, 'data':mainlist,'multirecod':mainlist, 'multicity':multicity, 'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request))
-        if totalrecords <= 0 and flag_count > 3:
+        if totalrecords <= 0 and flag_count > 0:
 	    return render_to_response('flightsearch/search.html', {'action':action, 'data':record, 'minprice':minprice, 'tax':tax, 'timedata':timeinfo,'progress_value':progress_value, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request))
             #msg = "Sorry, No flight found  from " + source + " To " + destination + ".  Please search for another date or city !"
             msg = "Oops, looks like there aren't any flight results for your filtered search. Try to broaden your search criteria for better results."

@@ -46,14 +46,14 @@
 			                <div class="form-group nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="from">From:</label>
 			                  <input type="search" class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" {% if searchparams%} value="{{searchparams.0.source}}"{% endif %}>
-			                  <input type="hidden" id="fromid1" class="fromid" name="fromMain" {% if searchparams%} value="{{searchparams.0.origin_airport_id}}"{% endif %} />
+			                  <input type="hidden" id="fromid1" class="fromid fromMain" name="fromMain" {% if searchparams%} value="{{searchparams.0.origin_airport_id}}"{% endif %} />
 			                </div>
 			              </div>
 			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
 			                <div class="form-group  nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="to">To:</label>
 			                  <input type="search"  class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" {% if searchparams%} value="{{searchparams.0.destination}}"{% endif %}>
-			                  <input type="hidden" id="toid1" class="fromid" name="toMain" {% if searchparams%} value="{{searchparams.0.destination_airport_id}}"{% endif %}/>
+			                  <input type="hidden" id="toid1" class="fromid toMain" name="toMain" {% if searchparams%} value="{{searchparams.0.destination_airport_id}}"{% endif %}/>
 			                </div>
 			              </div>
 			              <div class="input-daterange">
@@ -63,7 +63,7 @@
 			                  <label class="sr-only" for="departMain">Departure Date:</label>
 			                  <div class="inner-addon left-addon date" id="dp1">
 			                      <i class="glyphicon glyphicon-calendar"></i>
-			                      <input type="text"  class="form_val form-control calender_class curson"  placeholder="Depart" name="deptdate" autocomplete="off" {% if searchparams%} value="{{searchparams.0.traveldate|date:"m/d/Y"}}"{% endif %} id="calenderid1">
+			                      <input type="text"  class="form_val form-control calender_class curson deptdate"  placeholder="Depart" name="deptdate" autocomplete="off" {% if searchparams%} value="{{searchparams.0.traveldate|date:"m/d/Y"}}"{% endif %} id="calenderid1">
 			                  		<input type="hidden" id="dateval" value="">
 			                  </div>
 			                  
@@ -91,14 +91,14 @@
 			                <div class="form-group nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="from">From:</label>
 			                  <input type="search"  class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" value="{{d.source}}" >
-			                  <input type="hidden" id="fromid2" class="fromid" name="fromMain" value="{{d.origin_airport_id}}"/>
+			                  <input type="hidden" id="fromid2" class="fromid fromMain" name="fromMain" value="{{d.origin_airport_id}}"/>
 			                </div>
 			              </div>
 			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
 			                <div class="form-group  nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="to">To:</label>
 			                  <input type="search"  class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" value="{{d.destination}}" >
-			                  <input type="hidden" id="toid2" class="fromid" name="toMain" value="{{d.destination_airport_id}}"/>
+			                  <input type="hidden" id="toid2" class="fromid toMain" name="toMain" value="{{d.destination_airport_id}}"/>
 			                </div>
 			              </div>
 			              <div class="input-daterange">
@@ -108,9 +108,8 @@
 			                  <label class="sr-only" for="departMain">Departure Date:</label>
 			                  <div class="inner-addon left-addon date" id="dp1">
 			                      <i class="glyphicon glyphicon-calendar"></i>
-			                      <input type="text" class="form_val form-control calender_class curson"  placeholder="Depart" name="deptdate" autocomplete="off"  value="{{d.traveldate|date:'m/d/Y'}}">
+			                      <input type="text" class="form_val form-control calender_class curson deptdate"  placeholder="Depart" name="deptdate" autocomplete="off"  value="{{d.traveldate|date:'m/d/Y'}}">
 			                  </div>
-			     
 			                </div>
 			              </div>
 			              </div>
@@ -625,9 +624,9 @@
 	        	html = '<div class="container xs-nopadding"><div class="col-sm-12 col-xs-12 nopadding pl5 xs-pad-with-cross-btn custome-pd ">';
 				html = html+'<div class="col-sm-2 col-xs-12 nopl xs-nopadding"><div class="form-group nomr noml" class="ui-widget"><label class="sr-only" for="from">From:</label>';
 				html = html+' <input type="search" class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" >';
-				html=html+'<input type="hidden" id="fromid'+newid+'" class="fromid" name="fromMain" /></div></div><div class="col-sm-2 col-xs-12 nopl xs-nopadding">';
+				html=html+'<input type="hidden" id="fromid'+newid+'" class="fromid fromMain" name="fromMain" /></div></div><div class="col-sm-2 col-xs-12 nopl xs-nopadding">';
 				html=html+'<div class="form-group  nomr noml" class="ui-widget"><label class="sr-only" for="to">To:</label><input type="search"  class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" >';
-				html=html+'<input type="hidden" id="toid'+newid+'" class="fromid" name="toMain" /></div></div><div class="input-daterange"><div class="col-sm-2 col-xs-12 nopl xs-pr5 mobile-wt pd-xs-r-0">';
+				html=html+'<input type="hidden" id="toid'+newid+'" class="fromid toMain" name="toMain" /></div></div><div class="input-daterange"><div class="col-sm-2 col-xs-12 nopl xs-pr5 mobile-wt pd-xs-r-0">';
 				html=html+'<div class="form-group nomr noml nomb"><label class="sr-only" for="departMain">Departure Date:</label><div class="inner-addon left-addon date" id="dp1">';
 				html=html+'<i class="glyphicon glyphicon-calendar"></i><input type="text" id="calenderid'+newid+'" class="form_val form-control calender_class curson"  placeholder="Depart" name="deptdate" autocomplete="off" ></div></div></div></div><a href="#" class="col-sm-2 col-xs-6 hidden-xs xs-nopadding remove_field"> Remove</a><a href="#" class="glyphicon glyphicon-remove visible-xs cross-btn remove_field"></a></div></div>';
 
@@ -671,25 +670,7 @@
 	</script>
         
     <script>
-    $("#submitid").click(function(event) {
-    	if($('#from').val().length<1)
-    	{
-    		//$('#frommsg').append("Please enter the Source field");
-    		$('#from').focus();
-    		event.preventDefault();
-    	} 
-    	if($('#to').val().length<1)
-    	{
-    		$('#to').focus();
-    		event.preventDefault();	
-    	}
-    	if($('#departMain').val().length<1)
-    	{
-    		$('#departMain').focus();
-    		event.preventDefault();	
-    	}
-				
-    });
+    
     $(document).ready(function(){
     	if($("#ow").prop('checked') == true){
     			$("#return").hide();
@@ -974,3 +955,90 @@ return sum;
     });
     
     </script>
+    <script>
+  var CSRF_TOKEN = "{{ csrf_token }}";
+  var triptype = '';
+  var destinationid = '';
+  var sourceid = '';
+  var returndateval = '';
+  var departdateval = '';
+  var rdtrip = '';
+  var trip = '';
+  var multikey ='';
+  var cabintypeval = '';
+  var searchid ='';
+  var returnid = '';
+$("#submitid").click(function(event) {
+    	event.preventDefault();	
+    	triptype = $("input[type='radio'][name='trip']:checked");
+    	if (triptype.length > 0) {
+		    triptypeval = triptype.val();
+		}
+		
+    	if($('[name="fromMain"]').val().length<1)
+    	{
+    		//$('#frommsg').append("Please enter the Source field");
+    		$('#from').focus();
+    		event.preventDefault();
+    	} 
+    	if($('[name="toMain"]').val().length<1)
+    	{
+    		$('#to').focus();
+    		event.preventDefault();	
+    	}
+    	if($('[name="deptdate"]').val().length<1)
+    	{
+    		$('#departMain').focus();
+    		event.preventDefault();	
+    	}
+    
+		
+		sourceid = $('[name="fromMain"]').val(); //$('#fromid').val();
+		alert(sourceid);
+		destinationid = $('[name="toMain"]').val(); //$('#toid').val();	
+		returndateval = $('#returnMain').val();
+		departdateval = $('[name="deptdate"]').val(); //$('#departMain').val();
+		cabintypeval = $('#cabintype option:selected').val();
+		
+		//searchData();
+    });
+  
+  function searchData(){
+  	$('#submitid').prop('disabled', true);
+  	$.ajax({
+        type: "POST",
+        url: "/search/",
+        data: "returndate="+ encodeURI(returndateval)+"&rndtripkey="+encodeURI(rdtrip) +"&cabin="+encodeURI(cabintypeval)+"&triptype="+ encodeURI(trip)+ "&fromMain="+ encodeURI(sourceid)+ "&toMain=" + encodeURI(destinationid)+ "&deptdate=" + encodeURI(departdateval) + "&csrfmiddlewaretoken=" + encodeURI(CSRF_TOKEN),
+    	success: function(data){
+        multikey = data[0];
+        searchid1 = multikey.split(',');
+        searchid = searchid1[0];
+        console.log(searchid);
+        var returnid='';
+        if(data[1])
+        {
+        	returnid = data[1];
+        }
+        redirecttosearchpage(searchid,returnid); 
+         //refreshIntervalId = setInterval(datacheck, 5000,searchid,returnid); 
+    },
+	
+   });
+ 
+  }	
+  function redirecttosearchpage(searchid,returnkey){
+ 	multicity='';
+ 	if(multikey.indexOf(",") >= 0){
+ 		multicity = "&multicity="+encodeURI(multikey);
+ 	}
+ 	if(searchid != '')
+	{  
+	$('#searchid').val(searchid);
+	var location = "getsearchresult?keyid="+ encodeURI(searchid)+"&cabin="+encodeURI(cabintypeval)+"&passenger="+encodeURI($('#passenger').val())+multicity;
+	if(returnkey != ''){ location = location+"&returnkey="+encodeURI(returnkey);}
+	window.location.href = location; 
+	}
+}
+  	
+  </script>
+
