@@ -2858,7 +2858,7 @@ $(document).ready(function(){
 	}
 	else{
 		$('.filters-holder').addClass('xs-filters-holder-ht');
-		refreshIntervalId = setInterval(redirecttosearchpage, 6000);
+		refreshIntervalId = setInterval(isprocess, 2000);
 		
 	}
 	
@@ -2868,6 +2868,7 @@ $(document).ready(function(){
          type:'POST',
          data: "csrfmiddlewaretoken={{ csrf_token }}&depaturemin="+depaturemin+"&depaturemax="+depaturemax+"&airlines="+airline+"&stoppage="+stoppage+row_val,
          success: function(html){
+         	/*
          	$.ajax({
          		url:dataurls,
          		type:'POST',
@@ -2876,8 +2877,8 @@ $(document).ready(function(){
          			$('#price_matrix').empty();
          			$('#price_matrix').append(html);
          		}
-         	});
-         	isprocess();
+         	}); */
+         	//isprocess();
          	$('.filters-holder').addClass('xs-filters-holder-ht');
          	$("#content1").empty();
          	$(".contentdiv").remove();
@@ -2904,6 +2905,7 @@ $(document).ready(function(){
          }
 	});
 	}
+	var dataCheckCount = 1;
 	function isprocess()
 	{
 		var temp = '';
@@ -2917,7 +2919,9 @@ $(document).ready(function(){
 	 	data: "keyid="+ encodeURI(searchid) + "&csrfmiddlewaretoken={{ csrf_token }}"+"&cabin="+encodeURI(cabin)+temp,
 	 	success: function(data){
  		if(data[1] == 'completed' )
- 		{
+ 		{ 
+ 			
+ 			redirecttosearchpage();
  			console.log('stop');
  			$('#progressbar').css("width", "100%");
 			$('#progress_hidden_val').val('195');
@@ -2927,7 +2931,31 @@ $(document).ready(function(){
  			$('.progress').hide();
  			$("#loading-model").modal('hide');
  			$('.filters-holder').removeClass('xs-filters-holder-ht');
+ 			
+ 			//@@@@@@ call pricematrix @@@@@@@@
+ 			$.ajax({
+         		url:dataurls,
+         		type:'POST',
+         		data:"actionfor=prc_matrix&csrfmiddlewaretoken={{csrf_token }}&depaturemin="+depaturemin+"&depaturemax="+depaturemax+"&airlines="+airline+"&stoppage="+stoppage+row_val,
+         		success:function(html){
+         			$('#price_matrix').empty();
+         			$('#price_matrix').append(html);
+         		}
+         	});
  		}
+ 		else{
+ 			if(dataCheckCount == 3){
+ 				dataCheckCount = 1;
+ 				redirecttosearchpage();
+ 			}
+ 			else{
+ 				dataCheckCount = parseInt(dataCheckCount)+1;
+ 			}
+ 			
+ 			
+ 			
+ 		}
+ 		
  	},
  	});
 	}
@@ -2995,6 +3023,8 @@ $("#changebtnid").click(function(event) {
     });
   function searchData(){
   	$('#changebtnid').prop('disabled', true);
+  	$("#content1").empty();
+  	$("#loading-model").modal('show');
   	$.ajax({
         type: "POST",
         url: "/search/",
@@ -3023,7 +3053,7 @@ $("#changebtnid").click(function(event) {
 	{  
 	$('#searchid').val(searchid);
 	var location = "getsearchresult?keyid="+ encodeURI(searchidval)+"&cabin="+encodeURI(cabintypeval)+"&passenger="+encodeURI($('#passenger').val())+multicity;
-	if(searchidval != ''){ location = location+"&returnkey="+encodeURI(returnidval);}
+	if(returnidval != ''){ location = location+"&returnkey="+encodeURI(returnidval);}
 	window.location.href = location; 
 	}
 }
