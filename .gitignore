@@ -1,2 +1,6 @@
 manage.py
 db.sqlite3
+pexproject/static/flightsearch/uploads
+*.pyc
+*.py~
+*.html~

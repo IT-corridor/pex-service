@@ -834,7 +834,7 @@
 													</div>
 													<a href="#" data-toggle="modal" class="share" data-target="#share-modal" id="{{selectedrow.rowid}}">share</a>
 <input type="hidden" value="Anyone want to meet me in  {{search.0.destination}}? I found a great flight for Miles {{selectedrow.maincabin|intcomma}} on Pex." class="{{selectedrow.finalprice|intcomma}}">
-													<!--<a href="share?selectedid={{selectedrow.rowid}}&cabin={{request.GET.cabin}}&passenger={{request.GET.passenger}}">share</a>-->
+													
 												</div>
 											</div>
 										</div>
@@ -2905,7 +2905,7 @@ $(document).ready(function(){
          	if(scraperStatus == 'complete'){
 	         	$('#progressbar').css("width", "100%");
 				$('#progress_hidden_val').val('195');
-	 			clearInterval(refreshIntervalId);
+	 			//clearInterval(refreshIntervalId);
 	 			$('#progressbar').text('');
 	 			$('.progress').hide();
 	 			$("#loading-model").modal('hide');

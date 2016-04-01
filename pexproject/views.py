@@ -1203,17 +1203,18 @@ def getsearchresult(request):
         if request.GET.get('returnkey', ''):
             roundtripkey = request.GET.get('returnkey', '')
         totalrecords1 = ''
-        if roundtripkey:
-            return_cabin_fare = "p2." + cabinclass
-            depart_cabin_fare = "p1." + cabinclass
-            totalrecords1 = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(roundtripkey)+" and "+return_cabin_fare+" > 0 where p1.searchkeyid="+str(searchkey)+" and "+depart_cabin_fare+" > 0")
+        
+        #if roundtripkey:
+         #   return_cabin_fare = "p2." + cabinclass
+          #  depart_cabin_fare = "p1." + cabinclass
+            #totalrecords1 = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(roundtripkey)+" and "+return_cabin_fare+" > 0 where p1.searchkeyid="+str(searchkey)+" and "+depart_cabin_fare+" > 0")
 
 	    #flag_count1 = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(roundtripkey)+" and p2.flighno = 'flag' where p1.searchkeyid="+str(searchkey)+" and p1.flighno = 'flag'")
-        else:
-            totalrecords1 = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(searchkey)+" and flighno != 'flag' and "+cabinclass+"> 0")
+        #else:
+            #totalrecords1 = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(searchkey)+" and flighno != 'flag' and "+cabinclass+"> 0")
 	    #flag_count1 = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(searchkey)+" and flighno = 'flag' ")
 	#print flag_count1.query
-        totalrecords = len(list(totalrecords1))
+        #totalrecords = len(list(totalrecords1))
 	#flag_count = len(list(flag_count1))
 	
         if request.GET.get('multicity'):
@@ -1330,14 +1331,12 @@ def getsearchresult(request):
                 recordid = request.GET.get('rowid', '')
                 if 'rowid' in request.POST:
                     recordid = request.POST['rowid']
-                 
                 datasources = request.GET.get('datasource', '')
                 if recordid != "undefined":
                     selectedrow = Flightdata.objects.get(pk=recordid)
                     action = 'return'
                 
             else:
-                
                 #------------------------change code for return trip------------------------------------
                 if cabinclass == "maincabin" :
                     deltamin1 = Flightdata.objects.filter(searchkeyid=returnkey, datasource='delta', maincabin__gt=0).values('maincabin', 'maintax', 'cabintype1').annotate(Min('maincabin')).order_by('maincabin')
@@ -1368,7 +1367,7 @@ def getsearchresult(request):
                 '''
                 returndelta = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',maincabin=deltaminval)            
                 '''
-                unitedmin1 = Flightdata.objects.filter(searchkeyid=returnkey, datasource='united', maincabin__gt=0).values('maincabin', 'maintax', 'cabintype1').annotate(Min('maincabin')).order_by('maincabin')
+                #unitedmin1 = Flightdata.objects.filter(searchkeyid=returnkey, datasource='united', maincabin__gt=0).values('maincabin', 'maintax', 'cabintype1').annotate(Min('maincabin')).order_by('maincabin')
                 if cabinclass == "maincabin" :
                     unitedmin1 = Flightdata.objects.filter(searchkeyid=returnkey, datasource='united', maincabin__gt=0).values('maincabin', 'maintax', 'cabintype1').annotate(Min('maincabin')).order_by('maincabin')
                     if len(unitedmin1) > 0:
@@ -1520,17 +1519,18 @@ def getsearchresult(request):
         
         if request.is_ajax():
             return render_to_response('flightsearch/search.html', {'action':action,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value, 'multisearch':multisearch, 'data':mainlist,'multirecod':mainlist, 'multicity':multicity, 'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request))
-        if totalrecords <= 0 and scraperStatus == "complete":
+        '''
+        #if totalrecords <= 0 and scraperStatus == "complete":
             #return render_to_response('flightsearch/search.html', {'action':action, 'data':record, 'minprice':minprice, 'tax':tax, 'timedata':timeinfo,'progress_value':progress_value, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request))
             #msg = "Sorry, No flight found  from " + source + " To " + destination + ".  Please search for another date or city !"
-            msg = "Oops, looks like there aren't any flight results for your filtered search. Try to broaden your search criteria for better results."
+            ##msg = "Oops, looks like there aren't any flight results for your filtered search. Try to broaden your search criteria for better results."
             if len(searchdata) > 0:
                 return  render_to_response('flightsearch/flights.html', {'message':msg, 'search':searchdata[0],'returndate':returndate}, context_instance=RequestContext(request))
             else:
                 return HttpResponseRedirect(reverse('index'))
         else:
             return render_to_response('flightsearch/searchresult.html', {'action':action,'pointlist':pointlist,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value,'multisearch':multisearch,'data':mainlist,'multirecod':mainlist,'multicity':multicity,'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request)) 
-        
+        '''
 
 def share(request):
     context = {}
