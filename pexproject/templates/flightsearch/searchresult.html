@@ -2848,6 +2848,8 @@ $(document).ready(function(){
 			}
 	  
 	var progess_width = 0;
+	var timecompleted = true ;
+	var callrunning = false ;
 	
 	$("#loading-model").modal('show');
 	if(parseInt($('#progress_hidden_val').val()) > 185 )
@@ -2859,11 +2861,20 @@ $(document).ready(function(){
 	}
 	else{
 		$('.filters-holder').addClass('xs-filters-holder-ht');
-		refreshIntervalId = setInterval(isprocess, 2000);
+		refreshIntervalId = setInterval(updateTime, 2000);
 		
 	}
-	
+	function updateTime()
+	{
+		timecompleted = true ;
+		if(!callrunning)
+		{
+			isprocess();
+		}
+	}
 	function redirecttosearchpage(scraperStatus){
+		
+		
 	$.ajax({
          url:dataurls,
          type:'POST',
@@ -2915,6 +2926,8 @@ $(document).ready(function(){
 	var dataCheckCount = 1;
 	function isprocess()
 	{
+		callrunning = true ;
+		timecompleted = false ;
 		var temp = '';
 	 	if( returnid != '')
 	 	{
@@ -2925,9 +2938,16 @@ $(document).ready(function(){
 	 	url: "/checkData/",
 	 	data: "keyid="+ encodeURI(searchid) + "&csrfmiddlewaretoken={{ csrf_token }}"+"&cabin="+encodeURI(cabin)+temp,
 	 	success: function(data){
+	 	callrunning = false ;
+	 	console.log(data) ;
+	 	if(timecompleted && data[1] != 'completed' )
+	 	{
+	 		
+	 		isprocess();
+	 	}
  		if(data[1] == 'completed' )
  		{ 
- 			
+ 			clearInterval(refreshIntervalId);
  			redirecttosearchpage('complete');
  			$.ajax({
          		url:dataurls,
