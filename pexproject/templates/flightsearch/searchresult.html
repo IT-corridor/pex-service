@@ -1187,12 +1187,7 @@
 													{% for i in recordlen  %}
 													{% with row.multidetail_list|lookup:i as details %}
 															<h2>Flight {{i|add:1}}</h2>
-																<!--
-																<p itemprop="flightNumber">
-																{{row.datasource|title}} | {{row.flighno}} (
-																{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
-																{{row.cabintype1}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{row.cabintype2}} {% else%}{{row.cabintype3}} {% endif %})
-																</p> -->
+																
 																<div class="table-responsive table-date-search">
 																<table class="table">
 													                    {% with details.departdetails|split:'@' as mylist%}
@@ -2919,7 +2914,7 @@ $(document).ready(function(){
          }
 	});
 	}
-	var dataCheckCount = 1;
+	var dataCheckCount = 3;
 	function isprocess()
 	{
 		callrunning = true ;
@@ -2967,13 +2962,16 @@ $(document).ready(function(){
  			
  		}
  		else{
- 			if(dataCheckCount == 3){
- 				dataCheckCount = 1;
- 				redirecttosearchpage('onprocess');
- 			}
- 			else{
- 				dataCheckCount = parseInt(dataCheckCount)+1;
- 			}
+ 			if(data[0] != 'onprocess')
+ 			{
+	 			if(dataCheckCount == 3){
+	 				dataCheckCount = 1;
+	 				redirecttosearchpage('onprocess');
+	 			}
+	 			else{
+	 				dataCheckCount = parseInt(dataCheckCount)+1;
+	 			}
+	 		}
  			
  			
  			
