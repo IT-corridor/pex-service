@@ -9,23 +9,7 @@
 .add {
     margin-left: -6px;}
 </style>
-
-	<!--	<div class="main-holder"> 
-		
-			<div class="col-xs-12 nopadding">
-				<div class="jumbotron">
-					<div class="container-fluid">
-						<div class="col-md-12 col-xs-12 nopadding">
-							<div class="col-md-2 col-xs-12 nopadding filters-holder mvb10px ">
-								</div>
-							
-							<div class="col-md-8 col-xs-12 xs-nopadding">-->
-
-								
-								
-							
-								
-							<div class="col-md-12 col-xs-12 centr-info">
+						<div class="col-md-12 col-xs-12 centr-info">
 								<img src="{% static 'flightsearch/img/ad11.jpg' %}"  style="margin-top:5px;margin-bottom:5px;width:100%; max-height: 150px;" alt="Responsive image"  class="img-responsive">
 							</div>
 							{% with "1" as rows_count %}
@@ -378,12 +362,7 @@
 													{% for i in recordlen  %}
 													{% with row.multidetail_list|lookup:i as details %}
 															<h2>Flight {{i|add:1}}</h2>
-																<!--
-																<p itemprop="flightNumber">
-																{{row.datasource|title}} | {{row.flighno}} (
-																{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
-																{{row.cabintype1}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{row.cabintype2}} {% else%}{{row.cabintype3}} {% endif %})
-																</p> -->
+																
 																<div class="table-responsive table-date-search">
 																<table class="table">
 													                    {% with details.departdetails|split:'@' as mylist%}
@@ -1175,11 +1154,6 @@
 													</form>
 													</div>
 											{% endif %}
-												<!-- END RETURN UNITED BLOCK -->
-													
-													
-													
-													<!-- <a href="share?selectedid={{row.rowid}}&cabin={{request.GET.cabin}}&passenger={{request.GET.passenger}}{% if request.GET.returnkey and row.datasource == 'united' and unitedreturn.0.rowid %}&returnrowid={{unitedreturn.0.rowid}}{%endif%}{% if request.GET.returnkey and row.datasource == 'delta' and deltareturn.0.rowid%}&returnrowid={{deltareturn.0.rowid}}{%endif%}" data-toggle="modal" data-target="#myModal">share</a> -->
 													<a href="#" data-toggle="modal" class="share" data-target="#share-modal" id="{{row.rowid}}">share</a>
 <input type="hidden" value="Anyone want to meet me in  {{search.0.destination}}? I found a great flight for Miles {{row.finalprice|intcomma}} on Pex." class="{{row.finalprice|intcomma}}">
 												</div>
@@ -1195,15 +1169,7 @@
 								<input type="hidden" id="nodata" name="nodata" />	
 							{% endif %}	
 							{% endwith %}					
-							<!--</div>
 							
-							<div class="col-md-2 col-xs-12 nopadding "><img src="{% static 'flightsearch/img/ad.jpg' %}"  alt="Responsive image" class="img-responsive">
-
-							</div> 
-						</div>
-					</div>
-				</div>
-			</div>-->
 			
 		
 
