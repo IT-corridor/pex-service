@@ -2854,7 +2854,7 @@ $(document).ready(function(){
 		$("#loading-model").modal('hide');
 		$('.progress').hide();
 		$('.filters-holder').removeClass('xs-filters-holder-ht');
-		redirecttosearchpage();
+		isprocess();
 	}
 	else{
 		$('.filters-holder').addClass('xs-filters-holder-ht');
@@ -2862,22 +2862,13 @@ $(document).ready(function(){
 		
 	}
 	
-	function redirecttosearchpage(){
+	function redirecttosearchpage(scraperStatus){
 	$.ajax({
          url:dataurls,
          type:'POST',
-         data: "csrfmiddlewaretoken={{ csrf_token }}&depaturemin="+depaturemin+"&depaturemax="+depaturemax+"&airlines="+airline+"&stoppage="+stoppage+row_val,
+         data: "csrfmiddlewaretoken={{ csrf_token }}&depaturemin="+depaturemin+"&depaturemax="+depaturemax+"&airlines="+airline+"&stoppage="+stoppage+row_val+"&scraperStatus="+scraperStatus,
          success: function(html){
-         	/*
-         	$.ajax({
-         		url:dataurls,
-         		type:'POST',
-         		data:"actionfor=prc_matrix&csrfmiddlewaretoken={{csrf_token }}&depaturemin="+depaturemin+"&depaturemax="+depaturemax+"&airlines="+airline+"&stoppage="+stoppage+row_val,
-         		success:function(html){
-         			$('#price_matrix').empty();
-         			$('#price_matrix').append(html);
-         		}
-         	}); */
+         
          	//isprocess();
          	$('.filters-holder').addClass('xs-filters-holder-ht');
          	$("#content1").empty();
@@ -2899,7 +2890,16 @@ $(document).ready(function(){
          		}
          	}
          	$('#progressbar').width(progess_width);
-         	
+         	if(scraperStatus == 'complete'){
+	         	$('#progressbar').css("width", "100%");
+				$('#progress_hidden_val').val('195');
+	 			clearInterval(refreshIntervalId);
+	 			$('#progressbar').text('');
+	 			$('.progress').hide();
+	 			$("#loading-model").modal('hide');
+	 			$('.filters-holder').removeClass('xs-filters-holder-ht');
+ 			
+         	}
          	
          	
          }
@@ -2921,32 +2921,33 @@ $(document).ready(function(){
  		if(data[1] == 'completed' )
  		{ 
  			
- 			redirecttosearchpage();
- 			console.log('stop');
- 			$('#progressbar').css("width", "100%");
-			$('#progress_hidden_val').val('195');
- 			clearInterval(refreshIntervalId);
- 			$('#progressbar').text('');
- 			
- 			$('.progress').hide();
- 			$("#loading-model").modal('hide');
- 			$('.filters-holder').removeClass('xs-filters-holder-ht');
- 			
- 			//@@@@@@ call pricematrix @@@@@@@@
+ 			redirecttosearchpage('complete');
+ 			//console.log('stop');
  			$.ajax({
          		url:dataurls,
          		type:'POST',
-         		data:"actionfor=prc_matrix&csrfmiddlewaretoken={{csrf_token }}&depaturemin="+depaturemin+"&depaturemax="+depaturemax+"&airlines="+airline+"&stoppage="+stoppage+row_val,
+         		data:"actionfor=prc_matrix&csrfmiddlewaretoken={{csrf_token }}", // # &depaturemin="+depaturemin+"&depaturemax="+depaturemax+"&airlines="+airline+"&stoppage="+stoppage+row_val,
          		success:function(html){
          			$('#price_matrix').empty();
          			$('#price_matrix').append(html);
          		}
          	});
+         	/*
+ 			$('#progressbar').css("width", "100%");
+			$('#progress_hidden_val').val('195');
+ 			clearInterval(refreshIntervalId);
+ 			$('#progressbar').text('');
+ 			$('.progress').hide();
+ 			$("#loading-model").modal('hide');
+ 			$('.filters-holder').removeClass('xs-filters-holder-ht');
+ 			*/
+ 			//@@@@@@ call pricematrix @@@@@@@@
+ 			
  		}
  		else{
  			if(dataCheckCount == 3){
  				dataCheckCount = 1;
- 				redirecttosearchpage();
+ 				redirecttosearchpage('onprocess');
  			}
  			else{
  				dataCheckCount = parseInt(dataCheckCount)+1;
@@ -3024,7 +3025,7 @@ $("#changebtnid").click(function(event) {
   function searchData(){
   	$('#changebtnid').prop('disabled', true);
   	$("#content1").empty();
-  	$("#loading-model").modal('show');
+  	//$("#loading-model").modal('show');
   	$.ajax({
         type: "POST",
         url: "/search/",
@@ -3055,9 +3056,9 @@ $("#changebtnid").click(function(event) {
 	var location = "getsearchresult?keyid="+ encodeURI(searchidval)+"&cabin="+encodeURI(cabintypeval)+"&passenger="+encodeURI($('#passenger').val())+multicity;
 	if(returnidval != ''){ location = location+"&returnkey="+encodeURI(returnidval);}
 	window.location.href = location; 
+	
 	}
-}
-  	
+}	
   </script>
 
 

@@ -1136,6 +1136,38 @@ def getsearchresult(request):
     pricesources = []
     roundtripkey = ''
     pointlist=''
+    
+    #@@@@ Get Pricematrix list @@@@@@@@@@@@@@@@@@@@
+    if 'actionfor' in request.POST and request.POST['actionfor'] == 'prc_matrix':
+        if 'multicity' in request.GET or 'multicity' in request.POST:
+            n = 1
+            multicitykey = request.GET.get('multicity', '')
+            multicitykey1 = multicitykey.split(',')
+            recordkey = multicitykey1[0]
+            ecocabin = 'min(if(p1.maincabin > 0,p1.maincabin,NULL))'
+            busscabin = 'min(if(p1.firstclass > 0,p1.firstclass,NULL))'
+            firstcabin = 'min(if(p1.business > 0,p1.business,NULL))'
+            for keys in multicitykey1:
+                if n > 1:
+                    ecocabin = ecocabin+adding+"min(if(p"+str(n)+".maincabin > 0,p"+str(n)+".maincabin,NULL))"
+                    busscabin = busscabin+adding+"min(if(p"+str(n)+".firstclass > 0,p"+str(n)+".firstclass,NULL))"
+                    firstcabin = firstcabin+adding+"min(if(p"+str(n)+".business > 0,p"+str(n)+".business,NULL))"
+                    inner_join_on = inner_join_on+" inner join pexproject_flightdata p"+str(n)+" on  p"+str(n)+".searchkeyid ='" +keys+"' and p1.datasource = p"+str(n)+".datasource"
+                n = n+1
+            pricematrix =  Flightdata.objects.raw("select p1.rowid, p1.datasource,"+ecocabin+" as maincabin,"+busscabin+"  as firstclass ,"+firstcabin+" as business  from pexproject_flightdata p1 "+inner_join_on+" where p1.searchkeyid="+str(recordkey)+" group by p1.datasource")      
+            
+        elif 'keyid' in  request.GET:
+            key = request.GET.get('keyid', '')
+            if 'returnkey' in request.GET:
+                returnkeyid = request.GET.get('returnkey', '')
+                pricematrix = Flightdata.objects.raw("select p1.rowid,p2.rowid, p2.datasource, (min(if(p1.maincabin > 0,p1.maincabin,NULL))+min(if(p2.maincabin > 0,p2.maincabin,NULL))) as maincabin, (min(if(p1.firstclass>0,p1.firstclass,NULL))+min(if(p2.firstclass>0,p2.firstclass,NULL))) as firstclass ,(min(if(p1.business>0,p1.business,NULL))+min(if(p2.business>0,p2.business,NULL))) as business  from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+returnkeyid+" where p1.searchkeyid="+str(key)+" group by p1.datasource")
+            else:
+                pricematrix =  Flightdata.objects.raw("select rowid, datasource, min(if(maincabin > 0,maincabin,NULL)) as maincabin, min(if(firstclass>0,firstclass,NULL)) as firstclass ,min(if(business>0,business,NULL)) as business  from pexproject_flightdata where searchkeyid="+str(key)+" group by datasource")
+        if pricematrix:
+            for s in pricematrix:
+                pricesources.append(s.datasource)  
+        return render_to_response('flightsearch/pricematrix.html',{'pricesources':pricesources, 'pricematrix':pricematrix},context_instance=RequestContext(request))
+    
     adimages = GoogleAd.objects.filter(ad_code="result page")
     #print "adimages",adimages
     if 'userid' in request.session:
@@ -1143,38 +1175,43 @@ def getsearchresult(request):
         cursor = connection.cursor()
         cursor.execute("select * from reward_points where user_id="+str(userid))
         pointlist = cursor.fetchall()
+        
+    
     
     if request.is_ajax():
         if 'page_no' in request.POST:
             pageno = request.REQUEST['page_no']
-        print "pageno",pageno
         offset = (int(pageno) - 1) * limit
-    if pageno == 1:
-        if request.GET.get('keyid', ''):
-            recordkey = request.GET.get('keyid', '')
-            if request.GET.get('returnkey', ''):
-                roundtripkey = request.GET.get('returnkey', '')
-                pricematrix = Flightdata.objects.raw("select p1.rowid,p2.rowid, p2.datasource, (min(if(p1.maincabin > 0,p1.maincabin,NULL))+min(if(p2.maincabin > 0,p2.maincabin,NULL))) as maincabin, (min(if(p1.firstclass>0,p1.firstclass,NULL))+min(if(p2.firstclass>0,p2.firstclass,NULL))) as firstclass ,(min(if(p1.business>0,p1.business,NULL))+min(if(p2.business>0,p2.business,NULL))) as business  from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+roundtripkey+" where p1.searchkeyid="+str(recordkey)+" group by p1.datasource")
-            else:
-                pricematrix =  Flightdata.objects.raw("select rowid, datasource, min(if(maincabin > 0,maincabin,NULL)) as maincabin, min(if(firstclass>0,firstclass,NULL)) as firstclass ,min(if(business>0,business,NULL)) as business  from pexproject_flightdata where searchkeyid="+str(recordkey)+" group by datasource")
-            for s in pricematrix:
-                 pricesources.append(s.datasource)      
+    #if pageno == 1:
+        #if request.GET.get('keyid', ''):
+            #recordkey = request.GET.get('keyid', '')
+            
+                #if 'actionfor' in request.POST:
+                    #pricematrix = Flightdata.objects.raw("select p1.rowid,p2.rowid, p2.datasource, (min(if(p1.maincabin > 0,p1.maincabin,NULL))+min(if(p2.maincabin > 0,p2.maincabin,NULL))) as maincabin, (min(if(p1.firstclass>0,p1.firstclass,NULL))+min(if(p2.firstclass>0,p2.firstclass,NULL))) as firstclass ,(min(if(p1.business>0,p1.business,NULL))+min(if(p2.business>0,p2.business,NULL))) as business  from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+roundtripkey+" where p1.searchkeyid="+str(recordkey)+" group by p1.datasource")
+            #else:
+                #if 'actionfor' in request.POST:
+                    #pricematrix =  Flightdata.objects.raw("select rowid, datasource, min(if(maincabin > 0,maincabin,NULL)) as maincabin, min(if(firstclass>0,firstclass,NULL)) as firstclass ,min(if(business>0,business,NULL)) as business  from pexproject_flightdata where searchkeyid="+str(recordkey)+" group by datasource")
+            #if pricematrix:
+                #for s in pricematrix:
+                     #pricesources.append(s.datasource)      
     action = ''
     if request.GET.get('keyid', '') :
         searchkey = request.GET.get('keyid', '')
+        if request.GET.get('returnkey', ''):
+            roundtripkey = request.GET.get('returnkey', '')
         totalrecords1 = ''
         if roundtripkey:
             return_cabin_fare = "p2." + cabinclass
             depart_cabin_fare = "p1." + cabinclass
             totalrecords1 = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(roundtripkey)+" and "+return_cabin_fare+" > 0 where p1.searchkeyid="+str(searchkey)+" and "+depart_cabin_fare+" > 0")
 
-	    flag_count1 = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(roundtripkey)+" and p2.flighno = 'flag' where p1.searchkeyid="+str(searchkey)+" and p1.flighno = 'flag'")
+	    #flag_count1 = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(roundtripkey)+" and p2.flighno = 'flag' where p1.searchkeyid="+str(searchkey)+" and p1.flighno = 'flag'")
         else:
             totalrecords1 = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(searchkey)+" and flighno != 'flag' and "+cabinclass+"> 0")
-	    flag_count1 = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(searchkey)+" and flighno = 'flag' ")
+	    #flag_count1 = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(searchkey)+" and flighno = 'flag' ")
 	#print flag_count1.query
         totalrecords = len(list(totalrecords1))
-	flag_count = len(list(flag_count1))
+	#flag_count = len(list(flag_count1))
 	
         if request.GET.get('multicity'):
             allkey = request.GET.get('multicity')
@@ -1384,7 +1421,7 @@ def getsearchresult(request):
                 destname = (destname1[1]).replace(')','')
                 multicitysearch = {"source":originname,"destination":destname,"traveldate":row.traveldate}
                 m = m+1
-            #print multicitysearch
+                #print multicitysearch
                 multisearch.append(multicitysearch) 
             multicity='true' 
             cabintype = " and " + "p1."+cabinclass + " > 0"
@@ -1400,36 +1437,35 @@ def getsearchresult(request):
             sep = ",'_',"
             sep1 = ''
             adding = '+'
-            ecocabin = 'min(if(p1.maincabin > 0,p1.maincabin,NULL))'
-            busscabin = 'min(if(p1.firstclass > 0,p1.firstclass,NULL))'
-            firstcabin = 'min(if(p1.business > 0,p1.business,NULL))'
-            inner_join_on = ''
+            #ecocabin = 'min(if(p1.maincabin > 0,p1.maincabin,NULL))'
+            #busscabin = 'min(if(p1.firstclass > 0,p1.firstclass,NULL))'
+            #firstcabin = 'min(if(p1.business > 0,p1.business,NULL))'
             pricesources =[]
             recordkey = multicitykey1[0]
             pricematrix_query = ''
             for keys in multicitykey1:
-                
                 if n > 1:
-                    ecocabin = ecocabin+adding+"min(if(p"+str(n)+".maincabin > 0,p"+str(n)+".maincabin,NULL))"
-                    busscabin = busscabin+adding+"min(if(p"+str(n)+".firstclass > 0,p"+str(n)+".firstclass,NULL))"
-                    firstcabin = firstcabin+adding+"min(if(p"+str(n)+".business > 0,p"+str(n)+".business,NULL))"
+                    #ecocabin = ecocabin+adding+"min(if(p"+str(n)+".maincabin > 0,p"+str(n)+".maincabin,NULL))"
+                    #busscabin = busscabin+adding+"min(if(p"+str(n)+".firstclass > 0,p"+str(n)+".firstclass,NULL))"
+                    #firstcabin = firstcabin+adding+"min(if(p"+str(n)+".business > 0,p"+str(n)+".business,NULL))"
                     totalfare = totalfare+"+p"+str(n)+"." + cabinclass
                     totaltax = totaltax+"+p"+str(n)+"."+taxes
                     newidstring =newidstring+sep+"p"+str(n)+".rowid"
                     qry2 = qry2+sep1+'p'+str(n)+'.origin as origin'+str(n)+',p'+str(n)+'.rowid as rowid'+str(n)+', p'+str(n)+'.stoppage as stoppage'+str(n)+', p'+str(n)+'.destination as destination'+str(n)+', p'+str(n)+'.departure as departure'+str(n)+', p'+str(n)+'.arival as arival'+str(n)+', p'+str(n)+'.duration as duration'+str(n)+',p'+str(n)+'.flighno as flighno'+str(n)+', p'+str(n)+'.cabintype1 as cabintype1'+str(n)+',p'+str(n)+'.cabintype2 as cabintype2'+str(n)+',p'+str(n)+'.cabintype3 as cabintype3'+str(n)+', p'+str(n)+'.maincabin as maincabin'+str(n)+', p'+str(n)+'.maintax as maintax'+str(n)+', p'+str(n)+'.firsttax as firsttax'+str(n)+', p'+str(n)+'.businesstax as businesstax'+str(n)+',p'+str(n)+'.departdetails as departdetails'+str(n)+',p'+str(n)+'.arivedetails as arivedetails'+str(n)+', p'+str(n)+'.planedetails as planedetails'+str(n)+',p'+str(n)+'.operatedby as operatedby'+str(n)
                     sep1 = ','
-                    inner_join_on = inner_join_on+" inner join pexproject_flightdata p"+str(n)+" on  p"+str(n)+".searchkeyid ='" +keys+"' and p1.datasource = p"+str(n)+".datasource"
+                    #inner_join_on = inner_join_on+" inner join pexproject_flightdata p"+str(n)+" on  p"+str(n)+".searchkeyid ='" +keys+"' and p1.datasource = p"+str(n)+".datasource"
                     qry3 = qry3+"inner join pexproject_flightdata p"+str(n)+" on  p"+str(n)+".searchkeyid ='" +keys+"' and p1.datasource = p"+str(n)+".datasource and p"+str(n)+"."+cabinclass +" > '0'  "
                     q = ''
                 counter = counter+1
                 n = n+1
-            pricematrix =  Flightdata.objects.raw("select p1.rowid, p1.datasource,"+ecocabin+" as maincabin,"+busscabin+"  as firstclass ,"+firstcabin+" as business  from pexproject_flightdata p1 "+inner_join_on+" where p1.searchkeyid="+str(recordkey)+" group by p1.datasource")      
+            #if 'actionfor' in request.POST:
+                #pricematrix =  Flightdata.objects.raw("select p1.rowid, p1.datasource,"+ecocabin+" as maincabin,"+busscabin+"  as firstclass ,"+firstcabin+" as business  from pexproject_flightdata p1 "+inner_join_on+" where p1.searchkeyid="+str(recordkey)+" group by p1.datasource")      
+                #for s in pricematrix:
+                    #pricesources.append(s.datasource)
             finalquery = qry1+"CONCAT("+newidstring+") as newid ,"+qry2+ totalfare+" as finalprice "+totaltax+" as totaltaxes from pexproject_flightdata p1 "+qry3+"where " + querylist + " order by finalprice,totaltaxes , departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset)
             record = Flightdata.objects.raw(finalquery)
             
-	    #print pricematrix.query
-            for s in pricematrix:
-                 pricesources.append(s.datasource)
+            
             for row in record:
                 mainlist1=''
                 multirecordlist = {}
@@ -1448,8 +1484,7 @@ def getsearchresult(request):
                     dept_detail = getattr(row,"departdetails"+str(i))
                     arive_detail = getattr(row,"arivedetails"+str(i))
                     plane_detail = getattr(row,"planedetails"+str(i))
-                    operate_detail = getattr(row,"operatedby"+str(i))
-		    #print "totaltaxes",row.totaltaxes                    
+                    operate_detail = getattr(row,"operatedby"+str(i))                    
                     data = {"origin":org,"destination":dest,"stoppage":stop,"departure":depart,"arival":arival,"duration":duration}
                     multirecordlist[pos]=data
                     multidetail_list[pos] = {"departdetails":dept_detail,"arivedetails":arive_detail,"planedetails":plane_detail,"operatedby":operate_detail}
@@ -1485,20 +1520,22 @@ def getsearchresult(request):
         if 'share_recordid' in request.GET:
             sharedid = request.GET.get('share_recordid','')
             selectedrow = Flightdata.objects.get(pk=sharedid)
-        if 'actionfor' in request.POST:
-            return render_to_response('flightsearch/pricematrix.html',{'pricesources':pricesources, 'pricematrix':pricematrix},context_instance=RequestContext(request))      
-        if request.is_ajax() :
-            
+        scraperStatus = ''
+        if 'scraperStatus' in request.POST:
+            scraperStatus = request.POST['scraperStatus']
+        #if 'actionfor' in request.POST:
+            #return render_to_response('flightsearch/pricematrix.html',{'pricesources':pricesources, 'pricematrix':pricematrix},context_instance=RequestContext(request))      
+        if request.is_ajax():
             return render_to_response('flightsearch/search.html', {'action':action,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value, 'multisearch':multisearch, 'data':mainlist,'multirecod':mainlist, 'multicity':multicity, 'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request))
-        if totalrecords <= 0 and flag_count > 0:
-	    return render_to_response('flightsearch/search.html', {'action':action, 'data':record, 'minprice':minprice, 'tax':tax, 'timedata':timeinfo,'progress_value':progress_value, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request))
+        if totalrecords <= 0 and scraperStatus == "complete":
+            #return render_to_response('flightsearch/search.html', {'action':action, 'data':record, 'minprice':minprice, 'tax':tax, 'timedata':timeinfo,'progress_value':progress_value, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request))
             #msg = "Sorry, No flight found  from " + source + " To " + destination + ".  Please search for another date or city !"
             msg = "Oops, looks like there aren't any flight results for your filtered search. Try to broaden your search criteria for better results."
-	    if len(searchdata) > 0:
-		return  render_to_response('flightsearch/flights.html', {'message':msg, 'search':searchdata[0],'returndate':returndate}, context_instance=RequestContext(request))
-	    else:
-		return HttpResponseRedirect(reverse('index'))
-	else:
+            if len(searchdata) > 0:
+                return  render_to_response('flightsearch/flights.html', {'message':msg, 'search':searchdata[0],'returndate':returndate}, context_instance=RequestContext(request))
+            else:
+                return HttpResponseRedirect(reverse('index'))
+        else:
             return render_to_response('flightsearch/searchresult.html', {'action':action,'pointlist':pointlist,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value,'multisearch':multisearch,'data':mainlist,'multirecod':mainlist,'multicity':multicity,'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request)) 
         
 
