@@ -370,18 +370,21 @@ def index(request):
     img_cityName = []
     #img_
     recent_searches = Searchkey.objects.raw("select ps.destination, ps.searchid,ps.destination,ps.destination_city as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from pexproject_flightdata as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from pexproject_flightdata as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin order by pf1.scrapetime desc)  as pfs1 on pfs1.searchkeyid = ps.searchid group by destination order by ps.scrapetime desc limit 8")
-    for s in recent_searches:
+    recent_searches1 = list(recent_searches)
+    for s in recent_searches1:
         if s.final_dest:
             img_cityName.append(s.final_dest)
     img_cityName1 = "','".join(img_cityName)
     cityobj = CityImages.objects.raw("select city_image_id,image_path,city_name from pexproject_cityimages where city_image_id IN( select max(city_image_id) from pexproject_cityimages where city_name in  ('"+img_cityName1+"') and status= '1' group by city_name ) ")
-    for s in recent_searches:
+    cityobj1 = list(cityobj)
+    for s in recent_searches1:
         img_path =''
-        for data in cityobj:
+        for data in cityobj1:
             if s.final_dest == data.city_name:
                img_path = data.image_path 
                break
         searches.append({'final_dest':s.final_dest,'maintax':s.maintax,'searchkeyid':s.searchid,'maincabin':s.maincabin,'image_path':img_path})  
+    
     if request.is_ajax() and 'pexdeals' in request.REQUEST:
         request.session['pexdeal'] = request.REQUEST['pexdeals']
         mimetype = 'application/json'
@@ -404,7 +407,7 @@ def index(request):
             lname = user1.lastname
     	request.session['password'] = user1.password        
 	if 'pexdeal' in request.session:
-	    #print "in pex deal"
+	
 	    subscriber = Mailchimp(customfunction.mailchimp_api_key)
 	    subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':username}, merge_vars={'FNAME':fname,'LNAME':lname})
        	   
@@ -418,14 +421,16 @@ def flights(request):
     img_path =''
     img_cityName = []
     recent_searches = Searchkey.objects.raw("select ps.destination, ps.searchid,ps.destination,ps.destination_city as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from pexproject_flightdata as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from pexproject_flightdata as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin order by pf1.scrapetime desc)  as pfs1 on pfs1.searchkeyid = ps.searchid group by destination order by ps.scrapetime desc limit 8")
-    for s in recent_searches:
+    recent_searches1 = list(recent_searches) 
+    for s in recent_searches1:
         if s.final_dest:
             img_cityName.append(s.final_dest)
     img_cityName1 = "','".join(img_cityName)
     cityobj = CityImages.objects.raw("select city_image_id,image_path,city_name from pexproject_cityimages where city_image_id IN( select max(city_image_id) from pexproject_cityimages where city_name in  ('"+img_cityName1+"') and status= '1' group by city_name ) ")
-    for s in recent_searches:
+    cityobj1 = list(cityobj)
+    for s in recent_searches1:
         img_path =''
-        for data in cityobj:
+        for data in cityobj1:
             if s.final_dest == data.city_name:
                img_path = data.image_path 
                break
