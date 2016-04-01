@@ -1985,11 +1985,7 @@
 													</form>
 													</div>
 											{% endif %}
-												<!-- END RETURN UNITED BLOCK -->
-													
-													
-													
-													<!-- <a href="share?selectedid={{row.rowid}}&cabin={{request.GET.cabin}}&passenger={{request.GET.passenger}}{% if request.GET.returnkey and row.datasource == 'united' and unitedreturn.0.rowid %}&returnrowid={{unitedreturn.0.rowid}}{%endif%}{% if request.GET.returnkey and row.datasource == 'delta' and deltareturn.0.rowid%}&returnrowid={{deltareturn.0.rowid}}{%endif%}" data-toggle="modal" data-target="#myModal">share</a> -->
+												
 													<a href="#" data-toggle="modal" class="share" data-target="#share-modal" id="{{row.rowid}}">share</a>
 <input type="hidden" value="Anyone want to meet me in  {{search.0.destination}}? I found a great flight for Miles {{row.finalprice|intcomma}} on Pex." class="{{row.finalprice|intcomma}}">
 												</div>
