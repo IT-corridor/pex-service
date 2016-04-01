@@ -404,6 +404,7 @@
 									    <section id="">
 									    	
 										<div class="table-responsive" id="price_matrix">
+										<!-- 
 										  <table class="table div-table" cellspacing="2" id="pricematrix">
 										  		
 												<tr class="div-table-row row">
@@ -498,7 +499,7 @@
 												</tr>
 											{% endif %}
 										{% endif %}	
-										</table>
+										</table> -->
 										  <!--<div class="color-details">
 										  	<span class="cheaper"><span class="glyphicon glyphicon-stop" aria-hidden="true"></span></span>
 										  	<span class="expensive"><span class="glyphicon glyphicon-stop " aria-hidden="true"></span></span>
@@ -2898,7 +2899,13 @@ $(document).ready(function(){
 	 			$('.progress').hide();
 	 			$("#loading-model").modal('hide');
 	 			$('.filters-holder').removeClass('xs-filters-holder-ht');
- 			
+	 			
+	 			if($('#nodata').length > 0)
+	         	{
+	         		var newurl = dataurls.replace('getsearchresult','flights');
+	         		window.location.href = newurl;
+	         	}
+	 			
          	}
          	
          	
@@ -2922,7 +2929,6 @@ $(document).ready(function(){
  		{ 
  			
  			redirecttosearchpage('complete');
- 			//console.log('stop');
  			$.ajax({
          		url:dataurls,
          		type:'POST',

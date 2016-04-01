@@ -30,10 +30,10 @@
 			                  <label><input type="radio" id="rt" name="trip" value="roundTripBtn"  class="curson" checked="checked"> Round-Trip</label>
 			                </div>
 			                <div class="checkbox-inline mhr10px auto-crsr" >
-			                  <label ><input type="radio" id="ow" name="trip"  class="curson" value="oneWayBtn" {% if 'action' in request.GET and  request.GET.action == 'ow' or returndate == '' %}checked="checked" {%endif%}> One-Way</label>
+			                  <label ><input type="radio" id="ow" name="trip"  class="curson" value="oneWayBtn" {% if 'action' in request.GET and  request.GET.action == 'ow' or returndate == '' and search != '' %}checked="checked" {%endif%}> One-Way</label>
 			                </div>
 			                <div class="checkbox-inline mhr10px auto-crsr" >
-			                  <label ><input type="radio" id="mc" value="multicity"  class="curson" name="trip" {% if 'action' in request.GET and  request.GET.action == 'mc'%}checked="checked" {%endif%}> Multi-City</label>
+			                  <label ><input type="radio" id="mc" value="multicity"  class="curson" name="trip" {% if 'action' in request.GET and  request.GET.action == 'mc' or 'multicitykeys' in request.GET %}checked="checked" {%endif%}> Multi-City</label>
 			                </div>
 			              </div>
 			            </div>
@@ -46,14 +46,14 @@
 			                <div class="form-group nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="from">From:</label>
 			                  <input type="search" class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" {% if searchparams%} value="{{searchparams.0.source}}"{% endif %}>
-			                  <input type="hidden" id="fromid1" class="fromid fromMain" name="fromMain" {% if searchparams%} value="{{searchparams.0.origin_airport_id}}"{% endif %} />
+			                  <input type="hidden" id="fromid1" class="fromid fromMain" name="fromMain[]" {% if searchparams%} value="{{searchparams.0.origin_airport_id}}"{% endif %} />
 			                </div>
 			              </div>
 			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
 			                <div class="form-group  nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="to">To:</label>
 			                  <input type="search"  class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" {% if searchparams%} value="{{searchparams.0.destination}}"{% endif %}>
-			                  <input type="hidden" id="toid1" class="fromid toMain" name="toMain" {% if searchparams%} value="{{searchparams.0.destination_airport_id}}"{% endif %}/>
+			                  <input type="hidden" id="toid1" class="fromid toMain" name="toMain[]" {% if searchparams%} value="{{searchparams.0.destination_airport_id}}"{% endif %}/>
 			                </div>
 			              </div>
 			              <div class="input-daterange">
@@ -63,7 +63,7 @@
 			                  <label class="sr-only" for="departMain">Departure Date:</label>
 			                  <div class="inner-addon left-addon date" id="dp1">
 			                      <i class="glyphicon glyphicon-calendar"></i>
-			                      <input type="text"  class="form_val form-control calender_class curson deptdate"  placeholder="Depart" name="deptdate" autocomplete="off" {% if searchparams%} value="{{searchparams.0.traveldate|date:"m/d/Y"}}"{% endif %} id="calenderid1">
+			                      <input type="text"  class="form_val form-control calender_class curson deptdate"  placeholder="Depart" name="deptdate[]" autocomplete="off" {% if searchparams%} value="{{searchparams.0.traveldate|date:"m/d/Y"}}"{% endif %} id="calenderid1">
 			                  		<input type="hidden" id="dateval" value="">
 			                  </div>
 			                  
@@ -91,14 +91,14 @@
 			                <div class="form-group nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="from">From:</label>
 			                  <input type="search"  class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" value="{{d.source}}" >
-			                  <input type="hidden" id="fromid2" class="fromid fromMain" name="fromMain" value="{{d.origin_airport_id}}"/>
+			                  <input type="hidden" id="fromid2" class="fromid fromMain" name="fromMain[]" value="{{d.origin_airport_id}}"/>
 			                </div>
 			              </div>
 			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
 			                <div class="form-group  nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="to">To:</label>
 			                  <input type="search"  class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" value="{{d.destination}}" >
-			                  <input type="hidden" id="toid2" class="fromid toMain" name="toMain" value="{{d.destination_airport_id}}"/>
+			                  <input type="hidden" id="toid2" class="fromid toMain" name="toMain[]" value="{{d.destination_airport_id}}"/>
 			                </div>
 			              </div>
 			              <div class="input-daterange">
@@ -108,7 +108,7 @@
 			                  <label class="sr-only" for="departMain">Departure Date:</label>
 			                  <div class="inner-addon left-addon date" id="dp1">
 			                      <i class="glyphicon glyphicon-calendar"></i>
-			                      <input type="text" class="form_val form-control calender_class curson deptdate"  placeholder="Depart" name="deptdate" autocomplete="off"  value="{{d.traveldate|date:'m/d/Y'}}">
+			                      <input type="text" class="form_val form-control calender_class curson deptdate"  placeholder="Depart" name="deptdate[]" autocomplete="off"  value="{{d.traveldate|date:'m/d/Y'}}">
 			                  </div>
 			                </div>
 			              </div>
@@ -128,14 +128,14 @@
 			                <div class="form-group nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="from">From:</label>
 			                  <input type="search"  class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" {% if search %} value="{{search.source}}" {%endif%}>
-			                  <input type="hidden" id="fromid2" class="fromid" name="fromMain"/>
+			                  <input type="hidden" id="fromid2" class="fromid" name="fromMain[]"/>
 			                </div>
 			              </div>
 			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
 			                <div class="form-group  nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="to">To:</label>
 			                  <input type="search"  class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" {% if search %} value="{{search.destination}}" {%endif%}>
-			                  <input type="hidden" id="toid2" class="fromid" name="toMain"/>
+			                  <input type="hidden" id="toid2" class="fromid" name="toMain[]"/>
 			                </div>
 			              </div>
 			              <div class="input-daterange">
@@ -145,7 +145,7 @@
 			                  <label class="sr-only" for="departMain">Departure Date:</label>
 			                  <div class="inner-addon left-addon date" id="dp1">
 			                      <i class="glyphicon glyphicon-calendar"></i>
-			                      <input type="text" id="calenderid2" class="form_val form-control calender_class curson"  placeholder="Depart" name="deptdate" autocomplete="off" {% if search %} value="{{search.traveldate|date:'m/d/Y'}}" {%endif%}>
+			                      <input type="text" id="calenderid2" class="form_val form-control calender_class curson"  placeholder="Depart" name="deptdate[]" autocomplete="off" {% if search %} value="{{search.traveldate|date:'m/d/Y'}}" {%endif%}>
 			                  </div>
 			     
 			                </div>
@@ -162,14 +162,14 @@
 			                <div class="form-group nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="from">From:</label>
 			                  <input type="search"  class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" {% if search %} value="{{search.source}}" {%endif%}>
-			                  <input type="hidden" id="fromid3" class="fromid" name="fromMain"/>
+			                  <input type="hidden" id="fromid3" class="fromid" name="fromMain[]"/>
 			                </div>
 			              </div>
 			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
 			                <div class="form-group  nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="to">To:</label>
 			                  <input type="search"  class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" {% if search %} value="{{search.destination}}" {%endif%}>
-			                  <input type="hidden" id="toid3" class="fromid" name="toMain"/>
+			                  <input type="hidden" id="toid3" class="fromid" name="toMain[]"/>
 			                </div>
 			              </div>
 			              <div class="input-daterange">
@@ -179,7 +179,7 @@
 			                  <label class="sr-only" for="departMain">Departure Date:</label>
 			                  <div class="inner-addon left-addon date" id="dp1">
 			                      <i class="glyphicon glyphicon-calendar"></i>
-			                      <input type="text" id="calenderid3" class="form_val form-control calender_class curson"  placeholder="Depart" name="deptdate" autocomplete="off" {% if search %} value="{{search.traveldate|date:'m/d/Y'}}" {%endif%}>
+			                      <input type="text" id="calenderid3" class="form_val form-control calender_class curson"  placeholder="Depart" name="deptdate[]" autocomplete="off" {% if search %} value="{{search.traveldate|date:'m/d/Y'}}" {%endif%}>
 			                  </div>
 			     
 			                </div>
@@ -308,14 +308,14 @@
 			                <div class="form-group nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="from">From:</label>
 			                  <input type="search" tabindex="1" class=" form_val form-control" id="from" name="from" placeholder="From" autocomplete="off" {% if search %} value="{{search.source}}"{%endif%}>
-			                  <input type="hidden" id="fromid" name="fromMain" {% if search %} value="{{search.origin_airport_id}}"{%endif%}/>
+			                  <input type="hidden" id="fromid" name="fromMain[]" {% if search %} value="{{search.origin_airport_id}}"{%endif%}/>
 			                </div>
 			              </div>
 			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
 			                <div class="form-group  nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="to">To:</label>
 			                  <input type="search" tabindex="2" class="form_val form-control" id="to" name="to" placeholder="To" autocomplete="off" {% if search %} value="{{search.destination}}"{%endif%}>
-			                  <input type="hidden" id="toid" name="toMain" {% if search %} value="{{search.destination_airport_id}}"{%endif%} />
+			                  <input type="hidden" id="toid" name="toMain[]" {% if search %} value="{{search.destination_airport_id}}"{%endif%} />
 			                </div>
 			              </div>
 			              <div class="input-daterange">
@@ -325,7 +325,7 @@
 			                  <label class="sr-only" for="departMain">Departure Date:</label>
 			                  <div class="inner-addon left-addon date" id="dp1">
 			                      <i class="glyphicon glyphicon-calendar"></i>
-			                      <input type="text" tabindex="3" class="form_val form-control curson" id="departMain" placeholder="Depart" name="deptdate" autocomplete="off" {% if search %} value="{{search.traveldate|date:'m/d/Y'}}"{%endif%}>
+			                      <input type="text" tabindex="3" class="form_val form-control curson" id="departMain" placeholder="Depart" name="deptdate[]" autocomplete="off" {% if search %} value="{{search.traveldate|date:'m/d/Y'}}"{%endif%}>
 			                  </div>
 			                  <div class="form-group" id="deptmsg"></div>
 			                </div>
@@ -335,7 +335,7 @@
 			                  <label class="sr-only" for="returnMain">Return Date:</label>
 			                  <div class="inner-addon left-addon date" id="dp2">
 			                      <i class="glyphicon glyphicon-calendar"></i>
-			                      <input type="text" tabindex="4" class="form_val form-control curson" id="returnMain" placeholder="Return" name="returndate" autocomplete="off" {% if returndate %} value="{{returndate.0|date:'m/d/Y'}}"{% endif %}>
+			                      <input type="text" tabindex="4" class="form_val form-control curson" id="returnMain" placeholder="Return" name="returndate" autocomplete="off" {% if returndate %} value="{{returndate|date:'m/d/Y'}}"{% endif %}>
 			                  </div>
 			                </div>
 			              </div>
@@ -624,11 +624,11 @@
 	        	html = '<div class="container xs-nopadding"><div class="col-sm-12 col-xs-12 nopadding pl5 xs-pad-with-cross-btn custome-pd ">';
 				html = html+'<div class="col-sm-2 col-xs-12 nopl xs-nopadding"><div class="form-group nomr noml" class="ui-widget"><label class="sr-only" for="from">From:</label>';
 				html = html+' <input type="search" class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" >';
-				html=html+'<input type="hidden" id="fromid'+newid+'" class="fromid fromMain" name="fromMain" /></div></div><div class="col-sm-2 col-xs-12 nopl xs-nopadding">';
+				html=html+'<input type="hidden" id="fromid'+newid+'" class="fromid fromMain" name="fromMain[]" /></div></div><div class="col-sm-2 col-xs-12 nopl xs-nopadding">';
 				html=html+'<div class="form-group  nomr noml" class="ui-widget"><label class="sr-only" for="to">To:</label><input type="search"  class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" >';
-				html=html+'<input type="hidden" id="toid'+newid+'" class="fromid toMain" name="toMain" /></div></div><div class="input-daterange"><div class="col-sm-2 col-xs-12 nopl xs-pr5 mobile-wt pd-xs-r-0">';
+				html=html+'<input type="hidden" id="toid'+newid+'" class="fromid toMain" name="toMain[]" /></div></div><div class="input-daterange"><div class="col-sm-2 col-xs-12 nopl xs-pr5 mobile-wt pd-xs-r-0">';
 				html=html+'<div class="form-group nomr noml nomb"><label class="sr-only" for="departMain">Departure Date:</label><div class="inner-addon left-addon date" id="dp1">';
-				html=html+'<i class="glyphicon glyphicon-calendar"></i><input type="text" id="calenderid'+newid+'" class="form_val form-control calender_class curson"  placeholder="Depart" name="deptdate" autocomplete="off" ></div></div></div></div><a href="#" class="col-sm-2 col-xs-6 hidden-xs xs-nopadding remove_field"> Remove</a><a href="#" class="glyphicon glyphicon-remove visible-xs cross-btn remove_field"></a></div></div>';
+				html=html+'<i class="glyphicon glyphicon-calendar"></i><input type="text" id="calenderid'+newid+'" class="form_val form-control calender_class curson"  placeholder="Depart" name="deptdate[]" autocomplete="off" ></div></div></div></div><a href="#" class="col-sm-2 col-xs-6 hidden-xs xs-nopadding remove_field"> Remove</a><a href="#" class="glyphicon glyphicon-remove visible-xs cross-btn remove_field"></a></div></div>';
 
 	        if(x < max_fields){ //max input box allowed
 	            x++; //text box increment
@@ -968,36 +968,46 @@ return sum;
   var cabintypeval = '';
   var searchid ='';
   var returnid = '';
+  var triptypeval = '';
 $("#submitid").click(function(event) {
     	event.preventDefault();	
     	triptype = $("input[type='radio'][name='trip']:checked");
     	if (triptype.length > 0) {
 		    triptypeval = triptype.val();
+		    
 		}
 		
-    	if($('[name="fromMain"]').val().length<1)
+    	if($('[name="fromMain[]"]').val().length<1)
     	{
     		//$('#frommsg').append("Please enter the Source field");
     		$('#from').focus();
     		event.preventDefault();
     	} 
-    	if($('[name="toMain"]').val().length<1)
+    	if($('[name="toMain[]"]').val().length<1)
     	{
     		$('#to').focus();
     		event.preventDefault();	
     	}
-    	if($('[name="deptdate"]').val().length<1)
+    	if($('[name="deptdate[]"]').val().length<1)
     	{
     		$('#departMain').focus();
     		event.preventDefault();	
     	}
     
 		
-		sourceid = $('[name="fromMain"]').val(); //$('#fromid').val();
-		
-		destinationid = $('[name="toMain"]').val(); //$('#toid').val();	
-		returndateval = $('#returnMain').val();
-		departdateval = $('[name="deptdate"]').val(); //$('#departMain').val();
+		sourceid = $('input[name="fromMain[]"]').map(function() {
+        		return this.value;
+    			}).get();   //$('[name="fromMain"]').val(); //$('#fromid').val();
+		destinationid = $('input[name="toMain[]"]').map(function() {
+        		return this.value;
+    			}).get();           //$('[name="toMain"]').val(); //$('#toid').val();
+		if(triptypeval == 'roundTripBtn')
+		{
+			returndateval = $('#returnMain').val();	
+		}	
+		departdateval = $('input[name="deptdate[]"]').map(function() {
+        		return this.value;
+    			}).get(); //$('[name="deptdate"]').val(); //$('#departMain').val();
 		cabintypeval = $('#cabintype option:selected').val();
 		
 		searchData();
