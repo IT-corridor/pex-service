@@ -11,9 +11,11 @@
 </style>
 		
 		<div class="main-holder">
+			
 			<div class="col-xs-12 nopadding">
 				<div class="jumbotron">
 					<div class="container-fluid">
+						
 						<div class="col-md-12 col-xs-12 nopadding">								
 							<div class="col-md-2 col-xs-12 nopadding ">
 					 
@@ -250,6 +252,10 @@
 								{% if search and 'multicity' not in request.GET%}
 						
 							<div class="col-xs-12 mvb10px nopadding">
+								<div class="nopaddig" id="nodata-msg">
+									<h4 class"alert-danger">Oops, looks like there aren't any flight results for your filtered search. Try to broaden your search criteria for better results.</h4>
+								</div>
+								
 								<div class="col-xs-12 nopaddig visible-xs form-side">
 									<p class="pull-left">Flight Search</p>
 									<p class="pull-right flight-search-show"><span class="glyphicon glyphicon-search"></span></p>
@@ -2166,6 +2172,17 @@
 		  </div>
 		</div>	
 	<script type="text/javascript">
+	$('#nodata-msg').hide();
+	var data_status = false;
+	var datalist = "{{data.0}}";
+	
+	if(datalist.length > 0)
+	{
+		data_status = true;
+	}
+	//console.log();
+	console.log(data_status);
+	
 	$(function(){
 		
              $('#departuredate').datepicker(
@@ -2841,20 +2858,38 @@ $(document).ready(function(){
 	var progess_width = 0;
 	var timecompleted = true ;
 	var callrunning = false ;
-	
-	$("#loading-model").modal('show');
-	if(parseInt($('#progress_hidden_val').val()) > 185 )
-	{
-		$("#loading-model").modal('hide');
-		$('.progress').hide();
-		$('.filters-holder').removeClass('xs-filters-holder-ht');
-		isprocess();
+
+	if(!data_status) {
+		$("#loading-model").modal('show');
+		
+		if(parseInt($('#progress_hidden_val').val()) > 185 )
+		{
+			$("#loading-model").modal('hide');
+			$('.progress').hide();
+			$('.filters-holder').removeClass('xs-filters-holder-ht');
+			isprocess();
+		}
+		else{
+			$('.filters-holder').addClass('xs-filters-holder-ht');
+			refreshIntervalId = setInterval(updateTime, 2000);
+			
+		}
 	}
 	else{
-		$('.filters-holder').addClass('xs-filters-holder-ht');
-		refreshIntervalId = setInterval(updateTime, 2000);
-		
+		$('.progress').hide();
+		$('.filters-holder').removeClass('xs-filters-holder-ht');
+		$.ajax({
+         		url:dataurls,
+         		type:'POST',
+         		data:"actionfor=prc_matrix&csrfmiddlewaretoken={{csrf_token }}", // # &depaturemin="+depaturemin+"&depaturemax="+depaturemax+"&airlines="+airline+"&stoppage="+stoppage+row_val,
+         		success:function(html){
+         			$('#price_matrix').empty();
+         			$('#price_matrix').append(html);
+         		}
+         	});
+			//isprocess();
 	}
+	
 	function updateTime()
 	{
 		timecompleted = true ;
@@ -2904,8 +2939,9 @@ $(document).ready(function(){
 	 			
 	 			if($('#nodata').length > 0)
 	         	{
-	         		var newurl = dataurls.replace('getsearchresult','flights');
-	         		window.location.href = newurl;
+	         		$('#nodata-msg').show();
+	         		//var newurl = dataurls.replace('getsearchresult','flights');
+	         		//window.location.href = newurl;
 	         	}
 	 			
          	}
@@ -2949,17 +2985,7 @@ $(document).ready(function(){
          			$('#price_matrix').append(html);
          		}
          	});
-         	/*
- 			$('#progressbar').css("width", "100%");
-			$('#progress_hidden_val').val('195');
- 			clearInterval(refreshIntervalId);
- 			$('#progressbar').text('');
- 			$('.progress').hide();
- 			$("#loading-model").modal('hide');
- 			$('.filters-holder').removeClass('xs-filters-holder-ht');
- 			*/
- 			//@@@@@@ call pricematrix @@@@@@@@
- 			
+         	
  		}
  		else{
  			if(data[0] != 'onprocess')
@@ -3016,6 +3042,7 @@ $('#subscribe').click(function(){
 });
 </script>
 <script>
+  
   var CSRF_TOKEN = "{{ csrf_token }}";
   var triptype = '';
   var destinationid = '';
@@ -3029,8 +3056,6 @@ $('#subscribe').click(function(){
   var returnidval = '';
 $("#changebtnid").click(function(event) {
     	event.preventDefault();	
-    	//triptype = $("input[type='radio'][name='trip']:checked");
-		
 		sourceid = $('#fromid').val();
 		destinationid = $('#toid').val();
 		var isReturndate = '';
@@ -3045,7 +3070,7 @@ $("#changebtnid").click(function(event) {
   function searchData(){
   	$('#changebtnid').prop('disabled', true);
   	$("#content1").empty();
-  	//$("#loading-model").modal('show');
+  	
   	$.ajax({
         type: "POST",
         url: "/search/",
@@ -3076,7 +3101,6 @@ $("#changebtnid").click(function(event) {
 	var location = "getsearchresult?keyid="+ encodeURI(searchidval)+"&cabin="+encodeURI(cabintypeval)+"&passenger="+encodeURI($('#passenger').val())+multicity;
 	if(returnidval != ''){ location = location+"&returnkey="+encodeURI(returnidval);}
 	window.location.href = location; 
-	
 	}
 }	
   </script>
