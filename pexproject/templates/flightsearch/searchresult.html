@@ -252,8 +252,8 @@
 								{% if search and 'multicity' not in request.GET%}
 						
 							<div class="col-xs-12 mvb10px nopadding">
-								<div class="nopaddig" id="nodata-msg">
-									<h4 class"alert-danger">Oops, looks like there aren't any flight results for your filtered search. Try to broaden your search criteria for better results.</h4>
+								<div class="nopaddig">
+									<h4 class"alert-danger" id="nodata-msg"></h4>
 								</div>
 								
 								<div class="col-xs-12 nopaddig visible-xs form-side">
@@ -2172,7 +2172,7 @@
 		  </div>
 		</div>	
 	<script type="text/javascript">
-	$('#nodata-msg').hide();
+	$('#nodata-msg').empty();
 	var data_status = false;
 	var datalist = "{{data.0}}";
 	
@@ -2939,7 +2939,7 @@ $(document).ready(function(){
 	 			
 	 			if($('#nodata').length > 0)
 	         	{
-	         		$('#nodata-msg').show();
+	         		$('#nodata-msg').append("Oops, looks like there aren't any flight results for your filtered search. Try to broaden your search criteria for better results.");
 	         		//var newurl = dataurls.replace('getsearchresult','flights');
 	         		//window.location.href = newurl;
 	         	}
