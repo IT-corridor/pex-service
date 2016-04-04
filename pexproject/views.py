@@ -280,9 +280,6 @@ def manageblogImage(request):
             #: 'var cke_ob = window.parent.CKEDITOR; for(var ckid in cke_ob.instances) { if(cke_ob.instances[ckid].focusManager.hasFocus) break;} cke_ob.instances[ckid].insertHtml(\'<audio src="'+ $url .'" controls></audio>\', \'unfiltered_html\'); alert("'. $msg .'"); var dialog = cke_ob.dialog.getCurrent();  dialog.hide();';
 	    return render_to_response('flightsearch/admin/ajaxresponse.html',{"CKEditorFuncNum":CKEditorFuncNum,"message":message,"imgpath":imgpath1})
 	    
-            #mimetype = 'application/html'
-    
-            #return HttpResponse( '<script>'+re +';</script>', mimetype)
 
     
     
