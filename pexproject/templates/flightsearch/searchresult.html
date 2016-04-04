@@ -2951,6 +2951,9 @@ $(document).ready(function(){
 	});
 	}
 	var dataCheckCount = 3;
+	var multicity='';
+	var multicity1 = "{{request.GET.multicity}}";
+	
 	function isprocess()
 	{
 		callrunning = true ;
@@ -2960,10 +2963,14 @@ $(document).ready(function(){
 	 	{
 	 		var temp = "&returnkey="+encodeURI(returnid);
 	 	}
+	 	if (multicity1 != '')
+		{
+		   multicity = "&multicity="+encodeURI(multicity1);
+		}
 		$.ajax({
 	 	type: "POST",
 	 	url: "/checkData/",
-	 	data: "keyid="+ encodeURI(searchid) + "&csrfmiddlewaretoken={{ csrf_token }}"+"&cabin="+encodeURI(cabin)+temp,
+	 	data: "keyid="+ encodeURI(searchid) + "&csrfmiddlewaretoken={{ csrf_token }}"+"&cabin="+encodeURI(cabin)+temp+multicity,
 	 	success: function(data){
 	 	callrunning = false ;
 	 	console.log(data) ;

@@ -17,7 +17,7 @@ import json
 
 def united(origin, destination, searchdate, searchkey):
     #return searchkey
-    dt = datetime.datetime.strptime(searchdate, '%Y/%m/%d')
+    dt = datetime.datetime.strptime(searchdate, '%m/%d/%Y')
     date = dt.strftime('%Y-%m-%d')
     date_format = dt.strftime('%a, %b %-d')
     payload_date = dt.strftime('%d, %b %Y')
@@ -77,8 +77,9 @@ def united(origin, destination, searchdate, searchkey):
                             element.appendChild(document.createTextNode(self.responseText));
                             count = count+1;
                        }
+                       
                     }
-                   
+                    
                  
                 }
     
@@ -106,20 +107,32 @@ def united(origin, destination, searchdate, searchkey):
 
     
         WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "interceptedResponse")))
+        html_page = driver.page_source
+        soup = BeautifulSoup(html_page,"xml")
+        maindata = soup.findAll("div",{"id":"interceptedResponse"})
+        json_string = maindata[0].text
+        jsonOb = json.loads(json_string)
+        flightDetails = jsonOb["data"]["Trips"][0]["Flights"]
     except:
         print "No data Found"
         display.stop()
         driver.quit()
-        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "united", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
+        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "united", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
         db.commit()
         return searchkey
+    '''
     html_page = driver.page_source
     soup = BeautifulSoup(html_page,"xml")
     maindata = soup.findAll("div",{"id":"interceptedResponse"})
+    
     json_string = maindata[0].text
     jsonOb = json.loads(json_string)
-    flightDetails = jsonOb["data"]["Trips"][0]["Flights"] #[0]["DepartTimeFormat"]
-    
+    flightDetails = jsonOb["data"]["Trips"][0]["Flights"] #[0]["DepartTimeFormat"] '''
+    comma = ''
+    values_string = []
+    totalrecords = len(flightDetails)
+    print "totalrecords",totalrecords
+    recordcount = 1
     for i in range(0,len(flightDetails)):
         print "=================================================="+str(i)+"======================================================"
         
@@ -189,13 +202,11 @@ def united(origin, destination, searchdate, searchkey):
         FlightSegmentJson = flightDetails[i]["FlightSegmentJson"]
         segmentJsonObj = json.loads(FlightSegmentJson)
         #print "segmentJsonObj",segmentJsonObj
-        print "=============== segmentJsonObj ====================="
         departdetails = []
         arivaildetails = []
         flightdeatails = []
         operator = []
         for k in range(0,len(segmentJsonObj)):
-            print "============= segmentJsonObj "+str(k)+"========================"
             #print "Origin", segmentJsonObj[k]["Origin"]
             FlightNumber = segmentJsonObj[k]["FlightNumber"]
             FlightDate = segmentJsonObj[k]["FlightDate"]
@@ -260,7 +271,7 @@ def united(origin, destination, searchdate, searchkey):
         #print "TravelMinutes",flightDetails[i]["TravelMinutes"]
         #print "PricesByColumn",flightDetails[i]["PricesByColumn"]
       
-        print "=====================price column ============================="
+        
         economy = 0
         ecoTax = 0
         business = 0
@@ -314,11 +325,11 @@ def united(origin, destination, searchdate, searchkey):
                 productdesc = connectingFarecode[m]["ProductTypeDescription"]
                 if productdesc:
                     connectingBookingCode = connectingBookingCode+" "+productdesc
-                if 'Economy' in connectingProductstype:
+                if connectingProductstype and 'Economy' in connectingProductstype:
                     ecoFareClassCode.append(connectingBookingCode)
-                elif 'Business' in connectingProductstype:
+                elif connectingProductstype and 'Business' in connectingProductstype:
                     busFareClassCode.append(connectingBookingCode)
-                elif 'First' in connectingProductstype:
+                elif connectingProductstype and 'First' in connectingProductstype:
                     firtFareClassCode.append(connectingBookingCode)
         if len(ecoFareClassCode) > 0:
             ecoFareCode = '@'.join(ecoFareClassCode)
@@ -327,8 +338,6 @@ def united(origin, destination, searchdate, searchkey):
         if len(firtFareClassCode) > 0:
            firstFareCode = '@'.join(firtFareClassCode)
         
-
-
         '''
         print "stoppage",stoppage
         print "totaltime",totaltime
@@ -347,16 +356,21 @@ def united(origin, destination, searchdate, searchkey):
         arivedetailsText = '@'.join(arivaildetails) 
         planedetails = '@'.join(flightdeatails)
         operatedbytext = ''
-        
-        print operator
-        print len(operator)
         if len(operator) > 0: 
-            operatedbytext = '@'.join(operator) 
+            operatedbytext = '@'.join(operator)
+    
+        recordcount = recordcount+1        
+        values_string.append((Flightno, str(searchkey), stime, stoppage, "test", source, lastdestination, test1, arivetime, totaltime, str(economy), str(ecoTax), str(business), str(businessTax), str(first), str(firstTax),"Economy", "Business", "First", "united", departdetailsText, arivedetailsText, planedetails, operatedbytext,ecoFareCode,businessFareCode,firstFareCode))
+        if recordcount > 50 or i == totalrecords and len(values_string)>0:
+            
+            #args_str = ','.join(cursor.mogrify("(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", x) for x in values_string) 
+            cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", values_string) # (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", values_string) #(Flightno, str(searchkey), stime, stoppage, "test", source, lastdestination, test1, arivetime, totaltime, str(economy), str(ecoTax), str(business), str(businessTax), str(first), str(firstTax),"Economy", "Business", "First", "united", departdetailsText, arivedetailsText, planedetails, operatedbytext,ecoFareCode,businessFareCode,firstFareCode))
+            db.commit()
+            values_string =[]
+            print recordcount,"row inserted"
+            recordcount = 1
         
-        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (Flightno, str(searchkey), stime, stoppage, "test", source, lastdestination, test1, arivetime, totaltime, str(economy), str(ecoTax), str(business), str(businessTax), str(first), str(firstTax),"Economy", "Business", "First", "united", departdetailsText, arivedetailsText, planedetails, operatedbytext,ecoFareCode,businessFareCode,firstFareCode))
-        db.commit()
-        print "row inserted"
-    cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "united", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
+    cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "united", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
     db.commit()
     display.stop()
     driver.quit()              
