@@ -367,16 +367,18 @@ def index(request):
     #img_
     recent_searches = Searchkey.objects.raw("select ps.destination, ps.searchid,ps.destination,ps.destination_city as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from pexproject_flightdata as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from pexproject_flightdata as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin order by pf1.scrapetime desc)  as pfs1 on pfs1.searchkeyid = ps.searchid group by destination order by ps.scrapetime desc limit 8")
     recent_searches1 = list(recent_searches)
+    for s in recent_searches1:
+        if s.final_dest:
+            img_cityName.append(s.final_dest)
+    img_cityName2 = "','".join(img_cityName)
     recordFromActiveTable = len(recent_searches1)
     dataFromAcradeTable = ''
     if recordFromActiveTable < 8:
         nextLimit = 8 - recordFromActiveTable 
-        dataFromAcradeTable1 = Searchkey.objects.raw("select ps.destination, ps.searchid,ps.destination,ps.destination_city as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from arcade_flight_data as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from arcade_flight_data as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin order by pf1.scrapetime desc)  as pfs1 on pfs1.searchkeyid = ps.searchid group by destination order by ps.scrapetime desc limit "+str(nextLimit))
+        dataFromAcradeTable1 = Searchkey.objects.raw("select ps.destination, ps.searchid,ps.destination,ps.destination_city as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from arcade_flight_data as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from arcade_flight_data as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin order by pf1.scrapetime desc)  as pfs1 on pfs1.searchkeyid = ps.searchid where ps.destination_city not in ('"+img_cityName2+"') group by destination order by ps.scrapetime desc limit "+str(nextLimit))
         dataFromAcradeTable = list(dataFromAcradeTable1)
 
-    for s in recent_searches1:
-        if s.final_dest:
-            img_cityName.append(s.final_dest)
+    
     if dataFromAcradeTable:
         for city in dataFromAcradeTable:
             img_cityName.append(city.final_dest)
@@ -436,16 +438,18 @@ def flights(request):
     img_cityName = []
     recent_searches = Searchkey.objects.raw("select ps.destination, ps.searchid,ps.destination,ps.destination_city as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from pexproject_flightdata as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from pexproject_flightdata as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin order by pf1.scrapetime desc)  as pfs1 on pfs1.searchkeyid = ps.searchid group by destination order by ps.scrapetime desc limit 8")
     recent_searches1 = list(recent_searches)
+    for s in recent_searches1:
+        if s.final_dest:
+            img_cityName.append(s.final_dest)
+    img_cityName2 = "','".join(img_cityName)        
     recordFromActiveTable = len(recent_searches1)
     dataFromAcradeTable = ''
     if recordFromActiveTable < 8:
         nextLimit = 8 - recordFromActiveTable 
-        dataFromAcradeTable1 = Searchkey.objects.raw("select ps.destination, ps.searchid,ps.destination,ps.destination_city as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from arcade_flight_data as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from arcade_flight_data as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin order by pf1.scrapetime desc)  as pfs1 on pfs1.searchkeyid = ps.searchid group by destination order by ps.scrapetime desc limit "+str(nextLimit))
+        dataFromAcradeTable1 = Searchkey.objects.raw("select ps.destination, ps.searchid,ps.destination,ps.destination_city as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from arcade_flight_data as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from arcade_flight_data as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin order by pf1.scrapetime desc)  as pfs1 on pfs1.searchkeyid = ps.searchid where ps.destination_city not in ('"+img_cityName2+"') group by destination order by ps.scrapetime desc limit "+str(nextLimit))
         dataFromAcradeTable = list(dataFromAcradeTable1)
 
-    for s in recent_searches1:
-        if s.final_dest:
-            img_cityName.append(s.final_dest)
+    
     if dataFromAcradeTable:
         for city in dataFromAcradeTable:
             img_cityName.append(city.final_dest)
@@ -1119,6 +1123,8 @@ def checkData(request):
     data1 = ''
     iscomplete =''
     totalrecords = 0
+    isdatastored = ''
+    flagcheck = ''
     if request.is_ajax():
         cabin = request.POST['cabin']
         if 'multicity' in request.POST:
@@ -1135,41 +1141,40 @@ def checkData(request):
                 n = n+1
             isdatastored = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 "+recordcheck+" where p1.searchkeyid ='"+str(multiple_key[0])+"' and p1."+cabin+" > 0")
             
-            flagObj = Flightdata.objects.raw("select p1.rowid from pexproject_flightdata p1 "+inner_join_on+" where p1.searchkeyid ='"+str(multiple_key[0])+"' and p1.flighno = 'flag'")
-            objlen = len(list(flagObj))
-            if len(list(isdatastored)) > 0:
-                data1 = "stored"
-            else:
-                data1 = "onprocess"
-            if objlen > 0:
-                iscomplete = "completed"
-                
+            flagcheck = Flightdata.objects.raw("select p1.rowid from pexproject_flightdata p1 "+inner_join_on+" where p1.searchkeyid ='"+str(multiple_key[0])+"' and p1.flighno = 'flag'")
+            
         else:    
             if 'keyid' in request.POST:
                 recordkey = request.POST['keyid']
+                time1 = datetime.datetime.now() - timedelta(minutes=30)
+                time1 = time1.strftime('%Y-%m-%d %H:%M:%S')
                 
+                #print keystatus.count()
                 if 'returnkey' in request.POST:
                     returnkey = request.POST['returnkey']
                     returnfare = "p2." + cabin
                     departfare = "p1." + cabin                
-                    totalrecords1 = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and "+returnfare+" > 0 where p1.searchkeyid="+str(recordkey)+" and "+departfare+" > 0")
-                    totalrecords = len(list(totalrecords1))                 
-                    obj = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and p2.flighno = 'flag' where p1.searchkeyid="+str(recordkey)+" and p1.flighno = 'flag'")
+                    isdatastored = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and "+returnfare+" > 0 where p1.searchkeyid="+str(recordkey)+" and "+departfare+" > 0")
+                                     
+                    flagcheck = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and p2.flighno = 'flag' where p1.searchkeyid="+str(recordkey)+" and p1.flighno = 'flag'")
                     
-                    obj1 = len(list(obj))
-                    if obj1 > 0:
-                         iscomplete = "completed"  
-                else:                
-                    totalrecords1 = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(recordkey)+" and "+cabin+"> 0")
-                    totalrecords = len(list(totalrecords1))
-                    obj = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(recordkey)+" and flighno = 'flag' ")
-                    obj1 = len(list(obj))
-                    if obj1 > 0:
-                         iscomplete = "completed"       
-                if totalrecords > 0:
-                    data1 = "stored"
-                else:
-                    data1 = "onprocess"
+                    
+                else: 
+                    try:
+                        keystatus = Searchkey.objects.get(searchid=recordkey,scrapetime__gte= time1)
+                    except:
+                        iscomplete = "key_expired"
+                                       
+                    isdatastored = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(recordkey)+" and "+cabin+"> 0")
+                    
+                    flagcheck = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(recordkey)+" and flighno = 'flag' ")
+                       
+        if len(list(isdatastored)) > 0:
+            data1 = "stored"
+        else:
+            data1 = "onprocess"
+        if len(list(flagcheck)) > 0:
+            iscomplete = "completed"
         #data1 = "onprocess"
         mimetype = 'application/json'
         results = []

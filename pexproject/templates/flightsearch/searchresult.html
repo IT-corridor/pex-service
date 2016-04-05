@@ -2180,8 +2180,7 @@
 	{
 		data_status = true;
 	}
-	//console.log();
-	console.log(data_status);
+	
 	
 	$(function(){
 		
@@ -2973,11 +2972,19 @@ $(document).ready(function(){
 	 	data: "keyid="+ encodeURI(searchid) + "&csrfmiddlewaretoken={{ csrf_token }}"+"&cabin="+encodeURI(cabin)+temp+multicity,
 	 	success: function(data){
 	 	callrunning = false ;
-	 	console.log(data) ;
+	 	
 	 	if(timecompleted && data[1] != 'completed' )
 	 	{
 	 		
 	 		isprocess();
+	 	}
+	 	if(data[1] == 'key_expired')
+	 	{
+	 		clearInterval(refreshIntervalId);
+	 		$('changebtnid').click();
+	 		
+			setSearchData();
+	 		
 	 	}
  		if(data[1] == 'completed' )
  		{ 
@@ -3062,8 +3069,15 @@ $('#subscribe').click(function(){
   var searchidval ='';
   var returnidval = '';
 $("#changebtnid").click(function(event) {
-    	event.preventDefault();	
-		sourceid = $('#fromid').val();
+		
+    	//event.preventDefault();	
+		setSearchData();
+		
+    });
+   function setSearchData(){
+   	
+   	event.preventDefault();	
+   	sourceid = $('#fromid').val();
 		destinationid = $('#toid').val();
 		var isReturndate = '';
 		isReturndate = "{{returndate}}"	;
@@ -3073,7 +3087,7 @@ $("#changebtnid").click(function(event) {
 		departdateval = $('#departuredate').val();
 		cabintypeval = $('#cabintype option:selected').val();
 		searchData();
-    });
+   }
   function searchData(){
   	$('#changebtnid').prop('disabled', true);
   	$("#content1").empty();
