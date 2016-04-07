@@ -19,7 +19,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from django.db import connection, transaction
-from multiprocessing import Process
+import customfunction  
 import threading
 from threading import Thread
 import Queue
@@ -33,64 +33,59 @@ import urllib
 
 def delta(orgn, dest, searchdate, searchkey):
     #return searchkey
-    db = MySQLdb.connect(host="localhost",  
-                     user="root",           
-                      passwd="1jyT382PWzYP",        
-                      db="pex")  
+    db = customfunction.dbconnection()
     cursor = db.cursor()
     db.set_character_set('utf8')
-    
+    print "searchdate",searchdate
     #cursor = connection.cursor()
     url = "http://www.delta.com/"   
     searchid = str(searchkey)
     currentdatetime = datetime.datetime.now()
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
-    
+  
     display = Display(visible=0, size=(800, 600))
     display.start()
+    '''
     chromedriver = "/usr/bin/chromedriver"
     os.environ["webdriver.chrome.driver"] = chromedriver
     driver = webdriver.Chrome(chromedriver)
     
-    #driver = webdriver.Chrome()
+    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
+    driver.set_window_size(1120, 1080) '''
+    driver = webdriver.Chrome()
     try:
-        driver.implicitly_wait(20)
         driver.get(url)
         time.sleep(1)
         WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "oneWayBtn")))
         oneway = driver.find_element_by_id('oneWayBtn')
+        #oneway.click()
         driver.execute_script("arguments[0].click();", oneway)
-        
         origin = driver.find_element_by_id("originCity")
         origin.clear()
         origin.send_keys(orgn.strip())
         destination = driver.find_element_by_id("destinationCity")
         destination.send_keys(dest.strip())
-    
-        ddate = driver.find_element_by_id("departureDate")  # .click()
-        ddate.send_keys(str(searchdate))
+        ddate = driver.find_element_by_id("departureDate")  
+        driver.execute_script("document.getElementById('departureDate').setAttribute('value', '"+str(searchdate)+"')")
         milebtn = driver.find_element_by_id("milesBtn")
-        driver.execute_script("arguments[0].click();", milebtn)
+        milebtn.click()
         driver.find_element_by_id("findFlightsSubmit").send_keys(Keys.ENTER)
         
     except:
-        display.stop
+        print "before data page"
         driver.quit()
         return searchkey
     soup = ''
     try:
-        #print "test1"
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
+        time.sleep(2)
+        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
         print "data found"
-	#html_page = driver.page_source
-	#soup = BeautifulSoup(html_page)
     except:
         print "exception"
         display.stop()
         driver.quit()
-        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "delta", "flag", "flag", "flag", "flag"))
+        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag","flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "delta", "flag", "flag", "flag", "flag"))
     	db.commit()
-        #transaction.commit()
         return searchkey
     
     try:
@@ -98,15 +93,14 @@ def delta(orgn, dest, searchdate, searchkey):
         driver.find_element_by_link_text('Show All').click()
         WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.ID, "fareRowContainer_20")))
         sleep(1)
-	#html_page = driver.page_source
-	#soup = BeautifulSoup(html_page)
+	
     except:
         print "single page data"
         #WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
     try:
-	html_page = driver.page_source
-    	soup = BeautifulSoup(html_page)
-   	pricehead = soup.find("tr",{"class":"tblHeadUp"})
+        html_page = driver.page_source
+    	soup = BeautifulSoup(html_page,"lxml")
+        pricehead = soup.find("tr",{"class":"tblHeadUp"})
     	pricecol = pricehead.findAll("label",{"class":["nextGenHiddenFieldWindow","tblHeadBigtext"]})
     	datatable = soup.findAll("table", {"class":"fareDetails"})
     except:
@@ -120,36 +114,34 @@ def delta(orgn, dest, searchdate, searchkey):
     
     fare_flag = 0
     soup2 = ''
-    try:
-    	detailids = soup.findAll("div", {"class":"detailLinkHldr"})
-    	for detlid in detailids:
-            detailid = detlid['id']
-            driver.execute_script("document.getElementById('"+detailid+"').click()")
-            time.sleep(0.05)
-    	time.sleep(0.06)
+    #try:
+    detailids = soup.findAll("div", {"class":"detailLinkHldr"})
+    for detlid in detailids:
+        detailid = detlid['id']
+        detailid_ele = driver.find_element_by_id(detailid)
+        
+        driver.execute_script("document.getElementById('"+detailid+"').click()")
+        time.sleep(.02)
+	time.sleep(0.05)
     	#page = driver.page_source
     	#soup2 = BeautifulSoup(page)
-    except:
+    #except:
+        '''
     	print "something wrong"
-    	display.stop()
     	driver.quit()
-    	cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "delta", "flag", "flag", "flag", "flag"))
+    	cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "delta", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
         print "delta flag inserted"
     	db.commit()
         #transaction.commit()
-    	return searchkey
+    	return searchkey'''
     n = 0
     
     htmlpage = driver.page_source
-    soup2 = BeautifulSoup(htmlpage)
+    soup2 = BeautifulSoup(htmlpage,"lxml")
     cabin_ele = driver.find_elements_by_xpath("//*[@class='miscCabin']")
-    #print "cabin_ele",cabin_ele
+    values_string = []
+    recordcount = 1
     for content in datatable:
-        #if soup2:
-        #time.sleep(0.06)
-        #page = driver.page_source
-        #page = str(page.encode('ascii', 'ignore'))
-        #soup2 = BeautifulSoup(page)
         datatable1 = soup2.findAll("table", {"class":"fareDetails"})
         k = 0
         departdetails = []
@@ -159,6 +151,7 @@ def delta(orgn, dest, searchdate, searchkey):
         efare_class = []
         bfare_class=[]
         ffare_class = []
+        
         for cnt in datatable1:
             if cnt.find("div", {"class":"detailsRow" }) and k == n:
                 detailblk = cnt.findAll("div", {"class":"detailsRow"})
@@ -330,7 +323,7 @@ def delta(orgn, dest, searchdate, searchkey):
                         hover = ActionChains(driver).move_to_element(cabin_ele[fare_flag])
                         hover.perform()
                         #get_html  = ele.get_attribute("innerHTML")
-                        time.sleep(1)
+                        time.sleep(.5)
                         #time.sleep(.2)
                         html_page2 = driver.page_source
                         soup = BeautifulSoup(html_page2)
@@ -368,18 +361,22 @@ def delta(orgn, dest, searchdate, searchkey):
         efare_class_text = '@'.join(efare_class)
         bfare_class_text = '@'.join(bfare_class)
         ffare_class_text = '@'.join(ffare_class)
-        #print "bfare_class_text",bfare_class_text
-        #print "ffare_class_text",ffare_class_text
-        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno, searchid, stime, stp, lyover, sourcestn, destinationstn, test1, arivalformat1, duration, str(fare1), str(economytax), str(fare2), str(businesstax), str(fare3), str(firsttax), cabintype1.strip(), cabintype2.strip(), cabintype3, "delta", deptdetail, arivedetail, planetext, operatedbytext,efare_class_text,bfare_class_text,ffare_class_text))
+        recordcount = recordcount+1
+        values_string.append((fltno, searchid, stime, stp, lyover, sourcestn, destinationstn, test1, arivalformat1, duration, str(fare1), str(economytax), str(fare2), str(businesstax), str(fare3), str(firsttax), cabintype1.strip(), cabintype2.strip(), cabintype3, "delta", deptdetail, arivedetail, planetext, operatedbytext,efare_class_text,bfare_class_text,ffare_class_text))
+        if recordcount > 50:
+            cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", values_string)
+            db.commit()
+            values_string =[]
+            recordcount = 1
+            print "data inserted"
+
+    if len(values_string) > 0:
+        cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", values_string)
         db.commit()
-        #transaction.commit()
-        print "data inserted"
-
-
     
-    display.stop()
     driver.quit()
-    cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "delta", "flag", "flag", "flag", "flag"))
+    display.stop()
+    cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "delta", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
     db.commit()
     #transaction.commit()
     return searchkey
@@ -390,14 +387,8 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     #date = dt.strftime('%d/%m/%Y')
     date = searchdate
     print "final date", date
-   
-    db = MySQLdb.connect(host="localhost",   
-                     user="root",          
-                      passwd="1jyT382PWzYP",        
-                      db="pex")
-    db.set_character_set('utf8')
+    db = customfunction.dbconnection()
     cursor = db.cursor()
-    
     #cursor = connection.cursor()
     currentdatetime = datetime.datetime.now()
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
@@ -410,32 +401,30 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
         search_cabin = "Radio3"
     
     url = "http://www.etihad.com/en-us/plan-and-book/book-redemption-flights/"
-    
+  
     display = Display(visible=0, size=(800, 600))
     display.start()
     chromedriver = "/usr/bin/chromedriver"
     os.environ["webdriver.chrome.driver"] = chromedriver
     driver = webdriver.Chrome(chromedriver)
-    driver = webdriver.Chrome()
     '''
     driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
-    driver.set_window_size(1120, 550)'''
+    driver.set_window_size(1120, 1080)  '''
     driver.get(url)
-    time.sleep(3)
     try:
-    	WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.ID, "frm_2012158061206151234")))
+    	WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "frm_2012158061206151234")))
     except:
-        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "etihad", "flag", "flag", "flag", "flag"))
+        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "etihad", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
         db.commit()
         #transaction.commit()
         print "etihad flag inserted"
         display.stop()
         driver.quit()
         return searchkey
-    time.sleep(2)
+    time.sleep(5)
     origin = driver.find_element_by_id("frm_2012158061206151234")
     origin.click()
-    time.sleep(3)
+    time.sleep(2)
     origin.send_keys(str(source))
     time.sleep(1)
     origin.send_keys(Keys.TAB)
@@ -446,41 +435,40 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     to.send_keys(Keys.TAB)
     
     oneway = driver.find_element_by_id("frm_oneWayFlight")
-    oneway.click()
-    #driver.execute_script("arguments[0].click();", oneway)
+    #oneway.click()
+    driver.execute_script("arguments[0].click();", oneway)
     
     search_cabin1 = driver.find_element_by_id(search_cabin)
-    search_cabin1.click()
-    #driver.execute_script("arguments[0].click();", search_cabin1)
+    #search_cabin1.click()
+    driver.execute_script("arguments[0].click();", search_cabin1)
     
     ddate = driver.find_element_by_id("frm_2012158061206151238")
     ddate.clear()
     ddate.send_keys(date)
-    ddate.send_keys(Keys.ENTER)
+    ddate.send_keys(Keys.TAB)
     flightbutton = driver.find_element_by_name("webform")
     flightbutton.send_keys(Keys.ENTER)
     
-    time.sleep(4)
-    #html_page = driver.page_source
-    
-    #soup = BeautifulSoup(html_page)
+    time.sleep(5)
+
     datatable = ''
     try:
+        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "dtcontainer-both")))
         html_page = driver.page_source
     	soup = BeautifulSoup(html_page)
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "dtcontainer-both")))
         maincontain = soup.find("div", {"id":"dtcontainer-both"})
     	datatable = maincontain.find("tbody")
 
     except:
         display.stop()
         driver.quit()
-        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "etihad", "flag", "flag", "flag", "flag"))
+        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "etihad", "flag", "flag", "flag", "flag"))
         db.commit()
         #transaction.commit()
         print "flag inserted" 
         return searchkey
-
+    value_string = []
+    recordcount = 1
     trblock = datatable.findAll("tr")   
     for tds in trblock:
         duration = ''
@@ -515,11 +503,10 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
             from_time = from_detail[1].text
 	    #print "from info", from_code,from_time
         else:
-            #display.stop()
+            display.stop()
             driver.quit()
             print "etihad has no data"
             cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "etihad", "flag", "flag", "flag", "flag"))
-            #transaction.commit()
             db.commit()
             print "etihad flag inserted" 
             return searchkey
@@ -557,47 +544,59 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
             fltno = flightno.text
             fltno = fltno.replace(opt,'')
     	    soup1 = ''
-    	    try:
-            	flt_link = driver.find_elements_by_xpath("//*[contains(text(), '"+str(fltno)+"')]")
-            	driver.execute_script("arguments[0].click();", flt_link[0])
-            	time.sleep(0.05)
-            	html_page1 = driver.page_source
-            	soup1 = BeautifulSoup(html_page1)
-    	    except:
-        	 	htmlpage = driver.page_source
-        		soup1 = BeautifulSoup(htmlpage)
+    	    flt_link = driver.find_elements_by_xpath("//*[contains(text(), '"+str(fltno)+"')]")
+    	    
+            time.sleep(1)
+    	    #flt_link[0].click()
+            driver.execute_script("arguments[0].click();", flt_link[0])
+            time.sleep(1)
+            html_page1 = driver.page_source
+            soup1 = BeautifulSoup(html_page1)
+            '''
+                try:
+                	flt_link = driver.find_elements_by_xpath("//*[contains(text(), '"+str(fltno)+"')]")
+            print "flt_link",flt_link[0]
+            flt_link[0].click()
+                	#driver.execute_script("arguments[0].click();", flt_link[0])
+                	time.sleep(0.05)
+                	html_page1 = driver.page_source
+                	soup1 = BeautifulSoup(html_page1)
+                except:
+            htmlpage = driver.page_source
+            	soup1 = BeautifulSoup(htmlpage)'''
         
-            detailblock = soup1.find("div", {"class":"flight"})
-            detailbody = detailblock.find("tbody")
-            trbody = detailbody.findAll("tr")
-            departdetail = []
-            arivedetail = []
-            planedetail = []
-            operator = []
-            for info in trbody:
-                tdblock = info.findAll("td")
-                operatedby = tdblock[0].text
-                operator.append(operatedby)
-                ftno = tdblock[1].text
-                origin = tdblock[2].text
-                origin_tym2 = tdblock[3].find("span")["data-wl-date"]
-                origin_tym1 = origin_tym2.split(",")
-                origin_tym = origin_tym1[0]
-                departinfo = origin_tym + " from " + origin
-                departdetail.append(departinfo)
-                dest = tdblock[4].text
-                dest_tym2 = tdblock[5].find("span")["data-wl-date"]
-                dest_tym1 = origin_tym2.split(",")
-                dest_tym = dest_tym1[0]
-                arivalinfo = dest_tym + " at " + dest
-                arivedetail.append(arivalinfo)
-                aircraft = tdblock[6].text
-                plane = ftno + " | " + aircraft
-                planedetail.append(plane)
-            departdetailtext = '@'.join(departdetail)
-            arivedetailtext = '@'.join(arivedetail)
-            planedetailtext = '@'.join(planedetail)
-            operatortext = '@'.join(operator)
+        detailblock = soup1.find("div", {"class":"flight"})
+        detailbody = detailblock.find("tbody")
+        trbody = detailbody.findAll("tr")
+        departdetail = []
+        arivedetail = []
+        planedetail = []
+        operator = []
+        for info in trbody:
+            tdblock = info.findAll("td")
+            operatedby = tdblock[0].text
+            operator.append(operatedby)
+            ftno = tdblock[1].text
+            origin = tdblock[2].text
+            origin_tym2 = tdblock[3].find("span")["data-wl-date"]
+            origin_tym1 = origin_tym2.split(",")
+            origin_tym = origin_tym1[0]
+            departinfo = origin_tym + " from " + origin
+            departdetail.append(departinfo)
+            dest = tdblock[4].text
+            dest_tym2 = tdblock[5].find("span")["data-wl-date"]
+            dest_tym1 = origin_tym2.split(",")
+            dest_tym = dest_tym1[0]
+            arivalinfo = dest_tym + " at " + dest
+            arivedetail.append(arivalinfo)
+            aircraft = tdblock[6].text
+            plane = ftno + " | " + aircraft
+            planedetail.append(plane)
+        departdetailtext = '@'.join(departdetail)
+        arivedetailtext = '@'.join(arivedetail)
+        planedetailtext = '@'.join(planedetail)
+        operatortext = '@'.join(operator)
+        print "etihad ",departdetailtext
         
         priceblocks = tds.findAll("td",{"class":"price"})
         if len(priceblocks) == 4:
@@ -623,15 +622,23 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
             businesstax = tax
         else:
             fare3 = pricemiles
-            firsttax = tax      
-        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fltno, str(searchkey), stime, stoppage, "test", from_code, to_code, from_time, to_time, duration, str(fare1), str(ecotax), str(fare2),str(businesstax), str(fare3), str(firsttax), "Economy", "Business", "First", "etihad", departdetailtext, arivedetailtext, planedetailtext, operatortext))
-        db.commit()  
+            firsttax = tax
+        eco_fare_text = ''
+        bfare_text=''
+        first_fare_text=''     
+        value_string.append((fltno, str(searchkey), stime, stoppage, "test", from_code, to_code, from_time, to_time, duration, str(fare1), str(ecotax), str(fare2),str(businesstax), str(fare3), str(firsttax), "Economy", "Business", "First", "etihad", departdetailtext, arivedetailtext, planedetailtext, operatortext,eco_fare_text,bfare_text,first_fare_text))     
+        recordcount = recordcount+1
+        if recordcount > 50:
+            cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
+            db.commit()  
         #transaction.commit() 
-        print "data inserted"
-     
+            print "data inserted"
+    if len(value_string) > 0:
+        cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
+        db.commit()  
     display.stop()
     driver.quit()
-    cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "etihad", "flag", "flag", "flag", "flag"))
+    cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "etihad", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
     db.commit()
     #transaction.commit()
     print "etihad flag inserted" 
