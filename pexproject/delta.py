@@ -103,12 +103,19 @@ def delta(orgn, dest, searchdate, searchkey):
     except:
         print "single page data"
         #WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "fareRowContainer_0")))
-    html_page = driver.page_source
-    soup = BeautifulSoup(html_page)
-    pricehead = soup.find("tr",{"class":"tblHeadUp"})
-    pricecol = pricehead.findAll("label",{"class":["nextGenHiddenFieldWindow","tblHeadBigtext"]})
-    datatable = soup.findAll("table", {"class":"fareDetails"})
-    
+    try:
+	html_page = driver.page_source
+    	soup = BeautifulSoup(html_page)
+   	pricehead = soup.find("tr",{"class":"tblHeadUp"})
+    	pricecol = pricehead.findAll("label",{"class":["nextGenHiddenFieldWindow","tblHeadBigtext"]})
+    	datatable = soup.findAll("table", {"class":"fareDetails"})
+    except:
+	display.stop()
+        driver.quit()
+        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "delta", "flag", "flag", "flag", "flag"))
+        db.commit()
+        return searchkey
+
     
     
     fare_flag = 0
@@ -185,8 +192,7 @@ def delta(orgn, dest, searchdate, searchkey):
         tds = content.findAll("td")
         cabinhead = ''
         detailsblock = tds[0]
-        print len(pricecol)
-        print len(tds)
+        
         if  len(pricecol) > 1:
             if tds[1]:
                 economy = tds[1]
@@ -281,8 +287,14 @@ def delta(orgn, dest, searchdate, searchkey):
                     if 'Multiple Cabins' in cabintype1:
                         #hover_element =  economy.find("div", {"class":"frmTxtHldr flightCabinClass"})
                         #hover_link = hover_element.find("a")['class']
-                        hover = ActionChains(driver).move_to_element(cabin_ele[fare_flag])
-                        hover.perform()
+			try:
+                            hover = ActionChains(driver).move_to_element(cabin_ele[fare_flag])
+                            hover.perform()
+			except:
+			    cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "delta", "flag", "flag", "flag", "flag"))
+    			    db.commit()
+			    driver.quit()
+                            return searchkey
                         time.sleep(.2)
                         html_page2 = driver.page_source
                         soup = BeautifulSoup(html_page2)
