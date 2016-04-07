@@ -29,18 +29,14 @@ import urllib
 def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
     #return searchkey
     print origin,dest, searchdate,returndate, searchkey,returnkey
-    '''
-    db = MySQLdb.connect(host="localhost", 
-                     user="root",           
-                      passwd="root",      
-                      db="pex")'''
+    
     db = customfunction.dbconnection()
     cursor = db.cursor()
     #cursor = connection.cursor()
-    dt = datetime.datetime.strptime(searchdate, '%Y/%m/%d')
+    dt = datetime.datetime.strptime(searchdate, '%m/%d/%Y')
     date = dt.strftime('%d/%m/%Y')
     if returndate:
-        dt1 = datetime.datetime.strptime(returndate, '%Y/%m/%d')
+        dt1 = datetime.datetime.strptime(returndate, '%m/%d/%Y')
         retdate = dt1.strftime('%d/%m/%Y') 
     currentdatetime = datetime.datetime.now()
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
@@ -64,6 +60,8 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
     html_page = driver.page_source
     
     soup = BeautifulSoup(html_page)
+    value_string = []
+    recordcount = 1
     def virgindata(tbody,keyid):
         try :
             if tbody.findAll("tr",{"class":"directRoute "}):
@@ -309,12 +307,21 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
             planedetails = ('@'.join(planelist)).strip()
             operatedbytext = '@'.join(operatedby)  
             print "==============================================================================================="
-            cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (fl_flightno, str(keyid), stime, stp, lyover, sourcestn, destinationstn, depttime, arivaltime,total_duration, str(econo), str(econotax), str(business), str(busstax), str(first), str(firsttax),"Economy","Business","First", "virgin_atlantic", departdetails, arivedetails, planedetails, operatedbytext))
+            value_string.append((fl_flightno, str(keyid), stime, stp, lyover, sourcestn, destinationstn, depttime, arivaltime,total_duration, str(econo), str(econotax), str(business), str(busstax), str(first), str(firsttax),"Economy","Business","First", "virgin_atlantic", departdetails, arivedetails, planedetails, operatedbytext))
+            recordcount = recordcount+1
+            if recordcount > 50:
+                cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);",value_string )
+                db.commit()
+                value_string = []
+                recordcount = 1
+        if len(value_string) > 0:
+            cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);",value_string )
             db.commit()
-    
+            
     tbody = soup.findAll("tbody",{"class":"flightStatusTbody"})
     if len(tbody) > 0:
         virgindata(tbody[0],searchkey)
+        
     if len(tbody)> 1 :
         virgindata(tbody[1],returnkey)
     #display.stop()                                                                                                                                  
