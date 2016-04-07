@@ -12,6 +12,7 @@ import time
 import MySQLdb
 from django.db import connection, transaction
 import datetime
+import customfunction 
 from datetime import timedelta
 from selenium.webdriver.support.ui import Select
 import re
@@ -21,10 +22,11 @@ from pyvirtualdisplay import Display
 def scrapeFlight(page_contents,searchid):
     db = customfunction.dbconnection()
     cursor = db.cursor()
-    
+
     currentdatetime = datetime.datetime.now()
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     flightcontainer = page_contents.findAll("div",{"class":"aa_flightListContainer"})
+    value_string = []
     for flights in flightcontainer:
         flightinfo = flights.findAll("div",{"class":"ca_flightSlice"})
         stop =  int(len(flightinfo))-1    
@@ -156,45 +158,40 @@ def scrapeFlight(page_contents,searchid):
         business_fare_class = ''
         fisrt_fare_class = ''
         #print "****************************************************************************************************"
-        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (flightno, str(searchid), stime, stoppage, "test", departcode, dest_code, departtime1, dest_time1, totaltime, str(maincabin),"0.0", str(business),"0.0", str(first),"0.0", cabintype1, cabintype2, cabintype3, "american airlines", departdetails, arivedetails, planedetails, operatedbytext,economy_fare_class,business_fare_class,fisrt_fare_class))
+        value_string.append((flightno, str(searchid), stime, stoppage, "test", departcode, dest_code, departtime1, dest_time1, totaltime, str(maincabin),"0.0", str(business),"0.0", str(first),"0.0", cabintype1, cabintype2, cabintype3, "american airlines", departdetails, arivedetails, planedetails, operatedbytext,economy_fare_class,business_fare_class,fisrt_fare_class))
+        
+        if len(value_string)> 50 :
+            cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
+            db.commit()
+            value_string = []
+            print len(value_string),"row inserted"
+    if len(value_string) > 0:
+        cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
         db.commit()
-        #transaction.commit()
-        print "row inserted"
+        print len(value_string),"row inserted"
         
 if __name__=='__main__':
     
     searchid = sys.argv[4]
-    dt = datetime.datetime.strptime(sys.argv[3], '%Y/%m/%d')
+    dt = datetime.datetime.strptime(sys.argv[3], '%m/%d/%Y')
     date = dt.strftime('%m/%d/%Y')
     selectdate = dt.strftime('X%m-X%d-%Y').replace('X0','X').replace('X','')
     month = dt.strftime("%b")
     day = dt.strftime("X%d").replace('X0','X').replace('X','')
     year = dt.strftime("%Y")
 
-    
     url = "https://www.aa.com/reservation/awardFlightSearchAccess.do"
-   
-    display = Display(visible=0, size=(800, 600))
-    display.start()
-    '''  
-    chromedriver = "/usr/bin/chromedriver"
-    os.environ["webdriver.chrome.driver"] = chromedriver
-    driver = webdriver.Chrome(chromedriver)
-    '''
+    #display = Display(visible=0, size=(800, 600))
+    #display.start()
+    #chromedriver = "/usr/bin/chromedriver"
+    #os.environ["webdriver.chrome.driver"] = chromedriver
+    #driver = webdriver.Chrome(chromedriver)
+    
+    #driver = webdriver.Chrome()
     driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
     driver.set_window_size(1120, 1080)
-    #driver = webdriver.Chrome()
     driver.get(url)
-    driver.implicitly_wait(5)
-    time.sleep(5)
-    print "url called"
-    #time.sleep(20)
-    #WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "awardFlightSearchForm.originAirport")))
-        
-    #origin  = driver.find_element_by_name("originAirport")
-    html_page = driver.page_source
-    pagecontent = BeautifulSoup(html_page)
-    print pagecontent
+    #driver.implicitly_wait(5)
     origin  = driver.find_element_by_id("awardFlightSearchForm.originAirport")
     print "origin",origin
     origin.clear()
@@ -236,9 +233,10 @@ if __name__=='__main__':
         WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "selectedPanel")))
     except:
         print "No flights found on american airlines"
-        display.stop()
+        #display.stop()
         driver.quit()
-	exit()
+        exit()
+
         #return searchid
         
         
@@ -257,7 +255,7 @@ if __name__=='__main__':
         if "NotAvailable" not in is_available:
             cabin = link['href']
             cabin_ele = driver.find_element_by_xpath("//a[@href='" +cabin+ "']")
-	    cabin_ele.click()
+            cabin_ele.click()
             #driver.execute_script("arguments[0].click();", cabin_ele)
             time.sleep(1)
             html_page = driver.page_source
@@ -272,6 +270,7 @@ if __name__=='__main__':
             if len(flightcontainer) > 9:
                 for page_link in paginglist:
                     link_text = page_link.text
+                    
                     pageObj = driver.find_element_by_link_text(link_text)
 
                     pageObj.click()
@@ -282,9 +281,9 @@ if __name__=='__main__':
                     scrapeFlight(data_container,searchid)
                     #print "++++++++++++++++++"+link_text+"+++++++++++++++++++++++++++++++++++"
                 page1_Obj = driver.find_element_by_link_text("Page 1")
-		page1_Obj.click()
+                page1_Obj.click()
                 #driver.execute_script("arguments[0].click();", page1_Obj);
                 
     driver.quit()
-    display.stop()
+    #display.stop()
     #return searchid
