@@ -42,7 +42,7 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
     #driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true', '--ssl-protocol=any'])
     #driver.set_window_size(1120, 1080)
     driver.get(url)
-    time.sleep(2)
+    time.sleep(4)
     submitbtn = driver.find_element_by_xpath("//*[contains(text(), 'Find Flights')]")
     #submitbtn.click()
     driver.execute_script("arguments[0].click();", submitbtn)
@@ -50,11 +50,13 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
     time.sleep(1)
     
     try:
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "dtcontainer-0")))
+        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "dtcontainer-0")))
+	print "data found"
         html_page = driver.page_source
         soup = BeautifulSoup(html_page,"xml")
         templatedata = soup.find('script', text=re.compile('var templateData = '))
-        json_text = re.search(r'^\s*var templateData = \s*({.*?})\s*;\s*$',templatedata.string, flags=re.DOTALL | re.MULTILINE).group(1)
+	time.sleep(1)
+	json_text = re.search(r'^\s*var templateData = \s*({.*?})\s*;\s*$',templatedata.string, flags=re.DOTALL | re.MULTILINE).group(1)
         jsonData = json.loads(json_text)
         tempdata = jsonData["rootElement"]["children"][1]["children"][0]["children"][7]["model"]
     except:
