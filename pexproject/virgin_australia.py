@@ -164,11 +164,12 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
             businesstax = 0
             first = 0
             firsttax = 0
-            for m in range(1,len(farePrices)):
+            for m in range(0,len(farePrices)):
                 saverPrice = farePrices[m]["pricesPerCurrency"]
                 taxes = 0
                 miles = 0
-                taxes = saverPrice["AUD"]["amount"]
+                if "AUD" in saverPrice:
+                    taxes = saverPrice["AUD"]["amount"]
                 miles = saverPrice["FFCURRENCY"]["amount"]
                 if cabinType == 'E':
                     economy = miles
