@@ -194,6 +194,13 @@
 									</div>
 									<div class="checkbox" >
 									<label>
+									<input type='checkbox' class="chk-airlines" name="airlines" value="Virgin Australia" {% for row in filterkey.datasource %} {% if row == 'Virgin Australia'%} checked="checked" {% endif %}{%endfor %}>
+									<span></span>
+									VIRGIN AUSTRALIA AIRLINES
+									</label>
+									</div>
+									<div class="checkbox" >
+									<label>
 									<input type='checkbox' class="chk-airlines" name="airlines" value="american airlines" {% for row in filterkey.datasource %} {% if row == 'american airlines'%} checked="checked" {% endif %}{%endfor %}>
 									<span></span>
 									AMERICAN AIRLINES
@@ -538,6 +545,9 @@
 											<img src="{% static 'flightsearch/img/etihad.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
 											{% if selectedrow.datasource == "Virgin America" %}
 											<img src="{% static 'flightsearch/img/va.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
+											{% if selectedrow.datasource == "Virgin Australia" %}
+											<img src="{% static 'flightsearch/img/VAUS.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
+										
 										</div>
 										<div class="col-sm-9 col-xs-7 nopr">
 											<p class="flight-name">
@@ -591,7 +601,9 @@
 										<img src="{% static 'flightsearch/img/va.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
 										{% if selectedrow.datasource == "american airlines" %}
 										<img src="{% static 'flightsearch/img/aa.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
-										
+										{% if selectedrow.datasource == "Virgin Australia" %}
+										<img itemprop="logo" src="{% static 'flightsearch/img/VAUS.png' %}" class="img-responsive" alt="Responsive image">
+										{% endif %}
 										<h5>OUTBOUND</h5>
 									</div>
 											<div class="col-sm-5 col-xs-6 col-xs-12 nopadding hidden-sm hidden-xs for-mobile-view text-right xs-margin-20">
@@ -874,6 +886,10 @@
 											{% if row.datasource == "jetblue" %}
 												<img itemprop="logo" src="{% static 'flightsearch/img/jetblue.jpg' %}" class="img-responsive" alt="Responsive image">
 											{% endif %}
+											{% if row.datasource == "Virgin Australia" %}
+												<img itemprop="logo" src="{% static 'flightsearch/img/VAUS.png' %}" class="img-responsive" alt="Responsive image">
+											{% endif %}
+											
 										</div>
 									</div>
 									<div class="col-md-12 col-sm-9 col-xs-7 nopadding" itemscope itemtype ="http://schema.org/Flight">
@@ -911,6 +927,9 @@
 												<img itemprop="logo" src="{% static 'flightsearch/img/virgin.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
 												{% if row.datasource == "jetblue" %}
 												<img itemprop="logo" src="{% static 'flightsearch/img/jetblue.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
+												{% if row.datasource == "Virgin Australia" %}
+												<img itemprop="logo" src="{% static 'flightsearch/img/VAUS.png' %}" class="img-responsive" alt="Responsive image">
+											{% endif %}
 											</div>
 										</div>
 									</div>

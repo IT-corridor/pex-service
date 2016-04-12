@@ -6,9 +6,7 @@ from django.shortcuts import render_to_response
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext, loader
-import json
 from django.db.models import Q, Count, Min
-from datetime import timedelta
 from social_auth.models import UserSocialAuth
 from django.contrib.auth import login
 from types import *
@@ -27,7 +25,7 @@ from social_auth.models import UserSocialAuth
 from django.contrib.auth import login as social_login,authenticate,get_user
 from django.contrib.auth import logout as auth_logout
 import settings
-from customfunction import is_scrape_delta,is_scrape_united,is_scrape_virgin_atlantic,is_scrape_jetblue,is_scrape_aa
+from customfunction import is_scrape_vAUS,is_scrape_delta,is_scrape_united,is_scrape_virgin_atlantic,is_scrape_jetblue,is_scrape_aa
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.html import strip_tags
 from random import randint
@@ -986,7 +984,9 @@ def search(request):
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",destcode, orgncode, str(returndate), str(returnkey)])
                     if is_scrape_aa == 1:
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aa.py",destcode, orgncode, str(returndate), str(returnkey)])
-                   
+                    if is_scrape_vAUS == 1:
+                        subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/virgin_australia.py",destcode, orgncode, str(returndate), str(returnkey),cabin])
+                        
             else:
                 obj = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, scrapetime__gte=time1)
             if len(obj) > 0:
@@ -1008,28 +1008,10 @@ def search(request):
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",orgncode,destcode,str(depart),str(searchkeyid)])
                 if is_scrape_aa == 1:
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aa.py",orgncode,destcode,str(depart),str(searchkeyid)])
-                    
-                # return key process already done then why duplicate code
-                '''
-                returnkey = ''
-                if returndate:
-                    retunobj = Searchkey.objects.filter(source=destination1, destination=origin, destination_city=etihadorigin, traveldate=searchdate1, scrapetime__gte=time1)
-                    if len(retunobj) > 0:
-                        for keyid in retunobj:
-                            returnkey = keyid.searchid
-                    else:
-                        searchdata = Searchkey(source=destination1, destination=origin, destination_city=etihadorigin, traveldate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid)
-                        searchdata.save()
-                        returnkey = searchdata.searchid
-                        if is_scrape_jetblue == 1:
-                            subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/jetblue.py",destcode, orgncode, str(returndate), str(returnkey)])
-                        if is_scrape_delta == 1:
-                            subprocess.Popen(["python",settings.BASE_DIR+"/pexproject/delta.py",destcode, orgncode, str(date1), str(returndate), str(returnkey),etihaddest,etihadorigin,cabin])
-                        if is_scrape_united == 1:
-                            subprocess.Popen(["python",settings.BASE_DIR+"/pexproject/united.py",destcode, orgncode, str(returndate), str(returnkey)])
-                        if s_scrape_aa == 1:
-                            subprocess.Popen(["python",settings.BASE_DIR+"/pexproject/aa.py",destcode, orgncode, str(returndate), str(returnkey)])
-                   '''     
+                if is_scrape_vAUS == 1:
+                        subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/virgin_australia.py",orgncode,destcode,str(depart),str(searchkeyid),cabin])
+                          
+                  
             if is_scrape_virgin_atlantic == 1:
                 Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='virgin_atlantic').delete()
                 if returnkey:
