@@ -61,9 +61,9 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
         if isflag:   
             cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "Virgin Australia", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
             db.commit()
-            display.stop()
-            driver.quit()
-            return searchid
+        display.stop()
+        driver.quit()
+        return searchid
     i = 1 
     
     maindata = tempdata['dayOffers'][0]["itineraryOffers"]
