@@ -2026,6 +2026,9 @@ background: #39A8E0;
 }
 
 @media (max-width: 767px) {
+	#loading-model .modal-dialog {
+		margin: auto 24px;
+	}
 	.form-side-2 {
 	background: #E9F2FA;
 	padding: 10px 10px 0px;
