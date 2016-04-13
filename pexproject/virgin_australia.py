@@ -66,11 +66,18 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
         driver.quit()
         return searchid
     i = 1 
-    
+    operatordiv = soup.findAll(True, {'class': re.compile(r'\operating-carrier-wrapper\b')})
+    operatorArray = []
+    for div in operatordiv:
+        #print "========================================================================"
+        #print div["class"]
+        optr = div.find("span",{"class":"carrier-name"}).text
+        operatorArray.append(optr)
     maindata = tempdata['dayOffers'][0]["itineraryOffers"]
     
     operatorDetails = []
     value_string = []
+    operatorcounter = 0
     for k in range(0,len(maindata)):
         flightsDetails =[]
         
@@ -88,6 +95,7 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
         #@@@@@@@ Segment info @@@@@@@@@@@@@@@@@
         originDetails = []
         destDetails = []
+        operatingCarrier = []
         for counter in range (0,len(segments)):
             segOrigin = segments[counter]["departureCode"]
             segDepartDate = segments[counter]["departureDate"]
@@ -98,7 +106,9 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
             segArive = segments[counter]["arrivalDate"]
             destdetailFormat = segArive+" | at "+segDest
             destDetails.append(destdetailFormat)
-                   
+            if len(operatorArray) >= operatorcounter:
+                operatingCarrier.append(operatorArray[operatorcounter]) 
+                operatorcounter = operatorcounter+1     
         deptDate = deptDateTime[0]
         depttime = deptDateTime[1]
         depttime1 = (datetime.datetime.strptime(depttime, '%H:%M:%S'))
@@ -125,7 +135,7 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
         
         departureCodes = rowRecord["departureCodes"]
         #arrivalCodes = rowRecord["arrivalCodes"]
-        operatingCarrier = rowRecord["operatingCarrier"]
+        #operatingCarrier = rowRecord["operatingCarrier"]
         flightDurations = rowRecord["flightDurations"]
         
         flightNumber = rowRecord["flightNumber"]
@@ -153,7 +163,8 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
             stoppage = "1 STOP"
         else:
             stoppage = str(noOfStop)+" STOPS"
-        operatortext = '@'.join(operatingCarrier)
+        if len(operatingCarrier) > 0:
+            operatortext = '@'.join(operatingCarrier)
         allPrices = maindata[k]["basketsRef"]
         for key in allPrices:
             farePrices = maindata[k]["basketsRef"][key]["prices"]["priceAlternatives"]
