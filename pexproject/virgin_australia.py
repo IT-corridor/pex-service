@@ -96,7 +96,15 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
         originDetails = []
         destDetails = []
         operatingCarrier = []
+        fareClassCode = []
         for counter in range (0,len(segments)):
+            bookingCode1 = ''
+            bookingCode = segments[counter]['bookingClass']
+            if cabinType == 'E':
+                bookingCode1 = bookingCode+" Economy"
+            else:
+                bookingCode1 = bookingCode+" Business"
+            fareClassCode.append(bookingCode1)
             segOrigin = segments[counter]["departureCode"]
             segDepartDate = segments[counter]["departureDate"]
             segDetailFormat = segDepartDate+" | from "+segOrigin
@@ -155,6 +163,15 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
         originDetailString = '@'.join(originDetails)
         arivedetailtext = '@'.join(destDetails)
         planedetailtext = '@'.join(flightsDetails)
+        ecoFareCode = ''
+        busFareCode = ''
+        firstFareCode = ''
+        if len(fareClassCode)> 0:
+            if cabinType == 'E':
+                ecoFareCode = '@'.join(fareClassCode)
+            else:
+                busFareCode = '@'.join(fareClassCode)
+
         noOfStop = len(departureCodes) - 1
         stoppage = ''
         if noOfStop == 0:
@@ -187,9 +204,6 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
                 else:
                     business = miles
                     businesstax = taxes
-                ecoFareCode = ''
-                busFareCode = ''
-                firstFareCode = ''
                 value_string.append((str(fltno), str(searchid), stime, stoppage, "test", origin, dest, departtime, arive, tripDuration, str(economy), str(ecotax), str(business),str(businesstax), str(first), str(firsttax), "Economy", "Business", "First", "Virgin Australia", originDetailString, arivedetailtext, planedetailtext, operatortext,ecoFareCode,busFareCode,firstFareCode))
                 if len(value_string) == 50:
                     cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
