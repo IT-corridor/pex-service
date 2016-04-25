@@ -175,7 +175,7 @@
 
 	</div>
 </div>
-	
+{% include "flightsearch/admin/admin-footer.html" %}
 	<script>
 	CKEDITOR.env.isCompatible = true;
     CKEDITOR.replace( 'ckeditor1', {
@@ -183,6 +183,7 @@
                 { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Strike','-','RemoveFormat'] },
                 { name: 'paragraph', items: ['NumberedList','BulletedList','-','Outdent','Indent', '-','Blockquote'] },
                 { name: 'links', items: ['Link','Unlink','Anchor'] },
+                { name: 'styles', items : [ 'Styles','Format','Font','FontSize' ] },
                 { name: 'insert', items:['Image','Table','Youtube','Source'] }
           ],
            "filebrowserImageUploadUrl": "manageblogImage",
