@@ -42,8 +42,8 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     
     url = "http://www.etihad.com/en-us/plan-and-book/book-redemption-flights/"
   
-    display = Display(visible=0, size=(800, 600))
-    display.start()
+    #display = Display(visible=0, size=(800, 600))
+    #display.start()
     chromedriver = "/usr/bin/chromedriver"
     os.environ["webdriver.chrome.driver"] = chromedriver
     driver = webdriver.Chrome(chromedriver)
@@ -58,23 +58,11 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
         db.commit()
     
         print "etihad flag inserted"
-        display.stop()
+        #display.stop()
         driver.quit()
         return searchkey
-    time.sleep(5)
-    origin = driver.find_element_by_id("frm_2012158061206151234")
-    origin.click()
-    time.sleep(2)
-    origin.send_keys(str(source))
-    time.sleep(1)
-    origin.send_keys(Keys.TAB)
-    time.sleep(1)
-    to = driver.find_element_by_id("frm_20121580612061235")
-    time.sleep(2)
-    to.send_keys(str(destcode))
-    time.sleep(2)
-    to.send_keys(Keys.TAB)
-    time.sleep(1)
+    #time.sleep(5)
+    driver.execute_script('document.getElementById("frm_2012158061206151234").removeAttribute("readonly")')
     oneway = driver.find_element_by_id("frm_oneWayFlight")
     #oneway.click()
     driver.execute_script("arguments[0].click();", oneway)
@@ -83,20 +71,36 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     #search_cabin1.click()
     driver.execute_script("arguments[0].click();", search_cabin1)
     
+    origin = driver.find_element_by_id("frm_2012158061206151234")
+    origin.click()
+    time.sleep(1)
+    origin.send_keys(str(source))
+    time.sleep(.5)
+    
+    origin.send_keys(Keys.TAB)
+    time.sleep(.5)
+    driver.execute_script('document.getElementById("frm_20121580612061235").removeAttribute("readonly")')
+    to = driver.find_element_by_id("frm_20121580612061235")
+    time.sleep(1)
+    to.send_keys(str(destcode))
+    time.sleep(.5)
+    to.send_keys(Keys.TAB)
+    time.sleep(.5)
     ddate = driver.find_element_by_id("frm_2012158061206151238")
     ddate.clear()
     ddate.send_keys(date)
     ddate.send_keys(Keys.TAB)
     flightbutton = driver.find_element_by_name("webform")
     flightbutton.send_keys(Keys.ENTER)
+
     try:
-        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "dtcontainer-both")))
+        WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.ID, "dtcontainer-both")))
     except:
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "etihad", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
         db.commit()
     
         print "etihad flag inserted"
-        display.stop()
+        #display.stop()
         driver.quit()
         return searchkey
     
@@ -291,7 +295,7 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "etihad", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
     db.commit()
     driver.quit()
-    display.stop()    
+    #display.stop()    
     return searchkey
                 
         
