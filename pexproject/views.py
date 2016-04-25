@@ -261,8 +261,6 @@ def manageblogImage(request):
   	CKEditorFuncNum =''
 	if 'CKEditorFuncNum' in request.GET: 
             CKEditorFuncNum = request.REQUEST['CKEditorFuncNum'];
-	
-                           
         if file.multiple_chunks:
             dbpath = ''
             for c in file.chunks():
@@ -310,10 +308,10 @@ def manageBlog(request):
             blog.save()
     	    page = ''
     	    if "blogid" in request.POST:
-                	page = '/Admin/bloglist?msg=Blog Edited Successfully'
+                page = '/Admin/bloglist?msg=Blog Edited Successfully'
     	    else:
-    	   	page = '/Admin/bloglist?msg=Blog Added Successfully'
-                return HttpResponseRedirect(page)
+    	   	    page = '/Admin/bloglist?msg=Blog Added Successfully'
+            return HttpResponseRedirect(page)
         except:
             page = '/Admin/bloglist?msg=There is some technical problem'
             return HttpResponseRedirect(page)
@@ -977,16 +975,22 @@ def search(request):
                     searchdata.save()
                     returnkey = searchdata.searchid
                     if is_scrape_jetblue == 1:
+                        customfunction.flag = customfunction.flag+1
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/jetblue.py",destcode, orgncode, str(returndate), str(returnkey)])
                     if is_scrape_delta == 1:
+                        customfunction.flag = customfunction.flag+1
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/delta.py",destcode, orgncode, str(date1), str(returndate), str(returnkey),etihaddest,etihadorigin,cabin])
                     if is_scrape_united == 1:
+                        customfunction.flag = customfunction.flag+1
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",destcode, orgncode, str(returndate), str(returnkey)])
                     if is_scrape_aa == 1:
+                        #customfunction.flag = customfunction.flag+1
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aa.py",destcode, orgncode, str(returndate), str(returnkey)])
                     if is_scrape_vAUS == 1:
+                        customfunction.flag = customfunction.flag+1
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/virgin_australia.py",destcode, orgncode, str(returndate), str(returnkey),cabin])
                     if is_scrape_etihad == 1:
+                        customfunction.flag = customfunction.flag+1
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/etihad.py",etihaddest, etihadorigin, str(date1), str(returnkey),cabin])
                         
             else:
@@ -1003,19 +1007,26 @@ def search(request):
                 searchkeyid = searchdata.searchid 
                 cursor = connection.cursor()
                 if is_scrape_jetblue == 1:
+                    customfunction.flag = 1
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/jetblue.py",orgncode,destcode,str(depart),str(searchkeyid)])
                 if is_scrape_delta == 1:
+                    customfunction.flag = customfunction.flag+1
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/delta.py",orgncode,destcode,str(date),str(depart),str(searchkeyid),etihadorigin,etihaddest,cabin])
                 if is_scrape_united == 1:
+                    customfunction.flag = customfunction.flag+1
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",orgncode,destcode,str(depart),str(searchkeyid)])
                 if is_scrape_aa == 1:
+                    #customfunction.flag = customfunction.flag+1
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aa.py",orgncode,destcode,str(depart),str(searchkeyid)])
                 if is_scrape_vAUS == 1:
+                    customfunction.flag = customfunction.flag+1
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/virgin_australia.py",orgncode,destcode,str(depart),str(searchkeyid),cabin])
                 if is_scrape_etihad == 1:
+                    customfunction.flag = customfunction.flag+1
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/etihad.py",etihadorigin,etihaddest,str(date),str(searchkeyid),cabin])
                   
             if is_scrape_virgin_atlantic == 1:
+                customfunction.flag = customfunction.flag+1
                 Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='virgin_atlantic').delete()
                 if returnkey:
                     Flightdata.objects.filter(searchkeyid=returnkey,datasource='virgin_atlantic').delete()            
@@ -1110,6 +1121,7 @@ def checkData(request):
     totalrecords = 0
     isdatastored = ''
     flagcheck = ''
+    
     if request.is_ajax():
         cabin = request.POST['cabin']
         if 'multicity' in request.POST:
@@ -1159,7 +1171,7 @@ def checkData(request):
             data1 = "stored"
         else:
             data1 = "onprocess"
-        if len(list(flagcheck)) > 0:
+        if len(list(flagcheck)) >= customfunction.flag:
             iscomplete = "completed"
         #data1 = "onprocess"
         mimetype = 'application/json'
