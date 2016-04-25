@@ -1153,6 +1153,7 @@ def checkData(request):
                     isdatastored = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(recordkey)+" and "+cabin+"> 0")
                     
                     flagcheck = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(recordkey)+" and flighno = 'flag' ")
+	#print  flagcheck.query
                        
         if len(list(isdatastored)) > 0:
             data1 = "stored"

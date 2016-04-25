@@ -42,8 +42,8 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     
     url = "http://www.etihad.com/en-us/plan-and-book/book-redemption-flights/"
   
-    #display = Display(visible=0, size=(800, 600))
-    #display.start()
+    display = Display(visible=0, size=(800, 600))
+    display.start()
     chromedriver = "/usr/bin/chromedriver"
     os.environ["webdriver.chrome.driver"] = chromedriver
     driver = webdriver.Chrome(chromedriver)
@@ -58,7 +58,7 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
         db.commit()
     
         print "etihad flag inserted"
-        #display.stop()
+        display.stop()
         driver.quit()
         return searchkey
     #time.sleep(5)
@@ -75,17 +75,17 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     origin.click()
     time.sleep(1)
     origin.send_keys(str(source))
-    time.sleep(.5)
+    time.sleep(1)
     
     origin.send_keys(Keys.TAB)
-    time.sleep(.5)
+    time.sleep(1)
     driver.execute_script('document.getElementById("frm_20121580612061235").removeAttribute("readonly")')
     to = driver.find_element_by_id("frm_20121580612061235")
     time.sleep(1)
     to.send_keys(str(destcode))
-    time.sleep(.5)
+    time.sleep(1)
     to.send_keys(Keys.TAB)
-    time.sleep(.5)
+    time.sleep(1)
     ddate = driver.find_element_by_id("frm_2012158061206151238")
     ddate.clear()
     ddate.send_keys(date)
@@ -100,10 +100,10 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
         db.commit()
     
         print "etihad flag inserted"
-        #display.stop()
+        display.stop()
         driver.quit()
         return searchkey
-    
+
     html_page = driver.page_source
     soup = BeautifulSoup(html_page,"lxml")
     operators = soup.findAll("th",{"class":"operatingCarrier"})
@@ -295,7 +295,7 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "etihad", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
     db.commit()
     driver.quit()
-    #display.stop()    
+    display.stop()    
     return searchkey
                 
         

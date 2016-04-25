@@ -4,3 +4,4 @@ pexproject/static/flightsearch/uploads
 *.pyc
 *.py~
 *.html~
+*.sw*
