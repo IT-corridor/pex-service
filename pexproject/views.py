@@ -310,7 +310,7 @@ def manageBlog(request):
     	    if "blogid" in request.POST:
                 page = '/Admin/bloglist?msg=Blog Edited Successfully'
     	    else:
-    	   	    page = '/Admin/bloglist?msg=Blog Added Successfully'
+    	   	page = '/Admin/bloglist?msg=Blog Added Successfully'
             return HttpResponseRedirect(page)
         except:
             page = '/Admin/bloglist?msg=There is some technical problem'
@@ -369,6 +369,7 @@ def index(request):
     img_cityName2 = "','".join(img_cityName)
     recordFromActiveTable = len(recent_searches1)
     dataFromAcradeTable = ''
+    
     if recordFromActiveTable < 8:
         nextLimit = 8 - recordFromActiveTable 
         dataFromAcradeTable1 = Searchkey.objects.raw("select ps.destination, ps.searchid,ps.destination,ps.destination_city as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from arcade_flight_data as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from arcade_flight_data as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin order by pf1.scrapetime desc)  as pfs1 on pfs1.searchkeyid = ps.searchid where ps.destination_city not in ('"+img_cityName2+"') group by destination order by ps.scrapetime desc limit "+str(nextLimit))
@@ -388,7 +389,7 @@ def index(request):
             if s.final_dest == data.city_name:
                img_path = data.image_path 
                break
-        searches.append({'final_dest':s.final_dest,'maintax':s.maintax,'searchkeyid':s.searchid,'maincabin':s.maincabin,'image_path':img_path})  
+        searches.append({'final_dest':s.final_dest,'maintax':s.maintax,'searchkeyid':s.searchid,'maincabin':s.maincabin,'image_path':img_path})     
     for rcd in dataFromAcradeTable:
         img_path =''
         for data in cityobj1:
@@ -1026,7 +1027,7 @@ def search(request):
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/etihad.py",etihadorigin,etihaddest,str(date),str(searchkeyid),cabin])
                   
             if is_scrape_virgin_atlantic == 1:
-                customfunction.flag = customfunction.flag+1
+                #customfunction.flag = customfunction.flag+1
                 Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='virgin_atlantic').delete()
                 if returnkey:
                     Flightdata.objects.filter(searchkeyid=returnkey,datasource='virgin_atlantic').delete()            
