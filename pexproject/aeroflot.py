@@ -19,7 +19,7 @@ import os,sys
 
 db = MySQLdb.connect(host="localhost",  
                      user="root",           
-                      passwd="root",        
+                      passwd="1jyT382PWzYP",        
                       db="pex")  
 cursor = db.cursor()
 
@@ -74,10 +74,10 @@ def find_flight_id(row, flight_type_code):
     except AttributeError:
         return None
 
-
+#searchkeyid =''
 class AeroflotSpider(scrapy.Spider):
     name = 'aeroflot'
-    
+    searchkeyid = ''    
     def __init__(self,*args, **kwargs):
         super(AeroflotSpider, self).__init__(*args, **kwargs)
        
@@ -86,6 +86,7 @@ class AeroflotSpider(scrapy.Spider):
         self.date = '2016-05-03' #date #kwargs.get('date')
         self.start_urls = [URL % (self.origin, self.destination, self.date)]
         self.searchkeyid = kwargs.get('searchid')
+	print "searchkeyid",self.searchkeyid
     def init_cookies(self, response):
         print "init cookies"
         radio_id = response.xpath(
@@ -107,6 +108,7 @@ class AeroflotSpider(scrapy.Spider):
         return cookies
 
     def parse(self, response):
+	print "searchkeyid",self.searchkeyid
         error_msgs = ('No Flights Available', 'No award available')
         for m in error_msgs:
             if m in response.body:
@@ -201,7 +203,7 @@ class AeroflotSpider(scrapy.Spider):
             #yield flight
             #cursor.execute("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (str(flightno),'2',str(now),stoppage,"test",self.origin,self.destination,str(departure),str(arrival),duration,str(maincabin),str(maintax),str(business),str(businesstax),str(firstclass),str(firsttax),'Economy','Business','First','aeroflot',departdetails,arrivedetails,flightno,operatedby))
 
-            flightinfo.append((str(flightno),str(searchkeyid),str(now),stoppage,"test",self.origin,self.destination,str(departure),str(arrival),duration,str(maincabin),str(maintax),str(business),str(businesstax),str(firstclass),str(firsttax),'Economy','Business','First','aeroflot',departdetails,arrivedetails,flightno,operatedby))
+            flightinfo.append((str(flightno),str(self.searchkeyid),str(now),stoppage,"test",self.origin,self.destination,str(departure),str(arrival),duration,str(maincabin),str(maintax),str(business),str(businesstax),str(firstclass),str(firsttax),'Economy','Business','First','aeroflot',departdetails,arrivedetails,flightno,operatedby))
         #print flightinfo
         cursor.executemany("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", flightinfo)
         print "final row inserted"
