@@ -91,6 +91,12 @@
 					{% if blog and blog.blog_id%}
 					<input type="hidden" name="blogid"  value="{{blog.blog_id}}" >
 					{%endif%}
+					{%if blog and blog.blog_created_time %}
+					<input type="hidden" name="blog_created_time"  value="{{blog.blog_created_time|date:'Y-m-d H:i:s' }}" >
+					{%endif%}
+					{%if blog and blog.blog_creator %}
+					<input type="hidden" name="createdby"  value="{{blog.blog_creator }}" >
+					{%endif%}
 				    
 				  <div class="form-group">
 				    <label for="blog_url" class="col-sm-2 control-label">Blog Url</label>
@@ -113,7 +119,7 @@
 				    <label for="blog_title" class="col-sm-2 control-label">Blog Featured Image</label>
 				    <div class="col-sm-10">
 				      <input id="file-1" type="file" multiple="true" data-preview-file-type="any" name="image[]" />
-				      <input type="hidden" name="img_path" id="doc" />
+				      <input type="hidden" name="img_path" id="doc" {% if blog.blog_image_path %} value={{blog.blog_image_path}} {%endif%}/>
 				    </div>
 				  </div>
 				  <div class="form-group">
@@ -175,7 +181,7 @@
 
 	</div>
 </div>
-{% include "flightsearch/admin/admin-footer.html" %}
+
 	<script>
 	CKEDITOR.env.isCompatible = true;
     CKEDITOR.replace( 'ckeditor1', {

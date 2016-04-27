@@ -3,7 +3,6 @@
 		{% load humanize %}
 		<title>Admin|Dashboard</title>
 		{% include "flightsearch/admin/admin-header.html" %}
-		
 			{% include "flightsearch/admin/admin-sidebar.html" %}
 		<div class="main-content">
 			<div class="row">
@@ -91,6 +90,7 @@
 						<th>Featured Image</th>
 						<th>Blog Title</th>
 						<th>Written By</th>
+						<th>Created Time</th>
 						<th>Last Updated</th>
 						<th>Position</th>
 						<th>Status</th>
@@ -106,6 +106,7 @@
 							<td>{{obj.blog_title|title}}</td>
 							<td>{{obj.blog_creator|title}}</td>
 							<td>{{obj.blog_created_time}}</td>
+							<td>{{obj.blog_updated_time}}</td>
 							<td>{% if obj.blog_position == True%}Top Banner {%else%}Normal{%endif%}</td>
 							<td>{% if obj.blog_status == True%}Active {%else%}Inactive{%endif%}</td>
 							<td><a href="manageBlog?blogid={{obj.blog_id}}&act=edit" class="btn btn-default btn-sm btn-icon icon-left"><i class="entypo-pencil"></i>Edit</a>

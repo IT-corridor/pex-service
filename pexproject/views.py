@@ -25,7 +25,7 @@ from social_auth.models import UserSocialAuth
 from django.contrib.auth import login as social_login,authenticate,get_user
 from django.contrib.auth import logout as auth_logout
 import settings
-from customfunction import is_scrape_vAUS,is_scrape_etihad,is_scrape_delta,is_scrape_united,is_scrape_virgin_atlantic,is_scrape_jetblue,is_scrape_aa
+from customfunction import is_scrape_vAUS,is_aeroflot,is_scrape_etihad,is_scrape_delta,is_scrape_united,is_scrape_virgin_atlantic,is_scrape_jetblue,is_scrape_aa
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.html import strip_tags
 from random import randint
@@ -294,10 +294,18 @@ def manageBlog(request):
     	blog.blog_content = request.POST['blog_content']
     	blog.blog_meta_key = request.POST['metakey']
     	blog.blog_meta_Description = request.POST['meta_description']
+        
     	if 'img_path' in request.POST:
     	    blog.blog_image_path = request.REQUEST['img_path']
-    	blog.blog_created_time = str(curr_time)
-    	if 'admin' in request.session:
+        blog.blog_updated_time = str(curr_time)
+    
+        if 'blog_created_time' in request.POST:
+            blog.blog_created_time = request.POST['blog_created_time']
+        else:
+            blog.blog_created_time = str(curr_time)
+        if 'createdby' in request.POST:
+            blog.blog_creator = request.POST['createdby']
+    	elif 'admin' in request.session:
     	    blog.blog_creator = request.session['admin_name']
     	if 'status' in request.POST:
     	    blog.blog_status = request.POST['status']
@@ -990,9 +998,16 @@ def search(request):
                     if is_scrape_vAUS == 1:
                         customfunction.flag = customfunction.flag+1
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/virgin_australia.py",destcode, orgncode, str(returndate), str(returnkey),cabin])
+                    if is_aeroflot == 1:
+                        customfunction.flag = customfunction.flag+1
+                        ret_format_date  = datetime.datetime.strptime(returndate, '%m/%d/%Y')
+                        formated_returndate = ret_format_date.strftime('%Y-%m-%d')     
+                        subprocess.Popen(["scrapy", "runspider", settings.BASE_DIR+"/pexproject/aeroflot.py", "-a", "origin="+destcode,"-a", "destination="+orgncode,"-a", "date="+str(formated_returndate),"-a", "searchid="+str(returnkey)])
+                    
                     if is_scrape_etihad == 1:
                         customfunction.flag = customfunction.flag+1
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/etihad.py",etihaddest, etihadorigin, str(date1), str(returnkey),cabin])
+                    
                         
             else:
                 obj = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, scrapetime__gte=time1)
@@ -1025,9 +1040,13 @@ def search(request):
                 if is_scrape_etihad == 1:
                     customfunction.flag = customfunction.flag+1
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/etihad.py",etihadorigin,etihaddest,str(date),str(searchkeyid),cabin])
-                  
+                if is_aeroflot == 1:
+                    customfunction.flag = customfunction.flag+1 
+                    outbound_date = datetime.datetime.strptime(depart, '%m/%d/%Y')
+                    formated_date = outbound_date.strftime('%Y-%m-%d')  
+                    subprocess.Popen(["scrapy", "runspider", settings.BASE_DIR+"/pexproject/aeroflot.py", "-a", "origin="+orgncode,"-a", "destination="+destcode,"-a", "date="+formated_date,"-a", "searchid="+str(searchkeyid)])
+                    
             if is_scrape_virgin_atlantic == 1:
-                #customfunction.flag = customfunction.flag+1
                 Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='virgin_atlantic').delete()
                 if returnkey:
                     Flightdata.objects.filter(searchkeyid=returnkey,datasource='virgin_atlantic').delete()            

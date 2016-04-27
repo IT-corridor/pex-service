@@ -71,9 +71,9 @@ class Searchkey(models.Model):
     source = models.CharField(max_length=50)
     destination = models.CharField(max_length=50)
     destination_city = models.CharField(max_length=512)
-    traveldate = models.DateField(max_length=50)
-    returndate = models.DateField(null=True)
-    scrapetime = models.DateTimeField(max_length=50)
+    traveldate = models.DateField()
+    returndate = models.DateField()
+    scrapetime = models.DateTimeField()
     origin_airport_id = models.IntegerField ()
     destination_airport_id = models.IntegerField ()
 
@@ -192,6 +192,7 @@ class Blogs(models.Model):
     blog_meta_Description = models.TextField()
     blog_creator = models.CharField(max_length=100)
     blog_created_time = models.DateTimeField()
+    blog_updated_time = models.DateTimeField()
     blog_status = models.BooleanField(default=False)
 
 class BlogImages(models.Model):
