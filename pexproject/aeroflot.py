@@ -87,13 +87,19 @@ class AeroflotSpider(scrapy.Spider):
     def init_cookies(self, response):
         radio_id = response.xpath(
             '//input[contains(@id, "flight_both_")]/@id').extract_first()
-        print radio_id 
+        
         display = pyvirtualdisplay.Display(visible=0, size=(800, 600))
         display.start()
         driver = selenium.webdriver.Chrome()
         driver.get(self.start_urls[0])
         execution = driver.current_url[-4:]
-        radio = driver.find_element_by_id(radio_id)
+        try:
+            radio = driver.find_element_by_id(radio_id)
+        except:
+            now = datetime.datetime.now()
+            cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(self.searchkeyid), str(now), "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "aeroflot", "flag", "flag", "flag", "flag"))
+            db.commit()
+            return
         time.sleep(1)
         radio.click()
         cookies = {
@@ -107,7 +113,8 @@ class AeroflotSpider(scrapy.Spider):
         error_msgs = ('No Flights Available', 'No award available')
         for m in error_msgs:
             if m in response.body:
-                print m
+                cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(self.searchkeyid), str(now), "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "aeroflot", "flag", "flag", "flag", "flag"))
+                db.commit()
                 return
 
         now = datetime.datetime.now()
