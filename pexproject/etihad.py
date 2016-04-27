@@ -61,7 +61,7 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
         display.stop()
         driver.quit()
         return searchkey
-    #time.sleep(5)
+
     driver.execute_script('document.getElementById("frm_2012158061206151234").removeAttribute("readonly")')
     oneway = driver.find_element_by_id("frm_oneWayFlight")
     #oneway.click()
@@ -122,7 +122,6 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     value_string = []
     opCounter = 0
     for k in range(0,len(tempdata)):
-        #print "+++++++++++++++++++++++++++++++++++"+str(k)+"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
         segments = tempdata[k]["segments"]
         
         rowRecord = tempdata[k]["itineraryPartData"]
@@ -302,6 +301,5 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     
     
 if __name__=='__main__':
-    #print sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5]
     etihad(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5])
 
