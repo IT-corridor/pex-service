@@ -915,6 +915,7 @@ def contactUs(request):
 def search(request):
     context = {}
     if request.is_ajax():
+        customfunction.flag = 0
         context = {}
         cursor = connection.cursor()
         returndate = request.POST['returndate']
@@ -1022,8 +1023,9 @@ def search(request):
                 searchdata.save()
                 searchkeyid = searchdata.searchid 
                 cursor = connection.cursor()
+                customfunction.flag = 0
                 if is_scrape_jetblue == 1:
-                    customfunction.flag = 1
+                    customfunction.flag = customfunction.flag+1
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/jetblue.py",orgncode,destcode,str(depart),str(searchkeyid)])
                 if is_scrape_delta == 1:
                     customfunction.flag = customfunction.flag+1
@@ -1191,6 +1193,8 @@ def checkData(request):
             data1 = "stored"
         else:
             data1 = "onprocess"
+        print "flagcheck",len(list(flagcheck))
+        print "customfunction flag", customfunction.flag
         if len(list(flagcheck)) >= customfunction.flag:
             iscomplete = "completed"
         #data1 = "onprocess"
