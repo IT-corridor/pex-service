@@ -3013,6 +3013,7 @@ function updateTime()
 }
 var dataCheckCount = 3;
 var timeCount = 0;
+var isDataComplete = '';
 var multicity='';
 var multicity1 = "{{request.GET.multicity}}";
 
@@ -3035,9 +3036,9 @@ url: "/checkData/",
 data: "keyid="+ encodeURI(searchid) + "&csrfmiddlewaretoken={{ csrf_token }}"+"&cabin="+encodeURI(cabin)+temp+multicity,
 success: function(data){
 callrunning = false ;
-if(timeCount >= 9)
+if(timeCount >= 9 && data[0] != 'onprocess')
 {
-	$('#loading-model').hide();
+	$("#loading-model").modal('hide');
 }
 else
 {
