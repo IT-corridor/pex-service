@@ -67,12 +67,17 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
         return searchid
     i = 1 
     operatordiv = soup.findAll(True, {'class': re.compile(r'\operating-carrier-wrapper\b')})
+   
     operatorArray = []
     for div in operatordiv:
         #print "========================================================================"
-        #print div["class"]
-        optr = div.find("span",{"class":"carrier-name"}).text
-        operatorArray.append(optr)
+        optrtext =''
+        optr = div.find("span",{"class":["carrier-name","operator-meta-data-internal"]})
+        if optr:
+            optrtext = optr.text
+            if '/' in optrtext[0]:
+                 optrtext = optrtext.replace('/','')
+        operatorArray.append(optrtext)
     maindata = tempdata['dayOffers'][0]["itineraryOffers"]
     
     operatorDetails = []
@@ -208,6 +213,7 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
                 if len(value_string) == 50:
                     cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
                     db.commit()
+                    value_string=[]
     if len(value_string) > 0:
         cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
         db.commit()
