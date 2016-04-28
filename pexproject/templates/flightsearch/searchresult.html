@@ -2925,95 +2925,94 @@ var progess_width = 0;
 var timecompleted = true ;
 var callrunning = false ;
 
-if(!data_status) {
-$("#loading-model").modal('show');
-
-if(parseInt($('#progress_hidden_val').val()) > 185 )
+if(!data_status) 
 {
-$("#loading-model").modal('hide');
-$('.progress').hide();
-$('.filters-holder').removeClass('xs-filters-holder-ht');
-isprocess();
-}
-else{
-$('.filters-holder').addClass('xs-filters-holder-ht');
-refreshIntervalId = setInterval(updateTime, 2000);
+	$("#loading-model").modal('show');
 
+	if(parseInt($('#progress_hidden_val').val()) > 185 )
+	{
+		$("#loading-model").modal('hide');
+		$('.progress').hide();
+		$('.filters-holder').removeClass('xs-filters-holder-ht');
+		isprocess();
+	}
+	else{
+		$('.filters-holder').addClass('xs-filters-holder-ht');
+		refreshIntervalId = setInterval(updateTime, 2000);
+	
+	}
 }
-}
-else{
-$('.progress').hide();
-$('.filters-holder').removeClass('xs-filters-holder-ht');
-$.ajax({
-url:dataurls,
-type:'POST',
-data:"actionfor=prc_matrix&csrfmiddlewaretoken={{csrf_token }}", // # &depaturemin="+depaturemin+"&depaturemax="+depaturemax+"&airlines="+airline+"&stoppage="+stoppage+row_val,
-success:function(html){
-$('#price_matrix').empty();
-$('#price_matrix').append(html);
-}
-});
-//isprocess();
+else
+{
+	$('.progress').hide();
+	$('.filters-holder').removeClass('xs-filters-holder-ht');
+	$.ajax({
+	url:dataurls,
+	type:'POST',
+	data:"actionfor=prc_matrix&csrfmiddlewaretoken={{csrf_token }}", // # &depaturemin="+depaturemin+"&depaturemax="+depaturemax+"&airlines="+airline+"&stoppage="+stoppage+row_val,
+	success:function(html){
+	$('#price_matrix').empty();
+	$('#price_matrix').append(html);
+	}
+	});
+	//isprocess();
 }
 
 function updateTime()
 {
-timecompleted = true ;
-if(!callrunning)
-{
-isprocess();
+	timecompleted = true ;
+	if(!callrunning)
+	{
+		isprocess();
+	}
 }
-}
-function redirecttosearchpage(scraperStatus){
-
-$.ajax({
-url:dataurls,
-type:'POST',
-data: "csrfmiddlewaretoken={{ csrf_token }}&depaturemin="+depaturemin+"&depaturemax="+depaturemax+"&airlines="+airline+"&stoppage="+stoppage+row_val+"&scraperStatus="+scraperStatus,
-success: function(html){
-
-//isprocess();
-$('.filters-holder').addClass('xs-filters-holder-ht');
-$("#content1").empty();
-$(".contentdiv").remove();
-$("#content1").append(html);
-progess_width = $('#progressbar').width();
-
-$('#progress_hidden_val').val(progess_width);
-if(progess_width < 125)
-{
-progess_width = parseInt(progess_width)+5;
-
-}
-else{
-if(progess_width < 185){
-progess_width = parseInt(progess_width)+2;
-
-}
-}
-$('#progressbar').width(progess_width);
-if(scraperStatus == 'complete'){
-$('#progressbar').css("width", "100%");
-$('#progress_hidden_val').val('195');
-//clearInterval(refreshIntervalId);
-$('#progressbar').text('');
-$('.progress').hide();
-$("#loading-model").modal('hide');
-$('.filters-holder').removeClass('xs-filters-holder-ht');
-
-if($('#nodata').length > 0)
-{
-$('#nodata-msg').append("Oops, looks like there aren't any flight results for your filtered search. Try to broaden your search criteria for better results.");
-//var newurl = dataurls.replace('getsearchresult','flights');
-//window.location.href = newurl;
-}
-
-}
-
-}
-});
+	function redirecttosearchpage(scraperStatus){
+	
+	$.ajax({
+	url:dataurls,
+	type:'POST',
+	data: "csrfmiddlewaretoken={{ csrf_token }}&depaturemin="+depaturemin+"&depaturemax="+depaturemax+"&airlines="+airline+"&stoppage="+stoppage+row_val+"&scraperStatus="+scraperStatus,
+	success: function(html){
+	
+	//isprocess();
+	$('.filters-holder').addClass('xs-filters-holder-ht');
+	$("#content1").empty();
+	$(".contentdiv").remove();
+	$("#content1").append(html);
+	progess_width = $('#progressbar').width();
+	
+	$('#progress_hidden_val').val(progess_width);
+	if(progess_width < 125)
+	{
+		progess_width = parseInt(progess_width)+5;
+	}
+	else{
+		if(progess_width < 185){
+			progess_width = parseInt(progess_width)+2;
+		}
+	}
+	$('#progressbar').width(progess_width);
+	if(scraperStatus == 'complete'){
+		$('#progressbar').css("width", "100%");
+		$('#progress_hidden_val').val('195');
+		//clearInterval(refreshIntervalId);
+		$('#progressbar').text('');
+		$('.progress').hide();
+		$("#loading-model").modal('hide');
+		$('.filters-holder').removeClass('xs-filters-holder-ht');
+		
+		if($('#nodata').length > 0)
+		{
+			$('#nodata-msg').append("Oops, looks like there aren't any flight results for your filtered search. Try to broaden your search criteria for better results.");
+		}
+		
+	}
+	
+	}
+	});
 }
 var dataCheckCount = 3;
+var timeCount = 0;
 var multicity='';
 var multicity1 = "{{request.GET.multicity}}";
 
@@ -3036,11 +3035,18 @@ url: "/checkData/",
 data: "keyid="+ encodeURI(searchid) + "&csrfmiddlewaretoken={{ csrf_token }}"+"&cabin="+encodeURI(cabin)+temp+multicity,
 success: function(data){
 callrunning = false ;
-
+if(timeCount >= 9)
+{
+	$('#loading-model').hide();
+}
+else
+{
+	timeCount = parseInt(timeCount)+1;
+}
 if(timecompleted && data[1] != 'completed' )
 {
 
-isprocess();
+	isprocess();
 }
 if(data[1] == 'key_expired')
 {
@@ -3069,7 +3075,7 @@ else{
 if(data[0] != 'onprocess')
 {
 if(dataCheckCount == 3){
-dataCheckCount = 1;
+	dataCheckCount = 1;
 redirecttosearchpage('onprocess');
 }
 else{
