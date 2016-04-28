@@ -25,7 +25,7 @@ from social_auth.models import UserSocialAuth
 from django.contrib.auth import login as social_login,authenticate,get_user
 from django.contrib.auth import logout as auth_logout
 import settings
-from customfunction import is_scrape_vAUS,is_aeroflot,is_scrape_etihad,is_scrape_delta,is_scrape_united,is_scrape_virgin_atlantic,is_scrape_jetblue,is_scrape_aa
+from customfunction import is_scrape_vAUS,is_aeroflot,is_scrape_virginAmerica,is_scrape_etihad,is_scrape_delta,is_scrape_united,is_scrape_virgin_atlantic,is_scrape_jetblue,is_scrape_aa
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.html import strip_tags
 from random import randint
@@ -987,6 +987,10 @@ def search(request):
                     if is_scrape_jetblue == 1:
                         customfunction.flag = customfunction.flag+1
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/jetblue.py",destcode, orgncode, str(returndate), str(returnkey)])
+                    if is_scrape_virginAmerica == 1:
+                        customfunction.flag = customfunction.flag+1
+                        subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/virginAmerica.py",destcode, orgncode, str(returndate), str(returnkey)])
+                    
                     if is_scrape_delta == 1:
                         customfunction.flag = customfunction.flag+1
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/delta.py",destcode, orgncode, str(date1), str(returndate), str(returnkey),etihaddest,etihadorigin,cabin])
@@ -1027,6 +1031,10 @@ def search(request):
                 if is_scrape_jetblue == 1:
                     customfunction.flag = customfunction.flag+1
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/jetblue.py",orgncode,destcode,str(depart),str(searchkeyid)])
+                if is_scrape_virginAmerica == 1:
+                    customfunction.flag = customfunction.flag+1
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/virginAmerica.py",orgncode,destcode,str(depart),str(searchkeyid)])
+                
                 if is_scrape_delta == 1:
                     customfunction.flag = customfunction.flag+1
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/delta.py",orgncode,destcode,str(date),str(depart),str(searchkeyid),etihadorigin,etihaddest,cabin])
