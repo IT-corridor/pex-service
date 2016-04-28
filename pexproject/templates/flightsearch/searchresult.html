@@ -2191,9 +2191,11 @@
 						</div>
 						<div class="col-sm-5 col-sm-pull-7 col-xs-12">
 							<div id="loading" align="center">
-								<p class="mvt10px">
-									<h4>Hang on a minute while we fetch your search results...</h4>
-								</p>
+								
+								<h4 class="mvt10px hidden-xs">
+									Hang on a minute while we fetch your search results...
+								</h4>
+								
 								<img id="loading-image" src="{% static 'flightsearch/js/images/loading.gif' %}" alt="Loading..." />
 
 							</div>
@@ -3039,6 +3041,7 @@ callrunning = false ;
 if(timeCount >= 9 && data[0] != 'onprocess')
 {
 	$("#loading-model").modal('hide');
+	
 }
 else
 {
