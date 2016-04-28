@@ -52,7 +52,7 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid):
         #time.sleep(2)
         lgn = driver.find_element_by_link_text("Close")
         lgn.click()
-        time.sleep(2)
+        time.sleep(4)
         #time.sleep(5)
         html_page = driver.page_source
         soup = BeautifulSoup(html_page)
