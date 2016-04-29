@@ -2986,11 +2986,11 @@ function updateTime()
 	$('#progress_hidden_val').val(progess_width);
 	if(progess_width < 125)
 	{
-		progess_width = parseInt(progess_width)+5;
+		progess_width = parseInt(progess_width)+10;
 	}
 	else{
 		if(progess_width < 185){
-			progess_width = parseInt(progess_width)+2;
+			progess_width = parseInt(progess_width)+4;
 		}
 	}
 	$('#progressbar').width(progess_width);
