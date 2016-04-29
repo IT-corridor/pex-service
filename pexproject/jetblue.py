@@ -51,24 +51,17 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
     
     driver.get(url)
     #driver.implicitly_wait(50)
-    #time.sleep(2)
-    WebDriverWait(driver,10).until(EC.presence_of_element_located((By.ID, "jbBookerPOS")))
-    driver.find_elements_by_css_selector("input[type='submit'][value='Find it']")[0].click()
-    print "click worked"
-    
+    time.sleep(2)
     try:
-	    
-        #milestype = driver.find_elements_by_xpath("//*[contains(text(), 'TrueBlue Points')]")
-        #milestype[0].click()
-        #driver.execute_script("arguments[0].click();", milestype[0]);
-        
+	WebDriverWait(driver,10).until(EC.presence_of_element_located((By.ID, "jbBookerPOS")))
+        driver.find_elements_by_css_selector("input[type='submit'][value='Find it']")[0].click()
         #time.sleep(4)
         WebDriverWait(driver,10).until(EC.presence_of_element_located((By.ID, "AIR_SEARCH_RESULT_CONTEXT_ID0")))
     except:
         print "nodata on jetblue"
         #display.stop
         driver.quit()
-        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "jetblue", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
+        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "jetblue", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
         db.commit()
         return searchid
         
@@ -261,7 +254,7 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
             db.commit()
     except:
         print "please change your seach filter"
-    cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "jetblue", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
+    cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "jetblue", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
     db.commit()
     #display.stop
     driver.quit()
@@ -271,5 +264,4 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
 
 
 if __name__=='__main__':
-    #virginAmerica(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
     jetblue(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])

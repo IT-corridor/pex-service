@@ -131,10 +131,8 @@ def united(origin, destination, searchdate, searchkey):
     comma = ''
     values_string = []
     totalrecords = len(flightDetails)
-    print "totalrecords",totalrecords
     recordcount = 1
     for i in range(0,len(flightDetails)):
-        print "=================================================="+str(i)+"======================================================"
         
         source = flightDetails[i]["Origin"]
         depttime = flightDetails[i]["DepartTimeFormat"]
@@ -159,7 +157,6 @@ def united(origin, destination, searchdate, searchkey):
         Flightno =flightDetails[i]["FlightNumber"]
         flightcode = flightDetails[i]["OperatingCarrier"]
         Flightno = "Flight "+flightcode+" "+str(Flightno)
-        #print "FlightNumber",FlightNumber
         TravelMinutes = flightDetails[i]["TravelMinutes"]
         MaxLayoverTime = flightDetails[i]["MaxLayoverTime"]
         TravelMinutes = TravelMinutes
@@ -220,7 +217,6 @@ def united(origin, destination, searchdate, searchkey):
                 if len(stopnJsonobj) > 0:
 
                     for l in range(0,len(stopnJsonobj)):
-                        print "----------------- stop "+str(l)+"----------------------"
                         stopOrigin = stopnJsonobj[l]["OriginDescription"]
                         stopFlightDate = stopnJsonobj[l]["FlightDate"]
                         stopOriginDetails = stopFlightDate+" from "+stopOrigin
@@ -233,8 +229,6 @@ def united(origin, destination, searchdate, searchkey):
                         else:
                             fullAriveinfo = DestinationDateTime+" at "+stopDestination
                             arivaildetails.append(fullAriveinfo)
-                        print "stopDestination",stopDestination
-                        print "stopOrigin",stopOrigin
                         stopOperator = stopnJsonobj[l]["OperatingCarrierDescription"]
                         if stopOperator != None:
                             operator.append(stopOperator)
@@ -367,7 +361,6 @@ def united(origin, destination, searchdate, searchkey):
             cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", values_string) # (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", values_string) #(Flightno, str(searchkey), stime, stoppage, "test", source, lastdestination, test1, arivetime, totaltime, str(economy), str(ecoTax), str(business), str(businessTax), str(first), str(firstTax),"Economy", "Business", "First", "united", departdetailsText, arivedetailsText, planedetails, operatedbytext,ecoFareCode,businessFareCode,firstFareCode))
             db.commit()
             values_string =[]
-            print recordcount,"row inserted"
             recordcount = 1
         
     cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "united", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))

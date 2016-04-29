@@ -192,10 +192,8 @@ if __name__=='__main__':
     driver.get(url)
     #driver.implicitly_wait(5)
     origin  = driver.find_element_by_id("awardFlightSearchForm.originAirport")
-    print "origin",origin
     origin.clear()
     origin.send_keys(sys.argv[1]) 
-    print origin.get_attribute('value')
     destination = driver.find_element_by_id("awardFlightSearchForm.destinationAirport")
 
     destination.send_keys(sys.argv[2])
