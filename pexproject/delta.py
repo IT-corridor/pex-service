@@ -383,4 +383,3 @@ def delta(orgn, dest, searchdate, searchkey):
 
 if __name__=='__main__':
     delta(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[5])
-    #etihad(sys.argv[6],sys.argv[7],date,sys.argv[5],sys.argv[8])
