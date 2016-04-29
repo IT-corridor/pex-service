@@ -19,6 +19,9 @@ import re
 import customfunction
 from pyvirtualdisplay import Display
 
+db = customfunction.dbconnection()
+cursor = db.cursor()
+
 def scrapeFlight(page_contents,searchid):
     db = customfunction.dbconnection()
     cursor = db.cursor()
@@ -169,9 +172,11 @@ def scrapeFlight(page_contents,searchid):
         cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
         db.commit()
         print len(value_string),"row inserted"
+    
         
 if __name__=='__main__':
-    
+    currentdatetime = datetime.datetime.now()
+    stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     searchid = sys.argv[4]
     dt = datetime.datetime.strptime(sys.argv[3], '%m/%d/%Y')
     date = dt.strftime('%m/%d/%Y')
@@ -181,13 +186,7 @@ if __name__=='__main__':
     year = dt.strftime("%Y")
 
     url = "https://www.aa.com/reservation/awardFlightSearchAccess.do"
-    #display = Display(visible=0, size=(800, 600))
-    #display.start()
-    #chromedriver = "/usr/bin/chromedriver"
-    #os.environ["webdriver.chrome.driver"] = chromedriver
-    #driver = webdriver.Chrome(chromedriver)
     
-    #driver = webdriver.Chrome()
     driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
     driver.set_window_size(1120, 1080)
     driver.get(url)
@@ -223,8 +222,6 @@ if __name__=='__main__':
         if val == day:
             optn.click()
             break
-    #option = select_date.find_element_by_xpath('.//option[contains(@value, "'+str(day)+'")]')
-    #option.click()
 
     submit = driver.find_element_by_id("awardFlightSearchForm.button.go")
     submit.click()
@@ -233,13 +230,11 @@ if __name__=='__main__':
         WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "selectedPanel")))
     except:
         print "No flights found on american airlines"
+        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "american airlines", "flag", "flag", "flag", "flag"))
+        db.commit()
         #display.stop()
         driver.quit()
         exit()
-
-        #return searchid
-        
-        
     time.sleep(1)
     html_page = driver.page_source
     pagecontent = BeautifulSoup(html_page)
@@ -248,42 +243,46 @@ if __name__=='__main__':
     cabindiv = pagecontent.find("div",{"class","aa_awardsListBox"})
     cabinblock = cabindiv.find("ul")
     cabinlist = cabinblock.findAll("a")
-
-    for link in cabinlist:
-        is_available = link.text
-        
-        if "NotAvailable" not in is_available:
-            cabin = link['href']
-            cabin_ele = driver.find_element_by_xpath("//a[@href='" +cabin+ "']")
-            cabin_ele.click()
-            #driver.execute_script("arguments[0].click();", cabin_ele)
-            time.sleep(1)
-            html_page = driver.page_source
-            pagecontent = BeautifulSoup(html_page)
-            flightblock = pagecontent.find("div",{"id":"flightListBox"})
-            data_container = flightblock.find("div",{"id":"flightListContainer"})
-            flightcontainer = data_container.findAll("div",{"class":"aa_flightListContainer"})
-            pagging = pagecontent.find("div",{"class":"aa_pageInation"})
-            paginf_ul = pagging.find("ul",{"id":"pgNt"})
-            paginglist = paginf_ul.findAll("a")
-            scrapeFlight(data_container,searchid)
-            if len(flightcontainer) > 9:
-                for page_link in paginglist:
-                    link_text = page_link.text
+    try:
+        for link in cabinlist:
+            is_available = link.text
+            
+            if "NotAvailable" not in is_available:
+                cabin = link['href']
+                cabin_ele = driver.find_element_by_xpath("//a[@href='" +cabin+ "']")
+                cabin_ele.click()
+                #driver.execute_script("arguments[0].click();", cabin_ele)
+                time.sleep(1)
+                html_page = driver.page_source
+                pagecontent = BeautifulSoup(html_page)
+                flightblock = pagecontent.find("div",{"id":"flightListBox"})
+                data_container = flightblock.find("div",{"id":"flightListContainer"})
+                flightcontainer = data_container.findAll("div",{"class":"aa_flightListContainer"})
+                pagging = pagecontent.find("div",{"class":"aa_pageInation"})
+                paginf_ul = pagging.find("ul",{"id":"pgNt"})
+                paginglist = paginf_ul.findAll("a")
+                scrapeFlight(data_container,searchid)
+                if len(flightcontainer) > 9:
+                    for page_link in paginglist:
+                        link_text = page_link.text
+                        
+                        pageObj = driver.find_element_by_link_text(link_text)
+    
+                        pageObj.click()
+                        time.sleep(1)
+                        html_page1 = driver.page_source
+                        html = BeautifulSoup(html_page1)
+                        data_container = html.find("div",{"id":"flightListContainer"})
+                        scrapeFlight(data_container,searchid)
+                        #print "++++++++++++++++++"+link_text+"+++++++++++++++++++++++++++++++++++"
+                    page1_Obj = driver.find_element_by_link_text("Page 1")
+                    page1_Obj.click()
                     
-                    pageObj = driver.find_element_by_link_text(link_text)
-
-                    pageObj.click()
-                    time.sleep(1)
-                    html_page1 = driver.page_source
-                    html = BeautifulSoup(html_page1)
-                    data_container = html.find("div",{"id":"flightListContainer"})
-                    scrapeFlight(data_container,searchid)
-                    #print "++++++++++++++++++"+link_text+"+++++++++++++++++++++++++++++++++++"
-                page1_Obj = driver.find_element_by_link_text("Page 1")
-                page1_Obj.click()
-                #driver.execute_script("arguments[0].click();", page1_Obj);
+    except:
+        print "process end"
+    finally:
+        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "american airlines", "flag", "flag", "flag", "flag"))
+        db.commit()
                 
     driver.quit()
-    #display.stop()
-    #return searchid
+    

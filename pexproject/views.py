@@ -998,7 +998,7 @@ def search(request):
                         customfunction.flag = customfunction.flag+1
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",destcode, orgncode, str(returndate), str(returnkey)])
                     if is_scrape_aa == 1:
-                        #customfunction.flag = customfunction.flag+1
+                        customfunction.flag = customfunction.flag+1
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aa.py",destcode, orgncode, str(returndate), str(returnkey)])
                     if is_scrape_vAUS == 1:
                         customfunction.flag = customfunction.flag+1
@@ -1042,7 +1042,7 @@ def search(request):
                     customfunction.flag = customfunction.flag+1
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",orgncode,destcode,str(depart),str(searchkeyid)])
                 if is_scrape_aa == 1:
-                    #customfunction.flag = customfunction.flag+1
+                    customfunction.flag = customfunction.flag+1
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aa.py",orgncode,destcode,str(depart),str(searchkeyid)])
                 if is_scrape_vAUS == 1:
                     customfunction.flag = customfunction.flag+1
