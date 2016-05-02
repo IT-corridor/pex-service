@@ -22,7 +22,7 @@ from pyvirtualdisplay import Display
 db = customfunction.dbconnection()
 cursor = db.cursor()
 
-def scrapeFlight(page_contents,searchid):
+def scrapeFlight(page_contents,searchid,tax):
     db = customfunction.dbconnection()
     cursor = db.cursor()
 
@@ -133,6 +133,9 @@ def scrapeFlight(page_contents,searchid):
         cabintype1 = ''
         cabintype2 = ''
         cabintype3 = ''
+        maintax = 0
+        businesstax = 0
+        firsttax = 0
         flightno = "Flight "+str(flightno)
         departtime2 = (datetime.datetime.strptime(departtime, '%I:%M %p'))
         departtime1 = departtime2.strftime('%H:%M')
@@ -146,13 +149,16 @@ def scrapeFlight(page_contents,searchid):
         if 'Economy' in cabin_name:
             maincabin = pricemile
             cabintype1 = cabin_name
+            maintax = tax
         elif 'First' in cabin_name:
             first = pricemile
             cabintype3 = cabin_name
+            firsttax = tax
         else:
             if 'Business' in cabin_name:
                 business = pricemile
                 cabintype2 = cabin_name
+                businesstax = tax
         departdetails = '@'.join(departdetail)
         arivedetails = '@'.join(arivedetail)
         planedetails = '@'.join(flightdetail)
@@ -161,7 +167,7 @@ def scrapeFlight(page_contents,searchid):
         business_fare_class = ''
         fisrt_fare_class = ''
         #print "****************************************************************************************************"
-        value_string.append((flightno, str(searchid), stime, stoppage, "test", departcode, dest_code, departtime1, dest_time1, totaltime, str(maincabin),"0.0", str(business),"0.0", str(first),"0.0", cabintype1, cabintype2, cabintype3, "american airlines", departdetails, arivedetails, planedetails, operatedbytext,economy_fare_class,business_fare_class,fisrt_fare_class))
+        value_string.append((flightno, str(searchid), stime, stoppage, "test", departcode, dest_code, departtime1, dest_time1, totaltime, str(maincabin),str(maintax), str(business),str(businesstax), str(first),str(firsttax), cabintype1, cabintype2, cabintype3, "american airlines", departdetails, arivedetails, planedetails, operatedbytext,economy_fare_class,business_fare_class,fisrt_fare_class))
         
         if len(value_string)> 50 :
             cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
@@ -186,9 +192,11 @@ if __name__=='__main__':
     year = dt.strftime("%Y")
 
     url = "https://www.aa.com/reservation/awardFlightSearchAccess.do"
-    
-    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
-    driver.set_window_size(1120, 1080)
+    display = Display(visible=0, size=(800, 600))
+    display.start()
+    driver = webdriver.Chrome()
+    #driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
+    #driver.set_window_size(1120, 1080)
     driver.get(url)
     #driver.implicitly_wait(5)
     origin  = driver.find_element_by_id("awardFlightSearchForm.originAirport")
@@ -201,12 +209,12 @@ if __name__=='__main__':
 
     # oneway  = driver.find_element_by_id("flightSearchForm.tripType.oneWay")
     oneway = driver.find_element_by_id("awardFlightSearchForm.tripType.oneWay")
-    oneway.click()
-    #driver.execute_script("arguments[0].click();", oneway);
+    #oneway.click()
+    driver.execute_script("arguments[0].click();", oneway);
 
     exactdate = driver.find_element_by_id("awardFlightSearchForm.datesFlexible.false")
-    exactdate.click()
-    #driver.execute_script("arguments[0].click();", exactdate);
+    #exactdate.click()
+    driver.execute_script("arguments[0].click();", exactdate);
 
 
 
@@ -230,36 +238,43 @@ if __name__=='__main__':
         print "No flights found on american airlines"
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "american airlines", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
         db.commit()
-        #display.stop()
+        display.stop()
         driver.quit()
         exit()
     time.sleep(1)
     html_page = driver.page_source
-    pagecontent = BeautifulSoup(html_page)
+    pagecontent = BeautifulSoup(html_page,"lxml")
     datadiv = pagecontent.find("div",{"id":"selectedPanel"})
 
     cabindiv = pagecontent.find("div",{"class","aa_awardsListBox"})
     cabinblock = cabindiv.find("ul")
     cabinlist = cabinblock.findAll("a")
+    #if cabinlist:
     try:
         for link in cabinlist:
             is_available = link.text
-            
             if "NotAvailable" not in is_available:
                 cabin = link['href']
                 cabin_ele = driver.find_element_by_xpath("//a[@href='" +cabin+ "']")
-                cabin_ele.click()
-                #driver.execute_script("arguments[0].click();", cabin_ele)
+                #cabin_ele.click()
+                driver.execute_script("arguments[0].click();", cabin_ele)
                 time.sleep(1)
                 html_page = driver.page_source
-                pagecontent = BeautifulSoup(html_page)
+                pagecontent = BeautifulSoup(html_page,"lxml")
+                datadiv = pagecontent.find("div",{"id":"selectedPanel"})
+                tax = 0
+                taxesdiv = pagecontent.find("span",{"id":"taxAmount_0"})
+                if taxesdiv:
+                    taxesdiv = taxesdiv.text
+                    taxes = re.findall("\d+.\d+", str(taxesdiv))
+                    tax = taxes[0]
                 flightblock = pagecontent.find("div",{"id":"flightListBox"})
                 data_container = flightblock.find("div",{"id":"flightListContainer"})
                 flightcontainer = data_container.findAll("div",{"class":"aa_flightListContainer"})
                 pagging = pagecontent.find("div",{"class":"aa_pageInation"})
                 paginf_ul = pagging.find("ul",{"id":"pgNt"})
                 paginglist = paginf_ul.findAll("a")
-                scrapeFlight(data_container,searchid)
+                scrapeFlight(data_container,searchid,tax)
                 if len(flightcontainer) > 9:
                     for page_link in paginglist:
                         link_text = page_link.text
@@ -271,16 +286,16 @@ if __name__=='__main__':
                         html_page1 = driver.page_source
                         html = BeautifulSoup(html_page1)
                         data_container = html.find("div",{"id":"flightListContainer"})
-                        scrapeFlight(data_container,searchid)
+                        scrapeFlight(data_container,searchid,tax)
                         #print "++++++++++++++++++"+link_text+"+++++++++++++++++++++++++++++++++++"
                     page1_Obj = driver.find_element_by_link_text("Page 1")
                     page1_Obj.click()
-                    
+    #else:                
     except:
         print "process end"
     finally:
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "american airlines", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
         db.commit()
-                
+    display.stop()            
     driver.quit()
     
