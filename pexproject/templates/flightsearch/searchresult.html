@@ -405,7 +405,8 @@
 									<h4>{% if action == 'return' %}Return : {% endif %}{{searchrow.source}} &#10230; {{searchrow.destination}} </h4>
 									<h4> {{searchrow.traveldate}}<!--<input type="text" id="datepicker" name="date" value="{{searchdate}}"></h4>-->
 								</div>
-
+								</div>
+								{% endif %}
 								<a class="price-calender" role="button" data-toggle="collapse" href="#pricecalender" aria-expanded="false" aria-controls="pricecalender"> View Price Matrix</a>
 								<div class="collapse" id="pricecalender">
 									<span class="mvt10px"> {{search.0.source}} to {{search.0.destination}}{% if returndate %}: Round Trip{%else%}:  One Way{% endif %}</span>
@@ -413,116 +414,16 @@
 										<section id="">
 
 											<div class="table-responsive" id="price_matrix">
-												<!--
-												<table class="table div-table" cellspacing="2" id="pricematrix">
-
-												<tr class="div-table-row row">
-												<th class="bc-whi left-heading"></th>
-												<th class="bc-whi">Economy</th>
-												<th class="bc-whi">Business</th>
-												<th class="bc-whi">First</th>
-												</tr>
-												{% if pricematrix %}
-												{% for matrix in pricematrix %}
-
-												<tr class="div-table-row row">
-												<td class="bc-whi left-heading"> {{matrix.datasource|title }}</td>
-												{% if matrix.maincabin %}
-												<td class="color-grey-1">{{matrix.maincabin|intcomma}}</td>
-												{% else%}
-												<td class="color-grey-1">-</td>
-												{% endif %}
-												{% if matrix.firstclass %}
-												<td class="color-grey-1">{{matrix.firstclass|intcomma}}</td>
-												{% else%}
-												<td class="color-grey-1">-</td>
-												{% endif %}
-												{% if matrix.business %}
-												<td class="color-grey-1">{{matrix.business|intcomma}}</td>
-												{% else%}
-												<td class="color-grey-1">-</td>
-												{% endif %}
-												</tr>
-
-												{% endfor %}
-												{% if "delta" not in pricesources%}
-
-												<tr class="div-table-row row">
-												<td class="bc-whi left-heading"> Delta </td>
-												<td class="color-grey-1">-</td>
-												<td class="color-grey-1">-</td>
-												<td class="color-grey-1">-</td>
-												</tr>
-												{% endif %}
-												{% if "united" not in pricesources %}
-												<tr class="div-table-row row">
-												<td class="bc-whi left-heading"> United </td>
-												<td class="color-grey-1">-</td>
-												<td class="color-grey-1">-</td>
-												<td class="color-grey-1">-</td>
-												</tr>
-												{% endif %}
-												{% if "etihad" not in pricesources%}
-
-												<tr class="div-table-row row">
-												<td class="bc-whi left-heading"> Etihad </td>
-												<td class="color-grey-1">-</td>
-												<td class="color-grey-1">-</td>
-												<td class="color-grey-1">-</td>
-												</tr>
-												{% endif %}
-												{% if "jetblue" not in pricesources%}
-
-												<tr class="div-table-row row">
-												<td class="bc-whi left-heading"> Jetblue </td>
-												<td class="color-grey-1">-</td>
-												<td class="color-grey-1">-</td>
-												<td class="color-grey-1">-</td>
-												</tr>
-												{% endif %}
-												{% if "virgin_atlantic" not in pricesources%}
-
-												<tr class="div-table-row row">
-												<td class="bc-whi left-heading"> Virgin Atlantic </td>
-												<td class="color-grey-1">-</td>
-												<td class="color-grey-1">-</td>
-												<td class="color-grey-1">-</td>
-												</tr>
-												{% endif %}
-												{% if "Virgin America" not in pricesources%}
-
-												<tr class="div-table-row row">
-												<td class="bc-whi left-heading"> Virgin America </td>
-												<td class="color-grey-1">-</td>
-												<td class="color-grey-1">-</td>
-												<td class="color-grey-1">-</td>
-												</tr>
-												{% endif %}
-												{% if "american airlines" not in pricesources%}
-
-												<tr class="div-table-row row">
-												<td class="bc-whi left-heading"> American Airlines </td>
-												<td class="color-grey-1">-</td>
-												<td class="color-grey-1">-</td>
-												<td class="color-grey-1">-</td>
-												</tr>
-												{% endif %}
-												{% endif %}
-												</table> -->
-												<!--<div class="color-details">
-												<span class="cheaper"><span class="glyphicon glyphicon-stop" aria-hidden="true"></span></span>
-												<span class="expensive"><span class="glyphicon glyphicon-stop " aria-hidden="true"></span></span>
-												<span class="nodata"><span class="glyphicon glyphicon-stop " aria-hidden="true"></span></span>
-												</div> -->
+												
 											</div>
 
 										</section>
 									</div>
 								</div>
 
-							</div>
+							
 
-							{% endif %}
+							
 
 							{% if selectedrow %}
 							<div class="col-xs-12 selected-flights bgclr">
@@ -2982,7 +2883,6 @@ function updateTime()
 	$(".contentdiv").remove();
 	$("#content1").append(html);
 	progess_width = $('#progressbar').width();
-	
 	$('#progress_hidden_val').val(progess_width);
 	if(progess_width < 125)
 	{
@@ -3062,17 +2962,17 @@ setSearchData();
 }
 if(data[1] == 'completed' )
 {
-clearInterval(refreshIntervalId);
-redirecttosearchpage('complete');
-$.ajax({
-url:dataurls,
-type:'POST',
-data:"actionfor=prc_matrix&csrfmiddlewaretoken={{csrf_token }}", // # &depaturemin="+depaturemin+"&depaturemax="+depaturemax+"&airlines="+airline+"&stoppage="+stoppage+row_val,
-success:function(html){
-$('#price_matrix').empty();
-$('#price_matrix').append(html);
-}
-});
+	clearInterval(refreshIntervalId);
+	redirecttosearchpage('complete');
+	$.ajax({
+	url:dataurls,
+	type:'POST',
+	data:"actionfor=prc_matrix&csrfmiddlewaretoken={{csrf_token }}", // # &depaturemin="+depaturemin+"&depaturemax="+depaturemax+"&airlines="+airline+"&stoppage="+stoppage+row_val,
+	success:function(html){
+		$('#price_matrix').empty();
+		$('#price_matrix').append(html);
+		}
+	});
 
 }
 else{
