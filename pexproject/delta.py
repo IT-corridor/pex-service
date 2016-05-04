@@ -124,7 +124,7 @@ def delta(orgn, dest, searchdate, searchkey):
         detailid_ele = driver.find_element_by_id(detailid)
         driver.execute_script("document.getElementById('"+detailid+"').click()")
         time.sleep(.02)
-	time.sleep(0.05)
+    time.sleep(0.05)
     	#page = driver.page_source
     	#soup2 = BeautifulSoup(page)
     #except:
