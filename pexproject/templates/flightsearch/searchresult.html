@@ -2678,10 +2678,11 @@
 			}
 			var stoplenght = stoppage.length;
 			var airlinelenght = airline.length;
+			
 			$.ajax({
 				url : urls,
 				type : 'POST',
-				data : "action=" + encodeURI('infinite_scroll') + "&page_no=" + encodeURI(pageNumber) + "&loop_file=loop&csrfmiddlewaretoken={{ csrf_token }}&depaturemin=" + depaturemin + "&depaturemax=" + depaturemax + "&airlines=" + airline + "&stoppage=" + stoppage + row_val + multicity,
+				data : "action=" + encodeURI('infinite_scroll') + "&page_no=" + encodeURI(pageNumber) + "&loop_file=loop&csrfmiddlewaretoken={{ csrf_token }}&depaturemin=" + depaturemin + "&depaturemax=" + depaturemax +"&arivalmin="+arivalmin+"&arivalmax="+arivalmax+"&airlines=" + airline + "&stoppage=" + stoppage + row_val + multicity,
 				success : function(html) {
 					$("#content").append(html);
 					call_sent = "completed";
