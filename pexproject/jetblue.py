@@ -37,7 +37,6 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
     cursor = db.cursor()
     
     url = "https://book.jetblue.com/shop/search/#/book/from/"+from_airport+"/to/"+to_airport+"/depart/"+str(date)+"/return/false/pax/ADT-1/redemption/true/promo/false"
-    #cursor = connection.cursor()
     currentdatetime = datetime.datetime.now()
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     display = Display(visible=0, size=(800, 600))
@@ -51,20 +50,20 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
     
     driver.get(url)
     #driver.implicitly_wait(50)
-    time.sleep(2)
+    #time.sleep(2)
     try:
-	WebDriverWait(driver,10).until(EC.presence_of_element_located((By.ID, "jbBookerPOS")))
+        WebDriverWait(driver,10).until(EC.presence_of_element_located((By.ID, "jbBookerPOS")))
         driver.find_elements_by_css_selector("input[type='submit'][value='Find it']")[0].click()
         #time.sleep(4)
         WebDriverWait(driver,10).until(EC.presence_of_element_located((By.ID, "AIR_SEARCH_RESULT_CONTEXT_ID0")))
     except:
         print "nodata on jetblue"
-        #display.stop
+        display.stop
         driver.quit()
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "jetblue", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
         db.commit()
         return searchid
-        
+     
     try:
         time.sleep(2)
         html_page = driver.page_source
@@ -94,6 +93,9 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
             arivedetails = []
             plaindetails = []
             operatedby = []
+            echoFareCode=[]
+            businessFareCode=[]
+            firstFareCode=[]
             flightno =''
             depttd  = ''
             arivetd = ''
@@ -159,6 +161,9 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                             dest_code = dest_code.replace(')','')
                         arivedetail = str(date)+" | "+arival_time+" at "+arive_fullname
                         arivedetails.append(arivedetail)
+                        echoFareCode.append("Blue")
+                        businessFareCode.append("Blue plus")
+                        firstFareCode.append("Blue flex")
                     if content.findAll("td",{"class":"colDuration"}):
                         duration = content.findAll("td",{"class":"colDuration"})
                         if duration:
@@ -220,12 +225,11 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                             arivetexts = '@'.join(arivedetails) 
                             plaiintexts = '@'.join(plaindetails) 
                             operatedtexts = '@'.join(operatedby)
+                            ecoFareText = '@'.join(echoFareCode)
+                            businessFareText = '@'.join(businessFareCode)
+                            firstFareText = '@'.join(firstFareCode)
                         recordCount = recordCount+1
-                        value_string.append((str(fltno), str(searchid), stime, stoppage, "test", origin_code, dest_code, depttime2, arivetime2, totaltime, str(economy_miles), str(econ_tax), str(business_miles), str(businesstax), str(first_miles), str(firsttax),"Economy", "Business", "First", "jetblue", departtexts, arivetexts, plaiintexts, operatedtexts))
-                        #cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", )
-                        #print "row inserted"
-                        #db.commit()
-                        #transaction.commit()
+                        value_string.append((str(fltno), str(searchid), stime, stoppage, "test", origin_code, dest_code, depttime2, arivetime2, totaltime, str(economy_miles), str(econ_tax), str(business_miles), str(businesstax), str(first_miles), str(firsttax),"Economy", "Business", "First", "jetblue", departtexts, arivetexts, plaiintexts, operatedtexts,ecoFareText,businessFareText,firstFareText))
                         
                     else:
                         if n < 2:
@@ -238,25 +242,28 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                                 arivetexts = '@'.join(arivedetails) 
                                 plaiintexts = '@'.join(plaindetails) 
                                 operatedtexts = '@'.join(operatedby)
-                            recordCount = recordCount+1
-                            value_string.append((str(flightno), str(searchid), stime, stoppage, "test", orgncode, dest_code, depttime2, arivetime2, totaltime, str(economy_miles), str(econ_tax), str(business_miles), str(businesstax), str(first_miles), str(firsttax), "Economy", "Business", "First", "jetblue", departtexts, arivetexts, plaiintexts, operatedtexts))
+                                ecoFareText = '@'.join(echoFareCode)
+                                businessFareText = '@'.join(businessFareCode)
+                                firstFareText = '@'.join(firstFareCode)
+                                recordCount = recordCount+1
+                            value_string.append((str(flightno), str(searchid), stime, stoppage, "test", orgncode, dest_code, depttime2, arivetime2, totaltime, str(economy_miles), str(econ_tax), str(business_miles), str(businesstax), str(first_miles), str(firsttax), "Economy", "Business", "First", "jetblue", departtexts, arivetexts, plaiintexts, operatedtexts,ecoFareText,businessFareText,firstFareText))
                             
                     if recordCount > 50:
-                        cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
+                        cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
                         print "row inserted"
                         db.commit()
                         recordCount = 1
                         value_string = []
                     n = n-1
         if len(value_string) > 0:
-            cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
+            cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
             print "final row inserted"
             db.commit()
     except:
         print "please change your seach filter"
     cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "jetblue", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
     db.commit()
-    #display.stop
+    display.stop
     driver.quit()
     return searchid
 
