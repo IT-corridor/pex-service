@@ -48,6 +48,9 @@ def scrapeFlight(page_contents,searchid,tax):
         arivedetail = []
         flightdetail = []
         operatedby = []
+        BookingFareCode = []
+        #bussFareCode= []
+        #firstFareCode=[]
         for detail in flightinfo:
             miles = (detail.find("div",{"class":"aa_flightList_col-1"}).text).strip()
             if miles != '':
@@ -91,8 +94,18 @@ def scrapeFlight(page_contents,searchid,tax):
             operatedby.append(caption)
             detailtable = detail.find("tbody")
             trblock = detailtable.findAll("tr")
-            aircraft = trblock[1].find("td").text
-
+            aircraft = ''
+            fareCode = ''
+            bookingCode = trblock[1].findAll("td")
+            if  len(bookingCode) > 0:
+                aircraft = bookingCode[0].text
+            
+            if len(bookingCode) > 1:
+                fareCode = bookingCode[1].text
+                if ':' in fareCode:
+                    fullfareCode = fareCode.split(":")
+                    fareCode = fullfareCode[1].strip()
+            BookingFareCode.append(fareCode)
             if "Link opens in a new window" in aircraft:
                 aircraft = aircraft.replace("Link opens in a new window","").strip()
             flightinfo = flight_num+" | "+aircraft
@@ -146,26 +159,38 @@ def scrapeFlight(page_contents,searchid,tax):
             totaltime = totaltime1[1]
         if 'Cabin:' in cabin_name:
             cabin_name = cabin_name.replace('Cabin:','').strip()
+        economy_fare_class = ''
+        business_fare_class = ''
+        fisrt_fare_class = ''
+        
+            
         if 'Economy' in cabin_name:
             maincabin = pricemile
             cabintype1 = cabin_name
             maintax = tax
+            if len(BookingFareCode) > 0:
+                economy_fare_class = ' Economy@'.join(BookingFareCode)
+                economy_fare_class = economy_fare_class+" Economy"
         elif 'First' in cabin_name:
             first = pricemile
             cabintype3 = cabin_name
             firsttax = tax
+            if len(BookingFareCode) > 0:
+                fisrt_fare_class = ' Fisrt@'.join(BookingFareCode)
+                fisrt_fare_class = fisrt_fare_class+" Fisrt"
         else:
             if 'Business' in cabin_name:
                 business = pricemile
                 cabintype2 = cabin_name
                 businesstax = tax
+                if len(BookingFareCode) > 0:
+                    business_fare_class = ' Business@'.join(BookingFareCode)
+                    business_fare_class = business_fare_class + " Business"
         departdetails = '@'.join(departdetail)
         arivedetails = '@'.join(arivedetail)
         planedetails = '@'.join(flightdetail)
         operatedbytext='@'.join(operatedby)
-        economy_fare_class = ''
-        business_fare_class = ''
-        fisrt_fare_class = ''
+        
         #print "****************************************************************************************************"
         value_string.append((flightno, str(searchid), stime, stoppage, "test", departcode, dest_code, departtime1, dest_time1, totaltime, str(maincabin),str(maintax), str(business),str(businesstax), str(first),str(firsttax), cabintype1, cabintype2, cabintype3, "american airlines", departdetails, arivedetails, planedetails, operatedbytext,economy_fare_class,business_fare_class,fisrt_fare_class))
         
