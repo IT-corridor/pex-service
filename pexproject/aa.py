@@ -176,8 +176,8 @@ def scrapeFlight(page_contents,searchid,tax):
             cabintype3 = cabin_name
             firsttax = tax
             if len(BookingFareCode) > 0:
-                fisrt_fare_class = ' Fisrt@'.join(BookingFareCode)
-                fisrt_fare_class = fisrt_fare_class+" Fisrt"
+                fisrt_fare_class = ' First@'.join(BookingFareCode)
+                fisrt_fare_class = fisrt_fare_class+" First"
         else:
             if 'Business' in cabin_name:
                 business = pricemile
