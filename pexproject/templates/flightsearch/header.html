@@ -3,7 +3,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	
 	<head>
-		<title>PEX+</title>
+		{% if title %}
+		<title>{{title}}</title>
+		{%endif%}
 		{% load staticfiles %}
 		{% load humanize %}
 		{% if request.GET.keyid %}

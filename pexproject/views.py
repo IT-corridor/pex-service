@@ -45,6 +45,7 @@ import customfunction,rewardScraper
 import smtplib
 from email.mime.text import MIMEText
 import socket
+import re
 from email.mime.multipart import MIMEMultipart
 import base64
 #from djnago.conf import settings
@@ -432,7 +433,7 @@ def index(request):
 	    subscriber = Mailchimp(customfunction.mailchimp_api_key)
 	    subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':username}, merge_vars={'FNAME':fname,'LNAME':lname})
        	   
-    return  render_to_response('flightsearch/index.html',{'image':image,'searchObj':searches}, context_instance=RequestContext(request))
+    return  render_to_response('flightsearch/index.html',{'image':image,'searchObj':searches,'title':"Search Flights on PEX+"}, context_instance=RequestContext(request))
 
 def flights(request):
     context = {}
@@ -496,7 +497,7 @@ def flights(request):
             returndate = Searchkey.objects.values_list('traveldate', flat=True).get(searchid=returnkey)
         msg = "Oops, looks like there aren't any flight results for your filtered search. Try to broaden your search criteria for better results."
     
-    return  render_to_response('flightsearch/flights.html',{'mc':mc,'message':msg,'search':searchdata,'searchparams':objects,'searchObj':searches,'returndate':returndate}, context_instance=RequestContext(request))
+    return  render_to_response('flightsearch/flights.html',{'mc':mc,'message':msg,'search':searchdata,'searchparams':objects,'searchObj':searches,'returndate':returndate,'title':"Find Cheap Flights and Airline Tickets Using Miles | PEX+"}, context_instance=RequestContext(request))
         
 def staticPage(request):
     context = {}
@@ -1057,6 +1058,7 @@ def search(request):
                     subprocess.Popen(["scrapy", "runspider", settings.BASE_DIR+"/pexproject/aeroflot.py", "-a", "origin="+orgncode,"-a", "destination="+destcode,"-a", "date="+formated_date,"-a", "searchid="+str(searchkeyid)])
                     
             if is_scrape_virgin_atlantic == 1:
+                customfunction.flag = customfunction.flag+1
                 Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='virgin_atlantic').delete()
                 if returnkey:
                     Flightdata.objects.filter(searchkeyid=returnkey,datasource='virgin_atlantic').delete()            
@@ -1283,6 +1285,7 @@ def getsearchresult(request):
             pricematrix1 = list(pricematrix)
             for s in pricematrix1:
                 pricesources.append(s.datasource)  
+        
         return render_to_response('flightsearch/pricematrix.html',{'pricesources':pricesources, 'pricematrix':pricematrix1},context_instance=RequestContext(request))
     
     adimages = GoogleAd.objects.filter(ad_code="result page")
@@ -1519,16 +1522,32 @@ def getsearchresult(request):
         multisearch = []
         n = 1
         m = 0
+        multiSearchTitle=''
         if multicitykey1:
+            orlDestination=''
             multicitysearch = ''
+            commaSeperator=''
+            dateString = ''
+            dateSeperator = ''
             for row in searchdata:
-                originname1 = row.source.split("(")
-                originname = originname1[1].replace(')','')
-                destname1 = row.destination.split("(")
-                destname = (destname1[1]).replace(')','')
+                originname = re.findall(re.escape("(")+"(.*)"+re.escape(")"),row.source)[0]
+                destname = re.findall(re.escape("(")+"(.*)"+re.escape(")"),row.destination)[0]
+                if orlDestination  == originname:
+                    multiSearchTitle = multiSearchTitle+"-"+destname
+                    commaSeperator=''
+                    
+                else:
+                    multiSearchTitle = multiSearchTitle+commaSeperator+originname+"-"+destname
+                    commaSeperator = ", "
+                orlDestination = destname
+                travingDate = row.traveldate.strftime('%-m/%-d')
+                dateString = dateString+dateSeperator+travingDate
+                dateSeperator = '-'
                 multicitysearch = {"source":originname,"destination":destname,"traveldate":row.traveldate}
+                
                 m = m+1
                 multisearch.append(multicitysearch) 
+            multiSearchTitle = multiSearchTitle+", "+dateString
             multicity='true' 
             cabintype = " and " + "p1."+cabinclass + " > 0"
             querylist = querylist+cabintype
@@ -1603,6 +1622,7 @@ def getsearchresult(request):
                 querylist = querylist+cabintype
                 #print taxes
                 record = Flightdata.objects.raw("select p1.*,p1.maintax as maintax1, p1.firsttax as firsttax1, p1.businesstax as businesstax1,p1.rowid as newid ,case when datasource = 'delta' then " + deltaorderprice + "  else " + unitedorderprice + " end as finalprice, "+taxes+" as totaltaxes from pexproject_flightdata as p1 where " + querylist + " order by finalprice ," + taxes + ",departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset))
+            
             mainlist = list(record)
             #print record.quer
         progress_value = '' 
@@ -1624,7 +1644,27 @@ def getsearchresult(request):
             scraperStatus = request.POST['scraperStatus']
         #if 'actionfor' in request.POST:
             #return render_to_response('flightsearch/pricematrix.html',{'pricesources':pricesources, 'pricematrix':pricematrix},context_instance=RequestContext(request))      
-        
+        title=''
+        comma = ''
+        if multiSearchTitle == '' :
+            for val in searchdata:
+                title_origin = re.findall(re.escape("(")+"(.*)"+re.escape(")"),val.source)[0]
+                title_dest = re.findall(re.escape("(")+"(.*)"+re.escape(")"),val.destination)[0]
+                if title_origin == title_dest:
+                    title = title+comma+ "-"+title_dest
+                    comma = ", "
+                else:
+                    title = title+comma+title_origin+"-"+title_dest
+                    comma = ", "
+                fromDate = val.traveldate.strftime('%-m/%-d')
+                title = title+", "+fromDate
+                toDate = ''
+                if returndate:
+                    toDate = returndate[0].strftime('%-m/%-d')
+                    title = title+"-"+toDate
+            
+        else:
+            title = multiSearchTitle
         if request.is_ajax():
             return render_to_response('flightsearch/search.html', {'action':action,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value, 'multisearch':multisearch, 'data':mainlist,'multirecod':mainlist, 'multicity':multicity, 'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request))
         '''
@@ -1644,7 +1684,7 @@ def getsearchresult(request):
             cursor.execute("select * from reward_points where user_id="+str(userid))
             pointlist = cursor.fetchall()
         
-        return render_to_response('flightsearch/searchresult.html', {'action':action,'pointlist':pointlist,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value,'multisearch':multisearch,'data':mainlist,'multirecod':mainlist,'multicity':multicity,'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request)) 
+        return render_to_response('flightsearch/searchresult.html', {'title':title,'action':action,'pointlist':pointlist,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value,'multisearch':multisearch,'data':mainlist,'multirecod':mainlist,'multicity':multicity,'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request)) 
         
 
 def share(request):
