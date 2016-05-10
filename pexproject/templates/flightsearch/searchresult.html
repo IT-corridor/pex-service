@@ -2329,6 +2329,7 @@
 		var arivemintime;
 		var deptmaxtime;
 		var arivemaxtime;
+		
 		var process_status = 'complete';
 		function timeconversion(time) {
 			var val = time;
@@ -2395,14 +2396,25 @@
 			arivemaxtime = 1439;
 
 		}
-
 		/*************************** SLIDER DECTION  ******************************/
 		$("#depart").slider({
 			range : true,
 			min : 0,
 			max : 1439,
 			values : [deptmintime, deptmaxtime],
-			slide : slideTime1
+			slide: function (e, ui) {
+			var hours0 = Math.floor(ui.values[0] / 60);
+			var minutes0 = ui.values[0] - (hours0 * 60);
+	        var hours1 = Math.floor(ui.values[1] / 60);
+	        var minutes1 = ui.values[1] - (hours1 * 60);
+	        start = getTime(hours0, minutes0);
+			end = getTime(hours1, minutes1);
+			$('#depaturemin').val(start);
+			$('#depaturemax').val(end);
+			depaturemin = start;
+			depaturemax = end;
+			$("#time").text(start + ' - ' + end);
+					}
 
 		});
 
@@ -2432,8 +2444,21 @@
 			min : 0,
 			max : 1439,
 			values : [arivemintime, arivemaxtime],
-			slide : slideTime
+			slide : function (e, ui) {
+				hours0 = Math.floor(ui.values[0] / 60);
+        		minutes0 = ui.values[0] - (hours0 * 60);
+        		hours1 =  Math.floor(ui.values[1] / 60);
+        		minutes1 = ui.values[1] - (hours1 * 60);
+        		startTime = getTime(hours0, minutes0);
+				$('#arivalmin').val(startTime);
+				endTime = getTime(hours1, minutes1);
+				$('#arivalmax').val(endTime);
+				arivalmin = startTime;
+				arivalmax = endTime;
+				$("#arivaltime").text(startTime + ' - ' + endTime);
+			}
 		});
+		
 		function slideTime(event, ui) {
 			var val0 = $("#arive").slider("values", 0),
 			    val1 = $("#arive").slider("values", 1),
