@@ -66,44 +66,43 @@ def delta(orgn, dest, searchdate, searchkey):
         driver.quit()
         return searchkey
     time.sleep(1)
-    
-    driver.execute_script("""
-        var sortBy = [delta.airShopping.defaultSortBy, false];
-        SearchFlightResultsDWR.searchResults(currentSessionCheckSum, sortBy[0], delta.airShopping.numberOfColumnsToRequest, delta.airShopping.cacheKey, {
-            async: true,
-            timeout: 65000,
-            callback: function(searchResults) {
-                    var jsonData = {};
-                    jsonData['jsonobj'] = JSON.stringify(searchResults);
-                    var cabininfo = document.getElementsByClassName('tblHeadUp')[0].innerHTML;
-                    jsonData['cabinTypes'] = cabininfo;
-                    localStorage.setItem('deltaData', JSON.stringify(jsonData));
-                    throw new Error("Results found");
-                if (searchResults.errorFwdURL == null || searchResults.errorFwdURL == "") {
-                    flightResultsObj.isDOMReady(searchResults, action, false);
-                    FilterFunctions.hideFilterMsg();
-                } else {
-                
-                    flightResultsObj.isDOMReady(searchResults, false, true);
-                }
-                if (!action) {
-                    Wait.hide();
-                    $(".tableHeaderHolderFareBottom").show();
-                    $("#nextGenAirShopping .tableHeaderHolder").show();
-                }
-            },
-            errorHandler: function(msg, exc) {
-                shoppingUtil.errorHandler(msg, exc);
-            },
-            exceptionHandler: function(msg, exc) {
-                (action) ? FilterFunctions.hideFilterMsg(): "";
-                shoppingUtil.exceptionHandler(msg, exc);
-            }
-        });
-        
-
-    """)
     try:
+        driver.execute_script("""
+            var sortBy = [delta.airShopping.defaultSortBy, false];   
+            SearchFlightResultsDWR.searchResults(currentSessionCheckSum, sortBy[0], delta.airShopping.numberOfColumnsToRequest, delta.airShopping.cacheKey, {
+                async: true,
+                timeout: 65000,
+                callback: function(searchResults) {
+                        var jsonData = {};
+                        jsonData['jsonobj'] = JSON.stringify(searchResults);
+                        var cabininfo = document.getElementsByClassName('tblHeadUp')[0].innerHTML;
+                        jsonData['cabinTypes'] = cabininfo;
+                        localStorage.setItem('deltaData', JSON.stringify(jsonData));
+                        throw new Error("Results found");
+                    if (searchResults.errorFwdURL == null || searchResults.errorFwdURL == "") {
+                        flightResultsObj.isDOMReady(searchResults, action, false);
+                        FilterFunctions.hideFilterMsg();
+                    } else {
+                    
+                        flightResultsObj.isDOMReady(searchResults, false, true);
+                    }
+                    if (!action) {
+                        Wait.hide();
+                        $(".tableHeaderHolderFareBottom").show();
+                        $("#nextGenAirShopping .tableHeaderHolder").show();
+                    }
+                },
+                errorHandler: function(msg, exc) {
+                    shoppingUtil.errorHandler(msg, exc);
+                },
+                exceptionHandler: function(msg, exc) {
+                    (action) ? FilterFunctions.hideFilterMsg(): "";
+                    shoppingUtil.exceptionHandler(msg, exc);
+                }
+            });
+            
+    
+        """)
         WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.ID, "submitAdvanced")))
     except:
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "delta", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
