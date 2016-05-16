@@ -22,6 +22,7 @@ import socket
 import json
 
 def delta(orgn, dest, searchdate, searchkey):
+    print "ararrararararararaa"
     db = customfunction.dbconnection()
     cursor = db.cursor()
     db.set_character_set('utf8')
