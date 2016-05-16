@@ -34,10 +34,6 @@ def delta(orgn, dest, searchdate, searchkey):
     display = Display(visible=0, size=(800, 600))
     display.start()
     '''
-    chromedriver = "/usr/bin/chromedriver"
-    os.environ["webdriver.chrome.driver"] = chromedriver
-    driver = webdriver.Chrome(chromedriver)
-    
     driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
     driver.set_window_size(1120, 1080) '''
     driver = webdriver.Chrome()
@@ -68,42 +64,110 @@ def delta(orgn, dest, searchdate, searchkey):
         return searchkey
     time.sleep(1)
     try:
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "showAll")))
+        print "More than one page"
         driver.execute_script("""
-            var sortBy = [delta.airShopping.defaultSortBy, false];   
-            SearchFlightResultsDWR.searchResults(currentSessionCheckSum, sortBy[0], delta.airShopping.numberOfColumnsToRequest, delta.airShopping.cacheKey, {
-                async: true,
-                timeout: 65000,
-                callback: function(searchResults) {
-                        var jsonData = {};
-                        jsonData['jsonobj'] = JSON.stringify(searchResults);
-                        var cabininfo = document.getElementsByClassName('tblHeadUp')[0].innerHTML;
-                        jsonData['cabinTypes'] = cabininfo;
-                        localStorage.setItem('deltaData', JSON.stringify(jsonData));
-                        throw new Error("Results found");
-                    if (searchResults.errorFwdURL == null || searchResults.errorFwdURL == "") {
-                        flightResultsObj.isDOMReady(searchResults, action, false);
-                        FilterFunctions.hideFilterMsg();
+            DWRHandler.currentPage = -1;
+            var _shopInputDo=shopInputDo;
+            shoppingUtil.scrollWindow("top");
+            FilterFunctions.showFilterMsg();
+            FlightUtil.emptyResults();
+            ResummarizeFlightResultsDWR.pageResults(DWRHandler.currentPage, _shopInputDo.currentSessionCheckSum, delta.airShopping.cacheKey, {
+            async: true,
+            callback: function(searchResults) {
+                if (searchResults != null) {
+                    var jsonData = {};
+                    jsonData['jsonobj'] = JSON.stringify(searchResults);
+                    var cabininfo = document.getElementsByClassName('tblHeadUp')[0].innerHTML;
+                    jsonData['cabinTypes'] = cabininfo;
+                    localStorage.setItem('deltaData', JSON.stringify(jsonData));
+                    var element = document.createElement('div');
+                    element.id = "submitAdvanced";
+                    element.appendChild(document.createTextNode("text"));
+                    document.body.appendChild(element);
+                    throw new Error("Results found");
+                    if (searchResults.errorFwdURL == null) {
+                        jsonResultPopulation(searchResults);
+                        paginationPopulation(searchResults);
+                        if (shoppingUtil.isIE8()) {
+                            if (DWRHandler.currentPage == -1) {
+                                ieTimeout = setTimeout("RenderTemplate.renderResult();FilterFunctions.hideFilterMsg();RenderTemplate.adjustHeight();", 200);
+                            } else {
+                                ieTimeout = setTimeout("RenderTemplate.renderResult();FilterFunctions.hideFilterMsg();RenderTemplate.adjustHeight();", 100);
+                            }
+                        } else {
+                            RenderTemplate.renderResult();
+                            FilterFunctions.hideFilterMsg();
+                            RenderTemplate.adjustHeight();
+                        }
+                        if (DWRHandler.currentPage == -1) {
+                            $("#showAll").hide();
+                            $("#showAll-footer").hide();
+                        }
+                        contienuedOnload(false);
+                        if (searchResults.debugInfo != null && ((typeof(printRequestResponse) !== "undefined") && printRequestResponse == true)) {
+                            $("#requestXml").text(searchResults.debugInfo.itaRequest);
+                            $("#responceXml").text(searchResults.debugInfo.itaResponse);
+                            $("#reqRes").show();
+                        }
                     } else {
-                    
-                        flightResultsObj.isDOMReady(searchResults, false, true);
+                        window.location.replace(searchResults.errorFwdURL);
                     }
-                    if (!action) {
-                        Wait.hide();
-                        $(".tableHeaderHolderFareBottom").show();
-                        $("#nextGenAirShopping .tableHeaderHolder").show();
-                    }
-                },
-                errorHandler: function(msg, exc) {
-                    shoppingUtil.errorHandler(msg, exc);
-                },
-                exceptionHandler: function(msg, exc) {
-                    (action) ? FilterFunctions.hideFilterMsg(): "";
-                    shoppingUtil.exceptionHandler(msg, exc);
+                } else {
+                    FilterFunctions.errorHandling();
                 }
-            });
-            
-    
+                $(".tableHeaderHolderFareBottom.return2Top").show();
+            },
+            exceptionHandler: FilterFunctions.errorHandling
+        });
+        
+        
+        
         """)
+    except:
+        print "single page"
+        driver.execute_script("""
+        var sortBy = [delta.airShopping.defaultSortBy, false];
+        SearchFlightResultsDWR.searchResults(currentSessionCheckSum, sortBy[0], delta.airShopping.numberOfColumnsToRequest, delta.airShopping.cacheKey, {
+            async: true,
+            timeout: 65000,
+            callback: function(searchResults) {
+                    var jsonData = {};
+                    
+                    jsonData['jsonobj'] = JSON.stringify(searchResults);
+                    var cabininfo = document.getElementsByClassName('tblHeadUp')[0].innerHTML;
+                    jsonData['cabinTypes'] = cabininfo;
+                    localStorage.setItem('deltaData', JSON.stringify(jsonData));
+                    var element = document.createElement('div');
+                    element.id = "submitAdvanced";
+                    element.appendChild(document.createTextNode("text"));
+                    document.body.appendChild(element);
+                    throw new Error("Results found");
+                    
+                if (searchResults.errorFwdURL == null || searchResults.errorFwdURL == "") {
+                    flightResultsObj.isDOMReady(searchResults, action, false);
+                    FilterFunctions.hideFilterMsg();
+                } else {
+                
+                    flightResultsObj.isDOMReady(searchResults, false, true);
+                }
+                if (!action) {
+                    Wait.hide();
+                    $(".tableHeaderHolderFareBottom").show();
+                    $("#nextGenAirShopping .tableHeaderHolder").show();
+                }
+            },
+            errorHandler: function(msg, exc) {
+                shoppingUtil.errorHandler(msg, exc);
+            },
+            exceptionHandler: function(msg, exc) {
+                (action) ? FilterFunctions.hideFilterMsg(): "";
+                shoppingUtil.exceptionHandler(msg, exc);
+            }
+        });
+        
+        """)
+    try:
         WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.ID, "submitAdvanced")))
     except:
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "delta", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
@@ -226,11 +290,10 @@ def delta(orgn, dest, searchdate, searchkey):
                 
                 if j == 0:
                     cabintype = "Economy"
-                elif j == 1 and 'First' not in pricecol[1].text:
+                if j == 1 and 'First' not in pricecol[1].text:
                     cabintype = "Business"
-                else:
-                    if 'First' not in pricecol[2].text:
-                        cabintype = "Business"
+                if j == 2 and len(pricecol) > 2 and 'First' not in pricecol[2].text:
+                    cabintype = "Business"
             else:
                 if len(pricecol) > 0 and len(pricecol) < 2:
                     if 'Main Cabin' in pricecol[0].text:
