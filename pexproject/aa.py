@@ -215,49 +215,47 @@ if __name__=='__main__':
     month = dt.strftime("%b")
     day = dt.strftime("X%d").replace('X0','X').replace('X','')
     year = dt.strftime("%Y")
-
-    url = "https://www.aa.com/reservation/awardFlightSearchAccess.do"
-    display = Display(visible=0, size=(800, 600))
-    display.start()
-    driver = webdriver.Chrome()
-    #driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
-    #driver.set_window_size(1120, 1080)
-    driver.get(url)
-    #driver.implicitly_wait(5)
-    origin  = driver.find_element_by_id("awardFlightSearchForm.originAirport")
-    origin.clear()
-    origin.send_keys(sys.argv[1]) 
-    destination = driver.find_element_by_id("awardFlightSearchForm.destinationAirport")
-
-    destination.send_keys(sys.argv[2])
-
-
-    # oneway  = driver.find_element_by_id("flightSearchForm.tripType.oneWay")
-    oneway = driver.find_element_by_id("awardFlightSearchForm.tripType.oneWay")
-    #oneway.click()
-    driver.execute_script("arguments[0].click();", oneway);
-
-    exactdate = driver.find_element_by_id("awardFlightSearchForm.datesFlexible.false")
-    #exactdate.click()
-    driver.execute_script("arguments[0].click();", exactdate);
-
-
-
-    select_month = Select(driver.find_element_by_id("awardFlightSearchForm.flightParams.flightDateParams.travelMonth"))
-    select_month.select_by_visible_text(month)
-
-    select_date = Select(driver.find_element_by_id("awardFlightSearchForm.flightParams.flightDateParams.travelDay"))
-    #select_date.select_by_visible_text(str(day))
-    for optn in select_date.options:
-        val = optn.get_attribute('value')
-        if val == day:
-            optn.click()
-            break
-
-    submit = driver.find_element_by_id("awardFlightSearchForm.button.go")
-    submit.click()
-
     try:
+        url = "https://www.aa.com/reservation/awardFlightSearchAccess.do"
+        display = Display(visible=0, size=(800, 600))
+        display.start()
+        driver = webdriver.Chrome()
+        #driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
+        #driver.set_window_size(1120, 1080)
+        driver.get(url)
+        #driver.implicitly_wait(5)
+        origin  = driver.find_element_by_id("awardFlightSearchForm.originAirport")
+        origin.clear()
+        origin.send_keys(sys.argv[1]) 
+        destination = driver.find_element_by_id("awardFlightSearchForm.destinationAirport")
+    
+        destination.send_keys(sys.argv[2])
+    
+    
+        # oneway  = driver.find_element_by_id("flightSearchForm.tripType.oneWay")
+        oneway = driver.find_element_by_id("awardFlightSearchForm.tripType.oneWay")
+        #oneway.click()
+        driver.execute_script("arguments[0].click();", oneway);
+    
+        exactdate = driver.find_element_by_id("awardFlightSearchForm.datesFlexible.false")
+        #exactdate.click()
+        driver.execute_script("arguments[0].click();", exactdate);
+    
+    
+    
+        select_month = Select(driver.find_element_by_id("awardFlightSearchForm.flightParams.flightDateParams.travelMonth"))
+        select_month.select_by_visible_text(month)
+    
+        select_date = Select(driver.find_element_by_id("awardFlightSearchForm.flightParams.flightDateParams.travelDay"))
+        #select_date.select_by_visible_text(str(day))
+        for optn in select_date.options:
+            val = optn.get_attribute('value')
+            if val == day:
+                optn.click()
+                break
+    
+        submit = driver.find_element_by_id("awardFlightSearchForm.button.go")
+        submit.click()
         WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "selectedPanel")))
     except:
         print "No flights found on american airlines"
@@ -309,7 +307,7 @@ if __name__=='__main__':
                         pageObj.click()
                         time.sleep(1)
                         html_page1 = driver.page_source
-                        html = BeautifulSoup(html_page1)
+                        html = BeautifulSoup(html_page1,"lxml")
                         data_container = html.find("div",{"id":"flightListContainer"})
                         scrapeFlight(data_container,searchid,tax)
                         #print "++++++++++++++++++"+link_text+"+++++++++++++++++++++++++++++++++++"
@@ -323,4 +321,4 @@ if __name__=='__main__':
         db.commit()
     display.stop()            
     driver.quit()
-    
+        
