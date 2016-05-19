@@ -15,7 +15,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 #from django.db import connection, transaction
 import customfunction
-#from pyvirtualdisplay import Display
+from pyvirtualdisplay import Display
 import json
 #import socket
 
@@ -46,11 +46,11 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid):
         milesbtn = WebDriverWait(driver,5).until(
                 lambda driver :driver.find_elements_by_name("payment_type"))
         driver.execute_script("return arguments[0].click();", milesbtn[1])
-        element = WebDriverWait(driver,4).until(
+        element = WebDriverWait(driver,5).until(
                 lambda driver : driver.find_element_by_link_text("Close"))
         element.click()
     except:
-        print "someting wrong"
+        print "something wrong"
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "Virgin America", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
         db.commit()
         driver.quit()
@@ -118,191 +118,196 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid):
         driver.quit()
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "Virgin America", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
         db.commit()
-        return 
-    if flightData:
-        jsonOb = json.loads(flightData.text)
-        flightList = jsonOb["response"]["departingFlightsInfo"]["flightList"]
-        value_string = []
-        for key in flightList:
-            for n in range(0,len(flightList[key])):
-                flightInfo = flightList[key][n]
-                flightType = flightList[key][n]['flightType']
-                fareList = flightList[key][n]['fareList']
-                economy = 0
-                business = 0
-                first = 0
-                ecotax = 0
-                busstax = 0
-                firsttax = 0
-                ecoFareClass = ''
-                bussFareClass = ''
-                firstFareClass = ''
-                for i in fareList:
-                
-                    if 'fareBasisCode' in fareList[i]:
-                        
-                        Taxes = float(fareList[i]['pointsFare']['totalTax'])
-                        Miles = int(fareList[i]['pointsFare']['totalPoints'])
-                        classOfServiceList = fareList[i]['classOfServiceList']
-                        fareCode = []
-                        for j in range(0,len(classOfServiceList)):
-                            
-                            classOfService = classOfServiceList[j]['classOfService']
-                            fareCode.append(classOfService)
-                        if 'MCS' in i and (0 == business or business > Miles):
-                            business = Miles
-                            busstax = Taxes
-                            bussFareClass = ' Business@'.join(fareCode)+' Business'
-                        elif 'MC' in i and (0 == economy or economy > Miles):
-                            economy = Miles
-                            ecotax = Taxes
-                            ecoFareClass = ' Economy@'.join(fareCode)+' Economy'
-                        elif 'FIRST' in i and (0 == first or first > Miles):
-                            first = Miles
-                            firsttax = Taxes
-                            firstFareClass = ' First@'.join(fareCode)+' First'
-                        #print "seatsRemaining",fareList[i]['seatsRemaining']
-                        
-                flightDetails =''
-                "++++++++++++++++flightDetails ++++++++++++++++++++++++++++"
-                source = ''
-                dest = ''
-                departureTime=''
-                arivalTime=''
-                flightNo = ''
-                duration = ''
-                ariveArray = []
-                departArray = []
-                flightArray = []
-                
-                if 'NON_STOP' in flightType:
-                    flightDetails = flightList[key][n]['flightSegment']
-                    
-                    "########### Source ####################"
-                    
-                    source = flightDetails["departure"]
-                    departureDateTime = flightDetails["departureDateTime"]
-                    
-                    
-                    dept = departureDateTime.split("T")
-                    #print "deptDate",dept[0]
-                    departTime = dept[1].split("-")
-                    departTimeFormat = (datetime.datetime.strptime(departTime[0], '%H:%M:%S'))
-                    departureTime = departTimeFormat.strftime('%H:%M')
-                    departDisplay = dept[0]+" | "+departureTime+" from "+source
-                    departArray.append(departDisplay)
+        return
+    try: 
+        if flightData:
+            jsonOb = json.loads(flightData.text)
             
-                    "############ Destination ######################"
-                    dest = flightDetails["arrival"]
-                    arrivalDateTime = flightDetails["arrivalDateTime"]
-                    arrival = arrivalDateTime.split("T")
+            flightList = jsonOb["response"]["departingFlightsInfo"]["flightList"]
+            value_string = []
+            for key in flightList:
+                for n in range(0,len(flightList[key])):
+                    flightInfo = flightList[key][n]
+                    flightType = flightList[key][n]['flightType']
+                    fareList = flightList[key][n]['fareList']
+                    economy = 0
+                    business = 0
+                    first = 0
+                    ecotax = 0
+                    busstax = 0
+                    firsttax = 0
+                    ecoFareClass = ''
+                    bussFareClass = ''
+                    firstFareClass = ''
+                    for i in fareList:
                     
-                    ariveTime = arrival[1].split("-")
-                    arivalTime = ariveTime[0]
-                    ariveTimeFormat = (datetime.datetime.strptime(ariveTime[0], '%H:%M:%S'))
-                    arivalTime = ariveTimeFormat.strftime('%H:%M')
-                    ariveDisplay = arrival[0]+" | "+arivalTime+" at "+dest
-                    ariveArray.append(ariveDisplay)
+                        if 'fareBasisCode' in fareList[i]:
+                            
+                            Taxes = float(fareList[i]['pointsFare']['totalTax'])
+                            Miles = int(fareList[i]['pointsFare']['totalPoints'])
+                            classOfServiceList = fareList[i]['classOfServiceList']
+                            fareCode = []
+                            for j in range(0,len(classOfServiceList)):
+                                
+                                classOfService = classOfServiceList[j]['classOfService']
+                                fareCode.append(classOfService)
+                            if 'MCS' in i and (0 == business or business > Miles):
+                                business = Miles
+                                busstax = Taxes
+                                bussFareClass = ' Business@'.join(fareCode)+' Business'
+                            elif 'MC' in i and (0 == economy or economy > Miles):
+                                economy = Miles
+                                ecotax = Taxes
+                                ecoFareClass = ' Economy@'.join(fareCode)+' Economy'
+                            elif 'FIRST' in i and (0 == first or first > Miles):
+                                first = Miles
+                                firsttax = Taxes
+                                firstFareClass = ' First@'.join(fareCode)+' First'
+                            #print "seatsRemaining",fareList[i]['seatsRemaining']
+                            
+                    flightDetails =''
+                    "++++++++++++++++flightDetails ++++++++++++++++++++++++++++"
+                    source = ''
+                    dest = ''
+                    departureTime=''
+                    arivalTime=''
+                    flightNo = ''
+                    duration = ''
+                    ariveArray = []
+                    departArray = []
+                    flightArray = []
                     
-                    elapsedTime = flightDetails["elapsedTime"]
-                    duration = str((int(elapsedTime)/60))+"h "+str((int(elapsedTime)%60))+"m"
-
-                    "########### Flight Details #############################"
-                    aircraftType = flightDetails["aircraftType"]
-                    flightNo = "Flight "+str(flightDetails["flightNum"])
-                    flightDisplay = flightNo+" | "+aircraftType+" ("+duration+")"
-                    flightArray.append(flightDisplay)
-                    
-                    classOfService = flightDetails["classOfService"]
-                    
-                    segNum = flightDetails["segNum"]
-                    
-                else:
-                    flightDetails = flightList[key][n]['flightList']
-                    oldAriveTime = ''
-                    tripDuration = 0
-                    for k in range(0,len(flightDetails)):
+                    if 'NON_STOP' in flightType:
+                        flightDetails = flightList[key][n]['flightSegment']
                         
-                        flightType = flightDetails[k]['flightType']
                         "########### Source ####################"
-                        departure = flightDetails[k]['flightSegment']["departure"]
                         
-                        departureDateTime = flightDetails[k]['flightSegment']["departureDateTime"]
+                        source = flightDetails["departure"]
+                        departureDateTime = flightDetails["departureDateTime"]
+                        
+                        
                         dept = departureDateTime.split("T")
-                        
+                        #print "deptDate",dept[0]
                         departTime = dept[1].split("-")
-                        
                         departTimeFormat = (datetime.datetime.strptime(departTime[0], '%H:%M:%S'))
-                        departTimeFormat = departTimeFormat.strftime('%H:%M')
-                        
-                        departDisplay = dept[0]+" | "+departTimeFormat+" from "+departure
+                        departureTime = departTimeFormat.strftime('%H:%M')
+                        departDisplay = dept[0]+" | "+departureTime+" from "+source
                         departArray.append(departDisplay)
-                        
+                
                         "############ Destination ######################"
-                        ariveAt = flightDetails[k]['flightSegment']["arrival"]
-                        
-                        arrivalDateTime = flightDetails[k]['flightSegment']["arrivalDateTime"]
+                        dest = flightDetails["arrival"]
+                        arrivalDateTime = flightDetails["arrivalDateTime"]
                         arrival = arrivalDateTime.split("T")
-                        ariveTime = arrival[1].split("-")
-                        ariveTimeFormat = (datetime.datetime.strptime(ariveTime[0], '%H:%M:%S'))
-                        ariveTimeFormat = ariveTimeFormat.strftime('%H:%M')
-                        if k == len(flightDetails)-1:
-                            dest = ariveAt
-                            arivalTime = ariveTimeFormat
-                        timedelta = 0
-                        if oldAriveTime:
-                            waitingTime = datetime.datetime.strptime(departTimeFormat,'%H:%M') - datetime.datetime.strptime(oldAriveTime,'%H:%M')
-                            timedelta = (waitingTime.total_seconds())/60  
                         
-                        ariveDisplay = str(arrival[0])+" | "+str(ariveTimeFormat)+" at "+ariveAt
+                        ariveTime = arrival[1].split("-")
+                        arivalTime = ariveTime[0]
+                        ariveTimeFormat = (datetime.datetime.strptime(ariveTime[0], '%H:%M:%S'))
+                        arivalTime = ariveTimeFormat.strftime('%H:%M')
+                        ariveDisplay = arrival[0]+" | "+arivalTime+" at "+dest
                         ariveArray.append(ariveDisplay)
-
+                        
+                        elapsedTime = flightDetails["elapsedTime"]
+                        duration = str((int(elapsedTime)/60))+"h "+str((int(elapsedTime)%60))+"m"
+    
                         "########### Flight Details #############################"
-                        flightNum = flightDetails[k]['flightSegment']["flightNum"]
-                        if k == 0:
-                            source = departure
-                            flightNo = "Flight "+str(flightNum)
-                            departureTime = departTimeFormat
-                        classOfService = flightDetails[k]['flightSegment']["classOfService"]
-                        elapsedTime = flightDetails[k]['flightSegment']["elapsedTime"]
-                        aircraftType = flightDetails[k]['flightSegment']["aircraftType"]
-                        flightairTime = str((int(elapsedTime)/60))+"h "+str((int(elapsedTime)%60))+"m"
-                        flightDisplay = "Flight "+str(flightNum)+" | "+aircraftType+" ("+flightairTime+")"
+                        aircraftType = flightDetails["aircraftType"]
+                        flightNo = "Flight "+str(flightDetails["flightNum"])
+                        flightDisplay = flightNo+" | "+aircraftType+" ("+duration+")"
                         flightArray.append(flightDisplay)
                         
-                        tripDuration = tripDuration+timedelta+elapsedTime
+                        classOfService = flightDetails["classOfService"]
                         
-                        segNum = flightDetails[k]['flightSegment']["segNum"]
-                        oldAriveTime = ariveTimeFormat
-                    duration = str((int(tripDuration)/60))+"h "+str((int(tripDuration)%60))+"m"
-                stoppage = ''
-                stop = len(departArray) - 1
-                if stop == 0:
-                    stoppage = "NONSTOP"
-                elif stop == 1:
-                    stoppage = "1 STOP"
-                else:
-                    stoppage = str(stop)+" STOPS"
+                        segNum = flightDetails["segNum"]
+                        
+                    else:
+                        flightDetails = flightList[key][n]['flightList']
+                        oldAriveTime = ''
+                        tripDuration = 0
+                        for k in range(0,len(flightDetails)):
+                            
+                            flightType = flightDetails[k]['flightType']
+                            "########### Source ####################"
+                            departure = flightDetails[k]['flightSegment']["departure"]
+                            
+                            departureDateTime = flightDetails[k]['flightSegment']["departureDateTime"]
+                            dept = departureDateTime.split("T")
+                            
+                            departTime = dept[1].split("-")
+                            
+                            departTimeFormat = (datetime.datetime.strptime(departTime[0], '%H:%M:%S'))
+                            departTimeFormat = departTimeFormat.strftime('%H:%M')
+                            
+                            departDisplay = dept[0]+" | "+departTimeFormat+" from "+departure
+                            departArray.append(departDisplay)
+                            
+                            "############ Destination ######################"
+                            ariveAt = flightDetails[k]['flightSegment']["arrival"]
+                            
+                            arrivalDateTime = flightDetails[k]['flightSegment']["arrivalDateTime"]
+                            arrival = arrivalDateTime.split("T")
+                            ariveTime = arrival[1].split("-")
+                            ariveTimeFormat = (datetime.datetime.strptime(ariveTime[0], '%H:%M:%S'))
+                            ariveTimeFormat = ariveTimeFormat.strftime('%H:%M')
+                            if k == len(flightDetails)-1:
+                                dest = ariveAt
+                                arivalTime = ariveTimeFormat
+                            timedelta = 0
+                            if oldAriveTime:
+                                waitingTime = datetime.datetime.strptime(departTimeFormat,'%H:%M') - datetime.datetime.strptime(oldAriveTime,'%H:%M')
+                                timedelta = (waitingTime.total_seconds())/60  
+                            
+                            ariveDisplay = str(arrival[0])+" | "+str(ariveTimeFormat)+" at "+ariveAt
+                            ariveArray.append(ariveDisplay)
+    
+                            "########### Flight Details #############################"
+                            flightNum = flightDetails[k]['flightSegment']["flightNum"]
+                            if k == 0:
+                                source = departure
+                                flightNo = "Flight "+str(flightNum)
+                                departureTime = departTimeFormat
+                            classOfService = flightDetails[k]['flightSegment']["classOfService"]
+                            elapsedTime = flightDetails[k]['flightSegment']["elapsedTime"]
+                            aircraftType = flightDetails[k]['flightSegment']["aircraftType"]
+                            flightairTime = str((int(elapsedTime)/60))+"h "+str((int(elapsedTime)%60))+"m"
+                            flightDisplay = "Flight "+str(flightNum)+" | "+aircraftType+" ("+flightairTime+")"
+                            flightArray.append(flightDisplay)
+                            
+                            tripDuration = tripDuration+timedelta+elapsedTime
+                            
+                            segNum = flightDetails[k]['flightSegment']["segNum"]
+                            oldAriveTime = ariveTimeFormat
+                        duration = str((int(tripDuration)/60))+"h "+str((int(tripDuration)%60))+"m"
+                    stoppage = ''
+                    stop = len(departArray) - 1
+                    if stop == 0:
+                        stoppage = "NONSTOP"
+                    elif stop == 1:
+                        stoppage = "1 STOP"
+                    else:
+                        stoppage = str(stop)+" STOPS"
+                        
+                    departdetailtext= '@'.join(departArray)
+                    arivedetailtext = '@'.join(ariveArray)
+                    planedetailtext = '@'.join(flightArray)
+                    operatortext = ''
                     
-                departdetailtext= '@'.join(departArray)
-                arivedetailtext = '@'.join(ariveArray)
-                planedetailtext = '@'.join(flightArray)
-                operatortext = ''
-                
-                value_string.append((str(flightNo), str(searchid), stime, stoppage, "test", source, dest, departureTime, arivalTime, duration, str(economy), str(ecotax), str(business),str(busstax), str(first), str(firsttax), "Economy", "Business", "First", "Virgin America", departdetailtext, arivedetailtext, planedetailtext, operatortext,ecoFareClass,bussFareClass,firstFareClass)) 
-                if len(value_string) == 50:
-                    cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
-                    db.commit()
-                    print "row inserted"
-                    value_string =[]
-        if len(value_string) > 0:
-            cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
-            db.commit()
-            print len(value_string),"row inserted"
-    driver.quit()
-    cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "Virgin America", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
-    db.commit()
-    return 
+                    value_string.append((str(flightNo), str(searchid), stime, stoppage, "test", source, dest, departureTime, arivalTime, duration, str(economy), str(ecotax), str(business),str(busstax), str(first), str(firsttax), "Economy", "Business", "First", "Virgin America", departdetailtext, arivedetailtext, planedetailtext, operatortext,ecoFareClass,bussFareClass,firstFareClass)) 
+                    if len(value_string) == 50:
+                        cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
+                        db.commit()
+                        print "row inserted"
+                        value_string =[]
+            if len(value_string) > 0:
+                cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
+                db.commit()
+                print len(value_string),"row inserted"
+    except:
+        print "some thing wrong"
+    finally:
+        driver.quit()
+        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "Virgin America", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
+        db.commit()
+        return 
 
 if __name__=='__main__':
     virginAmerica(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
