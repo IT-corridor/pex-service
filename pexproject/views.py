@@ -967,7 +967,7 @@ def search(request):
             searchdate = dt.strftime('%Y-%m-%d')        
             currentdatetime = datetime.datetime.now()
             time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
-            time1 = datetime.datetime.now() - timedelta(hours=4)
+            time1 = datetime.datetime.now() - timedelta(minutes=30)
             time1 = time1.strftime('%Y-%m-%d %H:%M:%S')
                                    
             #Searchkey.objects.filter(scrapetime__lte=time1)#.delete()
@@ -1058,7 +1058,7 @@ def search(request):
                     subprocess.Popen(["scrapy", "runspider", settings.BASE_DIR+"/pexproject/aeroflot.py", "-a", "origin="+orgncode,"-a", "destination="+destcode,"-a", "date="+formated_date,"-a", "searchid="+str(searchkeyid)])
                     
             if is_scrape_virgin_atlantic == 1:
-                customfunction.flag = customfunction.flag+1
+                #customfunction.flag = customfunction.flag+1
                 Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='virgin_atlantic').delete()
                 if returnkey:
                     Flightdata.objects.filter(searchkeyid=returnkey,datasource='virgin_atlantic').delete()            
