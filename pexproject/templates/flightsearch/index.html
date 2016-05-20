@@ -474,7 +474,14 @@
                		},
                		  onClose: function(selectedDate) {
         					// Set the minDate of 'to' as the selectedDate of 'from'
+        					if (selectedDate != '')
+        					{
         						$("#returnMain").datepicker("option", "minDate", selectedDate);
+        					}
+        					else{
+        						$("#returnMain").datepicker("option", "minDate", 0);	
+        					}
+        					
     					}
                	}
                	

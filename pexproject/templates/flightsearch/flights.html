@@ -45,15 +45,15 @@
 			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
 			                <div class="form-group nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="from">From:</label>
-			                  <input type="search" class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" {% if searchparams%} value="{{searchparams.0.source}}"{% endif %}>
-			                  <input type="hidden" id="fromid1" class="fromid fromMain" name="fromMain[]" {% if searchparams%} value="{{searchparams.0.origin_airport_id}}"{% endif %} />
+			                  <input type="search"  class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" {% if searchparams%} value="{{searchparams.0.source}}"{% endif %}>
+			                  <input type="hidden"  class="fromid fromMain" name="fromMain[]" {% if searchparams%} value="{{searchparams.0.origin_airport_id}}"{% endif %} />
 			                </div>
 			              </div>
 			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
 			                <div class="form-group  nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="to">To:</label>
 			                  <input type="search"  class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" {% if searchparams%} value="{{searchparams.0.destination}}"{% endif %}>
-			                  <input type="hidden" id="toid1" class="fromid toMain" name="toMain[]" {% if searchparams%} value="{{searchparams.0.destination_airport_id}}"{% endif %}/>
+			                  <input type="hidden"  class="fromid toMain" name="toMain[]" {% if searchparams%} value="{{searchparams.0.destination_airport_id}}"{% endif %}/>
 			                </div>
 			              </div>
 			              <div class="input-daterange">
@@ -91,14 +91,14 @@
 			                <div class="form-group nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="from">From:</label>
 			                  <input type="search"  class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" value="{{d.source}}" >
-			                  <input type="hidden" id="fromid2" class="fromid fromMain" name="fromMain[]" value="{{d.origin_airport_id}}"/>
+			                  <input type="hidden"  class="fromid fromMain" name="fromMain[]" value="{{d.origin_airport_id}}"/>
 			                </div>
 			              </div>
 			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
 			                <div class="form-group  nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="to">To:</label>
-			                  <input type="search"  class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" value="{{d.destination}}" >
-			                  <input type="hidden" id="toid2" class="fromid toMain" name="toMain[]" value="{{d.destination_airport_id}}"/>
+			                  <input type="search"   class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" value="{{d.destination}}" >
+			                  <input type="hidden"  class="fromid toMain" name="toMain[]" value="{{d.destination_airport_id}}"/>
 			                </div>
 			              </div>
 			              <div class="input-daterange">
@@ -127,15 +127,15 @@
 			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
 			                <div class="form-group nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="from">From:</label>
-			                  <input type="search"  class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" {% if search %} value="{{search.source}}" {%endif%}>
-			                  <input type="hidden" id="fromid2" class="fromid" name="fromMain[]"/>
+			                  <input type="search" id="fromOrigin2"  class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" {% if search %} value="{{search.source}}" {%endif%}>
+			                  <input type="hidden" id="fromid2" class="fromid fromMain" name="fromMain[]"/>
 			                </div>
 			              </div>
 			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
 			                <div class="form-group  nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="to">To:</label>
 			                  <input type="search"  class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" {% if search %} value="{{search.destination}}" {%endif%}>
-			                  <input type="hidden" id="toid2" class="fromid" name="toMain[]"/>
+			                  <input type="hidden" id="toid2" class="fromid toMain" name="toMain[]"/>
 			                </div>
 			              </div>
 			              <div class="input-daterange">
@@ -162,14 +162,14 @@
 			                <div class="form-group nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="from">From:</label>
 			                  <input type="search"  class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" {% if search %} value="{{search.source}}" {%endif%}>
-			                  <input type="hidden" id="fromid3" class="fromid" name="fromMain[]"/>
+			                  <input type="hidden" class="fromid fromMain" name="fromMain[]"/>
 			                </div>
 			              </div>
 			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
 			                <div class="form-group  nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="to">To:</label>
 			                  <input type="search"  class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" {% if search %} value="{{search.destination}}" {%endif%}>
-			                  <input type="hidden" id="toid3" class="fromid" name="toMain[]"/>
+			                  <input type="hidden"  class="fromid toMain" name="toMain[]"/>
 			                </div>
 			              </div>
 			              <div class="input-daterange">
@@ -613,6 +613,11 @@
     </script>
     <script>
 		$(document).ready(function() {
+		addDynamic('arive_code','toDest');
+	    addDynamic('toMain','toid');
+	    addDynamic('fromMain','fromid');
+	    addDynamic('depart_code','fromOrigin');
+	    addDynamic('calender_class','departMain');
 	    var max_fields = 6; //maximum input boxes allowed
 	    var add_button = $(".add_field_button"); //Add button ID
 	    var x = 3; //initlal text box count
@@ -624,15 +629,20 @@
 	        	html = '<div class="container xs-nopadding"><div class="col-sm-12 col-xs-12 nopadding pl5 xs-pad-with-cross-btn custome-pd ">';
 				html = html+'<div class="col-sm-2 col-xs-12 nopl xs-nopadding"><div class="form-group nomr noml" class="ui-widget"><label class="sr-only" for="from">From:</label>';
 				html = html+' <input type="search" class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" >';
-				html=html+'<input type="hidden" id="fromid'+newid+'" class="fromid fromMain" name="fromMain[]" /></div></div><div class="col-sm-2 col-xs-12 nopl xs-nopadding">';
+				html=html+'<input type="hidden"  class="fromid fromMain" name="fromMain[]" /></div></div><div class="col-sm-2 col-xs-12 nopl xs-nopadding">';
 				html=html+'<div class="form-group  nomr noml" class="ui-widget"><label class="sr-only" for="to">To:</label><input type="search"  class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" >';
-				html=html+'<input type="hidden" id="toid'+newid+'" class="fromid toMain" name="toMain[]" /></div></div><div class="input-daterange"><div class="col-sm-2 col-xs-12 nopl xs-pr5 mobile-wt pd-xs-r-0">';
+				html=html+'<input type="hidden"  class="fromid toMain" name="toMain[]" /></div></div><div class="input-daterange"><div class="col-sm-2 col-xs-12 nopl xs-pr5 mobile-wt pd-xs-r-0">';
 				html=html+'<div class="form-group nomr noml nomb"><label class="sr-only" for="departMain">Departure Date:</label><div class="inner-addon left-addon date" id="dp1">';
 				html=html+'<i class="glyphicon glyphicon-calendar"></i><input type="text" id="calenderid'+newid+'" class="form_val form-control calender_class curson"  placeholder="Depart" name="deptdate[]" autocomplete="off" ></div></div></div></div><a href="#" class="col-sm-2 col-xs-6 hidden-xs xs-nopadding remove_field"> Remove</a><a href="#" class="glyphicon glyphicon-remove visible-xs cross-btn remove_field"></a></div></div>';
 
 	        if(x < max_fields){ //max input box allowed
 	            x++; //text box increment
 	            $('.addmore').append($(html));
+	            addDynamic('arive_code','toDest');
+	            addDynamic('toMain','toid');
+	            addDynamic('fromMain','fromid');
+	            addDynamic('depart_code','fromOrigin');
+	            addDynamic('calender_class','departMain');
 	            $('.addmore').find(".depart_code, .arive_code").autocomplete({
 				open: function(event, ui) {
 	        	$('.ui-autocomplete').off('menufocus hover mouseover');
@@ -649,7 +659,29 @@
 	            html=''; //add input box
 	        }
 	    });
-	    
+	    $(document).on('focus',".depart_code", function() {
+	    	var field_id = $(this).attr('id');
+	    	var idNumber = parseInt((field_id.slice(-1)));
+	    	if(idNumber > 0)
+	    	{
+	    		var previous_id = idNumber - 1;
+	    		var airport_name_id = "#toDest"+(previous_id);
+	    		var airport_code_id = "#toid"+(previous_id);
+	    		$('#'+field_id).val($(airport_name_id).val());
+	    		$('#fromid'+idNumber).val($(airport_code_id).val());
+	    	}
+	    	
+	    });
+	   	function addDynamic(class_name,idText)
+	   	{
+	   		var m = 0;
+	    	$("."+class_name).each(function() {
+	    	var	dynamic_origin_id = idText+m; 
+	         $(this).attr('id', dynamic_origin_id);
+	         m++;
+	    	});
+	    	
+	   	}
 	    $('.remove_field').on('click',function (e) {
 	    	
 		  e.preventDefault(); $(this).parent('div').remove(); x--;
@@ -661,10 +693,28 @@
 	        newid = newid-1;
 	    });
 	   
-	    $('.addmore').on("focus",".calender_class", function(e){ //user click on remove text
-	        e.preventDefault(); $(this).datepicker({format: "m/d/Y", minDate: 0}); x--;
-	    }); 
+	});
+	
+	$(document).on('focus',".calender_class", function() {
+	    var calenderId = parseInt(($(this).attr('id').slice(-1)));
+	    var minDate1 = 0;
 	    
+	    for(var i=0; i < calenderId; i++)
+	    {
+	    	if($('#departMain'+i).val() != '')
+	    	{
+	    		
+	    		minDate1 = $('#departMain'+i).val();
+	    	}
+	    }
+	    
+		$('#'+$(this).attr('id')).datepicker(
+               	{
+               		minDate: minDate1
+               	}
+               	
+               );
+		
 	});
 	
 	</script>
@@ -748,7 +798,6 @@
     	minLength: 2,
     	select: function(event, ui) {
     		var hiddenid = $(this).siblings('.fromid').attr('id');
-    		console.log(hiddenid);
     		$("#"+hiddenid).val(ui.item.id);
     	},
     	});
@@ -782,61 +831,7 @@
     </script>
     <script>
     
-    $(document).ready(function(){
-    	var datepickerid = '';
-    	var nextid = '';
-    	var curdate = $.datepicker.formatDate('mm/dd/yy', new Date());
-    	$('#dateval').val(curdate);
-    	//var selected_mindate = 0;
-    	$('#calenderid1').datepicker({format: "m/d/Y", minDate: 0 });
-    	$('.calender_class').on('click',function(){
-    		datepickerid = this.id.match(/\d+/);
-    		nextid = parseInt(datepickerid)+1;
-    		nextid = 'calenderid'+nextid;
-    		datepickerid = 'calenderid'+datepickerid;
-    		
-    		//$('#'+nextid).datepicker({format: "m/d/Y", minDate: 0});
-    		//dynamicdate(datepickerid,nextid);
-    	
-    	});
-    	
-    	function dynamicdate(datepickerid,nextid){
-    		
-    		$("#"+datepickerid).datepicker({
-			        onClose: function() {
-			            $("#"+nextid).datepicker(
-			                    "change",
-			                    { minDate: new Date($('#'+datepickerid).val()) }
-			            );
-			        }
-			    });
-			    $("#"+nextid).datepicker({
-			        onClose: function() {
-			            $("#"+datepickerid).datepicker(
-			                    "change",
-			                    { maxDate: new Date($('#'+nextid).val()) }
-			            );
-			        }
-			    });
-			/*
-    		//$('#'+nextid).datepicker('option', 'minDate', $('#'+datepickerid).datepicker('getDate')); 
-    		 
-    		$('#'+datepickerid).datepicker(
-               	{
-               		  onSelect: function(selectedDate) {
-        					// Set the minDate of 'to' as the selectedDate of 'from'
-        						$('#'+nextid).datepicker("option", "minDate", selectedDate);
-    					},
-    					onClose: function(){
-    						$('#'+datepickerid).removeClass("hasDatepicker");
-    					}
-               	}
-               	
-               );
-               */
-    	};
-    	
-    });
+    
      
 	$(function(){
               $('#departMain').datepicker(
@@ -851,7 +846,13 @@
                		},
                		  onClose: function(selectedDate) {
         					// Set the minDate of 'to' as the selectedDate of 'from'
+        					if (selectedDate != '')
+        					{
         						$("#returnMain").datepicker("option", "minDate", selectedDate);
+        					}
+        					else{
+        						$("#returnMain").datepicker("option", "minDate", 0);	
+        					}
     					}
                	}
                	
@@ -904,7 +905,6 @@ $('#cabintype').on('change',function(){
 
 $(document).ready(function(){
 	var check = "{{request.GET.passenger}}";
-	console.log(check);
 	$('#passenger').val('1');
 	$(".alert-warning").hide();
 	if(check != ''){
@@ -1023,7 +1023,7 @@ $("#submitid").click(function(event) {
         multikey = data[0];
         searchid1 = multikey.split(',');
         searchid = searchid1[0];
-        console.log(searchid);
+        
         var returnid='';
         if(data[1])
         {
