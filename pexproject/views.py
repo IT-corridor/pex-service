@@ -1532,8 +1532,8 @@ def getsearchresult(request):
             multiSearchTitle = multiSearchTitle+", "+dateString
             multicity='true' 
             #cabintype = " and " + "p1."+cabinclass + " > 0"
-            if querylist:
-                querylist = querylist #+cabintype
+            #if querylist:
+            #    querylist = querylist #+cabintype
             replacekey = searchkey
             totalfare = ", p1." + cabinclass
             totaltax = ", p1."+taxes
