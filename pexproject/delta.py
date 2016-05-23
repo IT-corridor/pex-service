@@ -22,7 +22,6 @@ import socket
 import json
 
 def delta(orgn, dest, searchdate, searchkey):
-    print "ararrararararararaa"
     db = customfunction.dbconnection()
     cursor = db.cursor()
     db.set_character_set('utf8')
@@ -178,7 +177,7 @@ def delta(orgn, dest, searchdate, searchkey):
         
         """)
     try:
-        WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.ID, "submitAdvanced")))
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "submitAdvanced")))
     except:
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "delta", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
         db.commit()
@@ -335,10 +334,10 @@ def delta(orgn, dest, searchdate, searchkey):
         operatorDetailtext = '@'.join(operatorDetail)
         
         stoppage = ''
-        stop = len(departDetail) - 1
+        stop = int(len(departDetail) - 1)
         if stop == 0:
             stoppage = "NONSTOP"
-        if stop == 1:
+        elif stop == 1:
             stoppage = "1 STOP"
         else:
             stoppage = str(stop)+" STOPS"

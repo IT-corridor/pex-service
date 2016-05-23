@@ -56,7 +56,11 @@ import logging
 from mailchimp import Mailchimp
 logger = logging.getLogger(__name__)
 
-
+'''
+def error(request):
+    Http404("Poll does not exist")
+    return  render_to_response('flightsearch/admin/index.html', context_instance=RequestContext(request))
+'''
 def Admin(request):
     context = {}
     return  render_to_response('flightsearch/admin/index.html', context_instance=RequestContext(request))
@@ -513,12 +517,12 @@ def blog(request, title=None):
 	blog_title1 = curr_path.split('blog/')
 	if len(blog_title1)>1:
 	    blog_title = blog_title1[1].strip()
-	    try:
-	    	blog = Blogs.objects.get(blog_url=blog_title)
-	    	title = blog.blog_title
-		return render_to_response('flightsearch/blog_details.html',{'blog':blog}, context_instance=RequestContext(request))
-	    except:
-		return render_to_response('flightsearch/blog_details.html', context_instance=RequestContext(request))
+        try:
+            blog = Blogs.objects.get(blog_url=blog_title)
+            title = blog.blog_title
+            return render_to_response('flightsearch/blog_details.html',{'blog':blog}, context_instance=RequestContext(request))
+        except:
+            return render_to_response('flightsearch/blog_details.html', context_instance=RequestContext(request))
 	
     blogs = Blogs.objects.filter(blog_status=1)
     bloglist = []
@@ -710,13 +714,13 @@ def manageAccount(request):
 def mailchimp(request):
     context = {}
     if request.is_ajax():
-	lname=''
-	fname=''
+    	lname=''
+    	fname=''
         useremail = request.REQUEST['email']
-	if 'fname' in request.POST:
-            fname = request.REQUEST['fname']
-	if 'lname' in request.POST:
-            lname = request.REQUEST['lname']
+    	if 'fname' in request.POST:
+                fname = request.REQUEST['fname']
+    	if 'lname' in request.POST:
+                lname = request.REQUEST['lname']
         data = ''
         try:
             subscriber = Mailchimp(customfunction.mailchimp_api_key)
@@ -810,11 +814,11 @@ def forgotPassword(request):
 	if 'pagetype' in request.REQUEST:	
 	    return render(request, 'flightsearch/index.html', {'welcome_msg': text})
 	    #return render_to_response('flightsearch/index.html',{'welcome_msg':text}, context_instance=RequestContext(request))
-        if request.is_ajax():
-            mimetype = 'application/json'
-            data = text
-            json.dumps(data)
-            return HttpResponse(data, mimetype)
+    if request.is_ajax():
+        mimetype = 'application/json'
+        data = text
+        json.dumps(data)
+        return HttpResponse(data, mimetype)
         
     else:
         msg = "forgot password"
@@ -1289,16 +1293,6 @@ def getsearchresult(request):
         return render_to_response('flightsearch/pricematrix.html',{'pricesources':pricesources, 'pricematrix':pricematrix1},context_instance=RequestContext(request))
     
     adimages = GoogleAd.objects.filter(ad_code="result page")
-    #print "adimages",adimages
-    '''
-    if 'userid' in request.session and  'actionfor' not in request.POST:
-        userid = request.session['userid']
-        cursor = connection.cursor()
-        cursor.execute("select * from reward_points where user_id="+str(userid))
-        pointlist = cursor.fetchall()
-     '''   
-    
-    
     if request.is_ajax():
         if 'page_no' in request.POST:
             pageno = request.REQUEST['page_no']
@@ -1310,20 +1304,7 @@ def getsearchresult(request):
         if request.GET.get('returnkey', ''):
             roundtripkey = request.GET.get('returnkey', '')
         totalrecords1 = ''
-        
-        #if roundtripkey:
-         #   return_cabin_fare = "p2." + cabinclass
-          #  depart_cabin_fare = "p1." + cabinclass
-            #totalrecords1 = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(roundtripkey)+" and "+return_cabin_fare+" > 0 where p1.searchkeyid="+str(searchkey)+" and "+depart_cabin_fare+" > 0")
-
-	    #flag_count1 = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(roundtripkey)+" and p2.flighno = 'flag' where p1.searchkeyid="+str(searchkey)+" and p1.flighno = 'flag'")
-        #else:
-            #totalrecords1 = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(searchkey)+" and flighno != 'flag' and "+cabinclass+"> 0")
-	    #flag_count1 = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(searchkey)+" and flighno = 'flag' ")
-	#print flag_count1.query
-        #totalrecords = len(list(totalrecords1))
-	#flag_count = len(list(flag_count1))
-	
+        multiple_key = ''
         if request.GET.get('multicity'):
             allkey = request.GET.get('multicity')
             multiple_key = allkey.split(',')
@@ -1338,8 +1319,9 @@ def getsearchresult(request):
             action = request.GET.get('action', '')
             searchkey = request.GET.get('returnkey', '')
             returnkey = request.GET.get('keyid', '')
-        querylist = querylist + join + " p1.searchkeyid = '"+searchkey+"'"
-        join = ' AND '
+        if multiple_key == '':
+            querylist = querylist + join + " p1.searchkeyid = '"+searchkey+"'"
+            join = ' AND '
     if 'multicity' in request.GET or 'multicity' in request.POST:
         multicitykey = request.GET.get('multicity', '')
         multicitykey1 = multicitykey.split(',')
@@ -1549,8 +1531,9 @@ def getsearchresult(request):
                 multisearch.append(multicitysearch) 
             multiSearchTitle = multiSearchTitle+", "+dateString
             multicity='true' 
-            cabintype = " and " + "p1."+cabinclass + " > 0"
-            querylist = querylist+cabintype
+            #cabintype = " and " + "p1."+cabinclass + " > 0"
+            if querylist:
+                querylist = querylist #+cabintype
             replacekey = searchkey
             totalfare = ", p1." + cabinclass
             totaltax = ", p1."+taxes
@@ -1573,15 +1556,18 @@ def getsearchresult(request):
                     qry2 = qry2+sep1+'p'+str(n)+'.origin as origin'+str(n)+',p'+str(n)+'.rowid as rowid'+str(n)+', p'+str(n)+'.stoppage as stoppage'+str(n)+', p'+str(n)+'.destination as destination'+str(n)+', p'+str(n)+'.departure as departure'+str(n)+', p'+str(n)+'.arival as arival'+str(n)+', p'+str(n)+'.duration as duration'+str(n)+',p'+str(n)+'.flighno as flighno'+str(n)+', p'+str(n)+'.cabintype1 as cabintype1'+str(n)+',p'+str(n)+'.cabintype2 as cabintype2'+str(n)+',p'+str(n)+'.cabintype3 as cabintype3'+str(n)+', p'+str(n)+'.maincabin as maincabin'+str(n)+', p'+str(n)+'.maintax as maintax'+str(n)+', p'+str(n)+'.firsttax as firsttax'+str(n)+', p'+str(n)+'.businesstax as businesstax'+str(n)+',p'+str(n)+'.departdetails as departdetails'+str(n)+',p'+str(n)+'.arivedetails as arivedetails'+str(n)+', p'+str(n)+'.planedetails as planedetails'+str(n)+',p'+str(n)+'.operatedby as operatedby'+str(n)
                     sep1 = ','
                     #inner_join_on = inner_join_on+" inner join pexproject_flightdata p"+str(n)+" on  p"+str(n)+".searchkeyid ='" +keys+"' and p1.datasource = p"+str(n)+".datasource"
-                    qry3 = qry3+"inner join pexproject_flightdata p"+str(n)+" on  p"+str(n)+".searchkeyid ='" +keys+"' and p1.datasource = p"+str(n)+".datasource and p"+str(n)+"."+cabinclass +" > '0'  "
+                    #qry3 = qry3+"inner join pexproject_flightdata p"+str(n)+" on  p"+str(n)+".searchkeyid ='" +keys+"' and p1.datasource = p"+str(n)+".datasource and p"+str(n)+"."+cabinclass +" > '0'  "
+                    
+                    if querylist and 'p1' in querylist:
+                        
+                        querylist = querylist
+                        querylist = querylist.replace('p1.','')+" and "
+                    qry3 = qry3+" inner join (select  * from pexproject_flightdata where "+querylist+" searchkeyid ='"+keys+"' and "+cabinclass+" > '0' order by "+cabinclass+" limit 10) as p"+str(n)+" on p1.datasource = p"+str(n)+".datasource"
                     q = ''
                 counter = counter+1
                 n = n+1
-            finalquery = qry1+"CONCAT("+newidstring+") as newid ,"+qry2+ totalfare+" as finalprice "+totaltax+" as totaltaxes from pexproject_flightdata p1 "+qry3+"where " + querylist + " order by finalprice,totaltaxes , departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset)
-            #print finalquery
-            #exit()
+            finalquery = qry1+"CONCAT("+newidstring+") as newid ,"+qry2+ totalfare+" as finalprice "+totaltax+" as totaltaxes from (select  * from pexproject_flightdata where "+querylist+" searchkeyid ='"+str(recordkey)+"' and "+cabinclass+" > '0' order by maincabin limit 10) as p1 "+qry3 + " order by finalprice,totaltaxes , departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset)
             record_obj = Flightdata.objects.raw(finalquery)
-            
             record = list(record_obj)
             
             for row in record:
