@@ -211,8 +211,11 @@
 							</div>
 						</div>
 						<div class="col-md-8 col-xs-12 xs-nopadding">
-
+							
 							{% if multisearch and 'multicity' in request.GET %}
+							<div class="nopaddig">
+									<h4 class"alert-danger" id="nodata-msg"></h4>
+								</div>
 							<div class="col-xs-12 mvb10px nopadding search-name">
 								<div class="col-md-11 nopadding ">
 									{% for searchparam in multisearch %}

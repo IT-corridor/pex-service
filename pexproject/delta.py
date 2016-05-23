@@ -63,7 +63,7 @@ def delta(orgn, dest, searchdate, searchkey):
         return searchkey
     time.sleep(1)
     try:
-        WebDriverWait(driver,3).until(EC.presence_of_element_located((By.ID, "submitAdvanced")))
+        WebDriverWait(driver,5).until(EC.presence_of_element_located((By.ID, "submitAdvanced")))
         print "no data"
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "delta", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
         db.commit()
@@ -136,6 +136,10 @@ def delta(orgn, dest, searchdate, searchkey):
     except:
         print "single page"
         driver.execute_script("""
+        if(typeof delta.airShopping.defaultSortBy === 'undefined')
+        {
+            throw new Error("Results found");
+        }
         var sortBy = [delta.airShopping.defaultSortBy, false];
         SearchFlightResultsDWR.searchResults(currentSessionCheckSum, sortBy[0], delta.airShopping.numberOfColumnsToRequest, delta.airShopping.cacheKey, {
             async: true,
