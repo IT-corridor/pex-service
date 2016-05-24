@@ -19,7 +19,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 import json
 import customfunction
-from pyvirtualdisplay import Display
+#from pyvirtualdisplay import Display
 import urllib
 
 def etihad(source, destcode, searchdate, searchkey,scabin):
@@ -42,49 +42,72 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     
     url = "http://www.etihad.com/en-us/plan-and-book/book-redemption-flights/"
   
-    display = Display(visible=0, size=(800, 600))
-    display.start()
-    chromedriver = "/usr/bin/chromedriver"
-    os.environ["webdriver.chrome.driver"] = chromedriver
-    driver = webdriver.Chrome(chromedriver)
-    '''
+    #display = Display(visible=0, size=(800, 600))
+    #display.start()
+    #chromedriver = "/usr/bin/chromedriver"
+    #os.environ["webdriver.chrome.driver"] = chromedriver
+    #driver = webdriver.Chrome(chromedriver)
+    
     driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
-    driver.set_window_size(1120, 1080)  '''
+    driver.set_window_size(1120, 1080)  
     driver.get(url)
     try:
-        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "frm_2012158061206151234")))
+        WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.ID, "frm_2012158061206151234")))
     except:
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "etihad", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
         db.commit()
     
         print "etihad flag inserted"
-        display.stop()
+        #display.stop()
         driver.quit()
         return searchkey
 
     driver.execute_script('document.getElementById("frm_2012158061206151234").removeAttribute("readonly")')
     oneway = driver.find_element_by_id("frm_oneWayFlight")
     #oneway.click()
-    driver.execute_script("arguments[0].click();", oneway)
+    driver.execute_script("return arguments[0].click();", oneway)
     
     search_cabin1 = driver.find_element_by_id(search_cabin)
     #search_cabin1.click()
-    driver.execute_script("arguments[0].click();", search_cabin1)
+    driver.execute_script("return arguments[0].click();", search_cabin1)
     
     origin = driver.find_element_by_id("frm_2012158061206151234")
-    origin.click()
+    
+    driver.execute_script("return arguments[0].click();", origin)
+    #origin.click()
     time.sleep(1)
     origin.send_keys(str(source))
     time.sleep(1)
-    
     origin.send_keys(Keys.TAB)
-    time.sleep(1)
-    driver.execute_script('document.getElementById("frm_20121580612061235").removeAttribute("readonly")')
+    flag = 0
+    def setOrigin():
+        origin.clear()
+        origin.send_keys(str(source))
+        time.sleep(1)
+        origin.send_keys(Keys.TAB)
+    sourceVal = origin.get_attribute("value")   
+    if (sourceVal == '' or len(sourceVal) <= len(source)) and flag < 2:
+        setOrigin()
+        flag = flag+1
+    flag = 0
+    driver.execute_script('return document.getElementById("frm_20121580612061235").removeAttribute("readonly")')
     to = driver.find_element_by_id("frm_20121580612061235")
-    time.sleep(1)
-    to.send_keys(str(destcode))
+    time.sleep(1) 
+    to.send_keys(destcode)
     time.sleep(1)
     to.send_keys(Keys.TAB)
+    def setDestination():
+        to.clear()
+        to.send_keys(destcode)
+        time.sleep(1)
+        to.send_keys(Keys.TAB)
+    
+    destcodeVal = to.get_attribute("value")
+    if (destcodeVal == '' or len(destcodeVal) <= len(destcode)) and flag < 2:
+        flag = flag+1
+        setDestination()
+   
+    
     time.sleep(1)
     ddate = driver.find_element_by_id("frm_2012158061206151238")
     ddate.clear()
@@ -92,18 +115,18 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     ddate.send_keys(Keys.TAB)
     flightbutton = driver.find_element_by_name("webform")
     flightbutton.send_keys(Keys.ENTER)
-
+    
     try:
-        WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.ID, "dtcontainer-both")))
+        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "dtcontainer-both")))
     except:
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "etihad", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
         db.commit()
-    
+        #driver.save_screenshot('screen1.png')
         print "etihad flag inserted"
-        display.stop()
+        #display.stop()
         driver.quit()
         return searchkey
-
+    
     html_page = driver.page_source
     soup = BeautifulSoup(html_page,"lxml")
     operators = soup.findAll("th",{"class":"operatingCarrier"})
@@ -294,7 +317,7 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "etihad", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
     db.commit()
     driver.quit()
-    display.stop()    
+    #display.stop()    
     return searchkey
                 
         
