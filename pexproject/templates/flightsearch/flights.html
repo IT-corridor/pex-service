@@ -45,14 +45,14 @@
 			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
 			                <div class="form-group nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="from">From:</label>
-			                  <input type="search"  class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" {% if searchparams%} value="{{searchparams.0.source}}"{% endif %}>
+			                  <input type="search"  class=" form_val form-control depart_code"  name="from" placeholder="From" autocomplete="off" {% if searchparams%} value="{{searchparams.0.source}}"{% endif %}  >
 			                  <input type="hidden"  class="fromid fromMain" name="fromMain[]" {% if searchparams%} value="{{searchparams.0.origin_airport_id}}"{% endif %} />
 			                </div>
 			              </div>
 			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
 			                <div class="form-group  nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="to">To:</label>
-			                  <input type="search"  class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" {% if searchparams%} value="{{searchparams.0.destination}}"{% endif %}>
+			                  <input type="search"  class="form_val form-control arive_code"  name="to" placeholder="To" autocomplete="off" {% if searchparams%} value="{{searchparams.0.destination}}"{% endif %} >
 			                  <input type="hidden"  class="fromid toMain" name="toMain[]" {% if searchparams%} value="{{searchparams.0.destination_airport_id}}"{% endif %}/>
 			                </div>
 			              </div>
@@ -409,7 +409,7 @@
 											<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="seatinfants" tabindex="11">								
 											<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
 											
-								5		</span>
+										</span>
 										<span class="col-xs-3 nopr">under 2</span>  
 										</p>                			
 			                  		</div>
@@ -970,34 +970,50 @@ return sum;
   var returnid = '';
   var triptypeval = '';
 $("#submitid").click(function(event) {
-    	event.preventDefault();	
+    	
     	triptype = $("input[type='radio'][name='trip']:checked");
     	if (triptype.length > 0) {
 		    triptypeval = triptype.val();
 		    
 		}
-		
-    	if($('[name="fromMain[]"]').val().length<1)
-    	{
-    		//$('#frommsg').append("Please enter the Source field");
-    		$('#from').focus();
-    		event.preventDefault();
-    	} 
-    	if($('[name="toMain[]"]').val().length<1)
-    	{
-    		$('#to').focus();
-    		event.preventDefault();	
+		for(c = 0; c < ($('[name="fromMain[]"]').length); c++)
+		{
+	    	if($('#fromOrigin'+c).val() == '')
+	    	{
+	    		$('#fromOrigin'+c).focus();
+	    		return false;
+	    		event.preventDefault();
+	    	} 
+	    	if($('#toDest'+c).val() == '')
+	    	{
+	    		$('#toDest'+c).focus();
+	    		return false;
+	    		event.preventDefault();
+	    	}
+	    	if($('#departMain'+c).val() == '')
+	    	{
+	    		$('#departMain'+c).focus();
+	    		return false;
+	    		event.preventDefault();
+	    	}
     	}
-    	if($('[name="deptdate[]"]').val().length<1)
-    	{
-    		$('#departMain').focus();
-    		event.preventDefault();	
-    	}
-    
 		
 		sourceid = $('input[name="fromMain[]"]').map(function() {
-        		return this.value;
-    			}).get();   //$('[name="fromMain"]').val(); //$('#fromid').val();
+				if(this.value != '')
+				{
+					//alert("test");
+        			return this.value;
+        		}
+        		else{
+        			
+        			var intId = parseInt(($(this).attr("id")).slice(-1)); 
+        			$('#fromOrigin'+intId).focus();
+        			event.preventDefault();	
+        			
+        		}
+        		
+    			}).get();  
+    	
 		destinationid = $('input[name="toMain[]"]').map(function() {
         		return this.value;
     			}).get();           //$('[name="toMain"]').val(); //$('#toid').val();
