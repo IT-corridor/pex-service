@@ -793,6 +793,9 @@
     $('.depart_code, .arive_code').autocomplete({
   		 open: function(event, ui) {
 	        	$('.ui-autocomplete').off('menufocus hover mouseover');
+	        	var hiddenid = $(this).siblings('.fromid').attr('id');
+	        	$('label[id=from-error]').remove();
+	        	$("#"+hiddenid).val('');
 	        	$('#'+$(this).attr('id')).css('border-color','');
     		},
 		autoFocus: true,
@@ -808,6 +811,8 @@
     $( "#from" ).autocomplete({
   		 open: function(event, ui) {
 	        	$('.ui-autocomplete').off('menufocus hover mouseover');
+	        	$('label[id=from-error]').remove();
+	        	$('#fromid').val('');
 	        	$('#from').css('border-color','');
     		},
 		autoFocus: true,
@@ -820,6 +825,8 @@
     $( "#to" ).autocomplete({
   		open: function(event, ui) {
 	        	$('.ui-autocomplete').off('menufocus hover mouseover');
+	        	$('label[id=from-error]').remove();
+	        	$('#toid').val('');
 	        	$('#to').css('border-color','');
     		},
 
@@ -975,17 +982,6 @@ return sum;
   var returnid = '';
   var triptypeval = '';
   
-  $('#flightSearchForm').validate({
-        rules: {
-        	from:"required",
-        	to:"required"
-            
-            },
-        messages: {
-        	from:"Please enter valid airport",
-        	to:"Please enter valid airport",
-        }
-    });
 $("#submitid").click(function(event) {
 	
 		
@@ -1002,7 +998,7 @@ $("#submitid").click(function(event) {
 			{
 		    	if($('#fromOrigin'+c).val() == '' || $('#fromid'+c).val() == '')
 		    	{
-		    		$('#fromOrigin'+c).valid();
+		    		
 		    		$('label[class=error]').remove();
     				$('#fromOrigin'+c).after(appendErrorLabel);
 		    		$('#fromOrigin'+c).css('border-color','red');
@@ -1011,7 +1007,7 @@ $("#submitid").click(function(event) {
 		    	} 
 		    	if($('#toDest'+c).val() == '' || $('#to'+c).val() == '')
 		    	{
-		    		$('#toDest'+c).valid();
+		    		
 		    		$('label[class=error]').remove();
 		    		$('#toDest'+c).after(appendErrorLabel);
 		    		$('#toDest'+c).css('border-color','red');
@@ -1029,7 +1025,6 @@ $("#submitid").click(function(event) {
     	else{
     		if($('#fromid').val().length<1 || $('#from').val() == '')
 	    	{	
-	    		$('#from').valid();
 	    		$('label[class=error]').remove();
 	    		$('#from').after(appendErrorLabel);
 	    		$('#from').css('border-color','red');
@@ -1039,7 +1034,7 @@ $("#submitid").click(function(event) {
     	 
 	    	if($('#toid').val().length<1 || $('#to').val() == '')
 	    	{
-	    		$('#to').valid();
+	    		
 	    		$('label[class=error]').remove();
 	    		$('#to').after(appendErrorLabel);
 	    		$('#to').css('border-color','red');

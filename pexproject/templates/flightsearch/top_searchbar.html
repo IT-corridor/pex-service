@@ -313,6 +313,9 @@
     $( "#from" ).autocomplete({
   		 open: function(event, ui) {
 	        	$('.ui-autocomplete').off('menufocus hover mouseover');
+	        	$('label[class=error]').remove();
+	        	$('#from').css('border-color','');
+	        	$('#fromid').val('');
     		},
 		autoFocus: true,
     	source: "get_airport/",
@@ -324,6 +327,9 @@
     $( "#to" ).autocomplete({
   		open: function(event, ui) {
 	        	$('.ui-autocomplete').off('menufocus hover mouseover');
+	        	$('label[class=error]').remove();
+	        	$('#to').css('border-color','');
+	        	$('#toid').val('');
     		},
 
 		autoFocus: true,
@@ -466,20 +472,7 @@ return sum;
   var cabintypeval = '';
   var searchid ='';
   var returnid = '';
-  $('#flightSearchForm').validate({
-        rules: {
-        	from:"required",
-        	to:"required"
-            
-            },
-        messages: {
-        	from:"Please enter valid airport",
-        	to:"Please enter valid airport",
-        }
-            
-        
-        
-    });
+  
 $("#submitid").click(function(event) {
 			
     	triptype = $("input[type='radio'][name='trip']:checked");
