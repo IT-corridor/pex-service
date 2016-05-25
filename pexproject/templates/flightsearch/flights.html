@@ -21,7 +21,7 @@
         </div>
         <div class="col-xs-12 xs-nopadding nopadding">
         	<div class="col-xs-12 xs-nopadding nopadding">
-				<form class="form-horizontal" role="form" action="searchLoadingPage" method="post" >
+				<form class="form-horizontal" role="form" action="searchLoadingPage" method="post" id="flightSearchForm">
 		        	{% csrf_token %}
 			         <div class="col-xs-12 nopadding">
 							<div class="container nopadding trip-custome">
@@ -314,7 +314,7 @@
 			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
 			                <div class="form-group  nomr noml" class="ui-widget">
 			                  <label class="sr-only" for="to">To:</label>
-			                  <input type="search" tabindex="2" class="form_val form-control" id="to" name="to" placeholder="To" autocomplete="off" {% if search %} value="{{search.destination}}"{%endif%}>
+			                  <input type="search" tabindex="2" class="form_val form-control" id="to" name="to" placeholder="To" autocomplete="off" {% if search %} value="{{search.destination}}"{%endif%} >
 			                  <input type="hidden" id="toid" name="toMain[]" {% if search %} value="{{search.destination_airport_id}}"{%endif%} />
 			                </div>
 			              </div>
@@ -669,6 +669,7 @@
 	    		var airport_code_id = "#toid"+(previous_id);
 	    		$('#'+field_id).val($(airport_name_id).val());
 	    		$('#fromid'+idNumber).val($(airport_code_id).val());
+	    		$('#'+field_id).css('border-color','');
 	    	}
 	    	
 	    });
@@ -792,6 +793,7 @@
     $('.depart_code, .arive_code').autocomplete({
   		 open: function(event, ui) {
 	        	$('.ui-autocomplete').off('menufocus hover mouseover');
+	        	$('#'+$(this).attr('id')).css('border-color','');
     		},
 		autoFocus: true,
     	source: "get_airport/",
@@ -806,6 +808,7 @@
     $( "#from" ).autocomplete({
   		 open: function(event, ui) {
 	        	$('.ui-autocomplete').off('menufocus hover mouseover');
+	        	$('#from').css('border-color','');
     		},
 		autoFocus: true,
     	source: "get_airport/",
@@ -817,6 +820,7 @@
     $( "#to" ).autocomplete({
   		open: function(event, ui) {
 	        	$('.ui-autocomplete').off('menufocus hover mouseover');
+	        	$('#to').css('border-color','');
     		},
 
 		autoFocus: true,
@@ -955,6 +959,7 @@ return sum;
     });
     
     </script>
+    
     <script>
   var CSRF_TOKEN = "{{ csrf_token }}";
   var triptype = '';
@@ -969,33 +974,85 @@ return sum;
   var searchid ='';
   var returnid = '';
   var triptypeval = '';
+  
+  $('#flightSearchForm').validate({
+        rules: {
+        	from:"required",
+        	to:"required"
+            
+            },
+        messages: {
+        	from:"Please enter valid airport",
+        	to:"Please enter valid airport",
+        }
+    });
 $("#submitid").click(function(event) {
+	
+		
     	
     	triptype = $("input[type='radio'][name='trip']:checked");
     	if (triptype.length > 0) {
 		    triptypeval = triptype.val();
 		    
 		}
-		for(c = 0; c < ($('[name="fromMain[]"]').length); c++)
+		if(action == 'mc')
 		{
-	    	if($('#fromOrigin'+c).val() == '')
-	    	{
-	    		$('#fromOrigin'+c).focus();
-	    		return false;
-	    		event.preventDefault();
-	    	} 
-	    	if($('#toDest'+c).val() == '')
-	    	{
-	    		$('#toDest'+c).focus();
-	    		return false;
-	    		event.preventDefault();
+			for(c = 0; c < ($('[name="fromMain[]"]').length); c++)
+			{
+		    	if($('#fromOrigin'+c).val() == '')
+		    	{
+		    		$('#fromOrigin'+c).valid();
+		    		$('#fromOrigin'+c).css('border-color','red');
+		    		return false;
+		    		event.preventDefault();
+		    	} 
+		    	if($('#toDest'+c).val() == '')
+		    	{
+		    		$('#toDest'+c).valid();
+		    		$('#toDest'+c).css('border-color','red');
+		    		return false;
+		    		event.preventDefault();
+		    	}
+		    	if($('#departMain'+c).val() == '')
+		    	{
+		    		$('#departMain'+c).focus();
+		    		return false;
+		    		event.preventDefault();
+		    	}
 	    	}
-	    	if($('#departMain'+c).val() == '')
-	    	{
-	    		$('#departMain'+c).focus();
-	    		return false;
+    	}
+    	else{
+    		if($('#fromid').val().length<1)
+	    	{	
+	    		$('#from').valid();
+	    		$('#from').css('border-color','red');
 	    		event.preventDefault();
+	    		return false;
 	    	}
+    	 
+	    	if($('#toid').val().length<1)
+	    	{
+	    		$('#to').valid();
+	    		$('#to').css('border-color','red');
+	    		event.preventDefault();	
+	    		return false;
+	    	}
+	    	if($('#departMain').val().length<1)
+	    	{
+	    		$('#departMain').focus();
+	    		event.preventDefault();
+	    		return false;	
+	    	}
+	    	if('roundTripBtn' == triptypeval)
+	    	{
+	    		if($('#returnMain').val().length<1)
+		    	{
+		    		$('#returnMain').focus();
+		    		event.preventDefault();
+		    		return false;	
+		    	}
+	    	}
+    		
     	}
 		
 		sourceid = $('input[name="fromMain[]"]').map(function() {

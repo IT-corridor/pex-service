@@ -22,7 +22,7 @@
         </div>
         <div class="col-xs-12 xs-nopadding nopadding">
         	<div class="col-xs-12 xs-nopadding nopadding">
-				<form class="form-horizontal" role="form" action="#" method="post" >
+				<form class="form-horizontal" role="form" action="#" method="post" id="flightSearchForm">
 		        	{% csrf_token %}
 			         <div class="col-xs-12 nopadding">
 							<div class="container nopadding trip-custome">
@@ -61,7 +61,7 @@
 			                  <label class="sr-only" for="departMain">Departure Date:</label>
 			                  <div class="inner-addon left-addon date" id="dp1">
 			                      <i class="glyphicon glyphicon-calendar"></i>
-			                      <input type="text" tabindex="3" class="form_val form-control curson" id="departMain" placeholder="Depart" name="deptdate" autocomplete="off">
+			                      <input type="text" tabindex="3" class="form_val form-control curson" id="departMain" placeholder="Depart" name="deptdate" autocomplete="off" required>
 			                  </div>
 			                  <div class="form-group" id="deptmsg"></div>
 			                </div>
@@ -71,7 +71,7 @@
 			                  <label class="sr-only" for="returnMain">Return Date:</label>
 			                  <div class="inner-addon left-addon date" id="dp2">
 			                      <i class="glyphicon glyphicon-calendar"></i>
-			                      <input type="text" tabindex="4" class="form_val form-control curson" id="returnMain" placeholder="Return" name="returndate" autocomplete="off">
+			                      <input type="text" tabindex="4" class="form_val form-control curson" id="returnMain" placeholder="Return" name="returndate" autocomplete="off" required>
 			                  </div>
 			                </div>
 			              </div>
@@ -426,7 +426,9 @@
     $( "#from" ).autocomplete({
   		 open: function(event, ui) {
 	        	$('.ui-autocomplete').off('menufocus hover mouseover');
+	        	$('#from').css('border-color','');
     		},
+    		
 		autoFocus: true,
     	source: "get_airport/",
     	minLength: 1,
@@ -437,6 +439,7 @@
     $( "#to" ).autocomplete({
   		open: function(event, ui) {
 	        	$('.ui-autocomplete').off('menufocus hover mouseover');
+	        	$('#to').css('border-color','');
     		},
 
 		autoFocus: true,
@@ -452,15 +455,7 @@
     <script>
     
 	 $(function(){
-	 	/*	$('#returnMain').datetimepicker({format: 'm/d/Y','timepicker': false,closeOnDateSelect: true,scrollMonth: false,defaultSelect: false,});
-            $('#departMain').datetimepicker({ format: 'm/d/Y',minDate: 0,'timepicker': false,closeOnDateSelect: true,scrollMonth:false,defaultSelect: false,
-                        onSelectDate: function(selectedDate)
-                        {
-                                $("#returnMain").focus();
-                                $( "#returnMain" ).datetimepicker({format: 'm/d/Y', minDate: selectedDate, });
-                        }
-               });
-               */
+	 	
                $('#departMain').datepicker(
                	{
 
@@ -580,6 +575,7 @@ return sum;
     });
    
     </script>
+    
   <script>
   var CSRF_TOKEN = "{{ csrf_token }}";
   var triptype = '';
@@ -592,28 +588,61 @@ return sum;
   var cabintypeval = '';
   var searchid ='';
   var returnid = '';
+  $('#flightSearchForm').validate({
+        rules: {
+        	from:"required",
+        	to:"required"
+            
+            },
+        messages: {
+        	from:"Please enter valid airport",
+        	to:"Please enter valid airport",
+        }
+            
+        
+        
+    });
 $("#submitid").click(function(event) {
-    	event.preventDefault();	
+	
+	 
+    		
     	triptype = $("input[type='radio'][name='trip']:checked");
+    	
     	if (triptype.length > 0) {
 		    triptypeval = triptype.val();
 		}
 		
-    	if($('#from').val().length<1)
-    	{
-    		//$('#frommsg').append("Please enter the Source field");
-    		$('#from').focus();
+    	if($('#fromid').val().length<1)
+    	{	
+    		$('#from').valid();
+    		$('#from').css('border-color','red');
+    		
+    		
     		event.preventDefault();
-    	} 
-    	if($('#to').val().length<1)
+    		return false;
+    	}
+    	 
+    	if($('#toid').val().length<1)
     	{
-    		$('#to').focus();
+    		$('#to').valid();
+    		$('#to').css('border-color','red');
     		event.preventDefault();	
+    		return false;
     	}
     	if($('#departMain').val().length<1)
     	{
     		$('#departMain').focus();
-    		event.preventDefault();	
+    		event.preventDefault();
+    		return false;	
+    	}
+    	if('roundTripBtn' == triptypeval)
+    	{
+    		if($('#returnMain').val().length<1)
+	    	{
+	    		$('#returnMain').focus();
+	    		event.preventDefault();
+	    		return false;	
+	    	}
     	}
 		sourceid = $('#fromid').val();
 		destinationid = $('#toid').val();	
