@@ -999,14 +999,14 @@ $("#submitid").click(function(event) {
 		{
 			for(c = 0; c < ($('[name="fromMain[]"]').length); c++)
 			{
-		    	if($('#fromOrigin'+c).val() == '')
+		    	if($('#fromOrigin'+c).val() == '' || $('#fromid'+c).val() == '')
 		    	{
 		    		$('#fromOrigin'+c).valid();
 		    		$('#fromOrigin'+c).css('border-color','red');
 		    		return false;
 		    		event.preventDefault();
 		    	} 
-		    	if($('#toDest'+c).val() == '')
+		    	if($('#toDest'+c).val() == '' || $('#to'+c).val() == '')
 		    	{
 		    		$('#toDest'+c).valid();
 		    		$('#toDest'+c).css('border-color','red');
@@ -1022,7 +1022,7 @@ $("#submitid").click(function(event) {
 	    	}
     	}
     	else{
-    		if($('#fromid').val().length<1)
+    		if($('#fromid').val().length<1 || $('#from').val() == '')
 	    	{	
 	    		$('#from').valid();
 	    		$('#from').css('border-color','red');
@@ -1030,7 +1030,7 @@ $("#submitid").click(function(event) {
 	    		return false;
 	    	}
     	 
-	    	if($('#toid').val().length<1)
+	    	if($('#toid').val().length<1 || $('#to').val() == '')
 	    	{
 	    		$('#to').valid();
 	    		$('#to').css('border-color','red');

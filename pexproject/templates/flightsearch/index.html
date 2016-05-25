@@ -612,7 +612,7 @@ $("#submitid").click(function(event) {
 		    triptypeval = triptype.val();
 		}
 		
-    	if($('#fromid').val().length<1)
+    	if($('#fromid').val().length<1 || $('#from').val() == '')
     	{	
     		$('#from').valid();
     		$('#from').css('border-color','red');
@@ -622,7 +622,7 @@ $("#submitid").click(function(event) {
     		return false;
     	}
     	 
-    	if($('#toid').val().length<1)
+    	if($('#toid').val().length<1 || $('#to').val() == '')
     	{
     		$('#to').valid();
     		$('#to').css('border-color','red');
@@ -643,6 +643,9 @@ $("#submitid").click(function(event) {
 	    		event.preventDefault();
 	    		return false;	
 	    	}
+    	}
+    	else{
+    		$('#returnMain').val('');
     	}
 		sourceid = $('#fromid').val();
 		destinationid = $('#toid').val();	
