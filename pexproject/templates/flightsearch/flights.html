@@ -995,6 +995,7 @@ $("#submitid").click(function(event) {
 		    triptypeval = triptype.val();
 		    
 		}
+		var appendErrorLabel = '<label id="from-error" class="error" for="from">Please enter valid airport</label>';
 		if(action == 'mc')
 		{
 			for(c = 0; c < ($('[name="fromMain[]"]').length); c++)
@@ -1002,6 +1003,8 @@ $("#submitid").click(function(event) {
 		    	if($('#fromOrigin'+c).val() == '' || $('#fromid'+c).val() == '')
 		    	{
 		    		$('#fromOrigin'+c).valid();
+		    		$('label[class=error]').remove();
+    				$('#fromOrigin'+c).after(appendErrorLabel);
 		    		$('#fromOrigin'+c).css('border-color','red');
 		    		return false;
 		    		event.preventDefault();
@@ -1009,6 +1012,8 @@ $("#submitid").click(function(event) {
 		    	if($('#toDest'+c).val() == '' || $('#to'+c).val() == '')
 		    	{
 		    		$('#toDest'+c).valid();
+		    		$('label[class=error]').remove();
+		    		$('#toDest'+c).after(appendErrorLabel);
 		    		$('#toDest'+c).css('border-color','red');
 		    		return false;
 		    		event.preventDefault();
@@ -1025,6 +1030,8 @@ $("#submitid").click(function(event) {
     		if($('#fromid').val().length<1 || $('#from').val() == '')
 	    	{	
 	    		$('#from').valid();
+	    		$('label[class=error]').remove();
+	    		$('#from').after(appendErrorLabel);
 	    		$('#from').css('border-color','red');
 	    		event.preventDefault();
 	    		return false;
@@ -1033,6 +1040,8 @@ $("#submitid").click(function(event) {
 	    	if($('#toid').val().length<1 || $('#to').val() == '')
 	    	{
 	    		$('#to').valid();
+	    		$('label[class=error]').remove();
+	    		$('#to').after(appendErrorLabel);
 	    		$('#to').css('border-color','red');
 	    		event.preventDefault();	
 	    		return false;

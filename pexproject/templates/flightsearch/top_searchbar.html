@@ -481,21 +481,19 @@ return sum;
         
     });
 $("#submitid").click(function(event) {
-	
-	 
-    		
+			
     	triptype = $("input[type='radio'][name='trip']:checked");
     	
     	if (triptype.length > 0) {
 		    triptypeval = triptype.val();
 		}
-		
+		var appendErrorLabel = '<label id="from-error" class="error" for="from">Please enter valid airport</label>';
     	if($('#fromid').val().length<1 || $('#from').val() == '')
     	{	
     		$('#from').valid();
     		$('#from').css('border-color','red');
-    		
-    		
+    		$('label[class=error]').remove();
+    		$('#from').after(appendErrorLabel);
     		event.preventDefault();
     		return false;
     	}
@@ -503,6 +501,8 @@ $("#submitid").click(function(event) {
     	if($('#toid').val().length<1 || $('#to').val() == '')
     	{
     		$('#to').valid();
+    		$('label[class=error]').remove();
+    		$('#to').after(appendErrorLabel);
     		$('#to').css('border-color','red');
     		event.preventDefault();	
     		return false;
