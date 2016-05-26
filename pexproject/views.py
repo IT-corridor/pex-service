@@ -1400,7 +1400,6 @@ def getsearchresult(request):
         arivtmaxformat1 = arivtmaxformat.strftime('%H:%M:%S')
         querylist = querylist + join + " p1.arival <= '" + arivtmaxformat1 + "'"
         join = ' AND ' 
-    print request.POST          
     action = ''
     if request.GET.get('keyid', '') :
         if cabinclass != '':
@@ -1559,8 +1558,6 @@ def getsearchresult(request):
                     #qry3 = qry3+"inner join pexproject_flightdata p"+str(n)+" on  p"+str(n)+".searchkeyid ='" +keys+"' and p1.datasource = p"+str(n)+".datasource and p"+str(n)+"."+cabinclass +" > '0'  "
                     
                     if querylist and 'p1' in querylist:
-                        
-                        querylist = querylist
                         querylist = querylist.replace('p1.','')+" and "
                     qry3 = qry3+" inner join (select  * from pexproject_flightdata where "+querylist+" searchkeyid ='"+keys+"' and "+cabinclass+" > '0' order by "+cabinclass+" limit 10) as p"+str(n)+" on p1.datasource = p"+str(n)+".datasource"
                     q = ''
@@ -1568,9 +1565,7 @@ def getsearchresult(request):
                 n = n+1
             finalquery = qry1+"CONCAT("+newidstring+") as newid ,"+qry2+ totalfare+" as finalprice "+totaltax+" as totaltaxes from (select  * from pexproject_flightdata where "+querylist+" searchkeyid ='"+str(recordkey)+"' and "+cabinclass+" > '0' order by maincabin limit 10) as p1 "+qry3 + " order by finalprice,totaltaxes , departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset)
             record_obj = Flightdata.objects.raw(finalquery)
-	    print record_obj.query
             record = list(record_obj)
-	    print "record",len(record)            
             for row in record:
                 mainlist1=''
                 multirecordlist = {}
