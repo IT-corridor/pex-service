@@ -800,9 +800,7 @@ def forgotPassword(request):
             emailbody = obj.body
             emailbody = emailbody.replace('[USER_NAME]',user_email)
             emailbody = emailbody.replace('[RESET-LINK]','<a href="http://pexportal.com/createPassword?usercode='+usercode+'">Click here</a>')
-            #html_content = '"To manage Your password  <a href="http://pexportal.com/createPassword?usercode='+usercode+'">Click here</a>'
             resp = customfunction.sendMail('PEX',user_email,email_sub,emailbody,text)
-            print resp
             if resp == "sent":
                 user.usercode = usercode
                 currentdatetime = datetime.datetime.now()
@@ -812,8 +810,12 @@ def forgotPassword(request):
                 text = "Please check your registered email id to create new password"
             else:
                 text = "There is some technical problem. Please try again"
-	if 'pagetype' in request.REQUEST:	
-	    return render(request, 'flightsearch/index.html', {'welcome_msg': text})
+            
+    if 'pagetype' in request.POST:
+        return HttpResponseRedirect('/index?welcome_msg='+text)
+        	
+	    #return render(request, 'flightsearch/index.html', {'welcome_msg': text})
+        
 	    #return render_to_response('flightsearch/index.html',{'welcome_msg':text}, context_instance=RequestContext(request))
     if request.is_ajax():
         mimetype = 'application/json'
@@ -1202,7 +1204,6 @@ def checkData(request):
         print "customfunction flag", customfunction.flag
         if len(list(flagcheck)) >= customfunction.flag:
             iscomplete = "completed"
-        #data1 = "onprocess"
         mimetype = 'application/json'
         results = []
         results.append(data1)

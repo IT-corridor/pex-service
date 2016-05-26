@@ -154,7 +154,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">{% if welcome_msg %}{{welcome_msg}} {% else %}Enter your registered email{% endif %}</h4>
+        <h4 class="modal-title">{% if 'welcome_msg' in request.GET %}{{request.GET.welcome_msg}} {% else %}Enter your registered email{% endif %}</h4>
       </div>
       
       <form action="forgotPassword" method="post" class="form-group" id="forgot_password_form">
@@ -187,7 +187,7 @@
 
 
 	var resetpassword = "{{fpmsg}}"; 
-	var welcome_msg = "{{welcome_msg}}";
+	var welcome_msg = "{{request.GET.welcome_msg}}";
 	var lmsg = "{{msg}}";
 	var smsg = "{{signup_msg}}";
 	$(function(){
@@ -206,7 +206,7 @@
 		  	$('#forgetpassword').modal('show');
 		  	resetpassword='';
 		  }
-		  if(welcome_msg != ''){
+		  if("{{request.GET.welcome_msg}}" != ''){
 		  	$('#forgetpassword').modal('show');
 		  	$('#forgot_password_form').hide();
 		  	setTimeout(function() {$('#forgetpassword').modal('hide');}, 5000);
