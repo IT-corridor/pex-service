@@ -1005,7 +1005,7 @@ $("#submitid").click(function(event) {
 		    		return false;
 		    		event.preventDefault();
 		    	} 
-		    	if($('#toDest'+c).val() == '' || $('#to'+c).val() == '')
+		    	if($('#toDest'+c).val() == '' || $('#toid'+c).val() == '')
 		    	{
 		    		
 		    		$('label[class=error]').remove();
@@ -1013,6 +1013,14 @@ $("#submitid").click(function(event) {
 		    		$('#toDest'+c).css('border-color','red');
 		    		return false;
 		    		event.preventDefault();
+		    	}
+		    	if($('#toid'+c).val() == $('#fromid'+c).val())
+		    	{
+		    		$('label[class=error]').remove();
+		    		$('#toDest'+c).after('<label id="from-error" class="error" for="from">From and To city cannot be same</label>');
+		    		$('#toDest'+c).css('border-color','red');
+		    		event.preventDefault();	
+		    		return false;
 		    	}
 		    	if($('#departMain'+c).val() == '')
 		    	{
@@ -1037,6 +1045,14 @@ $("#submitid").click(function(event) {
 	    		
 	    		$('label[class=error]').remove();
 	    		$('#to').after(appendErrorLabel);
+	    		$('#to').css('border-color','red');
+	    		event.preventDefault();	
+	    		return false;
+	    	}
+	    	if($('#toid').val() == $('#fromid').val())
+	    	{
+	    		$('label[class=error]').remove();
+	    		$('#to').after('<label id="from-error" class="error" for="from">From and To city cannot be same</label>');
 	    		$('#to').css('border-color','red');
 	    		event.preventDefault();	
 	    		return false;
