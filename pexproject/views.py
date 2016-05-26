@@ -247,12 +247,10 @@ def bloglist(request):
     	bloglist = Blogs.objects.filter()
     	return render_to_response('flightsearch/admin/bloglist.html',{'bloglist':bloglist}, context_instance=RequestContext(request))
     else:
-	return HttpResponseRedirect(reverse('Admin'))
+        return HttpResponseRedirect(reverse('Admin'))
 
 @csrf_exempt
 def manageblogImage(request):
-    if 'userid' in request.POST:
-        print request.REQUEST['userid']
     for file in request.FILES.getlist('upload'):        
         t = time.time()
         if '.' in str(t):
@@ -264,8 +262,8 @@ def manageblogImage(request):
         print path
         dest = open(path, 'wb+')
   	CKEditorFuncNum =''
-	if 'CKEditorFuncNum' in request.GET: 
-            CKEditorFuncNum = request.REQUEST['CKEditorFuncNum'];
+    if 'CKEditorFuncNum' in request.GET: 
+        CKEditorFuncNum = request.REQUEST['CKEditorFuncNum']
         if file.multiple_chunks:
             dbpath = ''
             for c in file.chunks():
@@ -273,13 +271,13 @@ def manageblogImage(request):
                 dbpath = img
                 image = BlogImages()
                 image.user_id = "1"
-		image.image_path = dbpath
-		imgpath1 = img_fol+dbpath
-		image.save()
-	    message = '' ;
+                image.image_path = dbpath
+                imgpath1 = img_fol+dbpath
+                image.save()
+        	message = '' ;
           
             #: 'var cke_ob = window.parent.CKEDITOR; for(var ckid in cke_ob.instances) { if(cke_ob.instances[ckid].focusManager.hasFocus) break;} cke_ob.instances[ckid].insertHtml(\'<audio src="'+ $url .'" controls></audio>\', \'unfiltered_html\'); alert("'. $msg .'"); var dialog = cke_ob.dialog.getCurrent();  dialog.hide();';
-	    return render_to_response('flightsearch/admin/ajaxresponse.html',{"CKEditorFuncNum":CKEditorFuncNum,"message":message,"imgpath":imgpath1})
+            return render_to_response('flightsearch/admin/ajaxresponse.html',{"CKEditorFuncNum":CKEditorFuncNum,"message":message,"imgpath":imgpath1})
 	    
 
     
@@ -800,7 +798,7 @@ def forgotPassword(request):
             emailbody = obj.body
             emailbody = emailbody.replace('[USER_NAME]',user_email)
             emailbody = emailbody.replace('[RESET-LINK]','<a href="http://pexportal.com/createPassword?usercode='+usercode+'">Click here</a>')
-            resp = customfunction.sendMail('PEX',user_email,email_sub,emailbody,text)
+            resp = customfunction.sendMail('PEX+',user_email,email_sub,emailbody,text)
             if resp == "sent":
                 user.usercode = usercode
                 currentdatetime = datetime.datetime.now()
@@ -1304,6 +1302,9 @@ def getsearchresult(request):
         else:
             searchdata1 = Searchkey.objects.filter(searchid=searchkey)
         searchdata = list(searchdata1)
+        if len(searchdata) < 1:
+            return HttpResponseRedirect('/index?message=You must enter departure city, destination city and departure date')
+            
         for s in searchdata:
             source = s.source
             destination = s.destination
