@@ -374,7 +374,7 @@ def index(request):
     recordFromActiveTable = 0
     img_cityName = []
     #img_
-    recent_searches = Searchkey.objects.raw("select ps.destination, ps.searchid,ps.destination,ps.destination_city as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from pexproject_flightdata as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from pexproject_flightdata as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin order by pf1.scrapetime desc)  as pfs1 on pfs1.searchkeyid = ps.searchid group by destination order by ps.scrapetime desc limit 8")
+    recent_searches = Searchkey.objects.raw("select ps.destination, ps.searchid,ps.destination,ps.destination_city as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from pexproject_flightdata as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from pexproject_flightdata as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin order by pf1.scrapetime desc)  as pfs1 on pfs1.searchkeyid = ps.searchid group by destination_city order by ps.scrapetime desc limit 8")
     recent_searches1 = list(recent_searches)
     for s in recent_searches1:
         if s.final_dest:
@@ -446,7 +446,7 @@ def flights(request):
     searches = []
     img_path =''
     img_cityName = []
-    recent_searches = Searchkey.objects.raw("select ps.destination, ps.searchid,ps.destination,ps.destination_city as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from pexproject_flightdata as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from pexproject_flightdata as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin order by pf1.scrapetime desc)  as pfs1 on pfs1.searchkeyid = ps.searchid group by destination order by ps.scrapetime desc limit 8")
+    recent_searches = Searchkey.objects.raw("select ps.destination, ps.searchid,ps.destination,ps.destination_city as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from pexproject_flightdata as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from pexproject_flightdata as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin order by pf1.scrapetime desc)  as pfs1 on pfs1.searchkeyid = ps.searchid group by destination_city order by ps.scrapetime desc limit 8")
     recent_searches1 = list(recent_searches)
     for s in recent_searches1:
         if s.final_dest:
@@ -802,6 +802,7 @@ def forgotPassword(request):
             emailbody = emailbody.replace('[RESET-LINK]','<a href="http://pexportal.com/createPassword?usercode='+usercode+'">Click here</a>')
             #html_content = '"To manage Your password  <a href="http://pexportal.com/createPassword?usercode='+usercode+'">Click here</a>'
             resp = customfunction.sendMail('PEX',user_email,email_sub,emailbody,text)
+            print resp
             if resp == "sent":
                 user.usercode = usercode
                 currentdatetime = datetime.datetime.now()
@@ -973,12 +974,6 @@ def search(request):
             time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
             time1 = datetime.datetime.now() - timedelta(minutes=30)
             time1 = time1.strftime('%Y-%m-%d %H:%M:%S')
-                                   
-            #Searchkey.objects.filter(scrapetime__lte=time1)#.delete()
-            # remove archive data query from here and move it a separate cron file 
-            #cursor.execute("insert into arcade_flight_data select * from pexproject_flightdata where scrapetime < '"+str(time1)+"'")
-            #Flightdata.objects.filter(scrapetime__lte=time1)#.delete()
-            #transaction.commit()
             if searchdate1:
                 obj = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, scrapetime__gte=time1)
                 returnobj = Searchkey.objects.filter(source=destination1, destination=origin, traveldate=searchdate1, scrapetime__gte=time1)
@@ -1181,8 +1176,6 @@ def checkData(request):
                 recordkey = request.POST['keyid']
                 time1 = datetime.datetime.now() - timedelta(minutes=30)
                 time1 = time1.strftime('%Y-%m-%d %H:%M:%S')
-                
-                #print keystatus.count()
                 if 'returnkey' in request.POST:
                     returnkey = request.POST['returnkey']
                     returnfare = "p2." + cabin
@@ -1201,8 +1194,6 @@ def checkData(request):
                     isdatastored = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(recordkey)+" and "+cabin+"> 0")
                     
                     flagcheck = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(recordkey)+" and flighno = 'flag' ")
-	#print  flagcheck.query
-                       
         if len(list(isdatastored)) > 0:
             data1 = "stored"
         else:
@@ -1530,9 +1521,6 @@ def getsearchresult(request):
                 multisearch.append(multicitysearch) 
             multiSearchTitle = multiSearchTitle+", "+dateString
             multicity='true' 
-            #cabintype = " and " + "p1."+cabinclass + " > 0"
-            #if querylist:
-            #    querylist = querylist #+cabintype
             replacekey = searchkey
             totalfare = ", p1." + cabinclass
             totaltax = ", p1."+taxes
@@ -1547,6 +1535,9 @@ def getsearchresult(request):
             pricesources =[]
             recordkey = multicitykey1[0]
             pricematrix_query = ''
+            setLimit = 10
+            if len(multicitykey1) < 3:
+                setLimit = 30
             for keys in multicitykey1:
                 if n > 1:
                     totalfare = totalfare+"+p"+str(n)+"." + cabinclass
@@ -1554,16 +1545,13 @@ def getsearchresult(request):
                     newidstring =newidstring+sep+"p"+str(n)+".rowid"
                     qry2 = qry2+sep1+'p'+str(n)+'.origin as origin'+str(n)+',p'+str(n)+'.rowid as rowid'+str(n)+', p'+str(n)+'.stoppage as stoppage'+str(n)+', p'+str(n)+'.destination as destination'+str(n)+', p'+str(n)+'.departure as departure'+str(n)+', p'+str(n)+'.arival as arival'+str(n)+', p'+str(n)+'.duration as duration'+str(n)+',p'+str(n)+'.flighno as flighno'+str(n)+', p'+str(n)+'.cabintype1 as cabintype1'+str(n)+',p'+str(n)+'.cabintype2 as cabintype2'+str(n)+',p'+str(n)+'.cabintype3 as cabintype3'+str(n)+', p'+str(n)+'.maincabin as maincabin'+str(n)+', p'+str(n)+'.maintax as maintax'+str(n)+', p'+str(n)+'.firsttax as firsttax'+str(n)+', p'+str(n)+'.businesstax as businesstax'+str(n)+',p'+str(n)+'.departdetails as departdetails'+str(n)+',p'+str(n)+'.arivedetails as arivedetails'+str(n)+', p'+str(n)+'.planedetails as planedetails'+str(n)+',p'+str(n)+'.operatedby as operatedby'+str(n)
                     sep1 = ','
-                    #inner_join_on = inner_join_on+" inner join pexproject_flightdata p"+str(n)+" on  p"+str(n)+".searchkeyid ='" +keys+"' and p1.datasource = p"+str(n)+".datasource"
-                    #qry3 = qry3+"inner join pexproject_flightdata p"+str(n)+" on  p"+str(n)+".searchkeyid ='" +keys+"' and p1.datasource = p"+str(n)+".datasource and p"+str(n)+"."+cabinclass +" > '0'  "
-                    
                     if querylist and 'p1' in querylist:
                         querylist = querylist.replace('p1.','')+" and "
-                    qry3 = qry3+" inner join (select  * from pexproject_flightdata where "+querylist+" searchkeyid ='"+keys+"' and "+cabinclass+" > '0' order by "+cabinclass+" limit 10) as p"+str(n)+" on p1.datasource = p"+str(n)+".datasource"
+                    qry3 = qry3+" inner join (select  * from pexproject_flightdata where "+querylist+" searchkeyid ='"+keys+"' and "+cabinclass+" > '0' order by "+cabinclass+" limit "+str(setLimit)+") as p"+str(n)+" on p1.datasource = p"+str(n)+".datasource"
                     q = ''
                 counter = counter+1
                 n = n+1
-            finalquery = qry1+"CONCAT("+newidstring+") as newid ,"+qry2+ totalfare+" as finalprice "+totaltax+" as totaltaxes from (select  * from pexproject_flightdata where "+querylist+" searchkeyid ='"+str(recordkey)+"' and "+cabinclass+" > '0' order by maincabin limit 10) as p1 "+qry3 + " order by finalprice,totaltaxes , departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset)
+            finalquery = qry1+"CONCAT("+newidstring+") as newid ,"+qry2+ totalfare+" as finalprice "+totaltax+" as totaltaxes from (select  * from pexproject_flightdata where "+querylist+" searchkeyid ='"+str(recordkey)+"' and "+cabinclass+" > '0' order by maincabin limit "+str(setLimit)+") as p1 "+qry3 + " order by finalprice,totaltaxes , departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset)
             record_obj = Flightdata.objects.raw(finalquery)
             record = list(record_obj)
             for row in record:
@@ -1602,11 +1590,9 @@ def getsearchresult(request):
             else:
                 cabintype = " and " + cabinclass + " > 0"
                 querylist = querylist+cabintype
-                #print taxes
                 record = Flightdata.objects.raw("select p1.*,p1.maintax as maintax1, p1.firsttax as firsttax1, p1.businesstax as businesstax1,p1.rowid as newid ,case when datasource = 'delta' then " + deltaorderprice + "  else " + unitedorderprice + " end as finalprice, "+taxes+" as totaltaxes from pexproject_flightdata as p1 where " + querylist + " order by finalprice ," + taxes + ",departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset))
-            
             mainlist = list(record)
-            #print record.quer
+            
         progress_value = '' 
         if 'progress_value' in request.POST:
             progress_value = request.REQUEST['progress_value']
@@ -1624,8 +1610,6 @@ def getsearchresult(request):
         scraperStatus = ''
         if 'scraperStatus' in request.POST:
             scraperStatus = request.POST['scraperStatus']
-        #if 'actionfor' in request.POST:
-            #return render_to_response('flightsearch/pricematrix.html',{'pricesources':pricesources, 'pricematrix':pricematrix},context_instance=RequestContext(request))      
         title=''
         comma = ''
         if multiSearchTitle == '' :
