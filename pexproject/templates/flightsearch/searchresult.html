@@ -2341,15 +2341,20 @@
 			ampm = val.split(' ');
 			mindepature = ampm[0].split(':');
 			hour = mindepature[0];
-
+			
 			if ($.trim(ampm[1]) != "p.m." && $.trim(ampm[1]) != "PM") {
 
 				if (parseInt(hour) > 11) {
 					hour = 0;
 				}
 			} else {
-
-				hour = parseInt(hour) + 12;
+				if(parseInt(hour) < 12)
+				{
+					hour = parseInt(hour) + 12;
+				}
+				else{
+					hour = 0+12;
+				}
 
 			}
 			minute = mindepature[1];
