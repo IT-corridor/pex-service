@@ -74,8 +74,8 @@
 						<div class="tab-content">
 							<div role="tabpanel" class="tab-pane active" id="signup">
 								
-								{%if signup_msg %}
-									<span class="show-msg">{{signup_msg}}</span>
+								{%if 'signup_msg' in request.GET %}
+									<span class="show-msg">{{request.GET.signup_msg}}</span>
 								{%endif%}
 								<form action="signup" method="post" class="modelform">
 									{% csrf_token %}
@@ -110,8 +110,8 @@
 								</form>
 							</div>
 							<div role="tabpanel" class="tab-pane" id="login">
-								{% if msg %}
-									<div class="show-msg">{{msg}} </div>
+								{% if 'msg' in request.GET %}
+									<div class="show-msg">{{request.GET.msg}} </div>
 								{% endif %}
 								<div class="show-msg" id="loginmsg"></div>
 								<form action="login" method="post">
@@ -188,8 +188,8 @@
 
 	var resetpassword = "{{fpmsg}}"; 
 	var welcome_msg = "{{request.GET.welcome_msg}}";
-	var lmsg = "{{msg}}";
-	var smsg = "{{signup_msg}}";
+	var lmsg = "{{request.GET.msg}}";
+	var smsg = "{{request.GET.signup_msg}}";
 	$(function(){
 		$(document).ready(function() {
 			if (lmsg != '')

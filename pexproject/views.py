@@ -554,7 +554,8 @@ def signup(request):
             user = User.objects.filter(username=email)
             if len(user) > 0:
                 msg = "Email is already registered"
-                return render_to_response('flightsearch/index.html',{'signup_msg':msg},context_instance=RequestContext(request))
+                return HttpResponseRedirect('/index?signup_msg='+msg)
+                #return render_to_response('flightsearch/index.html',{'signup_msg':msg},context_instance=RequestContext(request))
             password = request.REQUEST['password']
             password1 = hashlib.md5(password).hexdigest()
             airport = request.REQUEST['home_airport']
@@ -593,8 +594,10 @@ def signup(request):
                     resp = customfunction.sendMail('PEX+',email,email_sub,emailbody,html_content)
                 except:
                     print "something wrong"
-                return render_to_response('flightsearch/index.html',{'welcome_msg':msg}, context_instance=RequestContext(request))   
-        return render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
+                return HttpResponseRedirect('/index?welcome_msg='+msg)
+                #return render_to_response('flightsearch/index.html',{'welcome_msg':msg}, context_instance=RequestContext(request))   
+        #return render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
+        return HttpResponseRedirect(reverse('index'))
     else:
         return HttpResponseRedirect(reverse('index'))
 
@@ -687,25 +690,25 @@ def manageAccount(request):
         issocial = 'yes'
     if request.POST:
         if 'home_ariport' in request.POST:
-            user1.home_airport = request.REQUEST['home_ariport']
+            user1.home_airport = request.POST['home_ariport']
             isupdated  = user1.save()
             print isupdated
         if 'home_ariport' not in request.POST:
-            user1.firstname = request.REQUEST['firstname']
-            user1.middlename = request.REQUEST['middlename']
-            user1.lastname = request.REQUEST['lastname']
-            user1.gender = request.REQUEST['gender']
-            if request.REQUEST['dateofbirth']:
-                user1.date_of_birth = request.REQUEST['dateofbirth']
+            user1.firstname = request.POST['firstname']
+            user1.middlename = request.POST['middlename']
+            user1.lastname = request.POST['lastname']
+            user1.gender = request.POST['gender']
+            if request.POST['dateofbirth']:
+                user1.date_of_birth = request.POST['dateofbirth']
             else:
                 user1.date_of_birth = None
-            user1.address1 = request.REQUEST['address1']
-            user1.address2 = request.REQUEST['address2']
-            user1.city = request.REQUEST['city']
-            user1.state = request.REQUEST['state']
-            user1.zipcode = request.REQUEST['zipcode']
-            user1.country = request.REQUEST['country']
-            user1.phone = request.REQUEST['phone']
+            user1.address1 = request.POST['address1']
+            user1.address2 = request.POST['address2']
+            user1.city = request.POST['city']
+            user1.state = request.POST['state']
+            user1.zipcode = request.POST['zipcode']
+            user1.country = request.POST['country']
+            user1.phone = request.POST['phone']
             user1.save()   
     return render_to_response('flightsearch/manage_account.html',{'message':msg,'user':user1,'issocial':issocial,'subscription':subscription}, context_instance=RequestContext(request))
 
@@ -760,10 +763,12 @@ def login(request):
                 return HttpResponseRedirect(reverse('index'))
             else:
                 msg = "Invalid username or password"
-                return render_to_response('flightsearch/index.html', {'msg':msg}, context_instance=RequestContext(request))
+                return HttpResponseRedirect('/index?msg='+msg)
+                #return render_to_response('flightsearch/index.html', {'msg':msg}, context_instance=RequestContext(request))
     	except:
     	    msg = "Invalid username or password"
-            return render_to_response('flightsearch/index.html', {'msg':msg}, context_instance=RequestContext(request))
+            return HttpResponseRedirect('/index?msg='+msg)
+            #return render_to_response('flightsearch/index.html', {'msg':msg}, context_instance=RequestContext(request))
     else:
         return HttpResponseRedirect(reverse('index'))
 
@@ -1075,6 +1080,7 @@ def search(request):
         return HttpResponse(data, mimetype)
         
 def get_airport(request):
+    
     if request.is_ajax():
         q = request.GET.get('term', '')
         airport = Airports.objects.filter(Q(code__istartswith=q)).order_by('code','cityName')[:20]    
