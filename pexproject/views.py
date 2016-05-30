@@ -683,7 +683,8 @@ def manageAccount(request):
     m = mailchimp_user.lists.member_info(customfunction.mailchiml_List_ID,[{'email':email1}])['data']
     if len(m) > 0 and 'subscribed' in m[0]['status']:
         subscription = 'subscribed'
-    user1 = User.objects.get(pk =request.session['userid'])
+    
+    user1 = User.objects.get(pk =request.session['userid']) 
     cursor.execute("select provider from social_auth_usersocialauth where user_id ="+str(request.session['userid']))
     social_id = cursor.fetchone()
     if social_id:	
@@ -692,7 +693,6 @@ def manageAccount(request):
         if 'home_ariport' in request.POST:
             user1.home_airport = request.POST['home_ariport']
             isupdated  = user1.save()
-            print isupdated
         if 'home_ariport' not in request.POST:
             user1.firstname = request.POST['firstname']
             user1.middlename = request.POST['middlename']
@@ -709,7 +709,8 @@ def manageAccount(request):
             user1.zipcode = request.POST['zipcode']
             user1.country = request.POST['country']
             user1.phone = request.POST['phone']
-            user1.save()   
+            user1.save() 
+    user1 = User.objects.get(pk =request.session['userid'])  
     return render_to_response('flightsearch/manage_account.html',{'message':msg,'user':user1,'issocial':issocial,'subscription':subscription}, context_instance=RequestContext(request))
 
 def mailchimp(request):
