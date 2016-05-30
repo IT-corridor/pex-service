@@ -900,17 +900,17 @@ def contactUs(request):
     contact_msg = ''
     html_content = ''
     if request.POST:
-        firstname = request.REQUEST['first_name']
-        lastname = request.REQUEST['last_name']
-        title = request.REQUEST['title']
-        company = request.REQUEST['company']
-        message = request.REQUEST['message']
-        topic = request.REQUEST['topic']
-        labeltext = request.REQUEST['label_text']
+        firstname = request.POST['first_name']
+        lastname = request.POST['last_name']
+        title = request.POST['title']
+        company = request.POST['company']
+        message = request.POST['message']
+        topic = request.POST['topic']
+        labeltext = request.POST['label_text']
         labeltext = strip_tags(labeltext)
-        phone = request.REQUEST['phone']
-        websitename = request.REQUEST['website']
-        email = request.REQUEST['email']
+        phone = request.POST['phone']
+        websitename = request.POST['website']
+        email = request.POST['email']
         object = Contactus(first_name=firstname,last_name=lastname,email=email,phone=phone,title=title,company=company,website=websitename,message=message,topic=topic,label_text= labeltext)
         object.save()
         fullname = firstname+" "+lastname

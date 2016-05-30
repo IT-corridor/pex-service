@@ -58,10 +58,22 @@
 							<dt>Last Name:</dt>
 							<dd><input type="text" class="form-control" name="lastname" {%if user.lastname%} value="{{user.lastname|title}}" {%endif%}></dd>
 							<dt>Date of Birth:</dt>
-							<dd><div class="inner-addon left-addon date"><i class="glyphicon glyphicon-calendar "></i><input type="text" class="form-control" id="dob" name="dateofbirth" {%if user.date_of_birth%} value="{{user.date_of_birth|date:'Y-m-d'}}" {%endif%}></div></dd>
-							<dt>Gender:</dt>
-							<dd><input type="text" class="form-control" name="gender" {%if user.gender%} value="{{user.gender|title}}" {%endif%}></dd>
+							<dd><div class="inner-addon left-addon date"><i class="glyphicon glyphicon-calendar "></i><input type="text" class="form-control" id="dob" name="dateofbirth" {%if user.date_of_birth%} value="{{user.date_of_birth}}" {%endif%}></div></dd>
 							
+							<dt>Gender:</dt>
+							<dd>
+								<div class="col-sm-12 col-xs-12 nopadding">
+			                <div class="checkbox-inline mhr10px auto-crsr nopadding">
+			                  <label class="nopaddig"><input type="radio" id="male" class="curson" name="gender" value="Male" {%if user.gender and user.gender == 'Male'%} checked="checked" {%endif%}>Male</label>
+			                </div>
+			                <div class="checkbox-inline mhr10px auto-crsr">
+			                  <label><input type="radio" id="female" class="curson" name="gender" value="Female" {%if user.gender and user.gender == 'Female'%} checked="checked" {%endif%}> Female</label>
+			                </div>
+			              </div>
+			              
+			              		<!--
+								<input type="text" class="form-control" name="gender" {%if user.gender%} value="{{user.gender|title}}" {%endif%}></dd>
+								-->
 						</dl>
 					</div>
 					<div class="col-sm-5 col-sm-push-1 col-xs-12 nopr xs-nopadding">
