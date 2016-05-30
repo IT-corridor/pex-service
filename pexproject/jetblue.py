@@ -1,6 +1,5 @@
 #!/usr/bin/env python 
 import os, sys
-from subprocess import call
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import selenium
@@ -17,14 +16,10 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from django.db import connection, transaction
-from multiprocessing import Process
-import threading
-from threading import Thread
-import Queue
 import customfunction
-from pyvirtualdisplay import Display
+#from pyvirtualdisplay import Display
 import socket
-import urllib
+
 
 def jetblue(from_airport,to_airport,searchdate,searchid):
     #return searchid
@@ -39,38 +34,31 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
     url = "https://book.jetblue.com/shop/search/#/book/from/"+from_airport+"/to/"+to_airport+"/depart/"+str(date)+"/return/false/pax/ADT-1/redemption/true/promo/false"
     currentdatetime = datetime.datetime.now()
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
-    display = Display(visible=0, size=(800, 600))
-    display.start()
-    #chromedriver = "/usr/bin/chromedriver"
-    #os.environ["webdriver.chrome.driver"] = chromedriver
-    #driver = webdriver.Chrome(chromedriver)
-    driver = webdriver.Chrome()
-    #driver=webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true', '--ssl-protocol=any'])
-    #driver.set_window_size(1120, 550)
+    driver=webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true', '--ssl-protocol=any'])
+    driver.set_window_size(1120, 550)
     
     driver.get(url)
-    #driver.implicitly_wait(50)
-    #time.sleep(2)
-    try:
-        WebDriverWait(driver,10).until(EC.presence_of_element_located((By.ID, "jbBookerPOS")))
-        driver.find_elements_by_css_selector("input[type='submit'][value='Find it']")[0].click()
-        #time.sleep(4)
-        WebDriverWait(driver,10).until(EC.presence_of_element_located((By.ID, "AIR_SEARCH_RESULT_CONTEXT_ID0")))
-    except:
-        print "nodata on jetblue"
-        display.stop
+    
+    dataCkeckFlag = 0
+    def storeFlag(searchid,stime):
+        #display.stop
         driver.quit()
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "jetblue", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
-        db.commit()
-        return searchid
-     
+        db.commit() 
     try:
-        time.sleep(2)
+        WebDriverWait(driver,10).until(EC.presence_of_element_located((By.ID, "jbBookerPOS")))
+        searchBtn = driver.find_element_by_css_selector("input[type='submit'][value='Find it']") 
+        driver.execute_script(" return arguments[0].click();", searchBtn)
+        WebDriverWait(driver,15).until(EC.presence_of_element_located((By.ID, "AIR_SEARCH_RESULT_CONTEXT_ID0")))
+        
+    except:
+        storeFlag(searchid,stime)
+        return searchid
+    try:
         html_page = driver.page_source
-        soup = BeautifulSoup(html_page)
+        soup = BeautifulSoup(html_page,"lxml")
         maintable = soup.find("table",{"id":"AIR_SEARCH_RESULT_CONTEXT_ID0"})
         databody =  maintable.findAll("tbody")
-        #print "databody",len(databody)
         value_string = []
         recordCount = 1
         for trs in databody:
@@ -127,30 +115,24 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                             origin_code = origin_code.replace('(','')
                         if ')' in origin_code:
                             origin_code = origin_code.replace(')','')
-                        #print origin_code,depttime,origin_fullname
                         deptdetail = str(date)+" | "+depttime+" from "+origin_fullname
                         departdetails.append(deptdetail)
                         fltno = depttd.find("span",{"class":"flightCode"}).text
                         fltdetal = depttd.find("a")['onclick']
-                        #print fltdetal
                         start = fltdetal.index("companyShortName=") + len( "companyShortName=" )
                         end = fltdetal.index("')", start )
-                        #print "operated by", fltdetal[start:end]
                         operatedby.append(fltdetal[start:end])
                         if 'Flight number' in fltno:
                             fltno = (fltno.replace('Flight number','')).strip()
                         if 'With layover' in fltno:
                             fltno = fltno.replace('With layover','')
                         planetype = depttd.find("span",{"class":"equipType"}).text
-                        #print fltno,planetype
                         planeinfo = fltno+" | "+planetype
                     if arivetd:
                         arivetime = arivetd.find("div",{"class":"time"}).text
                         arival_time = arivetime 
-                        #print "arival_time",arivetime
                         if '+' in arivetime:
                             arive_time = arivetime.split("+")
-                            #print arive_time
                             arivetime = arive_time[0]
                             
                         arive_fullname = arivetd.find("b").text
@@ -168,7 +150,6 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                         duration = content.findAll("td",{"class":"colDuration"})
                         if duration:
                             totaltime = duration[0].text.strip()
-                            #print "Flight Duration",totaltime
                             planetime = ''
                             if "Total:" in totaltime:
                                 totaltime1 = totaltime.split('Total:')
@@ -261,10 +242,7 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
             db.commit()
     except:
         print "please change your seach filter"
-    cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "jetblue", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
-    db.commit()
-    display.stop
-    driver.quit()
+    storeFlag(searchid,stime)
     return searchid
 
 
