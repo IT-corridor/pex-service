@@ -58,7 +58,7 @@
 							<dt>Last Name:</dt>
 							<dd><input type="text" class="form-control" name="lastname" {%if user.lastname%} value="{{user.lastname|title}}" {%endif%}></dd>
 							<dt>Date of Birth:</dt>
-							<dd><input type="text" class="form-control" id="dob" name="dateofbirth" {%if user.date_of_birth%} value="{{user.date_of_birth|date:'Y-m-d'}}" {%endif%}></dd>
+							<dd><div class="inner-addon left-addon date"><i class="glyphicon glyphicon-calendar "></i><input type="text" class="form-control" id="dob" name="dateofbirth" {%if user.date_of_birth%} value="{{user.date_of_birth|date:'Y-m-d'}}" {%endif%}></div></dd>
 							<dt>Gender:</dt>
 							<dd><input type="text" class="form-control" name="gender" {%if user.gender%} value="{{user.gender|title}}" {%endif%}></dd>
 							
@@ -225,7 +225,7 @@
 		});
 	</script>
 	<script>
-		$('#dob').datepicker({ dateFormat: 'yy-mm-dd' });
+		$('#dob').datepicker({ dateFormat: 'yy-mm-dd', changeYear: true });
 		$( "#airport" ).autocomplete({
   		 open: function(event, ui) {
 	        	$('.ui-autocomplete').off('menufocus hover mouseover');
