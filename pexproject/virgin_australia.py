@@ -41,16 +41,14 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
     driver = webdriver.Chrome()
     #driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true', '--ssl-protocol=any'])
     #driver.set_window_size(1120, 1080)
-    driver.get(url)
-    time.sleep(4)
-    submitbtn = driver.find_element_by_xpath("//*[contains(text(), 'Find Flights')]")
-    #submitbtn.click()
-    driver.execute_script("arguments[0].click();", submitbtn)
     
-    time.sleep(1)
-    
+    #time.sleep(1)
     try:
-        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "dtcontainer-0")))
+        driver.get(url)
+        submitbtn = WebDriverWait(driver,5).until(
+                    lambda driver :driver.find_element_by_xpath("//*[contains(text(), 'Find Flights')]"))
+        driver.execute_script("arguments[0].click();", submitbtn)
+        WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.ID, "dtcontainer-0")))
         html_page = driver.page_source
         soup = BeautifulSoup(html_page,"xml")
         templatedata = soup.find('script', text=re.compile('var templateData = '))
