@@ -37,21 +37,33 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
     driver=webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true', '--ssl-protocol=any'])
     driver.set_window_size(1120, 550)
     
-    driver.get(url)
-    
-    dataCkeckFlag = 0
     def storeFlag(searchid,stime):
         #display.stop
         driver.quit()
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "jetblue", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
-        db.commit() 
+        db.commit()
     try:
+        driver.get(url)
         WebDriverWait(driver,10).until(EC.presence_of_element_located((By.ID, "jbBookerPOS")))
         searchBtn = driver.find_element_by_css_selector("input[type='submit'][value='Find it']") 
         driver.execute_script(" return arguments[0].click();", searchBtn)
-        WebDriverWait(driver,15).until(EC.presence_of_element_located((By.ID, "AIR_SEARCH_RESULT_CONTEXT_ID0")))
+        time.sleep(1)
+    except:
+        print "page not loaded"
+        storeFlag(searchid,stime)
+        return
+    try:
+        errorValue = WebDriverWait(driver,5).until(
+                lambda driver :driver.find_elements_by_class_name("inline_error"))
+        storeFlag(searchid,stime)
+        return
+    except:
+        print "valid search data"
+    try:
+        WebDriverWait(driver,10).until(EC.presence_of_element_located((By.ID, "AIR_SEARCH_RESULT_CONTEXT_ID0")))
         
     except:
+        driver.save_screenshot('screen.png')
         storeFlag(searchid,stime)
         return searchid
     try:
