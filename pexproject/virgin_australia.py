@@ -21,7 +21,6 @@ import json
 import customfunction
 from pyvirtualdisplay import Display
 def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag):
-    
     db = customfunction.dbconnection()
     cursor = db.cursor()
     currentdatetime = datetime.datetime.now()
@@ -39,16 +38,39 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
     display = Display(visible=0, size=(800, 600))
     display.start()
     driver = webdriver.Chrome()
-    #driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true', '--ssl-protocol=any'])
-    #driver.set_window_size(1120, 1080)
     
-    #time.sleep(1)
+    def storeFlag(searchid,stime,isflag):
+        if isflag:   
+            cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "Virgin Australia", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
+            db.commit()
+        display.stop()
+        driver.quit()
     try:
         driver.get(url)
         submitbtn = WebDriverWait(driver,5).until(
                     lambda driver :driver.find_element_by_xpath("//*[contains(text(), 'Find Flights')]"))
         driver.execute_script("arguments[0].click();", submitbtn)
-        WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.ID, "dtcontainer-0")))
+        
+    except:
+        storeFlag(searchid,stime,isflag)
+        return
+    try:
+        # check Invalid Input
+        WebDriverWait(driver,2).until(EC.presence_of_element_located((By.ID, "page-dialog")))
+        storeFlag(searchid,stime,isflag)
+        return
+    except:
+        print "form submitted"
+    try:
+        # check No flight data 
+        errorValue = WebDriverWait(driver,5).until(
+                    lambda driver :driver.find_elements_by_class_name("flightAdvisoryMessages"))
+        storeFlag(searchid,stime,isflag)
+        return
+    except:
+        print "data found"
+    try:
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "dtcontainer-0")))
         html_page = driver.page_source
         soup = BeautifulSoup(html_page,"xml")
         templatedata = soup.find('script', text=re.compile('var templateData = '))
@@ -57,11 +79,14 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
         jsonData = json.loads(json_text)
         tempdata = jsonData["rootElement"]["children"][1]["children"][0]["children"][7]["model"]
     except:
+        storeFlag(searchid,stime,isflag)
+        '''
         if isflag:   
             cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "Virgin Australia", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
             db.commit()
         display.stop()
         driver.quit()
+        '''
         return searchid
     i = 1 
     operatordiv = soup.findAll(True, {'class': re.compile(r'\operating-carrier-wrapper\b')})
@@ -83,9 +108,7 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
     operatorcounter = 0
     for k in range(0,len(maindata)):
         flightsDetails =[]
-        
         segments = maindata[k]["segments"]
-        
         rowRecord = maindata[k]["itineraryPartData"]
         fltno = ''
         #@@@@@@ Depart Details @@@@@@@@@@@@@@@@@
@@ -124,21 +147,13 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
         depttime = deptDateTime[1]
         depttime1 = (datetime.datetime.strptime(depttime, '%H:%M:%S'))
         departtime = depttime1.strftime('%H:%M')
-      
-        
         arrivalDate = rowRecord["arrivalDate"]
-        
-        
         arrivalDateTime = arrivalDate.split(" ")
-        
         arivaldt = arrivalDateTime[0]
         arivalTime = arrivalDateTime[1]
         arivalTime1 = (datetime.datetime.strptime(arivalTime, '%H:%M:%S'))
         arive = arivalTime1.strftime('%H:%M')
-       
-        
         totalTripDuration = rowRecord["totalTripDuration"]
-        
         totalMinte = (int(totalTripDuration)/60000)
         hr = totalMinte/60
         minute = totalMinte % 60
