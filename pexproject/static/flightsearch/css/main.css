@@ -8,7 +8,11 @@ html, body {
 	height: 100%;
 }
 .error {
-    color:red;
+    color:#D63301;
+}
+.google-adsense{
+	padding: 10px;
+    margin-bottom: 20px;
 }
 .wrapper {
 	 min-height: 100%;

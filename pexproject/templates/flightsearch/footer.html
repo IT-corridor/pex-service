@@ -77,7 +77,7 @@
 								{%if 'signup_msg' in request.GET %}
 									<span class="show-msg">{{request.GET.signup_msg}}</span>
 								{%endif%}
-								<form action="signup" method="post" class="modelform">
+								<form action="/signup" method="post" class="modelform">
 									{% csrf_token %}
 									<div class="form-group">
 										<input type="text" class="form-control" placeholder="First Name" name="firstname" required >
@@ -114,7 +114,7 @@
 									<div class="show-msg">{{request.GET.msg}} </div>
 								{% endif %}
 								<div class="show-msg" id="loginmsg"></div>
-								<form action="login" method="post">
+								<form action="/login" method="post">
 									{% csrf_token %}
 									<input type="hidden" name="curl" value="{{request.get_full_path}}" id="curl">
 									<div class="form-group">
@@ -157,7 +157,7 @@
         <h4 class="modal-title">{% if 'welcome_msg' in request.GET %}{{request.GET.welcome_msg}} {% else %}Enter your registered email{% endif %}</h4>
       </div>
       
-      <form action="forgotPassword" method="post" class="form-group" id="forgot_password_form">
+      <form action="/forgotPassword" method="post" class="form-group" id="forgot_password_form">
       	{% csrf_token %}
       <div class="modal-body col-xs-12">
         <input type="email" name="email" class="form-group" required/>
@@ -186,7 +186,7 @@
   ga('send', 'pageview');
 
 
-	var resetpassword = "{{fpmsg}}"; 
+	var resetpassword = "{{request.GET.fpmsg}}"; 
 	var welcome_msg = "{{request.GET.welcome_msg}}";
 	var lmsg = "{{request.GET.msg}}";
 	var smsg = "{{request.GET.signup_msg}}";

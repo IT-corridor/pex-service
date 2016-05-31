@@ -801,7 +801,7 @@ def forgotPassword(request):
     context = {}
     msg =''   
     if request.POST:
-        user_email =  request.REQUEST['email']
+        user_email =  request.POST['email']
         randomcode = randint(100000000000,999999999999)
         usercode =  base64.b64encode(str(randomcode))
         if 'userid' in request.session:
@@ -810,8 +810,10 @@ def forgotPassword(request):
             try:
                 user = User.objects.get(email=user_email)
             except:
-                return render_to_response('flightsearch/index.html', {'msg':"Invalid username"}, context_instance=RequestContext(request))
+                return HttpResponseRedirect('/index?msg=Invalid username')
+                #return render_to_response('flightsearch/index.html', {'msg':"Invalid username"}, context_instance=RequestContext(request))
         text = ''
+        print "user",user
         if user > 0:
             #subject = "Manage Your Password"
             obj = EmailTemplate.objects.get(email_code='forgotPassword')
@@ -832,10 +834,6 @@ def forgotPassword(request):
             
     if 'pagetype' in request.POST:
         return HttpResponseRedirect('/index?welcome_msg='+text)
-        	
-	    #return render(request, 'flightsearch/index.html', {'welcome_msg': text})
-        
-	    #return render_to_response('flightsearch/index.html',{'welcome_msg':text}, context_instance=RequestContext(request))
     if request.is_ajax():
         mimetype = 'application/json'
         data = text
@@ -844,7 +842,7 @@ def forgotPassword(request):
         
     else:
         msg = "forgot password"
-    return render_to_response('flightsearch/index.html',{'fpmsg':msg},context_instance=RequestContext(request)) 
+    return HttpResponseRedirect('/index?fpmsg='+msg) 
 def createPassword(request):
     context = {}
     msg = ''
@@ -1708,8 +1706,8 @@ def share(request):
 
 def subscribe(request):
     if request.is_ajax:
-	email = request.POST['emailid']
-	subscriber = Mailchimp(customfunction.mailchimp_api_key)
+        email = request.POST['emailid']
+        subscriber = Mailchimp(customfunction.mailchimp_api_key)
         subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':email})
     exit()
 
