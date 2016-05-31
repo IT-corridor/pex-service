@@ -504,9 +504,24 @@ def flights(request):
 def staticPage(request):
     context = {}
     page = ''
-    if "action" in request.GET:
-    	page = request.GET.get('action','')
-        return  render_to_response('flightsearch/'+page+'.html', context_instance=RequestContext(request))
+    curr_path = request.get_full_path()
+    action = ''
+    if 'staticPage/' in curr_path:
+        pageName = curr_path.split('staticPage/')
+        if len(pageName) > 1:
+            if '?' in pageName[1]:
+                pageName1 = pageName[1].split('?')
+                page= pageName1[0]
+            elif '/' in pageName[1]:
+                pageName1 = pageName[1].split('/')
+                page= pageName1[0]
+                if len(pageName1) > 1:
+                    action = pageName1[1]
+            else:
+                page  = pageName[1].strip()
+            return  render_to_response('flightsearch/'+page+'.html',{'action':action}, context_instance=RequestContext(request))
+        return  render_to_response('flightsearch/Help.html',{'action':action}, context_instance=RequestContext(request))
+    return  render_to_response('flightsearch/About.html',{'action':action}, context_instance=RequestContext(request))
 
 def blog(request, title=None):
     context = {}

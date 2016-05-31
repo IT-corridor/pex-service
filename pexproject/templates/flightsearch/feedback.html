@@ -210,7 +210,7 @@
 <div class="col-md-12 col-xs-12 bc-f2">
 
 <div class="col-md-6 col-xs-12 form-feedback " style="border-right:1px solid #ddd;">
-	<form action="sendFeedBack" method="post">
+	<form action="/sendFeedBack" method="post">
 		{% csrf_token %}
 	  <div class="form-group">
 		<label for="exampleInputEmail1">Your email address</label>
@@ -221,7 +221,7 @@
 		 <select class="form-control" id="feedback_option" name="topic">
 		  <option value="General" id="1">General</option>
 		  <option value="I have a question about a booking" id="2">I have a question about a booking</option>
-		  <option value="I found a price inaccuracy" id="3" {% if 'item' in request.GET and request.GET.item == 'report_problem' %}selected="selected"{% endif %}>I found a price inaccuracy</option>
+		  <option value="I found a price inaccuracy" id="3" {% if action and action == 'report_problem' %}selected="selected"{% endif %}>I found a price inaccuracy</option>
 		  <option value="I want to add/edit my Hotel or Property" id="4">I want to add/edit my Hotel or Property</option>
 		  <option value="I want to buy an ad" id="5">I want to buy an ad</option>
 		</select>
@@ -259,7 +259,7 @@
 	  <div class="form-group message-bx" id="message">
 		<label for="exampleInputFile">Message</label>
 		<textarea class="form-control" rows="4" name="message"></textarea>
-		<p class="dtls mt10"> While we make every attempt to get accurate data,<a href="staticPage?action=Pricing_policy"> price and availability are not guaranteed.</a></p>
+		<p class="dtls mt10"> While we make every attempt to get accurate data,<a href="/staticPage/Pricing_policy"> price and availability are not guaranteed.</a></p>
 		<p class="">Please note PEX+ may share any portion of the information submitted, including personal data, with travel vendors referenced in feedback submissions. </p>
 	  </div>
 	  
