@@ -1,5 +1,4 @@
 #!/usr/bin/env p
-
 import os, sys
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -20,6 +19,7 @@ from pyvirtualdisplay import Display
 import customfunction
 import socket
 import json
+import urllib
 
 def delta(orgn, dest, searchdate, searchkey):
     db = customfunction.dbconnection()
@@ -129,9 +129,6 @@ def delta(orgn, dest, searchdate, searchkey):
             },
             exceptionHandler: FilterFunctions.errorHandling
         });
-        
-        
-        
         """)
     except:
         print "single page"
@@ -298,7 +295,15 @@ def delta(orgn, dest, searchdate, searchkey):
                     miles = miles.replace(',','')
                 taxInt = totalFareDetails[j]['totalPriceLeft']
                 taxFloat = totalFareDetails[j]['totalPriceRight']
+                if taxFloat == '' or taxFloat == None:
+                    taxFloat = 0
                 tax = float(taxInt)+float(taxFloat)
+                currencyCode = totalFareDetails[j]['currencyCode']
+                if currencyCode and currencyCode != 'USD': 
+                    currencychange = urllib.urlopen("https://www.exchangerate-api.com/%s/%s/%f?k=e002a7b64cabe2535b57f764"%(currencyCode,"USD",float(tax)))
+                    taxes = currencychange.read()
+                else:
+                    taxes = tax
             if len(pricecol) > 1:
                 
                 if j == 0:
@@ -315,7 +320,7 @@ def delta(orgn, dest, searchdate, searchkey):
                         cabintype = 'Business'
             if 'Economy' in cabintype:
                 ecofare = miles
-                echoTax = tax
+                echoTax = taxes
                 cabintype1 = "Economy"
                 if len(fareCode) > 0:
                     ecofareClass = ' Economy@'.join(fareCode)+' Economy'
@@ -323,13 +328,13 @@ def delta(orgn, dest, searchdate, searchkey):
             elif 'Business' in cabintype:
                 cabintype2 = "Business"
                 bussfare = miles
-                busstax = tax
+                busstax = taxes
                 if len(fareCode) > 0:
                     bussFareClass = ' Business@'.join(fareCode)+' Business'
             else:
                 cabintype3 = "First"
                 firstFare = miles
-                firsttax = tax
+                firsttax = taxes
                 if len(fareCode) > 0:
                     firstFareClass = ' First@'.join(fareCode)+' First'
         departdetailtext = '@'.join(departDetail)
