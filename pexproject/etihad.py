@@ -26,8 +26,6 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     #return searchkey
     dt = datetime.datetime.strptime(searchdate, '%m/%d/%Y')
     date = dt.strftime('%d/%m/%Y')
-    #date = searchdate
-    
     db = customfunction.dbconnection()
     cursor = db.cursor()
     currentdatetime = datetime.datetime.now()
@@ -41,25 +39,18 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
         search_cabin = "Radio3"
     
     url = "http://www.etihad.com/en-us/plan-and-book/book-redemption-flights/"
-  
-    #display = Display(visible=0, size=(800, 600))
-    #display.start()
-    #chromedriver = "/usr/bin/chromedriver"
-    #os.environ["webdriver.chrome.driver"] = chromedriver
-    #driver = webdriver.Chrome(chromedriver)
-    
     driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
     driver.set_window_size(1120, 1080)  
     driver.get(url)
+    def storeFlag(searchkey,stime):
+        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "etihad", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
+        db.commit()
+        print "etihad flag inserted"
+        driver.quit()
     try:
         WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.ID, "frm_2012158061206151234")))
     except:
-        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "etihad", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
-        db.commit()
-    
-        print "etihad flag inserted"
-        #display.stop()
-        driver.quit()
+        storeFlag(searchkey,stime)
         return searchkey
 
     driver.execute_script('document.getElementById("frm_2012158061206151234").removeAttribute("readonly")')
@@ -80,16 +71,25 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     time.sleep(1)
     origin.send_keys(Keys.TAB)
     flag = 0
+    flag1 = 0
+    sourceVal = ''
     def setOrigin():
         origin.clear()
         origin.send_keys(str(source))
         time.sleep(1)
         origin.send_keys(Keys.TAB)
-    sourceVal = origin.get_attribute("value")   
-    if (sourceVal == '' or len(sourceVal) <= len(source)) and flag < 2:
-        setOrigin()
-        flag = flag+1
+    while flag < 1 and flag1 < 2:
+        sourceVal = origin.get_attribute("value")   
+        if (sourceVal == '' or len(sourceVal) <= len(source)):
+            setOrigin()
+            flag1 = flag1+1
+        else:
+            flag = flag+1
+    if sourceVal == '':
+        storeFlag(searchkey,stime)
+        return
     flag = 0
+    flag1 = 0
     driver.execute_script('return document.getElementById("frm_20121580612061235").removeAttribute("readonly")')
     to = driver.find_element_by_id("frm_20121580612061235")
     time.sleep(1) 
@@ -101,13 +101,17 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
         to.send_keys(destcode)
         time.sleep(1)
         to.send_keys(Keys.TAB)
-    
-    destcodeVal = to.get_attribute("value")
-    if (destcodeVal == '' or len(destcodeVal) <= len(destcode)) and flag < 2:
-        flag = flag+1
-        setDestination()
-   
-    
+    destcodeVal = ''
+    while flag < 1 and flag1 < 2:
+        destcodeVal = to.get_attribute("value")
+        if (destcodeVal == '' or len(destcodeVal) <= len(destcode)) and flag < 2:
+            flag1 = flag1+1
+            setDestination()
+        else:
+            flag = flag+1
+    if destcodeVal == '':
+        storeFlag(searchkey,stime)
+        return
     time.sleep(1)
     ddate = driver.find_element_by_id("frm_2012158061206151238")
     ddate.clear()
@@ -119,12 +123,7 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     try:
         WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "dtcontainer-both")))
     except:
-        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "etihad", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
-        db.commit()
-        #driver.save_screenshot('screen1.png')
-        print "etihad flag inserted"
-        #display.stop()
-        driver.quit()
+        storeFlag(searchkey,stime)
         return searchkey
     
     html_page = driver.page_source
