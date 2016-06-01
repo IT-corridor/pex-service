@@ -36,12 +36,24 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid):
     driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
     driver.set_window_size(1120, 1080)
     driver.get(url)
-    #time.sleep(1)
-    #milesbtn = driver.find_elements_by_name("payment_type")
-    #print milesbtn
-    #driver.save_screenshot("screen.png")
-    #milesbtn[1].click()
-    
+    pageStatus = driver.execute_script('return document.readyState;')
+    pageLoadFlag = 0
+    while pageLoadFlag < 1:
+        pageStatus = driver.execute_script('return document.readyState;')
+        if pageStatus == 'complete':
+            pageLoadFlag = pageLoadFlag+1
+        else:
+            time.sleep(1)
+    try:
+       
+       errorMsg = WebDriverWait(driver,4).until(
+                    lambda driver :driver.find_element_by_class_name("message"))
+       cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "Virgin America", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
+       db.commit()
+       driver.quit()
+       return
+    except:
+        print "data found"
     try:
         milesbtn = WebDriverWait(driver,5).until(
                 lambda driver :driver.find_elements_by_name("payment_type"))
@@ -56,7 +68,6 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid):
         driver.quit()
         return
 
-    
     driver.execute_script("""
         (function(XHR) {
         "use strict";
@@ -108,6 +119,7 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid):
         }
     }) (XMLHttpRequest);
     """)
+    
     try:
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "interceptedResponse")))
         html_page = driver.page_source
@@ -122,7 +134,6 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid):
     try: 
         if flightData:
             jsonOb = json.loads(flightData.text)
-            
             flightList = jsonOb["response"]["departingFlightsInfo"]["flightList"]
             value_string = []
             for key in flightList:
@@ -140,15 +151,12 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid):
                     bussFareClass = ''
                     firstFareClass = ''
                     for i in fareList:
-                    
                         if 'fareBasisCode' in fareList[i]:
-                            
                             Taxes = float(fareList[i]['pointsFare']['totalTax'])
                             Miles = int(fareList[i]['pointsFare']['totalPoints'])
                             classOfServiceList = fareList[i]['classOfServiceList']
                             fareCode = []
                             for j in range(0,len(classOfServiceList)):
-                                
                                 classOfService = classOfServiceList[j]['classOfService']
                                 fareCode.append(classOfService)
                             if 'MCS' in i and (0 == business or business > Miles):
