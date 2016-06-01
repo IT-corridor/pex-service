@@ -600,7 +600,7 @@
 								</div>
 
 								<div class="col-xs-12 nopadding pop-hover xs-nopadding">
-									<a class="" role="button" data-toggle="collapse" href="#{{selectedrow.rowid}}" aria-expanded="false" aria-controls="collapseExample">SHOW DETAILS</a>
+									<a class="show-details" role="button" data-toggle="collapse" href="#{{selectedrow.rowid}}" aria-expanded="false" aria-controls="collapseExample">SHOW DETAILS</a>
 									<div class="collapse" id="{{selectedrow.rowid}}">
 										<div class="well">
 											<h2>DEPART</h2>
@@ -1973,9 +1973,8 @@
 
 												{% if action == 'depart' %}
 												<div>
-													<form action="getsearchresult" method="get">
+													<form action="getsearchresult?keyid={{row.searchkeyid}}&cabin={{request.GET.cabin}}&passenger={{request.GET.passenger}}{% if returndata %}&returnkey={{returndata}}{%endif%}" method="post">
 														{% csrf_token %}
-														<input type="hidden" name="cabin"  value="{{request.GET.cabin}}">
 														<input type="hidden" name="rowid"  value="{{row.rowid}}">
 														<input type="hidden" name="price"
 														{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
@@ -1985,9 +1984,6 @@
 														<input type="hidden" name="tax">
 														<input type="hidden" name="action"  value="return">
 														<input type="hidden" name="datasource"  value="{{row.datasource}}">
-														<input type="hidden" name="passenger"  value="{{request.GET.passenger}}">
-														<input type="hidden" name="keyid"  value="{{row.searchkeyid}}">
-														<input type="hidden" name="returnkey"  {% if returndata %} value="{{returndata}}"{%endif%}>
 														<button type"submit" value="{{searchrow.searchid}}" name="return" class="btn btn-pexSearch">
 															Other Options For Return Flight
 														</button>
