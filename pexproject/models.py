@@ -111,7 +111,8 @@ class UserManager(BaseUserManager):
         user.firstname = fname
         
         user.lastname = lname
-        user.set_password(password)
+	if user.password == '' or user.password == None:
+            user.set_password(password)
         user.save(using=self._db)
         return user
 
@@ -206,4 +207,14 @@ class CityImages(models.Model):
     city_name = models.CharField(max_length=512)
     status = models.BooleanField(default=False)
     last_updated = models.DateTimeField()
+
+class Search(models.Model):
+    keyword = models.CharField(max_length=100)
+    frequency = models.IntegerField(default=0)
+    image = models.CharField(max_length=500)
+    lowest_price = models.CharField(max_length=50)
+    lowest_points = models.CharField(max_length=50)
+
+    def __unicode__(self):
+        return self.keyword
  

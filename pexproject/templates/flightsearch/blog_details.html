@@ -18,10 +18,10 @@
 				id="a">
 				{% if blog.blog_image_path %}
 				<div class="blog-header cstm-pd-blog" style="background: url('{{blog.blog_image_path|safe}}') no-repeat;background-size:cover;background-position:center;">
-					<h1 class="">{{blog.blog_title|title}}</h1>			
+					<h1 class="">{{blog.blog_title}}</h1>			
 				</div>
 				{%else%}
-				<h5 class="blog-title" >{{blog.blog_title|title}}</h5>
+				<h5 class="blog-title" >{{blog.blog_title}}</h5>
 				
 				{%endif%}
 				<!-- 
