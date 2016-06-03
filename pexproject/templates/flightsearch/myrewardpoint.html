@@ -13,9 +13,11 @@
 			{% endif %}
 			
 			<div class="col-xs-12 text-right cstm-btn">
+				{% if points %}
 				<a href="myRewardPoint?account=all">	
 				   <button class="btn btn-pexSearch" id="sync_all_points">Refresh All Points </button>
 				</a>
+				{% endif %}
 				<button class="btn btn-pexSearch" id="add_account">Add Account</button>
 			</div>
 			<div class="col-xs-12 form-group" id="addaccount" style="padding: 0 0 0 0">
