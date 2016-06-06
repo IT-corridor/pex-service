@@ -26,7 +26,7 @@
 				<span style="margin-bottom: 40px">{{temp_message}} </span>	
 			</div>
 			
-		<form class="form-inline"  method="post" action="myRewardPoint">
+		<form class="form-inline" id="syncform" method="post" action="myRewardPoint">
 		  {% csrf_token %}
 		  <input type="hidden" name="action" id="action" value="">
 		  <div class="col-md-12 col-xs-12 nopadding form-reward">
@@ -92,11 +92,18 @@
 			</div>
 		</div>
 		
-			
 		</div>	
+		
+		</div>
 		</div>
 		
-			
+		<div class="modal fade bs-example-modal-sm" id="point-loading-model" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+		  <div class="modal-dialog modal-sm">
+		    <div class="modal-content text-center">
+				 <img id="loading-image" src="{% static 'flightsearch/js/images/loading.gif' %}" alt="Loading..." />
+				 <p class="mvt10px">Hang on a minute while we fetch your points...</p> 
+		    </div>
+		  </div>
 		</div>
 		
 		<div class="">
@@ -105,10 +112,12 @@
 	<script>
 	
 	
-		$('#syncdata').click(function(){
-			//$('#syncdata').prop('disabled', true);
+		$('#syncform').submit(function(){
+			$('#point-loading-model').modal('show');
+			$('#syncdata').prop('disabled', true);
 		});
 		$(document).ready(function(){
+			
 			var action = '';
 			var update_action = '';
 			update_action = "{{updatemsg}}";
