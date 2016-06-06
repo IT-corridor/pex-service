@@ -99,9 +99,11 @@
 		
 		<div class="modal fade bs-example-modal-sm" id="point-loading-model" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
 		  <div class="modal-dialog modal-sm">
-		    <div class="modal-content text-center">
+		    <div class="modal-content text-center col-xs-12">
+		    
 				 <img id="loading-image" src="{% static 'flightsearch/js/images/loading.gif' %}" alt="Loading..." />
-				 <p class="mvt10px">Hang on a minute while we fetch your points...</p> 
+				 <p class="mvt10px text-center mvt15px">Please wait while we fetch your points...</p> 
+		    	
 		    </div>
 		  </div>
 		</div>
@@ -111,13 +113,14 @@
 	</div>
 	<script>
 	
-	
+		$('#sync_all_points').click(function(){
+			$('#point-loading-model').modal('show');
+		});
 		$('#syncform').submit(function(){
 			$('#point-loading-model').modal('show');
 			$('#syncdata').prop('disabled', true);
 		});
 		$(document).ready(function(){
-			
 			var action = '';
 			var update_action = '';
 			update_action = "{{updatemsg}}";
