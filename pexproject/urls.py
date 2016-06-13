@@ -4,14 +4,19 @@ from django.views.generic.base import RedirectView
 from django.conf import settings
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.static import static
+from django.conf.urls import handler404
+#from pexproject.views import error
 #from django.contrib import admin
 #admin.autodiscover()
 import views
+
+
 
 urlpatterns = patterns('',
     #url(r'^admin/', include(admin.site.urls)),
     
     url(r'^$', index, name='index'),
+    #url(r'^$', 'pexproject.views.index'),
     url(r'', include('social_auth.urls')),
     #url(r'^facebooklogin', facebooklogin, name='facebooklogin'),
     
@@ -64,6 +69,11 @@ urlpatterns = patterns('',
     #url(r'^$','social_auth.urls',namespace='social'),
     #url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT, 'show_indexes':True}),
 )
-
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns += patterns('',
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+    )
+#handler404 = error
 urlpatterns += staticfiles_urlpatterns()
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

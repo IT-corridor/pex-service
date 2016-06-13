@@ -73,15 +73,11 @@ def adminlogin(request):
     if request.POST:
         username = request.REQUEST['admin_user']
         password = request.REQUEST['admin_password']
-        
         try:
-        
             adminuser = Adminuser.objects.get(username=username, password=password)
-            
             request.session['admin'] = username
             request.session['admin_name'] = adminuser.name
             return HttpResponseRedirect('dashboard')
-            
         except:
             currentpage = "/Admin?message=invalid"
             return HttpResponseRedirect(currentpage)
@@ -93,7 +89,6 @@ def adminlogout(request):
     if 'admin' in request.session:
         del request.session['admin']  
     return HttpResponseRedirect(reverse('Admin'))
-
 
 def pages(request):
     pagelist = Pages.objects.filter()
@@ -162,7 +157,6 @@ def manageCityImage(request):
         imageid = request.GET['cityimageid']
         cityimage = CityImages.objects.get(pk = imageid)
     if request.POST :
-        
         cityimage = CityImages()
         if 'img_path' in request.POST:
             cityimage.image_path = request.POST['img_path']
@@ -175,15 +169,11 @@ def manageCityImage(request):
         if 'imageid' in request.POST:
             cityimage.city_image_id = request.POST['imageid']
             page = '/Admin/cityimages?msg=Record Updated Successfully'
-            
         else:
             page = '/Admin/cityimages?msg=Record Added Successfully'
-            
         cityimage.save()
         return HttpResponseRedirect(page)
-       
     return render_to_response('flightsearch/admin/manage_city_image.html',{'cityimage':cityimage,'citylist':citylist}, context_instance=RequestContext(request))
-        
     
 def adimage(request):
     context = {}
@@ -262,7 +252,6 @@ def manageblogImage(request):
         img = str(t)+str(file)
         img_fol = '/static/flightsearch/uploads/'
         path = directory+img_fol+img
-        print path
         dest = open(path, 'wb+')
   	CKEditorFuncNum =''
     if 'CKEditorFuncNum' in request.GET: 
@@ -324,7 +313,7 @@ def manageBlog(request):
     	    if "blogid" in request.POST:
                 page = '/Admin/bloglist?msg=Blog Edited Successfully'
     	    else:
-    	   	page = '/Admin/bloglist?msg=Blog Added Successfully'
+    	   	    page = '/Admin/bloglist?msg=Blog Added Successfully'
             return HttpResponseRedirect(page)
         except:
             page = '/Admin/bloglist?msg=There is some technical problem'
@@ -365,6 +354,7 @@ def manageEmailTemplate(request):
     return  render_to_response('flightsearch/admin/manage_email_template.html',{'templateobj':templateobj}, context_instance=RequestContext(request))
 
 def index(request):
+    
     context = {}
     user = User()
     image = ''
@@ -568,24 +558,24 @@ def signup(request):
         if request.method == "POST":
             currentdatetime = datetime.datetime.now()
             time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
-            email = request.REQUEST['username']
+            email = request.POST['username']
             user = User.objects.filter(username=email)
             if len(user) > 0:
                 msg = "Email is already registered"
                 return HttpResponseRedirect('/index?signup_msg='+msg)
                 #return render_to_response('flightsearch/index.html',{'signup_msg':msg},context_instance=RequestContext(request))
-            password = request.REQUEST['password']
+            password = request.POST['password']
             password1 = hashlib.md5(password).hexdigest()
-            airport = request.REQUEST['home_airport']
+            airport = request.POST['home_airport']
             firstname = ''
             lastname = ''
             pexdeals = 0
             if 'firstname' in request.POST:
-                firstname = request.REQUEST['firstname']
+                firstname = request.POST['firstname']
             if 'lastname' in request.POST:
-                lastname = request.REQUEST['lastname']
-            if 'pexdeals' in request.REQUEST:
-                pexdeals = request.REQUEST['pexdeals']
+                lastname = request.POST['lastname']
+            if 'pexdeals' in request.POST:
+                pexdeals = request.POST['pexdeals']
 
             object = User(username=email,email=email, password=password1,firstname=firstname,lastname=lastname, home_airport=airport,last_login=time,pexdeals=pexdeals)
             object.save()
@@ -641,7 +631,7 @@ def myRewardPoint(request):
         updatemsg = "Your account has been updated successfully"     
         
     if 'userid' in request.GET and 'airline' in request.GET:
-        pointsource = request.REQUEST['airline']
+        pointsource = request.GET['airline']
         cursor.execute("select * from reward_point_credential where user_id="+str(userid)+" and airline = '"+pointsource+"'")
         user = cursor.fetchone()
         resp = customfunction.syncPoints(pointsource,userid,user[2],user[5],user[3])
@@ -658,11 +648,11 @@ def myRewardPoint(request):
         json.dumps(data)
     	return HttpResponse(data, mimetype)
     if request.POST:
-        username = request.REQUEST['username']
-        password = request.REQUEST['password']
-        skymiles_number = request.REQUEST['skymiles_number']
-        airline = request.REQUEST['airline']
-        action = request.REQUEST['action']
+        username = request.POST['username']
+        password = request.POST['password']
+        skymiles_number = request.POST['skymiles_number']
+        airline = request.POST['airline']
+        action = request.POST['action']
         if action == 'update' :
                  
             resp = customfunction.syncPoints(airline,userid,username,skymiles_number,password)
@@ -764,7 +754,7 @@ def login(request):
     if request.method == "POST": 
         username = request.REQUEST['username']
         password = request.REQUEST['password']
-        if "curl" in request.POST:
+        if "curl" in request.POST and 'index' not in request.POST['curl']:
             currentpath = request.REQUEST['curl']
         password1 = hashlib.md5(password).hexdigest()
     	try:
@@ -783,6 +773,7 @@ def login(request):
             else:
                 msg = "Invalid username or password"
                 return HttpResponseRedirect('/index?msg='+msg)
+            
                 #return render_to_response('flightsearch/index.html', {'msg':msg}, context_instance=RequestContext(request))
     	except:
     	    msg = "Invalid username or password"
@@ -1187,12 +1178,15 @@ def checkData(request):
             for keys in multiple_key:
                 
                 if n > 1:
-                    recordcheck = recordcheck+ " inner join pexproject_flightdata p"+str(n)+" on  p"+str(n)+".searchkeyid ='" +str(keys)+"' and p1.datasource = p"+str(n)+".datasource and p"+str(n)+"."+cabin+" > 0"
-                    inner_join_on = inner_join_on+" inner join pexproject_flightdata p"+str(n)+" on  p"+str(n)+".searchkeyid ='" +str(keys)+"' and p1.datasource = p"+str(n)+".datasource and p"+str(n)+".flighno = 'flag'"
+                    #recordcheck = recordcheck+ " inner join pexproject_flightdata p"+str(n)+" on  p"+str(n)+".searchkeyid ='" +str(keys)+"' and p1.datasource = p"+str(n)+".datasource and p"+str(n)+"."+cabin+" > 0"
+                    recordcheck = recordcheck+" inner join ( select rowid,datasource from pexproject_flightdata where searchkeyid ='"+str(keys)+"' and "+cabin+" > 0 limit 10   ) as p"+str(n)+" on p1.datasource = p"+str(n)+".datasource"
+                    #inner_join_on = inner_join_on+" inner join pexproject_flightdata p"+str(n)+" on  p"+str(n)+".searchkeyid ='" +str(keys)+"' and p1.datasource = p"+str(n)+".datasource and p"+str(n)+".flighno = 'flag'"
+                    inner_join_on = inner_join_on+" inner join( select rowid,datasource from pexproject_flightdata where searchkeyid ='"+str(keys)+"' and flighno = 'flag' ) as p"+str(n)+" on p1.datasource = p"+str(n)+".datasource"
                 n = n+1
-            isdatastored = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 "+recordcheck+" where p1.searchkeyid ='"+str(multiple_key[0])+"' and p1."+cabin+" > 0")
+            #isdatastored = Flightdata.objects.raw("select count(*),p1.rowid  from pexproject_flightdata p1 "+recordcheck+" where p1.searchkeyid ='"+str(multiple_key[0])+"' and p1."+cabin+" > 0")
+            isdatastored = Flightdata.objects.raw("select p1.rowid,p1.datasource from ( select rowid,datasource from pexproject_flightdata where searchkeyid = '"+str(multiple_key[0])+"' and "+cabin+" > 0 ) as p1 "+recordcheck) 
+            flagcheck = Flightdata.objects.raw("select p1.rowid,p1.datasource from ( select rowid,datasource from pexproject_flightdata where searchkeyid = '"+str(multiple_key[0])+"' and flighno = 'flag' ) as p1 "+inner_join_on)
             
-            flagcheck = Flightdata.objects.raw("select p1.rowid from pexproject_flightdata p1 "+inner_join_on+" where p1.searchkeyid ='"+str(multiple_key[0])+"' and p1.flighno = 'flag'")
             
         else:    
             if 'keyid' in request.POST:
@@ -1204,7 +1198,6 @@ def checkData(request):
                     returnfare = "p2." + cabin
                     departfare = "p1." + cabin                
                     isdatastored = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and "+returnfare+" > 0 where p1.searchkeyid="+str(recordkey)+" and "+departfare+" > 0")
-                                     
                     flagcheck = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and p2.flighno = 'flag' where p1.searchkeyid="+str(recordkey)+" and p1.flighno = 'flag'")
                     
                     
@@ -1335,9 +1328,9 @@ def getsearchresult(request):
             action = request.GET.get('action', '')
             searchkey = request.GET.get('returnkey', '')
             returnkey = request.GET.get('keyid', '')
-        if multiple_key == '':
-            querylist = querylist + join + " p1.searchkeyid = '"+searchkey+"'"
-            join = ' AND '
+        #if multiple_key == '':
+        querylist = querylist + join + " p1.searchkeyid = '"+searchkey+"'"
+        join = ' AND '
     if 'multicity' in request.GET or 'multicity' in request.POST:
         multicitykey = request.GET.get('multicity', '')
         multicitykey1 = multicitykey.split(',')
@@ -1469,10 +1462,6 @@ def getsearchresult(request):
                             deltacabin_name = deltamin['cabintype3']
                             returndelta = Flightdata.objects.filter(searchkeyid=returnkey, datasource='delta', business=deltaminval)
                        
-                '''
-                returndelta = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',maincabin=deltaminval)            
-                '''
-                #unitedmin1 = Flightdata.objects.filter(searchkeyid=returnkey, datasource='united', maincabin__gt=0).values('maincabin', 'maintax', 'cabintype1').annotate(Min('maincabin')).order_by('maincabin')
                 if cabinclass == "maincabin" :
                     unitedmin1 = Flightdata.objects.filter(searchkeyid=returnkey, datasource='united', maincabin__gt=0).values('maincabin', 'maintax', 'cabintype1').annotate(Min('maincabin')).order_by('maincabin')
                     if len(unitedmin1) > 0:
@@ -1498,9 +1487,6 @@ def getsearchresult(request):
                             unitedtax = unitedmin['businesstax']
                             unitedcabin_name = unitedmin['cabintype3']
                             returnunited = Flightdata.objects.filter(searchkeyid=returnkey, datasource='united', business=unitedminval)
-                
-        
-        
         unitedorderprice = cabinclass + "+" + str(unitedminval)
         deltaorderprice = cabinclass + "+" + str(deltaminval)
         
