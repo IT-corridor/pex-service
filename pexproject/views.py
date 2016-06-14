@@ -1518,7 +1518,7 @@ def getsearchresult(request):
                 if orlDestination  == originname and m < len(searchdata):
                     multiSearchTitle = multiSearchTitle+"-"+destname
                     commaSeperator=''
-		    multisearch[m-1]["destination"] = ''                    
+                    multisearch[m-1]["destination"] = ''                    
                 else:
                     multiSearchTitle = multiSearchTitle+commaSeperator+originname+"-"+destname
                     commaSeperator = ", "
