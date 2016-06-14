@@ -335,7 +335,6 @@ def delta(orgn, dest, searchdate, searchkey):
         ariveDetailtext = '@'.join(ariveDetail)
         flightDetailtext = '@'.join(flightDetail)
         operatorDetailtext = '@'.join(operatorDetail)
-        
         stoppage = ''
         stop = int(len(departDetail) - 1)
         if stop == 0:
