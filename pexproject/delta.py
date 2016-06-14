@@ -26,30 +26,22 @@ def delta(orgn, dest, searchdate, searchkey):
     cursor = db.cursor()
     db.set_character_set('utf8')
     url = "http://www.delta.com/"   
+    searchid = str(searchkey)
     currentdatetime = datetime.datetime.now()
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     display = Display(visible=0, size=(800, 600))
     display.start()
+    '''
     driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
-    driver.set_window_size(1120, 1080)
-    #driver = webdriver.Chrome()
-    def storeFlag(searchkey,stime):
-        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag","flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "delta", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
-        db.commit()
-        display.stop()
-        driver.quit()
+    driver.set_window_size(1120, 1080) '''
+    driver = webdriver.Chrome()
     try:
         driver.get(url)
-        flg = 0
-        while flg < 1:
-            pageStatus = driver.execute_script('return document.readyState;')
-            print pageStatus
-            if pageStatus == 'complete':
-                flg = flg+1
-        WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "oneWayBtn")))
+        time.sleep(1)
+        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "oneWayBtn")))
         oneway = driver.find_element_by_id('oneWayBtn')
-        oneway.click()
-        #driver.execute_script("arguments[0].click();", oneway)
+        #oneway.click()
+        driver.execute_script("arguments[0].click();", oneway)
         origin = driver.find_element_by_id("originCity")
         origin.clear()
         origin.send_keys(orgn.strip())
@@ -63,13 +55,19 @@ def delta(orgn, dest, searchdate, searchkey):
         
     except:
         print "before data page"
-        storeFlag(searchkey,stime)
+        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag","flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "delta", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
+        db.commit()
+        display.stop()
+        driver.quit()
         return searchkey
     time.sleep(1)
     try:
         WebDriverWait(driver,5).until(EC.presence_of_element_located((By.ID, "submitAdvanced")))
         print "no data"
-        storeFlag(searchkey,stime)
+        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "delta", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
+        db.commit()
+        display.stop()
+        driver.quit()
         return searchkey
     except:
         print "Data found"
@@ -132,63 +130,65 @@ def delta(orgn, dest, searchdate, searchkey):
         });
         """)
     except:
-        try:
-            print "single page"
-            driver.execute_script("""
-            var sortBy = "deltaScheduleAward";  
-            SearchFlightResultsDWR.searchResults(currentSessionCheckSum, sortBy[0], delta.airShopping.numberOfColumnsToRequest, delta.airShopping.cacheKey, {
-                async: true,
-                timeout: 65000,
-                callback: function(searchResults) {
-                        var jsonData = {};
-                        
-                        jsonData['jsonobj'] = JSON.stringify(searchResults);
-                        var cabininfo = document.getElementsByClassName('tblHeadUp')[0].innerHTML;
-                        jsonData['cabinTypes'] = cabininfo;
-                        localStorage.setItem('deltaData', JSON.stringify(jsonData));
-                        var element = document.createElement('div');
-                        element.id = "submitAdvanced";
-                        element.appendChild(document.createTextNode("text"));
-                        document.body.appendChild(element);
-                        throw new Error("Results found");
-                        
-                    if (searchResults.errorFwdURL == null || searchResults.errorFwdURL == "") {
-                        flightResultsObj.isDOMReady(searchResults, action, false);
-                        FilterFunctions.hideFilterMsg();
-                    } else {
+        print "single page"
+        driver.execute_script("""
+        if(typeof delta.airShopping.defaultSortBy === 'undefined')
+        {
+            throw new Error("Results found");
+        }
+        var sortBy = [delta.airShopping.defaultSortBy, false];
+        SearchFlightResultsDWR.searchResults(currentSessionCheckSum, sortBy[0], delta.airShopping.numberOfColumnsToRequest, delta.airShopping.cacheKey, {
+            async: true,
+            timeout: 65000,
+            callback: function(searchResults) {
+                    var jsonData = {};
                     
-                        flightResultsObj.isDOMReady(searchResults, false, true);
-                    }
-                    if (!action) {
-                        Wait.hide();
-                        $(".tableHeaderHolderFareBottom").show();
-                        $("#nextGenAirShopping .tableHeaderHolder").show();
-                    }
-                },
-                errorHandler: function(msg, exc) {
-                    shoppingUtil.errorHandler(msg, exc);
-                },
-                exceptionHandler: function(msg, exc) {
-                    (action) ? FilterFunctions.hideFilterMsg(): "";
-                    shoppingUtil.exceptionHandler(msg, exc);
+                    jsonData['jsonobj'] = JSON.stringify(searchResults);
+                    var cabininfo = document.getElementsByClassName('tblHeadUp')[0].innerHTML;
+                    jsonData['cabinTypes'] = cabininfo;
+                    localStorage.setItem('deltaData', JSON.stringify(jsonData));
+                    var element = document.createElement('div');
+                    element.id = "submitAdvanced";
+                    element.appendChild(document.createTextNode("text"));
+                    document.body.appendChild(element);
+                    throw new Error("Results found");
+                    
+                if (searchResults.errorFwdURL == null || searchResults.errorFwdURL == "") {
+                    flightResultsObj.isDOMReady(searchResults, action, false);
+                    FilterFunctions.hideFilterMsg();
+                } else {
+                
+                    flightResultsObj.isDOMReady(searchResults, false, true);
                 }
-            });
-            
-            """)
-        except:
-            storeFlag(searchkey,stime)
-            return searchkey
-            
+                if (!action) {
+                    Wait.hide();
+                    $(".tableHeaderHolderFareBottom").show();
+                    $("#nextGenAirShopping .tableHeaderHolder").show();
+                }
+            },
+            errorHandler: function(msg, exc) {
+                shoppingUtil.errorHandler(msg, exc);
+            },
+            exceptionHandler: function(msg, exc) {
+                (action) ? FilterFunctions.hideFilterMsg(): "";
+                shoppingUtil.exceptionHandler(msg, exc);
+            }
+        });
+        
+        """)
     try:
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "submitAdvanced")))
     except:
-        storeFlag(searchkey,stime)
+        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "delta", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
+        db.commit()
+        driver.quit()
+        display.stop()
         return searchkey
     result = driver.execute_script(""" return localStorage.getItem('deltaData'); """)
     deltaObj = json.loads(result)
     searchResult = json.loads(deltaObj['jsonobj'])
     cabinhead = "<tr>"+deltaObj['cabinTypes']+"</tr>"
-    soup = BeautifulSoup(cabinhead,"lxml")
+    soup = BeautifulSoup(cabinhead,"xml")
     tds = soup.findAll("td")
     pricecol =  soup.findAll("a",{"class":"tblHeadBigtext lnkCabinName"})
     flightData = searchResult["itineraries"]
@@ -273,10 +273,10 @@ def delta(orgn, dest, searchdate, searchkey):
         for j in range(0,len(totalFareDetails)):
             cabintype = ''
             miles = 0
-            taxes = 0
+            taxes = 0 
             fareCode=[]
             if totalFareDetails[j]['cabinName'] != None:
-                tax = 0
+		tax = 0
                 fareCodeHolder = totalFareDetails[j]['miscFlightInfos']
                 for c in range(0,len(fareCodeHolder)):
                     fareCabin = fareCodeHolder[c]['cabinName']
