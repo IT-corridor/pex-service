@@ -63,7 +63,6 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
         WebDriverWait(driver,10).until(EC.presence_of_element_located((By.ID, "AIR_SEARCH_RESULT_CONTEXT_ID0")))
         
     except:
-        driver.save_screenshot('screen.png')
         storeFlag(searchid,stime)
         return searchid
     try:

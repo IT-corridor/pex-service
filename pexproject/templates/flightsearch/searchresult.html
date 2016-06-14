@@ -220,6 +220,7 @@
 								<div class="col-md-11 nopadding ">
 									{% for searchparam in multisearch %}
 									<div class="data-search-area">
+										
 										<p>
 											{{searchparam.source}}
 										</p>
@@ -227,10 +228,11 @@
 									</div>
 									<h4 class="for-desktop-view arrow-size"><img src="/static/flightsearch/img/summary-arrow.png"  class="img-responsive"></h4>
 									<div class="data-search-area">
+										
 										<p>
 											{{searchparam.destination}}
 										</p>
-										<span> .</span>
+											<span> &nbsp; </span> 
 									</div>
 									{% endfor %}
 									<div class="main-plc-name">
@@ -412,7 +414,9 @@
 								{% endif %}
 								<a class="price-calender" role="button" data-toggle="collapse" href="#pricecalender" aria-expanded="false" aria-controls="pricecalender"> View Price Matrix</a>
 								<div class="collapse" id="pricecalender">
+									{% if 'multicity' not in request.GET %}
 									<span class="mvt10px"> {{search.0.source}} to {{search.0.destination}}{% if returndate %}: Round Trip{%else%}:  One Way{% endif %}</span>
+									{%endif%}
 									<div class="well custom-well text-center">
 										<section id="">
 
@@ -2049,6 +2053,7 @@
 
 					<div class="row">
 						<div class="col-sm-7 col-sm-push-5 col-xs-12 login-section">
+							
 							<center>
 								<b>
 								<sapn class="pr5">
@@ -2063,6 +2068,7 @@
 								<br>
 								<small>This will not interfere with your search.</small></h4>
 							</center>
+							
 							<div class="tab-content">
 								<div role="tabpanel" class="tab-pane active">
 									<p id="subs_msg"></p>
@@ -2507,7 +2513,7 @@
 		slideTime1();
 
 		//======================================== end time slider======================================
-
+	// ======================Auto suggest ==============================
 		$(function() {
 
 			$("#from").autocomplete({

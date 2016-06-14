@@ -1328,9 +1328,9 @@ def getsearchresult(request):
             action = request.GET.get('action', '')
             searchkey = request.GET.get('returnkey', '')
             returnkey = request.GET.get('keyid', '')
-        #if multiple_key == '':
-        querylist = querylist + join + " p1.searchkeyid = '"+searchkey+"'"
-        join = ' AND '
+        if multiple_key == '':
+            querylist = querylist + join + " p1.searchkeyid = '"+searchkey+"'"
+            join = ' AND '
     if 'multicity' in request.GET or 'multicity' in request.POST:
         multicitykey = request.GET.get('multicity', '')
         multicitykey1 = multicitykey.split(',')
@@ -1515,14 +1515,15 @@ def getsearchresult(request):
             for row in searchdata:
                 originname = re.findall(re.escape("(")+"(.*)"+re.escape(")"),row.source)[0]
                 destname = re.findall(re.escape("(")+"(.*)"+re.escape(")"),row.destination)[0]
-                if orlDestination  == originname:
+                if orlDestination  == originname and m < len(searchdata):
                     multiSearchTitle = multiSearchTitle+"-"+destname
                     commaSeperator=''
-                    
+                    orlDestination = destname
+                    multisearch[m-1]["destination"] = ''
                 else:
                     multiSearchTitle = multiSearchTitle+commaSeperator+originname+"-"+destname
                     commaSeperator = ", "
-                orlDestination = destname
+                    orlDestination = destname
                 travingDate = row.traveldate.strftime('%-m/%-d')
                 dateString = dateString+dateSeperator+travingDate
                 dateSeperator = '-'

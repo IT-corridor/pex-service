@@ -27,39 +27,33 @@ import urllib
 #import settings
 
 def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
-    #return searchkey
-    print origin,dest, searchdate,returndate, searchkey,returnkey
-    
-    db = customfunction.dbconnection()
-    cursor = db.cursor()
-    #cursor = connection.cursor()
-    dt = datetime.datetime.strptime(searchdate, '%m/%d/%Y')
-    date = dt.strftime('%d/%m/%Y')
-    if returndate:
-        dt1 = datetime.datetime.strptime(returndate, '%m/%d/%Y')
-        retdate = dt1.strftime('%d/%m/%Y') 
-    currentdatetime = datetime.datetime.now()
-    stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
-    if returndate:
-        url = "http://www.virgin-atlantic.com/us/en/book-your-travel/book-your-flight/flight-search-results.html?departure="+origin+"&arrival="+dest+"&adult=1&departureDate="+str(date)+"&search_type=redeemMiles&classType=10&classTypeReturn=10&bookingPanelLocation=Undefined&isreturn=yes&returnDate="+str(retdate)
-    else:
-        url = "http://www.virgin-atlantic.com/us/en/book-your-travel/book-your-flight/flight-search-results.html?departure="+origin+"&arrival="+dest+"&adult=1&departureDate="+str(date)+"&search_type=redeemMiles&classType=10&classTypeReturn=10&bookingPanelLocation=BookYourFlight&isreturn=no"
-    #display = Display(visible=0, size=(800, 600))
-    #display.start()
-    #driver = webdriver.Chrome()
-    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
-    driver.set_window_size(1120, 1080)
-    #chromedriver = "/usr/bin/chromedriver"
-    #os.environ["webdriver.chrome.driver"] = chromedriver
-    #driver = webdriver.Chrome(chromedriver)
-    #driver = webdriver.Chrome()
-    driver.get(url)
-    # normalLayout
-    #driver.implicitly_wait(20)
-    time.sleep(2)
-    html_page = driver.page_source
-    
-    soup = BeautifulSoup(html_page)
+    try:
+        db = customfunction.dbconnection()
+        cursor = db.cursor()
+        #cursor = connection.cursor()
+        dt = datetime.datetime.strptime(searchdate, '%m/%d/%Y')
+        date = dt.strftime('%d/%m/%Y')
+        if returndate:
+            dt1 = datetime.datetime.strptime(returndate, '%m/%d/%Y')
+            retdate = dt1.strftime('%d/%m/%Y') 
+        currentdatetime = datetime.datetime.now()
+        stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
+        if returndate:
+            url = "http://www.virgin-atlantic.com/us/en/book-your-travel/book-your-flight/flight-search-results.html?departure="+origin+"&arrival="+dest+"&adult=1&departureDate="+str(date)+"&search_type=redeemMiles&classType=10&classTypeReturn=10&bookingPanelLocation=Undefined&isreturn=yes&returnDate="+str(retdate)
+        else:
+            url = "http://www.virgin-atlantic.com/us/en/book-your-travel/book-your-flight/flight-search-results.html?departure="+origin+"&arrival="+dest+"&adult=1&departureDate="+str(date)+"&search_type=redeemMiles&classType=10&classTypeReturn=10&bookingPanelLocation=BookYourFlight&isreturn=no"
+        #display = Display(visible=0, size=(800, 600))
+        #display.start()
+        #driver = webdriver.Chrome()
+        driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
+        driver.set_window_size(1120, 1080)
+        driver.get(url)
+        time.sleep(2)
+        html_page = driver.page_source
+        soup = BeautifulSoup(html_page)
+    except:
+        if driver:
+            driver.quit()
     value_string = []
     recordcount = 1
     def virgindata(tbody,keyid):

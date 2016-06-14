@@ -37,15 +37,10 @@ def united(origin, destination, searchdate, searchkey):
     #driver.set_window_size(1120, 550)
     
     driver = webdriver.Chrome(chromedriver)
-    
-    '''
-    driver=webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true', '--ssl-protocol=any'])
-    driver.set_window_size(1120, 550)
-    #driver = webdriver.Chrome("/usr/bin/chromedriver")
-    '''
-    driver.get(url)
-    time.sleep(2)
+
     try:
+        driver.get(url)
+        time.sleep(2)
         driver.execute_script("""
         (function(XHR) {
         "use strict";
@@ -120,14 +115,7 @@ def united(origin, destination, searchdate, searchkey):
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "united", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
         db.commit()
         return searchkey
-    '''
-    html_page = driver.page_source
-    soup = BeautifulSoup(html_page,"xml")
-    maindata = soup.findAll("div",{"id":"interceptedResponse"})
     
-    json_string = maindata[0].text
-    jsonOb = json.loads(json_string)
-    flightDetails = jsonOb["data"]["Trips"][0]["Flights"] #[0]["DepartTimeFormat"] '''
     comma = ''
     values_string = []
     totalrecords = len(flightDetails)
@@ -176,18 +164,6 @@ def united(origin, destination, searchdate, searchkey):
             lastFlightTravelhour = lastFlightTravelTime/60
             lastFlightTravelminute = lastFlightTravelTime % 60
             lastFlightTravelDuration = str(lastFlightTravelhour)+"h "+str(lastFlightTravelminute)+"m"
-        
-        #print "Connections",flightDetails[i]["Connections"]
-        
-        '''
-        connectionFlight = flightDetails[i]["Connections"]
-        if connectionFlight != None:
-            #connectioninfo = json.loads(connectionFlight)
-            print "+++++++++++++++++++++++++++++++++++++++++++++"
-            print len(connectionFlight)
-            for p in range(0,len(connectionFlight)):
-                print "connectioninfo origin",connectionFlight[p]["OriginDescription"]
-        '''   
         
         DepartDateFormat = flightDetails[i]["DepartDateFormat"]
         #print "**************Destination*****************/n"
@@ -257,14 +233,6 @@ def united(origin, destination, searchdate, searchkey):
                 filghtFormat = OperatingCarrierCode+" "+FlightNumber+" | "+EquipmentDescription+" ("+lastFlightTravelDuration+")"
             flightdeatails.append(filghtFormat)
             
-            
-  
-        #print "AllEquipmentDisclosures",flightDetails[i]["AllEquipmentDisclosures"]
-        
-        #print "AirportsStopList",flightDetails[i]["AirportsStopList"]
-        #print "TravelMinutes",flightDetails[i]["TravelMinutes"]
-        #print "PricesByColumn",flightDetails[i]["PricesByColumn"]
-      
         
         economy = 0
         ecoTax = 0
@@ -332,20 +300,6 @@ def united(origin, destination, searchdate, searchkey):
         if len(firtFareClassCode) > 0:
            firstFareCode = '@'.join(firtFareClassCode)
         
-        '''
-        print "stoppage",stoppage
-        print "totaltime",totaltime
-        print "Origin info",source, test1
-        print "Final destination",lastdestination, arivetime
-        print "economy",economy
-        print "business",business
-        print "first",first
-        print "ecoFareCode",ecoFareCode
-        print "businessFareCode",businessFareCode
-        print "firstFareCode",firstFareCode
-        print "firstTax",firstTax
-        print "ecoTax",ecoTax
-        print "businessTax",businessTax ''' 
         departdetailsText = '@'.join(departdetails) 
         arivedetailsText = '@'.join(arivaildetails) 
         planedetails = '@'.join(flightdeatails)

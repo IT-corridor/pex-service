@@ -18,16 +18,22 @@ sendgrid_api_key = "SG.68Zcrl5NQ56XwSn3gbgmGQ.NoYD5_4T8nLZhg9eCbIxboO3_IRjOUGFEM
 mailchimp_api_key = "def631e53845c0b9f251db8fdd8d2ae6-us12"
 mailchiml_List_ID = "bda2a62002"
 mailchimp_username = "pradeep@techencephalon.com"
-is_scrape_delta =1
-is_scrape_united = 1
-is_scrape_virgin_atlantic = 1
-is_scrape_jetblue = 1
+is_scrape_delta = 1
+is_scrape_united = 0
+is_scrape_virgin_atlantic = 0
+is_scrape_jetblue = 0
 is_scrape_aa = 0
+is_scrape_virginAmerica = 0
+is_scrape_vAUS = 0
+is_scrape_etihad = 0
+is_aeroflot = 0
+is_debug_tool = 1
+flag = 0
 
 def dbconnection():
     db = MySQLdb.connect(host="localhost",  
                      user="root",           
-                      passwd="1jyT382PWzYP",        
+                      passwd="root",        
                       db="pex")  
     return db
 
@@ -46,9 +52,7 @@ def sendMail(from_email,to_email,subject,bodytext,html_content=None):
             if html_content:
                 message.set_html(html_content)
     	resp = client.send(message)
-    	print "resp",resp
     	return  "sent"
-    	
     except:
         return "fail"
     
