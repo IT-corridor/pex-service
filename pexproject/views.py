@@ -1179,7 +1179,7 @@ def checkData(request):
                 
                 if n > 1:
                     #recordcheck = recordcheck+ " inner join pexproject_flightdata p"+str(n)+" on  p"+str(n)+".searchkeyid ='" +str(keys)+"' and p1.datasource = p"+str(n)+".datasource and p"+str(n)+"."+cabin+" > 0"
-                    recordcheck = recordcheck+" inner join ( select rowid,datasource from pexproject_flightdata where searchkeyid ='"+str(keys)+"' and "+cabin+" > 0 limit 10   ) as p"+str(n)+" on p1.datasource = p"+str(n)+".datasource"
+                    recordcheck = recordcheck+" inner join ( select rowid,datasource from pexproject_flightdata where searchkeyid ='"+str(keys)+"' and "+cabin+" > 0 ) as p"+str(n)+" on p1.datasource = p"+str(n)+".datasource"
                     #inner_join_on = inner_join_on+" inner join pexproject_flightdata p"+str(n)+" on  p"+str(n)+".searchkeyid ='" +str(keys)+"' and p1.datasource = p"+str(n)+".datasource and p"+str(n)+".flighno = 'flag'"
                     inner_join_on = inner_join_on+" inner join( select rowid,datasource from pexproject_flightdata where searchkeyid ='"+str(keys)+"' and flighno = 'flag' ) as p"+str(n)+" on p1.datasource = p"+str(n)+".datasource"
                 n = n+1
@@ -1301,7 +1301,7 @@ def getsearchresult(request):
     adimages = GoogleAd.objects.filter(ad_code="result page")
     if request.is_ajax():
         if 'page_no' in request.POST:
-            pageno = request.REQUEST['page_no']
+            pageno = request.POST['page_no']
         offset = (int(pageno) - 1) * limit
              
     action = ''
@@ -1518,12 +1518,11 @@ def getsearchresult(request):
                 if orlDestination  == originname and m < len(searchdata):
                     multiSearchTitle = multiSearchTitle+"-"+destname
                     commaSeperator=''
-                    orlDestination = destname
-                    multisearch[m-1]["destination"] = ''
+		    multisearch[m-1]["destination"] = ''                    
                 else:
                     multiSearchTitle = multiSearchTitle+commaSeperator+originname+"-"+destname
                     commaSeperator = ", "
-                    orlDestination = destname
+                orlDestination = destname
                 travingDate = row.traveldate.strftime('%-m/%-d')
                 dateString = dateString+dateSeperator+travingDate
                 dateSeperator = '-'
@@ -1565,6 +1564,7 @@ def getsearchresult(request):
                 n = n+1
             finalquery = qry1+"CONCAT("+newidstring+") as newid ,"+qry2+ totalfare+" as finalprice "+totaltax+" as totaltaxes from (select  * from pexproject_flightdata where "+querylist+" searchkeyid ='"+str(recordkey)+"' and "+cabinclass+" > '0' order by "+cabinclass+") as p1 "+qry3 + " order by finalprice,totaltaxes , departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset)
             record_obj = Flightdata.objects.raw(finalquery)
+	    #print finalquery
             record = list(record_obj)
             for row in record:
                 mainlist1=''

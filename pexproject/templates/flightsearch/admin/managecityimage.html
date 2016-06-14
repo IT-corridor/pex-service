@@ -4,8 +4,13 @@
 		{% load humanize %}
 		<title>Admin|Dashboard</title>
 		{% include "flightsearch/admin/admin-header.html" %}
-		
-			{% include "flightsearch/admin/admin-sidebar.html" %}
+		{% include "flightsearch/admin/admin-sidebar.html" %}
+		<link rel="stylesheet" href="{% static 'flightsearch/admin/autocomplete/jquery-ui.css' %}">
+		<link rel="stylesheet" href="{% static 'flightsearch/admin/autocomplete/jquery-ui.min.css' %}">
+		<link rel="stylesheet" href="{% static 'flightsearch/admin/autocomplete/jquery-ui.theme.css' %}">
+		<link rel="stylesheet" href="{% static 'flightsearch/admin/autocomplete/jquery-ui.theme.min.css' %}">
+		<script src="{% static 'flightsearch/admin/autocomplete/jquery-ui.js' %}"></script>
+		<script src="{% static 'flightsearch/admin/autocomplete/jquery-ui.min.js' %}"></script>
 		<div class="main-content">
 			<div class="row">
 
@@ -34,23 +39,12 @@
 
 						<!-- Profile Info -->
 						<li class="profile-info dropdown">
-							<!-- add class "pull-right" if you want to place this from right -->
+							
 						
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown">
 							{{request.session.admin}}							<i class="entypo-down-open"></i>
 							</a>
-							<!--  
-							<ul class="dropdown-menu">
-								<li class="caret"></li>
-								<li><a href="/easy-detaxt/admin/manageprofile">
-										<i class="entypo-user"></i> Edit profile
-								</a></li>
-								<li><a href="/easy-detaxt/admin/changepassword">
-										<i class="entypo-user"></i> Change password
-								</a></li>
-
-							</ul>
-							-->
+							
 						</li>
 						
 
@@ -81,35 +75,37 @@
 
 			<div class="panel-body">
 
-				<form class="form-horizontal" id="imageform" action="manage_adimage" method="post" enctype="multipart/form-data">
+				<form class="form-horizontal" id="imageform" action="manageCityImage" method="post" enctype="multipart/form-data">
 					{% csrf_token %}
-					{%if imageobj.ad_id %}
-				 		<input type="hidden" name="imageid"  value="{{imageobj.ad_id}}">
+					{%if cityimage.city_image_id %}
+				 		<input type="hidden" name="imageid"  value="{{cityimage.city_image_id}}">
 				 	{%endif%}
-				<input type="hidden" name="ad_code" {% if imageobj.ad_code %} value="{{imageobj.ad_code}}" {% endif %} /> 
 				 <div class="form-group">
-				 	
-				    
-				  <div class="form-group">
-				    <label for="image" class="col-sm-2 control-label">Google Code</label>
-				    <div class="col-sm-10">
-				      <textarea cols="73" rows="4" class="form-control" name="google_code">
-				      	{%if imageobj.google_code %} {{imageobj.google_code}}{%endif%}
-				      </textarea>
-				      
+				    <label for="city" class="col-sm-2 control-label"> Select City</label>
+				    <div class="col-sm-10 ui-widget">
+				    	<input type="search" class="form-control" id="city" name="cityname"  autocomplete="off" {% if cityimage and cityimage.city_name %}value="{{cityimage.city_name}}"{%endif%}>
 				    </div>
-				  </div>
+				 </div>	
+				
 				  <div class="form-group">
 				    <label for="image" class="col-sm-2 control-label">Select Ad Image</label>
 				    <div class="col-sm-10">
-				      <!--<input type="file" class="form-control" name="image">-->
+				      
 				      <input id="file-1" type="file" multiple="true" data-preview-file-type="any" name="image[]" />
-				      <input type="hidden" name="img_path" id="doc" />
+				      <input type="hidden" name="img_path" id="doc" {% if cityimage and cityimage.image_path %} value="{{cityimage.image_path}}" {%endif%}/>
 				    </div>
 				  </div>
-				 <!-- 
-				  <img src="{{imageobj.image_path|safe}}">
-				   -->
+				  
+				  <div class="form-group">
+				    <label for="is_active" class="col-sm-2 control-label">Is Active</label>
+				    <div class="col-sm-10">
+				      <input type="checkbox" class="" name="status" value="1"
+				      {% if cityimage and cityimage.status == True %} checked {%endif%}
+				       />
+				      
+				    </div>
+				  </div>
+			
 				  
 				  <div class="form-group">
 				    <div class="col-sm-offset-2 col-sm-10">
@@ -130,9 +126,11 @@
 
 	</div>
 </div>
-	
+{% include "flightsearch/admin/admin-footer.html" %}
 <script src="{% static 'flightsearch/js/jquery.form.js' %}"></script>
-	<script src="{% static 'flightsearch/js/fileinput.js' %}"></script>
+<script src="{% static 'flightsearch/js/fileinput.js' %}"></script>
+
+	
 	<script>
 $(function(){
 $("#file-1").change(function() { 
@@ -179,8 +177,19 @@ function uploadfile()
 		}
 	});
 }
-
-
+</script>
+<script>
+$(function() {
+	$( "#city" ).autocomplete({
+    	open: function(event, ui) {
+	        	$('.ui-autocomplete').off('menufocus hover mouseover');
+    		},
+    	autoFocus: true,
+    	source: "get_cityname/",
+    	minLength: 2,
+    	
+    });
+  });
 </script>
 
 <script>
@@ -195,9 +204,6 @@ $("#uploadid").click(function(event){
 });
 
 </script>
-	
-			 
-			
-	
+
 	</body>
 </html>
