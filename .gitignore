@@ -5,3 +5,4 @@ pexproject/static/flightsearch/uploads
 *.py~
 *.html~
 *.sw*
+pexproject/customfunction.py
