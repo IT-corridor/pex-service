@@ -26,13 +26,10 @@ def delta(orgn, dest, searchdate, searchkey):
     cursor = db.cursor()
     db.set_character_set('utf8')
     url = "http://www.delta.com/"   
-    #searchid = str(searchkey)
     currentdatetime = datetime.datetime.now()
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
-  
     display = Display(visible=0, size=(800, 600))
     display.start()
-    
     driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
     driver.set_window_size(1120, 1080)
     #driver = webdriver.Chrome()
@@ -190,16 +187,13 @@ def delta(orgn, dest, searchdate, searchkey):
     result = driver.execute_script(""" return localStorage.getItem('deltaData'); """)
     deltaObj = json.loads(result)
     searchResult = json.loads(deltaObj['jsonobj'])
-    
     cabinhead = "<tr>"+deltaObj['cabinTypes']+"</tr>"
-    
     soup = BeautifulSoup(cabinhead,"lxml")
     tds = soup.findAll("td")
     pricecol =  soup.findAll("a",{"class":"tblHeadBigtext lnkCabinName"})
     flightData = searchResult["itineraries"]
     values_string = []
     for i in range(0,len(flightData)):
-        
         totalFareDetails = flightData[i]['totalFare']
         slicesDetails = flightData[i]['slices']
         departDetail = []
@@ -213,7 +207,6 @@ def delta(orgn, dest, searchdate, searchkey):
         departTime=''
         flightNo = ''
         for k in range(0,len(slicesDetails)):
-            
             tripDuration = slicesDetails[k]['duration']
             SourceCOde = slicesDetails[k]['sliceOrigin']['airportCode']
             destinationCode = slicesDetails[k]['sliceDestination']['airportCode']
@@ -243,7 +236,6 @@ def delta(orgn, dest, searchdate, searchkey):
                             destAirport = destcityname+" "+destcityCode+" ("+orgnCode+")"
                         
                         duration = legdetail['duration']
-                        #print "airTime",legdetail['airTime']
                         schedDepartureTime = legdetail['schedDepartureTime']
                         schedDepartureDate = legdetail['schedDepartureDate']
                         schedArrivalTime = legdetail['schedArrivalTime']
