@@ -279,10 +279,10 @@ def delta(orgn, dest, searchdate, searchkey):
         for j in range(0,len(totalFareDetails)):
             cabintype = ''
             miles = 0
-            tax = 0
-            
+            taxes = 0 
             fareCode=[]
             if totalFareDetails[j]['cabinName'] != None:
+		tax = 0
                 fareCodeHolder = totalFareDetails[j]['miscFlightInfos']
                 for c in range(0,len(fareCodeHolder)):
                     fareCabin = fareCodeHolder[c]['cabinName']
