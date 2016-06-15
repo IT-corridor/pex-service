@@ -1070,7 +1070,7 @@ def search(request):
                     subprocess.Popen(["scrapy", "runspider", settings.BASE_DIR+"/pexproject/aeroflot.py", "-a", "origin="+orgncode,"-a", "destination="+destcode,"-a", "date="+formated_date,"-a", "searchid="+str(searchkeyid)])
                     
             if is_scrape_virgin_atlantic == 1:
-                #customfunction.flag = customfunction.flag+1
+                customfunction.flag = customfunction.flag+1
                 Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='virgin_atlantic').delete()
                 if returnkey:
                     Flightdata.objects.filter(searchkeyid=returnkey,datasource='virgin_atlantic').delete()            
