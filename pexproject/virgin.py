@@ -80,7 +80,7 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
                     trbody = tbody.findAll("tr",{"class":"indirectRoute "})
         except:
             #storeFlag(keyid,stime)
-            driver.quit()
+            #driver.quit()
             return keyid
         for row in trbody:
             econo = 0
@@ -325,7 +325,7 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
         if len(value_string) > 0:
             cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);",value_string )
             db.commit()
-        driver.quit()
+        #driver.quit()
             
     tbody = soup.findAll("tbody",{"class":"flightStatusTbody"})
     if searchkey:
@@ -336,6 +336,7 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
         if len(tbody)> 1 :
             virgindata(tbody[1],returnkey)
         storeFlag(returnkey,stime)
+    driver.quit()
     return searchkey
 
 virgin_atlantic(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5],sys.argv[6])
