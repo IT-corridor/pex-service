@@ -26,44 +26,45 @@ import socket
 import urllib
 #import settings
 
-def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
-    #return searchkey
-    print origin,dest, searchdate,returndate, searchkey,returnkey
-    
+def storeFlag(searchkey,stime):
     db = customfunction.dbconnection()
     cursor = db.cursor()
-    #cursor = connection.cursor()
-    dt = datetime.datetime.strptime(searchdate, '%m/%d/%Y')
-    date = dt.strftime('%d/%m/%Y')
-    if returndate:
-        dt1 = datetime.datetime.strptime(returndate, '%m/%d/%Y')
-        retdate = dt1.strftime('%d/%m/%Y') 
-    currentdatetime = datetime.datetime.now()
-    stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
-    if returndate:
-        url = "http://www.virgin-atlantic.com/us/en/book-your-travel/book-your-flight/flight-search-results.html?departure="+origin+"&arrival="+dest+"&adult=1&departureDate="+str(date)+"&search_type=redeemMiles&classType=10&classTypeReturn=10&bookingPanelLocation=Undefined&isreturn=yes&returnDate="+str(retdate)
-    else:
-        url = "http://www.virgin-atlantic.com/us/en/book-your-travel/book-your-flight/flight-search-results.html?departure="+origin+"&arrival="+dest+"&adult=1&departureDate="+str(date)+"&search_type=redeemMiles&classType=10&classTypeReturn=10&bookingPanelLocation=BookYourFlight&isreturn=no"
-    #display = Display(visible=0, size=(800, 600))
-    #display.start()
-    #driver = webdriver.Chrome()
+    cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag","flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "virgin_atlantic", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
+    db.commit()
+    
+
+def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
     driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
     driver.set_window_size(1120, 1080)
-    #chromedriver = "/usr/bin/chromedriver"
-    #os.environ["webdriver.chrome.driver"] = chromedriver
-    #driver = webdriver.Chrome(chromedriver)
-    #driver = webdriver.Chrome()
-    driver.get(url)
-    # normalLayout
-    #driver.implicitly_wait(20)
-    time.sleep(2)
-    html_page = driver.page_source
+    try:
+        db = customfunction.dbconnection()
+        cursor = db.cursor()
+        #cursor = connection.cursor()
+        dt = datetime.datetime.strptime(searchdate, '%m/%d/%Y')
+        date = dt.strftime('%d/%m/%Y')
+        if returndate:
+            dt1 = datetime.datetime.strptime(returndate, '%m/%d/%Y')
+            retdate = dt1.strftime('%d/%m/%Y') 
+        currentdatetime = datetime.datetime.now()
+        stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
+        if returndate:
+            url = "http://www.virgin-atlantic.com/us/en/book-your-travel/book-your-flight/flight-search-results.html?departure="+origin+"&arrival="+dest+"&adult=1&departureDate="+str(date)+"&search_type=redeemMiles&classType=10&classTypeReturn=10&bookingPanelLocation=Undefined&isreturn=yes&returnDate="+str(retdate)
+        else:
+            url = "http://www.virgin-atlantic.com/us/en/book-your-travel/book-your-flight/flight-search-results.html?departure="+origin+"&arrival="+dest+"&adult=1&departureDate="+str(date)+"&search_type=redeemMiles&classType=10&classTypeReturn=10&bookingPanelLocation=BookYourFlight&isreturn=no"
+        #display = Display(visible=0, size=(800, 600))
+        #display.start()
+        #driver = webdriver.Chrome()
+        driver.get(url)
+        time.sleep(2)
+        html_page = driver.page_source
+        soup = BeautifulSoup(html_page,"lxml")
+    except:
+        storeFlag(searchkey,stime)
+        driver.quit()
     
-    soup = BeautifulSoup(html_page)
-    #value_string = []
-    #recordcount = 1
     def virgindata(tbody,keyid):
-	value_string = []
+        recordcount = 1
+        value_string = []
         try :
             if tbody.findAll("tr",{"class":"directRoute "}):
                 trbody = tbody.findAll("tr",{"class":"directRoute "})
@@ -71,7 +72,7 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
                 if tbody.findAll("tr",{"class":"indirectRoute "}):
                     trbody = tbody.findAll("tr",{"class":"indirectRoute "})
         except:
-            #display.stop()
+            storeFlag(searchkey,stime)
             driver.quit()
             return keyid
         for row in trbody:
@@ -91,7 +92,7 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
             if economy == '' and row.find("td",{"class":"cellOption economy "}):
                 economy = row.find("td",{"class":"cellOption economy "})
             if economy:
-                print "--------------economy--------------------------------"
+                "--------------economy--------------------------------"
                 economy_price = economy.find("span",{"class":"price"})
                 econprice1 = economy_price.text
                 
@@ -119,7 +120,7 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
             if pre_economy == '' and row.find("td",{"class":"cellOption premEconomy  hasLowestCostMessage"}):
                 pre_economy = row.find("td",{"class":"cellOption premEconomy  hasLowestCostMessage"})
             if pre_economy:
-                print "--------------pre economy--------------------------------"
+                "--------------pre economy--------------------------------"
                 pre_economy_price = pre_economy.find("span",{"class":"price"})
                 pre_economy = pre_economy_price.text
                 #print pre_economy
@@ -144,7 +145,7 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
                     #print "pre_econotax",busstax
             upper_class = ''
             if row.find("td",{"class":"cellOption upperclass  last"}):
-                print "--------------upper class--------------------------------"
+                "--------------upper class--------------------------------"
                 upper_class = row.find("td",{"class":"cellOption upperclass  last"})
             else:
                 if row.find("td",{"class":"cellOption upperclass  last hasLowestCostMessage"}):
@@ -195,7 +196,6 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
                 if '+' in arivaltime:
                     arivaltimesplit = arivaltime.split('+')
                     arivaltime = arivaltimesplit[0]
-                print "arivaltime",arivaltime
                 ariveat1 = ariveinfo[1].text
                 if 'at' in ariveat1:
                     ariveat = (ariveat1.replace('at','')).strip()
@@ -307,14 +307,14 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
             arivedetails = '@'.join(arivelist)
             planedetails = ('@'.join(planelist)).strip()
             operatedbytext = '@'.join(operatedby)  
-            print "==============================================================================================="
+            
             value_string.append((fl_flightno, str(keyid), stime, stp, lyover, sourcestn, destinationstn, depttime, arivaltime,total_duration, str(econo), str(econotax), str(business), str(busstax), str(first), str(firsttax),"Economy","Business","First", "virgin_atlantic", departdetails, arivedetails, planedetails, operatedbytext))
-            #recordcount = recordcount+1
-            if len(value_string) > 50:
+            recordcount = recordcount+1
+            if recordcount > 50:
                 cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);",value_string )
                 db.commit()
                 value_string = []
-                #recordcount = 1
+                recordcount = 1
         if len(value_string) > 0:
             cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);",value_string )
             db.commit()
@@ -325,8 +325,7 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
         
     if len(tbody)> 1 :
         virgindata(tbody[1],returnkey)
-    #display.stop()                                                                                                                                  
-    driver.quit()
+    storeFlag(searchkey,stime)
     return searchkey
 
 virgin_atlantic(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5],sys.argv[6])
