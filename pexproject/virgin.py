@@ -59,8 +59,15 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
         html_page = driver.page_source
         soup = BeautifulSoup(html_page,"lxml")
     except:
+        print "before data page"
+        print "searchkey",searchkey
+        print "returnkey",returnkey
         storeFlag(searchkey,stime)
+        if returnkey:
+            storeFlag(returnkey,stime)
+            print "return key stored"
         driver.quit()
+        return
     
     def virgindata(tbody,keyid):
         recordcount = 1
@@ -72,7 +79,7 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
                 if tbody.findAll("tr",{"class":"indirectRoute "}):
                     trbody = tbody.findAll("tr",{"class":"indirectRoute "})
         except:
-            storeFlag(searchkey,stime)
+            #storeFlag(keyid,stime)
             driver.quit()
             return keyid
         for row in trbody:
@@ -318,14 +325,17 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
         if len(value_string) > 0:
             cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);",value_string )
             db.commit()
+        driver.quit()
             
     tbody = soup.findAll("tbody",{"class":"flightStatusTbody"})
-    if len(tbody) > 0:
-        virgindata(tbody[0],searchkey)
-        
-    if len(tbody)> 1 :
-        virgindata(tbody[1],returnkey)
-    storeFlag(searchkey,stime)
+    if searchkey:
+        if len(tbody) > 0:
+            virgindata(tbody[0],searchkey)
+        storeFlag(searchkey,stime)
+    if returnkey:
+        if len(tbody)> 1 :
+            virgindata(tbody[1],returnkey)
+        storeFlag(returnkey,stime)
     return searchkey
 
 virgin_atlantic(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5],sys.argv[6])
