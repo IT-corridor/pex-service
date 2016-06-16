@@ -190,6 +190,7 @@ def united(origin, destination, searchdate, searchkey):
             stopstation = segmentJsonObj[k]["Stops"]
             if stopstation != None:
                 stopnJsonobj = stopstation
+                
                 if len(stopnJsonobj) > 0:
 
                     for l in range(0,len(stopnJsonobj)):
@@ -208,6 +209,10 @@ def united(origin, destination, searchdate, searchkey):
                         stopOperator = stopnJsonobj[l]["OperatingCarrierDescription"]
                         if stopOperator != None:
                             operator.append(stopOperator)
+                        else:
+                            stopOperator = segmentJsonObj[k]["MarketingCarrierDescription"]
+                            if stopOperator != None:
+                                operator.append(stopOperator)
                         stopFlightNumber = stopnJsonobj[l]["FlightNumber"]
                         stopOperatingCarrierCode = stopnJsonobj[l]["OperatingCarrierCode"]
                         stopflightDetail = stopOperatingCarrierCode+" "+stopFlightNumber
@@ -225,6 +230,10 @@ def united(origin, destination, searchdate, searchkey):
             operatedby = segmentJsonObj[k]["OperatingCarrierDescription"]
             if operatedby != None:
                 operator.append(operatedby)
+            else:
+                operatedby = segmentJsonObj[k]["MarketingCarrierDescription"]
+                if operatedby != None:
+                    operator.append(operatedby)
             
             EquipmentDescription = segmentJsonObj[k]["EquipmentDescription"]
             if source.strip() == segmentJsonObj[k]["Origin"].strip():
@@ -248,7 +257,6 @@ def united(origin, destination, searchdate, searchkey):
         businessFareCode =''
         firstFareCode = ''
         for j in range(0, len(flightDetails[i]["Products"])):
-            #print "FlightDetails", flightDetails[i]["Products"][j]["FlightDetails"]
             productstype = flightDetails[i]["Products"][j]["DataSourceLabelStyle"]
             pricesMiles = flightDetails[i]["Products"][j]["Prices"]
             tax = 0
