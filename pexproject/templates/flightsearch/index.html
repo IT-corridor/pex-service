@@ -450,6 +450,7 @@
                		{
                			setTimeout(function function_name (argument) {
 							 $('#returnMain').focus();
+							 $('#departMain').css('border-color','');
 						   },200);
                			
                		},
@@ -471,6 +472,7 @@
               		minDate:0,
               		onSelect: function()
                		{
+               			$('#returnMain').css('border-color','');
                		/*	setTimeout(function function_name (argument) {
 							 $('#cabintab').focus();
 						   },50);
@@ -576,9 +578,9 @@ return sum;
   var returnid = '';
   
 $("#submitid").click(function(event) {
-		
 		triptype = $("input[type='radio'][name='trip']:checked");
-    	
+    	var current_date = $.datepicker.formatDate('mm/dd/yy', new Date());
+
     	if (triptype.length > 0) {
 		    triptypeval = triptype.val();
 		}
@@ -608,17 +610,20 @@ $("#submitid").click(function(event) {
     		event.preventDefault();	
     		return false;
     	}
-    	if($('#departMain').val().length<1)
+    	
+    	if($('#departMain').val().length<1 || current_date > $('#departMain').val())
     	{
     		$('#departMain').focus();
+    		$('#departMain').css('border-color','red');
     		event.preventDefault();
     		return false;	
     	}
     	if('roundTripBtn' == triptypeval)
     	{
-    		if($('#returnMain').val().length<1)
+    		if($('#returnMain').val().length<1 || $('#departMain').val() > $('#returnMain').val())
 	    	{
 	    		$('#returnMain').focus();
+	    		$('#returnMain').css('border-color','red');
 	    		event.preventDefault();
 	    		return false;	
 	    	}
