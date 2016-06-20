@@ -18,6 +18,7 @@
 
 					<div class="col-md-12 col-xs-12 nopadding">
 						<div class="col-md-2 col-xs-12 nopadding ">
+
 							<div class="col-xs-12 nopadding">
 								<div class="progress">
 									<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" {% if progress_value %} style="width:{{progress_value}}px"{% else%}style="width:5%" {%endif%} id="progressbar">
@@ -25,6 +26,7 @@
 									</div>
 								</div>
 							</div>
+
 							{%if pointlist%}
 							<div class="col-xs-12 col-md-12 nopadding">
 								<a class="account_balance" role="button" data-toggle="collapse" href="#account-balance" aria-expanded="false" aria-controls="pricecalender">
@@ -170,6 +172,11 @@
 											</div>
 											<div class="checkbox" >
 												<label>
+													<input type='checkbox' class="chk-airlines" name="airlines" value="s7" {% for row in filterkey.datasource %} {% if row == 's7'%} checked="checked" {% endif %}{%endfor %}>
+													<span></span> S7 AIRLINES </label>
+											</div>
+											<div class="checkbox" >
+												<label>
 													<input type='checkbox' class="chk-airlines" name="airlines" value="etihad" {% for row in filterkey.datasource %} {% if row == 'etihad'%} checked="checked" {% endif %}{%endfor %}>
 													<span></span> ETIHAD AIRLINES </label>
 											</div>
@@ -228,7 +235,7 @@
 										<p>
 											{{searchparam.destination}}
 										</p>
-										<span>&nbsp; </span>
+										<span> .</span>
 									</div>
 									{% endfor %}
 									<div class="main-plc-name">
@@ -237,12 +244,10 @@
 											<p>
 												Economy
 											</p>
-											{%elif  request.GET.cabin == "firstclass"%}
+											{%else%}
 											<p>
-												Business	
+												{{request.GET.cabin|title}}
 											</p>
-											{% else %}
-											<p>First</p>
 											{% endif %}
 											<span>cabin</span>
 										</div>
@@ -434,6 +439,8 @@
 									<div class="col-sm-3 col-xs-5 text-left nopl ">
 										{% if selectedrow.datasource == "united" %}
 										<img src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
+										{% if selectedrow.datasource == "s7" %}
+										<img src="{% static 'flightsearch/img/s7Logo.svg' %}" class="img-responsive" alt="Responsive image" style="background-color: white !important;">{% endif %}
 										{% if selectedrow.datasource == "virgin_atlantic" %}
 										<img src="{% static 'flightsearch/img/virgin.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
 										{% if selectedrow.datasource == "delta" %}
@@ -492,6 +499,8 @@
 								<div class="col-md-2 col-xs-6 text-left xs-nopadding hidden-xs hidden-sm xs-margin-20">
 									{% if selectedrow.datasource == "united" %}
 									<img src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
+									{% if selectedrow.datasource == "s7" %}
+									<img src="{% static 'flightsearch/img/s7Logo.svg' %}" class="img-responsive" style="background-color: white !important;" alt="Responsive image">{% endif %}
 									{% if selectedrow.datasource == "delta" %}
 									<img src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
 									{% if selectedrow.datasource == "etihad" %}
@@ -793,6 +802,8 @@
 										{% if row.datasource == "united" %}
 										<img itemprop="logo" src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">
 										{% endif %}
+										{% if row.datasource == "s7" %}
+										<img src="{% static 'flightsearch/img/s7Logo.svg' %}" class="img-responsive" alt="Responsive image" style="background-color: white !important;">{% endif %}
 										{% if row.datasource == "virgin_atlantic" %}
 										<img itemprop="logo" src="{% static 'flightsearch/img/virgin.png' %}" class="img-responsive" alt="Responsive image">
 										{% endif %}
@@ -843,6 +854,8 @@
 										<div class="col-xs-12 nopadding text-center mvb10px" itemscope itemtype ="http://schema.org/Airline">
 											{% if row.datasource == "united" %}
 											<img itemprop="logo" src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
+											{% if row.datasource == "s7" %}
+											<img src="{% static 'flightsearch/img/s7Logo.svg' %}" class="img-responsive" alt="Responsive image" style="background-color: white !important;">{% endif %}
 											{% if row.datasource == "delta" %}
 											<img itemprop="logo" src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
 											{% if row.datasource == "etihad" %}
@@ -2840,7 +2853,7 @@ stoppage.push($(this).val());
 
 refresh_airline = setInterval(loading, 3000);
 var airlines = [
-"Delta", "United", "Etihad",
+"Delta", "United", "Etihad", "S7",
 "Virgin Atlantic", "Virgin America", "Virgin Australia", "Jetblue", "American", "Aeroflot", "Qantas", 
 ];
 i = 0;

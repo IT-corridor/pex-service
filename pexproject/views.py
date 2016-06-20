@@ -26,7 +26,7 @@ from social_auth.models import UserSocialAuth
 from django.contrib.auth import login as social_login,authenticate,get_user
 from django.contrib.auth import logout as auth_logout
 import settings
-from customfunction import is_scrape_vAUS,is_aeroflot,is_scrape_virginAmerica,is_scrape_etihad,is_scrape_delta,is_scrape_united,is_scrape_virgin_atlantic,is_scrape_jetblue,is_scrape_aa
+from customfunction import is_scrape_vAUS,is_aeroflot,is_scrape_virginAmerica,is_scrape_etihad,is_scrape_delta,is_scrape_united,is_scrape_virgin_atlantic,is_scrape_jetblue,is_scrape_aa, is_s7
 from django.views.decorators.csrf import csrf_exempt
 import requests
 from django.utils.html import strip_tags
@@ -73,11 +73,15 @@ def adminlogin(request):
     if request.POST:
         username = request.REQUEST['admin_user']
         password = request.REQUEST['admin_password']
+        
         try:
+        
             adminuser = Adminuser.objects.get(username=username, password=password)
+            
             request.session['admin'] = username
             request.session['admin_name'] = adminuser.name
             return HttpResponseRedirect('dashboard')
+            
         except:
             currentpage = "/Admin?message=invalid"
             return HttpResponseRedirect(currentpage)
@@ -89,6 +93,7 @@ def adminlogout(request):
     if 'admin' in request.session:
         del request.session['admin']  
     return HttpResponseRedirect(reverse('Admin'))
+
 
 def pages(request):
     pagelist = Pages.objects.filter()
@@ -157,6 +162,7 @@ def manageCityImage(request):
         imageid = request.GET['cityimageid']
         cityimage = CityImages.objects.get(pk = imageid)
     if request.POST :
+        
         cityimage = CityImages()
         if 'img_path' in request.POST:
             cityimage.image_path = request.POST['img_path']
@@ -169,11 +175,15 @@ def manageCityImage(request):
         if 'imageid' in request.POST:
             cityimage.city_image_id = request.POST['imageid']
             page = '/Admin/cityimages?msg=Record Updated Successfully'
+            
         else:
             page = '/Admin/cityimages?msg=Record Added Successfully'
+            
         cityimage.save()
         return HttpResponseRedirect(page)
+       
     return render_to_response('flightsearch/admin/manage_city_image.html',{'cityimage':cityimage,'citylist':citylist}, context_instance=RequestContext(request))
+        
     
 def adimage(request):
     context = {}
@@ -252,6 +262,7 @@ def manageblogImage(request):
         img = str(t)+str(file)
         img_fol = '/static/flightsearch/uploads/'
         path = directory+img_fol+img
+        print path
         dest = open(path, 'wb+')
   	CKEditorFuncNum =''
     if 'CKEditorFuncNum' in request.GET: 
@@ -313,7 +324,7 @@ def manageBlog(request):
     	    if "blogid" in request.POST:
                 page = '/Admin/bloglist?msg=Blog Edited Successfully'
     	    else:
-    	   	    page = '/Admin/bloglist?msg=Blog Added Successfully'
+    	   	page = '/Admin/bloglist?msg=Blog Added Successfully'
             return HttpResponseRedirect(page)
         except:
             page = '/Admin/bloglist?msg=There is some technical problem'
@@ -354,7 +365,6 @@ def manageEmailTemplate(request):
     return  render_to_response('flightsearch/admin/manage_email_template.html',{'templateobj':templateobj}, context_instance=RequestContext(request))
 
 def index(request):
-    
     context = {}
     user = User()
     image = ''
@@ -558,24 +568,24 @@ def signup(request):
         if request.method == "POST":
             currentdatetime = datetime.datetime.now()
             time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
-            email = request.POST['username']
+            email = request.REQUEST['username']
             user = User.objects.filter(username=email)
             if len(user) > 0:
                 msg = "Email is already registered"
                 return HttpResponseRedirect('/index?signup_msg='+msg)
                 #return render_to_response('flightsearch/index.html',{'signup_msg':msg},context_instance=RequestContext(request))
-            password = request.POST['password']
+            password = request.REQUEST['password']
             password1 = hashlib.md5(password).hexdigest()
-            airport = request.POST['home_airport']
+            airport = request.REQUEST['home_airport']
             firstname = ''
             lastname = ''
             pexdeals = 0
             if 'firstname' in request.POST:
-                firstname = request.POST['firstname']
+                firstname = request.REQUEST['firstname']
             if 'lastname' in request.POST:
-                lastname = request.POST['lastname']
-            if 'pexdeals' in request.POST:
-                pexdeals = request.POST['pexdeals']
+                lastname = request.REQUEST['lastname']
+            if 'pexdeals' in request.REQUEST:
+                pexdeals = request.REQUEST['pexdeals']
 
             object = User(username=email,email=email, password=password1,firstname=firstname,lastname=lastname, home_airport=airport,last_login=time,pexdeals=pexdeals)
             object.save()
@@ -631,7 +641,7 @@ def myRewardPoint(request):
         updatemsg = "Your account has been updated successfully"     
         
     if 'userid' in request.GET and 'airline' in request.GET:
-        pointsource = request.GET['airline']
+        pointsource = request.REQUEST['airline']
         cursor.execute("select * from reward_point_credential where user_id="+str(userid)+" and airline = '"+pointsource+"'")
         user = cursor.fetchone()
         resp = customfunction.syncPoints(pointsource,userid,user[2],user[5],user[3])
@@ -648,11 +658,11 @@ def myRewardPoint(request):
         json.dumps(data)
     	return HttpResponse(data, mimetype)
     if request.POST:
-        username = request.POST['username']
-        password = request.POST['password']
-        skymiles_number = request.POST['skymiles_number']
-        airline = request.POST['airline']
-        action = request.POST['action']
+        username = request.REQUEST['username']
+        password = request.REQUEST['password']
+        skymiles_number = request.REQUEST['skymiles_number']
+        airline = request.REQUEST['airline']
+        action = request.REQUEST['action']
         if action == 'update' :
                  
             resp = customfunction.syncPoints(airline,userid,username,skymiles_number,password)
@@ -754,7 +764,7 @@ def login(request):
     if request.method == "POST": 
         username = request.REQUEST['username']
         password = request.REQUEST['password']
-        if "curl" in request.POST and 'index' not in request.POST['curl']:
+        if "curl" in request.POST:
             currentpath = request.REQUEST['curl']
         password1 = hashlib.md5(password).hexdigest()
     	try:
@@ -773,7 +783,6 @@ def login(request):
             else:
                 msg = "Invalid username or password"
                 return HttpResponseRedirect('/index?msg='+msg)
-            
                 #return render_to_response('flightsearch/index.html', {'msg':msg}, context_instance=RequestContext(request))
     	except:
     	    msg = "Invalid username or password"
@@ -974,15 +983,19 @@ def search(request):
             etihadorigin = originobj.cityName
             orgncode = originobj.code
             origin = originobj.cityName + " (" + originobj.code + ")"
-          
+            print '@@@@', orgn, origin, '@@@@'
+
             dest = destobj.cityName + ", " + destobj.cityCode + ", " + destobj.countryCode + "  (" + destobj.code + ")"
             etihaddest = destobj.cityName
             destcode = destobj.code
             destination1 = destobj.cityName + " (" + destobj.code + ")"
+            print '####', dest, destination1, '####'
             
             dt = datetime.datetime.strptime(depart, '%m/%d/%Y')
             date = dt.strftime('%m/%d/%Y')
             searchdate = dt.strftime('%Y-%m-%d')        
+            print '$$$$', searchdate, '$$$$'
+            
             currentdatetime = datetime.datetime.now()
             time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
             time1 = datetime.datetime.now() - timedelta(minutes=30)
@@ -1010,6 +1023,10 @@ def search(request):
                     if is_scrape_united == 1:
                         customfunction.flag = customfunction.flag+1
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",destcode, orgncode, str(returndate), str(returnkey)])
+                    if is_s7 == 1:
+                        customfunction.flag = customfunction.flag+1
+                        print '@@@@@', destobj.cityCode, destobj.countryCode, originobj.cityCode, originobj.countryCode, str(searchdate1), str(returnkey)
+                        subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/s7.ru.py",destobj.cityCode, destobj.countryCode, originobj.cityCode, originobj.countryCode, str(searchdate1), str(returnkey)])
                     if is_scrape_aa == 1:
                         customfunction.flag = customfunction.flag+1
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aa.py",destcode, orgncode, str(returndate), str(returnkey)])
@@ -1018,17 +1035,15 @@ def search(request):
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/virgin_australia.py",destcode, orgncode, str(returndate), str(returnkey),cabin])
                     if is_aeroflot == 1:
                         customfunction.flag = customfunction.flag+1
-                        ret_format_date  = datetime.datetime.strptime(returndate, '%m/%d/%Y')
-                        formated_returndate = ret_format_date.strftime('%Y-%m-%d')     
-                        subprocess.Popen(["scrapy", "runspider", settings.BASE_DIR+"/pexproject/aeroflot.py", "-a", "origin="+destcode,"-a", "destination="+orgncode,"-a", "date="+str(formated_returndate),"-a", "searchid="+str(returnkey)])
+                        subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aeroflot.py", destobj.cityCode, originobj.cityCode,str(searchdate1),str(returnkey)])
                     
                     if is_scrape_etihad == 1:
                         customfunction.flag = customfunction.flag+1
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/etihad.py",etihaddest, etihadorigin, str(date1), str(returnkey),cabin])
-                    
-                        
             else:
                 obj = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, scrapetime__gte=time1)
+
+
             if len(obj) > 0:
                 for keyid in obj:
                     searchkeyid = keyid.searchid
@@ -1046,14 +1061,17 @@ def search(request):
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/jetblue.py",orgncode,destcode,str(depart),str(searchkeyid)])
                 if is_scrape_virginAmerica == 1:
                     customfunction.flag = customfunction.flag+1
-                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/virginAmerica.py",orgncode,destcode,str(depart),str(searchkeyid)])
-                
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/virginAmerica.py",orgncode,destcode,str(depart),str(searchkeyid)])                
                 if is_scrape_delta == 1:
                     customfunction.flag = customfunction.flag+1
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/delta.py",orgncode,destcode,str(date),str(depart),str(searchkeyid),etihadorigin,etihaddest,cabin])
                 if is_scrape_united == 1:
                     customfunction.flag = customfunction.flag+1
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",orgncode,destcode,str(depart),str(searchkeyid)])
+                if is_s7 == 1:
+                    customfunction.flag = customfunction.flag+1
+                    # print '@@@@@', originobj.cityCode, originobj.countryCode, destobj.cityCode, destobj.countryCode, str(searchdate), str(searchkeyid)
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/s7.ru.py", originobj.cityCode, originobj.countryCode, destobj.cityCode, destobj.countryCode, str(searchdate), str(searchkeyid)])                    
                 if is_scrape_aa == 1:
                     customfunction.flag = customfunction.flag+1
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aa.py",orgncode,destcode,str(depart),str(searchkeyid)])
@@ -1065,12 +1083,11 @@ def search(request):
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/etihad.py",etihadorigin,etihaddest,str(date),str(searchkeyid),cabin])
                 if is_aeroflot == 1:
                     customfunction.flag = customfunction.flag+1 
-                    outbound_date = datetime.datetime.strptime(depart, '%m/%d/%Y')
-                    formated_date = outbound_date.strftime('%Y-%m-%d')  
-                    subprocess.Popen(["scrapy", "runspider", settings.BASE_DIR+"/pexproject/aeroflot.py", "-a", "origin="+orgncode,"-a", "destination="+destcode,"-a", "date="+formated_date,"-a", "searchid="+str(searchkeyid)])
+                    print '@@@@@ Aeroflot', originobj.cityCode, destobj.cityCode, str(searchdate), str(searchkeyid)
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aeroflot.py", originobj.cityCode, destobj.cityCode, str(searchdate), str(searchkeyid)])
                     
             if is_scrape_virgin_atlantic == 1:
-                customfunction.flag = customfunction.flag+1
+                #customfunction.flag = customfunction.flag+1
                 Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='virgin_atlantic').delete()
                 if returnkey:
                     Flightdata.objects.filter(searchkeyid=returnkey,datasource='virgin_atlantic').delete()            
@@ -1178,15 +1195,12 @@ def checkData(request):
             for keys in multiple_key:
                 
                 if n > 1:
-                    #recordcheck = recordcheck+ " inner join pexproject_flightdata p"+str(n)+" on  p"+str(n)+".searchkeyid ='" +str(keys)+"' and p1.datasource = p"+str(n)+".datasource and p"+str(n)+"."+cabin+" > 0"
-                    recordcheck = recordcheck+" inner join ( select rowid,datasource from pexproject_flightdata where searchkeyid ='"+str(keys)+"' and "+cabin+" > 0 ) as p"+str(n)+" on p1.datasource = p"+str(n)+".datasource"
-                    #inner_join_on = inner_join_on+" inner join pexproject_flightdata p"+str(n)+" on  p"+str(n)+".searchkeyid ='" +str(keys)+"' and p1.datasource = p"+str(n)+".datasource and p"+str(n)+".flighno = 'flag'"
-                    inner_join_on = inner_join_on+" inner join( select rowid,datasource from pexproject_flightdata where searchkeyid ='"+str(keys)+"' and flighno = 'flag' ) as p"+str(n)+" on p1.datasource = p"+str(n)+".datasource"
+                    recordcheck = recordcheck+ " inner join pexproject_flightdata p"+str(n)+" on  p"+str(n)+".searchkeyid ='" +str(keys)+"' and p1.datasource = p"+str(n)+".datasource and p"+str(n)+"."+cabin+" > 0"
+                    inner_join_on = inner_join_on+" inner join pexproject_flightdata p"+str(n)+" on  p"+str(n)+".searchkeyid ='" +str(keys)+"' and p1.datasource = p"+str(n)+".datasource and p"+str(n)+".flighno = 'flag'"
                 n = n+1
-            #isdatastored = Flightdata.objects.raw("select count(*),p1.rowid  from pexproject_flightdata p1 "+recordcheck+" where p1.searchkeyid ='"+str(multiple_key[0])+"' and p1."+cabin+" > 0")
-            isdatastored = Flightdata.objects.raw("select p1.rowid,p1.datasource from ( select rowid,datasource from pexproject_flightdata where searchkeyid = '"+str(multiple_key[0])+"' and "+cabin+" > 0 ) as p1 "+recordcheck) 
-            flagcheck = Flightdata.objects.raw("select p1.rowid,p1.datasource from ( select rowid,datasource from pexproject_flightdata where searchkeyid = '"+str(multiple_key[0])+"' and flighno = 'flag' ) as p1 "+inner_join_on)
+            isdatastored = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 "+recordcheck+" where p1.searchkeyid ='"+str(multiple_key[0])+"' and p1."+cabin+" > 0")
             
+            flagcheck = Flightdata.objects.raw("select p1.rowid from pexproject_flightdata p1 "+inner_join_on+" where p1.searchkeyid ='"+str(multiple_key[0])+"' and p1.flighno = 'flag'")
             
         else:    
             if 'keyid' in request.POST:
@@ -1198,6 +1212,7 @@ def checkData(request):
                     returnfare = "p2." + cabin
                     departfare = "p1." + cabin                
                     isdatastored = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and "+returnfare+" > 0 where p1.searchkeyid="+str(recordkey)+" and "+departfare+" > 0")
+                                     
                     flagcheck = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and p2.flighno = 'flag' where p1.searchkeyid="+str(recordkey)+" and p1.flighno = 'flag'")
                     
                     
@@ -1301,7 +1316,7 @@ def getsearchresult(request):
     adimages = GoogleAd.objects.filter(ad_code="result page")
     if request.is_ajax():
         if 'page_no' in request.POST:
-            pageno = request.POST['page_no']
+            pageno = request.REQUEST['page_no']
         offset = (int(pageno) - 1) * limit
              
     action = ''
@@ -1462,6 +1477,10 @@ def getsearchresult(request):
                             deltacabin_name = deltamin['cabintype3']
                             returndelta = Flightdata.objects.filter(searchkeyid=returnkey, datasource='delta', business=deltaminval)
                        
+                '''
+                returndelta = Flightdata.objects.filter(searchkeyid=returnkey,datasource='delta',maincabin=deltaminval)            
+                '''
+                #unitedmin1 = Flightdata.objects.filter(searchkeyid=returnkey, datasource='united', maincabin__gt=0).values('maincabin', 'maintax', 'cabintype1').annotate(Min('maincabin')).order_by('maincabin')
                 if cabinclass == "maincabin" :
                     unitedmin1 = Flightdata.objects.filter(searchkeyid=returnkey, datasource='united', maincabin__gt=0).values('maincabin', 'maintax', 'cabintype1').annotate(Min('maincabin')).order_by('maincabin')
                     if len(unitedmin1) > 0:
@@ -1487,6 +1506,9 @@ def getsearchresult(request):
                             unitedtax = unitedmin['businesstax']
                             unitedcabin_name = unitedmin['cabintype3']
                             returnunited = Flightdata.objects.filter(searchkeyid=returnkey, datasource='united', business=unitedminval)
+                
+        
+        
         unitedorderprice = cabinclass + "+" + str(unitedminval)
         deltaorderprice = cabinclass + "+" + str(deltaminval)
         
@@ -1515,10 +1537,10 @@ def getsearchresult(request):
             for row in searchdata:
                 originname = re.findall(re.escape("(")+"(.*)"+re.escape(")"),row.source)[0]
                 destname = re.findall(re.escape("(")+"(.*)"+re.escape(")"),row.destination)[0]
-                if orlDestination  == originname and m < len(searchdata):
+                if orlDestination  == originname:
                     multiSearchTitle = multiSearchTitle+"-"+destname
                     commaSeperator=''
-                    multisearch[m-1]["destination"] = ''                    
+                    
                 else:
                     multiSearchTitle = multiSearchTitle+commaSeperator+originname+"-"+destname
                     commaSeperator = ", "
@@ -1558,13 +1580,12 @@ def getsearchresult(request):
                     sep1 = ','
                     if querylist and 'p1' in querylist:
                         querylist = querylist.replace('p1.','')+" and "
-                    qry3 = qry3+" inner join (select  * from pexproject_flightdata where "+querylist+" searchkeyid ='"+keys+"' and "+cabinclass+" > '0' order by "+cabinclass+") as p"+str(n)+" on p1.datasource = p"+str(n)+".datasource"
+                    qry3 = qry3+" inner join (select  * from pexproject_flightdata where "+querylist+" searchkeyid ='"+keys+"' and "+cabinclass+" > '0' order by "+cabinclass+" limit "+str(setLimit)+") as p"+str(n)+" on p1.datasource = p"+str(n)+".datasource"
                     q = ''
                 counter = counter+1
                 n = n+1
-            finalquery = qry1+"CONCAT("+newidstring+") as newid ,"+qry2+ totalfare+" as finalprice "+totaltax+" as totaltaxes from (select  * from pexproject_flightdata where "+querylist+" searchkeyid ='"+str(recordkey)+"' and "+cabinclass+" > '0' order by "+cabinclass+") as p1 "+qry3 + " order by finalprice,totaltaxes , departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset)
+            finalquery = qry1+"CONCAT("+newidstring+") as newid ,"+qry2+ totalfare+" as finalprice "+totaltax+" as totaltaxes from (select  * from pexproject_flightdata where "+querylist+" searchkeyid ='"+str(recordkey)+"' and "+cabinclass+" > '0' order by maincabin limit "+str(setLimit)+") as p1 "+qry3 + " order by finalprice,totaltaxes , departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset)
             record_obj = Flightdata.objects.raw(finalquery)
-	    #print finalquery
             record = list(record_obj)
             for row in record:
                 mainlist1=''
