@@ -215,13 +215,13 @@ if __name__=='__main__':
     month = dt.strftime("%b")
     day = dt.strftime("X%d").replace('X0','X').replace('X','')
     year = dt.strftime("%Y")
+    url = "https://www.aa.com/reservation/awardFlightSearchAccess.do"
+    display = Display(visible=0, size=(800, 600))
+    display.start()
+    driver = webdriver.Chrome()
+    #driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
+    #driver.set_window_size(1120, 1080)
     try:
-        url = "https://www.aa.com/reservation/awardFlightSearchAccess.do"
-        display = Display(visible=0, size=(800, 600))
-        display.start()
-        driver = webdriver.Chrome()
-        #driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
-        #driver.set_window_size(1120, 1080)
         driver.get(url)
         #driver.implicitly_wait(5)
         origin  = driver.find_element_by_id("awardFlightSearchForm.originAirport")
