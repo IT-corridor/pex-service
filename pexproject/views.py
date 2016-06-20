@@ -1024,7 +1024,7 @@ def search(request):
                         customfunction.flag = customfunction.flag+1
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",destcode, orgncode, str(returndate), str(returnkey)])
                     if is_s7 == 1:
-                        customfunction.flag = customfunction.flag+1
+                        #customfunction.flag = customfunction.flag+1
                         print '@@@@@', destobj.cityCode, destobj.countryCode, originobj.cityCode, originobj.countryCode, str(searchdate1), str(returnkey)
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/s7.ru.py",destobj.cityCode, destobj.countryCode, originobj.cityCode, originobj.countryCode, str(searchdate1), str(returnkey)])
                     if is_scrape_aa == 1:
@@ -1066,7 +1066,7 @@ def search(request):
                     customfunction.flag = customfunction.flag+1
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/delta.py",orgncode,destcode,str(date),str(depart),str(searchkeyid),etihadorigin,etihaddest,cabin])
                 if is_scrape_united == 1:
-                    customfunction.flag = customfunction.flag+1
+                    #customfunction.flag = customfunction.flag+1
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",orgncode,destcode,str(depart),str(searchkeyid)])
                 if is_s7 == 1:
                     customfunction.flag = customfunction.flag+1
