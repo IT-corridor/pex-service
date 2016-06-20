@@ -1330,7 +1330,7 @@ def getsearchresult(request):
             else:
                 pricematrix =  Flightdata.objects.raw("select rowid, datasource, min(if(maincabin > 0,maincabin,NULL)) as maincabin, min(if(firstclass>0,firstclass,NULL)) as firstclass ,min(if(business>0,business,NULL)) as business  from pexproject_flightdata where searchkeyid="+str(key)+" group by datasource")
                 priceRange =  Flightdata.objects.raw("select rowid, datasource, min(if("+cabinclass+" > 0,"+cabinclass+",NULL)) as minpricemile, max(if("+cabinclass+" > 0,"+cabinclass+",NULL)) as maxpricemile  from pexproject_flightdata where searchkeyid="+str(key)+" group by datasource order by minpricemile,maxpricemile")
-        
+            
         ''' get min and max price miles '''
         minPriceMile = 500
         maxPriceMile = 0
@@ -1444,14 +1444,7 @@ def getsearchresult(request):
     deptmaxtime = datetime.time(0, 0, 0)
     arivtime = datetime.time(0, 0, 0)
     arivtmaxtime = datetime.time(0, 0, 0)
-    if 'minPriceMile' in request.POST:
-        minpricemile = request.POST['minPriceMile']
-        querylist = querylist + join + " p1."+cabinclass+" >= '" + minpricemile + "'"
-        join = ' AND '
-    if 'maxPriceMile' in request.POST:
-        maxpricemile = request.POST['maxPriceMile']
-        querylist = querylist + join + " p1."+cabinclass+" <= '" + maxpricemile + "'"
-        join = ' AND '
+    
     if 'depaturemin' in request.POST:
          depttime = request.POST['depaturemin']
          deptformat = (datetime.datetime.strptime(depttime, '%I:%M %p'))
@@ -1606,6 +1599,14 @@ def getsearchresult(request):
                 m = m+1
                 multisearch.append(multicitysearch) 
             multiSearchTitle = multiSearchTitle+", "+dateString
+            if 'minPriceMile' in request.POST:
+                minpricemile = request.POST['minPriceMile']
+                querylist = querylist + join + " finalprice >= '" + minpricemile + "'"
+                join = ' AND '
+            if 'maxPriceMile' in request.POST:
+                maxpricemile = request.POST['maxPriceMile']
+                querylist = querylist + join + " finalprice <= '" + maxpricemile + "'"
+                join = ' AND '
             multicity='true' 
             replacekey = searchkey
             totalfare = ", p1." + cabinclass
@@ -1637,6 +1638,14 @@ def getsearchresult(request):
                     q = ''
                 counter = counter+1
                 n = n+1
+                if 'minPriceMile' in request.POST:
+                    minpricemile = request.POST['minPriceMile']
+                    querylist = querylist + join + " "+totalfare+" >= '" + minpricemile + "'"
+                    join = ' AND '
+                if 'maxPriceMile' in request.POST:
+                    maxpricemile = request.POST['maxPriceMile']
+                    querylist = querylist + join + " "+totalfare+" <= '" + maxpricemile + "'"
+                    join = ' AND '
             finalquery = qry1+"CONCAT("+newidstring+") as newid ,"+qry2+ totalfare+" as finalprice "+totaltax+" as totaltaxes from (select  * from pexproject_flightdata where "+querylist+" searchkeyid ='"+str(recordkey)+"' and "+cabinclass+" > '0' order by maincabin limit "+str(setLimit)+") as p1 "+qry3 + " order by finalprice,totaltaxes , departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset)
             record_obj = Flightdata.objects.raw(finalquery)
             record = list(record_obj)
@@ -1667,13 +1676,31 @@ def getsearchresult(request):
                 mainlist.append(mainlist1)
         else:
             if (returnkeyid1 and ('rowid' not in request.GET) and 'rowid' not in request.POST) or len(multicitykey1) > 0:
+                mile_condition = ''
+                
                 totalfare = "p1." + cabinclass + "+p2." + cabinclass
+                if 'minPriceMile' in request.POST:
+                    minpricemile = request.POST['minPriceMile']
+                    querylist = querylist + join + " "+totalfare+" >= '" + minpricemile + "'"
+                    join = ' AND '
+                if 'maxPriceMile' in request.POST:
+                    maxpricemile = request.POST['maxPriceMile']
+                    querylist = querylist + join + " "+totalfare+" <= '" + maxpricemile + "'"
+                    join = ' AND '
                 returnfare = "p2." + cabinclass
                 departfare = "p1." + cabinclass
                 totaltax = "p1."+taxes+"+p2."+taxes
                 record = Flightdata.objects.raw("select p1.*,CONCAT(p1.rowid,'_',p2.rowid) as newid,p2.origin as origin1,p2.rowid as rowid1, p2.stoppage as stoppage1,p2.flighno as flighno1, p2.cabintype1 as cabintype11,p2.cabintype2 as cabintype21,p2.cabintype3 as cabintype31, p2.destination as destination1, p2.departure as departure1, p2.arival as arival1, p2.duration as duration1, p2.maincabin as maincabin1, p2.maintax as maintax1, p2.firsttax as firsttax1, p2.businesstax as businesstax1,p2.departdetails as departdetails1,p2.arivedetails as arivedetails1, p2.planedetails as planedetails1,p2.operatedby as operatedby1," + totalfare + " as finalprice,  "+totaltax+" as totaltaxes from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ='" + returnkeyid1 + "' and " + returnfare + " > '0'  where  p1.searchkeyid = '" + searchkey + "' and " + departfare + " > 0 and " + querylist + " order by finalprice ,totaltaxes, departure, p2.departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset))
-                
             else:
+                if 'minPriceMile' in request.POST:
+                    minpricemile = request.POST['minPriceMile']
+                    querylist = querylist + join + " p1."+cabinclass+" >= '" + minpricemile + "'"
+                    join = ' AND '
+                if 'maxPriceMile' in request.POST:
+                    maxpricemile = request.POST['maxPriceMile']
+                    querylist = querylist + join + " p1."+cabinclass+" <= '" + maxpricemile + "'"
+                    join = ' AND '
+
                 cabintype = " and " + cabinclass + " > 0"
                 querylist = querylist+cabintype
                 record = Flightdata.objects.raw("select p1.*,p1.maintax as maintax1, p1.firsttax as firsttax1, p1.businesstax as businesstax1,p1.rowid as newid ,case when datasource = 'delta' then " + deltaorderprice + "  else " + unitedorderprice + " end as finalprice, "+taxes+" as totaltaxes from pexproject_flightdata as p1 where " + querylist + " order by finalprice ," + taxes + ",departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset))
@@ -1681,7 +1708,7 @@ def getsearchresult(request):
             
         progress_value = '' 
         if 'progress_value' in request.POST:
-            progress_value = request.REQUEST['progress_value']
+            progress_value = request.POST['progress_value']
             
         recordlen = len(multicitykey1)
         timerecord = Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` ")
