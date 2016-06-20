@@ -1126,7 +1126,7 @@ def get_airport(request):
         data = 'fail'
     mimetype = 'application/json'
     return HttpResponse(data, mimetype)
-
+'''
 def searchLoading(request):
     context = {}
     if request.method == "POST":
@@ -1175,7 +1175,7 @@ def searchLoading(request):
         return render_to_response('flightsearch/searchloading.html', {'searchdate':date, 'sname':orgn, 'dname':dest, 'returndate':date1, 'triptype':trip, 'roundtripkey':roundtripkey, 'cabintype':cabintype, 'passenger':passenger}, context_instance=RequestContext(request))
     else:
         return render_to_response('flightsearch/index.html')
-
+'''
 def checkData(request):
     context = {}
     data1 = ''
@@ -1214,7 +1214,6 @@ def checkData(request):
                     isdatastored = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and "+returnfare+" > 0 where p1.searchkeyid="+str(recordkey)+" and "+departfare+" > 0")
                                      
                     flagcheck = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and p2.flighno = 'flag' where p1.searchkeyid="+str(recordkey)+" and p1.flighno = 'flag'")
-                    
                     
                 else: 
                     try:
@@ -1277,9 +1276,15 @@ def getsearchresult(request):
     pricesources = []
     roundtripkey = ''
     pointlist=''
+    minpricemile = 0
+    maxpricemile = 0
     
     #@@@@ Get Pricematrix list @@@@@@@@@@@@@@@@@@@@
     if 'actionfor' in request.POST and request.POST['actionfor'] == 'prc_matrix':
+        getPriceRange = False
+        if 'valuefor' in request.POST and request.POST['valuefor'] == 'pricerange':
+            getPriceRange = True
+        priceRange = ''
         if 'multicity' in request.GET or 'multicity' in request.POST:
             n = 1
             multicitykey = request.GET.get('multicity', '')
@@ -1297,21 +1302,62 @@ def getsearchresult(request):
                     firstcabin = firstcabin+adding+"min(if(p"+str(n)+".business > 0,p"+str(n)+".business,NULL))"
                     inner_join_on = inner_join_on+" inner join pexproject_flightdata p"+str(n)+" on  p"+str(n)+".searchkeyid ='" +keys+"' and p1.datasource = p"+str(n)+".datasource"
                 n = n+1
-            pricematrix =  Flightdata.objects.raw("select p1.rowid, p1.datasource,"+ecocabin+" as maincabin,"+busscabin+"  as firstclass ,"+firstcabin+" as business  from pexproject_flightdata p1 "+inner_join_on+" where p1.searchkeyid="+str(recordkey)+" group by p1.datasource")      
+                
+            pricematrix =  Flightdata.objects.raw("select p1.rowid, p1.datasource,"+ecocabin+" as maincabin,"+busscabin+"  as firstclass ,"+firstcabin+" as business  from pexproject_flightdata p1 "+inner_join_on+" where p1.searchkeyid="+str(recordkey)+" group by p1.datasource")
             
+            '''fetching min max price miles for multicity '''
+            min_max_cabin = ''
+            if getPriceRange:
+                if cabinclass == 'maincabin':
+                    min_max_cabin = ecocabin
+                elif cabinclass == 'firstclass':
+                    min_max_cabin = busscabin
+                else:
+                    min_max_cabin = firstcabin
+                maxpricemile_query = min_max_cabin
+                if 'min' in maxpricemile_query:
+                    maxpricemile_query = maxpricemile_query.replace('min','max')    
+                priceRange =  Flightdata.objects.raw("select p1.rowid, p1.datasource,"+min_max_cabin+" as minpricemile,"+maxpricemile_query+"  as maxpricemile  from pexproject_flightdata p1 "+inner_join_on+" where p1.searchkeyid="+str(recordkey)+" group by p1.datasource order by minpricemile,maxpricemile")      
+                
         elif 'keyid' in  request.GET:
             key = request.GET.get('keyid', '')
+            
             if 'returnkey' in request.GET:
                 returnkeyid = request.GET.get('returnkey', '')
                 pricematrix = Flightdata.objects.raw("select p1.rowid,p2.rowid, p2.datasource, (min(if(p1.maincabin > 0,p1.maincabin,NULL))+min(if(p2.maincabin > 0,p2.maincabin,NULL))) as maincabin, (min(if(p1.firstclass>0,p1.firstclass,NULL))+min(if(p2.firstclass>0,p2.firstclass,NULL))) as firstclass ,(min(if(p1.business>0,p1.business,NULL))+min(if(p2.business>0,p2.business,NULL))) as business  from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+returnkeyid+" where p1.searchkeyid="+str(key)+" group by p1.datasource")
+                ''' fetch minimum maximum price'''
+                priceRange = Flightdata.objects.raw("select p1.rowid,p2.rowid, p2.datasource, (min(if(p1."+cabinclass+" > 0,p1."+cabinclass+",NULL))+min(if(p2."+cabinclass+" > 0,p2."+cabinclass+",NULL))) as minpricemile, (max(if(p1."+cabinclass+" > 0,p1."+cabinclass+",NULL))+max(if(p2."+cabinclass+" > 0,p2."+cabinclass+",NULL))) as maxpricemile  from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+returnkeyid+" where p1.searchkeyid="+str(key)+" group by p1.datasource order by minpricemile,maxpricemile")
             else:
                 pricematrix =  Flightdata.objects.raw("select rowid, datasource, min(if(maincabin > 0,maincabin,NULL)) as maincabin, min(if(firstclass>0,firstclass,NULL)) as firstclass ,min(if(business>0,business,NULL)) as business  from pexproject_flightdata where searchkeyid="+str(key)+" group by datasource")
+                priceRange =  Flightdata.objects.raw("select rowid, datasource, min(if("+cabinclass+" > 0,"+cabinclass+",NULL)) as minpricemile, max(if("+cabinclass+" > 0,"+cabinclass+",NULL)) as maxpricemile  from pexproject_flightdata where searchkeyid="+str(key)+" group by datasource order by minpricemile,maxpricemile")
+        
+        ''' get min and max price miles '''
+        minPriceMile = 500
+        maxPriceMile = 0
+        if getPriceRange:        
+            priceRange1 = list(priceRange)
+            temp = 0
+            
+            for t in priceRange1:
+                if temp < t.maxpricemile:
+                    temp = t.maxpricemile
+                if t.minpricemile != None and (minPriceMile > t.minpricemile or minPriceMile == 500):
+                   minPriceMile = t.minpricemile
+                
+            maxPriceMile = temp
+            mimetype = 'application/json'
+            results = []
+            results.append(minPriceMile)
+            results.append(maxPriceMile)
+            data = json.dumps(results)
+            return HttpResponse(data, mimetype) 
+            
         if pricematrix:
             pricematrix1 = list(pricematrix)
             for s in pricematrix1:
                 pricesources.append(s.datasource)  
         
-        return render_to_response('flightsearch/pricematrix.html',{'pricesources':pricesources, 'pricematrix':pricematrix1},context_instance=RequestContext(request))
+        return render_to_response('flightsearch/pricematrix.html',{'pricesources':pricesources, 'pricematrix':pricematrix1,'minPriceMile':minPriceMile,'maxPriceMile':maxPriceMile},context_instance=RequestContext(request))
     
     adimages = GoogleAd.objects.filter(ad_code="result page")
     if request.is_ajax():
@@ -1398,7 +1444,14 @@ def getsearchresult(request):
     deptmaxtime = datetime.time(0, 0, 0)
     arivtime = datetime.time(0, 0, 0)
     arivtmaxtime = datetime.time(0, 0, 0)
-    
+    if 'minPriceMile' in request.POST:
+        minpricemile = request.POST['minPriceMile']
+        querylist = querylist + join + " p1."+cabinclass+" >= '" + minpricemile + "'"
+        join = ' AND '
+    if 'maxPriceMile' in request.POST:
+        maxpricemile = request.POST['maxPriceMile']
+        querylist = querylist + join + " p1."+cabinclass+" <= '" + maxpricemile + "'"
+        join = ' AND '
     if 'depaturemin' in request.POST:
          depttime = request.POST['depaturemin']
          deptformat = (datetime.datetime.strptime(depttime, '%I:%M %p'))
@@ -1632,7 +1685,7 @@ def getsearchresult(request):
             
         recordlen = len(multicitykey1)
         timerecord = Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` ")
-        filterkey = {'stoppage':list2, 'datasource':list1, 'cabin':cabin} 
+        filterkey = {'stoppage':list2, 'datasource':list1, 'cabin':cabin,'minpricemile':minpricemile,'maxpricemile':maxpricemile} 
         if depttime:
             timeinfo = {'maxdept':deptmaxtime, 'mindept':depttime, 'minarival':arivtime, 'maxarival':arivtmaxtime}
         else:
