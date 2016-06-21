@@ -241,7 +241,6 @@ def united(origin, destination, searchdate, searchkey):
             else:
                 filghtFormat = OperatingCarrierCode+" "+FlightNumber+" | "+EquipmentDescription+" ("+lastFlightTravelDuration+")"
             flightdeatails.append(filghtFormat)
-            
         
         economy = 0
         ecoTax = 0
@@ -252,10 +251,15 @@ def united(origin, destination, searchdate, searchkey):
         ecoFareClassCode = []
         busFareClassCode = []
         firtFareClassCode = []
-        
         ecoFareCode = ''
         businessFareCode =''
         firstFareCode = ''
+        eco_code = []
+        bus_code = []
+        first_code = []
+        eco_fare_code = ''
+        bus_fare_code = ''
+        first_fare_code = ''
         for j in range(0, len(flightDetails[i]["Products"])):
             productstype = flightDetails[i]["Products"][j]["DataSourceLabelStyle"]
             pricesMiles = flightDetails[i]["Products"][j]["Prices"]
@@ -276,16 +280,24 @@ def united(origin, destination, searchdate, searchkey):
                 ecoTax = tax
                 ecoFareCode = BookingCode
                 ecoFareClassCode.append(BookingCode)
+                if flightDetails[i]["Products"][j]["BookingCode"]:
+                    eco_code.append(flightDetails[i]["Products"][j]["BookingCode"])
+                
             elif 'Business' in productstype and business == 0 and miles:
                 business = miles
                 businessTax = tax
                 businessFareCode = BookingCode
                 busFareClassCode.append(BookingCode)
+                if flightDetails[i]["Products"][j]["BookingCode"]:
+                    bus_code.append(flightDetails[i]["Products"][j]["BookingCode"])
+                
             elif 'First' in productstype and first == 0 and miles:
                 first = miles
                 firstTax = tax
                 firstFareCode = BookingCode
                 firtFareClassCode.append(BookingCode)
+                if flightDetails[i]["Products"][j]["BookingCode"]:
+                    first_code.append(flightDetails[i]["Products"][j]["BookingCode"])
         if connection:
             connectingFarecode = connection[0]["Products"]
             for m in range(0,len(connectingFarecode)):
@@ -297,17 +309,28 @@ def united(origin, destination, searchdate, searchkey):
                     connectingBookingCode = connectingBookingCode+" "+productdesc
                 if connectingProductstype and 'Economy' in connectingProductstype:
                     ecoFareClassCode.append(connectingBookingCode)
+                    if connectingFarecode[m]["BookingCode"]:
+                        eco_code.append(connectingFarecode[m]["BookingCode"])
                 elif connectingProductstype and 'Business' in connectingProductstype:
                     busFareClassCode.append(connectingBookingCode)
+                    if connectingFarecode[m]["BookingCode"]:
+                        bus_code.append(connectingFarecode[m]["BookingCode"])
                 elif connectingProductstype and 'First' in connectingProductstype:
                     firtFareClassCode.append(connectingBookingCode)
+                    if connectingFarecode[m]["BookingCode"]:
+                        first_code.append(connectingFarecode[m]["BookingCode"])
         if len(ecoFareClassCode) > 0:
             ecoFareCode = '@'.join(ecoFareClassCode)
         if len(busFareClassCode) > 0:
             businessFareCode = '@'.join(busFareClassCode)
         if len(firtFareClassCode) > 0:
            firstFareCode = '@'.join(firtFareClassCode)
-        
+        if len(eco_code) > 0:
+            eco_fare_code = ','.join(eco_code)
+        if len(bus_code) > 0:
+            bus_fare_code = ','.join(bus_code)
+        if len(first_code) > 0:
+            first_fare_code = ','.join(first_code)
         departdetailsText = '@'.join(departdetails) 
         arivedetailsText = '@'.join(arivaildetails) 
         planedetails = '@'.join(flightdeatails)
@@ -316,9 +339,9 @@ def united(origin, destination, searchdate, searchkey):
             operatedbytext = '@'.join(operator)
     
         recordcount = recordcount+1        
-        values_string.append((Flightno, str(searchkey), stime, stoppage, "test", source, lastdestination, test1, arivetime, totaltime, str(economy), str(ecoTax), str(business), str(businessTax), str(first), str(firstTax),"Economy", "Business", "First", "united", departdetailsText, arivedetailsText, planedetails, operatedbytext,ecoFareCode,businessFareCode,firstFareCode))
+        values_string.append((Flightno, str(searchkey), stime, stoppage, "test", source, lastdestination, test1, arivetime, totaltime, str(economy), str(ecoTax), str(business), str(businessTax), str(first), str(firstTax),"Economy", "Business", "First", "united", departdetailsText, arivedetailsText, planedetails, operatedbytext,ecoFareCode,businessFareCode,firstFareCode,eco_fare_code,bus_fare_code,first_fare_code))
         if recordcount > 50 or i == (totalrecords)-1 and len(values_string)>0:
-            cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", values_string)
+            cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code,eco_fare_code,business_fare_code,first_fare_code) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", values_string)
             db.commit()
             values_string =[]
             recordcount = 1

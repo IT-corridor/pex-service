@@ -1066,7 +1066,7 @@ def search(request):
                     customfunction.flag = customfunction.flag+1
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/delta.py",orgncode,destcode,str(date),str(depart),str(searchkeyid),etihadorigin,etihaddest,cabin])
                 if is_scrape_united == 1:
-                    #customfunction.flag = customfunction.flag+1
+                    customfunction.flag = customfunction.flag+1
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",orgncode,destcode,str(depart),str(searchkeyid)])
                 if is_s7 == 1:
                     customfunction.flag = customfunction.flag+1
@@ -1292,6 +1292,7 @@ def getsearchresult(request):
         if 'valuefor' in request.POST and request.POST['valuefor'] == 'pricerange':
             getPriceRange = True
         priceRange = ''
+        FareCodeFromDatabase = ''
         if 'multicity' in request.GET or 'multicity' in request.POST:
             n = 1
             multicitykey = request.GET.get('multicity', '')
@@ -1324,7 +1325,8 @@ def getsearchresult(request):
                 maxpricemile_query = min_max_cabin
                 if 'min' in maxpricemile_query:
                     maxpricemile_query = maxpricemile_query.replace('min','max')    
-                priceRange =  Flightdata.objects.raw("select p1.rowid, p1.datasource,p1."+fare_class_code+" as fare_code, "+min_max_cabin+" as minpricemile,"+maxpricemile_query+"  as maxpricemile  from pexproject_flightdata p1 "+inner_join_on+" where p1.searchkeyid="+str(recordkey)+" group by p1.datasource order by minpricemile,maxpricemile")      
+                priceRange =  Flightdata.objects.raw("select p1.rowid, p1.datasource,p1."+fare_class_code+" as fare_code, "+min_max_cabin+" as minpricemile,"+maxpricemile_query+"  as maxpricemile  from pexproject_flightdata p1 "+inner_join_on+" where p1.searchkeyid="+str(recordkey)+" group by fare_code")
+                FareCodeFromDatabase =  Flightdata.objects.raw("select p1.rowid,p1."+fare_class_code+" as fare_code from pexproject_flightdata p1 "+inner_join_on+" where p1.searchkeyid="+str(recordkey)+" group by p1.datasource order by minpricemile,maxpricemile")      
                 
         elif 'keyid' in  request.GET:
             key = request.GET.get('keyid', '')
@@ -1334,26 +1336,30 @@ def getsearchresult(request):
                 pricematrix = Flightdata.objects.raw("select p1.rowid,p2.rowid, p2.datasource, (min(if(p1.maincabin > 0,p1.maincabin,NULL))+min(if(p2.maincabin > 0,p2.maincabin,NULL))) as maincabin, (min(if(p1.firstclass>0,p1.firstclass,NULL))+min(if(p2.firstclass>0,p2.firstclass,NULL))) as firstclass ,(min(if(p1.business>0,p1.business,NULL))+min(if(p2.business>0,p2.business,NULL))) as business  from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+returnkeyid+" where p1.searchkeyid="+str(key)+" group by p1.datasource")
                 ''' fetch minimum maximum price'''
                 priceRange = Flightdata.objects.raw("select p1.rowid,p2.rowid, p2.datasource,p1."+fare_class_code+" as fare_code, (min(if(p1."+cabinclass+" > 0,p1."+cabinclass+",NULL))+min(if(p2."+cabinclass+" > 0,p2."+cabinclass+",NULL))) as minpricemile, (max(if(p1."+cabinclass+" > 0,p1."+cabinclass+",NULL))+max(if(p2."+cabinclass+" > 0,p2."+cabinclass+",NULL))) as maxpricemile  from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+returnkeyid+" where p1.searchkeyid="+str(key)+" group by p1.datasource order by minpricemile,maxpricemile")
+                FareCodeFromDatabase = Flightdata.objects.raw("select p1.rowid,p2.rowid,p1."+fare_class_code+" as fare_code from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+returnkeyid+" where p1.searchkeyid="+str(key)+" group by fare_code")
             else:
                 pricematrix =  Flightdata.objects.raw("select rowid, datasource, min(if(maincabin > 0,maincabin,NULL)) as maincabin, min(if(firstclass>0,firstclass,NULL)) as firstclass ,min(if(business>0,business,NULL)) as business  from pexproject_flightdata where searchkeyid="+str(key)+" group by datasource")
-                priceRange =  Flightdata.objects.raw("select rowid, datasource,"+fare_class_code+" as fare_code, min(if("+cabinclass+" > 0,"+cabinclass+",NULL)) as minpricemile, max(if("+cabinclass+" > 0,"+cabinclass+",NULL)) as maxpricemile  from pexproject_flightdata where searchkeyid="+str(key)+" group by datasource order by minpricemile,maxpricemile")
+                priceRange =  Flightdata.objects.raw("select rowid, datasource, min(if("+cabinclass+" > 0,"+cabinclass+",NULL)) as minpricemile, max(if("+cabinclass+" > 0,"+cabinclass+",NULL)) as maxpricemile  from pexproject_flightdata where searchkeyid="+str(key)+" group by datasource order by minpricemile,maxpricemile")
+                FareCodeFromDatabase = Flightdata.objects.raw("select rowid, "+fare_class_code+" as fare_code from pexproject_flightdata where searchkeyid="+str(key)+" group by fare_code")
         ''' get min and max price miles '''
         minPriceMile = 500
         maxPriceMile = 0
         fare_code_Array = []
-        if getPriceRange:        
+        if getPriceRange:
+            FareCodeFromDatabase1 = list(FareCodeFromDatabase)
+            for cd in FareCodeFromDatabase1:
+                fare_code_string = cd.fare_code
+                if fare_code_string != None and fare_code_string != '' and  ',' in fare_code_string:
+                    fare_code_string = fare_code_string.split(',')
+                    for n in range(0,len(fare_code_string)):
+                        if fare_code_string[n] not in fare_code_Array and fare_code_string != '' and fare_code_string[n] != None:
+                            fare_code_Array.append(fare_code_string[n])
+                else:
+                    if fare_code_string != None and fare_code_string != '' and fare_code_string not in fare_code_Array:
+                        fare_code_Array.append(fare_code_string)
             priceRange1 = list(priceRange) 
             temp = 0
             for t in priceRange1:
-                fare_code_string = t.fare_code
-                if fare_code_string != None and ',' in fare_code_string:
-                    fare_code_string = fare_code_string.split(',')
-                    for n in range(0,len(fare_code_string)):
-                        if fare_code_string[n] not in fare_code_Array and fare_code_string[n] != None:
-                            fare_code_Array.append(fare_code_string[n])
-                else:
-                    if fare_code_string != None and fare_code_string not in fare_code_Array:
-                        fare_code_Array.append(fare_code_string)
                 if temp < t.maxpricemile:
                     temp = t.maxpricemile
                 if t.minpricemile != None and (minPriceMile > t.minpricemile or minPriceMile == 500):
@@ -1736,11 +1742,10 @@ def getsearchresult(request):
             
         progress_value = '' 
         if 'progress_value' in request.POST:
-            progress_value = request.POST['progress_value']
-            
+            progress_value = request.POST['progress_value']  
         recordlen = len(multicitykey1)
         timerecord = Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` ")
-        filterkey = {'stoppage':list2,'fareCodes':codesList, 'datasource':list1, 'cabin':cabin,'minpricemile':minpricemile,'maxpricemile':maxpricemile} 
+        filterkey = {'stoppage':list2,'fareCodes':json.dumps(codesList),'fareCodelength':len(codesList), 'datasource':list1, 'cabin':cabin,'minpricemile':minpricemile,'maxpricemile':maxpricemile} 
         if depttime:
             timeinfo = {'maxdept':deptmaxtime, 'mindept':depttime, 'minarival':arivtime, 'maxarival':arivtmaxtime}
         else:

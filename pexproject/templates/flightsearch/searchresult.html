@@ -2976,7 +2976,8 @@ function getPriceMatrix()
 	$.ajax({
 	url:dataurls,
 	type:'POST',
-	data:"actionfor=prc_matrix&csrfmiddlewaretoken={{csrf_token }}", 
+	data:"actionfor=prc_matrix&csrfmiddlewaretoken={{csrf_token }}",
+	 
 	success:function(html){
 	$('#price_matrix').empty();
 	$('#price_matrix').append(html);
@@ -2997,18 +2998,25 @@ function getPriceMatrix()
 		});
 	
 }
-var codes = "{{filterkey.fareCodes|safe }}";
+
+var codelen = "{{filterkey.fareCodelength}}";
+var codes = "{{filterkey.fareCodes}}";
+var code1 = codes.replace(/&quot;/g, '');
+code1 = code1.replace('[','');
+code1 = code1.replace(']','');
+code1 = code1.split(',');
 function create_fare_code_filter(fareCodeList)
 {
 	var fareCodeDisplay='';
 	for(item=0;item < fareCodeList.length;item++)
 	{
 		codeStatus = '';
-		if(codes != '')
+		if(codelen > 0)
 		{
-			for(c=0;c<codes.length;c++)
+			for(c=0;c<codelen;c++)
 			{
-				if (codes[c] == fareCodeList[item])
+				
+				if ($.trim(code1[c]) == $.trim(fareCodeList[item]))
 				{
 					codeStatus =  "checked='checked'"; 
 				}
