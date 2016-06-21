@@ -169,9 +169,7 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                             else:
                                 planetime = totaltime
                             planeinfo = planeinfo+"("+planetime+")"
-
                             plaindetails.append(planeinfo)
-                       
                     if content.findAll("td",{"class":"colCost"}):
                         priceblock = content.findAll("td",{"class":"colCost"})
                         for fare in priceblock:
@@ -197,7 +195,6 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                                             first_miles = miles1
                                             firsttax = taxes1
                                     j = j-1
-            
                     if n > 1:
                         flag = n
                         orgncode = origin_code
@@ -205,7 +202,6 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                         flightno = str(fltno)
                         dest_code =''
                         arivetime=''
-                        
                     if flag == 0:
                         depttime1 = (datetime.datetime.strptime(depttime, '%I:%M %p'))
                         depttime2 = depttime1.strftime('%H:%M')
@@ -218,10 +214,13 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                             plaiintexts = '@'.join(plaindetails) 
                             operatedtexts = '@'.join(operatedby)
                             ecoFareText = '@'.join(echoFareCode)
+                            eco_fare_code = ','.join(echoFareCode)
                             businessFareText = '@'.join(businessFareCode)
+                            bus_fare_code = ','.join(businessFareCode)
                             firstFareText = '@'.join(firstFareCode)
+                            first_fare_code = ','.join(firstFareCode)
                         recordCount = recordCount+1
-                        value_string.append((str(fltno), str(searchid), stime, stoppage, "test", origin_code, dest_code, depttime2, arivetime2, totaltime, str(economy_miles), str(econ_tax), str(business_miles), str(businesstax), str(first_miles), str(firsttax),"Economy", "Business", "First", "jetblue", departtexts, arivetexts, plaiintexts, operatedtexts,ecoFareText,businessFareText,firstFareText))
+                        value_string.append((str(fltno), str(searchid), stime, stoppage, "test", origin_code, dest_code, depttime2, arivetime2, totaltime, str(economy_miles), str(econ_tax), str(business_miles), str(businesstax), str(first_miles), str(firsttax),"Economy", "Business", "First", "jetblue", departtexts, arivetexts, plaiintexts, operatedtexts,ecoFareText,businessFareText,firstFareText,eco_fare_code,bus_fare_code,first_fare_code))
                         
                     else:
                         if n < 2:
@@ -235,20 +234,23 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                                 plaiintexts = '@'.join(plaindetails) 
                                 operatedtexts = '@'.join(operatedby)
                                 ecoFareText = '@'.join(echoFareCode)
+                                eco_fare_code = ','.join(echoFareCode)
                                 businessFareText = '@'.join(businessFareCode)
+                                bus_fare_code = ','.join(businessFareCode)
                                 firstFareText = '@'.join(firstFareCode)
+                                first_fare_code = ','.join(firstFareCode)
                                 recordCount = recordCount+1
-                            value_string.append((str(flightno), str(searchid), stime, stoppage, "test", orgncode, dest_code, depttime2, arivetime2, totaltime, str(economy_miles), str(econ_tax), str(business_miles), str(businesstax), str(first_miles), str(firsttax), "Economy", "Business", "First", "jetblue", departtexts, arivetexts, plaiintexts, operatedtexts,ecoFareText,businessFareText,firstFareText))
+                            value_string.append((str(flightno), str(searchid), stime, stoppage, "test", orgncode, dest_code, depttime2, arivetime2, totaltime, str(economy_miles), str(econ_tax), str(business_miles), str(businesstax), str(first_miles), str(firsttax), "Economy", "Business", "First", "jetblue", departtexts, arivetexts, plaiintexts, operatedtexts,ecoFareText,businessFareText,firstFareText,eco_fare_code,bus_fare_code,first_fare_code))
                             
                     if recordCount > 50:
-                        cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
+                        cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code,eco_fare_code,business_fare_code,first_fare_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
                         print "row inserted"
                         db.commit()
                         recordCount = 1
                         value_string = []
                     n = n-1
         if len(value_string) > 0:
-            cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
+            cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code,eco_fare_code,business_fare_code,first_fare_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
             print "final row inserted"
             db.commit()
     except:

@@ -109,6 +109,7 @@
 										</div>
 
 									</div>
+									
 									<div class="col-md-12 col-xs-12 nopadding form-side">
 										<div class="priceRangeInfo">
 											DEPARTURE TIME
@@ -128,6 +129,14 @@
 										<input type="hidden" name="arivalmax" id="arivalmax" value=""/>
 
 									</div>
+									<div class="col-md-12 col-xs-12 nopadding form-side">
+										<p> FARE CODES</p>
+										<div class="col-md-10 col-xs-10 nopadding" id="add_fare_code">
+											
+										</div>
+										
+									</div>
+																
 									<div class="col-md-12 col-xs-12 nopadding form-side">
 										<p>
 											NUMBER OF STOPS
@@ -2716,6 +2725,7 @@
 			$('#loading_img').show();
 			var airline = new Array();
 			var stoppage = new Array();
+			var fareCodes = new Array();
 			var min_prc_param = "&minPriceMile="+parseInt($('#minPriceMile').val());
 			var max_prc_param = "&maxPriceMile="+parseInt($('#maxPriceMile').val());
 			var row_val = "";
@@ -2727,11 +2737,14 @@
 				airline.push($(this).val());
 
 			});
-
+			$(".farecode:checked").each(function(){
+				fareCodes.push($(this).val());
+			});
 			$(".chk-stoppage:checked").each(function() {
 				stoppage.push($(this).val());
 
 			});
+			console.log(fareCodes);
 			var multicity = '';
 			var multicity1 = "{{request.GET.multicity}}";
 			if (multicity1 != '') {
@@ -2743,7 +2756,7 @@
 			$.ajax({
 				url : urls,
 				type : 'POST',
-				data : "action=" + encodeURI('infinite_scroll')+min_prc_param+max_prc_param + "&page_no=" + encodeURI(pageNumber) + "&loop_file=loop&csrfmiddlewaretoken={{ csrf_token }}&depaturemin=" + depaturemin + "&depaturemax=" + depaturemax +"&arivalmin="+arivalmin+"&arivalmax="+arivalmax+"&airlines=" + airline + "&stoppage=" + stoppage + row_val + multicity,
+				data : "action=" + encodeURI('infinite_scroll')+min_prc_param+max_prc_param + "&page_no=" + encodeURI(pageNumber) + "&loop_file=loop&csrfmiddlewaretoken={{ csrf_token }}&depaturemin=" + depaturemin + "&depaturemax=" + depaturemax +"&arivalmin="+arivalmin+"&arivalmax="+arivalmax+"&airlines=" + airline +"&fareCodes="+fareCodes +"&stoppage=" + stoppage + row_val + multicity,
 				success : function(html) {
 					$("#content").append(html);
 					call_sent = "completed";
@@ -2978,12 +2991,32 @@ function getPriceMatrix()
 			$('#maxPriceMile').val(data[1]);
 			$('#fix_min_price').val(data[0]);
 			$('#fix_max_price').val(data[1]);
+			create_fare_code_filter(data[2]);
 			initialisePriceRange();
-			
-			
 			}
 		});
 	
+}
+var codes = "{{filterkey.fareCodes|safe }}";
+function create_fare_code_filter(fareCodeList)
+{
+	var fareCodeDisplay='';
+	for(item=0;item < fareCodeList.length;item++)
+	{
+		codeStatus = '';
+		if(codes != '')
+		{
+			for(c=0;c<codes.length;c++)
+			{
+				if (codes[c] == fareCodeList[item])
+				{
+					codeStatus =  "checked='checked'"; 
+				}
+			}
+		}
+		fareCodeDisplay = fareCodeDisplay+"<div class='checkbox'><label><input type='checkbox' class='farecode' name='fareCodes' value='"+fareCodeList[item]+"'"+codeStatus+"><span></span>"+fareCodeList[item]+"</label></div>";
+	}
+	$('#add_fare_code').append(fareCodeDisplay);
 }
 function updateTime()
 {

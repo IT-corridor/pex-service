@@ -162,13 +162,16 @@ def scrapeFlight(page_contents,searchid,tax):
         economy_fare_class = ''
         business_fare_class = ''
         fisrt_fare_class = ''
-        
+        eco_fare_code = ''
+        bus_fare_code = ''
+        first_fare_code = ''
             
         if 'Economy' in cabin_name:
             maincabin = pricemile
             cabintype1 = cabin_name
             maintax = tax
             if len(BookingFareCode) > 0:
+                eco_fare_code = ','.join(BookingFareCode)
                 economy_fare_class = ' Economy@'.join(BookingFareCode)
                 economy_fare_class = economy_fare_class+" Economy"
         elif 'First' in cabin_name:
@@ -176,6 +179,7 @@ def scrapeFlight(page_contents,searchid,tax):
             cabintype3 = cabin_name
             firsttax = tax
             if len(BookingFareCode) > 0:
+                first_fare_code = ','.join(BookingFareCode)
                 fisrt_fare_class = ' First@'.join(BookingFareCode)
                 fisrt_fare_class = fisrt_fare_class+" First"
         else:
@@ -184,6 +188,7 @@ def scrapeFlight(page_contents,searchid,tax):
                 cabintype2 = cabin_name
                 businesstax = tax
                 if len(BookingFareCode) > 0:
+                    bus_fare_code = ','.join(BookingFareCode)
                     business_fare_class = ' Business@'.join(BookingFareCode)
                     business_fare_class = business_fare_class + " Business"
         departdetails = '@'.join(departdetail)
@@ -192,15 +197,15 @@ def scrapeFlight(page_contents,searchid,tax):
         operatedbytext='@'.join(operatedby)
         
         #print "****************************************************************************************************"
-        value_string.append((flightno, str(searchid), stime, stoppage, "test", departcode, dest_code, departtime1, dest_time1, totaltime, str(maincabin),str(maintax), str(business),str(businesstax), str(first),str(firsttax), cabintype1, cabintype2, cabintype3, "american airlines", departdetails, arivedetails, planedetails, operatedbytext,economy_fare_class,business_fare_class,fisrt_fare_class))
+        value_string.append((flightno, str(searchid), stime, stoppage, "test", departcode, dest_code, departtime1, dest_time1, totaltime, str(maincabin),str(maintax), str(business),str(businesstax), str(first),str(firsttax), cabintype1, cabintype2, cabintype3, "american airlines", departdetails, arivedetails, planedetails, operatedbytext,economy_fare_class,business_fare_class,fisrt_fare_class,eco_fare_code,bus_fare_code,first_fare_code))
         
         if len(value_string)> 50 :
-            cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
+            cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code,eco_fare_code,business_fare_code,first_fare_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
             db.commit()
             value_string = []
             print len(value_string),"row inserted"
     if len(value_string) > 0:
-        cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
+        cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code,eco_fare_code,business_fare_code,first_fare_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
         db.commit()
         print len(value_string),"row inserted"
     
