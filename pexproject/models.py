@@ -111,7 +111,7 @@ class UserManager(BaseUserManager):
         user.firstname = fname
         
         user.lastname = lname
-        if user.password == '' or user.password == None:
+	if user.password == '' or user.password == None:
             user.set_password(password)
         user.save(using=self._db)
         return user
