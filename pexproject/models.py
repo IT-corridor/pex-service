@@ -214,7 +214,21 @@ class Search(models.Model):
     image = models.CharField(max_length=500)
     lowest_price = models.CharField(max_length=50)
     lowest_points = models.CharField(max_length=50)
-
+    
     def __unicode__(self):
         return self.keyword
+    
+class UserAlert(models.Model):
+    alertid = models.AutoField(primary_key=True)
+    userid = models.IntegerField()
+    user_email = models.EmailField(blank=True, null=True)
+    pricemile = models.IntegerField()
+    source_airportid = models.IntegerField()
+    destination_airportid = models.IntegerField()
+    departdate = models.DateField()
+    returndate = models.DateField()
+    expiredate = models.DateField()
+    alertday = models.CharField(max_length=512)
+    alert_status = models.BooleanField(default=False)
+    
  

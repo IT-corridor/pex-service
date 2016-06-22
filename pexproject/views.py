@@ -19,7 +19,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.context_processors import csrf
 from django.views.decorators.csrf import requires_csrf_token
-from pexproject.models import Flightdata, Airports, Searchkey, User,Pages, Contactus,Adminuser,EmailTemplate,GoogleAd
+from pexproject.models import Flightdata, Airports, Searchkey, User,Pages,UserAlert,Contactus,Adminuser,EmailTemplate,GoogleAd
 from pexproject.models import Blogs,BlogImages,CityImages,Search
 from pexproject.templatetags.customfilter import floatadd, assign
 from social_auth.models import UserSocialAuth
@@ -1284,9 +1284,23 @@ def getsearchresult(request):
     pricesources = []
     roundtripkey = ''
     pointlist=''
+    minpricemile = 0
+    maxpricemile = 0
+    fare_class_code = ''
+    if 'maincabin' in cabinclass:
+        fare_class_code = 'eco_fare_code'
+    elif 'firstclass' in cabinclass:
+        fare_class_code = 'business_fare_code'
+    else:
+        fare_class_code = 'first_fare_code'
     
     #@@@@ Get Pricematrix list @@@@@@@@@@@@@@@@@@@@
     if 'actionfor' in request.POST and request.POST['actionfor'] == 'prc_matrix':
+        getPriceRange = False
+        if 'valuefor' in request.POST and request.POST['valuefor'] == 'pricerange':
+            getPriceRange = True
+        priceRange = ''
+        FareCodeFromDatabase = ''
         if 'multicity' in request.GET or 'multicity' in request.POST:
             n = 1
             multicitykey = request.GET.get('multicity', '')
@@ -1305,14 +1319,65 @@ def getsearchresult(request):
                     inner_join_on = inner_join_on+" inner join pexproject_flightdata p"+str(n)+" on  p"+str(n)+".searchkeyid ='" +keys+"' and p1.datasource = p"+str(n)+".datasource"
                 n = n+1
             pricematrix =  Flightdata.objects.raw("select p1.rowid, p1.datasource,"+ecocabin+" as maincabin,"+busscabin+"  as firstclass ,"+firstcabin+" as business  from pexproject_flightdata p1 "+inner_join_on+" where p1.searchkeyid="+str(recordkey)+" group by p1.datasource")      
-            
+            '''fetching min max price miles for multicity '''
+            min_max_cabin = ''
+            if getPriceRange:
+                if cabinclass == 'maincabin':
+                    min_max_cabin = ecocabin
+                elif cabinclass == 'firstclass':
+                    min_max_cabin = busscabin
+                else:
+                    min_max_cabin = firstcabin
+                maxpricemile_query = min_max_cabin
+                if 'min' in maxpricemile_query:
+                    maxpricemile_query = maxpricemile_query.replace('min','max')    
+                priceRange =  Flightdata.objects.raw("select p1.rowid, p1.datasource,p1."+fare_class_code+" as fare_code, "+min_max_cabin+" as minpricemile,"+maxpricemile_query+"  as maxpricemile  from pexproject_flightdata p1 "+inner_join_on+" where p1.searchkeyid="+str(recordkey)+" group by fare_code")
+                FareCodeFromDatabase =  Flightdata.objects.raw("select p1.rowid,p1."+fare_class_code+" as fare_code from pexproject_flightdata p1 "+inner_join_on+" where p1.searchkeyid="+str(recordkey)+" group by p1.datasource order by minpricemile,maxpricemile")      
+       
         elif 'keyid' in  request.GET:
             key = request.GET.get('keyid', '')
             if 'returnkey' in request.GET:
                 returnkeyid = request.GET.get('returnkey', '')
                 pricematrix = Flightdata.objects.raw("select p1.rowid,p2.rowid, p2.datasource, (min(if(p1.maincabin > 0,p1.maincabin,NULL))+min(if(p2.maincabin > 0,p2.maincabin,NULL))) as maincabin, (min(if(p1.firstclass>0,p1.firstclass,NULL))+min(if(p2.firstclass>0,p2.firstclass,NULL))) as firstclass ,(min(if(p1.business>0,p1.business,NULL))+min(if(p2.business>0,p2.business,NULL))) as business  from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+returnkeyid+" where p1.searchkeyid="+str(key)+" group by p1.datasource")
+                ''' fetch minimum maximum price'''
+                priceRange = Flightdata.objects.raw("select p1.rowid,p2.rowid, p2.datasource,p1."+fare_class_code+" as fare_code, (min(if(p1."+cabinclass+" > 0,p1."+cabinclass+",NULL))+min(if(p2."+cabinclass+" > 0,p2."+cabinclass+",NULL))) as minpricemile, (max(if(p1."+cabinclass+" > 0,p1."+cabinclass+",NULL))+max(if(p2."+cabinclass+" > 0,p2."+cabinclass+",NULL))) as maxpricemile  from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+returnkeyid+" where p1.searchkeyid="+str(key)+" group by p1.datasource order by minpricemile,maxpricemile")
+                FareCodeFromDatabase = Flightdata.objects.raw("select p1.rowid,p2.rowid,p1."+fare_class_code+" as fare_code from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+returnkeyid+" where p1.searchkeyid="+str(key)+" group by fare_code")
+
             else:
                 pricematrix =  Flightdata.objects.raw("select rowid, datasource, min(if(maincabin > 0,maincabin,NULL)) as maincabin, min(if(firstclass>0,firstclass,NULL)) as firstclass ,min(if(business>0,business,NULL)) as business  from pexproject_flightdata where searchkeyid="+str(key)+" group by datasource")
+                priceRange =  Flightdata.objects.raw("select rowid, datasource, min(if("+cabinclass+" > 0,"+cabinclass+",NULL)) as minpricemile, max(if("+cabinclass+" > 0,"+cabinclass+",NULL)) as maxpricemile  from pexproject_flightdata where searchkeyid="+str(key)+" group by datasource order by minpricemile,maxpricemile")
+                FareCodeFromDatabase = Flightdata.objects.raw("select rowid, "+fare_class_code+" as fare_code from pexproject_flightdata where searchkeyid="+str(key)+" group by fare_code")
+        ''' get min and max price miles '''
+        minPriceMile = 500
+        maxPriceMile = 0
+        fare_code_Array = []
+        if getPriceRange:
+            FareCodeFromDatabase1 = list(FareCodeFromDatabase)
+            for cd in FareCodeFromDatabase1:
+                fare_code_string = cd.fare_code
+                if fare_code_string != None and fare_code_string != '' and  ',' in fare_code_string:
+                    fare_code_string = fare_code_string.split(',')
+                    for n in range(0,len(fare_code_string)):
+                        if fare_code_string[n] not in fare_code_Array and fare_code_string != '' and fare_code_string[n] != None:
+                            fare_code_Array.append(fare_code_string[n])
+                else:
+                    if fare_code_string != None and fare_code_string != '' and fare_code_string not in fare_code_Array:
+                        fare_code_Array.append(fare_code_string)
+            priceRange1 = list(priceRange) 
+            temp = 0
+            for t in priceRange1:
+                if temp < t.maxpricemile:
+                    temp = t.maxpricemile
+                if t.minpricemile != None and (minPriceMile > t.minpricemile or minPriceMile == 500):
+                   minPriceMile = t.minpricemile   
+            maxPriceMile = temp
+            mimetype = 'application/json'
+            results = []
+            results.append(minPriceMile)
+            results.append(maxPriceMile)
+            results.append(fare_code_Array)
+            data = json.dumps(results)
+            return HttpResponse(data, mimetype)
         if pricematrix:
             pricematrix1 = list(pricematrix)
             for s in pricematrix1:
@@ -1385,6 +1450,18 @@ def getsearchresult(request):
                     else:
                         querylist = querylist + join + "p1.stoppage = '" + list2[0] + "'"
                         join = ' AND '    
+    codesList = ''
+    code_query_string=''                    
+    if 'fareCodes' in request.POST:
+        codesList = request.POST.getlist('fareCodes') 
+        if request.is_ajax():
+            codesList = codesList[0].split(',')
+        conn = ''
+        for code in codesList:
+            code_query_string = code_query_string+conn+"p1."+fare_class_code+" like '%%"+code+"%%' "
+            conn = ' or '
+        querylist = querylist + join +str("("+code_query_string+")")
+        join = ' AND '
     if 'airlines' in request.POST:
         if request.is_ajax():
             list1 = request.POST.getlist('airlines')
@@ -1591,6 +1668,14 @@ def getsearchresult(request):
                     q = ''
                 counter = counter+1
                 n = n+1
+                if 'minPriceMile' in request.POST:
+                    minpricemile = request.POST['minPriceMile']
+                    querylist = querylist + join + " "+totalfare+" >= '" + minpricemile + "'"
+                    join = ' AND '
+                if 'maxPriceMile' in request.POST:
+                    maxpricemile = request.POST['maxPriceMile']
+                    querylist = querylist + join + " "+totalfare+" <= '" + maxpricemile + "'"
+                    join = ' AND '
             finalquery = qry1+"CONCAT("+newidstring+") as newid ,"+qry2+ totalfare+" as finalprice "+totaltax+" as totaltaxes from (select  * from pexproject_flightdata where "+querylist+" searchkeyid ='"+str(recordkey)+"' and "+cabinclass+" > '0' order by maincabin limit "+str(setLimit)+") as p1 "+qry3 + " order by finalprice,totaltaxes , departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset)
             record_obj = Flightdata.objects.raw(finalquery)
             record = list(record_obj)
@@ -1621,13 +1706,30 @@ def getsearchresult(request):
                 mainlist.append(mainlist1)
         else:
             if (returnkeyid1 and ('rowid' not in request.GET) and 'rowid' not in request.POST) or len(multicitykey1) > 0:
+                mile_condition = ''
                 totalfare = "p1." + cabinclass + "+p2." + cabinclass
+                if 'minPriceMile' in request.POST:
+                    minpricemile = request.POST['minPriceMile']
+                    querylist = querylist + join + " "+totalfare+" >= '" + minpricemile + "'"
+                    join = ' AND '
+                if 'maxPriceMile' in request.POST:
+                    maxpricemile = request.POST['maxPriceMile']
+                    querylist = querylist + join + " "+totalfare+" <= '" + maxpricemile + "'"
+                    join = ' AND '
                 returnfare = "p2." + cabinclass
                 departfare = "p1." + cabinclass
                 totaltax = "p1."+taxes+"+p2."+taxes
                 record = Flightdata.objects.raw("select p1.*,CONCAT(p1.rowid,'_',p2.rowid) as newid,p2.origin as origin1,p2.rowid as rowid1, p2.stoppage as stoppage1,p2.flighno as flighno1, p2.cabintype1 as cabintype11,p2.cabintype2 as cabintype21,p2.cabintype3 as cabintype31, p2.destination as destination1, p2.departure as departure1, p2.arival as arival1, p2.duration as duration1, p2.maincabin as maincabin1, p2.maintax as maintax1, p2.firsttax as firsttax1, p2.businesstax as businesstax1,p2.departdetails as departdetails1,p2.arivedetails as arivedetails1, p2.planedetails as planedetails1,p2.operatedby as operatedby1," + totalfare + " as finalprice,  "+totaltax+" as totaltaxes from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ='" + returnkeyid1 + "' and " + returnfare + " > '0'  where  p1.searchkeyid = '" + searchkey + "' and " + departfare + " > 0 and " + querylist + " order by finalprice ,totaltaxes, departure, p2.departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset))
                 
             else:
+                if 'minPriceMile' in request.POST:
+                    minpricemile = request.POST['minPriceMile']
+                    querylist = querylist + join + " p1."+cabinclass+" >= '" + minpricemile + "'"
+                    join = ' AND '
+                if 'maxPriceMile' in request.POST:
+                    maxpricemile = request.POST['maxPriceMile']
+                    querylist = querylist + join + " p1."+cabinclass+" <= '" + maxpricemile + "'"
+                    join = ' AND '
                 cabintype = " and " + cabinclass + " > 0"
                 querylist = querylist+cabintype
                 record = Flightdata.objects.raw("select p1.*,p1.maintax as maintax1, p1.firsttax as firsttax1, p1.businesstax as businesstax1,p1.rowid as newid ,case when datasource = 'delta' then " + deltaorderprice + "  else " + unitedorderprice + " end as finalprice, "+taxes+" as totaltaxes from pexproject_flightdata as p1 where " + querylist + " order by finalprice ," + taxes + ",departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset))
@@ -1639,7 +1741,7 @@ def getsearchresult(request):
             
         recordlen = len(multicitykey1)
         timerecord = Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` ")
-        filterkey = {'stoppage':list2, 'datasource':list1, 'cabin':cabin} 
+        filterkey = {'stoppage':list2,'fareCodes':json.dumps(codesList),'fareCodelength':len(codesList), 'datasource':list1, 'cabin':cabin,'minpricemile':minpricemile,'maxpricemile':maxpricemile}
         if depttime:
             timeinfo = {'maxdept':deptmaxtime, 'mindept':depttime, 'minarival':arivtime, 'maxarival':arivtmaxtime}
         else:
@@ -1721,6 +1823,42 @@ def share(request):
                     tax = returnrecord.businesstax
                     returncabin = returnrecord.cabintype3
         return render_to_response('flightsearch/share.html', {'record':record, 'cabin':cabin, 'traveler':traveler, 'returnrecord':returnrecord, "price":price, "tax":tax, 'returncabin':returncabin}, context_instance=RequestContext(request))
+
+def useralert(request):
+    context = {}
+    if request.POST and  'userid' in request.session:
+        message = ''
+        alertuser = UserAlert()
+        email = request.session['username']
+        alertuser.user_email = email
+        alertuser.userid = request.session['userid']
+        triptype = request.POST['trip']
+        alertuser.source_airportid = request.POST['fromid']
+        alertuser.destination_airportid = request.POST['destid']
+        alertuser.departdate = request.POST['alt_depardate']
+        if 'pricemile' in request.POST and request.POST['pricemile']:
+            alertuser.pricemile = request.POST['pricemile']
+        if 'alt_returndate' in request.POST and request.POST['alt_returndate']:
+            alertuser.returndate = request.POST['alt_returndate']
+            print "alt_returndate",request.POST['alt_returndate']
+        if 'alt_expire' in request.POST and request.POST['alt_expire']:
+            alertuser.expiredate = request.POST['alt_expire']
+        else:
+            alertuser.expiredate = request.POST['alt_depardate']
+        if 'alertday' in request.POST:
+            alertday = request.POST.getlist('alertday')
+            alertuser.alertday = ','.join(alertday)
+        alertuser.save()
+        try:
+            
+            email_sub = "PEX+ miles alert"
+            emailbody = "Hello "+email+" you have successfully created a PEX+ flight miles alert.<br><br>Thanks,<b> PEX+ Team"
+            resp = customfunction.sendMail('PEX+',email,email_sub,emailbody,html_content)
+            message = "you have successfully created Flight miles alert"
+        except:
+            message = "Something went wrong, Please try again"
+        return HttpResponseRedirect('/manageAccount?status='+message)
+    return HttpResponseRedirect(reverse('manageAccount'))
 
 def subscribe(request):
     if request.is_ajax:
