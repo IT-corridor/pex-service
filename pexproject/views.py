@@ -1852,7 +1852,7 @@ def useralert(request):
         try:
             html_content = ''
             email_sub = "PEX+ miles alert"
-            emailbody = "Hello "+email+" you have successfully created a PEX+ flight miles alert.<br><br>Thanks,<b> PEX+ Team"
+            emailbody = "Hello <b>"+email+"</b>,<br><br> you have successfully created a PEX+ flight miles alert.<br><br>Thanks,<br><b> PEX+ Team"
             resp = customfunction.sendMail('PEX+',email,email_sub,emailbody,html_content)
             message = "you have successfully created Flight miles alert"
         except:
