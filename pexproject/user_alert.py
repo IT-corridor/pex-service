@@ -30,8 +30,29 @@ olddestinationCode = ''
 olddestinationCity = ''
 destid = ''
 sourceid = ''
-'''  send scraper '''
-#def scrapers(sourcecode,sourcecity,destcode,destcity,date):
+
+def callScraper(source_code, olddestinationCode, departdate1,searchid):
+    united(source_code, olddestinationCode, departdate1,searchid)
+    delta(source_code, olddestinationCode, departdate1,searchid)
+    jetblue(source_code, olddestinationCode, departdate1,searchid)
+    virginAmerica(source_code, olddestinationCode, departdate1,searchid)
+    etihad(source_city, destcity, departdate1, searchid,"maincabin")
+    #virgin_atlantic(source_code, olddestinationCode, departdate1,returndate1,searchid,returnkey)
+    
+def sendAlertEmail(searchid,pricemiles,full_source,full_dest,usermail):
+    cursor.execute("select min(maincabin) as minprice, datasource from pexproject_flightdata where searchkeyid='"+str(searchid)+"' and maincabin > 0 and maincabin < "+str(pricemiles))
+    priceObj = cursor.fetchone()
+    print priceObj
+    if priceObj:
+        try:
+            price = priceObj['minprice']
+            email_sub = "PEX+ miles alert"
+            emailbody = "Hello <b>"+usermail+"</b>,<br><br> You can find flights from "+full_source+" to "+full_dest+" starting from "+str(price)+".<br><br>Thanks,<br><b> PEX+ Team"
+            html_content = ''
+            resp = customfunction.sendMail('PEX+',usermail,email_sub,emailbody,html_content)
+        except:
+            print "somting wrong"
+
     
 for row in users:
     print "**************************************************"
@@ -52,7 +73,7 @@ for row in users:
                 returndate1 = returndate.strftime('%m/%d/%Y')
             alertday =  row['alertday']
             pricemiles = row['pricemile']
-            print pricemiles
+            
             ''' check search key is exists or not'''
             cursor.execute("select searchid from pexproject_searchkey where origin_airport_id='"+str(originid)+"' and destination_airport_id='"+str(destid1)+"' and traveldate='"+str(departdate)+"' and scrapetime > '"+str(time1)+"'") 
             result = cursor.fetchone()
@@ -62,29 +83,13 @@ for row in users:
                 db.commit()
                 searchid = cursor.lastrowid
                 returnkey = ''
-                print "result",result
-                print "call scraper"
-                united(oldsourceCode, dest_code, departdate1,searchid)
-                delta(oldsourceCode, dest_code, departdate1,searchid)
-                jetblue(oldsourceCode, dest_code, departdate1,searchid)
-                virginAmerica(oldsourceCode, dest_code, departdate1,searchid)
-                #virgin_atlantic(oldsourceCode, dest_code, departdate1,returndate1,searchid,returnkey)
-                etihad(oldsourceCity, dest_city, departdate1, searchid,"maincabin")
+                callScraper(oldsourceCode, dest_code, departdate1,searchid)
+                
             else:
                 searchid = result['searchid']
+            print "searchid",searchid
             if searchid:
-                cursor.execute("select min(maincabin) as minprice, datasource from pexproject_flightdata where searchkeyid='"+str(searchid)+"' and maincabin > 0 and maincabin < "+str(pricemiles))
-                priceObj = cursor.fetchone()
-                print "priceObj", priceObj
-                if priceObj:
-                    try:
-                        price = priceObj['minprice']
-                        email_sub = "PEX+ miles alert"
-                        emailbody = "Hello <b>"+usermail+"</b>,<br><br> You can find flights from "+full_source+" to "+full_dest+" starting from miles "+str(price)+".<br><br>Thanks,<br><b> PEX+ Team"
-                        html_content = ''
-                        resp = customfunction.sendMail('PEX+',usermail,email_sub,emailbody,html_content)
-                    except:
-                        print "somting wrong"
+                sendAlertEmail(searchid,pricemiles,full_source,full_dest,usermail)
             cursor.execute("update pexproject_useralert set sent_alert_date='"+str(currentDate)+"' where alertid="+str(row['alertid']))    
             db.commit()
             oldsourceCode = ''
@@ -118,31 +123,12 @@ for row in users:
                 db.commit()
                 searchid = cursor.lastrowid
                 returnkey = ''
-                print "inserted id",searchid
-                print "result",result
-                print "call scraper"
-                united(source_code, olddestinationCode, departdate1,searchid)
-                delta(source_code, olddestinationCode, departdate1,searchid)
-                jetblue(source_code, olddestinationCode, departdate1,searchid)
-                virginAmerica(source_code, olddestinationCode, departdate1,searchid)
-                etihad(source_city, destcity, departdate1, searchid,"maincabin")
-                #virgin_atlantic(source_code, olddestinationCode, departdate1,returndate1,searchid,returnkey)
+                callScraper(source_code, olddestinationCode, departdate1,searchid)
             else:
                 searchid = result['searchid']
+            print "searchid",searchid
             if searchid:
-                cursor.execute("select min(maincabin) as minprice, datasource from pexproject_flightdata where searchkeyid='"+str(searchid)+"' and maincabin > 0 and maincabin < "+str(pricemiles))
-                priceObj = cursor.fetchone()
-                print "priceObj",priceObj
-                if priceObj:
-                    try:
-                        price = priceObj['minprice']
-                        email_sub = "PEX+ miles alert"
-                        emailbody = "Hello <b>"+usermail+"</b>,<br><br> You can find flights from "+full_source+" to "+full_dest+" starting from "+str(price)+".<br><br>Thanks,<br><b> PEX+ Team"
-                        html_content = ''
-                        resp = customfunction.sendMail('PEX+',usermail,email_sub,emailbody,html_content)
-                    except:
-                        print "somting wrong"
-                    
+                sendAlertEmail(searchid,pricemiles,full_source,full_dest,usermail)
             cursor.execute("update pexproject_useralert set sent_alert_date='"+str(currentDate)+"' where alertid="+str(row['alertid']))    
             db.commit()
             olddestinationCode = ''
@@ -157,4 +143,5 @@ for row in users:
         olddestinationCity = row['cityName']
         destid = row['destination_airportid']
     oldid = row['alertid']
+
 
