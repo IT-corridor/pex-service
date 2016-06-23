@@ -47,7 +47,9 @@ for row in users:
             departdate = row['departdate']
             departdate1 = departdate.strftime('%m/%d/%Y')
             returndate =  row['returndate']
-            returndate1 = returndate.strftime('%m/%d/%Y')
+            returndate1 = ''
+            if returndate:
+                returndate1 = returndate.strftime('%m/%d/%Y')
             alertday =  row['alertday']
             pricemiles = row['pricemile']
             print pricemiles
@@ -98,8 +100,10 @@ for row in users:
             print row['user_email']
             departdate = row['departdate']
             departdate1 = departdate.strftime('%m/%d/%Y')
+            returndate1 = ''
             returndate = row['returndate']
-            returndate1 = returndate.strftime('%m/%d/%Y')
+            if returndate1:
+                returndate1 = returndate.strftime('%m/%d/%Y')
             alertday = row['alertday']
             pricemiles = row['pricemile']
             
