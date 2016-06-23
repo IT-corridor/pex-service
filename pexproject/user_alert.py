@@ -76,12 +76,12 @@ for row in users:
                 cursor.execute("select min(maincabin) as minprice, datasource from pexproject_flightdata where searchkeyid='"+str(searchid)+"' and maincabin > 0 and maincabin < "+str(pricemiles))
                 priceObj = cursor.fetchone()
                 print "priceObj", priceObj
-                try:
+                if priceObj:
                     email_sub = "PEX+ miles alert"
-                    emailbody = "Hello "+email+" you can find flights from "+full_source+" to "+full_dest+" starting from .<br><br>Thanks,<b> PEX+ Team"
+                    emailbody = "Hello "+usermail+" you can find flights from "+full_source+" to "+full_dest+" starting from .<br><br>Thanks,<b> PEX+ Team"
                     html_content = ''
                     resp = customfunction.sendMail('PEX+',usermail,email_sub,emailbody,html_content)
-                except:
+                else:
                     print "somting wrong"
             cursor.execute("update pexproject_useralert set sent_alert_date='"+str(currentDate)+"' where alertid="+str(row['alertid']))    
             db.commit()
@@ -131,12 +131,12 @@ for row in users:
                 cursor.execute("select min(maincabin) as minprice, datasource from pexproject_flightdata where searchkeyid='"+str(searchid)+"' and maincabin > 0 and maincabin < "+str(pricemiles))
                 priceObj = cursor.fetchone()
                 print "priceObj",priceObj
-                try:
+                if priceObj:
                     email_sub = "PEX+ miles alert"
-                    emailbody = "Hello "+email+" you can find flights from "+full_source+" to "+full_dest+" starting from .<br><br>Thanks,<b> PEX+ Team"
+                    emailbody = "Hello "+usermail+" you can find flights from "+full_source+" to "+full_dest+" starting from .<br><br>Thanks,<b> PEX+ Team"
                     html_content = ''
                     resp = customfunction.sendMail('PEX+',usermail,email_sub,emailbody,html_content)
-                except:
+                else:
                     print "somting wrong"
                     
             cursor.execute("update pexproject_useralert set sent_alert_date='"+str(currentDate)+"' where alertid="+str(row['alertid']))    
