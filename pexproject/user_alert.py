@@ -8,7 +8,7 @@ from united import united
 from delta import delta
 from jetblue import jetblue
 from virginAmerica import virginAmerica
-from virgin import virgin_atlantic
+#from virgin import virgin_atlantic
 from etihad import etihad
 import thread
 
@@ -80,9 +80,9 @@ for row in users:
                     email_sub = "PEX+ miles alert"
                     emailbody = "Hello "+email+" you can find flights from "+full_source+" to "+full_dest+" starting from .<br><br>Thanks,<b> PEX+ Team"
                     html_content = ''
-                    resp = customfunction.sendMail('PEX+',email,email_sub,emailbody,html_content)
+                    resp = customfunction.sendMail('PEX+',usermail,email_sub,emailbody,html_content)
                 except:
-                    "somting wrong"
+                    print "somting wrong"
             cursor.execute("update pexproject_useralert set sent_alert_date='"+str(currentDate)+"' where alertid="+str(row['alertid']))    
             db.commit()
             oldsourceCode = ''
@@ -97,7 +97,7 @@ for row in users:
             destcode = olddestinationCode
             destcity = olddestinationCity  
             full_dest = olddestinationCity+" ("+olddestinationCode+")"
-            print row['user_email']
+            usermail = row['user_email']
             departdate = row['departdate']
             departdate1 = departdate.strftime('%m/%d/%Y')
             returndate1 = ''
@@ -135,9 +135,9 @@ for row in users:
                     email_sub = "PEX+ miles alert"
                     emailbody = "Hello "+email+" you can find flights from "+full_source+" to "+full_dest+" starting from .<br><br>Thanks,<b> PEX+ Team"
                     html_content = ''
-                    resp = customfunction.sendMail('PEX+',email,email_sub,emailbody,html_content)
+                    resp = customfunction.sendMail('PEX+',usermail,email_sub,emailbody,html_content)
                 except:
-                    "somting wrong"
+                    print "somting wrong"
                     
             cursor.execute("update pexproject_useralert set sent_alert_date='"+str(currentDate)+"' where alertid="+str(row['alertid']))    
             db.commit()
