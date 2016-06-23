@@ -229,6 +229,6 @@ class UserAlert(models.Model):
     returndate = models.DateField()
     expiredate = models.DateField()
     alertday = models.CharField(max_length=512)
-    alert_status = models.BooleanField(default=False)
+    sent_alert_date = models.DateField()
     
  

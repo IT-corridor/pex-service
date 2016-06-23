@@ -1850,7 +1850,7 @@ def useralert(request):
             alertuser.alertday = ','.join(alertday)
         alertuser.save()
         try:
-            
+            html_content = ''
             email_sub = "PEX+ miles alert"
             emailbody = "Hello "+email+" you have successfully created a PEX+ flight miles alert.<br><br>Thanks,<b> PEX+ Team"
             resp = customfunction.sendMail('PEX+',email,email_sub,emailbody,html_content)
