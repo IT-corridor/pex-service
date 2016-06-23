@@ -14,6 +14,11 @@ html, body {
 	padding: 10px;
     margin-bottom: 20px;
 }
+
+input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
 .wrapper {
 	 min-height: 100%;
 	 height: auto !important;
@@ -25,6 +30,15 @@ html, body {
 	 width: 100%;
 	 float: left;
 	 display: inline-block;
+}
+
+#select_day .btn-group {
+	width: 100% !important;
+}
+
+#select_day button {
+	width: 100% !important;
+	text-align: left !important;
 }
 
 .ad-images  img {
