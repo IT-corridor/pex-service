@@ -77,12 +77,14 @@ for row in users:
                 priceObj = cursor.fetchone()
                 print "priceObj", priceObj
                 if priceObj:
-                    email_sub = "PEX+ miles alert"
-                    emailbody = "Hello "+usermail+" you can find flights from "+full_source+" to "+full_dest+" starting from .<br><br>Thanks,<b> PEX+ Team"
-                    html_content = ''
-                    resp = customfunction.sendMail('PEX+',usermail,email_sub,emailbody,html_content)
-                else:
-                    print "somting wrong"
+                    try:
+                        price = priceObj['minprice']
+                        email_sub = "PEX+ miles alert"
+                        emailbody = "Hello <b>"+usermail+"</b>,<br><br> You can find flights from "+full_source+" to "+full_dest+" starting from miles "+str(price)+".<br><br>Thanks,<br><b> PEX+ Team"
+                        html_content = ''
+                        resp = customfunction.sendMail('PEX+',usermail,email_sub,emailbody,html_content)
+                    except:
+                        print "somting wrong"
             cursor.execute("update pexproject_useralert set sent_alert_date='"+str(currentDate)+"' where alertid="+str(row['alertid']))    
             db.commit()
             oldsourceCode = ''
@@ -132,12 +134,14 @@ for row in users:
                 priceObj = cursor.fetchone()
                 print "priceObj",priceObj
                 if priceObj:
-                    email_sub = "PEX+ miles alert"
-                    emailbody = "Hello "+usermail+" you can find flights from "+full_source+" to "+full_dest+" starting from .<br><br>Thanks,<b> PEX+ Team"
-                    html_content = ''
-                    resp = customfunction.sendMail('PEX+',usermail,email_sub,emailbody,html_content)
-                else:
-                    print "somting wrong"
+                    try:
+                        price = priceObj['minprice']
+                        email_sub = "PEX+ miles alert"
+                        emailbody = "Hello <b>"+usermail+"</b>,<br><br> You can find flights from "+full_source+" to "+full_dest+" starting from "+str(price)+".<br><br>Thanks,<br><b> PEX+ Team"
+                        html_content = ''
+                        resp = customfunction.sendMail('PEX+',usermail,email_sub,emailbody,html_content)
+                    except:
+                        print "somting wrong"
                     
             cursor.execute("update pexproject_useralert set sent_alert_date='"+str(currentDate)+"' where alertid="+str(row['alertid']))    
             db.commit()
