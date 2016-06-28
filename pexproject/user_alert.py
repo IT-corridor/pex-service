@@ -8,7 +8,7 @@ from united import united
 from delta import delta
 from jetblue import jetblue
 from virginAmerica import virginAmerica
-#from virgin import virgin_atlantic
+from virgin import virgin_atlantic
 from etihad import etihad
 import thread
 
@@ -21,7 +21,7 @@ time1 = time1.strftime('%Y-%m-%d %H:%M:%S')
 
 currentDate = datetime.datetime.now().date()
 currday = currentDate.strftime("%A")
-cursor.execute("select t1.*,t2.airport_id, t2.code,t2.cityName  from  pexproject_useralert t1 inner join pexproject_airports t2 on t1.source_airportid = t2.airport_id or t1.destination_airportid = t2.airport_id where expiredate > '"+str(currentDate)+"' and sent_alert_date < '"+str(currentDate)+"' and (alertday like '%%"+currday+"%%' or alertday='')")
+cursor.execute("select t1.*,t2.airport_id, t2.code,t2.cityName  from  pexproject_useralert t1 inner join pexproject_airports t2 on t1.source_airportid = t2.airport_id or t1.destination_airportid = t2.airport_id where expiredate >= '"+str(currentDate)+"' and sent_alert_date < '"+str(currentDate)+"' and (alertday like '%%"+currday+"%%' or alertday='')")
 users = cursor.fetchall()
 oldid = ''
 oldsourceCode = ''
@@ -31,23 +31,36 @@ olddestinationCity = ''
 destid = ''
 sourceid = ''
 
-def callScraper(source_code, olddestinationCode, departdate1,searchid):
+def callScraper(source_code, olddestinationCode, departdate1,searchid,source_city,destcity):
+    #print source_code, olddestinationCode, departdate1,searchid
     united(source_code, olddestinationCode, departdate1,searchid)
     delta(source_code, olddestinationCode, departdate1,searchid)
     jetblue(source_code, olddestinationCode, departdate1,searchid)
     virginAmerica(source_code, olddestinationCode, departdate1,searchid)
     etihad(source_city, destcity, departdate1, searchid,"maincabin")
-    #virgin_atlantic(source_code, olddestinationCode, departdate1,returndate1,searchid,returnkey)
+    virgin_atlantic(source_code, olddestinationCode, departdate1,returndate1,searchid,returnkey)
     
-def sendAlertEmail(searchid,pricemiles,full_source,full_dest,usermail):
-    cursor.execute("select min(maincabin) as minprice, datasource from pexproject_flightdata where searchkeyid='"+str(searchid)+"' and maincabin > 0 and maincabin < "+str(pricemiles))
+def sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,deptdate,retdate):
+    retstr = ''
+    triptype=''
+    if returnkey:
+        cursor.execute("select (min(p1.maincabin)+min(p2.maincabin)) as minprice from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and p2.maincabin > 0 where p1.searchkeyid="+str(searchid)+" and p1.maincabin > 0 group by p1.datasource order by minprice")   
+        retstr = ' - '+str(retdate)
+        triptype = "Round-Trip"
+    else:    
+        cursor.execute("select min(maincabin) as minprice, datasource from pexproject_flightdata where searchkeyid='"+str(searchid)+"' and maincabin > 0 and maincabin < "+str(pricemiles))
+        triptype = "One-Way"
+        
+    #print cursor._last_executed
     priceObj = cursor.fetchone()
-    print priceObj
-    if priceObj:
+    
+    ''' Send alert mail  '''
+    if priceObj and priceObj['minprice'] <= pricemiles and priceObj['minprice'] != None:
         try:
             price = priceObj['minprice']
             email_sub = "PEX+ miles alert"
-            emailbody = "Hello <b>"+usermail+"</b>,<br><br> You can find flights from "+full_source+" to "+full_dest+" starting from "+str(price)+".<br><br>Thanks,<br><b> PEX+ Team"
+            emailbody = "Hello <b>"+usermail+"</b>,<br><br> We've found flights that meets your search for:<br><br>"+full_source+" - "+full_dest+"<br>"+deptdate+retstr+" for "+triptype+".<br><br> Get more details by searching on <a href='http://pexportal.com/'>pexportal.com<br><br>Best Regards,<br><b>The PEX+ Team"
+            #print emailbody
             html_content = ''
             resp = customfunction.sendMail('PEX+',usermail,email_sub,emailbody,html_content)
         except:
@@ -78,18 +91,32 @@ for row in users:
             cursor.execute("select searchid from pexproject_searchkey where origin_airport_id='"+str(originid)+"' and destination_airport_id='"+str(destid1)+"' and traveldate='"+str(departdate)+"' and scrapetime > '"+str(time1)+"'") 
             result = cursor.fetchone()
             searchid = ''
+            returnkey = ''
+            
             if result == None:
                 cursor.execute("insert into pexproject_searchkey (source,destination,destination_city,traveldate,returndate,scrapetime,origin_airport_id,destination_airport_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)",(full_source,full_dest,dest_city,str(departdate),returndate,str(time),originid,destid1))
                 db.commit()
                 searchid = cursor.lastrowid
-                returnkey = ''
-                callScraper(oldsourceCode, dest_code, departdate1,searchid)
+                callScraper(oldsourceCode, dest_code, departdate1,searchid,oldsourceCity,dest_city)
                 
             else:
                 searchid = result['searchid']
-            print "searchid",searchid
+                
+            ''' if roundTrip '''
+            if returndate:
+                cursor.execute("select searchid from pexproject_searchkey where origin_airport_id='"+str(destid1)+"' and destination_airport_id='"+str(originid)+"' and traveldate='"+str(returndate)+"' and scrapetime > '"+str(time1)+"'") 
+                returnresult = cursor.fetchone()
+                if returnresult == None:
+                    returndate3 = ''
+                    cursor.execute("insert into pexproject_searchkey (source,destination,destination_city,traveldate,returndate,scrapetime,origin_airport_id,destination_airport_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)",(full_dest,full_source,oldsourceCity,str(returndate),returndate3,str(time),destid1,originid))
+                    db.commit()
+                    returnkey = cursor.lastrowid
+                    callScraper(dest_code, oldsourceCode, returndate1,returnkey,dest_city,oldsourceCity)
+                else:
+                    returnkey = returnresult['searchid']
+                    
             if searchid:
-                sendAlertEmail(searchid,pricemiles,full_source,full_dest,usermail)
+                sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,departdate1,returndate1)
             cursor.execute("update pexproject_useralert set sent_alert_date='"+str(currentDate)+"' where alertid="+str(row['alertid']))    
             db.commit()
             oldsourceCode = ''
@@ -109,7 +136,7 @@ for row in users:
             departdate1 = departdate.strftime('%m/%d/%Y')
             returndate1 = ''
             returndate = row['returndate']
-            if returndate1:
+            if returndate:
                 returndate1 = returndate.strftime('%m/%d/%Y')
             alertday = row['alertday']
             pricemiles = row['pricemile']
@@ -118,17 +145,32 @@ for row in users:
             cursor.execute("select searchid from pexproject_searchkey where origin_airport_id='"+str(originid)+"' and destination_airport_id='"+str(destid1)+"' and traveldate='"+str(departdate)+"' and scrapetime > '"+str(time1)+"'") 
             result = cursor.fetchone()
             searchid = ''
+            returnkey = ''
             if result == None:
                 cursor.execute("insert into pexproject_searchkey (source,destination,destination_city,traveldate,returndate,scrapetime,origin_airport_id,destination_airport_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)",(full_source,full_dest,destcity,str(departdate),returndate,str(time),originid,destid1))
                 db.commit()
                 searchid = cursor.lastrowid
-                returnkey = ''
-                callScraper(source_code, olddestinationCode, departdate1,searchid)
+                callScraper(source_code, olddestinationCode, departdate1,searchid,source_city,destcity)
             else:
                 searchid = result['searchid']
-            print "searchid",searchid
+                
+            ''' if RoundTrip '''
+              
+            if returndate:
+                cursor.execute("select searchid from pexproject_searchkey where origin_airport_id='"+str(destid1)+"' and destination_airport_id='"+str(originid)+"' and traveldate='"+str(returndate)+"' and scrapetime > '"+str(time1)+"'") 
+                returnresult = cursor.fetchone()
+                if returnresult == None:
+                    returndate3 = ''
+                    cursor.execute("insert into pexproject_searchkey (source,destination,destination_city,traveldate,returndate,scrapetime,origin_airport_id,destination_airport_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)",(full_dest,full_source,source_city,str(returndate),returndate3,str(time),destid1,originid))
+                    db.commit()
+                    returnkey = cursor.lastrowid
+                    print "returndate",returndate      
+                    callScraper(olddestinationCode, source_code, returndate1,returnkey,destcity,source_city)
+                else:
+                    returnkey = returnresult['searchid']
+            
             if searchid:
-                sendAlertEmail(searchid,pricemiles,full_source,full_dest,usermail)
+                sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,departdate1,returndate1)
             cursor.execute("update pexproject_useralert set sent_alert_date='"+str(currentDate)+"' where alertid="+str(row['alertid']))    
             db.commit()
             olddestinationCode = ''
