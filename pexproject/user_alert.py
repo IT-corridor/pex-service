@@ -59,7 +59,7 @@ def sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,
         try:
             price = priceObj['minprice']
             email_sub = "PEX+ Flight Alert: We found a matching flight"
-            emailbody = "Hello <b>"+usermail+"</b>,<br><br> We've found flights that meets your search for:<br><br>"+full_source+" - "+full_dest+"<br>"+deptdate+retstr+" for "+triptype+".<br><br> Get more details by searching on <a href='http://pexportal.com/'>pexportal.com</a><br><br>Best Regards,<br><b>The PEX+ Team"
+            emailbody = "<img src='/var/www/html/python/pex/pexproject/pexproject/static/flightsearch/img/logo.jpg' alt='Creating Email Magic' width='100' height='100' style='display: block;' /> <br><br> Hello <b>"+usermail+"</b>,<br><br> We've found flights that meets your search for:<br><br>"+full_source+" - "+full_dest+"<br>"+deptdate+retstr+" for "+triptype+".<br><br> Get more details by searching on <a href='http://pexportal.com/'>pexportal.com</a><br><br>Best Regards,<br><b>The PEX+ Team"
             #print emailbody
             html_content = ''
             resp = customfunction.sendMail('PEX+',usermail,email_sub,emailbody,html_content)
