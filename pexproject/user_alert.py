@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+from django.template.loader import render_to_string
+from django.shortcuts import render_to_response
 import os, sys
 import MySQLdb
 import datetime
@@ -11,6 +13,9 @@ from virginAmerica import virginAmerica
 from virgin import virgin_atlantic
 from etihad import etihad
 import thread
+import settings
+
+
 
 db = customfunction.dbconnection()
 cursor = db.cursor(MySQLdb.cursors.DictCursor)
@@ -30,6 +35,8 @@ olddestinationCode = ''
 olddestinationCity = ''
 destid = ''
 sourceid = ''
+
+
 
 def callScraper(source_code, olddestinationCode, departdate1,searchid,source_city,destcity):
     #print source_code, olddestinationCode, departdate1,searchid
@@ -56,14 +63,61 @@ def sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,
     
     ''' Send alert mail  '''
     if priceObj and priceObj['minprice'] <= pricemiles and priceObj['minprice'] != None:
-        try:
-            price = priceObj['minprice']
+        #try:
+        if data:
             email_sub = "PEX+ Flight Alert: We found a matching flight"
-            emailbody = "<img src='/var/www/html/python/pex/pexproject/pexproject/static/flightsearch/img/logo.jpg' alt='Creating Email Magic' width='100' height='100' style='display: block;' /> <br><br> Hello <b>"+usermail+"</b>,<br><br> We've found flights that meets your search for:<br><br>"+full_source+" - "+full_dest+"<br>"+deptdate+retstr+" for "+triptype+".<br><br> Get more details by searching on <a href='http://pexportal.com/'>pexportal.com</a><br><br>Best Regards,<br><b>The PEX+ Team"
-            #print emailbody
+            #emailbody = "<img src='static/flightsearch/img/logo.jpg' alt='' width='100' height='100' style='display: block;' /> <br><br> Hello <b>"+usermail+"</b>,<br><br> We've found flights that meets your search for:<br><br>"+full_source+" - "+full_dest+"<br>"+deptdate+retstr+" for "+triptype+".<br><br> Get more details by searching on <a href='http://pexportal.com/'>pexportal.com</a><br><br>Best Regards,<br><b>The PEX+ Team"
+            triptype = '''
+            <!DOCTYPE html>
+            <html lang="en">
+                <head>
+                    <meta charset="utf-8">
+                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                    <style>
+                        body, html {
+                            margin: 0;
+                        }
+                        :after, :before {
+                            -webkit-box-sizing: border-box;
+                            -moz-box-sizing: border-box;
+                            box-sizing: border-box;
+                        }
+                        * {
+                            -webkit-box-sizing: border-box;
+                            -moz-box-sizing: border-box;
+                            box-sizing: border-box;
+                        }
+                    </style>
+                    {% load staticfiles %}
+                </head>
+                <body style="font-family:arial;font-style:normal;font-size:15px;font-weight:200;color:#474747;">
+            
+                    <div style="width:100%;position:relative;">
+                        <div style="width:650px;position:relative;background:#fff;margin-left:auto;margin-right:auto;padding:20px;">
+                            <div style="width:100%;position:relative;text-align:center;">
+                                <img alt="Pex+" src="http://98.158.184.156:8001/static/flightsearch/img/flexPointLogo.jpg" style="max-width: 100%"/>
+                            </div>
+                            <div style="width:100%;posiition:relative;padding:10px 20px 0px;font-family:arial;font-style:normal;font-size:15px;font-weight:200;color:#474747;">
+                                <h3>We've found flights that meets your search for:</h3>
+                                <h2 style="text-align: center;margin: 30px 0;font-weight:700;line-height:24px;letter-spacing: 0.55px;color:#39A8E0;">'''+full_source+''' - '''+full_dest+'''<br>'''+deptdate+retstr+'''<br>Economy - '''+triptype+'''</h2>
+                                <h3>Get more details by searching on <a href='http://pexportal.com/' target='_blank' style="color:#39A8E0;">pexportal.com</a></h3>
+                            </div>
+                            <div style="width:100%;position:relative;padding:10px 20px 0px;font-family:arial;font-style:normal;font-size:15px;font-weight:200;color:#474747;">
+                                <h4 style="font-weight:100;margin-top:0;">Best Regards,
+                                <br>
+                                The PEX+ Team</h4>
+                            </div>
+                        </div>
+                    </div>
+            
+                </body>
+            </html>
+
+            '''
             html_content = ''
             resp = customfunction.sendMail('PEX+',usermail,email_sub,emailbody,html_content)
-        except:
+        #except:
+        else:
             print "somting wrong"
 
     
