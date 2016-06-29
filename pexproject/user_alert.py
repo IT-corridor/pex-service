@@ -64,10 +64,10 @@ def sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,
     ''' Send alert mail  '''
     if priceObj and priceObj['minprice'] <= pricemiles and priceObj['minprice'] != None:
         #try:
-        if data:
+        try:
             email_sub = "PEX+ Flight Alert: We found a matching flight"
             #emailbody = "<img src='static/flightsearch/img/logo.jpg' alt='' width='100' height='100' style='display: block;' /> <br><br> Hello <b>"+usermail+"</b>,<br><br> We've found flights that meets your search for:<br><br>"+full_source+" - "+full_dest+"<br>"+deptdate+retstr+" for "+triptype+".<br><br> Get more details by searching on <a href='http://pexportal.com/'>pexportal.com</a><br><br>Best Regards,<br><b>The PEX+ Team"
-            triptype = '''
+            emailbody = '''
             <!DOCTYPE html>
             <html lang="en">
                 <head>
@@ -88,18 +88,17 @@ def sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,
                             box-sizing: border-box;
                         }
                     </style>
-                    {% load staticfiles %}
                 </head>
                 <body style="font-family:arial;font-style:normal;font-size:15px;font-weight:200;color:#474747;">
             
                     <div style="width:100%;position:relative;">
                         <div style="width:650px;position:relative;background:#fff;margin-left:auto;margin-right:auto;padding:20px;">
                             <div style="width:100%;position:relative;text-align:center;">
-                                <img alt="Pex+" src="http://98.158.184.156:8001/static/flightsearch/img/flexPointLogo.jpg" style="max-width: 100%"/>
+                                <img alt="Pex+" src="http://pexportal.com/static/flightsearch/img/flexPointLogo.jpg" style="max-width: 100%"/>
                             </div>
                             <div style="width:100%;posiition:relative;padding:10px 20px 0px;font-family:arial;font-style:normal;font-size:15px;font-weight:200;color:#474747;">
                                 <h3>We've found flights that meets your search for:</h3>
-                                <h2 style="text-align: center;margin: 30px 0;font-weight:700;line-height:24px;letter-spacing: 0.55px;color:#39A8E0;">'''+full_source+''' - '''+full_dest+'''<br>'''+deptdate+retstr+'''<br>Economy - '''+triptype+'''</h2>
+                                <h2 style="text-align: center;margin: 30px 0;font-weight:700;line-height:24px;letter-spacing: 0.55px;color:#39A8E0;">'''+full_source+''' - '''+full_dest+'''<br>'''+str(deptdate)+retstr+'''<br>Economy - '''+triptype+'''</h2>
                                 <h3>Get more details by searching on <a href='http://pexportal.com/' target='_blank' style="color:#39A8E0;">pexportal.com</a></h3>
                             </div>
                             <div style="width:100%;position:relative;padding:10px 20px 0px;font-family:arial;font-style:normal;font-size:15px;font-weight:200;color:#474747;">
@@ -117,7 +116,7 @@ def sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,
             html_content = ''
             resp = customfunction.sendMail('PEX+',usermail,email_sub,emailbody,html_content)
         #except:
-        else:
+        except:
             print "somting wrong"
 
     
