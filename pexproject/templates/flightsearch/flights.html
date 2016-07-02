@@ -37,6 +37,7 @@
 			                </div>
 			              </div>
 			            </div>
+			            
 			            {% if mc == 'mc' %}
 			            
 			            <input type="hidden" name="multicy" value="mc">
@@ -301,7 +302,19 @@
 			              </div>
 			              </div>				            
 
-			            {% else %}	            
+			            {% else %}
+			            <div class="container nopadding trip-custome visible-xs">
+								<div class="col-sm-12 col-xs-12 nopadding">
+					                <div class="checkbox-inline mhr10px auto-crsr nopadding">
+					                	<label><input type="radio" id="exactDate" class="curson" name="searchtype" value="exactdate" checked="checked"> Exact Date</label>
+					                  
+					                </div>
+					                <div class="checkbox-inline mhr10px auto-crsr">
+					                  <label><input type="radio" id="flexDate" class="curson" name="searchtype" value="flexibledate" > Flexible Date</label>
+					                </div>
+					                
+				              </div>
+			            </div>	            
 			            <div class="container xs-nopadding">
 			            <div class="col-sm-12 col-xs-12 nopadding pl5 pd-xs custome-pd">
 			              <div class="col-sm-2 col-xs-12 nopl xs-nopadding">
@@ -440,14 +453,33 @@
 			                <button type="submit" class="form_val btn btn-pexSearch" id="submitid" tabindex="13">Search</button>
 			              </div>
 			            </div>
+			            <!--Add new option for flex date -->
+			            
+			            <div class="container nopadding trip-custome hidden-xs">
+								<div class="col-sm-12 col-xs-12 nopadding">
+					                <div class="checkbox-inline mhr10px auto-crsr nopadding">
+					                	<label><input type="radio" id="exactDate" class="curson" name="searchtype" value="exactdate" checked="checked"> Exact Date</label>
+					                  
+					                </div>
+					                <div class="checkbox-inline mhr10px auto-crsr">
+					                  <label><input type="radio" id="flexDate" class="curson" name="searchtype" value="flexibledate" > Flexible Date</label>
+					                </div>
+					                
+				              </div>
+			            </div>
+			            
+			            
+			            <!-- -------------------------------------------------- -->
 			            </div>
 			            {% endif %}
 			          </div>
 			          </div>
 			          </div>
-			        </form>	        		
+			        </form>	
+			        </div>  
+			        </div>      		
         	
-
+ <div class="col-xs-12 nopadding">
 <div class="container mvb60px mediaadd" id="add-section">
     		<h1 style="margin-left: 5px;"> <b>Search numerous travel sites for your rewards flight.  Fly to:</b></h1>
 			
@@ -566,6 +598,7 @@
 				</div>
 			</div>
 		</div> 
+		</div>
 	</div>
         </div>
       </div>
@@ -983,9 +1016,10 @@ return sum;
   var searchid ='';
   var returnid = '';
   var triptypeval = '';
+  var searchtype = '';
   
 $("#submitid").click(function(event) {
-		
+		searchtype = $("input[type='radio'][name='searchtype']:checked").val(); 
     	triptype = $("input[type='radio'][name='trip']:checked");
     	if (triptype.length > 0) {
 		    triptypeval = triptype.val();
@@ -1114,25 +1148,27 @@ $("#submitid").click(function(event) {
   	$.ajax({
         type: "POST",
         url: "/search/",
-        data: "returndate="+ encodeURI(returndateval)+"&rndtripkey="+encodeURI(rdtrip) +"&cabin="+encodeURI(cabintypeval)+"&triptype="+ encodeURI(trip)+ "&fromMain="+ encodeURI(sourceid)+ "&toMain=" + encodeURI(destinationid)+ "&deptdate=" + encodeURI(departdateval) + "&csrfmiddlewaretoken=" + encodeURI(CSRF_TOKEN),
+        data: "returndate="+ encodeURI(returndateval)+"&searchtype="+encodeURI(searchtype)+"&rndtripkey="+encodeURI(rdtrip) +"&cabin="+encodeURI(cabintypeval)+"&triptype="+ encodeURI(trip)+ "&fromMain="+ encodeURI(sourceid)+ "&toMain=" + encodeURI(destinationid)+ "&deptdate=" + encodeURI(departdateval) + "&csrfmiddlewaretoken=" + encodeURI(CSRF_TOKEN),
     	success: function(data){
-        multikey = data[0];
+        searchtype = data['searchtype'];
+    	console.log(data['returnkey']);
+        multikey = data['departkey']; //data[0];
         searchid1 = multikey.split(',');
         searchid = searchid1[0];
-        
+        console.log(searchid);
         var returnid='';
-        if(data[1])
+        if(data['returnkey'])
         {
-        	returnid = data[1];
+        	returnid = data['returnkey'];
         }
-        redirecttosearchpage(searchid,returnid); 
+        redirecttosearchpage(searchid,returnid,searchtype); 
          //refreshIntervalId = setInterval(datacheck, 5000,searchid,returnid); 
     },
 	
    });
  
   }	
-  function redirecttosearchpage(searchid,returnkey){
+  function redirecttosearchpage(searchid,returnkey,searchtype){
  	multicity='';
  	if(multikey.indexOf(",") >= 0){
  		multicity = "&multicity="+encodeURI(multikey);
@@ -1142,6 +1178,7 @@ $("#submitid").click(function(event) {
 	$('#searchid').val(searchid);
 	var location = "getsearchresult?keyid="+ encodeURI(searchid)+"&cabin="+encodeURI(cabintypeval)+"&passenger="+encodeURI($('#passenger').val())+multicity;
 	if(returnkey != ''){ location = location+"&returnkey="+encodeURI(returnkey);}
+	location = location+"&searchtype="+encodeURI(searchtype);
 	window.location.href = location; 
 	}
 }

@@ -1224,18 +1224,29 @@ border:0px solid;
 {
 	background:#8fe7ab;
 }
-.color-red-1
+.color-blue-1
 {
 	
-	background:#F8B951;
+	background:#39A8E0;  
 }
 .color-grey-1
 {
 	background:#CDCDCD;
 }
-.color-red-3
+.color-red-1
 {
-	background:#f5ddd3;
+	background:#F8B951;
+}
+.box{
+	height:16px;
+	width:16px;
+	display: inline-block;
+	border: 1px solid black;
+}
+#flexcalendar .custom_p {
+	margin-bottom: 1px;
+    font-size: 16px;
+    
 }
 .add-pic 
 {

@@ -67,6 +67,9 @@ urlpatterns = patterns('',
     url(r'^multicity', multicity, name='multicity'),
     url(r'^share', share, name='share'),
     url(r'^filter', filter, name='filter'),
+    url(r'^getFlexResult', getFlexResult, name='getFlexResult'),
+    #url(r'^apitest', apitest, name='apitest'),
+    
     #url(r'^$','social_auth.urls',namespace='social'),
     #url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT, 'show_indexes':True}),
 )

@@ -1,0 +1,140 @@
+{% load customfilter %}
+{% load staticfiles %}
+{% load humanize %}
+
+
+<div id="calendar"></div>
+
+<script>
+
+	
+	function calendar(month,ecoflexdate,bussflexdate,calendarType) {
+    //Variables to be used later.  Place holders right now.
+    var padding = "";
+    var totalFeb = "";
+    var i = 1;
+    var testing = "";
+
+    var current = new Date();
+    var cmonth = current.getMonth(); // current (today) month
+    var day = current.getDate();
+    var year = current.getFullYear();
+    var tempMonth = month + 1; //+1; //Used to match up the current month with the correct start date.
+    var prevMonth = month - 1;
+
+    //Determing if Feb has 28 or 29 days in it.  
+    if (month == 1) {
+        if ((year % 100 !== 0) && (year % 4 === 0) || (year % 400 === 0)) {
+            totalFeb = 29;
+        } else {
+            totalFeb = 28;
+        }
+    }
+
+    // Setting up arrays for the name of the months, days, and the number of days in the month.
+    var monthNames = ["Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
+    var dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thrusday", "Friday", "Saturday"];
+    var totalDays = ["31", "" + totalFeb + "", "31", "30", "31", "30", "31", "31", "30", "31", "30", "31"];
+
+    // Temp values to get the number of days in current month, and previous month. Also getting the day of the week.
+    var tempDate = new Date(tempMonth + ' 1 ,' + year);
+    var tempweekday = tempDate.getDay();
+    var tempweekday2 = tempweekday;
+    var dayAmount = totalDays[month];
+
+    // After getting the first day of the week for the month, padding the other days for that week with the previous months days.  IE, if the first day of the week is on a Thursday, then this fills in Sun - Wed with the last months dates, counting down from the last day on Wed, until Sunday.
+    while (tempweekday > 0) {
+        padding += "<td class='premonth'></td>";
+        //preAmount++;
+        tempweekday--;
+    }
+    // Filling in the calendar with the current month days in the correct location along.
+    while (i <= dayAmount) {
+    	var ecoflag = 0;
+    	var bussflag = 0;
+    	var color_class = '';
+    	for(n=0;n< ecoflexdate.length;n++)
+    	{
+    		if(parseInt(ecoflexdate[n]) == parseInt(i))
+    		{
+    			//ecoflag = "color-grey-1";
+    			ecoflag = 1;
+    			break;
+    		}
+    		
+    	}
+    	for(m=0;m< bussflexdate.length;m++)
+    	{
+    		if(parseInt(bussflexdate[m]) == parseInt(i))
+    		{
+    			//bussflag = " color-blue-1";
+    			bussflag = 1;
+    			break;
+    		}
+    		
+    	}
+    	if(ecoflag == 1 && bussflag == 1)
+    	{
+    		color_class = 'color-red-1';	
+    	}
+    	else if(ecoflag == 1 && bussflag == 0)
+    	{
+    		color_class = 'color-grey-1';
+    	}
+		else if(ecoflag == 0 && bussflag == 1){
+			color_class = 'color-blue-1';
+		}
+        // Determining when to start a new row
+        if (tempweekday2 > 6) {
+            tempweekday2 = 0;
+            padding += "</tr><tr>";
+        }
+		
+        // checking to see if i is equal to the current day, if so then we are making the color of that cell a different color using CSS. Also adding a rollover effect to highlight the day the user rolls over. This loop creates the actual calendar that is displayed.
+        if (i == day && month == cmonth) {
+            padding += "<td class='currentday "+color_class+"' style='border: 1px solid black;' >" + i + "</td>";
+        }
+        else if(i >= day && month == cmonth)
+        {
+        	
+        	padding += "<td class='currentday "+color_class+"' style='border: 1px solid black;' >" + i + "</td>";
+        }
+        else if(month > cmonth)
+        {
+        	padding += "<td class='currentday "+color_class+"' style='border: 1px solid black;' >" + i + "</td>";
+        }
+         else {
+            padding += "<td class='currentmonth' style='border: 1px solid black;' >" + i + "</td>";
+        }
+        tempweekday2++;
+        i++;
+    }
+
+
+    // Outputing the calendar onto the site.  Also, putting in the month name and days of the week.
+    var calendarTable = "<table class='calendar table div-table cellspacing='2' > <tr class='currentmonth'><th colspan='7'>" + monthNames[month] + " " + year + " ("+calendarType+")</th></tr>";
+    calendarTable += "<tr class='weekdays'>  <th class='class='bc-whi'>SUN</th>  <th class='class='bc-whi'>MON</th> <th class='class='bc-whi'>TUE</th> <th class='class='bc-whi'>WED</th> <th class='class='bc-whi'>THU</th> <th class='class='bc-whi'>FRI</th> <th class='class='bc-whi'>SAT</th> </tr>";
+    calendarTable += "<tr>";
+    calendarTable += padding;
+    calendarTable += "</tr></table>";
+    document.getElementById("calendar").innerHTML += calendarTable;
+}
+var ecolist = "{{economy}}";
+var business = "{{business}}";
+var ecoFlexDate = ecolist.split(',');
+var bussFlexDate = business.split(',');
+var retEcodate = "{{returnEco}}";
+var returnEcoFlexDate = retEcodate.split(',');
+var retBusiness = "{{returnBusiness}}";
+var returnBusFlexDate = retBusiness.split(',');
+var month = parseInt("{{month}}")-1;
+var returnMonth = parseInt("{{retmonth}}")-1;
+if(month){
+	calendar(month,ecoFlexDate,bussFlexDate,"Departure");
+}
+console.log(returnMonth);
+if(returnMonth){
+	calendar(returnMonth,returnEcoFlexDate,returnBusFlexDate,"Return");
+}
+
+</script>

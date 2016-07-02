@@ -230,5 +230,18 @@ class UserAlert(models.Model):
     expiredate = models.DateField()
     alertday = models.CharField(max_length=512)
     sent_alert_date = models.DateField()
+
+class FlexibleDateSearch(models.Model):
+    dataid = models.AutoField(primary_key=True)
+    scrapertime = models.DateTimeField()
+    searchkey = models.IntegerField ()
+    source = models.CharField(max_length=100)
+    destination = models.CharField(max_length=100)
+    journey = models.DateField()
+    flexdate = models.DateField()
+    economyflex = models.CharField(max_length=100)
+    businessflex = models.CharField(max_length=100)
+    firstflex = models.CharField(max_length=100)
+    
     
  

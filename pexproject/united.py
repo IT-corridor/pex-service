@@ -17,6 +17,7 @@ import json
 
 def united(origin, destination, searchdate, searchkey):
     #return searchkey
+    print searchdate
     dt = datetime.datetime.strptime(searchdate, '%m/%d/%Y')
     date = dt.strftime('%Y-%m-%d')
     date_format = dt.strftime('%a, %b %-d')
@@ -107,6 +108,65 @@ def united(origin, destination, searchdate, searchkey):
         maindata = soup.findAll("div",{"id":"interceptedResponse"})
         json_string = maindata[0].text
         jsonOb = json.loads(json_string)
+        
+        ''' Flex calender data '''
+        try:
+            flex_value = []
+            calenderData = jsonOb["data"]["Calendar"]["Months"]
+            for i in range(0,len(calenderData)):
+                flexcalender = calenderData[i]['Weeks']
+                for j in range(0,len(flexcalender)):
+                    calweeks = flexcalender[j]
+                    for row in calweeks:
+                        Month = calweeks["Month"]
+                        
+                        caldays = calweeks["Days"]
+                        for d in range(0,len(caldays)):
+                            Month  = caldays[d]["Month"]
+                            ecosaver,busssaver,firstsaver = '','',''
+                            
+                            if Month > 0:
+                                cabinOption = caldays[d]["ProductClass"]
+                                
+                                if cabinOption == '':
+                                    "--------------- Standard Award may be available -----------------"
+                                elif 'cabin-option-one' in cabinOption and 'cabin-option-two' not in cabinOption:
+                                    ecosaver = "saver"
+                                    "------------- Economy ------------------------------"
+                                elif 'cabin-option-two' in cabinOption and 'cabin-option-one' not in cabinOption:
+                                    busssaver = "saver"
+                                    "------------- premium cabin-------------------------"
+                                else:
+                                    "--------------- Economy & premium cabin--------------------------"
+                                    ecosaver = "saver"
+                                    busssaver = "saver"
+                                    
+                                travelDate = dt.strftime('%Y-%m-%d')
+                                Year  = caldays[d]["Year"]
+                                DateValue = caldays[d]["DateValue"]
+                                fulldate = str(Year)+"/"+str(Month)+"/"+str(DateValue)
+                                flexdate = datetime.datetime.strptime(fulldate, '%Y/%m/%d')
+                                flexdate1 = flexdate.strftime('%Y-%m-%d')
+                                '''
+                                print "PromoProductClass ", caldays[d]["PromoProductClass"]
+                                print "Cheapest ", caldays[d]["Cheapest"]
+                                #print "ProductClass ", caldays[d]["ProductClass"]
+                                print "DayNotInThisMonth ", caldays[d]["DayNotInThisMonth"]
+                                
+                                print "Display ", caldays[d]["Display"] 
+                                '''
+                                flex_value.append((str(stime),str(searchkey),origin,destination,str(travelDate),str(flexdate1),ecosaver,busssaver,"united"))
+                                
+            cursor.executemany ("INSERT INTO pexproject_flexibledatesearch (scrapertime,searchkey,source,destination,journey,flexdate,economyflex,businessflex,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);", flex_value)
+            #print cursor._last_executed
+            db.commit()
+        except:
+            'no calender data'
+            
+            
+        ''' End flex calender '''
+            
+            
         flightDetails = jsonOb["data"]["Trips"][0]["Flights"]
     except:
         print "No data Found"

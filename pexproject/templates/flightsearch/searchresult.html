@@ -423,37 +423,63 @@
 											</div>
 										</div>
 
-									</div>
-
-									<div class="form-group flight-search-xswd xs-pl5">
-
-										<button id="changebtnid" class="form_val btn  btn-pexSearch xs-fw" tabindex="13">
-											Change
-										</button>
-									</div>
-								</form>
-								<!--
-								<h4>{% if action == 'return' %}Return : {% endif %}{{searchrow.source}} &#10230; {{searchrow.destination}} </h4>
-								<h4> {{searchrow.traveldate}}<!--<input type="text" id="datepicker" name="date" value="{{searchdate}}"></h4>-->
-							</div>
-							</div>
-							{% endif %}
-							<a class="price-calender" role="button" data-toggle="collapse" href="#pricecalender" aria-expanded="false" aria-controls="pricecalender"> View Price Matrix</a>
-							<div class="collapse" id="pricecalender">
-								<span class="mvt10px"> {{search.0.source}} to {{search.0.destination}}{% if returndate %}: Round Trip{%else%}:  One Way{% endif %}</span>
-								<div class="well custom-well text-center">
-									<input type="hidden" id="fix_min_price" />
-									<input type="hidden" id="fix_max_price" />
-									<section id="">
-
-										<div class="table-responsive" id="price_matrix">
+									</form>
+									
+								</div>
+								</div>
+								{% endif %}
+								<div class="col-xs-12 nopadding">
+									<div class="col-sm-6 col-xs-12 nopadding">
+										<a class="price-calender" role="button" data-toggle="collapse" href="#pricecalender" aria-expanded="false" aria-controls="pricecalender"> View Price Matrix</a>
+										<div class="collapse" id="pricecalender">
+											<span class="mvt10px"> {{search.0.source}} to {{search.0.destination}}{% if returndate %}: Round Trip{%else%}:  One Way{% endif %}</span>
+											<div class="well custom-well text-center">
+												<input type="hidden" id="fix_min_price" />
+												<input type="hidden" id="fix_max_price" />
+												<section id="">
+		
+													<div class="table-responsive" id="price_matrix" style="margin:0;">
+														
+													</div>
+		
+												</section>
+											</div>
+										</div>
+									</div>	<!--  price matrix -->
+								{% if 'searchtype' in request.GET and request.GET.searchtype == 'flexibledate'%}	
+								<div class="col-sm-6 col-xs-12 nopadding"> 		
+									<a class="price-calendar pull-right" role="button" data-toggle="collapse" href="#flexcalendar" aria-expanded="false" aria-controls="flexcalendar"> Award Availabilty Calendar</a>
+									<div class="col-xs-12 nopadding collapse" id="flexcalendar">
+										
+										<div class="col-xs-12 nopadding well custom-well text-center">
+											<p class="custom_p text-left">
+												<span class="box color-grey-1"></span> Saver Award Economy
+											</p>
+											<p class="custom_p text-left">
+												<span class="box color-blue-1"></span> Saver Award Business/First 
+											</p>
+											<p class="custom_p text-left">
+												<span class="box color-red-1"></span> Saver Award Economy & Business/First 
+											</p>
+											<p class="custom_p text-left">
+												<span class="box"></span> Standard Award may be available  
+											</p>
+											<section class="col-xs-12 nopadding" id="">
+	
+												<div class="col-xs-12 nopadding table-responsive" id="calendarmatix">
+													
+												</div>
+												
+											</section>
 											
 										</div>
-
-									</section>
-								</div>
+									</div>
+								</div> <!-- Flexible  date calendar-->	
+							{% endif%}
 							</div>
+							
 
+									
 						
 
 						
@@ -2053,7 +2079,7 @@
 						<div id="content"></div>
 
 					</div>
-
+					</div>
 					<div class="col-md-2 col-xs-12 nopadding ">
 						{% if adimages %}
 						{% for images in adimages %}
@@ -2228,277 +2254,299 @@
 	</div>
 </div>
 <script type="text/javascript">
-	$('#nodata-msg').empty();
-	var data_status = false;
-	var datalist = "{{data.0}}";
+		$('#nodata-msg').empty();
+		var data_status = false;
+		var datalist = "{{data.0}}";
 
-	if (datalist.length > 0) {
-		data_status = true;
-	}
-
-	$(function() {
-
-		$('#departuredate').datepicker({
-			minDate : 0,
-			onSelect : function() {
-				setTimeout(function function_name(argument) {
-					$('#return').focus();
-				}, 200);
-
-			},
-			onClose : function(selectedDate) {
-				// Set the minDate of 'to' as the selectedDate of 'from'
-				$("#return").datepicker("option", "minDate", selectedDate);
-			}
-		});
-		$('#return').datepicker({
-			minDate : 0,
-			onSelect : function() {
-				/*	setTimeout(function function_name (argument) {
-				 $('#cabintab').focus();
-				 },50);
-				 */
-			},
-		});
-	});
-
-	$(".flight-search-show").click(function() {
-		$(".flight-search-panel").toggleClass('in');
-	});
-
-	$('#passenger').change(function() {
-		$('#traveller').val($('#passenger').val());
-	});
-</script>
-<script>
-	$(document).ready(function() {
-
-		if ("{{request.GET.returnkey}}" == '') {
-			//$('.travelers-down-menu').addClass('full-width-res');
-			$('.travelers-down-menu').css("left", "-=122");
-		}
-	});
-</script>
-
-{% include "flightsearch/footer.html" %}
-<script src="{% static 'flightsearch/js/jquery.ui.touch-punch.min.js' %}"></script>
-<script src="{% static 'flightsearch/js/vendor/bootstrap.min.js' %}"></script>
-<script>
-	$(document).ready(function() {
-		if (($('.chk-airlines').length) != ($('.chk-airlines:checked').length)) {
-			$("#selectairline").prop('checked', false);
-		} else {
-			$("#selectairline").prop('checked', true);
+		if (datalist.length > 0) {
+			data_status = true;
 		}
 
-		if (($('.chk-stoppage').length) != ($('.chk-stoppage:checked').length)) {
-			$("#selectallstop").prop('checked', false);
-		} else {
-			$("#selectallstop").prop('checked', true);
-		}
+		$(function() {
 
-	});
-</script>
-<script>
-	//@@@ SELECT ALL CABIN@@@@@@@@@
-	$(document).ready(function() {
+			$('#departuredate').datepicker({
+				minDate : 0,
+				onSelect : function() {
+					setTimeout(function function_name(argument) {
+						$('#return').focus();
+					}, 200);
 
-		$("#checkallcabin").on("click", function() {
-			if ($(this).is(':checked')) {
-				$(".chk").each(function() {
-					this.checked = true;
+				},
+				onClose : function(selectedDate) {
+					// Set the minDate of 'to' as the selectedDate of 'from'
+					$("#return").datepicker("option", "minDate", selectedDate);
+				}
+			});
+			$('#return').datepicker({
+				minDate : 0,
+				onSelect : function() {
+					/*	setTimeout(function function_name (argument) {
+					 $('#cabintab').focus();
+					 },50);
+					 */
+				},
+			});
+		});
 
-				});
+		$(".flight-search-show").click(function() {
+			$(".flight-search-panel").toggleClass('in');
+		});
+
+		$('#passenger').change(function() {
+			$('#traveller').val($('#passenger').val());
+		});
+	</script>
+	<script>
+		$(document).ready(function() {
+
+			if ("{{request.GET.returnkey}}" == '') {
+				//$('.travelers-down-menu').addClass('full-width-res');
+				$('.travelers-down-menu').css("left", "-=122");
+			}
+		});
+
+	</script>
+
+	{% include "flightsearch/footer.html" %}
+	<script src="{% static 'flightsearch/js/jquery.ui.touch-punch.min.js' %}"></script>
+	<script src="{% static 'flightsearch/js/vendor/bootstrap.min.js' %}"></script>
+	<script>
+		$(document).ready(function() {
+			if (($('.chk-airlines').length) != ($('.chk-airlines:checked').length)) {
+
+				$("#selectairline").prop('checked', false);
 			} else {
-				$(".chk").each(function() {
-					this.checked = false;
-				});
+				$("#selectairline").prop('checked', true);
 			}
-		});
-		$(".chk").on("click", function() {
-			if (!$(this).is(':checked')) {
-				$("#checkallcabin").attr('checked', false);
-			}
-		});
 
-		//@@@@ SELECT ALL AIRLINES @@@@@@@@@
-		//var airlines = {};
-		$("#selectairline").on("click", function() {
-			if ($(this).is(':checked')) {
-				$(".chk-airlines").each(function() {
-					this.checked = true;
+			if (($('.chk-stoppage').length) != ($('.chk-stoppage:checked').length)) {
 
-				});
+				$("#selectallstop").prop('checked', false);
 			} else {
-				$(".chk-airlines").each(function() {
-					this.checked = false;
-				});
+				$("#selectallstop").prop('checked', true);
 			}
+
 		});
-		$(".chk-airlines").on("click", function() {
-			if (!$(this).is(':checked')) {
-				$("#selectairline").attr('checked', false);
-			}
+	</script>
+	<script>
+		//@@@ SELECT ALL CABIN@@@@@@@@@
+		$(document).ready(function() {
+
+			$("#checkallcabin").on("click", function() {
+				if ($(this).is(':checked')) {
+					$(".chk").each(function() {
+						this.checked = true;
+
+					});
+				} else {
+					$(".chk").each(function() {
+						this.checked = false;
+					});
+				}
+			});
+			$(".chk").on("click", function() {
+				if (!$(this).is(':checked')) {
+					$("#checkallcabin").attr('checked', false);
+				}
+			});
+
+			//@@@@ SELECT ALL AIRLINES @@@@@@@@@
+			//var airlines = {};
+			$("#selectairline").on("click", function() {
+				if ($(this).is(':checked')) {
+					$(".chk-airlines").each(function() {
+						this.checked = true;
+
+					});
+				} else {
+					$(".chk-airlines").each(function() {
+						this.checked = false;
+					});
+				}
+			});
+			$(".chk-airlines").on("click", function() {
+				if (!$(this).is(':checked')) {
+					$("#selectairline").attr('checked', false);
+				}
+			});
+
+			//@@@@ SELECT ALL STOPPAGE @@@@@@@@@
+
+			$("#selectallstop").on("click", function() {
+				if ($(this).is(':checked')) {
+					$(".chk-stoppage").each(function() {
+						this.checked = true;
+
+					});
+				} else {
+					$(".chk-stoppage").each(function() {
+						this.checked = false;
+					});
+				}
+			});
+			$(".chk-stoppage").on("click", function() {
+				if (!$(this).is(':checked')) {
+					$("#selectallstop").attr('checked', false);
+				}
+			});
+
 		});
+	</script>
 
-		//@@@@ SELECT ALL STOPPAGE @@@@@@@@@
-
-		$("#selectallstop").on("click", function() {
-			if ($(this).is(':checked')) {
-				$(".chk-stoppage").each(function() {
-					this.checked = true;
-
-				});
-			} else {
-				$(".chk-stoppage").each(function() {
-					this.checked = false;
-				});
-			}
-		});
-		$(".chk-stoppage").on("click", function() {
-			if (!$(this).is(':checked')) {
-				$("#selectallstop").attr('checked', false);
-			}
-		});
-
-	});
-</script>
-
-<script>
-	
-	// ===================== time slider===================================================
-
-	var deptmintime;
-	var arivemintime;
-	var deptmaxtime;
-	var arivemaxtime;
-	
-	var process_status = 'complete';
-	function timeconversion(time) {
-		var val = time;
-		var hour;
-		ampm = val.split(' ');
-		mindepature = ampm[0].split(':');
-		hour = mindepature[0];
+	<script>
 		
-		if ($.trim(ampm[1]) != "p.m." && $.trim(ampm[1]) != "PM") {
+		// ===================== time slider===================================================
 
-			if (parseInt(hour) > 11) {
-				hour = 0;
-			}
-		} else {
-			if(parseInt(hour) < 12)
-			{
-				hour = parseInt(hour) + 12;
-			}
-			else{
-				hour = 0+12;
-			}
+		var deptmintime;
+		var arivemintime;
+		var deptmaxtime;
+		var arivemaxtime;
+		
+		var process_status = 'complete';
+		function timeconversion(time) {
+			var val = time;
+			var hour;
+			ampm = val.split(' ');
+			mindepature = ampm[0].split(':');
+			hour = mindepature[0];
+			
+			if ($.trim(ampm[1]) != "p.m." && $.trim(ampm[1]) != "PM") {
 
-		}
-		minute = mindepature[1];
-		deptmin = (hour * 60);
-		if (minute) {
-			deptmin = parseInt(deptmin) + parseInt(minute);
-		}
-
-		return deptmin;
-
-	}
-
-	if ("{{timedata}}") {
-
-		var dept = "{{ timedata.mindept }}";
-		if (dept != "None") {
-			deptmintime = timeconversion(dept);
-		} else {
-			deptmintime = 0;
-		}
-
-		var arive = "{{ timedata.minarival }}";
-		if (arive != "None") {
-			arivemintime = timeconversion(arive);
-		} else {
-			arivemintime = 0;
-		}
-		var maxdeparture = "{{ timedata.maxdept }}";
-		if (maxdeparture != "None") {
-			deptmaxtime = timeconversion(maxdeparture);
-		} else {
-			deptmaxtime = 1439;
-		}
-
-		var maxarivaltime = "{{ timedata.maxarival }}";
-
-		if (maxarivaltime != "None") {
-
-			arivemaxtime = timeconversion(maxarivaltime);
-
-		} else {
-			arivemaxtime = 1439;
-		}
-	} else {
-		deptmintime = 0;
-		arivemintime = 0;
-		deptmaxtime = 1439;
-		arivemaxtime = 1439;
-
-	}
-	/*************************** SLIDER DECTION  ******************************/
-	
-	$("#depart").slider({
-		range : true,
-		min : 0,
-		max : 1439,
-		values : [deptmintime, deptmaxtime],
-		slide: function (e, ui) {
-		var hours0 = Math.floor(ui.values[0] / 60);
-		var minutes0 = ui.values[0] - (hours0 * 60);
-        var hours1 = Math.floor(ui.values[1] / 60);
-        var minutes1 = ui.values[1] - (hours1 * 60);
-        start = getTime(hours0, minutes0);
-		end = getTime(hours1, minutes1);
-		$('#depaturemin').val(start);
-		$('#depaturemax').val(end);
-		depaturemin = start;
-		depaturemax = end;
-		$("#time").text(start + ' - ' + end);
+				if (parseInt(hour) > 11) {
+					hour = 0;
+				}
+			} else {
+				if(parseInt(hour) < 12)
+				{
+					hour = parseInt(hour) + 12;
+				}
+				else{
+					hour = 0+12;
 				}
 
-	});
+			}
+			minute = mindepature[1];
+			deptmin = (hour * 60);
+			if (minute) {
+				deptmin = parseInt(deptmin) + parseInt(minute);
+			}
 
-	var depaturemin = $('#depaturemin').val();
-	var depaturemax = $('#depaturemax').val();
-	var arivalmin = $('#arivalmin').val();
-	var arivalmax = $('#arivalmax').val();
-	function slideTime1(event, ui) {
-		var val0 =$("#depart").slider("values", 0),
-		val1 = $("#depart").slider("values", 1),
-		hours0 = Math.floor(val0 / 60);
-		minutes0 = val0 - (hours0 * 60); 
-		hours1 = Math.floor(val1 / 60);  
-		minutes1 = val1 - (hours1 * 60); 
-		start = getTime(hours0, minutes0);
-		end = getTime(hours1, minutes1);
-		$('#depaturemin').val(start);
-		$('#depaturemax').val(end);
-		depaturemin = start;
-		depaturemax = end;
-		$("#time").text(start + ' - ' + end);
-	}
+			return deptmin;
+
+		}
+
+		if ("{{timedata}}") {
+
+			var dept = "{{ timedata.mindept }}";
+			if (dept != "None") {
+				deptmintime = timeconversion(dept);
+			} else {
+				deptmintime = 0;
+			}
+
+			var arive = "{{ timedata.minarival }}";
+			if (arive != "None") {
+				arivemintime = timeconversion(arive);
+			} else {
+				arivemintime = 0;
+			}
+			var maxdeparture = "{{ timedata.maxdept }}";
+			if (maxdeparture != "None") {
+				deptmaxtime = timeconversion(maxdeparture);
+			} else {
+				deptmaxtime = 1439;
+			}
+
+			var maxarivaltime = "{{ timedata.maxarival }}";
+
+			if (maxarivaltime != "None") {
+
+				arivemaxtime = timeconversion(maxarivaltime);
+
+			} else {
+				arivemaxtime = 1439;
+			}
+		} else {
+			deptmintime = 0;
+			arivemintime = 0;
+			deptmaxtime = 1439;
+			arivemaxtime = 1439;
+
+		}
+		/*************************** SLIDER DECTION  ******************************/
+		
+		$("#depart").slider({
+			range : true,
+			min : 0,
+			max : 1439,
+			values : [deptmintime, deptmaxtime],
+			slide: function (e, ui) {
+			var hours0 = Math.floor(ui.values[0] / 60);
+			var minutes0 = ui.values[0] - (hours0 * 60);
+	        var hours1 = Math.floor(ui.values[1] / 60);
+	        var minutes1 = ui.values[1] - (hours1 * 60);
+	        start = getTime(hours0, minutes0);
+			end = getTime(hours1, minutes1);
+			$('#depaturemin').val(start);
+			$('#depaturemax').val(end);
+			depaturemin = start;
+			depaturemax = end;
+			$("#time").text(start + ' - ' + end);
+					}
+
+		});
+
+		var depaturemin = $('#depaturemin').val();
+		var depaturemax = $('#depaturemax').val();
+		var arivalmin = $('#arivalmin').val();
+		var arivalmax = $('#arivalmax').val();
+		function slideTime1(event, ui) {
+			var val0 =$("#depart").slider("values", 0),
+			val1 = $("#depart").slider("values", 1),
+			hours0 = Math.floor(val0 / 60);
+			minutes0 = val0 - (hours0 * 60); 
+			hours1 = Math.floor(val1 / 60);  
+			minutes1 = val1 - (hours1 * 60); 
+			start = getTime(hours0, minutes0);
+			end = getTime(hours1, minutes1);
+			$('#depaturemin').val(start);
+			$('#depaturemax').val(end);
+			depaturemin = start;
+			depaturemax = end;
+			$("#time").text(start + ' - ' + end);
+		}
 
 
-	$("#arive").slider({
-		range : true,
-		min : 0,
-		max : 1439,
-		values : [arivemintime, arivemaxtime],
-		slide : function (e, ui) {
-			hours0 = Math.floor(ui.values[0] / 60);
-    		minutes0 = ui.values[0] - (hours0 * 60);
-    		hours1 =  Math.floor(ui.values[1] / 60);
-    		minutes1 = ui.values[1] - (hours1 * 60);
-    		startTime = getTime(hours0, minutes0);
+		$("#arive").slider({
+			range : true,
+			min : 0,
+			max : 1439,
+			values : [arivemintime, arivemaxtime],
+			slide : function (e, ui) {
+				hours0 = Math.floor(ui.values[0] / 60);
+        		minutes0 = ui.values[0] - (hours0 * 60);
+        		hours1 =  Math.floor(ui.values[1] / 60);
+        		minutes1 = ui.values[1] - (hours1 * 60);
+        		startTime = getTime(hours0, minutes0);
+				$('#arivalmin').val(startTime);
+				endTime = getTime(hours1, minutes1);
+				$('#arivalmax').val(endTime);
+				arivalmin = startTime;
+				arivalmax = endTime;
+				$("#arivaltime").text(startTime + ' - ' + endTime);
+			}
+		});
+		
+		function slideTime(event, ui) {
+			
+			var val0 = $("#arive").slider("values", 0),
+			    val1 = $("#arive").slider("values", 1),
+			    hours0 = Math.floor(val0 / 60);
+			    minutes0 = val0 - (hours0 * 60); //parseInt(val0 % 60, 10),
+			    hours1 = Math.floor(val1 / 60);  
+			    minutes1 = val1 - (hours1 * 60); //parseInt(val1 % 60, 10),
+			    
+			startTime = getTime(hours0, minutes0);
 			$('#arivalmin').val(startTime);
 			endTime = getTime(hours1, minutes1);
 			$('#arivalmax').val(endTime);
@@ -2506,445 +2554,427 @@
 			arivalmax = endTime;
 			$("#arivaltime").text(startTime + ' - ' + endTime);
 		}
-	});
-	
-	function slideTime(event, ui) {
-		
-		var val0 = $("#arive").slider("values", 0),
-		    val1 = $("#arive").slider("values", 1),
-		    hours0 = Math.floor(val0 / 60);
-		    minutes0 = val0 - (hours0 * 60); //parseInt(val0 % 60, 10),
-		    hours1 = Math.floor(val1 / 60);  
-		    minutes1 = val1 - (hours1 * 60); //parseInt(val1 % 60, 10),
-		    
-		startTime = getTime(hours0, minutes0);
-		$('#arivalmin').val(startTime);
-		endTime = getTime(hours1, minutes1);
-		$('#arivalmax').val(endTime);
-		arivalmin = startTime;
-		arivalmax = endTime;
-		$("#arivaltime").text(startTime + ' - ' + endTime);
-	}
 
-	function getTime(hours, minutes) {
-		var time = null;
-		minutes = minutes + "";
-		if (hours < 12) {
-			time = "AM";
-		} else {
-			time = "PM";
-		}
-		if (hours == 0) {
-			hours = 12;
-		}
-		if (hours > 12) {
-			hours = hours - 12;
-		}
-		if (minutes.length == 1) {
-			minutes = "0" + minutes;
-		}
-		return hours + ":" + minutes + " " + time;
-	}
-
-	slideTime();
-	slideTime1();
-
-	//======================================== end time slider======================================
-
-	$(function() {
-
-		$("#from").autocomplete({
-			open : function(event, ui) {
-				$('.ui-autocomplete').off('menufocus hover mouseover');
-			},
-			autoFocus : true,
-			source : "get_airport/",
-			minLength : 2,
-			select : function(event, ui) {
-				$('#fromid').val(ui.item.id);
-			},
-		});
-		$("#to").autocomplete({
-			open : function(event, ui) {
-				$('.ui-autocomplete').off('menufocus hover mouseover');
-			},
-			autoFocus : true,
-			source : "get_airport/",
-			minLength : 2,
-			select : function(event, ui) {
-				$('#toid').val(ui.item.id);
-			},
-		});
-	});
-</script>
-
-<script>
-	$(function() {
-		if ($(window).width() < 768) {
-			$(".filters-holder").addClass('filters-holder-ht');
-			$(".show-filter").click(function() {
-				$(this).parent().parent().toggleClass('filters-holder-ht');
-			});
-		}
-		$("#cabintab").focus(function() {
-			$(".travelers-holder").addClass('open');
-			return false;
-		});
-
-		$("#cabintab").click(function() {
-			$(".travelers-holder").addClass('open');
-			return false;
-		});
-
-		$(".form_val").focus(function() {
-			if (!$(this).hasClass("cabin_type")) {
-				$(".travelers-holder").removeClass('open');
+		function getTime(hours, minutes) {
+			var time = null;
+			minutes = minutes + "";
+			if (hours < 12) {
+				time = "AM";
+			} else {
+				time = "PM";
 			}
-		});
-	});
-	$('#apply_traveler').click(function() {
-		$(".travelers-holder").removeClass('open');
-	});
-</script>
-<script>
-	$(document).ready(function() {
-		$(".alert-warning").hide();
-		var tno = '';
-		if ("{{request.GET.passenger}}") {
-			tno = "{{request.GET.passenger}}";
-		} else {
-			tno = "{{passenger}}";
-		}
-		$('#adults').val(tno);
-		$('#traveller').val(tno);
-		//$('#passenger').val(tno);
-		travelinfo();
-	});
-</script>
-<script>
-	var total;
-
-	//@@increase decrease on buttom click
-	$(function() {
-		$('.add').on('click', function() {
-			total = tatalpassenger();
-			if (total < 6) {
-				var $qty = $(this).closest('p').find('.qty');
-				var currentVal = parseInt($qty.val());
-				if (!isNaN(currentVal)) {
-					$qty.val(currentVal + 1);
-				}
-				travelinfo();
+			if (hours == 0) {
+				hours = 12;
 			}
-		});
-		$('.minus').on('click', function() {
-			total = tatalpassenger();
-			if (total > 0) {
-				var $qty = $(this).closest('p').find('.qty');
-				var currentVal = parseInt($qty.val());
-				if (!isNaN(currentVal) && currentVal > 0) {
-					$qty.val(currentVal - 1);
-				}
-
-				travelinfo();
+			if (hours > 12) {
+				hours = hours - 12;
 			}
-		});
-
-	});
-	$('#cabintype').on('change', function() {
-		travelinfo();
-	});
-	/*
-	$(document).ready(function(){
-	$('#passenger').val('1');
-	$(".alert-warning").hide();
-	});
-	*/
-	//@@@Cabin select@@@@
-
-	$(document).ready(function() {
-		//travelinfo();
-
-	});
-
-	function travelinfo() {
-		total = tatalpassenger();
-		$('#passenger').val(total);
-		var text;
-		if (total == 1) {
-			text = "traveler";
-		} else {
-			text = "travelers";
-		}
-		var selectedcabin = $("#cabintype option:selected").text();
-		var html = "<span id='travelar'>" + total + " " + text + ", " + selectedcabin + "</span>";
-		$('#travelar').replaceWith(html);
-		if (total == 0) {
-			var msg = '';
-			$('#submitid').prop('disabled', true);
-			$(".alert-warning").empty();
-			msg = "You must select atleast one traveler";
-			$(".alert-warning").append(msg);
-			$(".alert-warning").show();
-		} else {
-			$('#submitid').prop('disabled', false);
-			$(".alert-warning").hide();
-		}
-	}
-
-	//@@@Total Passenger@@@@
-	function tatalpassenger() {
-		var sum = 0;
-		$('.numberHolder').each(function() {
-			sum += parseFloat($(this).val());
-		});
-		return sum;
-	};
-
-	//@@not close on click dropdown
-
-	$('.dropdown-menu .down-menu-block').click(function(e) {
-		e.stopPropagation();
-	});
-
-</script>
-
-<script type="text/javascript">
-	$('#loading_img').hide();
-	//@@---------------------- pagination -------------------------------------
-	var call_sent = "completed";
-	var pagecount = 2;
-	var is_data = 1;
-
-	$(window).scroll(function() {
-		var doch = ($(document).height() - 200);
-		var winh = ($(window).height() + 200);
-		if ($(window).scrollTop() >= doch - winh) {
-			if (is_data > 0) {
-				if (call_sent == "completed") {
-					loadArticle(pagecount);
-					pagecount++;
-				}
+			if (minutes.length == 1) {
+				minutes = "0" + minutes;
 			}
+			return hours + ":" + minutes + " " + time;
 		}
-	});
 
-	var urls = ("{{request.get_full_path}}");
+		slideTime();
+		slideTime1();
 
-	function loadArticle(pageNumber) {
-		call_sent = "in_progress";
-		$('#loading_img').show();
-		var airline = new Array();
-		var stoppage = new Array();
-		var fareCodes = new Array();
-		var min_prc_param = "";
-		var max_prc_param = "";
-		var row_val = "";
+		//======================================== end time slider======================================
 
-		if ($('#minPriceMile').val() != '')
-			min_prc_param = "&minPriceMile="+parseInt($('#minPriceMile').val());
-		if ($('#maxPriceMile').val() != '')
-			max_prc_param = "&maxPriceMile="+parseInt($('#maxPriceMile').val());
-
-		if ($('#rowid').length) 
-			row_val = "&rowid=" + $('#rowid').val();
-
-		$(".chk-airlines:checked").each(function() {
-			airline.push($(this).val());
-		});
-
-		$(".farecode:checked").each(function(){
-			fareCodes.push($(this).val());
-		});
-
-		$(".chk-stoppage:checked").each(function() {
-			stoppage.push($(this).val());
-		});
-
-		var multicity = '';
-		var multicity1 = "{{request.GET.multicity}}";
-
-		if (multicity1 != '') 
-			multicity = "&multicity=" + multicity1;
-		
-		var stoplenght = stoppage.length;
-		var airlinelenght = airline.length;
-		
-		console.log("action=" + encodeURI('infinite_scroll')+min_prc_param+max_prc_param + "&page_no=" + encodeURI(pageNumber) + "&loop_file=loop&csrfmiddlewaretoken={{ csrf_token }}&depaturemin=" + depaturemin + "&depaturemax=" + depaturemax +"&arivalmin="+arivalmin+"&arivalmax="+arivalmax+"&airlines=" + airline +"&fareCodes="+fareCodes +"&stoppage=" + stoppage + row_val + multicity);
-
-		$.ajax({
-			url : urls,
-			type : 'POST',
-			data : "action=" + encodeURI('infinite_scroll')+min_prc_param+max_prc_param + "&page_no=" + encodeURI(pageNumber) + "&loop_file=loop&csrfmiddlewaretoken={{ csrf_token }}&depaturemin=" + depaturemin + "&depaturemax=" + depaturemax +"&arivalmin="+arivalmin+"&arivalmax="+arivalmax+"&airlines=" + airline +"&fareCodes="+fareCodes +"&stoppage=" + stoppage + row_val + multicity,
-			success : function(html) {
-				$("#content").append(html);
-				call_sent = "completed";
-				$('#loading_img').hide();
-				if ($("#nodata").length)
-					is_data = 0;
-			}
-		});
-		return false;
-	}
-</script>
-
-<script>
-	$(document).ready(function() {
-
-		// hide #back-top first
-		$("#back-top").hide();
-
-		// fade in #back-top
 		$(function() {
-			$(window).scroll(function() {
-				if ($(this).scrollTop() > 100) {
-					$('#back-top').fadeIn();
-				} else {
-					$('#back-top').fadeOut();
-				}
-			});
 
-			// scroll body to 0px on click
-			$('#back-top a').click(function() {
-				$('body,html').animate({
-					scrollTop : 0
-				}, 800);
+			$("#from").autocomplete({
+				open : function(event, ui) {
+					$('.ui-autocomplete').off('menufocus hover mouseover');
+				},
+				autoFocus : true,
+				source : "get_airport/",
+				minLength : 2,
+				select : function(event, ui) {
+					$('#fromid').val(ui.item.id);
+				},
+			});
+			$("#to").autocomplete({
+				open : function(event, ui) {
+					$('.ui-autocomplete').off('menufocus hover mouseover');
+				},
+				autoFocus : true,
+				source : "get_airport/",
+				minLength : 2,
+				select : function(event, ui) {
+					$('#toid').val(ui.item.id);
+				},
+			});
+		});
+	</script>
+
+	<script>
+		$(function() {
+			if ($(window).width() < 768) {
+				$(".filters-holder").addClass('filters-holder-ht');
+				$(".show-filter").click(function() {
+					$(this).parent().parent().toggleClass('filters-holder-ht');
+				});
+			}
+			$("#cabintab").focus(function() {
+				$(".travelers-holder").addClass('open');
 				return false;
 			});
+
+			$("#cabintab").click(function() {
+				$(".travelers-holder").addClass('open');
+				return false;
+			});
+
+			$(".form_val").focus(function() {
+				if (!$(this).hasClass("cabin_type")) {
+					$(".travelers-holder").removeClass('open');
+				}
+			});
+		});
+		$('#apply_traveler').click(function() {
+			$(".travelers-holder").removeClass('open');
+		});
+	</script>
+	<script>
+		$(document).ready(function() {
+			$(".alert-warning").hide();
+			var tno = '';
+			if ("{{request.GET.passenger}}") {
+				tno = "{{request.GET.passenger}}";
+			} else {
+				tno = "{{passenger}}";
+			}
+			$('#adults').val(tno);
+			$('#traveller').val(tno);
+			//$('#passenger').val(tno);
+			travelinfo();
+		});
+	</script>
+	<script>
+		var total;
+
+		//@@increase decrease on buttom click
+		$(function() {
+			$('.add').on('click', function() {
+				total = tatalpassenger();
+				if (total < 6) {
+					var $qty = $(this).closest('p').find('.qty');
+					var currentVal = parseInt($qty.val());
+					if (!isNaN(currentVal)) {
+						$qty.val(currentVal + 1);
+					}
+					travelinfo();
+				}
+			});
+			$('.minus').on('click', function() {
+				total = tatalpassenger();
+				if (total > 0) {
+					var $qty = $(this).closest('p').find('.qty');
+					var currentVal = parseInt($qty.val());
+					if (!isNaN(currentVal) && currentVal > 0) {
+						$qty.val(currentVal - 1);
+					}
+
+					travelinfo();
+				}
+			});
+
+		});
+		$('#cabintype').on('change', function() {
+			travelinfo();
+		});
+		/*
+		$(document).ready(function(){
+		$('#passenger').val('1');
+		$(".alert-warning").hide();
+		});
+		*/
+		//@@@Cabin select@@@@
+
+		$(document).ready(function() {
+			//travelinfo();
+
 		});
 
-	});
-</script>
-<script>
-	// ==========show/hide details=======================================
-	$(document.body).on('click', '.show-details', function() {
-		//$('.show-details').on('click',function () {
-		var collapse_content_selector = $(this).attr('href');
-		var toggle_switch = $(this);
-		$(collapse_content_selector).slideToggle(function() {
-			$(this).is(':visible') ? toggle_switch.text('HIDE DETAILS') : toggle_switch.text('SHOW DETAILS');
-		});
-	});
-</script>
-<script>
-	var record;
-	var tweet1;
-	var tweetcontent;
-	var fulltext;
-	var fbcontent;
-	$(document.body).on('click', '.share', function() {
-		var record = $(this).attr("id");
-		$('#recorid').val(record);
-		tweetcontent = $(this).siblings("input[type='hidden']").val();
-		var flight_price = $(this).siblings("input[type='hidden']").attr('class');
-		var fbtext = "Miles " + flight_price + " from {{search.0.source}} to {{search.0.destination}}.";
-		$('#fbtitle').empty();
-		$('#fbtitle').append(fbtext);
-		$('#social_share').attr('href', function() {
-			fbcontent = this.href + '%26share_recordid=' + record;
-
-		});
-		$('#twitter_share').attr('href', function() {
-			var fbcontent1 = fbcontent.split("?u=");
-			fbcontent1 = tweetcontent + fbcontent1[1];
-			var tweet = this.href;
-			tweet1 = tweet.split('status=');
-			var tweeturl = tweet1[1];
-			$('#twitter_content').val(fbcontent1);
-			fulltext = tweet1[0] + 'status=' + fbcontent1;
-			return this.href = tweet1[0] + 'status=' + fbcontent1;
-		});
-	});
-	$('#social_share').click(function() {
-		window.open(fbcontent, 'newwindow', 'width=600, height=250');
-		return false;
-	});
-
-	$('#twitter_content').change(function() {
-		var text = $('#twitter_content').val();
-		$('#twitter_share').attr('href', function() {
-			fulltext = '';
-			fulltext = tweet1[0] + 'status=' + text;
-		});
-
-	});
-	$('#twitter_share').click(function() {
-		window.open(fulltext, 'newwindow', 'width=600, height=250');
-		return false;
-
-	});
-</script>
-
-<script>
-	var dataurls = ("{{request.get_full_path}}");
-	var multicity1 = "{{request.GET.multicity}}";
-	var searchid = "{{request.GET.keyid}}";
-	var returnid = "{{request.GET.returnkey}}";
-	var cabin = "{{request.GET.cabin}}";
-	var airline =new Array();
-	var stoppage = new Array();
-	var row_val = "";
-	var refreshIntervalId = '';
-
-	$('#progress_hidden_val').val('{{progress_value}}');
-
-	if($('#rowid').length)
-		row_val = "&rowid="+$('#rowid').val() ;
-
-	$(".chk-airlines:checked").each(function() {
-		airline.push($(this).val());
-	});
-
-	$(".chk-stoppage:checked").each(function() {
-		stoppage.push($(this).val());
-	});
-
-	refresh_airline = setInterval(loading, 3000);
-
-	var airlines = ["Delta", "United", "Etihad", "S7", "Virgin Atlantic", "Virgin America", "Virgin Australia", "Jetblue", "American", "Aeroflot", "AirChina"];
-
-	i = 0;		
-	function loading() {
-		$('#loading-info').empty();
-		$('#loading-info').append('Searching  '+airlines[i]+' Airlines ...');
-		i = (i+1) % airlines.length;
-	}
-
-	var progess_width = 0;
-	var timecompleted = true ;
-	var callrunning = false ;
-
-	if(!data_status) // there is no data
-	{
-		$("#loading-model").modal('show');
-
-		if(parseInt($('#progress_hidden_val').val()) > 185 )	// after data is loaded
-		{
-			$("#loading-model").modal('hide');
-			$('.progress').hide();
-			$('.filters-holder').removeClass('xs-filters-holder-ht');
-			isprocess();
-		} else {
-			$('.filters-holder').addClass('xs-filters-holder-ht');
-			refreshIntervalId = setInterval(updateTime, 2000);
+		function travelinfo() {
+			total = tatalpassenger();
+			$('#passenger').val(total);
+			var text;
+			if (total == 1) {
+				text = "traveler";
+			} else {
+				text = "travelers";
+			}
+			var selectedcabin = $("#cabintype option:selected").text();
+			var html = "<span id='travelar'>" + total + " " + text + ", " + selectedcabin + "</span>";
+			$('#travelar').replaceWith(html);
+			if (total == 0) {
+				var msg = '';
+				$('#submitid').prop('disabled', true);
+				$(".alert-warning").empty();
+				msg = "You must select atleast one traveler";
+				$(".alert-warning").append(msg);
+				$(".alert-warning").show();
+			} else {
+				$('#submitid').prop('disabled', false);
+				$(".alert-warning").hide();
+			}
 		}
-	} else {
+
+		//@@@Total Passenger@@@@
+		function tatalpassenger() {
+			var sum = 0;
+			$('.numberHolder').each(function() {
+				sum += parseFloat($(this).val());
+			});
+			return sum;
+		};
+
+		//@@not close on click dropdown
+
+		$('.dropdown-menu .down-menu-block').click(function(e) {
+			e.stopPropagation();
+		});
+
+	</script>
+	<script type="text/javascript">
+		$('#loading_img').hide();
+		//@@---------------------- pagination -------------------------------------
+		var call_sent = "completed";
+		var pagecount = 2;
+		var is_data = 1;
+		$(window).scroll(function() {
+			var doch = ($(document).height() - 200);
+			var winh = ($(window).height() + 200);
+			if ($(window).scrollTop() >= doch - winh) {
+				if (is_data > 0) {
+					if (call_sent == "completed") {
+						loadArticle(pagecount);
+
+						pagecount++;
+					}
+				}
+			}
+		});
+		var urls = ("{{request.get_full_path}}");
+		function loadArticle(pageNumber) {
+			call_sent = "in_progress";
+			$('#loading_img').show();
+			var airline = new Array();
+			var stoppage = new Array();
+			var fareCodes = new Array();
+			var min_prc_param = "&minPriceMile="+parseInt($('#minPriceMile').val());
+			var max_prc_param = "&maxPriceMile="+parseInt($('#maxPriceMile').val());
+			var row_val = "";
+			if ($('#rowid').length) {
+				row_val = "&rowid=" + $('#rowid').val();
+
+			}
+			$(".chk-airlines:checked").each(function() {
+				airline.push($(this).val());
+
+			});
+			$(".farecode:checked").each(function(){
+				fareCodes.push($(this).val());
+			});
+			$(".chk-stoppage:checked").each(function() {
+				stoppage.push($(this).val());
+
+			});
+			
+			var multicity = '';
+			var multicity1 = "{{request.GET.multicity}}";
+			if (multicity1 != '') {
+				multicity = "&multicity=" + multicity1;
+			}
+			var stoplenght = stoppage.length;
+			var airlinelenght = airline.length;
+			
+			$.ajax({
+				url : urls,
+				type : 'POST',
+				data : "action=" + encodeURI('infinite_scroll')+min_prc_param+max_prc_param + "&page_no=" + encodeURI(pageNumber) + "&loop_file=loop&csrfmiddlewaretoken={{ csrf_token }}&depaturemin=" + depaturemin + "&depaturemax=" + depaturemax +"&arivalmin="+arivalmin+"&arivalmax="+arivalmax+"&airlines=" + airline +"&fareCodes="+fareCodes +"&stoppage=" + stoppage + row_val + multicity,
+				success : function(html) {
+					console.log($(html).find('#nodata').length);
+					$("#content").append(html);
+					call_sent = "completed";
+					$('#loading_img').hide();
+					if ($("#nodata").length)
+						is_data = 0;
+
+				}
+			});
+			return false;
+		}
+	</script>
+
+	<script>
+		$(document).ready(function() {
+
+			// hide #back-top first
+			$("#back-top").hide();
+
+			// fade in #back-top
+			$(function() {
+				$(window).scroll(function() {
+					if ($(this).scrollTop() > 100) {
+						$('#back-top').fadeIn();
+					} else {
+						$('#back-top').fadeOut();
+					}
+				});
+
+				// scroll body to 0px on click
+				$('#back-top a').click(function() {
+					$('body,html').animate({
+						scrollTop : 0
+					}, 800);
+					return false;
+				});
+			});
+
+		});
+	</script>
+	<script>
+		// ==========show/hide details=======================================
+		$(document.body).on('click', '.show-details', function() {
+			//$('.show-details').on('click',function () {
+			var collapse_content_selector = $(this).attr('href');
+			var toggle_switch = $(this);
+			$(collapse_content_selector).slideToggle(function() {
+				$(this).is(':visible') ? toggle_switch.text('HIDE DETAILS') : toggle_switch.text('SHOW DETAILS');
+			});
+		});
+	</script>
+	<script>
+		var record;
+		var tweet1;
+		var tweetcontent;
+		var fulltext;
+		var fbcontent;
+		$(document.body).on('click', '.share', function() {
+			var record = $(this).attr("id");
+			$('#recorid').val(record);
+			tweetcontent = $(this).siblings("input[type='hidden']").val();
+			var flight_price = $(this).siblings("input[type='hidden']").attr('class');
+			var fbtext = "Miles " + flight_price + " from {{search.0.source}} to {{search.0.destination}}.";
+			$('#fbtitle').empty();
+			$('#fbtitle').append(fbtext);
+			$('#social_share').attr('href', function() {
+				fbcontent = this.href + '%26share_recordid=' + record;
+
+			});
+			$('#twitter_share').attr('href', function() {
+				var fbcontent1 = fbcontent.split("?u=");
+				fbcontent1 = tweetcontent + fbcontent1[1];
+				var tweet = this.href;
+				tweet1 = tweet.split('status=');
+				var tweeturl = tweet1[1];
+				$('#twitter_content').val(fbcontent1);
+				fulltext = tweet1[0] + 'status=' + fbcontent1;
+				return this.href = tweet1[0] + 'status=' + fbcontent1;
+			});
+		});
+		$('#social_share').click(function() {
+			window.open(fbcontent, 'newwindow', 'width=600, height=250');
+			return false;
+		});
+
+		$('#twitter_content').change(function() {
+			var text = $('#twitter_content').val();
+			$('#twitter_share').attr('href', function() {
+				fulltext = '';
+				fulltext = tweet1[0] + 'status=' + text;
+			});
+
+		});
+		$('#twitter_share').click(function() {
+			window.open(fulltext, 'newwindow', 'width=600, height=250');
+			return false;
+
+		});
+	</script>
+	<script>
+
+var dataurls = ("{{request.get_full_path}}");
+var multicity1 = "{{request.GET.multicity}}";
+var searchid = "{{request.GET.keyid}}";
+var returnid = "{{request.GET.returnkey}}";
+var cabin = "{{request.GET.cabin}}";
+var airline =new Array();
+var stoppage = new Array();
+var row_val = "";
+var refreshIntervalId = '';
+$('#progress_hidden_val').val('{{progress_value}}');
+if($('#rowid').length)
+{
+row_val = "&rowid="+$('#rowid').val() ;
+}
+$(".chk-airlines:checked").each(function(){
+airline.push($(this).val());
+});
+$(".chk-stoppage:checked").each(function(){
+stoppage.push($(this).val());
+});
+
+refresh_airline = setInterval(loading, 3000);
+var airlines = ["Delta", "United", "Etihad", "S7", "Virgin Atlantic", "Virgin America", "Virgin Australia", "Jetblue", "American", "Aeroflot", "AirChina"];
+i = 0;
+function loading(){
+
+$('#loading-info').empty();
+$('#loading-info').append('Searching  '+airlines[i]+' Airlines ...');
+if(i < 6)
+{
+i = i+1;
+}
+else{
+i=0;
+}
+
+}
+
+var progess_width = 0;
+var timecompleted = true ;
+var callrunning = false ;
+
+if(!data_status) 
+{
+	
+	$("#loading-model").modal('show');
+
+	if(parseInt($('#progress_hidden_val').val()) > 185 )
+	{
+		$("#loading-model").modal('hide');
 		$('.progress').hide();
 		$('.filters-holder').removeClass('xs-filters-holder-ht');
-		getPriceMatrix();
-		//isprocess();
+		isprocess();
 	}
-
-	// ===================== price slider ===================================================
-	function priceMileslider(event, ui) {					
-		var min_miles = $("#miles_slider").slider("values", 0);
-		var max_miles = $("#miles_slider").slider("values", 1);
-		    $('#minPriceMile').val(min_miles);
-			$('#maxPriceMile').val(max_miles);
-		$("#miles_value").text('Miles '+min_miles+ ' - Miles ' + max_miles);
+	else{
+		$('.filters-holder').addClass('xs-filters-holder-ht');
+		refreshIntervalId = setInterval(updateTime, 2000);
+	
 	}
+}
+else
+{
+	$('.progress').hide();
+	$('.filters-holder').removeClass('xs-filters-holder-ht');
+	getPriceMatrix();
+	getflexData();
+	//isprocess();
+}
+// ===================== price slider ===================================================
+function priceMileslider(event, ui) {
 			
-	function initialisePriceRange() {
+			var min_miles = $("#miles_slider").slider("values", 0);
+			var max_miles = $("#miles_slider").slider("values", 1);
+			    $('#minPriceMile').val(min_miles);
+				$('#maxPriceMile').val(max_miles);
+			$("#miles_value").text('Miles '+min_miles+ ' - Miles ' + max_miles);
+		}
+		
+		function initialisePriceRange(){
 		var minPriceMile =  parseInt($('#minPriceMile').val());
 		var maxPriceMile = parseInt($('#maxPriceMile').val());
 		if("{{filterkey.minpricemile}}" != 0)
@@ -2969,255 +2999,316 @@
 			max : fix_max_price,
 			values : [minPriceMile, maxPriceMile],
 			slide: function (priceRange, ui) {
-				$('#minPriceMile').val(ui.values[0]);
-				$('#maxPriceMile').val(ui.values[1]);
-				$("#miles_value").text('Miles '+ui.values[0]+' -  Miles '+ui.values[1]);
+			$('#minPriceMile').val(ui.values[0]);
+			$('#maxPriceMile').val(ui.values[1]);
+			$("#miles_value").text('Miles '+ui.values[0]+' -  Miles '+ui.values[1]);
 			}
+
 		});
 		priceMileslider();
-	}
-
-	function getPriceMatrix()
-	{
-		$.ajax({
-			url: dataurls,
-			type: 'POST',
-			data: "actionfor=prc_matrix&csrfmiddlewaretoken={{csrf_token }}",		 
-			success:function(html) {
-				$('#price_matrix').empty();
-				$('#price_matrix').append(html);
-			}
-		});
-
-		$.ajax({
-			url: dataurls,
-			type: 'POST',
-			data: "actionfor=prc_matrix&valuefor=pricerange&csrfmiddlewaretoken={{csrf_token }}", 
-			success:function(data) {
-				$('#minPriceMile').val(data[0]);
-				$('#maxPriceMile').val(data[1]);
-				$('#fix_min_price').val(data[0]);
-				$('#fix_max_price').val(data[1]);
-				create_fare_code_filter(data[2]);
-				initialisePriceRange();
-			}
-		});
-	}
-
-	var codelen = "{{filterkey.fareCodelength}}";
-	var codes = "{{filterkey.fareCodes}}";
-	var code1 = codes.replace(/&quot;/g, '');
-	code1 = code1.replace('[','');
-	code1 = code1.replace(']','');
-	code1 = code1.split(',');
-
-	function create_fare_code_filter(fareCodeList)
-	{
-		var fareCodeDisplay='';
-		for(item=0;item < fareCodeList.length;item++) {
-			codeStatus = '';
-			if(codelen > 0)
-				for(c=0;c<codelen;c++)
-					if ($.trim(code1[c]) == $.trim(fareCodeList[item]))
-						codeStatus =  "checked='checked'"; 
-			fareCodeDisplay = fareCodeDisplay+"<div class='checkbox'><label><input type='checkbox' class='farecode' name='fareCodes' value='"+fareCodeList[item]+"'"+codeStatus+"><span></span>"+fareCodeList[item]+"</label></div>";
 		}
-		$('#add_fare_code').append(fareCodeDisplay);
-	}
 
-	function updateTime()
-	{
-		timecompleted = true ;
-		if(!callrunning)
-			isprocess();
+function getPriceMatrix()
+{
+	$.ajax({
+	url:dataurls,
+	type:'POST',
+	data:"actionfor=prc_matrix&csrfmiddlewaretoken={{csrf_token }}",
+	 
+	success:function(html){
+	$('#price_matrix').empty();
+	$('#price_matrix').append(html);
 	}
-
-	function redirecttosearchpage(scraperStatus) {
+	});
 		$.ajax({
-			url:dataurls,
-			type:'POST',
-			data: "csrfmiddlewaretoken={{ csrf_token }}&depaturemin="+depaturemin+"&depaturemax="+depaturemax+"&airlines="+airline+"&stoppage="+stoppage+row_val+"&scraperStatus="+scraperStatus,
-			success: function(html) {
-				$('.filters-holder').addClass('xs-filters-holder-ht');
-				$("#content1").empty();
-				$(".contentdiv").remove();
-				$("#content1").append(html);
-
-				progess_width = $('#progressbar').width();
-				$('#progress_hidden_val').val(progess_width);
-
-				if(progess_width < 195)
-					progess_width = parseInt(progess_width) + 12;
-
-				$('#progressbar').width(progess_width);
-				// needs to reload the data
-				is_data = 1;
-				pagecount = 2;
-				$('#content').empty();
-
-				if(scraperStatus == 'complete') {
-					$('#progressbar').css("width", "100%");
-					$('#progress_hidden_val').val('195');
-					//clearInterval(refreshIntervalId);
-					$('#progressbar').text('');
-					$('.progress').hide();
-					$("#loading-model").modal('hide');
-					$('.filters-holder').removeClass('xs-filters-holder-ht');
-
-					if($('#nodata').length > 0 && $('#datafound').length <= 0)
-						$('#nodata-msg').append("Oops, looks like there aren't any flight results for your filtered search. Try to broaden your search criteria for better results.");
-				}
+		url:dataurls,
+		type:'POST',
+		data:"actionfor=prc_matrix&valuefor=pricerange&csrfmiddlewaretoken={{csrf_token }}", 
+		success:function(data){
+			$('#minPriceMile').val(data[0]);
+			$('#maxPriceMile').val(data[1]);
+			$('#fix_min_price').val(data[0]);
+			$('#fix_max_price').val(data[1]);
+			create_fare_code_filter(data[2]);
+			initialisePriceRange();
 			}
 		});
-	}
+}
+// ----------- Flex data call ----------------------------------//
 
-	var dataCheckCount = 0;
-	var timeCount = 0;
-	var isDataComplete = '';
-	var multicity='';
-	var multicity1 = "{{request.GET.multicity}}";
+function getflexData(){
+	var searchtype = "{{request.GET.searchtype}}";
+	$.ajax({
+		type: "POST",
+		url: "/getFlexResult/",
+		data:{"departkey":searchid,"searchtype":searchtype,"returnkey":returnid,csrfmiddlewaretoken:"{{ csrf_token }}"},
+		success:function(html){
+			//$('#calendarmatix').empty();
+			$('#calendarmatix').append(html);
+		}
+	});
+}
 
-	function isprocess()
+var codelen = "{{filterkey.fareCodelength}}";
+var codes = "{{filterkey.fareCodes}}";
+var code1 = codes.replace(/&quot;/g, '');
+code1 = code1.replace('[','');
+code1 = code1.replace(']','');
+code1 = code1.split(',');
+function create_fare_code_filter(fareCodeList)
+{
+	var fareCodeDisplay='';
+	for(item=0;item < fareCodeList.length;item++)
 	{
-		callrunning = true ;
-		timecompleted = false ;
-		var temp = '';
-
-		if( returnid != '')
-			var temp = "&returnkey="+encodeURI(returnid);
-
-		if (multicity1 != '')
-			multicity = "&multicity="+encodeURI(multicity1);
-
-		$.ajax({
-			type: "POST",
-			url: "/checkData/",
-			data: "keyid="+ encodeURI(searchid) + "&csrfmiddlewaretoken={{ csrf_token }}"+"&cabin="+encodeURI(cabin)+temp+multicity,
-			success: function(data) {
-				callrunning = false ;
-
-				if(timeCount >= 9 && data[0] != 'onprocess')	// after 2 * 9 seconds hide the dialog
-					$("#loading-model").modal('hide');
-				else
-					timeCount = parseInt(timeCount)+1;
-
-				if(timecompleted && data[1] != 'completed' )
-					isprocess();
-
-				if(data[1] == 'key_expired')
+		codeStatus = '';
+		if(codelen > 0)
+		{
+			for(c=0;c<codelen;c++)
+			{
+				
+				if ($.trim(code1[c]) == $.trim(fareCodeList[item]))
 				{
-					clearInterval(refreshIntervalId);
-					$('changebtnid').click();
-
-					setSearchData();
+					codeStatus =  "checked='checked'"; 
 				}
-
-				if(data[1] == 'completed' || dataCheckCount > 60)
-				{
-					clearInterval(refreshIntervalId);
-					redirecttosearchpage('complete');
-					getPriceMatrix();
-				} else if(data[0] != 'onprocess' && dataCheckCount % 3 == 0) {
-					redirecttosearchpage('onprocess');
-				}
-
-				dataCheckCount++;
-			},
-		});
+			}
+		}
+		fareCodeDisplay = fareCodeDisplay+"<div class='checkbox'><label><input type='checkbox' class='farecode' name='fareCodes' value='"+fareCodeList[item]+"'"+codeStatus+"><span></span>"+fareCodeList[item]+"</label></div>";
 	}
-</script>
+	$('#add_fare_code').append(fareCodeDisplay);
+}
+function updateTime()
+{
+	timecompleted = true ;
+	if(!callrunning)
+	{
+		isprocess();
+	}
+}
+	function redirecttosearchpage(scraperStatus){
+	
+	$.ajax({
+	url:dataurls,
+	type:'POST',
+	data: "csrfmiddlewaretoken={{ csrf_token }}&depaturemin="+depaturemin+"&depaturemax="+depaturemax+"&airlines="+airline+"&stoppage="+stoppage+row_val+"&scraperStatus="+scraperStatus,
+	success: function(html){
+	
+	//isprocess();
+	$('.filters-holder').addClass('xs-filters-holder-ht');
+	
+	$("#content1").empty();
+	$(".contentdiv").remove();
+	$("#content1").append(html);
+	progess_width = $('#progressbar').width();
+	$('#progress_hidden_val').val(progess_width);
+	if(progess_width < 125)
+	{
+		progess_width = parseInt(progess_width)+10;
+	}
+	else{
+		if(progess_width < 185){
+			progess_width = parseInt(progess_width)+4;
+		}
+	}
+	$('#progressbar').width(progess_width);
+	if(scraperStatus == 'complete'){
+		$('#progressbar').css("width", "100%");
+		$('#progress_hidden_val').val('195');
+		//clearInterval(refreshIntervalId);
+		$('#progressbar').text('');
+		$('.progress').hide();
+		$("#loading-model").modal('hide');
+		$('.filters-holder').removeClass('xs-filters-holder-ht');
+		
+		if($('#nodata').length > 0)
+		{
+			$('#nodata-msg').append("Oops, looks like there aren't any flight results for your filtered search. Try to broaden your search criteria for better results.");
+		}
+		
+	}
+	
+	}
+	});
+}
+var dataCheckCount = 3;
+var timeCount = 0;
+var isDataComplete = '';
+var multicity='';
+var multicity1 = "{{request.GET.multicity}}";
 
-<script>
-	$('#subscribe').click(function() {
-		var is_checked = '';
-		var subscription_email = $('#subscription_email').val();
-		if (subscription_email != '') {
-			if ($('#pexdeals').is(':checked')) {
-				$.ajax({
-					type : "POST",
-					dataType : "text",
-					url : "/mailchimp/",
-					data : "email=" + encodeURI(subscription_email) + "&csrfmiddlewaretoken={{ csrf_token }}",
-					success : function(resp) {
-						$('#subs_msg').empty();
-						$('#subs_msg').append(resp);
-						setTimeout(function() {
-							$('#subs_msg').fadeOut();
-						}, 8000);
-					}
-				});
+function isprocess()
+{
+callrunning = true ;
+timecompleted = false ;
+var temp = '';
+if( returnid != '')
+{
+var temp = "&returnkey="+encodeURI(returnid);
+}
+if (multicity1 != '')
+{
+multicity = "&multicity="+encodeURI(multicity1);
+}
+$.ajax({
+type: "POST",
+url: "/checkData/",
+data: "keyid="+ encodeURI(searchid) + "&csrfmiddlewaretoken={{ csrf_token }}"+"&cabin="+encodeURI(cabin)+temp+multicity,
+success: function(data){
+callrunning = false ;
+if(timeCount >= 9 && data[0] != 'onprocess')
+{
+	$("#loading-model").modal('hide');
+	
+}
+else
+{
+	timeCount = parseInt(timeCount)+1;
+}
+if(timecompleted && data[1] != 'completed' )
+{
+
+	isprocess();
+}
+if(data[1] == 'key_expired')
+{
+clearInterval(refreshIntervalId);
+$('changebtnid').click();
+
+setSearchData();
+
+}
+if(data[1] == 'completed' )
+{
+	clearInterval(refreshIntervalId);
+	redirecttosearchpage('complete');
+	getPriceMatrix();
+	getflexData();
+}
+else{
+if(data[0] != 'onprocess')
+{
+if(dataCheckCount == 3){
+	dataCheckCount = 1;
+redirecttosearchpage('onprocess');
+}
+else{
+dataCheckCount = parseInt(dataCheckCount)+1;
+}
+}
+
+}
+
+},
+});
+}
+	</script>
+	<script>
+	
+		$('#subscribe').click(function() {
+			var is_checked = '';
+			var subscription_email = $('#subscription_email').val();
+			if (subscription_email != '') {
+				if ($('#pexdeals').is(':checked')) {
+
+					$.ajax({
+
+						type : "POST",
+						dataType : "text",
+						url : "/mailchimp/",
+						data : "email=" + encodeURI(subscription_email) + "&csrfmiddlewaretoken={{ csrf_token }}",
+						success : function(resp) {
+							$('#subs_msg').empty();
+							$('#subs_msg').append(resp);
+							setTimeout(function() {
+								$('#subs_msg').fadeOut();
+							}, 8000);
+						}
+					});
+				} else {
+					alert("please click on news and deals from PEX+");
+				}
 			} else {
-				alert("please click on news and deals from PEX+");
+				alert("please enter your valid email");
 			}
-		} else {
-			alert("please enter your valid email");
-		}
-	});
-</script>
-<script>
-	var CSRF_TOKEN = "{{ csrf_token }}";
-	var triptype = '';
-	var destinationid = '';
-	var sourceid = '';
-	var returndateval = '';
-	var departdateval = '';
-	var rdtrip = '';
-	var trip = '';
-	var cabintypeval = '';
-	var searchidval = '';
-	var returnidval = '';
-	$("#changebtnid").click(function(event) {
-		//event.preventDefault();
-		setSearchData();
-	});
 
-	function setSearchData() {
-		event.preventDefault();
-		sourceid = $('#fromid').val();
-		destinationid = $('#toid').val();
-		var isReturndate = '';
-		isReturndate = "{{returndate}}";
-		if (isReturndate != '') {
-			returndateval = $('#return').val();
-		}
-		departdateval = $('#departuredate').val();
-		cabintypeval = $('#cabintype option:selected').val();
-		searchData();
-	}
-
-	function searchData() {
-		$('#changebtnid').prop('disabled', true);
-		$("#content1").empty();
-
-		$.ajax({
-			type : "POST",
-			url : "/search/",
-			data : "returndate=" + encodeURI(returndateval) + "&rndtripkey=" + encodeURI(rdtrip) + "&cabin=" + encodeURI(cabintypeval) + "&triptype=" + encodeURI(trip) + "&fromMain=" + encodeURI(sourceid) + "&toMain=" + encodeURI(destinationid) + "&deptdate=" + encodeURI(departdateval) + "&csrfmiddlewaretoken=" + encodeURI(CSRF_TOKEN),
-			success : function(data) {
-				multikey = data[0];
-				searchid1 = multikey.split(',');
-				searchidval = searchid1[0];
-				if (data[1]) {
-					returnidval = data[1];
-				}
-				getsearchresult(searchidval, returnidval);
-				//refreshIntervalId = setInterval(datacheck, 5000,searchid,returnid);
-			},
 		});
-	}
+	</script>
+	<script>
+		var CSRF_TOKEN = "{{ csrf_token }}";
+		var triptype = '';
+		var destinationid = '';
+		var sourceid = '';
+		var returndateval = '';
+		var departdateval = '';
+		var rdtrip = '';
+		var trip = '';
+		var cabintypeval = '';
+		var searchidval = '';
+		var returnidval = '';
+		$("#changebtnid").click(function(event) {
 
-	function getsearchresult(searchidval, returnidval) {
-		multicity = '';
-		if (multikey.indexOf(",") >= 0) {
-			multicity = "&multicity=" + encodeURI(multikey);
-		}
-		if (searchidval != '') {
-			$('#searchid').val(searchid);
-			var location = "getsearchresult?keyid=" + encodeURI(searchidval) + "&cabin=" + encodeURI(cabintypeval) + "&passenger=" + encodeURI($('#passenger').val()) + multicity;
-			if (returnidval != '') {
-				location = location + "&returnkey=" + encodeURI(returnidval);
+			//event.preventDefault();
+			setSearchData();
+
+		});
+		function setSearchData() {
+
+			event.preventDefault();
+			sourceid = $('#fromid').val();
+			destinationid = $('#toid').val();
+			var isReturndate = '';
+			isReturndate = "{{returndate}}";
+			if (isReturndate != '') {
+				returndateval = $('#return').val();
 			}
-			window.location.href = location;
+			departdateval = $('#departuredate').val();
+			cabintypeval = $('#cabintype option:selected').val();
+			searchData();
 		}
-	}
-</script>
+
+		function searchData() {
+			$('#changebtnid').prop('disabled', true);
+			$("#content1").empty();
+			var searchtype = "{{request.GET.searchtype}}";
+			
+			$.ajax({
+				type : "POST",
+				url : "/search/",
+				data : "returndate=" + encodeURI(returndateval)+"&searchtype="+encodeURI(searchtype)+ "&rndtripkey=" + encodeURI(rdtrip) + "&cabin=" + encodeURI(cabintypeval) + "&triptype=" + encodeURI(trip) + "&fromMain=" + encodeURI(sourceid) + "&toMain=" + encodeURI(destinationid) + "&deptdate=" + encodeURI(departdateval) + "&csrfmiddlewaretoken=" + encodeURI(CSRF_TOKEN),
+				success : function(data) {
+				searchtype = data['searchtype'];
+		    	console.log(data['returnkey']);
+		        multikey = data['departkey']; //data[0];
+		        searchid1 = multikey.split(',');
+		        searchid = searchid1[0];
+		        console.log(searchid);
+		        var returnid='';
+		        if(data['returnkey'])
+		        {
+		        	returnid = data['returnkey'];
+		        }
+        		getsearchresult(searchid,returnid,searchtype);
+					//getsearchresult(searchidval, returnidval);
+					//refreshIntervalId = setInterval(datacheck, 5000,searchid,returnid);
+				},
+			});
+
+		}
+
+		function getsearchresult(searchidval, returnidval,searchtype) {
+			multicity = '';
+			if (multikey.indexOf(",") >= 0) {
+				multicity = "&multicity=" + encodeURI(multikey);
+			}
+			if (searchidval != '') {
+				$('#searchid').val(searchid);
+				var location = "getsearchresult?keyid=" + encodeURI(searchidval) + "&cabin=" + encodeURI(cabintypeval) + "&passenger=" + encodeURI($('#passenger').val()) + multicity;
+				if (returnidval != '') {
+					location = location + "&returnkey=" + encodeURI(returnidval);
+				}
+				location = location+"&searchtype="+encodeURI(searchtype);
+				window.location.href = location;
+			}
+		}
+	
+		
+	</script>

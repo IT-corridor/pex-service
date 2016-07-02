@@ -20,13 +20,14 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.context_processors import csrf
 from django.views.decorators.csrf import requires_csrf_token
 from pexproject.models import Flightdata, Airports, Searchkey, User,Pages,UserAlert,Contactus,Adminuser,EmailTemplate,GoogleAd
-from pexproject.models import Blogs,BlogImages,CityImages,Search
+from pexproject.models import Blogs,BlogImages,CityImages,Search,FlexibleDateSearch
 from pexproject.templatetags.customfilter import floatadd, assign
 from social_auth.models import UserSocialAuth
 from django.contrib.auth import login as social_login,authenticate,get_user
 from django.contrib.auth import logout as auth_logout
 import settings
 from customfunction import is_scrape_vAUS,is_scrape_aeroflot,is_scrape_virginAmerica,is_scrape_etihad,is_scrape_delta,is_scrape_united,is_scrape_virgin_atlantic,is_scrape_jetblue,is_scrape_aa, is_scrape_s7, is_scrape_airchina
+
 from django.views.decorators.csrf import csrf_exempt
 import requests
 from django.utils.html import strip_tags
@@ -966,8 +967,11 @@ def search(request):
         orgnid = request.POST['fromMain']
         destid = request.POST['toMain']
         depart = request.POST['deptdate']
-        print '$$$$$', depart, '$$$$$'
-        
+
+        searchtype = ''
+        if 'searchtype' in request.POST:
+            searchtype = request.POST['searchtype']
+        print "searchtype",searchtype
         cabin = request.POST['cabin']
         ongnidlist =  orgnid.split(',')
         destlist = destid.split(',')
@@ -1003,6 +1007,7 @@ def search(request):
             time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
             time1 = datetime.datetime.now() - timedelta(minutes=30)
             time1 = time1.strftime('%Y-%m-%d %H:%M:%S')
+                
             if searchdate1:
                 obj = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, scrapetime__gte=time1)
                 returnobj = Searchkey.objects.filter(source=destination1, destination=origin, traveldate=searchdate1, scrapetime__gte=time1)
@@ -1042,6 +1047,14 @@ def search(request):
                     if is_scrape_etihad == 1:
                         customfunction.flag = customfunction.flag+1
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/etihad.py",etihaddest, etihadorigin, str(date1), str(returnkey),cabin])
+                
+                ''' Flexible date search scraper for return Date'''
+                if returnkey and  'flexibledate' in searchtype:
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/Flex_delta.py",destcode, orgncode, str(returndate), str(returnkey),cabin])
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/flex_jetblue.py",destcode, orgncode, str(returndate), str(returnkey)])
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/flex_virgin_atlantic.py",destcode, orgncode, str(returndate), str(returnkey)])
+                        
+                '''-------------------------------------'''
             else:
                 obj = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, scrapetime__gte=time1)
 
@@ -1057,6 +1070,13 @@ def search(request):
                 searchdata.save()
                 searchkeyid = searchdata.searchid 
                 cursor = connection.cursor()
+                ''' Flexible date search scraper for return Date'''
+                if searchkeyid and  'flexibledate' in searchtype:
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/Flex_delta.py",orgncode,destcode, str(depart), str(searchkeyid),cabin])
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/flex_jetblue.py",orgncode,destcode, str(depart), str(searchkeyid)])
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/flex_virgin_atlantic.py",orgncode,destcode, str(depart), str(searchkeyid)])
+                        
+                '''-------------------------------------'''
                 customfunction.flag = 0
 		if searchdate1:
 		    customfunction.flag = 2
@@ -1097,7 +1117,7 @@ def search(request):
                         customfunction.flag = customfunction.flag+1 
                         print '@@@@@ AirChina One Way', originobj.code, destobj.code, str(searchdate), str(searchkeyid)
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/airchina.py", originobj.code, destobj.code, str(searchdate), str(searchkeyid)])
-                    
+
             if is_scrape_virgin_atlantic == 1:
                 customfunction.flag = customfunction.flag+1
                 Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='virgin_atlantic').delete()
@@ -1131,10 +1151,17 @@ def search(request):
                     
         mimetype = 'application/json'
         results = []
-        results.append(multiplekey)
+        #results.append(multiplekey)
+        key_json = {}
+        key_json['departkey'] = multiplekey
+        key_json['returnkey'] = returnkey
+        key_json['searchtype'] = searchtype
+        #results.append(key_json)
+        print key_json
         if returnkey:
             results.append(returnkey)
-        data = json.dumps(results)
+            
+        data = json.dumps(key_json)
         return HttpResponse(data, mimetype)
         
 def get_airport(request):
@@ -1273,6 +1300,87 @@ def checkData(request):
         data = json.dumps(results)
         return HttpResponse(data, mimetype)    
     
+def getFlexResult(request):
+    if request.is_ajax():
+        searchtype = request.POST['searchtype']
+        departkey = request.POST['departkey']
+        returnData = ''
+        return_eco_saver = []
+        return_bus_saver = []
+        retMonth = ''
+        if 'returnkey' in request.POST:
+            returnkey = request.POST['returnkey']
+            returnData = FlexibleDateSearch.objects.raw("select * from pexproject_flexibledatesearch where searchkey='"+str(returnkey)+"' and (economyflex = 'saver' or businessflex = 'saver') order by flexdate")
+            returnDatalist = list(returnData)
+            journeyDate = ''
+            for row1 in returnDatalist:
+                journeyDate = row1.journey
+                journey_month = journeyDate.strftime("%m")
+                flex_date = row1.flexdate
+                flex_day = flex_date.strftime("%d")
+                flex_month = flex_date.strftime("%m")
+                if int(flex_month) == int(journey_month):
+                    eco_s = row1.economyflex
+                    if eco_s  and flex_day not in return_eco_saver:
+                        return_eco_saver.append(flex_day)    
+                    bus_s = row1.businessflex
+                    if bus_s and flex_day not in return_bus_saver:
+                        return_bus_saver.append(flex_day) 
+            if journeyDate:            
+                dateval1 = journeyDate.strftime("%m/%Y")
+                year1 = journeyDate.strftime("%Y")
+                retMonth = journeyDate.strftime("%-m")
+                
+        flexData = FlexibleDateSearch.objects.raw("select * from pexproject_flexibledatesearch where searchkey='"+str(departkey)+"' and (economyflex = 'saver' or businessflex = 'saver') order by flexdate")
+        flexDataList = list(flexData)
+        
+        d = ''
+        economy_saver = []
+        business_saver = []
+        month = ''
+        for row in flexDataList:
+            d = row.journey
+            d.strftime("%m/%Y")
+            month1 = d.strftime("%m")
+            fd = row.flexdate
+            fd1 = fd.strftime("%d")
+            fd_month = fd.strftime("%m")
+            if int(fd_month) == int(month1): 
+                eco_s = row.economyflex
+                if eco_s  and fd1 not in economy_saver:
+                    economy_saver.append(fd1)    
+                bus_s = row.businessflex
+                
+                if bus_s and fd1 not in business_saver:
+                    business_saver.append(fd1)
+            
+        economy = ''
+        business = ''
+        ret_economy = ''
+        ret_business = ''
+
+        if len(economy_saver)>0:
+            economy = ','.join(economy_saver)
+        if len(business_saver) > 0:
+            business = ','.join(business_saver)
+        if len(return_eco_saver) > 0:
+            ret_economy = ','.join(return_eco_saver)
+        if len(return_bus_saver)  > 0 :  
+            ret_business = ','.join(return_bus_saver)
+    
+        dateval = d.strftime("%m/%Y")
+        year = d.strftime("%Y")
+        month = d.strftime("%-m")
+        
+        #print "totaldays",totaldays
+        dateval = "01"+"/"+dateval
+        #print dateval 
+        d1 = datetime.datetime.strptime(dateval, '%d/%m/%Y')
+        day = d1.strftime("%w")
+        print 
+        return render_to_response('flightsearch/calendarmatrix.html',{"month":month,"economy":economy,"business":business,"retmonth":retMonth,"returnEco":ret_economy,"returnBusiness":ret_business},context_instance=RequestContext(request))
+        
+
 def getsearchresult(request):
     context = {}
     cabin = []
@@ -1836,6 +1944,7 @@ def getsearchresult(request):
         return render_to_response('flightsearch/searchresult.html', {'title':title,'action':action,'pointlist':pointlist,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value,'multisearch':multisearch,'data':mainlist,'multirecod':mainlist,'multicity':multicity,'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request)) 
         
 
+
 def share(request):
     context = {}
     if 'selectedid' in request.GET:
@@ -1892,7 +2001,7 @@ def useralert(request):
         if 'alertday' in request.POST:
             alertday = request.POST.getlist('alertday')
             alertuser.alertday = ','.join(alertday)
-	alertuser.sent_alert_date = preDate
+        alertuser.sent_alert_date = '0000-00-00'
         alertuser.save()
         try:
             html_content = ''
