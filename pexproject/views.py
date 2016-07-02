@@ -26,7 +26,7 @@ from social_auth.models import UserSocialAuth
 from django.contrib.auth import login as social_login,authenticate,get_user
 from django.contrib.auth import logout as auth_logout
 import settings
-from customfunction import is_scrape_vAUS,is_aeroflot,is_scrape_virginAmerica,is_scrape_etihad,is_scrape_delta,is_scrape_united,is_scrape_virgin_atlantic,is_scrape_jetblue,is_scrape_aa, is_s7
+from customfunction import is_scrape_vAUS,is_scrape_aeroflot,is_scrape_virginAmerica,is_scrape_etihad,is_scrape_delta,is_scrape_united,is_scrape_virgin_atlantic,is_scrape_jetblue,is_scrape_aa, is_scrape_s7, is_scrape_airchina
 from django.views.decorators.csrf import csrf_exempt
 import requests
 from django.utils.html import strip_tags
@@ -767,6 +767,8 @@ def login(request):
         if "curl" in request.POST:
             currentpath = request.REQUEST['curl']
         password1 = hashlib.md5(password).hexdigest()
+	print password1
+	print username
     	try:
             user = User.objects.get(username=username, password=password1)
             if user > 0:
@@ -964,6 +966,7 @@ def search(request):
         orgnid = request.POST['fromMain']
         destid = request.POST['toMain']
         depart = request.POST['deptdate']
+        print '$$$$$', depart, '$$$$$'
         
         cabin = request.POST['cabin']
         ongnidlist =  orgnid.split(',')
@@ -1004,7 +1007,6 @@ def search(request):
                 obj = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, scrapetime__gte=time1)
                 returnobj = Searchkey.objects.filter(source=destination1, destination=origin, traveldate=searchdate1, scrapetime__gte=time1)
 
-                # returnobj_full = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, returndate=searchdate1, scrapetime__gte=time1)
                 if len(returnobj) > 0:
                     for retkey in returnobj:
                          returnkey = retkey.searchid
@@ -1025,7 +1027,7 @@ def search(request):
                     if is_scrape_united == 1:
                         customfunction.flag = customfunction.flag+1
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",destcode, orgncode, str(returndate), str(returnkey)])
-                    if is_s7 == 1:
+                    if is_scrape_s7 == 1:
                         customfunction.flag = customfunction.flag+1
                         print '@@@@@ S7 Round trip', destobj.code, originobj.code, str(searchdate1), str(returnkey)                        
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/s7.ru.py",destobj.code, originobj.code, str(searchdate1), str(returnkey)])
@@ -1036,11 +1038,7 @@ def search(request):
                     if is_scrape_vAUS == 1:
                         customfunction.flag = customfunction.flag+1
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/virgin_australia.py",destcode, orgncode, str(returndate), str(returnkey),cabin])
-                    if is_aeroflot == 1:
-                        customfunction.flag = customfunction.flag+2
-                        # print '@@@@@ Aeroflot Round Trip', originobj.code, destobj.code, str(searchdate), str(returnkey), str(searchdate1)
-                        subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aeroflot_rt.py", originobj.code, destobj.code, str(searchdate),str(returnkey), str(searchdate1)])
-                    
+                   
                     if is_scrape_etihad == 1:
                         customfunction.flag = customfunction.flag+1
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/etihad.py",etihaddest, etihadorigin, str(date1), str(returnkey),cabin])
@@ -1060,6 +1058,8 @@ def search(request):
                 searchkeyid = searchdata.searchid 
                 cursor = connection.cursor()
                 customfunction.flag = 0
+		if searchdate1:
+		    customfunction.flag = 2
                 if is_scrape_jetblue == 1:
                     customfunction.flag = customfunction.flag+1
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/jetblue.py",orgncode,destcode,str(depart),str(searchkeyid)])
@@ -1072,7 +1072,7 @@ def search(request):
                 if is_scrape_united == 1:
                     customfunction.flag = customfunction.flag+1
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",orgncode,destcode,str(depart),str(searchkeyid)])
-                if is_s7 == 1:
+                if is_scrape_s7 == 1:
                     customfunction.flag = customfunction.flag+1
                     # print '@@@@@ S7 One way', originobj.cityCode, destobj.cityCode, str(searchdate), str(searchkeyid)                    
                     print '@@@@@ S7 One way', originobj.code, destobj.code, str(searchdate), str(searchkeyid)                    
@@ -1087,18 +1087,44 @@ def search(request):
                 if is_scrape_etihad == 1:
                     customfunction.flag = customfunction.flag+1
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/etihad.py",etihadorigin,etihaddest,str(date),str(searchkeyid),cabin])
-                if is_aeroflot == 1:
+                if is_scrape_aeroflot == 1:
                     if not searchdate1:
                         customfunction.flag = customfunction.flag+1 
-                        # print '@@@@@ Aeroflot One Way', originobj.code, destobj.code, str(searchdate), str(searchkeyid)
+                        print '@@@@@ Aeroflot One Way', originobj.code, destobj.code, str(searchdate), str(searchkeyid)
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aeroflot.py", originobj.code, destobj.code, str(searchdate), str(searchkeyid)])
+                if is_scrape_airchina == 1:
+                    if not searchdate1:
+                        customfunction.flag = customfunction.flag+1 
+                        print '@@@@@ AirChina One Way', originobj.code, destobj.code, str(searchdate), str(searchkeyid)
+                        subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/airchina.py", originobj.code, destobj.code, str(searchdate), str(searchkeyid)])
                     
             if is_scrape_virgin_atlantic == 1:
-                #customfunction.flag = customfunction.flag+1
+                customfunction.flag = customfunction.flag+1
                 Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='virgin_atlantic').delete()
                 if returnkey:
                     Flightdata.objects.filter(searchkeyid=returnkey,datasource='virgin_atlantic').delete()            
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/virgin.py",orgncode,destcode, str(depart), str(returndate), str(searchkeyid),str(returnkey)])
+
+            if returnkey:
+                if is_scrape_aeroflot == 1:
+                    flight_to = Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='aeroflot')
+                    flight_from = Flightdata.objects.filter(searchkeyid=returnkey,datasource='aeroflot') 
+                    if not (flight_to and flight_from):
+                        customfunction.flag = customfunction.flag+1
+                        Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='aeroflot').delete()
+                        Flightdata.objects.filter(searchkeyid=returnkey,datasource='aeroflot').delete()            
+                        print '@@@@@ Aeroflot Round Trip', orgncode, destcode, str(searchdate), str(searchkeyid), str(searchdate1), str(returnkey)
+                        subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aeroflot_rt.py", orgncode, destcode, str(searchdate),str(searchkeyid), str(searchdate1), str(returnkey)])
+                if is_scrape_airchina == 1:
+                    flight_to = Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='airchina')
+                    flight_from = Flightdata.objects.filter(searchkeyid=returnkey,datasource='airchina') 
+                    if not (flight_to and flight_from):
+                        customfunction.flag = customfunction.flag+1
+                        Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='airchina').delete()
+                        Flightdata.objects.filter(searchkeyid=returnkey,datasource='airchina').delete()            
+                        print '@@@@@ AirChina Round Trip', orgncode, destcode, str(searchdate), str(searchkeyid), str(searchdate1), str(returnkey)
+                        subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/airchina_rt.py", orgncode, destcode, str(searchdate),str(searchkeyid), str(searchdate1), str(returnkey)])
+
             if len(departlist) > 0 :
                 multiplekey = multiplekey+seperator+str(searchkeyid)
                 seperator = ',' 
@@ -1287,6 +1313,10 @@ def getsearchresult(request):
     minpricemile = 0
     maxpricemile = 0
     fare_class_code = ''
+
+    print '############ GET', request.GET
+    print '############ POST', request.POST
+
     if 'maincabin' in cabinclass:
         fare_class_code = 'eco_fare_code'
     elif 'firstclass' in cabinclass:
@@ -1295,10 +1325,11 @@ def getsearchresult(request):
         fare_class_code = 'first_fare_code'
     
     #@@@@ Get Pricematrix list @@@@@@@@@@@@@@@@@@@@
-    if 'actionfor' in request.POST and request.POST['actionfor'] == 'prc_matrix':
+    if request.POST.get('actionfor') == 'prc_matrix':
         getPriceRange = False
-        if 'valuefor' in request.POST and request.POST['valuefor'] == 'pricerange':
+        if request.POST.get('valuefor') == 'pricerange':
             getPriceRange = True
+
         priceRange = ''
         FareCodeFromDatabase = ''
         if 'multicity' in request.GET or 'multicity' in request.POST:
@@ -1344,13 +1375,14 @@ def getsearchresult(request):
                 FareCodeFromDatabase = Flightdata.objects.raw("select p1.rowid,p2.rowid,p1."+fare_class_code+" as fare_code from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+returnkeyid+" where p1.searchkeyid="+str(key)+" group by fare_code")
 
             else:
-                pricematrix =  Flightdata.objects.raw("select rowid, datasource, min(if(maincabin > 0,maincabin,NULL)) as maincabin, min(if(firstclass>0,firstclass,NULL)) as firstclass ,min(if(business>0,business,NULL)) as business  from pexproject_flightdata where searchkeyid="+str(key)+" group by datasource")
-                priceRange =  Flightdata.objects.raw("select rowid, datasource, min(if("+cabinclass+" > 0,"+cabinclass+",NULL)) as minpricemile, max(if("+cabinclass+" > 0,"+cabinclass+",NULL)) as maxpricemile  from pexproject_flightdata where searchkeyid="+str(key)+" group by datasource order by minpricemile,maxpricemile")
+                pricematrix = Flightdata.objects.raw("select rowid, datasource, min(if(maincabin > 0,maincabin,NULL)) as maincabin, min(if(firstclass>0,firstclass,NULL)) as firstclass ,min(if(business>0,business,NULL)) as business  from pexproject_flightdata where searchkeyid="+str(key)+" group by datasource")
+                priceRange = Flightdata.objects.raw("select rowid, datasource, min(if("+cabinclass+" > 0,"+cabinclass+",NULL)) as minpricemile, max(if("+cabinclass+" > 0,"+cabinclass+",NULL)) as maxpricemile  from pexproject_flightdata where searchkeyid="+str(key)+" group by datasource order by minpricemile,maxpricemile")
                 FareCodeFromDatabase = Flightdata.objects.raw("select rowid, "+fare_class_code+" as fare_code from pexproject_flightdata where searchkeyid="+str(key)+" group by fare_code")
         ''' get min and max price miles '''
         minPriceMile = 500
         maxPriceMile = 0
         fare_code_Array = []
+
         if getPriceRange:
             FareCodeFromDatabase1 = list(FareCodeFromDatabase)
             for cd in FareCodeFromDatabase1:
@@ -1378,13 +1410,16 @@ def getsearchresult(request):
             results.append(fare_code_Array)
             data = json.dumps(results)
             return HttpResponse(data, mimetype)
+
+        price_matrix = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']
+        price_matrix = {item: [None, None, None] for item in price_matrix}
+
         if pricematrix:
-            pricematrix1 = list(pricematrix)
-            for s in pricematrix1:
-                pricesources.append(s.datasource)  
-        
-        return render_to_response('flightsearch/pricematrix.html',{'pricesources':pricesources, 'pricematrix':pricematrix1},context_instance=RequestContext(request))
-    
+            for item in pricematrix:
+                price_matrix[item.datasource] = [item.maincabin, item.firstclass, item.business]
+
+        return render_to_response('flightsearch/pricematrix.html',{'price_matrix': price_matrix}, context_instance=RequestContext(request))
+
     adimages = GoogleAd.objects.filter(ad_code="result page")
     if request.is_ajax():
         if 'page_no' in request.POST:
@@ -1418,6 +1453,9 @@ def getsearchresult(request):
         if multiple_key == '':
             querylist = querylist + join + " p1.searchkeyid = '"+searchkey+"'"
             join = ' AND '
+
+    print '$$$ (specify only searchkeyid): ', querylist    
+
     if 'multicity' in request.GET or 'multicity' in request.POST:
         multicitykey = request.GET.get('multicity', '')
         multicitykey1 = multicitykey.split(',')
@@ -1515,9 +1553,8 @@ def getsearchresult(request):
                 taxes = "maintax"
             elif cabinclass == 'firstclass':
                 taxes = "firsttax"
-            else:
-                if cabinclass == 'business':
-                    taxes = "businesstax"
+            elif cabinclass == 'business':
+                taxes = "businesstax"
         if 'returnkey' in request.GET or 'returnkey' in request.POST:
             returnkey = request.GET.get('returnkey', '')
             returnkeyid1 = returnkey
@@ -1732,7 +1769,9 @@ def getsearchresult(request):
                     join = ' AND '
                 cabintype = " and " + cabinclass + " > 0"
                 querylist = querylist+cabintype
+                print '$$$(class filtered): ', querylist
                 record = Flightdata.objects.raw("select p1.*,p1.maintax as maintax1, p1.firsttax as firsttax1, p1.businesstax as businesstax1,p1.rowid as newid ,case when datasource = 'delta' then " + deltaorderprice + "  else " + unitedorderprice + " end as finalprice, "+taxes+" as totaltaxes from pexproject_flightdata as p1 where " + querylist + " order by finalprice ," + taxes + ",departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset))
+                print '$$$ (synthesis): ', "select p1.*,p1.maintax as maintax1, p1.firsttax as firsttax1, p1.businesstax as businesstax1,p1.rowid as newid ,case when datasource = 'delta' then " + deltaorderprice + "  else " + unitedorderprice + " end as finalprice, "+taxes+" as totaltaxes from pexproject_flightdata as p1 where " + querylist + " order by finalprice ," + taxes + ",departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset)
             mainlist = list(record)
             
         progress_value = '' 
@@ -1774,6 +1813,7 @@ def getsearchresult(request):
         else:
             title = multiSearchTitle
         if request.is_ajax():
+            print '$$$ (ajax parameter-data, multirecod)', [(item.rowid, item.searchkeyid, item.datasource, item.flighno) for item in mainlist] 
             return render_to_response('flightsearch/search.html', {'action':action,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value, 'multisearch':multisearch, 'data':mainlist,'multirecod':mainlist, 'multicity':multicity, 'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request))
         '''
         #if totalrecords <= 0 and scraperStatus == "complete":
@@ -1792,6 +1832,7 @@ def getsearchresult(request):
             cursor.execute("select * from reward_points where user_id="+str(userid))
             pointlist = cursor.fetchall()
         
+        print '$$$ (render parameter-data, multirecod)', [(item.rowid, item.searchkeyid, item.datasource, item.flighno) for item in mainlist] 
         return render_to_response('flightsearch/searchresult.html', {'title':title,'action':action,'pointlist':pointlist,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value,'multisearch':multisearch,'data':mainlist,'multirecod':mainlist,'multicity':multicity,'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request)) 
         
 
@@ -1827,6 +1868,9 @@ def share(request):
 def useralert(request):
     context = {}
     if request.POST and  'userid' in request.session:
+	currentDate = datetime.datetime.now().date()
+	preDate = currentDate - timedelta(days=1)
+	print preDate
         message = ''
         alertuser = UserAlert()
         email = request.session['username']
@@ -1848,6 +1892,7 @@ def useralert(request):
         if 'alertday' in request.POST:
             alertday = request.POST.getlist('alertday')
             alertuser.alertday = ','.join(alertday)
+	alertuser.sent_alert_date = preDate
         alertuser.save()
         try:
             html_content = ''
