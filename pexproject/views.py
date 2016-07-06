@@ -27,7 +27,6 @@ from django.contrib.auth import login as social_login,authenticate,get_user
 from django.contrib.auth import logout as auth_logout
 import settings
 from customfunction import is_scrape_vAUS,is_scrape_aeroflot,is_scrape_virginAmerica,is_scrape_etihad,is_scrape_delta,is_scrape_united,is_scrape_virgin_atlantic,is_scrape_jetblue,is_scrape_aa, is_scrape_s7, is_scrape_airchina
-
 from django.views.decorators.csrf import csrf_exempt
 import requests
 from django.utils.html import strip_tags
@@ -967,7 +966,7 @@ def search(request):
         orgnid = request.POST['fromMain']
         destid = request.POST['toMain']
         depart = request.POST['deptdate']
-
+        print '$$$$$', depart, '$$$$$'
         searchtype = ''
         if 'searchtype' in request.POST:
             searchtype = request.POST['searchtype']
@@ -1007,7 +1006,6 @@ def search(request):
             time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
             time1 = datetime.datetime.now() - timedelta(minutes=30)
             time1 = time1.strftime('%Y-%m-%d %H:%M:%S')
-                
             if searchdate1:
                 obj = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, scrapetime__gte=time1)
                 returnobj = Searchkey.objects.filter(source=destination1, destination=origin, traveldate=searchdate1, scrapetime__gte=time1)
@@ -1117,7 +1115,7 @@ def search(request):
                         customfunction.flag = customfunction.flag+1 
                         print '@@@@@ AirChina One Way', originobj.code, destobj.code, str(searchdate), str(searchkeyid)
                         subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/airchina.py", originobj.code, destobj.code, str(searchdate), str(searchkeyid)])
-
+                    
             if is_scrape_virgin_atlantic == 1:
                 customfunction.flag = customfunction.flag+1
                 Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='virgin_atlantic').delete()
@@ -1915,6 +1913,7 @@ def getsearchresult(request):
             
         else:
             title = multiSearchTitle
+            
         if request.is_ajax():
             print '$$$ (ajax parameter-data, multirecod)', [(item.rowid, item.searchkeyid, item.datasource, item.flighno) for item in mainlist] 
             return render_to_response('flightsearch/search.html', {'action':action,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value, 'multisearch':multisearch, 'data':mainlist,'multirecod':mainlist, 'multicity':multicity, 'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request))
@@ -1938,7 +1937,6 @@ def getsearchresult(request):
         print '$$$ (render parameter-data, multirecod)', [(item.rowid, item.searchkeyid, item.datasource, item.flighno) for item in mainlist] 
         return render_to_response('flightsearch/searchresult.html', {'title':title,'action':action,'pointlist':pointlist,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value,'multisearch':multisearch,'data':mainlist,'multirecod':mainlist,'multicity':multicity,'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request)) 
         
-
 
 def share(request):
     context = {}
