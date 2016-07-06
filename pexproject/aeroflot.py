@@ -1,31 +1,30 @@
-# This scraper scrapes the Aeroflot website for fligth data. It accepts
-# three parameters on the command line (origin airport, destination airport
-# and date of travel), and outputs the result in a .json file.
-#
-# Dependencies: BeautifulSoup, requests, Selenium, Scrapy
-#
-# To invoke the scraper, simply type:
-# scrapy runspider aeroflot.py -a origin=MOW -a destination=JFK -a date=2016-04-22 -o aeroflot.json -t json
-
+import os, sys
 from bs4 import BeautifulSoup
+from selenium import webdriver
 import datetime
-import pyvirtualdisplay
-import requests
-import selenium.webdriver
-import scrapy
+from datetime import timedelta
 import time
-import MySQLdb
-import re,json
-import customfunction
+import re
+from pyvirtualdisplay import Display
+import json
+import codecs
+import requests
+import HTMLParser
 
-db = customfunction.dbconnection() 
-cursor = db.cursor()
+DEBUG = True
+# DEBUG = False
+DEV_LOCAL = False
+# DEV_LOCAL = True
+
+if not DEV_LOCAL:
+    import customfunction
 
 TAXES = {
-    'AE': 'maintax',
-    'AC': 'firsttax',
-    'AB': 'businesstax',
+    'AE': 'maintax',        # Economy
+    'AC': 'firsttax',       # Comfort
+    'AB': 'businesstax',    # Business
 }
+
 URL = ('https://reservation.aeroflot.ru/SSW2010/7B47/webqtrip.html?'
        'searchType=NORMAL&journeySpan=OW&alternativeLandingPage=1&lang=en&'
        'currency=USD&referrerCode=AFLBOOK&numAdults=1&numChildren=0&'
@@ -34,127 +33,89 @@ URL = ('https://reservation.aeroflot.ru/SSW2010/7B47/webqtrip.html?'
        '&departureDate=%s')
 
 FLIGHT_URL = 'https://reservation.aeroflot.ru/SSW2010/7B47/webqtrip.html'
+
 CONTEXTOBJECT = (
     '{"transferObjects":[{"componentType":"cart","actionCode":"checkPrice"'
     ',"queryData":{"componentId":"cart_1","componentType":"cart","actionCo'
     'de":"checkPrice","queryData":null,"requestPartials":["initialized"],"'
     'selectedBasketRefs":[%s]}}]}'
 )
+
 DATA = {
+    '_eventId_ajax': '',
     'execution': None,
+    'ajaxSource': 'true',
     'contextObject': None
 }
-
-
-def clean(s):
-    return s.replace('\n', '').replace('\r', '').strip()
-
-
-def get_text_from_cell(th):
-    return (' '.join([clean(e.extract())
-                      for e in th.xpath('.//text()')])).strip()
-
 
 def get_cookie(driver, name, path):
     cookies = driver.get_cookies()
     for cookie in cookies:
-        if (cookie['name'] == name and
-           cookie['path'].strip('/') == path.strip('/')):
+        if (cookie['name'] == name and cookie['path'].strip('/') == path.strip('/')):
             return cookie['value']
     return None
 
+def find_flight_id(flight, flight_type_code):
+    selector = 'td[fare-family-key="'+flight_type_code+'"]'
+    node = flight.select(selector)[0].find("input")        
+    return node['id'].replace('flight_both_', '') if node else None
 
-def find_flight_id(row, flight_type_code):
+def aeroflot(ocity_code, dcity_code, searchdate, searchkey):
+    display = Display(visible=0, size=(800, 600))
+    display.start()
+    chromedriver = "/usr/bin/chromedriver"
+    os.environ["webdriver.chrome.driver"] = chromedriver
+    
+    driver = webdriver.Chrome(chromedriver)
+    url = URL % (ocity_code, dcity_code, searchdate)
+    
+    driver.get(url)
+    execution = driver.current_url[-4:]
+    DATA['execution'] = execution
+
+    sys.stdout=codecs.getwriter('utf-8')(sys.stdout)
+    log_path = 'aeroflot_log' if DEV_LOCAL else '/home/upwork/aeroflot_log'
+    log_file = open(log_path, 'a') if DEBUG else sys.stdout
+    log_file.write('\n\n'+'='*70+'\n\n')    
+    log_file.write(url+'\n\n')
+    db = customfunction.dbconnection() if not DEV_LOCAL else None
+
+    currentdatetime = datetime.datetime.now()
+    stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
+    flightinfo = []
+
     try:
-        return row.xpath(
-            './/td[@fare-family-key="%s"]' % flight_type_code).css(
-            'input').xpath('./@id').extract_first().replace('flight_both_', '')
-    except AttributeError:
-        return None
+        html_page = driver.page_source
+        soup = BeautifulSoup(html_page,"lxml")
 
+        radio_id = soup.find('input', id=re.compile('^flight_both_'))['id']
+        radio = driver.find_element_by_id(radio_id)
 
-class AeroflotSpider(scrapy.Spider):
-    name = 'aeroflot'
-    searchkeyid = ''
-    def __init__(self, *args, **kwargs):
-        super(AeroflotSpider, self).__init__(*args, **kwargs)
-        self.origin = kwargs.get('origin')
-        self.destination = kwargs.get('destination')
-        self.date = kwargs.get('date')
-        self.start_urls = [URL % (self.origin, self.destination, self.date)]
-        self.searchkeyid = kwargs.get('searchid')
-        print "searchkeyid",self.searchkeyid
-    def init_cookies(self, response):
-        radio_id = response.xpath(
-            '//input[contains(@id, "flight_both_")]/@id').extract_first()
-        
-        display = pyvirtualdisplay.Display(visible=0, size=(800, 600))
-        display.start()
-        driver = selenium.webdriver.Chrome()
-        driver.get(self.start_urls[0])
-        execution = driver.current_url[-4:]
-        try:
-            radio = driver.find_element_by_id(radio_id)
-        except:
-            now = datetime.datetime.now()
-            cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(self.searchkeyid), str(now), "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "aeroflot", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
-            db.commit()
-            return
         time.sleep(1)
         radio.click()
         cookies = {
             'JSESSIONID': get_cookie(driver, 'JSESSIONID', '/SSW2010'),
             'WLPCOOKIE': get_cookie(driver, 'WLPCOOKIE', '/SSW2010'),
         }
-        DATA['execution'] = execution
-        return cookies
 
-    def parse(self, response):
-        error_msgs = ('No Flights Available', 'No award available')
-        now = datetime.datetime.now()
-        for m in error_msgs:
-            if m in response.body:
-                cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(self.searchkeyid), str(now), "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "aeroflot", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
-                db.commit()
-                return
+        maindata = soup.select("#dtcontainer-both tbody tr")
 
-        
-        cookies = self.init_cookies(response)
-        flightinfo = []
         operatorArray = []
-        priceArray=[]
         taxArray=[]
-        priceList = {}
-        taxList = {}
-        pricecounter = 0
-        for i, row in enumerate(response.css('#dtcontainer-both tbody tr')):
-            ths, tds = row.css('th'), row.css('td')
-            
-            span = ths[2].css('.flight-number-and-direction')
-            
-            for cn in ths[2].css('.carrier-name'):
-                operatedby = get_text_from_cell(cn)
-                operatorArray.append(operatedby)
-            maincabin = 0
-            firstclass = 0
-            business = 0
-            maincabin1 = get_text_from_cell(tds[0].css('.prices-amount'))
-            if maincabin1:
-                maincabin = int(maincabin1)
-            firstclass1 = get_text_from_cell(tds[1].css('.prices-amount'))
-            if firstclass1:
-                firstclass = int(firstclass1)
-            business1 = get_text_from_cell(tds[2].css('.prices-amount'))
-            if business1:
-                business = int(business1)
-                
-            priceList[pricecounter]={"maincabin":maincabin,"firstclass":firstclass,"business":business}
-            priceArray.append(priceList)
+
+        # log_file.write(str(len(maindata)))
+        for flight in maindata:
+            ths, tds = flight.select('th'), flight.select('td')
+            operatedby = ths[2].select('.carrier-name')[0].string
+            operatorArray.append(operatedby)
+
             maintax = 0
             firsttax = 0
             businesstax = 0
             for flight_type_code, tax_field_name in TAXES.items():
-                flight_id = find_flight_id(row, flight_type_code)
+                flight_id = find_flight_id(flight, flight_type_code)
+                # log_file.write(str(flight_id)) 
+                # log_file.write('\n')
                 if flight_id:
                     DATA['contextObject'] = [CONTEXTOBJECT % flight_id]
                     resp = requests.post(
@@ -162,50 +123,45 @@ class AeroflotSpider(scrapy.Spider):
                         cookies=cookies,
                         data=DATA,
                     )
-                    soup = BeautifulSoup(resp.text, 'html.parser')
+                    resp_html = resp.json()['content'][0]['partials']['initialized']
+                    h= HTMLParser.HTMLParser()
+                    resp_html = h.unescape(resp_html)
+                    taxsoup = BeautifulSoup(resp_html, 'lxml')
+                    # log_file.write(resp_html.encode('utf8')) 
+                    # log_file.write('\n\n')
 
-                    tax_amount = soup.find('div', class_='total-top').find_all(
-                        'span', class_='prices-amount')#[1].text
+                    tax_amount = taxsoup.find('div', class_='total-top').find_all(
+                        'span', class_='prices-amount')
+                    
                     if len(tax_amount) > 0:
                         tax_amount = tax_amount[1].text
                     else:
                         tax_amount = 0
-                    print "tax_amount",tax_amount
-                    print "tax_field_name",tax_field_name
+
                     if 'main' in tax_field_name:
                         maintax = float(tax_amount)
                     elif 'business' in tax_field_name:
                         businesstax = float(tax_amount)
-                    elif tax_field_name != '':
+                    elif 'first' in tax_field_name:
                         firsttax = float(tax_amount)
-            taxList[pricecounter]={"maintax":maintax,"businesstax":businesstax,"firsttax":firsttax}
-            pricecounter =pricecounter+1
-            taxArray.append(taxList)
-            
-        print "taxArray",len(taxArray)
-        print "priceArray",len(priceArray)
-        json_text = re.search(r'^\s*var templateData = \s*({.*?})\s*;\s*$',response.body, flags=re.DOTALL | re.MULTILINE).group(1)
+
+            taxArray.append({"maintax":maintax,"businesstax":businesstax,"firsttax":firsttax})
+        # log_file.write(str(taxArray))
+        # log_file.write('\n')
+        json_text = re.search(r'^\s*var templateData = \s*({.*?})\s*;\s*$', html_page, flags=re.DOTALL | re.MULTILINE).group(1)
         jsonData = json.loads(json_text)
         tempdata = jsonData["rootElement"]["children"][1]["children"][0]["children"][5]["model"]["allItineraryParts"]
-        operatorDetails = []
         count = 0
-        for k in range(0,len(tempdata)):
-            
+        for k in range(0,len(tempdata)):            
             segments = tempdata[k]["segments"]
-            #print segments
             rowRecord = tempdata[k]["itineraryPartData"]
             fltno = ''
-            #@@@@@@ Depart Details @@@@@@@@@@@@@@@@@
+
             origin = rowRecord["departureCode"]
-            
             dest = rowRecord["arrivalCode"]
-            
             departureDate = rowRecord["departureDate"]
-            
             deptDateTime = departureDate.split(" ")
-            #departdetailFormat = departureDate+" | from "+origin
-            #originDetails.append(departdetailFormat)
-            #@@@@@@@ Segment info @@@@@@@@@@@@@@@@@
+
             originDetails = []
             destDetails = []
             flightsDetails =[]
@@ -213,7 +169,6 @@ class AeroflotSpider(scrapy.Spider):
             for counter in range (0,len(segments)):
                 bookingCode = segments[counter]['bookingClass']
                 bookingClassCabin = segments[counter]['allClassOfService']
-                #print bookingCode,bookingClassCabin
                 segOrigin = segments[counter]["departureCode"]
                 segDepartDate = segments[counter]["departureDate"]
                 segDetailFormat = segDepartDate+" | from "+segOrigin
@@ -221,7 +176,7 @@ class AeroflotSpider(scrapy.Spider):
                 
                 segDest = segments[counter]["arrivalCode"]
                 segArive = segments[counter]["arrivalDate"]
-                destdetailFormat = segArive+" | at "+segDest
+                destdetailFormat = segArive+" at "+segDest
                 destDetails.append(destdetailFormat)
                 if len(operatorArray) > count:
                     operatorCarrier.append(operatorArray[count])
@@ -231,35 +186,26 @@ class AeroflotSpider(scrapy.Spider):
             depttime = deptDateTime[1]
             depttime1 = (datetime.datetime.strptime(depttime, '%H:%M:%S'))
             departtime = depttime1.strftime('%H:%M')
-            
-            
             arrivalDate = rowRecord["arrivalDate"]
-            
-            
             arrivalDateTime = arrivalDate.split(" ")
-            
             arivaldt = arrivalDateTime[0]
             arivalTime = arrivalDateTime[1]
             arivalTime1 = (datetime.datetime.strptime(arivalTime, '%H:%M:%S'))
             arive = arivalTime1.strftime('%H:%M')
-           
-            
             totalTripDuration = rowRecord["totalTripDuration"]
             
             totalMinte = (int(totalTripDuration)/60000)
             hr = totalMinte/60
             minute = totalMinte % 60
             tripDuration = str(hr)+"h "+str(minute)+"m"
-            print "tripDuration",tripDuration
             departureCodes = rowRecord["departureCodes"]
-            #arrivalCodes = rowRecord["arrivalCodes"]
             operatingCarrier = rowRecord["operatingCarrier"]
-            print "operatingCarrier",operatingCarrier
             flightDurations = rowRecord["flightDurations"]
             
             flightNumber = rowRecord["flightNumber"]
             airlineCodes = rowRecord["airlineCodes"]
             aircraftType = rowRecord["aircraftType"]
+
             for f in range(0,len(flightNumber)):
                 flightNo = airlineCodes[f]+" "+str(flightNumber[f])
                 if f == 0:
@@ -271,6 +217,7 @@ class AeroflotSpider(scrapy.Spider):
                 fltTimeFormat = str(fltMinuteTimeHour)+"h "+str(fltMinuteTime)+"m"
                 fltFormat = flightNo+" | "+aircraftType[f]+" ("+fltTimeFormat+")"
                 flightsDetails.append(fltFormat)
+
             originDetailString = '@'.join(originDetails)
             arivedetailtext = '@'.join(destDetails)
             planedetailtext = '@'.join(flightsDetails)
@@ -286,7 +233,6 @@ class AeroflotSpider(scrapy.Spider):
             else:
                 stoppage = str(noOfStop)+" STOPS"
             
-          
             allPrices = tempdata[k]["basketsRef"]
             economy = 0
             ecotax = 0
@@ -295,26 +241,40 @@ class AeroflotSpider(scrapy.Spider):
             first = 0
             firsttax = 0
             for key in allPrices:
-                
                 farePrices = allPrices[key]["prices"]["moneyElements"] #["priceAlternatives"]
                 miles = farePrices[0]["moneyTO"]["amount"]
-                taxes = farePrices[0]["moneyTO"]["originalAmount"]["amount"]
-                if 'AE' in key:
-                    economy = miles
-                    ecotax = taxes
-                elif 'AB' in key:
+                if 'AE' in key:     # X economy
+                    economy = miles 
+                    ecotax = taxArray[k]['maintax']
+                elif 'AB' in key:   # F economy
                     business = miles
-                    businesstax = taxes
-                elif 'AC' in key:
+                    businesstax = taxArray[k]['businesstax']
+                elif 'AC' in key:   # O Business
                     first = miles
-                    firsttax = taxes
-            
-            flightinfo.append((str(fltno), str(self.searchkeyid), str(now), stoppage, "test", origin, dest, departtime, arive, tripDuration, str(economy), str(ecotax), str(business),str(businesstax), str(first), str(firsttax), "Economy", "Business", "First", "aeroflot", originDetailString, arivedetailtext, planedetailtext, operatortext))
-            #flightinfo.append((str(flightno),str(self.searchkeyid),str(now),stoppage,"test",self.origin,self.destination,str(departure),str(arrival),duration,str(maincabin),str(maintax),str(business),str(businesstax),str(firstclass),str(firsttax),'Economy','Business','First','aeroflot',departdetails,arrivedetails,flightno,operatedby))
-        #print flightinfo
-        cursor.executemany("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", flightinfo)
-        print "final row inserted"
-        db.commit()
-        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(self.searchkeyid), str(now), "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "aeroflot", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
-        db.commit() 
+                    firsttax = taxArray[k]['firsttax']
+            if economy or business:
+                flightinfo.append(('Flight '+str(fltno), searchkey, stime, stoppage, "test", origin, dest, departtime, arive, tripDuration, str(economy), str(ecotax), str(business),str(businesstax), str(0), str(0), "Economy", "Business", "First", "aeroflot", originDetailString, arivedetailtext, planedetailtext, operatortext, 'X Economy', 'O Business', 'First', 'X', 'O', 'I'))
+            if first:
+                flightinfo.append(('Flight '+str(fltno), searchkey, stime, stoppage, "test", origin, dest, departtime, arive, tripDuration, str(first), str(firsttax), str(0),str(0), str(0), str(0), "Economy", "Business", "First", "aeroflot", originDetailString, arivedetailtext, planedetailtext, operatortext, 'F Comfort', 'O Business', 'First', 'F', 'O', 'I'))
 
+        log_file.write(str(flightinfo)) 
+    except Exception, e:
+        log_file.write('Error Message: '+str(e)+'\n')
+        log_file.write('Error or No data!\n\n')
+
+    if not DEV_LOCAL:
+        cursor = db.cursor()
+        cursor.executemany("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code,eco_fare_code,business_fare_code,first_fare_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", flightinfo)
+        db.commit()
+        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", searchkey, stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "aeroflot", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
+        db.commit()        
+
+    display.stop()
+    driver.quit()              
+    log_file.close()
+    return searchkey    
+
+if __name__=='__main__':
+    aeroflot(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+    # aeroflot('MOW', 'BJS', '2016-06-25', '265801')
+    # aeroflot('IAD', 'BER', '2016-08-04', '5500')

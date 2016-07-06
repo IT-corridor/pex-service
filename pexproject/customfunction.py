@@ -21,12 +21,15 @@ mailchimp_username = "pradeep@techencephalon.com"
 is_scrape_delta =1
 is_scrape_united = 1
 is_scrape_virgin_atlantic = 1
-is_scrape_virginAmerica =1 
+is_scrape_virginAmerica = 1
 is_scrape_jetblue = 1
 is_scrape_vAUS = 1
 is_scrape_aa = 1
-is_scrape_etihad = 1 
-is_aeroflot =0 
+is_scrape_etihad = 0
+is_scrape_aeroflot = 1
+is_scrape_s7 = 1
+is_scrape_airchina = 1 
+
 flag = 0
 def dbconnection():
     db = MySQLdb.connect(host="localhost",  

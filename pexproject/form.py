@@ -1,7 +1,6 @@
 from django import forms
 from django.forms.extras.widgets import SelectDateWidget
-from ckeditor.widgets import CKEditorWidget
-from ckeditor_uploader.fields import RichTextUploadingField
+#from flightsearch.models import Register
 '''
 class RegisterForm(forms.ModelForm):
     email=forms.EmailField(label="Email")
@@ -37,8 +36,4 @@ class HotelSearchForm(forms.Form):
     checkin = forms.CharField(widget=forms.TextInput(attrs={'required': True, 'class': 'form-control', 'placeholder': 'Check-in', 'autocomplete':'off'}), label='Check-in')
     checkout = forms.CharField(widget=forms.TextInput(attrs={'required': True, 'class': 'form-control', 'placeholder': 'Check-out', 'autocomplete':'off'}), label='Check-out')
 
-class BlogForm(forms.Form):
-    content=RichTextUploadingField(config_name='awesome_ckeditor')
-    
-    
 

@@ -299,9 +299,13 @@ def delta(orgn, dest, searchdate, searchkey):
                 if ',' in miles:
                     miles = miles.replace(',','')
                 taxInt = totalFareDetails[j]['totalPriceLeft']
+		if ',' in taxInt:
+		    taxInt = taxInt.replace(',','')
                 taxFloat = totalFareDetails[j]['totalPriceRight']
                 if taxFloat == '' or taxFloat == None:
                     taxFloat = 0
+		#print "taxint",taxInt
+		#print "taxfloat",taxFloat
                 tax = float(taxInt)+float(taxFloat)
                 currencyCode = totalFareDetails[j]['currencyCode']
                 if currencyCode and currencyCode != 'USD': 

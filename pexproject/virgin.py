@@ -338,5 +338,5 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
         storeFlag(returnkey,stime)
     driver.quit()
     return searchkey
-
-virgin_atlantic(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5],sys.argv[6])
+if __name__=='__main__':
+    virgin_atlantic(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5],sys.argv[6])

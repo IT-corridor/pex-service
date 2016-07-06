@@ -1078,8 +1078,8 @@ def search(request):
                         
                 '''-------------------------------------'''
                 customfunction.flag = 0
-		if searchdate1:
-		    customfunction.flag = 2
+		#if searchdate1:
+		#    customfunction.flag = 2
                 if is_scrape_jetblue == 1:
                     customfunction.flag = customfunction.flag+1
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/jetblue.py",orgncode,destcode,str(depart),str(searchkeyid)])
@@ -1367,17 +1367,12 @@ def getFlexResult(request):
             ret_economy = ','.join(return_eco_saver)
         if len(return_bus_saver)  > 0 :  
             ret_business = ','.join(return_bus_saver)
-    
-        dateval = d.strftime("%m/%Y")
-        year = d.strftime("%Y")
-        month = d.strftime("%-m")
+	if d:    
+            dateval = d.strftime("%m/%Y")
+            year = d.strftime("%Y")
+            month = d.strftime("%-m")
         
-        #print "totaldays",totaldays
-        dateval = "01"+"/"+dateval
-        #print dateval 
-        d1 = datetime.datetime.strptime(dateval, '%d/%m/%Y')
-        day = d1.strftime("%w")
-        print 
+        
         return render_to_response('flightsearch/calendarmatrix.html',{"month":month,"economy":economy,"business":business,"retmonth":retMonth,"returnEco":ret_economy,"returnBusiness":ret_business},context_instance=RequestContext(request))
         
 
