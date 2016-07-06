@@ -13,9 +13,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 DEBUG = False
-# DEBUG = True
+DEBUG = True
 DEV_LOCAL = False
-DEV_LOCAL = True
+# DEV_LOCAL = True
 
 if not DEV_LOCAL:
     import customfunction
