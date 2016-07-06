@@ -1,0 +1,28 @@
+
+
+======================================================================
+
+https://reservation.aeroflot.ru/SSW2010/7B47/webqtrip.html?searchType=NORMAL&journeySpan=OW&alternativeLandingPage=1&lang=en&currency=USD&referrerCode=AFLBOOK&numAdults=1&numChildren=0&utm_source=&utm_campaign=&utm_medium=&utm_content=&utm_term=&isAward=1&origin=PEK&destination=MOW&departureDate=2016-08-01
+
+Error Message: list index out of range
+Error or No data!
+
+
+
+======================================================================
+
+https://reservation.aeroflot.ru/SSW2010/7B47/webqtrip.html?searchType=NORMAL&journeySpan=OW&alternativeLandingPage=1&lang=en&currency=USD&referrerCode=AFLBOOK&numAdults=1&numChildren=0&utm_source=&utm_campaign=&utm_medium=&utm_content=&utm_term=&isAward=1&origin=PEK&destination=MOW&departureDate=2016-08-01
+
+
+
+======================================================================
+
+https://reservation.aeroflot.ru/SSW2010/7B47/webqtrip.html?searchType=NORMAL&journeySpan=OW&alternativeLandingPage=1&lang=en&currency=USD&referrerCode=AFLBOOK&numAdults=1&numChildren=0&utm_source=&utm_campaign=&utm_medium=&utm_content=&utm_term=&isAward=1&origin=PEK&destination=MOW&departureDate=2016-08-01
+
+
+
+======================================================================
+
+https://reservation.aeroflot.ru/SSW2010/7B47/webqtrip.html?searchType=NORMAL&journeySpan=OW&alternativeLandingPage=1&lang=en&currency=USD&referrerCode=AFLBOOK&numAdults=1&numChildren=0&utm_source=&utm_campaign=&utm_medium=&utm_content=&utm_term=&isAward=1&origin=PEK&destination=MOW&departureDate=2016-08-01
+
+[('Flight SU 201', '1234', '2016-07-06 14:46:40', 'NONSTOP', 'test', u'PEK', u'SVO', '02:30', '05:30', '8h 0m', '45000', '117.1', '82500', '220.7', '0', '0', 'Economy', 'Business', 'First', 'aeroflot', u'2016/08/01 02:30:00 | from PEK', u'2016/08/01 05:30:00 at SVO', u'SU 201 | 333 (8h 0m)', u'Aeroflot', 'X Economy', 'O Business', 'First', 'X', 'O', 'I'), ('Flight SU 203', '1234', '2016-07-06 14:46:40', 'NONSTOP', 'test', u'PEK', u'SVO', '05:50', '08:55', '8h 5m', '45000', '117.1', '82500', '220.7', '0', '0', 'Economy', 'Business', 'First', 'aeroflot', u'2016/08/01 05:50:00 | from PEK', u'2016/08/01 08:55:00 at SVO', u'SU 203 | 333 (8h 5m)', u'Aeroflot', 'X Economy', 'O Business', 'First', 'X', 'O', 'I'), ('Flight SU 205', '1234', '2016-07-06 14:46:40', 'NONSTOP', 'test', u'PEK', u'SVO', '11:40', '14:45', '8h 5m', '45000', '117.1', '82500', '220.7', '0', '0', 'Economy', 'Business', 'First', 'aeroflot', u'2016/08/01 11:40:00 | from PEK', u'2016/08/01 14:45:00 at SVO', u'SU 205 | 77W (8h 5m)', u'Aeroflot', 'X Economy', 'O Business', 'First', 'X', 'O', 'I'), ('Flight SU 205', '1234', '2016-07-06 14:46:40', 'NONSTOP', 'test', u'PEK', u'SVO', '11:40', '14:45', '8h 5m', '63750', '117.1', '0', '0', '0', '0', 'Economy', 'Business', 'First', 'aeroflot', u'2016/08/01 11:40:00 | from PEK', u'2016/08/01 14:45:00 at SVO', u'SU 205 | 77W (8h 5m)', u'Aeroflot', 'F Comfort', 'O Business', 'First', 'F', 'O', 'I')]

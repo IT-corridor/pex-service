@@ -56,7 +56,7 @@ def get_cookie(driver, name, path):
     return None
 
 def find_flight_id(flight, flight_type_code):
-    selector = 'td[fare-family-key="'+flight_type_code+'"]'
+    selector = 'td[data-fare-family-key="'+flight_type_code+'"]'
     node = flight.select(selector)[0].find("input")        
     return node['id'].replace('flight_both_', '') if node else None
 
