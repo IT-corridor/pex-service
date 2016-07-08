@@ -22,7 +22,6 @@ from django.views.decorators.csrf import requires_csrf_token
 from pexproject.models import Flightdata, Airports, Searchkey, User,Pages,UserAlert,Contactus,Adminuser,EmailTemplate,GoogleAd
 from pexproject.models import Blogs,BlogImages,CityImages,Search,FlexibleDateSearch
 from pexproject.templatetags.customfilter import floatadd, assign
-from social_auth.models import UserSocialAuth
 from django.contrib.auth import login as social_login,authenticate,get_user
 from django.contrib.auth import logout as auth_logout
 import settings
@@ -374,7 +373,7 @@ def index(request):
     searches = []
     recordFromActiveTable = 0
     img_cityName = []
-    #img_
+    
     recent_searches = Searchkey.objects.raw("select ps.destination, ps.searchid,ps.destination,ps.destination_city as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from pexproject_flightdata as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from pexproject_flightdata as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin order by pf1.scrapetime desc)  as pfs1 on pfs1.searchkeyid = ps.searchid group by destination_city order by ps.scrapetime desc limit 8")
     recent_searches1 = list(recent_searches)
     for s in recent_searches1:
@@ -1148,16 +1147,12 @@ def search(request):
                 seperator = ',' 
                     
         mimetype = 'application/json'
-        results = []
-        #results.append(multiplekey)
+        
         key_json = {}
         key_json['departkey'] = multiplekey
         key_json['returnkey'] = returnkey
         key_json['searchtype'] = searchtype
-        #results.append(key_json)
-        print key_json
-        if returnkey:
-            results.append(returnkey)
+        # print key_json
             
         data = json.dumps(key_json)
         return HttpResponse(data, mimetype)
@@ -1287,8 +1282,8 @@ def checkData(request):
             data1 = "stored"
         else:
             data1 = "onprocess"
-        print "flagcheck",len(list(flagcheck))
-        print "customfunction flag", customfunction.flag
+        # print "flagcheck",len(list(flagcheck))
+        # print "customfunction flag", customfunction.flag
         if len(list(flagcheck)) >= customfunction.flag:
             iscomplete = "completed"
         mimetype = 'application/json'
@@ -2023,7 +2018,6 @@ def multicity(request):
             
 
 # hotels views	
-# Create your views here.
 
 def hotels(request):
     form = HotelSearchForm()
@@ -2057,9 +2051,9 @@ def search_hotel(request):
             checkout = form.cleaned_data['checkout']
     else:
         place = request.GET.get('place')
-        print place, '@@@@@'
+        # print place, '@@@@@'
         place = parse_place(place)
-        print place, '########'
+        # print place, '########'
         checkin = request.GET.get('checkin') or dttime.today().strftime('%Y-%m-%d')
         checkout = request.GET.get('checkout') or (dttime.today() + timedelta(days=2)).strftime('%Y-%m-%d')
         form = HotelSearchForm(initial={'place':place, 'checkin': checkin, 'checkout': checkout})
@@ -2072,7 +2066,7 @@ def search_hotel(request):
         form.errors['Error: '] = 'Checkin date or checkout date is not correct. Please set it properly.'
     else:
         url = 'http://wandr.me/scripts/hustle/pex.ashx?term=%s&i=%s&o=%s' % (place, checkin, checkout)
-        print url, '@@@@@@@@@@@@'
+        # print url, '@@@@@@@@@@@@'
         try:
             res = requests.get(url=url).json()
             if res['results'] != 'error':
@@ -2082,7 +2076,7 @@ def search_hotel(request):
     
     r_hotels = []
 
-    print len(hotels), '@@@@@@@@@@@@'
+    # print len(hotels), '@@@@@@@@@@@@'
     # save search
     if hotels:
         search = Search.objects.filter(keyword=place.strip())
@@ -2111,7 +2105,7 @@ def search_hotel(request):
     chain = request.POST.get('chain') or ''
     chain = get_chain(chain)
     dis_place = place.split('-')[0]
-    print dis_place, '@@@@@@@@@'
+    # print dis_place, '@@@@@@@@@'
     filters = [price_low, price_high, award_low, award_high, radius, chain, price_lowest, price_highest, award_lowest, award_highest, dis_place]
 
     # build price matrix
@@ -2166,9 +2160,8 @@ def get_cash(str_cash):
     str_cash = str_cash.strip()
 
     if str_cash == 'N/A':
-        return 0
-    else:
-        return float(str_cash)
+        return 0    
+    return float(str_cash)
 
 def get_points(str_points):
     '''
@@ -2180,8 +2173,7 @@ def get_points(str_points):
 
     if str_points == 'N/A':
         return 0
-    else:
-        return int(str_points)
+    return int(str_points)
 
 def get_chain(serialize_str):
     '''
@@ -2223,7 +2215,6 @@ def get_lowest_points(hotels):
         if points and lowest > points:
             lowest = points
     return lowest
-
 
 def get_highest_price(hotels):
     '''
