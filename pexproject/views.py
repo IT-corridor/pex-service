@@ -2047,12 +2047,14 @@ def __debug(message):
     try:
         DEV_LOCAL = False
         DEBUG = True
-        log_path = 'hotel_place' if DEV_LOCAL else '/home/upwork/hotel_place'
+        log_path = 'hotel_place_log' if DEV_LOCAL else '/home/upwork/hotel_place_log'
         sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
         log_file = open(log_path, 'a') if DEBUG else sys.stdout
         log_file.write(message);
+        if DEBUG:
+            log_file.close()
     except Exception, e:
-        return
+        print '### DEBUG error %s' % str(e)
 
 def search_hotel(request):
 
