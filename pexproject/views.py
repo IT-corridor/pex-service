@@ -1,6 +1,7 @@
 #!usr/bin/env python
 import os, sys
 import hashlib
+import codecs
 from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.core.urlresolvers import reverse
