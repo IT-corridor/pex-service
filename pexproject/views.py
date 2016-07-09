@@ -2031,29 +2031,43 @@ def hotels(request):
 
 
 HOTEL_CHAINS = {
-    'ihg': 'IHG Rewards Club', 
-    'spg': 'Starwood Preferred Guest', 
-    'hh': 'Hilton HHonors', 
-    'cp': 'Choice Privileges', 
-    'cc': 'Club Carlson', 
-    'mr': 'Marriott Rewards', 
-    'hy': 'Hyatt Gold Passport', 
-    'ac': 'Le Club Accor', 
-    'wy': 'Wyndham Rewards',
+    'ihg':  'IHG Rewards Club', 
+    'spg':  'Starwood Preferred Guest', 
+    'hh':   'Hilton HHonors', 
+    'cp':   'Choice Privileges', 
+    'cc':   'Club Carlson', 
+    'mr':   'Marriott Rewards', 
+    'hy':   'Hyatt Gold Passport', 
+    'ac':   'Le Club Accor', 
+    'wy':   'Wyndham Rewards',
 }
 
+def __debug(message):
+    '''check the place'''
+    try:
+        DEV_LOCAL = False
+        DEBUG = True
+        log_path = 'hotel_place' if DEV_LOCAL else '/home/upwork/hotel_place'
+        sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
+        log_file = open(log_path, 'a') if DEBUG else sys.stdout
+        log_file.write(message);
+    except Exception, e:
+        return
+
 def search_hotel(request):
+
     if request.method == 'POST':
         form = HotelSearchForm(request.POST)
         if form.is_valid():
             place = form.cleaned_data['place']
+            __debug( '##### place from POST: %s\n' % place )
             checkin = form.cleaned_data['checkin']
             checkout = form.cleaned_data['checkout']
     else:
         place = request.GET.get('place')
-        # print place, '@@@@@'
+        __debug( '@@ place from GET original: %s\n' % place )
         place = parse_place(place)
-        # print place, '########'
+        __debug( '&& place from  GET  parsed: %s\n' % place )
         checkin = request.GET.get('checkin') or dttime.today().strftime('%Y-%m-%d')
         checkout = request.GET.get('checkout') or (dttime.today() + timedelta(days=2)).strftime('%Y-%m-%d')
         form = HotelSearchForm(initial={'place':place, 'checkin': checkin, 'checkout': checkout})
@@ -2066,7 +2080,7 @@ def search_hotel(request):
         form.errors['Error: '] = 'Checkin date or checkout date is not correct. Please set it properly.'
     else:
         url = 'http://wandr.me/scripts/hustle/pex.ashx?term=%s&i=%s&o=%s' % (place, checkin, checkout)
-        # print url, '@@@@@@@@@@@@'
+        __debug( '== url: %s\n' % url)
         try:
             res = requests.get(url=url).json()
             if res['results'] != 'error':
