@@ -2112,8 +2112,8 @@ def search_hotel(request):
 
     price_lowest = get_lowest_price(hotels)
     price_highest = get_highest_price(hotels)
-    award_lowest = get_lowest_points(hotels)
-    award_highest = get_highest_points(hotels)
+    award_lowest = int(get_lowest_points(hotels))
+    award_highest = int(get_highest_points(hotels))
 
     price_low = float(request.POST.get('price_low') or price_lowest)
     price_high = float(request.POST.get('price_high') or price_highest)
@@ -2133,8 +2133,8 @@ def search_hotel(request):
 
     # filter the hotels
     for hotel in hotels:
-        cashRate = get_cash(hotel['cashRate'])
-        pointsRate = get_points(hotel['pointsRate'])
+        cashRate = get_value(hotel['cashRate'])
+        pointsRate = get_value(hotel['pointsRate'])
         hradius = float(hotel['distance'] or 0)
         hchain = hotel['propID'].split('-')[0].strip()
 
@@ -2169,30 +2169,13 @@ default_search = [
     ['syd', 'http://cache.marriott.com/propertyimages/p/parsc/parsce01.jpg', 89.09, '5'],
 ]
 
-def get_cash(str_cash):
+def get_value(str_value):
     '''
-    get float cash value from the cash string
-    return 0 if N/A
+    get float value from the string (cash, point)
+    return 0 if not digit (add 0 in front of it)
     '''
-    str_cash = str_cash.replace('*', ' ') 
-    str_cash = str_cash.replace(',', '') 
-    str_cash = str_cash.strip()
-
-    if str_cash == 'N/A':
-        return 0    
-    return float(str_cash)
-
-def get_points(str_points):
-    '''
-    get int points value from the points string
-    return 0 if N/A
-    '''
-    str_points = str_points.replace(',', '')
-    str_points = str_points.strip()
-
-    if str_points == 'N/A':
-        return 0
-    return int(str_points)
+    str_value = re.sub(r"\D", "", '0'+str_value)
+    return float(str_value)
 
 def get_chain(serialize_str):
     '''
@@ -2219,7 +2202,7 @@ def get_lowest_price(hotels):
     '''
     lowest = 100
     for hotel in hotels:
-        cash = get_cash(hotel['cashRate'])
+        cash = get_value(hotel['cashRate'])
         if cash and lowest > cash:
             lowest = cash
     return lowest
@@ -2230,7 +2213,7 @@ def get_lowest_points(hotels):
     '''
     lowest = 20000
     for hotel in hotels:
-        points = get_points(hotel['pointsRate'])
+        points = get_value(hotel['pointsRate'])
         if points and lowest > points:
             lowest = points
     return lowest
@@ -2241,7 +2224,7 @@ def get_highest_price(hotels):
     '''
     highest = 100
     for hotel in hotels:
-        cash = get_cash(hotel['cashRate'])
+        cash = get_value(hotel['cashRate'])
         if cash and highest < cash:
             highest = cash
     return highest
@@ -2252,7 +2235,7 @@ def get_highest_points(hotels):
     '''
     highest = 50000
     for hotel in hotels:
-        points = get_points(hotel['pointsRate'])
+        points = get_value(hotel['pointsRate'])
         if points and highest < points:
             highest = points
     return highest
