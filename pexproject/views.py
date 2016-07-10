@@ -2023,7 +2023,7 @@ def multicity(request):
 def hotels(request):
     form = HotelSearchForm()
     searches = Search.objects.all().order_by('-frequency')[:8]
-    searches = [[item.keyword, item.image, float(item.lowest_price), int(item.lowest_points)/1000, item.keyword.split('-')[0]] for item in searches]
+    searches = [[item.keyword, item.image, float(item.lowest_price), int(float(item.lowest_points))/1000, item.keyword.split('-')[0]] for item in searches]
 
     if len(searches) < 8:
         searches += default_search
@@ -2058,7 +2058,6 @@ def __debug(message):
         print '### DEBUG error %s' % str(e)
 
 def search_hotel(request):
-
     if request.method == 'POST':
         form = HotelSearchForm(request.POST)
         if form.is_valid():
