@@ -2068,6 +2068,7 @@ def search_hotel(request):
             checkout = form.cleaned_data['checkout']
     else:
         place = request.GET.get('place')
+        place = place.split('&')[0]
         __debug( '@@ place from GET original: %s\n' % place )
         place = parse_place(place)
         __debug( '&& place from  GET  parsed: %s\n' % place )
@@ -2083,7 +2084,7 @@ def search_hotel(request):
         form.errors['Error: '] = 'Checkin date or checkout date is not correct. Please set it properly.'
     else:
         url = 'http://wandr.me/scripts/hustle/pex.ashx?term=%s&i=%s&o=%s' % (place, checkin, checkout)
-        __debug( '== url: %s\n' % url)
+        __debug( '== url: %s\n\n' % url)
         try:
             res = requests.get(url=url).json()
             if res['results'] != 'error':
@@ -2174,6 +2175,7 @@ def get_cash(str_cash):
     return 0 if N/A
     '''
     str_cash = str_cash.replace('*', ' ') 
+    str_cash = str_cash.replace(',', '') 
     str_cash = str_cash.strip()
 
     if str_cash == 'N/A':
