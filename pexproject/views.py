@@ -2174,7 +2174,7 @@ def get_value(str_value):
     get float value from the string (cash, point)
     return 0 if not digit (add 0 in front of it)
     '''
-    str_value = re.sub(r"\D", "", '0'+str_value)
+    str_value = re.sub(r"[^0-9.]", "", '0'+str_value)
     return float(str_value)
 
 def get_chain(serialize_str):
