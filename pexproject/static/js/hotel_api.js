@@ -6,13 +6,6 @@ $.fn.stars = function() {
 	});
 }
 
-function filter_submit()
-{
-	$( "#id_real_radius" ).val($( "#id_radius" ).val());
-	$('#id_chain').val($('#filter_form').serialize());
-	$('#search-form').submit();
-}
-
 function search_hotel()
 {
 	var place = $('#id_place').val().trim();

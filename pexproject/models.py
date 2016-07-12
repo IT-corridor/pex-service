@@ -43,6 +43,9 @@ class Flightdata(models.Model):
     economy_code = models.TextField(blank=True, null=True)
     business_code = models.TextField(blank=True, null=True)
     first_code = models.TextField(blank=True, null=True)
+    eco_fare_code = models.CharField(max_length=50, null=True, blank=True)
+    business_fare_code = models.CharField(max_length=50, null=True, blank=True)
+    first_fare_code = models.CharField(max_length=50, null=True, blank=True)
     '''
     def arive_list(self):
         return self.arivedetails.split('@')
@@ -211,13 +214,38 @@ class CityImages(models.Model):
 class Search(models.Model):
     keyword = models.CharField(max_length=100)
     frequency = models.IntegerField(default=0)
-    image = models.CharField(max_length=500)
-    lowest_price = models.CharField(max_length=50)
-    lowest_points = models.CharField(max_length=50)
-    
+    image = models.CharField(max_length=500, null=True, blank=True)
+    lowest_price = models.CharField(max_length=50, null=True, blank=True)
+    lowest_points = models.CharField(max_length=50, null=True, blank=True)
+    search_time = models.DateTimeField()
+
     def __unicode__(self):
         return self.keyword
-    
+
+    class Meta:
+        verbose_name = 'Hotel Search'
+        verbose_name_plural = 'Hotel Searches'
+
+class Hotel(models.Model):
+    prop_id = models.CharField(max_length=50)
+    name = models.CharField(max_length=100)
+    brand = models.CharField(max_length=50)
+    chain = models.CharField(max_length=10)
+    lat = models.CharField(max_length=50)
+    lon = models.CharField(max_length=50)
+    img = models.CharField(max_length=100)
+    url = models.CharField(max_length=100)
+    cash_rate = models.FloatField(default=0.0)
+    points_rate = models.IntegerField()
+    cash_points_rate = models.CharField(max_length=50)
+    award_cat = models.CharField(max_length=30)
+    distance = models.IntegerField()
+    star_rating = models.FloatField(default=0.0)
+    search = models.ForeignKey(Search)
+
+    def __unicode__(self):
+        return self.name
+
 class UserAlert(models.Model):
     alertid = models.AutoField(primary_key=True)
     userid = models.IntegerField()
@@ -242,6 +270,5 @@ class FlexibleDateSearch(models.Model):
     economyflex = models.CharField(max_length=100)
     businessflex = models.CharField(max_length=100)
     firstflex = models.CharField(max_length=100)
+    datasource = models.CharField(max_length=50, null=True, blank=True)
     
-    
- 

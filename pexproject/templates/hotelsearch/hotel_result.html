@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "hotelsearch/base.html" %}
 {% load staticfiles %} 
 
 {% block content %}
@@ -17,7 +17,8 @@
 					<span class="glyphicon glyphicon-th-large"></span>
 				</p>
 			</div>	
-			<form id="filter_form">
+			<form id="filter_form" action="/search_hotel/" method="post">
+				{% csrf_token %}
 	<!--         <div class="filter-lane">
 				<label>Number of Stars</label>
 				<div><input type="checkbox"> <span class="stars">5</span></label> </div>
@@ -28,50 +29,57 @@
 			</div> -->
 				<div class="filter-lane">
 					<label>Hotel Chains</label>
-					<div><input type="checkbox" name="hotel_chain" value="ihg" {% if 'ihg' in filters.5 %} checked="true" {% endif %}> IHG Rewards Club </input> </div>
-					<div><input type="checkbox" name="hotel_chain" value="spg" {% if 'spg' in filters.5 %} checked="true" {% endif %} > Starwood Preferred Guest </input> </div>
-					<div><input type="checkbox" name="hotel_chain" value="hh" {% if 'hh' in filters.5 %} checked="true" {% endif %}> Hilton HHonors </input> </div>
-					<div><input type="checkbox" name="hotel_chain" value="cp" {% if 'cp' in filters.5 %} checked="true" {% endif %}> Choice Privileges </input> </div>
-					<div><input type="checkbox" name="hotel_chain" value="cc" {% if 'cc' in filters.5 %} checked="true" {% endif %}> Club Carlson </input> </div>
-					<div><input type="checkbox" name="hotel_chain" value="mr" {% if 'mr' in filters.5 %} checked="true" {% endif %}> Marriott Rewards </input> </div>
-					<div><input type="checkbox" name="hotel_chain" value="hy" {% if 'hy' in filters.5 %} checked="true" {% endif %}> Hyatt Gold Passport </input> </div>
-					<div><input type="checkbox" name="hotel_chain" value="ac" {% if 'ac' in filters.5 %} checked="true" {% endif %}> Le Club Accor </input> </div>
-					<div><input type="checkbox" name="hotel_chain" value="wy" {% if 'wy' in filters.5 %} checked="true" {% endif %}> Wyndham Rewards </input> </div>
+					<div><input type="checkbox" name="hotel_chain" value="ihg" {% if 'ihg' in filters.chain %} checked="true" {% endif %}> IHG Rewards Club </input> </div>
+					<div><input type="checkbox" name="hotel_chain" value="spg" {% if 'spg' in filters.chain %} checked="true" {% endif %} > Starwood Preferred Guest </input> </div>
+					<div><input type="checkbox" name="hotel_chain" value="hh" {% if 'hh' in filters.chain %} checked="true" {% endif %}> Hilton HHonors </input> </div>
+					<div><input type="checkbox" name="hotel_chain" value="cp" {% if 'cp' in filters.chain %} checked="true" {% endif %}> Choice Privileges </input> </div>
+					<div><input type="checkbox" name="hotel_chain" value="cc" {% if 'cc' in filters.chain %} checked="true" {% endif %}> Club Carlson </input> </div>
+					<div><input type="checkbox" name="hotel_chain" value="mr" {% if 'mr' in filters.chain %} checked="true" {% endif %}> Marriott Rewards </input> </div>
+					<div><input type="checkbox" name="hotel_chain" value="hy" {% if 'hy' in filters.chain %} checked="true" {% endif %}> Hyatt Gold Passport </input> </div>
+					<div><input type="checkbox" name="hotel_chain" value="ac" {% if 'ac' in filters.chain %} checked="true" {% endif %}> Le Club Accor </input> </div>
+					<div><input type="checkbox" name="hotel_chain" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Wyndham Rewards </input> </div>
 				</div>
+				<input type="hidden" id="id_price_low" name="price_low" value="{{ filters.price_low }}">    
+				<input type="hidden" id="id_price_high" name="price_high" value="{{ filters.price_high }}">    
+				<input type="hidden" id="id_award_low" name="award_low" value="{{ filters.award_low }}">    
+				<input type="hidden" id="id_award_high" name="award_high" value="{{ filters.award_high }}">    			
+				<input type="hidden" name="place" value="{{ form.place.value }}">    			
+				<input type="hidden" name="checkin" value="{{ form.checkin.value }}">    			
+				<input type="hidden" name="checkout" value="{{ form.checkout.value }}">    			
+
+				<div class="filter-lane">
+					<label>Price</label>
+					<div class="slider-range">
+						<span id="dis_price_low">${{ filters.price_low }}</span>
+						<span style="float:right;" id="dis_price_high">${{ filters.price_high }}</span>
+					</div>
+					<div id="price-range" class="filter-slider"></div>
+				</div>        
+				<div class="filter-lane">
+					<label>Award Price</label>
+					<div class="slider-range">
+						<span id="dis_award_low">{{ filters.award_low }}</span>
+						<span style="float:right;" id="dis_award_high">{{ filters.award_high }}</span>
+					</div>
+					<div id="award-range" class="filter-slider"></div>
+				</div>        
+
+				<div class="filter-lane">
+					<label>Location</label>
+					<div>
+					<select name='radius' class="form-control" id="id_radius">
+						<option value="1000">Radius</option>
+						<option value="5" {% if filters.radius == 5 %}selected="true"{% endif %}>5 Miles</option>
+						<option value="10" {% if filters.radius == 10 %}selected="true"{% endif %}>10 Miles</option>
+						<option value="15" {% if filters.radius == 15 %}selected="true"{% endif %}>15 Miles</option>
+						<option value="30" {% if filters.radius == 30 %}selected="true"{% endif %}>30 Miles</option>
+						<option value="100" {% if filters.radius == 100 %}selected="true"{% endif %}>50+ Miles</option>
+					</select>
+					</div>
+				</div>     
+
+				<button class="btn btn-default filter-submit" type="submit">Filter</button>
 			</form>
-
-			<div class="filter-lane">
-				<label>Price</label>
-				<div class="slider-range">
-					<span id="dis_price_low">${{ filters.0 }}</span>
-					<span style="float:right;" id="dis_price_high">${{ filters.1 }}</span>
-				</div>
-				<div id="price-range" class="filter-slider"></div>
-			</div>        
-			<div class="filter-lane">
-				<label>Award Price</label>
-				<div class="slider-range">
-					<span id="dis_award_low">{{ filters.2 }}</span>
-					<span style="float:right;" id="dis_award_high">{{ filters.3 }}</span>
-				</div>
-				<div id="award-range" class="filter-slider"></div>
-			</div>        
-
-			<div class="filter-lane">
-				<label>Location</label>
-				<div>
-				<select name='radius' class="form-control" id="id_radius">
-					<option value="1000">Radius</option>
-					<option value="5" {% if filters.4 == 5 %}selected="true"{% endif %}>5 Miles</option>
-					<option value="10" {% if filters.4 == 10 %}selected="true"{% endif %}>10 Miles</option>
-					<option value="15" {% if filters.4 == 15 %}selected="true"{% endif %}>15 Miles</option>
-					<option value="30" {% if filters.4 == 30 %}selected="true"{% endif %}>30 Miles</option>
-					<option value="100" {% if filters.4 == 100 %}selected="true"{% endif %}>50+ Miles</option>
-				</select>
-				</div>
-			</div>     
-
-			<button class="btn btn-default filter-submit" onclick="filter_submit();">Filter</button>
 		</div>
 	</div>
 	<div class="col-md-8">    
@@ -134,12 +142,6 @@
 				  <div class="col-sm-1 col-xs-12">
 					<button type="button" onclick="search_hotel();" class="form_val btn btn-pexSearch" id="submitid" tabindex="6">Search</button>
 				  </div>      
-				  <input type="hidden" id="id_price_low" name="price_low" value="{{ filters.0 }}">    
-				  <input type="hidden" id="id_price_high" name="price_high" value="{{ filters.1 }}">    
-				  <input type="hidden" id="id_award_low" name="award_low" value="{{ filters.2 }}">    
-				  <input type="hidden" id="id_award_high" name="award_high" value="{{ filters.3 }}">    
-				  <input type="hidden" id="id_real_radius" name="radius" value="{{ filters.4 }}">    
-				  <input type="hidden" id="id_chain" name="chain" value="">    
 			</form>     
 			</div>
 		<div class="row">
@@ -160,8 +162,8 @@
 					{% for key, values in price_matrix.items %}
 					<tr class="div-table-row row">
 						<td class="bc-whi left-heading"> {{ values.title }}</td>
-						<td class="color-grey-1">{% if values.cashRate == 100000000 %}-{% else %} ${{ values.cashRate }} {% endif %}</td>
-						<td class="color-grey-1">{% if values.pointsRate == 100000000 %}-{% else %} {{ values.pointsRate }} {% endif %}</td>
+						<td class="color-grey-1">{% if values.cash_rate == 100000000 %}-{% else %} ${{ values.cash_rate }} {% endif %}</td>
+						<td class="color-grey-1">{% if values.points_rate == 100000000 %}-{% else %} {{ values.points_rate }} {% endif %}</td>
 					</tr>
 					{% endfor %}
 					</tbody>
@@ -180,8 +182,8 @@
 				<a href="{{ hotel.url }}" style="text-decoration: none;">
 				<div class="price-range">
 					<p class="title">Book With Points</p>
-					{% if hotel.pointsRate and hotel.pointsRate != "N/A" %}
-						<p style="margin: 0;">Points Rate: <span>{{ hotel.pointsRate }}</span></p>
+					{% if hotel.points_rate %}
+						<p style="margin: 0;">Points Rate: <span>{{ hotel.points_rate }}</span></p>
 					{% else %}
 						<p style="margin: 0;">Click to view rates</p>
 					{% endif %}
@@ -190,8 +192,8 @@
 				<a href="{{ hotel.url }}" style="text-decoration: none;">
 				<div class="price-range">
 					<p class="title">Book With Dollars</p>
-					{% if hotel.cashRate and hotel.cashRate != 'N/A' %}
-						<p style="margin: 0;">Cash Rate: <span>${{ hotel.cashRate }}</span></p>
+					{% if hotel.cash_rate %}
+						<p style="margin: 0;">Cash Rate: <span>${{ hotel.cash_rate }}</span></p>
 					{% else %}
 						<p style="margin: 0;">Click to view rates</p>
 					{% endif %}
@@ -252,7 +254,7 @@
 												</div>
 
 												<div class="col-xs-8">
-													<h4 class="media-heading" id="fbtitle">{{form.place.value}} for ${{filters.0}}/night</h4>
+													<h4 class="media-heading" id="fbtitle">{{form.place.value}} for ${{filters.price_low}}/night</h4>
 													<p>
 														Need a place to stay in {{ form.place.value }}? I found a great deal for a hotel there on PEX+.
 													</p>
@@ -269,7 +271,7 @@
 								<form class="mvt10px mvb10px">
 									<div class="form-group">
 										<label>Tweet about this</label>
-										<textarea id="twitter_content" rows="2" class="form-control" placeholder="Enter your tweet">Need a place to stay in %23{{filters.10}}? Found a great deal for a %23hotel on @PEXPlus! ${{filters.0}}/night </textarea>
+										<textarea id="twitter_content" rows="2" class="form-control" placeholder="Enter your tweet">Need a place to stay in %23{{filters.dis_place}}? Found a great deal for a %23hotel on @PEXPlus! ${{filters.price_low}}/night </textarea>
 									</div>
 									<div class="form-group">
 										<a href="http://pexportal.com/search_hotel/?place={{form.place.value|urlencode}}%26checkin={{form.checkin.value}}%26checkout={{form.checkout.value}}" id="twitter_share"> <span class="btn btn-pexSearch filter-serch-btn">Tweet</span> </a>
@@ -284,14 +286,14 @@
 	</div>
 
 <script> 
-var price_low = {{filters.0}};
-var price_high = {{filters.1}};
-var award_low = {{filters.2}};
-var award_high = {{filters.3}};
-var price_lowest = {{filters.6}};
-var price_highest = {{filters.7}};
-var award_lowest = {{filters.8}};
-var award_highest = {{filters.9}};
+var price_low = {{filters.price_low}};
+var price_high = {{filters.price_high}};
+var award_low = {{filters.award_low}};
+var award_high = {{filters.award_high}};
+var price_lowest = {{filters.price_lowest}};
+var price_highest = {{filters.price_highest}};
+var award_lowest = {{filters.award_lowest}};
+var award_highest = {{filters.award_highest}};
 
 $(document).ready(function() {
 	$('span.stars').stars();

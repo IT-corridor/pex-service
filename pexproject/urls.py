@@ -56,8 +56,11 @@ urlpatterns = patterns('',
     url(r'^contactUs', contactUs, name='contactUs'),
     url(r'^logout', logout, name='logout'),
     url(r'^flights', flights, name='flights'),
+
     url(r'^hotels', hotels, name='hotels'),
     url(r'^search_hotel/$', search_hotel),
+    url(r'^api/hotels/$', api_search_hotel),
+    
     url(r'^index', index, name='index'),
     url(r'^useralert',useralert,name='useralert'),
     #url(r'^searchLoading',searchLoading,name='searchLoading'),

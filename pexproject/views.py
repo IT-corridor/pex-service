@@ -21,7 +21,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.context_processors import csrf
 from django.views.decorators.csrf import requires_csrf_token
 from pexproject.models import Flightdata, Airports, Searchkey, User,Pages,UserAlert,Contactus,Adminuser,EmailTemplate,GoogleAd
-from pexproject.models import Blogs,BlogImages,CityImages,Search,FlexibleDateSearch
+from pexproject.models import Blogs,BlogImages,CityImages,Search,FlexibleDateSearch, Hotel
 from pexproject.templatetags.customfilter import floatadd, assign
 from django.contrib.auth import login as social_login,authenticate,get_user
 from django.contrib.auth import logout as auth_logout
@@ -54,9 +54,14 @@ import base64
 import subprocess
 import json
 import signal
-from .form import *
 import logging
 from mailchimp import Mailchimp
+
+from django.db.models import Max, Min
+from django.utils import timezone
+from django.forms.models import model_to_dict
+from .form import *
+
 logger = logging.getLogger(__name__)
 
 '''
@@ -2018,18 +2023,17 @@ def multicity(request):
     
             
 
-# hotels views	
+# hotels views  
 
 def hotels(request):
-    form = HotelSearchForm()
     searches = Search.objects.all().order_by('-frequency')[:8]
     searches = [[item.keyword, item.image, float(item.lowest_price), int(float(item.lowest_points))/1000, item.keyword.split('-')[0]] for item in searches]
 
-    if len(searches) < 8:
-        searches += default_search
+    # #for startup
+    # if len(searches) < 8:
+    #     searches += default_search
 
-    return render(request, 'hotel_home.html', {'form': form, 'searches': searches})
-
+    return render(request, 'hotelsearch/hotel_home.html', {'form': HotelSearchForm(), 'searches': searches})
 
 HOTEL_CHAINS = {
     'ihg':  'IHG Rewards Club', 
@@ -2046,7 +2050,7 @@ HOTEL_CHAINS = {
 def __debug(message):
     '''check the place'''
     try:
-        DEV_LOCAL = False
+        DEV_LOCAL = True
         DEBUG = True
         log_path = 'hotel_place_log' if DEV_LOCAL else '/home/upwork/hotel_place_log'
         sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
@@ -2057,14 +2061,187 @@ def __debug(message):
     except Exception, e:
         print '### DEBUG error %s' % str(e)
 
+@csrf_exempt
+def api_search_hotel(request):
+    if request.method == 'POST':        
+        params = json.loads(request.body)
+        token = request.META['HTTP_AUTHORIZATION'].split(' ')[1]
+        http_accept = request.META['HTTP_ACCEPT']
+        content_type = request.META['CONTENT_TYPE']
+
+        result = {}
+
+        if http_accept != 'application/json' or content_type != 'application/json':
+            result['status'] = 'Failed'
+            result['message'] = 'Content type  is incorrect'
+            return HttpResponse(json.dumps(result), 'application/json')
+
+        place = params['place']
+        checkin = params['checkin']
+        checkout = params['checkout']
+        filters = {'price_low':'', 'price_high':'', 'award_low':'', 'award_high':'', 'radius': 1000, 'chain': HOTEL_CHAINS.keys()}
+
+        _result = _search_hotel(place, checkin, checkout, filters)
+        error_message = _result[0]
+        if error_message:
+            result['status'] = 'Failed'
+            result['message'] = error_message
+            return HttpResponse(json.dumps(result), 'application/json')
+        else:
+            db_hotels, price_matrix, filters = _result[1], _result[2], _result[3]
+            result['status'] = 'Success'
+            result['price_matrix'] = price_matrix
+            result['filters'] = filters
+            result['hotels'] = [model_to_dict(item) for item in db_hotels]
+            return HttpResponse(json.dumps(result), 'application/json')
+        
+            
+def _search_hotel(place, checkin, checkout, filters):
+    '''
+    search hotels upon arguments
+    return list with first parameter as error message
+        Format:
+            Success: ['', hotels, price_matrix, filters]
+            Fail: [error_message]
+        Success if error message is empty
+    '''
+    checkin_date = dttime.strptime(checkin, "%Y-%m-%d").date()
+    checkout_date = dttime.strptime(checkout, "%Y-%m-%d").date()
+
+    # check date range
+    if checkin_date < dttime.today().date() or checkout_date < dttime.today().date() or checkin_date > checkout_date:
+        return ['Checkin date or checkout date is not correct. Please set it properly.']      
+
+    price_matrix = {}
+    for item in HOTEL_CHAINS:
+        price_matrix[item] = {'cash_rate': 100000000, 'points_rate': 100000000, 'title': HOTEL_CHAINS[item]}
+
+    # check last search time
+    currentdatetime = timezone.now().replace(tzinfo=None)
+    time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
+    time_60m = timezone.now() - timedelta(minutes=60)
+
+    _search = Search.objects.filter(keyword=place)
+    db_hotels = None
+
+    if _search:
+        search = _search[0]
+        __debug('search_time_current:%s\n' % str(currentdatetime)) 
+        __debug('search_time_db:%s\n' % str(search.search_time)) 
+        __debug('search_time_run:%s\n' % str(time_60m)) 
+
+        if search.search_time >= time_60m:
+            # cached
+            db_hotels = Hotel.objects.filter(search=search.id)
+        else:
+            # need to update
+            _search.update(search_time=time)
+            __debug('search_time_update:%s\n' % str(time)) 
+    else:
+        search = Search.objects.create(keyword=place, search_time=time)        
+
+    if not db_hotels:
+        url = 'http://wandr.me/scripts/hustle/pex.ashx?term=%s&i=%s&o=%s' % (place, checkin, checkout)
+        __debug( '== url: %s\n\n' % url)
+        
+        hotels = []    
+        try:
+            res = requests.get(url=url).json()
+            if res['results'] != 'error':
+                hotels = res['hotels']
+        except Exception, e:
+            pass
+
+        if not hotels:
+            # delete empty search including spam search
+            if not Hotel.objects.filter(search=search):
+                search.delete()
+
+            return ['There is no hotel in the place. Please check fields again.']      
+
+        for hotel in hotels:
+            _hotel = {}
+            _hotel['prop_id'] = hotel['propID']
+            _hotel['cash_rate'] = get_value(hotel['cashRate'])
+            _hotel['points_rate'] = int(get_value(hotel['pointsRate']))
+            _hotel['distance'] = int(get_value(hotel['distance']))
+            _hotel['chain'] = hotel['propID'].split('-')[0].strip()
+            _hotel['lat'] = hotel['lat']
+            _hotel['lon'] = hotel['lon']
+            _hotel['brand'] = hotel['brand']
+            _hotel['award_cat'] = hotel['awardCat']
+            _hotel['name'] = hotel['name']
+            _hotel['img'] = hotel['img']
+            _hotel['cash_points_rate'] = hotel['cashPointsRate']
+            _hotel['url'] = hotel['url']
+
+            db_hotel = Hotel.objects.filter(search=search.id, prop_id=_hotel['prop_id'])
+            if db_hotel:
+                db_hotel.update(**_hotel)
+            else:
+                Hotel.objects.create(search=search, **_hotel)
+
+        db_hotels = Hotel.objects.filter(search=search.id)
+
+    # filter the result
+    price_lowest = db_hotels.filter(~Q(cash_rate=0.0)).aggregate(Min('cash_rate'))['cash_rate__min']
+    price_highest = db_hotels.aggregate(Max('cash_rate'))['cash_rate__max']
+    award_lowest = db_hotels.filter(~Q(points_rate=0)).aggregate(Min('points_rate'))['points_rate__min']
+    award_highest = db_hotels.aggregate(Max('points_rate'))['points_rate__max']
+
+    search.frequency = search.frequency + 1
+    search.image = db_hotels.filter(~Q(img=''))[0].img
+    search.lowest_price = price_lowest
+    search.lowest_points = award_lowest
+    search.save()
+
+    # filter
+    tmp = float(filters['price_low'] or price_lowest)
+    price_low = max(tmp, price_lowest)
+    tmp = float(filters['price_high'] or price_highest)
+    price_high = min(tmp, price_highest)
+    tmp = float(filters['award_low'] or award_lowest)
+    award_low = max(tmp, award_lowest)
+    tmp = float(filters['award_high'] or award_highest)
+    award_high = min(tmp, award_highest)
+
+    # __debug('## chain: %s\n\n' % str(filters.chain))
+    dis_place = place.split('-')[0]
+
+    db_hotels = db_hotels.filter(
+        Q(cash_rate__lte=price_high), 
+        Q(points_rate__lte=award_high), 
+        Q(distance__lte=filters['radius']), 
+        Q(chain__in=filters['chain']), 
+        Q(cash_rate=0.0)|Q(cash_rate__gte=price_low), 
+        Q(points_rate=0.0)|Q(points_rate__gte=award_low))
+
+    # get price matrix
+    for item in price_matrix:
+        price_min = db_hotels.filter(chain__contains=item).filter(~Q(cash_rate=0.0)).aggregate(Min('cash_rate'))['cash_rate__min'] or 100000000
+        points_min = db_hotels.filter(chain=item).filter(~Q(points_rate=0)).aggregate(Min('points_rate'))['points_rate__min'] or 100000000
+        price_matrix[item]['cash_rate'] = price_min
+        price_matrix[item]['points_rate'] = points_min
+
+    # __debug('price_matrix: %s\n\n' % str(price_matrix))
+
+    filters = {'price_low':price_low, 'price_high':price_high, 'award_low':award_low, 'award_high':award_high, 'radius':filters['radius'], 'chain':filters['chain'], 'price_lowest':price_lowest, 'price_highest':price_highest, 'award_lowest':award_lowest, 'award_highest':award_highest, 'dis_place':dis_place}
+    # __debug('filters: %s\n' % str(filters))
+
+    return ['', db_hotels, price_matrix, filters]
+
 def search_hotel(request):
     if request.method == 'POST':
         form = HotelSearchForm(request.POST)
-        if form.is_valid():
-            place = form.cleaned_data['place']
-            __debug( '##### place from POST: %s\n' % place )
-            checkin = form.cleaned_data['checkin']
-            checkout = form.cleaned_data['checkout']
+        if not form.is_valid():
+            # for completeness
+            return render(request, 'hotelsearch/hotel_result.html', {'hotels': [], 'form': form, 'price_matrix': {}, 'filters': {}})
+        place = form.cleaned_data['place']
+        __debug( '##### place from POST: %s\n' % place )
+        # __debug( '##### POST data: %s\n\n' % str(request.POST) )
+        checkin = form.cleaned_data['checkin']
+        checkout = form.cleaned_data['checkout']
+        filters = {'price_low':request.POST.get('price_low'), 'price_high':request.POST.get('price_high'), 'award_low':request.POST.get('award_low'), 'award_high':request.POST.get('award_high'), 'radius':int(request.POST.get('radius', 1000)), 'chain':request.POST.getlist('hotel_chain', HOTEL_CHAINS.keys())}
     else:
         place = request.GET.get('place')
         place = place.split('&')[0]
@@ -2074,176 +2251,33 @@ def search_hotel(request):
         checkin = request.GET.get('checkin') or dttime.today().strftime('%Y-%m-%d')
         checkout = request.GET.get('checkout') or (dttime.today() + timedelta(days=2)).strftime('%Y-%m-%d')
         form = HotelSearchForm(initial={'place':place, 'checkin': checkin, 'checkout': checkout})
+        filters = {'price_low':'', 'price_high':'', 'award_low':'', 'award_high':'', 'radius': 1000, 'chain': HOTEL_CHAINS.keys()}
 
-    checkin_date = dttime.strptime(checkin, "%Y-%m-%d").date()
-    checkout_date = dttime.strptime(checkout, "%Y-%m-%d").date()
-    hotels = []
-
-    if checkin_date < dttime.today().date() or checkout_date < dttime.today().date() or checkin_date > checkout_date:
-        form.errors['Error: '] = 'Checkin date or checkout date is not correct. Please set it properly.'
+    result = _search_hotel(place, checkin, checkout, filters)
+    error_message = result[0]
+    if error_message:
+        form.errors['Error: '] = error_message
+        return render(request, 'hotelsearch/hotel_result.html', {'hotels': [], 'form': form, 'price_matrix': {}, 'filters': {}})
     else:
-        url = 'http://wandr.me/scripts/hustle/pex.ashx?term=%s&i=%s&o=%s' % (place, checkin, checkout)
-        __debug( '== url: %s\n\n' % url)
-        try:
-            res = requests.get(url=url).json()
-            if res['results'] != 'error':
-                hotels = res['hotels']
-        except Exception, e:
-            pass
-    
-    r_hotels = []
-
-    # print len(hotels), '@@@@@@@@@@@@'
-    # save search
-    if hotels:
-        search = Search.objects.filter(keyword=place.strip())
-        if search:
-            search = search[0]
-        else:
-            search = Search()
-            search.keyword = place.strip()
-
-        search.frequency = search.frequency + 1
-        search.image = get_image(hotels)
-        search.lowest_price = get_lowest_price(hotels)
-        search.lowest_points = get_lowest_points(hotels) 
-        search.save()
-
-    price_lowest = get_lowest_price(hotels)
-    price_highest = get_highest_price(hotels)
-    award_lowest = int(get_lowest_points(hotels))
-    award_highest = int(get_highest_points(hotels))
-
-    price_low = float(request.POST.get('price_low') or price_lowest)
-    price_high = float(request.POST.get('price_high') or price_highest)
-    award_low = int(request.POST.get('award_low') or award_lowest)
-    award_high = int(request.POST.get('award_high') or award_highest)   
-    radius = int(request.POST.get('radius') or 1000)    
-    chain = request.POST.get('chain') or ''
-    chain = get_chain(chain)
-    dis_place = place.split('-')[0]
-    # print dis_place, '@@@@@@@@@'
-    filters = [price_low, price_high, award_low, award_high, radius, chain, price_lowest, price_highest, award_lowest, award_highest, dis_place]
-
-    # build price matrix
-    price_matrix = {}
-    for item in HOTEL_CHAINS:
-        price_matrix[item] = {'cashRate': 100000000, 'pointsRate': 100000000, 'title': HOTEL_CHAINS[item]}
-
-    # filter the hotels
-    for hotel in hotels:
-        cashRate = get_value(hotel['cashRate'])
-        pointsRate = get_value(hotel['pointsRate'])
-        hradius = float(hotel['distance'] or 0)
-        hchain = hotel['propID'].split('-')[0].strip()
-
-        if cashRate and cashRate < price_low or cashRate > price_high:
-            continue
-        if pointsRate and pointsRate < award_low or pointsRate > award_high:
-            continue
-        if hradius > radius:
-            continue
-        if not hchain in chain:
-            continue
-
-        r_hotels.append(hotel)
-
-        if cashRate and price_matrix[hchain]['cashRate'] > cashRate:
-            price_matrix[hchain]['cashRate'] = cashRate
-
-        if pointsRate and price_matrix[hchain]['pointsRate'] > pointsRate:
-            price_matrix[hchain]['pointsRate'] = pointsRate
-
-    return render(request, 'hotel_result.html', {'hotels': r_hotels, 'form': form, 'price_matrix': price_matrix, 'filters': filters})
-
-# used for initial bootstrap 
-default_search = [
-    ['syd', 'http://cache.marriott.com/propertyimages/p/parsc/parsce01.jpg', 89.09, '5'],
-    ['sfo', 'http://cache.marriott.com/propertyimages/p/parsc/parsce01.jpg', 234.09, '2'],
-    ['cgd', 'http://cache.marriott.com/propertyimages/p/parsc/parsce01.jpg', 82.09, '4'],
-    ['cdg', 'http://cache.marriott.com/propertyimages/p/parsc/parsce01.jpg', 52.09, '6'],
-    ['hkg', 'http://cache.marriott.com/propertyimages/p/parsc/parsce01.jpg', 625.09, '2'],
-    ['syd', 'http://cache.marriott.com/propertyimages/p/parsc/parsce01.jpg', 234.09, '5'],
-    ['syd', 'http://cache.marriott.com/propertyimages/p/parsc/parsce01.jpg', 89.09, '5'],
-    ['syd', 'http://cache.marriott.com/propertyimages/p/parsc/parsce01.jpg', 89.09, '5'],
-]
+        db_hotels, price_matrix, filters = result[1], result[2], result[3]
+        return render(request, 'hotelsearch/hotel_result.html', {'hotels': db_hotels[:5], 'form': form, 'price_matrix': price_matrix, 'filters': filters})    
 
 def get_value(str_value):
     '''
     get float value from the string (cash, point)
     return 0 if not digit (add 0 in front of it)
+
+    example: '12,000' '234.21' 'N/A' '185 *' 
     '''
     str_value = re.sub(r"[^0-9.]", "", '0'+str_value)
     return float(str_value)
 
-def get_chain(serialize_str):
-    '''
-    get chains from the filter
-    '''
-    serialize_str = serialize_str.strip()
-    if not serialize_str:
-        return HOTEL_CHAINS.keys()
-
-    serialize_str = serialize_str.replace('&', '')
-    return serialize_str.split('hotel_chain=')
-
-def get_image(hotels):
-    '''
-    get a valid image url from hotel list
-    '''
-    for hotel in hotels:
-        if hotel['img'] != '':
-            return hotel['img']
-
-def get_lowest_price(hotels):
-    '''
-    get the lowest price from hotel list
-    '''
-    lowest = 100
-    for hotel in hotels:
-        cash = get_value(hotel['cashRate'])
-        if cash and lowest > cash:
-            lowest = cash
-    return lowest
-
-def get_lowest_points(hotels):
-    '''
-    get the lowest points from hotel list
-    '''
-    lowest = 20000
-    for hotel in hotels:
-        points = get_value(hotel['pointsRate'])
-        if points and lowest > points:
-            lowest = points
-    return lowest
-
-def get_highest_price(hotels):
-    '''
-    get the highest price from hotel list
-    '''
-    highest = 100
-    for hotel in hotels:
-        cash = get_value(hotel['cashRate'])
-        if cash and highest < cash:
-            highest = cash
-    return highest
-
-def get_highest_points(hotels):
-    '''
-    get the highest points from hotel list
-    '''
-    highest = 50000
-    for hotel in hotels:
-        points = get_value(hotel['pointsRate'])
-        if points and highest < points:
-            highest = points
-    return highest
-
-def parse_place(pre_place):
+def parse_place(place):
     '''
     get real place from encoded place string on twitter
+    used in GET request
     '''
-    place = pre_place.replace('_', ' ')
-    place = place.replace('0', ',')
-    place = place.replace('1', ')')
+    replacement = {'%20':' ', '%2C':',', '%28':'(', '%29':')', '_':' ', '0':',', '1':')'}
+    for item in replacement:
+        place = place.replace(item, replacement[item])
     return place
