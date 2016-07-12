@@ -2065,8 +2065,7 @@ def __debug(message):
 def api_search_hotel(request):
     if request.method == 'POST':        
         params = json.loads(request.body)
-        __debug('############\n%s\n' % str(request.META))
-        # token = request.META['HTTP_AUTHORIZATION'].split(' ')[1]
+        token = request.META['HTTP_AUTHORIZATION'].split(' ')[1]
         http_accept = request.META['HTTP_ACCEPT']
         content_type = request.META['CONTENT_TYPE']
 
@@ -2074,27 +2073,51 @@ def api_search_hotel(request):
 
         if http_accept != 'application/json' or content_type != 'application/json':
             result['status'] = 'Failed'
-            result['message'] = 'Content type is incorrect'
+            result['message'] = 'Content type  is incorrect'
             return HttpResponse(json.dumps(result), 'application/json')
 
-        place = params['place']
-        checkin = params['checkin']
-        checkout = params['checkout']
-        filters = {'price_low':'', 'price_high':'', 'award_low':'', 'award_high':'', 'radius': 1000, 'chain': HOTEL_CHAINS.keys()}
+        place = params.get('place')
+        if not place:
+            result['status'] = 'Failed'
+            result['message'] = 'Search place should be provided'
+            return HttpResponse(json.dumps(result), 'application/json')
+
+        checkin = params.get('checkin')
+        checkout = params.get('checkout')
+        if not (is_date(checkin) and is_date(checkout)):
+            result['status'] = 'Failed'
+            result['message'] = 'Checkin and checkout date should be in format(2016-07-17)'
+            return HttpResponse(json.dumps(result), 'application/json')
+
+        price_low = params.get('price_low')
+        price_high = params.get('price_high')
+        award_low = params.get('award_low')
+        award_high = params.get('award_high')
+        radius = params.get('radius') or 1000
+
+        if not (is_number(price_low) and is_number(price_high) and is_number(award_low) and is_number(award_high) and is_number(radius)):
+            result['status'] = 'Failed'
+            result['message'] = 'Filter parameters should be number'
+            return HttpResponse(json.dumps(result), 'application/json')
+
+        chain = params.get('hotel_chain') or HOTEL_CHAINS.keys()
+
+        filters = {'price_low':price_low, 'price_high':price_high, 'award_low':award_low, 'award_high':award_high, 'radius': float(radius), 'chain': chain }
 
         _result = _search_hotel(place, checkin, checkout, filters)
         error_message = _result[0]
+
         if error_message:
             result['status'] = 'Failed'
             result['message'] = error_message
-            return HttpResponse(json.dumps(result), 'application/json')
         else:
             db_hotels, price_matrix, filters = _result[1], _result[2], _result[3]
             result['status'] = 'Success'
             result['price_matrix'] = price_matrix
             result['filters'] = filters
             result['hotels'] = [model_to_dict(item) for item in db_hotels]
-            return HttpResponse(json.dumps(result), 'application/json')
+
+        return HttpResponse(json.dumps(result), 'application/json')
         
             
 def _search_hotel(place, checkin, checkout, filters):
@@ -2127,9 +2150,6 @@ def _search_hotel(place, checkin, checkout, filters):
 
     if _search:
         search = _search[0]
-        __debug('search_time_current:%s\n' % str(currentdatetime)) 
-        __debug('search_time_db:%s\n' % str(search.search_time)) 
-        __debug('search_time_run:%s\n' % str(time_60m)) 
 
         if search.search_time >= time_60m:
             # cached
@@ -2138,8 +2158,6 @@ def _search_hotel(place, checkin, checkout, filters):
             # need to update
             search.search_time = time
             search.save()
-            __debug('search_time_update:%s\n' % str(time)) 
-            __debug('search_time_updated:%s\n' % str(search.search_time)) 
     else:
         search = Search.objects.create(keyword=place, search_time=time)        
 
