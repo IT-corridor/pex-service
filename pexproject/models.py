@@ -212,9 +212,9 @@ class CityImages(models.Model):
     last_updated = models.DateTimeField()
 
 class Search(models.Model):
-    keyword = models.CharField(max_length=100)
+    keyword = models.CharField(max_length=300)
     frequency = models.IntegerField(default=0)
-    image = models.CharField(max_length=500, null=True, blank=True)
+    image = models.CharField(max_length=300, null=True, blank=True)
     lowest_price = models.CharField(max_length=50, null=True, blank=True)
     lowest_points = models.CharField(max_length=50, null=True, blank=True)
     search_time = models.DateTimeField()
@@ -228,16 +228,16 @@ class Search(models.Model):
 
 class Hotel(models.Model):
     prop_id = models.CharField(max_length=50)
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=300)
     brand = models.CharField(max_length=50)
     chain = models.CharField(max_length=10)
     lat = models.CharField(max_length=50)
     lon = models.CharField(max_length=50)
-    img = models.CharField(max_length=100)
-    url = models.CharField(max_length=100)
+    img = models.CharField(max_length=300)
+    url = models.CharField(max_length=300)
     cash_rate = models.FloatField(default=0.0)
     points_rate = models.IntegerField()
-    cash_points_rate = models.CharField(max_length=50)
+    cash_points_rate = models.CharField(max_length=150)
     award_cat = models.CharField(max_length=30)
     distance = models.IntegerField()
     star_rating = models.FloatField(default=0.0)
@@ -245,6 +245,7 @@ class Hotel(models.Model):
 
     def __unicode__(self):
         return self.name
+
 
 class UserAlert(models.Model):
     alertid = models.AutoField(primary_key=True)
