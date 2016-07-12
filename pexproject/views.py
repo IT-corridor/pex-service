@@ -2050,7 +2050,7 @@ HOTEL_CHAINS = {
 def __debug(message):
     '''check the place'''
     try:
-        DEV_LOCAL = True
+        DEV_LOCAL = False
         DEBUG = True
         log_path = 'hotel_place_log' if DEV_LOCAL else '/home/upwork/hotel_place_log'
         sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
@@ -2065,16 +2065,17 @@ def __debug(message):
 def api_search_hotel(request):
     if request.method == 'POST':        
         params = json.loads(request.body)
-        token = request.META['HTTP_AUTHORIZATION'].split(' ')[1]
-        http_accept = request.META['HTTP_ACCEPT']
-        content_type = request.META['CONTENT_TYPE']
+        __debug('############\n%s\n' % str(request.META))
+        # token = request.META['HTTP_AUTHORIZATION'].split(' ')[1]
+        # http_accept = request.META['HTTP_ACCEPT']
+        # content_type = request.META['CONTENT_TYPE']
 
         result = {}
 
-        if http_accept != 'application/json' or content_type != 'application/json':
-            result['status'] = 'Failed'
-            result['message'] = 'Content type  is incorrect'
-            return HttpResponse(json.dumps(result), 'application/json')
+        # if http_accept != 'application/json' or content_type != 'application/json':
+        #     result['status'] = 'Failed'
+        #     result['message'] = 'Content type  is incorrect'
+        #     return HttpResponse(json.dumps(result), 'application/json')
 
         place = params['place']
         checkin = params['checkin']
