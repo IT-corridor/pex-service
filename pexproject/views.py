@@ -948,221 +948,226 @@ def contactUs(request):
     return render_to_response('flightsearch/contact_us.html',{'contact_msg':contact_msg}, context_instance=RequestContext(request))  
         
 def search(request):
-    context = {}
     if request.is_ajax():
-        customfunction.flag = 0
-        context = {}
-        cursor = connection.cursor()
         returndate = request.POST['returndate']
-        dt1 = ''
-        searchdate1 = ''
-        multiplekey =''
-        seperator = ''
-        if returndate:
-            dt1 = datetime.datetime.strptime(returndate, '%m/%d/%Y')
-            date1 = dt1.strftime('%m/%d/%Y')
-            searchdate1 = dt1.strftime('%Y-%m-%d')
-        #triptype = request.POST['triptype']
-        ongnidlist=''
-        destlist = ''
-        departlist =''
-        searchkeyid = ''
-        returnkey = ''
         orgnid = request.POST['fromMain']
         destid = request.POST['toMain']
         depart = request.POST['deptdate']
-        print '$$$$$', depart, '$$$$$'
-        searchtype = ''
-        if 'searchtype' in request.POST:
-            searchtype = request.POST['searchtype']
-        print "searchtype",searchtype
+        searchtype = request.POST.get('searchtype', '')
         cabin = request.POST['cabin']
-        ongnidlist =  orgnid.split(',')
-        destlist = destid.split(',')
-        departlist = depart.split(',')
-        for i in range(0,len(departlist)):
-            etihadorigin =''
-            etihaddest = ''
-            orgnid = ongnidlist[i]
-            destid = destlist[i]
-            depart = departlist[i]
-            # todo get onle single row and remove for look for origin and destination
-            originobj = Airports.objects.get(airport_id=orgnid)
-            destobj = Airports.objects.get(airport_id=destid)
-           
-            orgn = originobj.cityName + ", " + originobj.cityCode + ", " + originobj.countryCode + "  (" + originobj.code + ")"
-            etihadorigin = originobj.cityName
-            orgncode = originobj.code
-            origin = originobj.cityName + " (" + originobj.code + ")"
-            print '@@@@', orgn, origin, '@@@@'
 
-            dest = destobj.cityName + ", " + destobj.cityCode + ", " + destobj.countryCode + "  (" + destobj.code + ")"
-            etihaddest = destobj.cityName
-            destcode = destobj.code
-            destination1 = destobj.cityName + " (" + destobj.code + ")"
-            print '####', dest, destination1, '####'
-            
-            dt = datetime.datetime.strptime(depart, '%m/%d/%Y')
-            date = dt.strftime('%m/%d/%Y')
-            searchdate = dt.strftime('%Y-%m-%d')        
-            print '$$$$', searchdate, '$$$$'
-            
-            currentdatetime = datetime.datetime.now()
-            time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
-            time1 = datetime.datetime.now() - timedelta(minutes=30)
-            time1 = time1.strftime('%Y-%m-%d %H:%M:%S')
-            if searchdate1:
-                obj = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, scrapetime__gte=time1)
-                returnobj = Searchkey.objects.filter(source=destination1, destination=origin, traveldate=searchdate1, scrapetime__gte=time1)
-
-                if len(returnobj) > 0:
-                    for retkey in returnobj:
-                         returnkey = retkey.searchid
-                else:
-                    searchdata = Searchkey(source=destination1, destination=origin, destination_city=etihadorigin,traveldate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid)
-                    searchdata.save()
-                    returnkey = searchdata.searchid
-                    if is_scrape_jetblue == 1:
-                        customfunction.flag = customfunction.flag+1
-                        subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/jetblue.py",destcode, orgncode, str(returndate), str(returnkey)])
-                    if is_scrape_virginAmerica == 1:
-                        customfunction.flag = customfunction.flag+1
-                        subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/virginAmerica.py",destcode, orgncode, str(returndate), str(returnkey)])
-                    
-                    if is_scrape_delta == 1:
-                        customfunction.flag = customfunction.flag+1
-                        subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/delta.py",destcode, orgncode, str(date1), str(returndate), str(returnkey),etihaddest,etihadorigin,cabin])
-                    if is_scrape_united == 1:
-                        customfunction.flag = customfunction.flag+1
-                        subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",destcode, orgncode, str(returndate), str(returnkey)])
-                    if is_scrape_s7 == 1:
-                        customfunction.flag = customfunction.flag+1
-                        print '@@@@@ S7 Round trip', destobj.code, originobj.code, str(searchdate1), str(returnkey)                        
-                        subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/s7.ru.py",destobj.code, originobj.code, str(searchdate1), str(returnkey)])
-                        # subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/s7.ru.py",destobj.cityCode, originobj.cityCode, str(searchdate1), str(returnkey)])
-                    if is_scrape_aa == 1:
-                        customfunction.flag = customfunction.flag+1
-                        subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aa.py",destcode, orgncode, str(returndate), str(returnkey)])
-                    if is_scrape_vAUS == 1:
-                        customfunction.flag = customfunction.flag+1
-                        subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/virgin_australia.py",destcode, orgncode, str(returndate), str(returnkey),cabin])
-                   
-                    if is_scrape_etihad == 1:
-                        customfunction.flag = customfunction.flag+1
-                        subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/etihad.py",etihaddest, etihadorigin, str(date1), str(returnkey),cabin])
-                
-                ''' Flexible date search scraper for return Date'''
-                if returnkey and  'flexibledate' in searchtype:
-                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/Flex_delta.py",destcode, orgncode, str(returndate), str(returnkey),cabin])
-                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/flex_jetblue.py",destcode, orgncode, str(returndate), str(returnkey)])
-                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/flex_virgin_atlantic.py",destcode, orgncode, str(returndate), str(returnkey)])
-                        
-                '''-------------------------------------'''
-            else:
-                obj = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, scrapetime__gte=time1)
-
-
-            if len(obj) > 0:
-                for keyid in obj:
-                    searchkeyid = keyid.searchid
-            else:
-                if dt1:
-                    searchdata = Searchkey(source=origin, destination=destination1,destination_city=etihaddest, traveldate=dt, returndate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid) 
-                else:
-                    searchdata = Searchkey(source=origin, destination=destination1,destination_city=etihaddest, traveldate=dt, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid)
-                searchdata.save()
-                searchkeyid = searchdata.searchid 
-                cursor = connection.cursor()
-                ''' Flexible date search scraper for return Date'''
-                if searchkeyid and  'flexibledate' in searchtype:
-                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/Flex_delta.py",orgncode,destcode, str(depart), str(searchkeyid),cabin])
-                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/flex_jetblue.py",orgncode,destcode, str(depart), str(searchkeyid)])
-                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/flex_virgin_atlantic.py",orgncode,destcode, str(depart), str(searchkeyid)])
-                        
-                '''-------------------------------------'''
-                customfunction.flag = 0
-		#if searchdate1:
-		#    customfunction.flag = 2
-                if is_scrape_jetblue == 1:
-                    customfunction.flag = customfunction.flag+1
-                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/jetblue.py",orgncode,destcode,str(depart),str(searchkeyid)])
-                if is_scrape_virginAmerica == 1:
-                    customfunction.flag = customfunction.flag+1
-                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/virginAmerica.py",orgncode,destcode,str(depart),str(searchkeyid)])                
-                if is_scrape_delta == 1:
-                    customfunction.flag = customfunction.flag+1
-                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/delta.py",orgncode,destcode,str(date),str(depart),str(searchkeyid),etihadorigin,etihaddest,cabin])
-                if is_scrape_united == 1:
-                    customfunction.flag = customfunction.flag+1
-                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",orgncode,destcode,str(depart),str(searchkeyid)])
-                if is_scrape_s7 == 1:
-                    customfunction.flag = customfunction.flag+1
-                    # print '@@@@@ S7 One way', originobj.cityCode, destobj.cityCode, str(searchdate), str(searchkeyid)                    
-                    print '@@@@@ S7 One way', originobj.code, destobj.code, str(searchdate), str(searchkeyid)                    
-                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/s7.ru.py", originobj.code, destobj.code, str(searchdate), str(searchkeyid)])                    
-                    # subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/s7.ru.py", originobj.cityCode, destobj.cityCode, str(searchdate), str(searchkeyid)])                    
-                if is_scrape_aa == 1:
-                    customfunction.flag = customfunction.flag+1
-                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aa.py",orgncode,destcode,str(depart),str(searchkeyid)])
-                if is_scrape_vAUS == 1:
-                    customfunction.flag = customfunction.flag+1
-                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/virgin_australia.py",orgncode,destcode,str(depart),str(searchkeyid),cabin])
-                if is_scrape_etihad == 1:
-                    customfunction.flag = customfunction.flag+1
-                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/etihad.py",etihadorigin,etihaddest,str(date),str(searchkeyid),cabin])
-                if is_scrape_aeroflot == 1:
-                    if not searchdate1:
-                        customfunction.flag = customfunction.flag+1 
-                        print '@@@@@ Aeroflot One Way', originobj.code, destobj.code, str(searchdate), str(searchkeyid)
-                        subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aeroflot.py", originobj.code, destobj.code, str(searchdate), str(searchkeyid)])
-                if is_scrape_airchina == 1:
-                    if not searchdate1:
-                        customfunction.flag = customfunction.flag+1 
-                        print '@@@@@ AirChina One Way', originobj.code, destobj.code, str(searchdate), str(searchkeyid)
-                        subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/airchina.py", originobj.code, destobj.code, str(searchdate), str(searchkeyid)])
-                    
-            if is_scrape_virgin_atlantic == 1:
-                customfunction.flag = customfunction.flag+1
-                Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='virgin_atlantic').delete()
-                if returnkey:
-                    Flightdata.objects.filter(searchkeyid=returnkey,datasource='virgin_atlantic').delete()            
-                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/virgin.py",orgncode,destcode, str(depart), str(returndate), str(searchkeyid),str(returnkey)])
-
-            if returnkey:
-                if is_scrape_aeroflot == 1:
-                    flight_to = Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='aeroflot')
-                    flight_from = Flightdata.objects.filter(searchkeyid=returnkey,datasource='aeroflot') 
-                    if not (flight_to and flight_from):
-                        customfunction.flag = customfunction.flag+1
-                        Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='aeroflot').delete()
-                        Flightdata.objects.filter(searchkeyid=returnkey,datasource='aeroflot').delete()            
-                        print '@@@@@ Aeroflot Round Trip', orgncode, destcode, str(searchdate), str(searchkeyid), str(searchdate1), str(returnkey)
-                        subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aeroflot_rt.py", orgncode, destcode, str(searchdate),str(searchkeyid), str(searchdate1), str(returnkey)])
-                if is_scrape_airchina == 1:
-                    flight_to = Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='airchina')
-                    flight_from = Flightdata.objects.filter(searchkeyid=returnkey,datasource='airchina') 
-                    if not (flight_to and flight_from):
-                        customfunction.flag = customfunction.flag+1
-                        Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='airchina').delete()
-                        Flightdata.objects.filter(searchkeyid=returnkey,datasource='airchina').delete()            
-                        print '@@@@@ AirChina Round Trip', orgncode, destcode, str(searchdate), str(searchkeyid), str(searchdate1), str(returnkey)
-                        subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/airchina_rt.py", orgncode, destcode, str(searchdate),str(searchkeyid), str(searchdate1), str(returnkey)])
-
-            if len(departlist) > 0 :
-                multiplekey = multiplekey+seperator+str(searchkeyid)
-                seperator = ',' 
-                    
-        mimetype = 'application/json'
+        key_json = _search(returndate, orgnid, destid, depart, searchtype, cabin)
         
-        key_json = {}
-        key_json['departkey'] = multiplekey
-        key_json['returnkey'] = returnkey
-        key_json['searchtype'] = searchtype
-        # print key_json
-            
+        mimetype = 'application/json'
         data = json.dumps(key_json)
         return HttpResponse(data, mimetype)
         
+def _search(returndate, orgnid, destid, depart, searchtype, cabin):
+    ''' 
+    trigger scrapers or return searchkey for cached search
+    return searchkeys
+    '''
+    customfunction.flag = 0
+    context = {}
+    cursor = connection.cursor()
+
+    dt1 = ''
+    searchdate1 = ''
+    multiplekey =''
+    seperator = ''
+    if returndate:
+        dt1 = datetime.datetime.strptime(returndate, '%m/%d/%Y')
+        date1 = dt1.strftime('%m/%d/%Y')
+        searchdate1 = dt1.strftime('%Y-%m-%d')
+    ongnidlist=''
+    destlist = ''
+    departlist =''
+    searchkeyid = ''
+    returnkey = ''
+
+
+    ongnidlist =  orgnid.split(',')
+    destlist = destid.split(',')
+    departlist = depart.split(',')
+    for i in range(0,len(departlist)):
+        etihadorigin =''
+        etihaddest = ''
+        orgnid = ongnidlist[i]
+        destid = destlist[i]
+        depart = departlist[i]
+        # todo get onle single row and remove for look for origin and destination
+        originobj = Airports.objects.get(airport_id=orgnid)
+        destobj = Airports.objects.get(airport_id=destid)
+       
+        orgn = originobj.cityName + ", " + originobj.cityCode + ", " + originobj.countryCode + "  (" + originobj.code + ")"
+        etihadorigin = originobj.cityName
+        orgncode = originobj.code
+        origin = originobj.cityName + " (" + originobj.code + ")"
+        print '@@@@', orgn, origin, '@@@@'
+
+        dest = destobj.cityName + ", " + destobj.cityCode + ", " + destobj.countryCode + "  (" + destobj.code + ")"
+        etihaddest = destobj.cityName
+        destcode = destobj.code
+        destination1 = destobj.cityName + " (" + destobj.code + ")"
+        print '####', dest, destination1, '####'
+        
+        dt = datetime.datetime.strptime(depart, '%m/%d/%Y')
+        date = dt.strftime('%m/%d/%Y')
+        searchdate = dt.strftime('%Y-%m-%d')        
+        print '$$$$', searchdate, '$$$$'
+        
+        currentdatetime = datetime.datetime.now()
+        time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
+        time1 = datetime.datetime.now() - timedelta(minutes=30)
+        time1 = time1.strftime('%Y-%m-%d %H:%M:%S')
+        if searchdate1:
+            obj = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, scrapetime__gte=time1)
+            returnobj = Searchkey.objects.filter(source=destination1, destination=origin, traveldate=searchdate1, scrapetime__gte=time1)
+
+            if len(returnobj) > 0:
+                for retkey in returnobj:
+                     returnkey = retkey.searchid
+            else:
+                searchdata = Searchkey(source=destination1, destination=origin, destination_city=etihadorigin,traveldate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid)
+                searchdata.save()
+                returnkey = searchdata.searchid
+                if is_scrape_jetblue == 1:
+                    customfunction.flag = customfunction.flag+1
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/jetblue.py",destcode, orgncode, str(returndate), str(returnkey)])
+                if is_scrape_virginAmerica == 1:
+                    customfunction.flag = customfunction.flag+1
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/virginAmerica.py",destcode, orgncode, str(returndate), str(returnkey)])
+                
+                if is_scrape_delta == 1:
+                    customfunction.flag = customfunction.flag+1
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/delta.py",destcode, orgncode, str(date1), str(returndate), str(returnkey),etihaddest,etihadorigin,cabin])
+                if is_scrape_united == 1:
+                    customfunction.flag = customfunction.flag+1
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",destcode, orgncode, str(returndate), str(returnkey)])
+                if is_scrape_s7 == 1:
+                    customfunction.flag = customfunction.flag+1
+                    print '@@@@@ S7 Round trip', destobj.code, originobj.code, str(searchdate1), str(returnkey)                        
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/s7.ru.py",destobj.code, originobj.code, str(searchdate1), str(returnkey)])
+                    # subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/s7.ru.py",destobj.cityCode, originobj.cityCode, str(searchdate1), str(returnkey)])
+                if is_scrape_aa == 1:
+                    customfunction.flag = customfunction.flag+1
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aa.py",destcode, orgncode, str(returndate), str(returnkey)])
+                if is_scrape_vAUS == 1:
+                    customfunction.flag = customfunction.flag+1
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/virgin_australia.py",destcode, orgncode, str(returndate), str(returnkey),cabin])
+               
+                if is_scrape_etihad == 1:
+                    customfunction.flag = customfunction.flag+1
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/etihad.py",etihaddest, etihadorigin, str(date1), str(returnkey),cabin])
+            
+            ''' Flexible date search scraper for return Date'''
+            if returnkey and  'flexibledate' in searchtype:
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/Flex_delta.py",destcode, orgncode, str(returndate), str(returnkey),cabin])
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/flex_jetblue.py",destcode, orgncode, str(returndate), str(returnkey)])
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/flex_virgin_atlantic.py",destcode, orgncode, str(returndate), str(returnkey)])
+                    
+            '''-------------------------------------'''
+        else:
+            obj = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, scrapetime__gte=time1)
+
+
+        if len(obj) > 0:
+            for keyid in obj:
+                searchkeyid = keyid.searchid
+        else:
+            if dt1:
+                searchdata = Searchkey(source=origin, destination=destination1,destination_city=etihaddest, traveldate=dt, returndate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid) 
+            else:
+                searchdata = Searchkey(source=origin, destination=destination1,destination_city=etihaddest, traveldate=dt, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid)
+            searchdata.save()
+            searchkeyid = searchdata.searchid 
+            cursor = connection.cursor()
+            ''' Flexible date search scraper for return Date'''
+            if searchkeyid and  'flexibledate' in searchtype:
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/Flex_delta.py",orgncode,destcode, str(depart), str(searchkeyid),cabin])
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/flex_jetblue.py",orgncode,destcode, str(depart), str(searchkeyid)])
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/flex_virgin_atlantic.py",orgncode,destcode, str(depart), str(searchkeyid)])
+                    
+            '''-------------------------------------'''
+            customfunction.flag = 0
+    #if searchdate1:
+    #    customfunction.flag = 2
+            if is_scrape_jetblue == 1:
+                customfunction.flag = customfunction.flag+1
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/jetblue.py",orgncode,destcode,str(depart),str(searchkeyid)])
+            if is_scrape_virginAmerica == 1:
+                customfunction.flag = customfunction.flag+1
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/virginAmerica.py",orgncode,destcode,str(depart),str(searchkeyid)])                
+            if is_scrape_delta == 1:
+                customfunction.flag = customfunction.flag+1
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/delta.py",orgncode,destcode,str(date),str(depart),str(searchkeyid),etihadorigin,etihaddest,cabin])
+            if is_scrape_united == 1:
+                customfunction.flag = customfunction.flag+1
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",orgncode,destcode,str(depart),str(searchkeyid)])
+            if is_scrape_s7 == 1:
+                customfunction.flag = customfunction.flag+1
+                # print '@@@@@ S7 One way', originobj.cityCode, destobj.cityCode, str(searchdate), str(searchkeyid)                    
+                print '@@@@@ S7 One way', originobj.code, destobj.code, str(searchdate), str(searchkeyid)                    
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/s7.ru.py", originobj.code, destobj.code, str(searchdate), str(searchkeyid)])                    
+                # subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/s7.ru.py", originobj.cityCode, destobj.cityCode, str(searchdate), str(searchkeyid)])                    
+            if is_scrape_aa == 1:
+                customfunction.flag = customfunction.flag+1
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aa.py",orgncode,destcode,str(depart),str(searchkeyid)])
+            if is_scrape_vAUS == 1:
+                customfunction.flag = customfunction.flag+1
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/virgin_australia.py",orgncode,destcode,str(depart),str(searchkeyid),cabin])
+            if is_scrape_etihad == 1:
+                customfunction.flag = customfunction.flag+1
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/etihad.py",etihadorigin,etihaddest,str(date),str(searchkeyid),cabin])
+            if is_scrape_aeroflot == 1:
+                if not searchdate1:
+                    customfunction.flag = customfunction.flag+1 
+                    print '@@@@@ Aeroflot One Way', originobj.code, destobj.code, str(searchdate), str(searchkeyid)
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aeroflot.py", originobj.code, destobj.code, str(searchdate), str(searchkeyid)])
+            if is_scrape_airchina == 1:
+                if not searchdate1:
+                    customfunction.flag = customfunction.flag+1 
+                    print '@@@@@ AirChina One Way', originobj.code, destobj.code, str(searchdate), str(searchkeyid)
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/airchina.py", originobj.code, destobj.code, str(searchdate), str(searchkeyid)])
+                
+        if is_scrape_virgin_atlantic == 1:
+            customfunction.flag = customfunction.flag+1
+            Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='virgin_atlantic').delete()
+            if returnkey:
+                Flightdata.objects.filter(searchkeyid=returnkey,datasource='virgin_atlantic').delete()            
+            subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/virgin.py",orgncode,destcode, str(depart), str(returndate), str(searchkeyid),str(returnkey)])
+
+        if returnkey:
+            if is_scrape_aeroflot == 1:
+                flight_to = Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='aeroflot')
+                flight_from = Flightdata.objects.filter(searchkeyid=returnkey,datasource='aeroflot') 
+                if not (flight_to and flight_from):
+                    customfunction.flag = customfunction.flag+1
+                    Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='aeroflot').delete()
+                    Flightdata.objects.filter(searchkeyid=returnkey,datasource='aeroflot').delete()            
+                    print '@@@@@ Aeroflot Round Trip', orgncode, destcode, str(searchdate), str(searchkeyid), str(searchdate1), str(returnkey)
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aeroflot_rt.py", orgncode, destcode, str(searchdate),str(searchkeyid), str(searchdate1), str(returnkey)])
+            if is_scrape_airchina == 1:
+                flight_to = Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='airchina')
+                flight_from = Flightdata.objects.filter(searchkeyid=returnkey,datasource='airchina') 
+                if not (flight_to and flight_from):
+                    customfunction.flag = customfunction.flag+1
+                    Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='airchina').delete()
+                    Flightdata.objects.filter(searchkeyid=returnkey,datasource='airchina').delete()            
+                    print '@@@@@ AirChina Round Trip', orgncode, destcode, str(searchdate), str(searchkeyid), str(searchdate1), str(returnkey)
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/airchina_rt.py", orgncode, destcode, str(searchdate),str(searchkeyid), str(searchdate1), str(returnkey)])
+
+        if len(departlist) > 0 :
+            multiplekey = multiplekey+seperator+str(searchkeyid)
+            seperator = ',' 
+                    
+    key_json = {}
+    key_json['departkey'] = multiplekey
+    key_json['returnkey'] = returnkey
+    key_json['searchtype'] = searchtype    
+    return key_json
+
+
 def get_airport(request):
     
     if request.is_ajax():
@@ -2021,7 +2026,7 @@ def multicity(request):
     return render_to_response('flightsearch/multicity.html', context_instance=RequestContext(request)) 
         
     
-            
+# api search flight
 
 # hotels views  
 
