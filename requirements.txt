@@ -1,3 +1,0 @@
-django
-oauth2
-django-social-auth
