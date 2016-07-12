@@ -2065,7 +2065,7 @@ def __debug(message):
 def api_search_hotel(request):
     if request.method == 'POST':        
         params = json.loads(request.body)
-        token = request.META['HTTP_AUTHORIZATION'].split(' ')[1]
+        # token = request.META['HTTP_AUTHORIZATION'].split(' ')[1]
         http_accept = request.META['HTTP_ACCEPT']
         content_type = request.META['CONTENT_TYPE']
 
