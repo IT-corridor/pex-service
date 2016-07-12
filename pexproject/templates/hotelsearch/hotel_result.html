@@ -162,8 +162,8 @@
 					{% for key, values in price_matrix.items %}
 					<tr class="div-table-row row">
 						<td class="bc-whi left-heading"> {{ values.title }}</td>
-						<td class="color-grey-1">{% if values.cash_rate == 100000000 %}-{% else %} ${{ values.cash_rate }} {% endif %}</td>
-						<td class="color-grey-1">{% if values.points_rate == 100000000 %}-{% else %} {{ values.points_rate }} {% endif %}</td>
+						<td class="color-grey-1">{% if not values.cash_rate %}-{% else %} ${{ values.cash_rate }} {% endif %}</td>
+						<td class="color-grey-1">{{ values.points_rate }}</td>
 					</tr>
 					{% endfor %}
 					</tbody>

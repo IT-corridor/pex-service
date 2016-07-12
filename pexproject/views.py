@@ -2154,26 +2154,21 @@ def _search_hotel(place, checkin, checkout, filters):
     if checkin_date < dttime.today().date() or checkout_date < dttime.today().date() or checkin_date > checkout_date:
         return ['Checkin date or checkout date is not correct. Please set it properly.']      
 
-    price_matrix = {}
-    for item in HOTEL_CHAINS:
-        price_matrix[item] = {'cash_rate': 100000000, 'points_rate': 100000000, 'title': HOTEL_CHAINS[item]}
-
     # check last search time
     currentdatetime = timezone.now().replace(tzinfo=None)
     time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     time_60m = timezone.now() - timedelta(minutes=60)
 
-    _search = Search.objects.filter(keyword=place)
+    search = Search.objects.filter(keyword=place)
     db_hotels = None
 
-    if _search:
-        search = _search[0]
-
+    if search:
+        search = search[0]
         if search.search_time >= time_60m:
             # cached
             db_hotels = Hotel.objects.filter(search=search.id)
         else:
-            # need to update
+            # need to update search time
             search.search_time = time
             search.save()
     else:
@@ -2256,12 +2251,12 @@ def _search_hotel(place, checkin, checkout, filters):
         Q(points_rate=0.0)|Q(points_rate__gte=award_low))
 
     # get price matrix
-    for item in price_matrix:
-        price_min = db_hotels.filter(chain__contains=item).filter(~Q(cash_rate=0.0)).aggregate(Min('cash_rate'))['cash_rate__min'] or 100000000
-        points_min = db_hotels.filter(chain=item).filter(~Q(points_rate=0)).aggregate(Min('points_rate'))['points_rate__min'] or 100000000
-        price_matrix[item]['cash_rate'] = price_min
-        price_matrix[item]['points_rate'] = points_min
-
+    # '-' if none for points, '' if none for price
+    price_matrix = {}
+    for item in HOTEL_CHAINS:
+        price_min = db_hotels.filter(chain__contains=item).filter(~Q(cash_rate=0.0)).aggregate(Min('cash_rate'))['cash_rate__min']
+        points_min = db_hotels.filter(chain=item).filter(~Q(points_rate=0)).aggregate(Min('points_rate'))['points_rate__min'] or '-'
+        price_matrix[item] = {'cash_rate': price_min, 'points_rate': points_min, 'title': HOTEL_CHAINS[item]}
     # __debug('price_matrix: %s\n\n' % str(price_matrix))
 
     filters = {'price_low':price_low, 'price_high':price_high, 'award_low':award_low, 'award_high':award_high, 'radius':filters['radius'], 'chain':filters['chain'], 'price_lowest':price_lowest, 'price_highest':price_highest, 'award_lowest':award_lowest, 'award_highest':award_highest, 'dis_place':dis_place}
