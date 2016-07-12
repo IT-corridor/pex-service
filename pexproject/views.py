@@ -2136,8 +2136,10 @@ def _search_hotel(place, checkin, checkout, filters):
             db_hotels = Hotel.objects.filter(search=search.id)
         else:
             # need to update
-            _search.update(search_time=time)
+            search.search_time = time
+            search.save()
             __debug('search_time_update:%s\n' % str(time)) 
+            __debug('search_time_updated:%s\n' % str(search.search_time)) 
     else:
         search = Search.objects.create(keyword=place, search_time=time)        
 
