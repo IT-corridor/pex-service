@@ -2061,6 +2061,24 @@ def __debug(message):
     except Exception, e:
         print '### DEBUG error %s' % str(e)
 
+def is_number(s):
+    if not s:
+        return True
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
+def is_date(date_text):
+    if not date_text:
+        return True
+    try:
+        dttime.strptime(date_text, '%Y-%m-%d')
+        return True
+    except ValueError:
+        return False
+
 @csrf_exempt
 def api_search_hotel(request):
     if request.method == 'POST':        
