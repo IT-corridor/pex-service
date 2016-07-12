@@ -2260,7 +2260,7 @@ def search_hotel(request):
         return render(request, 'hotelsearch/hotel_result.html', {'hotels': [], 'form': form, 'price_matrix': {}, 'filters': {}})
     else:
         db_hotels, price_matrix, filters = result[1], result[2], result[3]
-        return render(request, 'hotelsearch/hotel_result.html', {'hotels': db_hotels[:5], 'form': form, 'price_matrix': price_matrix, 'filters': filters})    
+        return render(request, 'hotelsearch/hotel_result.html', {'hotels': db_hotels, 'form': form, 'price_matrix': price_matrix, 'filters': filters})    
 
 def get_value(str_value):
     '''
