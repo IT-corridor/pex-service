@@ -2067,15 +2067,15 @@ def api_search_hotel(request):
         params = json.loads(request.body)
         __debug('############\n%s\n' % str(request.META))
         # token = request.META['HTTP_AUTHORIZATION'].split(' ')[1]
-        # http_accept = request.META['HTTP_ACCEPT']
-        # content_type = request.META['CONTENT_TYPE']
+        http_accept = request.META['HTTP_ACCEPT']
+        content_type = request.META['CONTENT_TYPE']
 
         result = {}
 
-        # if http_accept != 'application/json' or content_type != 'application/json':
-        #     result['status'] = 'Failed'
-        #     result['message'] = 'Content type  is incorrect'
-        #     return HttpResponse(json.dumps(result), 'application/json')
+        if http_accept != 'application/json' or content_type != 'application/json':
+            result['status'] = 'Failed'
+            result['message'] = 'Content type is incorrect'
+            return HttpResponse(json.dumps(result), 'application/json')
 
         place = params['place']
         checkin = params['checkin']
