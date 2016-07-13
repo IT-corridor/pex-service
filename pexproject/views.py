@@ -2054,7 +2054,7 @@ HOTEL_CHAINS = {
 def __debug(message):
     '''check the place'''
     try:
-        DEV_LOCAL = True
+        DEV_LOCAL = False
         DEBUG = True
         log_path = 'hotel_place_log' if DEV_LOCAL else '/home/upwork/hotel_place_log'
         sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
@@ -2345,7 +2345,11 @@ def check_validity_flight_params(request):
         invalid: [error_message]
     '''
     # check the header
-    # token = request.META['HTTP_AUTHORIZATION'].split(' ')[1]
+    token = request.META.get('HTTP_AUTHORIZATION')
+    if token:
+        token = token.split('Token ')[1]
+        __debug('$$$--- %s\n' % token)
+
     http_accept = request.META['HTTP_ACCEPT']
     content_type = request.META['CONTENT_TYPE']
 
