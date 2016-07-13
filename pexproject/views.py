@@ -2413,7 +2413,6 @@ def api_search_flight(request):
         keys = _search(return_date, origin, destination, depart_date, search_type, flight_class)
         while(1):
             delay_threshold = delay_threshold - 1
-            print delay_threshold
             time.sleep(1)
             # check the status of the scraping
             scrape_status = _check_data(keys['departkey'], keys['returnkey'], flight_class, '')
@@ -2430,10 +2429,15 @@ def api_search_flight(request):
 
         __debug('## filters for flight api: %s\n' % str(kwargs)) 
         flights = Flightdata.objects.filter(**kwargs)
+        flights = [model_to_dict(item, exclude=['rowid', 'scrapetime', 'searchkeyid']) for item in flights]
+
+        for flight in flights:
+            for k,v in flight.items():
+                flight[k] = str(v)
 
         result['status'] = 'Success'
         result['filters'] = kwargs#filters
-        result['flights'] = [model_to_dict(item) for item in flights]
+        result['flights'] = flights
         # result['price_matrix'] = price_matrix
 
         return HttpResponse(json.dumps(result), 'application/json')
