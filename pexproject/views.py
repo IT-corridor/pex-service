@@ -2096,7 +2096,6 @@ def check_validity_hotel_params(request):
         invalid: [error_message]
     '''
     # check the header
-    # token = request.META['HTTP_AUTHORIZATION'].split(' ')[1]
     http_accept = request.META['HTTP_ACCEPT']
     content_type = request.META['CONTENT_TYPE']
 
@@ -2132,8 +2131,15 @@ def check_validity_hotel_params(request):
 def api_search_hotel(request):
     if request.method == 'POST':        
         result = {}
-        _params = check_validity_hotel_params(request)
 
+        _token = check_validity_token(request.META.get('HTTP_AUTHORIZATION'), 'hotel')
+        error_message = _token[0]
+        if error_message:
+            result['status'] = 'Failed'
+            result['message'] = error_message
+            return HttpResponse(json.dumps(result), 'application/json')
+
+        _params = check_validity_hotel_params(request)
         error_message = _params[0]
         if error_message:
             result['status'] = 'Failed'
@@ -2337,6 +2343,38 @@ FLIGHT_CLASS = {
     'firstclass': 'business'
 }
 
+def check_validity_token(token, service):
+    '''
+    check and validate the token from the request for the service
+    return 
+        success: ['']
+        fail: [error_message]
+    '''
+    if not token:
+        return ['Authorization should be provided.']
+    r = re.compile('^Token \w+$')
+    if not r.match(token):
+        return ['Authorization format is wrong. It should be in the format("Token <token>").']
+    token = token.split('Token ')[1]
+
+    token = Token.objects.filter(token=token)
+    if not token:
+        return ['The token you provided is not correct!']
+
+    token = token[0]
+
+    # check limit
+    limit_request = getattr(token, 'limit_%s_search' % service)
+    number_request = getattr(token, 'run_%s_search' % service)
+    number_request = number_request + 1
+    setattr(token, 'run_%s_search' % service, number_request)
+    token.save()
+
+    if number_request > limit_request:
+        return ['Your license is reached to its limit. Please extend it!']
+    # check domain
+    return ['']
+
 def check_validity_flight_params(request):
     '''
     check validity of params for flight from the request
@@ -2345,11 +2383,6 @@ def check_validity_flight_params(request):
         invalid: [error_message]
     '''
     # check the header
-    token = request.META.get('HTTP_AUTHORIZATION')
-    if token:
-        token = token.split('Token ')[1]
-        __debug('$$$--- %s\n' % token)
-
     http_accept = request.META['HTTP_ACCEPT']
     content_type = request.META['CONTENT_TYPE']
 
@@ -2416,6 +2449,13 @@ def api_search_flight(request):
     if request.method == 'POST':
         delay_threshold = 30
         result = {}
+
+        _token = check_validity_token(request.META.get('HTTP_AUTHORIZATION'), 'flight')
+        error_message = _token[0]
+        if error_message:
+            result['status'] = 'Failed'
+            result['message'] = error_message
+            return HttpResponse(json.dumps(result), 'application/json')
 
         _params = check_validity_flight_params(request)
         error_message = _params[0]

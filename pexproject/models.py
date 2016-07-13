@@ -246,6 +246,18 @@ class Hotel(models.Model):
     def __unicode__(self):
         return self.name
 
+class Token(models.Model):
+    token = models.CharField(max_length=100)
+    owner = models.IntegerField(default=0)
+    limit_hotel_search = models.IntegerField(default=0)
+    limit_flight_search = models.IntegerField(default=0)
+    run_hotel_search = models.IntegerField(default=0)
+    run_flight_search = models.IntegerField(default=0)
+    allowed_domain = models.CharField(max_length=150)
+
+    def __unicode__(self):
+        # return self.owner.name
+        return self.token
 
 class UserAlert(models.Model):
     alertid = models.AutoField(primary_key=True)
