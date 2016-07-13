@@ -2349,7 +2349,7 @@ def check_validity_flight_params(request):
     destination = params.get('destination')
     depart_date = params.get('depart_date')
     return_date = params.get('return_date')
-    search_type = params.get('search_type')
+    search_type = params.get('search_type', '')
     flight_class = params.get('class')
     mile_low = params.get('mile_low') or '0'
     mile_high = params.get('mile_high') or '1000000'
