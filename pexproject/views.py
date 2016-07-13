@@ -20,8 +20,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.context_processors import csrf
 from django.views.decorators.csrf import requires_csrf_token
-from pexproject.models import Flightdata, Airports, Searchkey, User,Pages,UserAlert,Contactus,Adminuser,EmailTemplate,GoogleAd
-from pexproject.models import Blogs,BlogImages,CityImages,Search,FlexibleDateSearch, Hotel
+from pexproject.models import *
 from pexproject.templatetags.customfilter import floatadd, assign
 from django.contrib.auth import login as social_login,authenticate,get_user
 from django.contrib.auth import logout as auth_logout
