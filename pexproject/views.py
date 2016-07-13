@@ -2392,7 +2392,7 @@ def check_validity_flight_params(request):
     
     flight_class = FLIGHT_CLASS[flight_class]
 
-    return ['', return_date, origin, destination, depart_date, search_type, flight_class, mile_low, mile_high, airlines, depart_from, depart_to, arrival_from, arrival_to]
+    return ['', return_date, str(origin), str(destination), depart_date, search_type, flight_class, mile_low, mile_high, airlines, depart_from, depart_to, arrival_from, arrival_to]
 
 @csrf_exempt
 def api_search_flight(request):
