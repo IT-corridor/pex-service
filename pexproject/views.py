@@ -2356,7 +2356,7 @@ def check_validity_flight_params(request):
     destination = params.get('destination')
     depart_date = params.get('depart_date')
     return_date = params.get('return_date')
-    search_type = params.get('search_type', '') # consider
+    search_type = params.get('search_type', 'exactdate')
     flight_class = params.get('class')
     mile_low = params.get('mile_low') or '0'
     mile_high = params.get('mile_high') or '1000000'
@@ -2396,7 +2396,10 @@ def check_validity_flight_params(request):
 
     if not(is_time(depart_from) and is_time(depart_to) and is_time(arrival_from) and is_time(arrival_to)):
         return ['Please check filter time for depart and arrival again. They should be in format(13:45:30).']
-        
+
+    if search_type not in ['exactdate', 'flexibledate']:
+        return ['search_type should be "exactdate" or "flexibledate"']
+
     if flight_class not in FLIGHT_CLASS.keys():
         return ['Flight class is not correct. It should be one of economy, business, firstclass.']
     
