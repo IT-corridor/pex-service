@@ -6,6 +6,13 @@ $.fn.stars = function() {
 	});
 }
 
+function search_hotel_get(place)
+{
+	$('.pl5').html(place);
+	$("#loading-model").modal('show');
+	location.href = '/search_hotel/?place='+place;
+}
+
 function search_hotel()
 {
 	var place = $('#id_place').val().trim();
@@ -22,6 +29,8 @@ function search_hotel()
 		$('#id_checkout').focus();
 		return false;		
 	}
+	$('.pl5').html(place);
+	$("#loading-model").modal('show');
 	$('#search-form').submit();
 }
 

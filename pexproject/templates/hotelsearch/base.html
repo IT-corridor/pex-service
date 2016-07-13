@@ -84,6 +84,68 @@
 
       {% block content %}
       {% endblock %}
+      <div class="modal fade" id="loading-model" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"  data-backdrop="static">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="nopadding text-center loading-text" id="">
+              <span id="loading-info" style="font-size: 20px;"></span>
+            </div>
+            <div class="modal-body">
+
+              <div class="row">
+                <div class="col-sm-7 col-sm-push-5 col-xs-12 login-section">
+                  <center>
+                    <b>
+                    <sapn class="pr5">
+                      Hotels &nbsp;&nbsp;in 
+                    </sapn><span class="pl5"></span>
+                    <br>
+                    <h4><strong>Want an email when the price tanks?</strong>
+                    <br>
+                    <small>This will not interfere with your search.</small></h4>
+                  </center>
+                  <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active">
+                      <p id="subs_msg"></p>
+
+                      <form class="modelform">
+                        {% csrf_token %}
+
+                        <div class="form-group">
+                          <input type="email" id="subscription_email" class="form-control" placeholder="Email" name="username" required >
+                        </div>
+                        <div class="checkbox">
+                          <label>
+                            <input type="checkbox" id="pexdeals" name="pexdeals" value="1">
+                            Email me news and deals from PEX+</label>
+                        </div>
+
+                        <div class="form-group text-center">
+                          <span type="submit" class="btn btn-info" id="subscribe">Subscribe</span>
+                        </div>
+                        <hr>
+
+                      </form>
+                    </div>
+
+                  </div>
+                </div>
+                <div class="col-sm-5 col-sm-pull-7 col-xs-12">
+                  <div id="loading" align="center">
+                    
+                    <h4 class="mvt10px hidden-xs">
+                      Hang on a minute while we fetch your search results...
+                    </h4>
+                    
+                    <img id="loading-image" src="{% static 'img/loading-hotel.gif' %}" alt="Loading..." />
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
         <footer class="container-fluid nopadding container-footer">
         <div class="container footer-custome">
