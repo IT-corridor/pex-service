@@ -985,7 +985,6 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin):
     searchkeyid = ''
     returnkey = ''
 
-
     ongnidlist =  orgnid.split(',')
     destlist = destid.split(',')
     departlist = depart.split(',')
@@ -2028,8 +2027,6 @@ def multicity(request):
     return render_to_response('flightsearch/multicity.html', context_instance=RequestContext(request)) 
         
     
-# api search flight
-
 # hotels views  
 
 def hotels(request):
@@ -2057,7 +2054,7 @@ HOTEL_CHAINS = {
 def __debug(message):
     '''check the place'''
     try:
-        DEV_LOCAL = False
+        DEV_LOCAL = True
         DEBUG = True
         log_path = 'hotel_place_log' if DEV_LOCAL else '/home/upwork/hotel_place_log'
         sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
@@ -2074,64 +2071,72 @@ def is_number(s):
     try:
         float(s)
         return True
-    except ValueError:
+    except Exception:
         return False
 
-def is_date(date_text):
-    if not date_text:
-        return True
+def is_date(date_text, date_format='%Y-%m-%d'):
     try:
-        dttime.strptime(date_text, '%Y-%m-%d')
-        return True
-    except ValueError:
+        parsed_date = dttime.strptime(date_text, date_format).date()
+        return parsed_date >= dttime.today().date()
+    except Exception:
         return False
+
+def check_validity_hotel_params(request):
+    '''
+    check validity of params for hotel from the request
+    return 
+        valid: ['', return_date, origin, destination, depart_date, search_type, flight_class]
+        invalid: [error_message]
+    '''
+    # check the header
+    # token = request.META['HTTP_AUTHORIZATION'].split(' ')[1]
+    http_accept = request.META['HTTP_ACCEPT']
+    content_type = request.META['CONTENT_TYPE']
+
+    # check the body
+    params = json.loads(request.body)
+
+    place = params.get('place')
+    checkin = params.get('checkin')
+    checkout = params.get('checkout')
+    price_low = params.get('price_low')
+    price_high = params.get('price_high')
+    award_low = params.get('award_low')
+    award_high = params.get('award_high')
+    radius = params.get('radius') or 1000
+    chain = params.get('hotel_chain') or HOTEL_CHAINS.keys()
+
+    if http_accept != 'application/json' or content_type != 'application/json':
+        return ['Content type  is incorrect']
+
+    if not place:
+        return ['Search place should be provided']
+
+    if not (is_date(checkin) and is_date(checkout)):
+        return ['Checkin and checkout date should be provided and be in format(2016-07-17)']
+
+    if not (is_number(price_low) and is_number(price_high) and is_number(award_low) and is_number(award_high) and is_number(radius)):
+        return  ['Filter parameters should be number']
+
+    filters = {'price_low':price_low, 'price_high':price_high, 'award_low':award_low, 'award_high':award_high, 'radius': float(radius), 'chain': chain }
+    return ['', place, checkin, checkout, filters]
 
 @csrf_exempt
 def api_search_hotel(request):
     if request.method == 'POST':        
-        params = json.loads(request.body)
-        # token = request.META['HTTP_AUTHORIZATION'].split(' ')[1]
-        http_accept = request.META['HTTP_ACCEPT']
-        content_type = request.META['CONTENT_TYPE']
-
         result = {}
+        _params = check_validity_hotel_params(request)
 
-        if http_accept != 'application/json' or content_type != 'application/json':
+        error_message = _params[0]
+        if error_message:
             result['status'] = 'Failed'
-            result['message'] = 'Content type  is incorrect'
+            result['message'] = error_message
             return HttpResponse(json.dumps(result), 'application/json')
 
-        place = params.get('place')
-        if not place:
-            result['status'] = 'Failed'
-            result['message'] = 'Search place should be provided'
-            return HttpResponse(json.dumps(result), 'application/json')
+        # _result = _search_hotel(place, checkin, checkout, filters)
+        _result = _search_hotel(_params[1], _params[2], _params[3], _params[4])
 
-        checkin = params.get('checkin')
-        checkout = params.get('checkout')
-        if not (is_date(checkin) and is_date(checkout)):
-            result['status'] = 'Failed'
-            result['message'] = 'Checkin and checkout date should be in format(2016-07-17)'
-            return HttpResponse(json.dumps(result), 'application/json')
-
-        price_low = params.get('price_low')
-        price_high = params.get('price_high')
-        award_low = params.get('award_low')
-        award_high = params.get('award_high')
-        radius = params.get('radius') or 1000
-
-        if not (is_number(price_low) and is_number(price_high) and is_number(award_low) and is_number(award_high) and is_number(radius)):
-            result['status'] = 'Failed'
-            result['message'] = 'Filter parameters should be number'
-            return HttpResponse(json.dumps(result), 'application/json')
-
-        chain = params.get('hotel_chain') or HOTEL_CHAINS.keys()
-
-        filters = {'price_low':price_low, 'price_high':price_high, 'award_low':award_low, 'award_high':award_high, 'radius': float(radius), 'chain': chain }
-
-        _result = _search_hotel(place, checkin, checkout, filters)
         error_message = _result[0]
-
         if error_message:
             result['status'] = 'Failed'
             result['message'] = error_message
@@ -2139,12 +2144,11 @@ def api_search_hotel(request):
             db_hotels, price_matrix, filters = _result[1], _result[2], _result[3]
             result['status'] = 'Success'
             result['price_matrix'] = price_matrix
-            result['filters'] = filters
+            # result['filters'] = filters
             result['hotels'] = [model_to_dict(item) for item in db_hotels]
 
         return HttpResponse(json.dumps(result), 'application/json')
         
-            
 def _search_hotel(place, checkin, checkout, filters):
     '''
     search hotels upon arguments
@@ -2197,7 +2201,6 @@ def _search_hotel(place, checkin, checkout, filters):
             # delete empty search including spam search
             if not Hotel.objects.filter(search=search):
                 search.delete()
-
             return ['There is no hotel in the place. Please check fields again.']      
 
         for hotel in hotels:
@@ -2258,7 +2261,7 @@ def _search_hotel(place, checkin, checkout, filters):
         Q(points_rate=0.0)|Q(points_rate__gte=award_low))
 
     # get price matrix
-    # '-' if none for points, '' if none for price
+    # '-' if none
     price_matrix = {}
     for item in HOTEL_CHAINS:
         price_min = db_hotels.filter(chain__contains=item).filter(~Q(cash_rate=0.0)).aggregate(Min('cash_rate'))['cash_rate__min']
@@ -2275,11 +2278,8 @@ def search_hotel(request):
     if request.method == 'POST':
         form = HotelSearchForm(request.POST)
         if not form.is_valid():
-            # for completeness
             return render(request, 'hotelsearch/hotel_result.html', {'hotels': [], 'form': form, 'price_matrix': {}, 'filters': {}})
         place = form.cleaned_data['place']
-        __debug( '##### place from POST: %s\n' % place )
-        # __debug( '##### POST data: %s\n\n' % str(request.POST) )
         checkin = form.cleaned_data['checkin']
         checkout = form.cleaned_data['checkout']
         filters = {'price_low':request.POST.get('price_low'), 'price_high':request.POST.get('price_high'), 'award_low':request.POST.get('award_low'), 'award_high':request.POST.get('award_high'), 'radius':int(request.POST.get('radius', 1000)), 'chain':request.POST.getlist('hotel_chain', HOTEL_CHAINS.keys())}
@@ -2295,6 +2295,7 @@ def search_hotel(request):
         filters = {'price_low':'', 'price_high':'', 'award_low':'', 'award_high':'', 'radius': 1000, 'chain': HOTEL_CHAINS.keys()}
 
     result = _search_hotel(place, checkin, checkout, filters)
+
     error_message = result[0]
     if error_message:
         form.errors['Error: '] = error_message
@@ -2322,3 +2323,117 @@ def parse_place(place):
     for item in replacement:
         place = place.replace(item, replacement[item])
     return place
+
+FLIGHT_CLASS = {
+    'economy': 'maincabin',
+    'business': 'firstclass',
+    'firstclass': 'business'
+}
+
+def check_validity_flight_params(request):
+    '''
+    check validity of params for flight from the request
+    return 
+        valid: ['', return_date, origin, destination, depart_date, search_type, flight_class]
+        invalid: [error_message]
+    '''
+    # check the header
+    # token = request.META['HTTP_AUTHORIZATION'].split(' ')[1]
+    http_accept = request.META['HTTP_ACCEPT']
+    content_type = request.META['CONTENT_TYPE']
+
+    # check the body
+    params = json.loads(request.body)
+
+    origin = params.get('origin')
+    destination = params.get('destination')
+    depart_date = params.get('depart_date')
+    return_date = params.get('return_date')
+    search_type = params.get('search_type')
+    flight_class = params.get('class')
+    mile_low = params.get('mile_low') or '0'
+    mile_high = params.get('mile_high') or '1000000'
+    airlines = params.get('airlines') or ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']
+    depart_from = params.get('depart_from') or '00:00:00'
+    depart_to = params.get('depart_to') or '23:59:59'
+    arrival_from = params.get('arrival_from') or '00:00:00'
+    arrival_to = params.get('arrival_to') or '23:59:59'
+
+    if http_accept != 'application/json' or content_type != 'application/json':
+        return ['Content type  is incorrect']
+
+    if not (origin and destination):
+        return ['Flight origin and destination should be provided']
+
+    origin = Airports.objects.filter(Q(code__istartswith=origin)|Q(cityName__istartswith=origin)|Q(name__istartswith=origin))
+    destination = Airports.objects.filter(Q(code__istartswith=destination)|Q(cityName__istartswith=destination)|Q(name__istartswith=destination))
+    if not (origin and destination):
+        return ['Please check flight origin and destination again. There is no such place']
+
+    origin = origin[0].airport_id
+    destination = destination[0].airport_id
+
+    if not is_date or not is_date(depart_date, '%m/%d/%Y'):
+        return ['Depart date should be provided as valid date and should be in format(07/18/2016)']
+
+    if return_date and not is_date(return_date, '%m/%d/%Y'):
+        return ['Return date should be provided as valid date and should be in format(07/18/2016)']
+
+    if return_date:
+        _depart_date = dttime.strptime(depart_date, "%m/%d/%Y").date()
+        _return_date = dttime.strptime(return_date, "%m/%d/%Y").date()
+
+        # check date range
+        if _depart_date > _return_date:
+            return ['Depart date or return date is not correct. Please set it properly.']      
+
+    if flight_class not in FLIGHT_CLASS.keys():
+        return ['Flight class is not correct. It should be one of economy, business, firstclass.']
+    
+    flight_class = FLIGHT_CLASS[flight_class]
+
+    return ['', return_date, origin, destination, depart_date, search_type, flight_class, mile_low, mile_high, airlines, depart_from, depart_to, arrival_from, arrival_to]
+
+@csrf_exempt
+def api_search_flight(request):
+    if request.method == 'POST':
+        delay_threshold = 30
+        result = {}
+
+        _params = check_validity_flight_params(request)
+        error_message = _params[0]
+        if error_message:
+            result['status'] = 'Failed'
+            result['message'] = error_message
+            return HttpResponse(json.dumps(result), 'application/json')
+
+        # get valid parameters
+        return_date, origin, destination, depart_date, search_type, flight_class, mile_low, mile_high, airlines, depart_from, depart_to, arrival_from, arrival_to = _params[1], _params[2], _params[3], _params[4], _params[5], _params[6], _params[7], _params[8], _params[9], _params[10], _params[11], _params[12], _params[13]
+
+        keys = _search(return_date, origin, destination, depart_date, search_type, flight_class)
+        while(1):
+            delay_threshold = delay_threshold - 1
+            print delay_threshold
+            time.sleep(1)
+            # check the status of the scraping
+            scrape_status = _check_data(keys['departkey'], keys['returnkey'], flight_class, '')
+            if scrape_status[1] == 'completed' or not delay_threshold:
+                break
+
+        kwargs = {
+            'searchkeyid': keys['departkey'], 
+            '{0}__range'.format(flight_class):(mile_low, mile_high),
+            'datasource__in': airlines,
+            'departure__range': (depart_from, depart_to),
+            'arival__range': (arrival_from, arrival_to)
+        }
+
+        __debug('## filters for flight api: %s\n' % str(kwargs)) 
+        flights = Flightdata.objects.filter(**kwargs)
+
+        result['status'] = 'Success'
+        result['filters'] = kwargs#filters
+        result['flights'] = [model_to_dict(item) for item in flights]
+        # result['price_matrix'] = price_matrix
+
+        return HttpResponse(json.dumps(result), 'application/json')
