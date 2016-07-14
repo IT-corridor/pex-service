@@ -142,6 +142,7 @@ class User(AbstractBaseUser):
     usercode = models.CharField(max_length=20)
     user_code_time = models.DateTimeField()
     pexdeals = models.BooleanField(default=False)
+    level = models.IntegerField(default=0)
     USERNAME_FIELD = 'username'
     REQUIRED_FIELD = ['username']    
     objects =  UserManager()
@@ -254,6 +255,10 @@ class Token(models.Model):
     run_hotel_search = models.IntegerField(default=0)
     run_flight_search = models.IntegerField(default=0)
     allowed_domain = models.CharField(max_length=150)
+    number_update = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now=True)
+    notes = models.TextField(null=True, blank=True)
+    closed_at = models.DateTimeField(null=True)
 
     def __unicode__(self):
         # return self.owner.name
