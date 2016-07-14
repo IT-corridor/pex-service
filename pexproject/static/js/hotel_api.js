@@ -6,9 +6,20 @@ $.fn.stars = function() {
 	});
 }
 
+var hotel_chains = ["IHG Rewards Club", "Starwood Preferred Guest", "Hilton HHonors", "Choice Privileges", "Club Carlson", "Marriott Rewards", "Hyatt Gold Passport", "Le Club Accor", "Wyndham Rewards"];
+
+var i = 0;		
+
+function loading() {
+	$('#loading-info').empty();
+	$('#loading-info').append('Searching  '+hotel_chains[i]+' Chains ...');
+	i = (i+1) % hotel_chains.length;
+}
+
 function search_hotel_get(place)
 {
 	$('.pl5').html(place);
+	refresh_hotel_chain = setInterval(loading, 3000);	
 	$("#loading-model").modal('show');
 	location.href = '/search_hotel/?place='+place;
 }
@@ -30,6 +41,7 @@ function search_hotel()
 		return false;		
 	}
 	$('.pl5').html(place);
+	refresh_hotel_chain = setInterval(loading, 3000);	
 	$("#loading-model").modal('show');
 	$('#search-form').submit();
 }
