@@ -68,65 +68,6 @@ def error(request):
     Http404("Poll does not exist")
     return  render_to_response('flightsearch/admin/index.html', context_instance=RequestContext(request))
 '''
-def Admin(request):
-    context = {}
-    return  render_to_response('flightsearch/admin/index.html', context_instance=RequestContext(request))
-
-def adminlogin(request):
-    context = {}
-    if request.POST:
-        username = request.REQUEST['admin_user']
-        password = request.REQUEST['admin_password']
-        
-        try:
-        
-            adminuser = Adminuser.objects.get(username=username, password=password)
-            
-            request.session['admin'] = username
-            request.session['admin_name'] = adminuser.name
-            return HttpResponseRedirect('dashboard')
-            
-        except:
-            currentpage = "/Admin?message=invalid"
-            return HttpResponseRedirect(currentpage)
-    else:
-        return render_to_response('flightsearch/admin/admin_dashboard.html', context_instance=RequestContext(request))
-        
-def adminlogout(request):
-    context = {}
-    if 'admin' in request.session:
-        del request.session['admin']  
-    return HttpResponseRedirect(reverse('Admin'))
-
-
-def pages(request):
-    pagelist = Pages.objects.filter()
-    return render_to_response('flightsearch/admin/pages.html',{'pagelist':pagelist}, context_instance=RequestContext(request))
-def manage_page(request):
-    if 'pageid' in request.GET:
-        page = Pages.objects.get(pk=request.GET.get('pageid',''))
-    if request.POST and 'pageid' in request.REQUEST:
-        page = Pages()
-        #page = Pages.objects.get(pk=request.REQUEST['pageid'])
-        page.pageid = request.REQUEST['pageid']
-        page.page_name = request.REQUEST['pagename']
-        page.page_path = request.REQUEST['pagename']
-        page.top_content = request.REQUEST['top_content']
-        page.page_text = request.REQUEST['page_content']
-        page.placeholder = request.REQUEST['palceholder']
-        page.save()
-        return HttpResponseRedirect(reverse('pages'))
-    return render_to_response('flightsearch/admin/manage_pages.html',{'page':page}, context_instance=RequestContext(request))
-def dashboard(request):
-    context = {}  
-    return  render_to_response('flightsearch/admin/admin_dashboard.html', context_instance=RequestContext(request))
-def emailTemplate(request):
-    context = {}
-    if 'admin' in request.session:
-        emailtemplate = EmailTemplate.objects.filter()
-        return  render_to_response('flightsearch/admin/email_template.html',{'emaillist':emailtemplate}, context_instance=RequestContext(request))
-    else:
-        return HttpResponseRedirect(reverse('/Admin'))
 
 def get_cityname(request):
     if request.is_ajax():
@@ -150,223 +91,6 @@ def get_cityname(request):
     mimetype = 'application/json'
     return HttpResponse(data, mimetype)
 
-def cityimages(request):
-    context = {}
-    if 'admin' in request.session:
-        city_image_list = CityImages.objects.filter()
-        return  render_to_response('flightsearch/admin/city_image_listing.html',{'city_image_list':city_image_list}, context_instance=RequestContext(request))
-
-def manageCityImage(request):
-    context = {}
-    cityimage = ''
-    citylist = Airports.objects.filter()
-    currentdatetime = datetime.datetime.now()
-    curr_time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
-    if 'cityimageid' in request.GET:
-        imageid = request.GET['cityimageid']
-        cityimage = CityImages.objects.get(pk = imageid)
-    if request.POST :
-        
-        cityimage = CityImages()
-        if 'img_path' in request.POST:
-            cityimage.image_path = request.POST['img_path']
-        if 'cityname' in request.POST:
-            cityimage.city_name = request.POST['cityname']
-        if 'status' in request.POST:
-            cityimage.status = request.POST['status']
-        cityimage.last_updated = str(curr_time) 
-        page = ''
-        if 'imageid' in request.POST:
-            cityimage.city_image_id = request.POST['imageid']
-            page = '/Admin/cityimages?msg=Record Updated Successfully'
-            
-        else:
-            page = '/Admin/cityimages?msg=Record Added Successfully'
-            
-        cityimage.save()
-        return HttpResponseRedirect(page)
-       
-    return render_to_response('flightsearch/admin/manage_city_image.html',{'cityimage':cityimage,'citylist':citylist}, context_instance=RequestContext(request))
-        
-    
-def adimage(request):
-    context = {}
-    image_list = GoogleAd.objects.filter()
-    return  render_to_response('flightsearch/admin/ad_image.html',{'imagelist':image_list}, context_instance=RequestContext(request))
-
-def manage_adimage(request):
-    context = {}
-    image_list = GoogleAd.objects.filter()
-    image_path_list=[]
-    if request.is_ajax():
-        i= 0
-        for file in request.FILES.getlist('image[]'):
-            t = time.time()
-            if '.' in str(t):
-                t = str(t).replace('.','')
-            directory = os.path.join(os.path.dirname(os.path.abspath(__file__)))
-            img = str(t)+str(file)
-            img_fol = '/static/flightsearch/uploads/'
-            path = directory+img_fol+img
-            
-            dest = open(path, 'wb+')
-            if file.multiple_chunks:
-                for c in file.chunks():
-                    dest.write(c)
-                    dbpath = img
-                    image_path_list.append(dbpath)
-            #obj = GoogleAd()
-            #obj.image_path = img_fol+img
-            #obj.save()
-            dest.close()
-        mimetype = 'application/json'
-        data = json.dumps(image_path_list)
-        return HttpResponse(data, mimetype)
-    if request.POST and not request.is_ajax():
-        image_path = request.REQUEST['img_path']
-        img_path_arr = image_path.split('|')
-        for i in range(0,len(img_path_arr)):
-            obj = GoogleAd()
-            obj.image_path = img_path_arr[i]
-            if 'imageid' in request.REQUEST:
-               obj.ad_id =  request.REQUEST['imageid']
-            obj.google_code = request.REQUEST['google_code']
-            obj.ad_code = request.REQUEST['ad_code']
-            obj.save()
-        return HttpResponseRedirect(reverse('adimage'))
-    if 'action' in request.GET:
-        action = request.GET.get('action','')
-        if action == 'add' or action == 'edit':
-            imageobj=''
-            if 'imageid' in request.GET:
-                imageobj = GoogleAd.objects.get(pk=request.GET.get('imageid',''))
-            return render_to_response('flightsearch/admin/manage_image.html',{'imageobj':imageobj}, context_instance=RequestContext(request))
-        else:
-            if action == 'delete' and 'imageid' in request.GET:
-                GoogleAd.objects.get(pk=request.GET.get('imageid','')).delete()
-                return HttpResponseRedirect(reverse('adimage'))
-    return  render_to_response('flightsearch/admin/ad_image.html',{'imagelist':image_list}, context_instance=RequestContext(request))
-
-def bloglist(request):
-    context = {}
-    if 'admin' in request.session:
-    	bloglist=''
-    	bloglist = Blogs.objects.filter()
-    	return render_to_response('flightsearch/admin/bloglist.html',{'bloglist':bloglist}, context_instance=RequestContext(request))
-    else:
-        return HttpResponseRedirect(reverse('Admin'))
-
-@csrf_exempt
-def manageblogImage(request):
-    for file in request.FILES.getlist('upload'):        
-        t = time.time()
-        if '.' in str(t):
-            t = str(t).replace('.','')
-        directory = os.path.join(os.path.dirname(os.path.abspath(__file__)))
-        img = str(t)+str(file)
-        img_fol = '/static/flightsearch/uploads/'
-        path = directory+img_fol+img
-        print path
-        dest = open(path, 'wb+')
-  	CKEditorFuncNum =''
-    if 'CKEditorFuncNum' in request.GET: 
-        CKEditorFuncNum = request.REQUEST['CKEditorFuncNum']
-        if file.multiple_chunks:
-            dbpath = ''
-            for c in file.chunks():
-                dest.write(c)
-                dbpath = img
-                image = BlogImages()
-                image.user_id = "1"
-                image.image_path = dbpath
-                imgpath1 = img_fol+dbpath
-                image.save()
-        	message = '' ;
-          
-            #: 'var cke_ob = window.parent.CKEDITOR; for(var ckid in cke_ob.instances) { if(cke_ob.instances[ckid].focusManager.hasFocus) break;} cke_ob.instances[ckid].insertHtml(\'<audio src="'+ $url .'" controls></audio>\', \'unfiltered_html\'); alert("'. $msg .'"); var dialog = cke_ob.dialog.getCurrent();  dialog.hide();';
-            return render_to_response('flightsearch/admin/ajaxresponse.html',{"CKEditorFuncNum":CKEditorFuncNum,"message":message,"imgpath":imgpath1})
-	    
-
-    
-    
-def manageBlog(request):
-    context = {}
-    if request.POST:
-        currentdatetime = datetime.datetime.now()
-    	curr_time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
-        url_date = currentdatetime.strftime('%m-%Y')
-        blog = Blogs()
-	
-    	if 'blogid' in request.POST:
-    	    blog.blog_id = request.POST['blogid']
-    	blog.blog_url = request.POST['blog_url']
-    	blog.blog_title = request.POST['blog_title']
-    	blog.blog_content = request.POST['blog_content']
-    	blog.blog_meta_key = request.POST['metakey']
-    	blog.blog_meta_Description = request.POST['meta_description']
-        
-    	if 'img_path' in request.POST:
-    	    blog.blog_image_path = request.REQUEST['img_path']
-        blog.blog_updated_time = str(curr_time)
-    
-        if 'blog_created_time' in request.POST:
-            blog.blog_created_time = request.POST['blog_created_time']
-        else:
-            blog.blog_created_time = str(curr_time)
-        if 'createdby' in request.POST:
-            blog.blog_creator = request.POST['createdby']
-    	elif 'admin' in request.session:
-    	    blog.blog_creator = request.session['admin_name']
-    	if 'status' in request.POST:
-    	    blog.blog_status = request.POST['status']
-    	if 'position' in request.POST:
-    	    blog.blog_position = request.POST['position']
-    	    Blogs.objects.filter(blog_created_time__lte = str(curr_time)).update(blog_position=False)
-        try:
-            blog.save()
-    	    page = ''
-    	    if "blogid" in request.POST:
-                page = '/Admin/bloglist?msg=Blog Edited Successfully'
-    	    else:
-    	   	page = '/Admin/bloglist?msg=Blog Added Successfully'
-            return HttpResponseRedirect(page)
-        except:
-            page = '/Admin/bloglist?msg=There is some technical problem'
-            return HttpResponseRedirect(page)
-    blog = ''
-    if 'blogid' in request.GET:       
-    	blogid = request.GET.get('blogid','')
-    	blog = Blogs.objects.get(pk=blogid)
-	if 'action' in request.GET and request.GET.get('action','') == 'delete':
-	    blog.delete()
-	    page = '/Admin/bloglist?msg=Blog Deleted Successfully'
-	    return HttpResponseRedirect(page)
-    return  render_to_response('flightsearch/admin/manageblog.html',{'blog':blog}, context_instance=RequestContext(request))
-
-
-
-def manageEmailTemplate(request):
-    context = {}
-    if request.POST:
-        subject = request.REQUEST['subject']
-        body = request.REQUEST['body']
-        placeholder = request.REQUEST['palceholder']
-        email = EmailTemplate()
-        email.subject = subject
-        email.body = body
-        email.email_code = request.REQUEST['emailcode']
-        email.template_id = request.REQUEST['templateid']
-        email.placeholder = placeholder
-        try:
-            email.save()
-            page = '/Admin/emailTemplate?msg=Record Edited Successfully'
-            return HttpResponseRedirect(page)
-        except:
-            page = '/Admin/dashboard?msg=There is some technical problem'
-            return HttpResponseRedirect(page)        
-    templateid = request.GET.get('templateid','')
-    templateobj = EmailTemplate.objects.get(pk=templateid)
-    return  render_to_response('flightsearch/admin/manage_email_template.html',{'templateobj':templateobj}, context_instance=RequestContext(request))
 
 def index(request):
     context = {}
@@ -2498,3 +2222,268 @@ def api_search_flight(request):
         # result['price_matrix'] = price_matrix
 
         return HttpResponse(json.dumps(result), 'application/json')
+
+# admin views
+@staff_member_required(login_url='/Admin/login/')
+def Admin(request):
+    return render(request, 'Admin/dashboard.html', {})
+
+@staff_member_required(login_url='/Admin/login/')
+def city_image(request):
+    city_images = CityImages.objects.all()
+    return render(request, 'Admin/city_image.html', {'city_images': city_images})
+
+def city_image_delete(request, id):
+    if request.is_ajax():        
+        CityImages.objects.get(city_image_id=id).delete()
+        return HttpResponse('success')
+    
+@staff_member_required(login_url='/Admin/login/')
+def city_image_update(request, id=None):
+    city_image = CityImages()
+    if id:
+        city_image = CityImages.objects.get(city_image_id=id)
+
+    if request.method == 'GET':
+        form = CityImageForm(initial=model_to_dict(city_image))
+    else:
+        form = CityImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            if form.cleaned_data['image_path']:
+                city_image.image_path = form.cleaned_data['image_path']
+            city_image.city_name = form.cleaned_data['city_name']
+            city_image.status = form.cleaned_data['status']
+            city_image.last_updated = dttime.now()
+            city_image.save()
+            return HttpResponseRedirect('/Admin/city_image/')
+
+    return render(request, 'Admin/city_image_form.html', {'form':form})
+
+@staff_member_required(login_url='/Admin/login/')
+def hotel(request):
+    hotels = Hotel.objects.all()
+    return render(request, 'Admin/hotel.html', {'hotels': hotels})
+
+def hotel_delete(request, id):
+    if request.is_ajax():        
+        Hotel.objects.get(id=id).delete()
+        return HttpResponse('success')
+
+@staff_member_required(login_url='/Admin/login/')    
+def hotel_update(request, id=None):
+    hotel = Hotel()
+    if id:
+        hotel = Hotel.objects.get(id=id)
+
+    if request.method == 'GET':
+        form = HotelForm(initial=model_to_dict(hotel))
+    else:
+        form = HotelForm(request.POST, request.FILES)
+        if form.is_valid():
+            hotel.prop_id = form.cleaned_data['prop_id']
+            hotel.name = form.cleaned_data['name']
+            hotel.brand = form.cleaned_data['brand']
+            hotel.chain = form.cleaned_data['chain']
+            hotel.lat = form.cleaned_data['lat']
+            hotel.lon = form.cleaned_data['lon']
+            hotel.img = form.cleaned_data['img']
+            hotel.url = form.cleaned_data['url']
+            hotel.cash_rate = form.cleaned_data['cash_rate']
+            hotel.points_rate = form.cleaned_data['points_rate']
+            hotel.star_rating = form.cleaned_data['star_rating']
+            hotel.save()
+            return HttpResponseRedirect('/Admin/hotel/')
+
+    return render(request, 'Admin/hotel_form.html', {'form':form})
+
+@staff_member_required(login_url='/Admin/login/')
+def email_template(request):
+    email_templates = EmailTemplate.objects.all()
+    return render(request, 'Admin/email_template.html', {'email_templates': email_templates})
+
+def email_template_delete(request, id):
+    if request.is_ajax():        
+        EmailTemplate.objects.get(template_id=id).delete()
+        return HttpResponse('success')
+
+@staff_member_required(login_url='/Admin/login/')    
+def email_template_update(request, id=None):
+    email_template = EmailTemplate()
+    if id:
+        email_template = EmailTemplate.objects.get(template_id=id)
+
+    if request.method == 'GET':
+        form = EmailTemplateForm(initial=model_to_dict(email_template))
+    else:
+        form = EmailTemplateForm(request.POST, request.FILES)
+        if form.is_valid():
+            email_template.email_code = form.cleaned_data['email_code']
+            email_template.subject = form.cleaned_data['subject']
+            email_template.body = form.cleaned_data['body']
+            email_template.placeholder = form.cleaned_data['placeholder']
+            email_template.save()
+            return HttpResponseRedirect('/Admin/email_template/')
+
+    return render(request, 'Admin/email_template_form.html', {'form':form})
+
+@staff_member_required(login_url='/Admin/login/')
+def static_page(request):
+    static_pages = Pages.objects.all()
+    return render(request, 'Admin/static_page.html', {'static_pages': static_pages})
+
+@staff_member_required(login_url='/Admin/login/')
+def google_ad(request):
+    google_ads = GoogleAd.objects.all()
+    return render(request, 'Admin/google_ad.html', {'google_ads': google_ads})
+
+def google_ad_delete(request, id):
+    if request.is_ajax():        
+        GoogleAd.objects.get(ad_id=id).delete()
+        return HttpResponse('success')
+
+@staff_member_required(login_url='/Admin/login/')    
+def google_ad_update(request, id=None):
+    google_ad = GoogleAd()
+    if id:
+        google_ad = GoogleAd.objects.get(ad_id=id)
+
+    if request.method == 'GET':
+        form = GoogleAdForm(initial=model_to_dict(google_ad))
+    else:
+        form = GoogleAdForm(request.POST, request.FILES)
+        if form.is_valid():
+            if form.cleaned_data['image_path']:
+                google_ad.image_path = form.cleaned_data['image_path']            
+            google_ad.ad_code = form.cleaned_data['ad_code']
+            google_ad.google_code = form.cleaned_data['google_code']
+            google_ad.save()
+            return HttpResponseRedirect('/Admin/google_ad/')
+
+    return render(request, 'Admin/google_ad_form.html', {'form':form})
+
+@staff_member_required(login_url='/Admin/login/')
+def customer(request):
+    customers = User.objects.all()
+    return render(request, 'Admin/customer.html', {'customers': customers})
+
+@staff_member_required(login_url='/Admin/login/')    
+def customer_update(request, id=None):
+    customer = User()
+    if id:
+        customer = User.objects.get(id=id)
+
+    if request.method == 'GET':
+        form = CustomerForm(initial=model_to_dict(customer))
+    else:
+        form = CustomerForm(request.POST)
+        if form.is_valid():
+            if form.cleaned_data['image_path']:
+                google_ad.image_path = form.cleaned_data['image_path']            
+            google_ad.ad_code = form.cleaned_data['ad_code']
+            google_ad.google_code = form.cleaned_data['google_code']
+            google_ad.save()
+            return HttpResponseRedirect('/Admin/google_ad/')
+
+    return render(request, 'Admin/customer_form.html', {'form':form})
+
+def customer_delete(request, id):
+    if request.is_ajax():        
+        User.objects.get(ad_id=id).delete()
+        return HttpResponse('success')
+
+@staff_member_required(login_url='/Admin/login/')
+def blog_list(request):
+    blog_list = Blogs.objects.all()
+    return render(request, 'Admin/blog_list.html', {'blog_list': blog_list})
+
+@staff_member_required(login_url='/Admin/login/')
+def blog_list_update(request, id=None):
+    blog_list = Blogs()
+    if id:
+        blog_list = Blogs.objects.get(blog_id=id)
+
+    if request.method == 'GET':
+        form = BlogForm(initial=model_to_dict(blog_list))
+    else:
+        form = BlogForm(request.POST, request.FILES)
+        if form.is_valid():
+            if form.cleaned_data['blog_image_path']:
+                blog_list.blog_image_path = form.cleaned_data['blog_image_path']
+            blog_list.blog_title = form.cleaned_data['blog_title']
+            blog_list.blog_url = form.cleaned_data['blog_url']      # needs to be considered
+            blog_list.blog_position = form.cleaned_data['blog_position']
+            blog_list.blog_content = form.cleaned_data['blog_content']
+            blog_list.blog_meta_key = form.cleaned_data['blog_meta_key']
+            blog_list.blog_meta_Description = form.cleaned_data['blog_meta_Description']
+            blog_list.blog_creator = 'Waff Jason'   # needs to be modified
+            blog_list.blog_status = form.cleaned_data['blog_status']
+            if not blog_list.blog_created_time:
+                blog_list.blog_created_time = dttime.now()
+            blog_list.blog_updated_time = dttime.now()
+            blog_list.save()
+            return HttpResponseRedirect('/Admin/blog_list/')
+
+    return render(request, 'Admin/blog_list_form.html', {'form':form})
+
+def blog_list_delete(request, id):
+    if request.is_ajax():        
+        Blogs.objects.get(blog_id=id).delete()
+        return HttpResponse('success')
+
+@staff_member_required(login_url='/Admin/login/')
+def token(request):
+    tokens = Token.objects.all()
+    return render(request, 'Admin/token.html', {'tokens': tokens})
+
+@staff_member_required(login_url='/Admin/login/')
+def token_update(request, id=None):
+    token = Token()
+    if id:
+        token = Token.objects.get(blog_id=id)
+
+    if request.method == 'GET':
+        form = TokenForm(initial=model_to_dict(token))
+    else:
+        form = TokenForm(request.POST, request.FILES)
+        if form.is_valid():
+            if form.cleaned_data['blog_image_path']:
+                blog_list.blog_image_path = form.cleaned_data['blog_image_path']
+            blog_list.blog_title = form.cleaned_data['blog_title']
+            blog_list.blog_url = form.cleaned_data['blog_url']      # needs to be considered
+            blog_list.blog_position = form.cleaned_data['blog_position']
+            blog_list.blog_content = form.cleaned_data['blog_content']
+            blog_list.blog_meta_key = form.cleaned_data['blog_meta_key']
+            blog_list.blog_meta_Description = form.cleaned_data['blog_meta_Description']
+            blog_list.blog_creator = 'Waff Jason'   # needs to be modified
+            blog_list.blog_status = form.cleaned_data['blog_status']
+            if not blog_list.blog_created_time:
+                blog_list.blog_created_time = dttime.now()
+            blog_list.blog_updated_time = dttime.now()
+            blog_list.save()
+            return HttpResponseRedirect('/Admin/blog_list/')
+
+    return render(request, 'Admin/token_form.html', {'form':form})
+
+def token_delete(request, id):
+    if request.is_ajax():        
+        Token.objects.get(id=id).delete()
+        return HttpResponse('success')
+
+def admin_login(request):
+    if request.method == 'GET':
+        return render(request, 'Admin/login.html', {})    
+    else:
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_active and user.is_staff:
+                login(request, user)
+
+    return HttpResponseRedirect('/Admin/')
+
+@staff_member_required(login_url='/Admin/login/')
+def admin_logout(request):
+    logout(request)
+    return HttpResponseRedirect('/Admin/')

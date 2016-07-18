@@ -1,0 +1,131 @@
+{% extends "Admin/base.html" %}
+{% load staticfiles %} 
+
+{% block extra_css %}
+    <link href="/static/Admin/vendors/summernote/dist/summernote.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    
+    <div class="card">
+        {{ form.errors}}
+        <form class="form-horizontal" role="form" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="card-header">
+                <h2>Hotel Form <small>Fill the form to add or update the hotel.</small></h2>
+            </div>
+            
+            <div class="card-body card-padding">
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Property ID</label>
+                    <div class="col-sm-10">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" id="id_prop_id" required name="prop_id" value="{{form.prop_id.value}}">
+                        </div>
+                    </div>
+                </div>                 
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Name</label>
+                    <div class="col-sm-10">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" id="id_name" required name="name" value="{{form.name.value}}">
+                        </div>
+                    </div>
+                </div>                 
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Brand</label>
+                    <div class="col-sm-10">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" id="id_brand" name="brand" value="{{form.brand.value}}">
+                        </div>
+                    </div>
+                </div>                 
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Hotel Chain</label>
+                    <div class="col-sm-10">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" id="id_chain" required name="chain" value="{{form.chain.value}}">
+                        </div>
+                    </div>
+                </div>                 
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Address</label>
+                    <div class="col-sm-10">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" id="id_address" name="address" value="{{form.address.value}}">
+                        </div>
+                    </div>
+                </div>                 
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Latitude</label>
+                    <div class="col-sm-10">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" id="id_lat" name="lat" value="{{form.lat.value}}">
+                        </div>
+                    </div>
+                </div>                 
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Longitude</label>
+                    <div class="col-sm-10">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" id="id_lon" name="lon" value="{{form.lon.value}}">
+                        </div>
+                    </div>
+                </div>                 
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Image Url</label>
+                    <div class="col-sm-10">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" id="id_img" name="img" value="{{form.img.value}}">
+                        </div>
+                    </div>
+                </div>                 
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Hotel Url</label>
+                    <div class="col-sm-10">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" id="id_url" required name="url" value="{{form.url.value}}">
+                        </div>
+                    </div>
+                </div>                 
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Price</label>
+                    <div class="col-sm-10">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" id="id_cash_rate" required name="cash_rate" value="{{form.cash_rate.value}}">
+                        </div>
+                    </div>
+                </div>                 
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Points</label>
+                    <div class="col-sm-10">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" id="id_points_rate" required name="points_rate" value="{{form.points_rate.value}}">
+                        </div>
+                    </div>
+                </div>                 
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Star Rating</label>
+                    <div class="col-sm-10">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" id="id_star_rating" required name="star_rating" value="{{form.star_rating.value}}">
+                        </div>
+                    </div>
+                </div>                 
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-9">
+                        <button type="submit" class="btn btn-primary btn-sm">{% if form.name.value %}Update Hotel {% else %} Add Hotel {% endif %}</button>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="/static/Admin/vendors/bower_components/autosize/dist/autosize.min.js"></script>
+    <script src="/static/Admin/vendors/summernote/dist/summernote-updated.min.js"></script>
+{% endblock %}        
