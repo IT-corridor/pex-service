@@ -47,6 +47,7 @@ from django.views.decorators.csrf import requires_csrf_token
 from django.contrib.auth import login as social_login,authenticate,get_user
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.html import strip_tags
@@ -2227,11 +2228,11 @@ def api_search_flight(request):
         return HttpResponse(json.dumps(result), 'application/json')
 
 # admin views
-@staff_member_required(login_url='/Admin/login/')
+@login_required(login_url='/Admin/login/')
 def Admin(request):
     return render(request, 'Admin/dashboard.html', {})
 
-@staff_member_required(login_url='/Admin/login/')
+@login_required(login_url='/Admin/login/')
 def city_image(request):
     city_images = CityImages.objects.all()
     return render(request, 'Admin/city_image.html', {'city_images': city_images})
@@ -2241,7 +2242,7 @@ def city_image_delete(request, id):
         CityImages.objects.get(city_image_id=id).delete()
         return HttpResponse('success')
     
-@staff_member_required(login_url='/Admin/login/')
+@login_required(login_url='/Admin/login/')
 def city_image_update(request, id=None):
     city_image = CityImages()
     if id:
@@ -2262,7 +2263,7 @@ def city_image_update(request, id=None):
 
     return render(request, 'Admin/city_image_form.html', {'form':form})
 
-@staff_member_required(login_url='/Admin/login/')
+@login_required(login_url='/Admin/login/')
 def hotel(request):
     hotels = Hotel.objects.all()
     return render(request, 'Admin/hotel.html', {'hotels': hotels})
@@ -2272,7 +2273,7 @@ def hotel_delete(request, id):
         Hotel.objects.get(id=id).delete()
         return HttpResponse('success')
 
-@staff_member_required(login_url='/Admin/login/')    
+@login_required(login_url='/Admin/login/')    
 def hotel_update(request, id=None):
     hotel = Hotel()
     if id:
@@ -2299,7 +2300,7 @@ def hotel_update(request, id=None):
 
     return render(request, 'Admin/hotel_form.html', {'form':form})
 
-@staff_member_required(login_url='/Admin/login/')
+@login_required(login_url='/Admin/login/')
 def email_template(request):
     email_templates = EmailTemplate.objects.all()
     return render(request, 'Admin/email_template.html', {'email_templates': email_templates})
@@ -2309,7 +2310,7 @@ def email_template_delete(request, id):
         EmailTemplate.objects.get(template_id=id).delete()
         return HttpResponse('success')
 
-@staff_member_required(login_url='/Admin/login/')    
+@login_required(login_url='/Admin/login/')    
 def email_template_update(request, id=None):
     email_template = EmailTemplate()
     if id:
@@ -2329,12 +2330,12 @@ def email_template_update(request, id=None):
 
     return render(request, 'Admin/email_template_form.html', {'form':form})
 
-@staff_member_required(login_url='/Admin/login/')
+@login_required(login_url='/Admin/login/')
 def static_page(request):
     static_pages = Pages.objects.all()
     return render(request, 'Admin/static_page.html', {'static_pages': static_pages})
 
-@staff_member_required(login_url='/Admin/login/')
+@login_required(login_url='/Admin/login/')
 def google_ad(request):
     google_ads = GoogleAd.objects.all()
     return render(request, 'Admin/google_ad.html', {'google_ads': google_ads})
@@ -2344,7 +2345,7 @@ def google_ad_delete(request, id):
         GoogleAd.objects.get(ad_id=id).delete()
         return HttpResponse('success')
 
-@staff_member_required(login_url='/Admin/login/')    
+@login_required(login_url='/Admin/login/')    
 def google_ad_update(request, id=None):
     google_ad = GoogleAd()
     if id:
@@ -2364,12 +2365,12 @@ def google_ad_update(request, id=None):
 
     return render(request, 'Admin/google_ad_form.html', {'form':form})
 
-@staff_member_required(login_url='/Admin/login/')
+@login_required(login_url='/Admin/login/')
 def customer(request):
     customers = User.objects.all()
     return render(request, 'Admin/customer.html', {'customers': customers})
 
-@staff_member_required(login_url='/Admin/login/')    
+@login_required(login_url='/Admin/login/')    
 def customer_update(request, id=None):
     customer = User()
     if id:
@@ -2394,12 +2395,12 @@ def customer_delete(request, id):
         User.objects.get(ad_id=id).delete()
         return HttpResponse('success')
 
-@staff_member_required(login_url='/Admin/login/')
+@login_required(login_url='/Admin/login/')
 def blog_list(request):
     blog_list = Blogs.objects.all()
     return render(request, 'Admin/blog_list.html', {'blog_list': blog_list})
 
-@staff_member_required(login_url='/Admin/login/')
+@login_required(login_url='/Admin/login/')
 def blog_list_update(request, id=None):
     blog_list = Blogs()
     if id:
@@ -2433,12 +2434,12 @@ def blog_list_delete(request, id):
         Blogs.objects.get(blog_id=id).delete()
         return HttpResponse('success')
 
-@staff_member_required(login_url='/Admin/login/')
+@login_required(login_url='/Admin/login/')
 def token(request):
     tokens = Token.objects.all()
     return render(request, 'Admin/token.html', {'tokens': tokens})
 
-@staff_member_required(login_url='/Admin/login/')
+@login_required(login_url='/Admin/login/')
 def token_update(request, id=None):
     token = Token()
     if id:
@@ -2486,7 +2487,7 @@ def admin_login(request):
 
     return HttpResponseRedirect('/Admin/')
 
-@staff_member_required(login_url='/Admin/login/')
+@login_required(login_url='/Admin/login/')
 def admin_logout(request):
     auth_logout(request)
     return HttpResponseRedirect('/Admin/')
