@@ -1,0 +1,125 @@
+{% extends "Admin/base.html" %}
+{% load staticfiles %} 
+
+{% block extra_css %}
+    <link href="/static/Admin/vendors/bootgrid/jquery.bootgrid.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>Customer List </h2>
+        </div>
+        <a class="btn btn-primary waves-effect" href="/Admin/customer/new/" style="margin-left: 25px;"><i class="zmdi zmdi-plus zmdi-hc-fw"></i>Add Customer</a>
+
+        <table id="data-table-command" class="table table-striped table-vmiddle">
+            <thead>
+                <tr>
+                    <td data-column-id="id" data-identifier="true" data-type="numeric" data-visible="false">ID</td>
+                    <th data-column-id="username" data-formatter="username">Username</th>
+                    <th data-column-id="first_name">First Name</th>
+                    <th data-column-id="middle_name" data-visible="false">Middle Name</th>
+                    <th data-column-id="last_name">Last Name</th>
+                    <th data-column-id="email">Email</th>
+                    <th data-column-id="birthday" data-visible="false">Birthday</th>
+                    <th data-column-id="gender" data-visible="false">Gender</th>
+                    <th data-column-id="phone" data-visible="false">Phone</th>
+                    <th data-column-id="lang" data-visible="false">Language</th>
+                    <th data-column-id="home">Home Airport</th>
+                    <th data-column-id="addres" data-visible="false">Address</th>
+                    <th data-column-id="last_login" data-visible="false">Last Login</th>
+                    <th data-column-id="level" data-visible="false">Level</th>
+                    <th data-column-id="commands" data-formatter="commands" data-sortable="false">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for item in customers %}
+                <tr>
+                    <td>{{item.id}}</td>
+                    <td>{{item.username}}</td>
+                    <td>{{item.first_name}}</td>
+                    <td>{{item.middlename}}</td>
+                    <td>{{item.last_name}}</td>
+                    <td>{{item.email}}</td>
+                    <td>{{item.date_of_birth}}</td>
+                    <td>{{item.gender}}</td>
+                    <td>{{item.phone}}</td>
+                    <td>{{item.language}}</td>
+                    <td>{{item.home_airport}}</td>
+                    <td>{{item.address1}}</td>
+                    <td>{{item.last_login}}</td>
+                    <td>{{item.level}}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>				
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="/static/Admin/vendors/bootgrid/jquery.bootgrid.updated.min.js"></script>
+    
+    <!-- Data Table -->
+    <script type="text/javascript">
+        $(document).ready(function(){
+            //Command Buttons
+            var grid = $("#data-table-command").bootgrid({
+                caseSensitive: false,
+                css: {
+                    icon: 'zmdi icon',
+                    iconColumns: 'zmdi-view-module',
+                    iconDown: 'zmdi-expand-more',
+                    iconRefresh: 'zmdi-refresh',
+                    iconUp: 'zmdi-expand-less'
+                },
+                formatters: {
+                    "commands": function(column, row) {
+                        return "<button type=\"button\" class=\"btn btn-icon command-edit waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-edit\"></span></button> " + 
+                            "<button type=\"button\" class=\"btn btn-icon command-delete waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-delete\"></span></button>";
+                    },
+                    "pix": function (column, row) {
+                        var img_url = row.img;
+                        if(!row.img)
+                            img_url = '/static/hotelsearch/img/hotels.jpg';
+
+                        return "<img src=\"" + img_url + "\" style=\"width:60px; height:60px;\"/>";
+                    },
+                    "username": function (column, row) {
+                        if(row.level == 0) 
+                            return "<button class=\"btn bgm-lightgreen waves-effect\">"+row.username+"</button>";
+                        else if(row.level == 1)
+                            return "<button class=\"btn bgm-lightblue waves-effect\">"+row.username+"</button>";
+                        else if(row.level == 3)
+                            return "<button class=\"btn bgm-pink waves-effect\">"+row.username+"</button>";
+                    }
+                }
+            }).on("loaded.rs.jquery.bootgrid", function() {
+                /* Executes after data is loaded and rendered */
+                grid.find(".command-edit").on("click", function(e)
+                {
+                    location.href = "/Admin/customer/"+$(this).data("row-id")+"/";
+                }).end().find(".command-delete").on("click", function(e) {
+                    var item_id = $(this).data("row-id");
+                    //Warning Message
+                    swal({   
+                        title: "Are you sure?",   
+                        text: "You will not be able to recover this item!",   
+                        type: "warning",   
+                        showCancelButton: true,   
+                        confirmButtonColor: "#DD6B55",   
+                        confirmButtonText: "Yes, delete it!",   
+                        closeOnConfirm: false 
+                    }, function(){   
+                        $.get('/Admin/customer/'+item_id+'/delete/')
+                        .success(function(data){
+                            swal({title:"Deleted!", text:"The user has been deleted.", type:"success"}, 
+                                function() { location.href = "/Admin/customer/"; });                             
+                        });
+                    });
+                });
+            });
+        });
+    </script>
+{% endblock %}

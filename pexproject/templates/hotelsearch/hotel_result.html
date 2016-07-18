@@ -19,14 +19,14 @@
 			</div>	
 			<form id="filter_form" action="/search_hotel/" method="post">
 				{% csrf_token %}
-	<!--         <div class="filter-lane">
-				<label>Number of Stars</label>
-				<div><input type="checkbox"> <span class="stars">5</span></label> </div>
-				<div><input type="checkbox"> <span class="stars">4</span></input> </div>
-				<div><input type="checkbox"> <span class="stars">3</span></input> </div>
-				<div><input type="checkbox"> <span class="stars">2</span></input> </div>
-				<div><input type="checkbox"> <span class="stars">1</span></input> </div>
-			</div> -->
+		        <div class="filter-lane">
+					<label>Number of Stars</label>
+					<div><input type="checkbox"> <span class="stars">5</span></label> </div>
+					<div><input type="checkbox"> <span class="stars">4</span></input> </div>
+					<div><input type="checkbox"> <span class="stars">3</span></input> </div>
+					<div><input type="checkbox"> <span class="stars">2</span></input> </div>
+					<div><input type="checkbox"> <span class="stars">1</span></input> </div>
+				</div>
 				<div class="filter-lane">
 					<label>Hotel Chains</label>
 					<div><input type="checkbox" name="hotel_chain" value="ihg" {% if 'ihg' in filters.chain %} checked="true" {% endif %}> IHG Rewards Club </input> </div>
@@ -201,14 +201,14 @@
 			</div>
 			<div class="col-sm-3 col-xs-5">
 				<a href="{{ hotel.url }}"><h4> {{ hotel.name }} </h4></a>
-				<!-- <span class="stars">3</span> -->
+				<div style="margin-bottom: 5px;"><span class="stars">3</span></div>
 				<a href="#" data-toggle="modal" class="share" data-target="#share-modal">share</a>
 			</div>
 			<div class="col-sm-3 wide">
 				{% if hotel.img %}
 					<img src="{{ hotel.img }}" class="img-hotel">
 				{% else %}
-					<img src="/static/img/hotels.jpg" class="img-hotel">
+					<img src="/static/hotelsearch/img/hotels.jpg" class="img-hotel">
 				{% endif %}
 			</div>
 			<div class="col-sm-3 wide">

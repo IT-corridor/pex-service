@@ -5,10 +5,7 @@ from django.conf import settings
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.static import static
 from django.conf.urls import handler404
-#from pexproject.views import error
 #from django.contrib import admin
-#admin.autodiscover()
-import views
 
 
 
@@ -25,22 +22,7 @@ urlpatterns = patterns('',
     url(r'^google4fcc5c6791037930$', lambda r: HttpResponse("google-site-verification: google4fcc5c6791037930.html")),
     #url(r'^webmaster', webmaster, name='webmaster'),
     #url(r'^ckeditor/', include('ckeditor_uploader.urls')),
-    url(r'^Admin/$', Admin, name='Admin'),
-    url(r'^Admin/adminlogin', adminlogin, name='adminlogin'),
-    url(r'^Admin/cityimages', cityimages, name='cityimages'),
-    url(r'^Admin/get_cityname', get_cityname, name='get_cityname'),
-    url(r'^Admin/manageCityImage', manageCityImage, name='manageCityImage'),
-    url(r'^Admin/adminlogout', adminlogout, name='adminlogout'),
-    url(r'^Admin/dashboard', dashboard, name='dashboard'),
-    url(r'^Admin/bloglist', bloglist, name='bloglist'),
-    url(r'^Admin/manageblogImage', manageblogImage, name='manageblogImage'),
-    url(r'^Admin/manageBlog', manageBlog, name='manageBlog'),
-    url(r'^Admin/manageEmailTemplate', manageEmailTemplate, name='manageEmailTemplate'),
-    url(r'^Admin/adimage', adimage, name='adimage'),
-    url(r'^Admin/manage_adimage', manage_adimage, name='manage_adimage'),
-    url(r'^Admin/pages', pages, name='pages'),
-    url(r'^Admin/manage_page', manage_page, name='manage_page'),
-    url(r'^Admin/emailTemplate',emailTemplate, name='emailTemplate'),
+    
     url(r'^subscribe', subscribe, name='subscribe'),
     url(r'^blog', blog, name='blog'),
     url(r'^blog/$', blog, name='blog'),
@@ -57,7 +39,49 @@ urlpatterns = patterns('',
     url(r'^logout', logout, name='logout'),
     url(r'^flights', flights, name='flights'),
 
-    url(r'^hotels', hotels, name='hotels'),
+    url(r'^Admin/$', Admin, name='Admin'),
+    url(r'^Admin/login/$', admin_login, name='admin_login'),
+    url(r'^Admin/logout', admin_logout, name='admin_logout'),
+    
+    url(r'^Admin/email_template/$', email_template, name='email_template'),
+    url(r'^Admin/email_template/new/$', email_template_update, name='email_template_new'),
+    url(r'^Admin/email_template/(?P<id>\d+)/$', email_template_update, name='email_template_update'),
+    url(r'^Admin/email_template/(?P<id>\d+)/delete/$', email_template_delete, name='email_template_delete'),
+
+    url(r'^Admin/static_page/$', static_page, name='static_page'),
+
+    url(r'^Admin/city_image/$', city_image, name='city_image'),
+    url(r'^Admin/city_image/new/$', city_image_update, name='city_image_new'),
+    url(r'^Admin/city_image/(?P<id>\d+)/$', city_image_update, name='city_image_update'),
+    url(r'^Admin/city_image/(?P<id>\d+)/delete/$', city_image_delete, name='city_image_delete'),
+    url(r'^Admin/get_cityname', get_cityname, name='get_cityname'),
+
+    url(r'^Admin/hotel/$', hotel, name='hotel'),
+    url(r'^Admin/hotel/new/$', hotel_update, name='hotel_new'),
+    url(r'^Admin/hotel/(?P<id>\d+)/$', hotel_update, name='hotel_update'),
+    url(r'^Admin/hotel/(?P<id>\d+)/delete/$', hotel_delete, name='hotel_delete'),
+    
+    url(r'^Admin/google_ad/$', google_ad, name='google_ad'),
+    url(r'^Admin/google_ad/new/$', google_ad_update, name='google_ad_new'),
+    url(r'^Admin/google_ad/(?P<id>\d+)/$', google_ad_update, name='google_ad_update'),
+    url(r'^Admin/google_ad/(?P<id>\d+)/delete/$', google_ad_delete, name='google_ad_delete'),
+
+    url(r'^Admin/blog_list/$', blog_list, name='blog_list'),
+    url(r'^Admin/blog_list/new/$', blog_list_update, name='blog_list_new'),
+    url(r'^Admin/blog_list/(?P<id>\d+)/$', blog_list_update, name='blog_list_update'),
+    url(r'^Admin/blog_list/(?P<id>\d+)/delete/$', blog_list_delete, name='blog_list_delete'),
+
+    url(r'^Admin/customer/$', customer, name='customer_list'),
+    url(r'^Admin/customer/new/$', customer_update, name='customer_new'),
+    url(r'^Admin/customer/(?P<id>\d+)/$', customer_update, name='customer_update'),
+    url(r'^Admin/customer/(?P<id>\d+)/delete/$', customer_delete, name='customer_delete'),
+
+    url(r'^Admin/token/$', token, name='token_list'),
+    url(r'^Admin/token/new/$', token_update, name='token_new'),
+    url(r'^Admin/token/(?P<id>\d+)/$', token_update, name='token_update'),
+    url(r'^Admin/token/(?P<id>\d+)/delete/$', token_delete, name='token_delete'),
+
+    url(r'^hotels/$', hotels, name='hotels'),
     url(r'^search_hotel/$', search_hotel),
     url(r'^api/hotels/$', api_search_hotel),
     url(r'^api/flights/$', api_search_flight),

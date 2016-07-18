@@ -1,0 +1,68 @@
+{% extends "Admin/base.html" %}
+{% load staticfiles %} 
+
+{% block extra_css %}
+    <link href="/static/Admin/vendors/summernote/dist/summernote.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    
+    <div class="card">
+        {{ form.errors}}
+        <form class="form-horizontal" role="form" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="card-header">
+                <h2>Email Template Form <small>Fill the form to add or update the email template.</small></h2>
+            </div>
+            
+            <div class="card-body card-padding">
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Subject</label>
+                    <div class="col-sm-10">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" id="id_subject" required name="subject" value="{{form.subject.value}}">
+                        </div>
+                    </div>
+                </div>                 
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Email Code</label>
+                    <div class="col-sm-10">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" id="id_email_code" required name="email_code" value="{{form.email_code.value}}">
+                        </div>
+                    </div>
+                </div>                 
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Email Body</label>
+                    <div class="col-sm-10">
+                        <textarea class="html-editor" name="body">
+                            {{form.body.value|safe}}
+                        </textarea>
+                    </div>
+                </div>                 
+                                            
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Placeholder</label>
+                    <div class="col-sm-10">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" id="id_placeholder" placeholder="Meta Key" required name="placeholder" value="{{form.placeholder.value}}">
+                        </div>
+                    </div>
+                </div>                 
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-9">
+                        <button type="submit" class="btn btn-primary btn-sm">{% if form.subject.value %}Update Template {% else %} Add Template {% endif %}</button>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="/static/Admin/vendors/bower_components/autosize/dist/autosize.min.js"></script>
+    <script src="/static/Admin/vendors/summernote/dist/summernote-updated.min.js"></script>
+{% endblock %}        

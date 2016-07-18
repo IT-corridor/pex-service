@@ -1,0 +1,96 @@
+{% extends "Admin/base.html" %}
+{% load staticfiles %} 
+
+{% block extra_css %}
+    <link href="/static/Admin/vendors/bootgrid/jquery.bootgrid.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>City Image List </h2>
+        </div>
+
+        <a class="btn btn-primary waves-effect" href="/Admin/city_image/new/" style="margin-left: 25px;"><i class="zmdi zmdi-plus zmdi-hc-fw"></i>Add Image</a>
+        
+        <table id="data-table-command" class="table table-striped table-vmiddle">
+            <thead>
+                <tr>
+                    <td data-column-id="id" data-identifier="true" data-type="numeric" data-visible="false">ID</td>
+                    <th data-column-id="city_image" data-sortable="false" data-formatter="pix">City Image</th>
+                    <th data-column-id="city">City</th>
+                    <th data-column-id="last_updated" data-order="desc">Last Updated</th>
+                    <th data-column-id="status">Status</th>
+                    <th data-column-id="commands" data-formatter="commands" data-sortable="false">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for item in city_images %}
+                <tr>
+                    <td>{{item.city_image_id}}</td>
+                    <td>{{item.image_path}}</td>
+                    <td>{{item.city_name|title}}</td>
+                    <td>{{item.last_updated}}</td>
+                    <td>{% if item.status == True%}Active {%else%}Inactive{%endif%}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>				
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="/static/Admin/vendors/bootgrid/jquery.bootgrid.updated.min.js"></script>
+    
+    <!-- Data Table -->
+    <script type="text/javascript">
+        $(document).ready(function(){
+            //Command Buttons
+            var grid = $("#data-table-command").bootgrid({
+                caseSensitive: false,
+                css: {
+                    icon: 'zmdi icon',
+                    iconColumns: 'zmdi-view-module',
+                    iconDown: 'zmdi-expand-more',
+                    iconRefresh: 'zmdi-refresh',
+                    iconUp: 'zmdi-expand-less'
+                },
+                formatters: {
+                    "commands": function(column, row) {
+                        return "<button type=\"button\" class=\"btn btn-icon command-edit waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-edit\"></span></button> " + 
+                            "<button type=\"button\" class=\"btn btn-icon command-delete waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-delete\"></span></button>";
+                    },
+                    "pix": function (column, row) {
+                        return "<img src=\"/" + row.city_image + "\" style=\"width:60px; height:60px;\"/>";
+                    }
+                }
+            }).on("loaded.rs.jquery.bootgrid", function() {
+                /* Executes after data is loaded and rendered */
+                grid.find(".command-edit").on("click", function(e)
+                {
+                    location.href = "/Admin/city_image/"+$(this).data("row-id")+"/";
+                }).end().find(".command-delete").on("click", function(e) {
+                    var item_id = $(this).data("row-id");
+                    //Warning Message
+                    swal({   
+                        title: "Are you sure?",   
+                        text: "You will not be able to recover this item!",   
+                        type: "warning",   
+                        showCancelButton: true,   
+                        confirmButtonColor: "#DD6B55",   
+                        confirmButtonText: "Yes, delete it!",   
+                        closeOnConfirm: false 
+                    }, function(){   
+                        $.get('/Admin/city_image/'+item_id+'/delete/')
+                        .success(function(data){
+                            swal({title:"Deleted!", text:"The city image has been deleted.", type:"success"}, 
+                                function() { location.href = "/Admin/city_image/"; });                             
+                        });
+                    });
+                });
+            });
+        });
+    </script>
+{% endblock %}

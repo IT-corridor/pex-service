@@ -7,9 +7,6 @@ from social_auth.backends.steam import SteamBackend
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.contrib import admin
-from django.contrib.auth.models import (
-    BaseUserManager, AbstractBaseUser
-)
 
 #class User(AbstractUser):
     #pass
@@ -93,125 +90,33 @@ class Contactus(models.Model):
     topic = models.TextField()
     label_text = models.TextField()
     
-class UserManager(BaseUserManager):
+
+class UserAlert(models.Model):
+    alertid = models.AutoField(primary_key=True)
+    userid = models.IntegerField()
+    user_email = models.EmailField(blank=True, null=True)
+    pricemile = models.IntegerField()
+    source_airportid = models.IntegerField()
+    destination_airportid = models.IntegerField()
+    departdate = models.DateField()
+    returndate = models.DateField()
+    expiredate = models.DateField()
+    alertday = models.CharField(max_length=512)
+    sent_alert_date = models.DateField()
+
+class FlexibleDateSearch(models.Model):
+    dataid = models.AutoField(primary_key=True)
+    scrapertime = models.DateTimeField()
+    searchkey = models.IntegerField ()
+    source = models.CharField(max_length=100)
+    destination = models.CharField(max_length=100)
+    journey = models.DateField()
+    flexdate = models.DateField()
+    economyflex = models.CharField(max_length=100)
+    businessflex = models.CharField(max_length=100)
+    firstflex = models.CharField(max_length=100)
+    datasource = models.CharField(max_length=50, null=True, blank=True)
     
-    def create_user(self, username,email, password=None, **kwargs):
-        fname = ''
-        lname = ''
-        if kwargs['profile']['first_name']:
-            fname = kwargs['profile']['first_name']
-        if kwargs['profile']['last_name']:
-            lname = kwargs['profile']['last_name']
-        try:			
-		    user = self.model.objects.get(email=email)
-        except:
-            user = self.model(
-                  email=UserManager.normalize_email(email),
-		          username = username,
-		   	
-	            )
-
-        user.firstname = fname
-        
-        user.lastname = lname
-	if user.password == '' or user.password == None:
-            user.set_password(password)
-        user.save(using=self._db)
-        return user
-
-		
-class User(AbstractBaseUser):
-    user_id = models.AutoField(primary_key=True)
-    firstname = models.CharField(max_length=100)
-    middlename = models.CharField(max_length=100)
-    lastname = models.CharField(max_length=100)
-    username = models.CharField(max_length=100,unique=True)
-    email = models.EmailField(blank=True, null=True)
-    #password = models.CharField(max_length=100)
-    gender = models.CharField(max_length=20)
-    date_of_birth = models.DateField(null=True, blank=True)
-    language = models.CharField(max_length=100)
-    country = models.CharField(max_length=100)
-    phone = models.CharField(max_length=20)
-    home_airport = models.CharField(max_length=100)
-    address1 = models.CharField(max_length=512)
-    address2 = models.CharField(max_length=512)
-    city = models.CharField(max_length=512)
-    state = models.CharField(max_length=512)
-    zipcode = models.CharField(max_length=20)
-    usercode = models.CharField(max_length=20)
-    user_code_time = models.DateTimeField()
-    pexdeals = models.BooleanField(default=False)
-    level = models.IntegerField(default=0)
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELD = ['username']    
-    objects =  UserManager()
-    def is_authenticated(self):
-        return False
-
-#class User(AbstractUser):
-    #pass
-    #objects = UserManager()
-    
-class EmailTemplate(models.Model):
-    template_id = models.AutoField(primary_key=True)
-    email_code = models.CharField(max_length=100)
-    subject = models.CharField(max_length=512)
-    body = models.TextField()
-    placeholder = models.TextField()
-    
-class Adminuser(models.Model):
-    admin_id = models.AutoField(primary_key=True)
-    username = models.CharField(max_length=100)
-    password = models.CharField(max_length=100)
-    name = models.CharField(max_length=100)
-'''    
-class GoogleAd(models.Model):
-    ad_id = models.AutoField(primary_key=True)
-    ad_code = models.CharField(max_length=100)
-    image_path = models.ImageField(upload_to='/static/flightsearch/img', blank=True, null=True)
-    google_code = models.CharField(max_length=512)'''
-class GoogleAd(models.Model):
-    ad_id = models.AutoField(primary_key=True)
-    ad_code = models.CharField(max_length=100)
-    image_path = models.CharField(max_length=512)
-    google_code = models.CharField(max_length=512)
-    
-
-class Pages(models.Model):
-    pageid = models.AutoField(primary_key=True)
-    page_name=models.CharField(max_length=100)
-    page_path=models.CharField(max_length=100)
-    top_content=models.TextField()
-    page_text=models.TextField()
-    placeholder=models.CharField(max_length=512)
-
-class Blogs(models.Model):
-    blog_id = models.AutoField(primary_key=True)
-    blog_title = models.CharField(max_length=512)
-    blog_url = models.CharField(max_length=100)
-    blog_position = models.BooleanField(default=False)
-    blog_content = models.TextField()
-    blog_image_path = models.CharField(max_length=512)
-    blog_meta_key = models.CharField(max_length=512)
-    blog_meta_Description = models.TextField()
-    blog_creator = models.CharField(max_length=100)
-    blog_created_time = models.DateTimeField()
-    blog_updated_time = models.DateTimeField()
-    blog_status = models.BooleanField(default=False)
-
-class BlogImages(models.Model):
-    image_id = models.AutoField(primary_key=True)
-    user_id = models.IntegerField()
-    image_path = models.CharField(max_length=100)
-    
-class CityImages(models.Model):
-    city_image_id = models.AutoField(primary_key=True)
-    image_path = models.CharField(max_length=100)
-    city_name = models.CharField(max_length=512)
-    status = models.BooleanField(default=False)
-    last_updated = models.DateTimeField()
-
 class Search(models.Model):
     keyword = models.CharField(max_length=300)
     frequency = models.IntegerField(default=0)
@@ -230,12 +135,13 @@ class Search(models.Model):
 class Hotel(models.Model):
     prop_id = models.CharField(max_length=50)
     name = models.CharField(max_length=300)
-    brand = models.CharField(max_length=50)
+    brand = models.CharField(max_length=50, null=True, blank=True)
     chain = models.CharField(max_length=10)
-    lat = models.CharField(max_length=50)
-    lon = models.CharField(max_length=50)
-    img = models.CharField(max_length=300)
+    lat = models.CharField(max_length=50, null=True, blank=True)
+    lon = models.CharField(max_length=50, null=True, blank=True)
+    img = models.CharField(max_length=300, null=True, blank=True)
     url = models.CharField(max_length=300)
+    address = models.CharField(max_length=500, null=True, blank=True)
     cash_rate = models.FloatField(default=0.0)
     points_rate = models.IntegerField()
     cash_points_rate = models.CharField(max_length=150)
@@ -264,29 +170,71 @@ class Token(models.Model):
         # return self.owner.name
         return self.token
 
-class UserAlert(models.Model):
-    alertid = models.AutoField(primary_key=True)
-    userid = models.IntegerField()
-    user_email = models.EmailField(blank=True, null=True)
-    pricemile = models.IntegerField()
-    source_airportid = models.IntegerField()
-    destination_airportid = models.IntegerField()
-    departdate = models.DateField()
-    returndate = models.DateField()
-    expiredate = models.DateField()
-    alertday = models.CharField(max_length=512)
-    sent_alert_date = models.DateField()
+class EmailTemplate(models.Model):
+    template_id = models.AutoField(primary_key=True)
+    email_code = models.CharField(max_length=100)
+    subject = models.CharField(max_length=512)
+    body = models.TextField()
+    placeholder = models.TextField()
 
-class FlexibleDateSearch(models.Model):
-    dataid = models.AutoField(primary_key=True)
-    scrapertime = models.DateTimeField()
-    searchkey = models.IntegerField ()
-    source = models.CharField(max_length=100)
-    destination = models.CharField(max_length=100)
-    journey = models.DateField()
-    flexdate = models.DateField()
-    economyflex = models.CharField(max_length=100)
-    businessflex = models.CharField(max_length=100)
-    firstflex = models.CharField(max_length=100)
-    datasource = models.CharField(max_length=50, null=True, blank=True)
-    
+class GoogleAd(models.Model):
+    ad_id = models.AutoField(primary_key=True)
+    ad_code = models.CharField(max_length=100)
+    image_path = models.FileField(upload_to='static/flightsearch/uploads/', null=True, blank=True)
+    google_code = models.CharField(max_length=512)
+
+class Pages(models.Model):
+    pageid = models.AutoField(primary_key=True)
+    page_name=models.CharField(max_length=100)
+    page_path=models.CharField(max_length=100)
+    top_content=models.TextField()
+    page_text=models.TextField()
+    placeholder=models.CharField(max_length=512)
+
+class Blogs(models.Model):
+    blog_id = models.AutoField(primary_key=True)
+    blog_title = models.CharField(max_length=512)
+    blog_url = models.CharField(max_length=100, default='pexportl/blog/')
+    blog_position = models.BooleanField(default=False)
+    blog_content = models.TextField()
+    blog_image_path = models.FileField(upload_to='static/flightsearch/uploads/', null=True, blank=True)
+    blog_meta_key = models.CharField(max_length=512)
+    blog_meta_Description = models.TextField(null=True, blank=True, default='')
+    blog_creator = models.CharField(max_length=100)
+    blog_created_time = models.DateTimeField()
+    blog_updated_time = models.DateTimeField()
+    blog_status = models.BooleanField(default=False)
+
+class CityImages(models.Model):
+    city_image_id = models.AutoField(primary_key=True)
+    image_path = models.FileField(upload_to='static/flightsearch/uploads/', null=True, blank=True)
+    city_name = models.CharField(max_length=512)
+    status = models.BooleanField(default=False)
+    last_updated = models.DateTimeField()
+
+    def __unicode__(self):
+        return self.city_name
+
+class BlogImages(models.Model):
+    image_id = models.AutoField(primary_key=True)
+    user_id = models.IntegerField()
+    image_path = models.CharField(max_length=100)
+        
+class User(AbstractUser):
+    middlename = models.CharField(max_length=100,null=True,blank=True)
+    gender = models.CharField(max_length=20,null=True, blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    language = models.CharField(max_length=100,null=True, blank=True)
+    country = models.CharField(max_length=100,null=True, blank=True)
+    phone = models.CharField(max_length=20,null=True, blank=True)
+    home_airport = models.CharField(max_length=100,null=True, blank=True)
+    address1 = models.CharField(max_length=512,null=True, blank=True)
+    address2 = models.CharField(max_length=512,null=True, blank=True)
+    city = models.CharField(max_length=512,null=True, blank=True)
+    state = models.CharField(max_length=512,null=True, blank=True)
+    zipcode = models.CharField(max_length=20,null=True, blank=True)
+    usercode = models.CharField(max_length=20,null=True, blank=True)
+    user_code_time = models.DateTimeField(null=True, blank=True)
+    pexdeals = models.BooleanField(default=False)
+    level = models.IntegerField(default=0)
+
