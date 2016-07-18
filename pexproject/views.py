@@ -486,6 +486,7 @@ def login(request):
     user = User()
     user = authenticate()
     currentpath = ''
+    print "user", user
     if user is not None:
         if user.is_active:
             social_login(request,user)	
@@ -495,8 +496,8 @@ def login(request):
         if "curl" in request.POST:
             currentpath = request.REQUEST['curl']
         password1 = hashlib.md5(password).hexdigest()
-	print password1
-	print username
+    	print password1
+    	print username
     	try:
             user = User.objects.get(username=username, password=password1)
             if user > 0:
@@ -1095,7 +1096,7 @@ def getFlexResult(request):
             ret_economy = ','.join(return_eco_saver)
         if len(return_bus_saver)  > 0 :  
             ret_business = ','.join(return_bus_saver)
-	if d:    
+        if d:    
             dateval = d.strftime("%m/%Y")
             year = d.strftime("%Y")
             month = d.strftime("%-m")
@@ -1724,7 +1725,7 @@ def useralert(request):
         if 'alertday' in request.POST:
             alertday = request.POST.getlist('alertday')
             alertuser.alertday = ','.join(alertday)
-        alertuser.sent_alert_date = '0000-00-00'
+        alertuser.sent_alert_date = preDate
         alertuser.save()
         try:
             html_content = ''
