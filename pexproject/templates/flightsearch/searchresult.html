@@ -71,7 +71,7 @@
 								</p>
 							</div>
 							<form action="getsearchresult?keyid={{request.GET.keyid}}&passenger={{request.GET.passenger}}&cabin={{request.GET.cabin}}
-							{% if request.GET.returnkey%}&returnkey={{request.GET.returnkey}}{% endif %}{% if request.GET.multicity%}&multicity={{request.GET.multicity}}{% endif %}" method="post">
+							{% if request.GET.returnkey%}&returnkey={{request.GET.returnkey}}{% endif %}{% if request.GET.multicity%}&multicity={{request.GET.multicity}}{% endif %}{% if request.GET.searchtype%}&searchtype={{request.GET.searchtype}}{%endif%}" method="post">
 								<div class="container nopadding">
 									{% csrf_token %}
 									{% if selectedrow %}
@@ -3162,6 +3162,7 @@ function getflexData(){
 					clearInterval(refreshIntervalId);
 					redirecttosearchpage('complete');
 					getPriceMatrix();
+					getflexData();
 				} else if(data[0] != 'onprocess' && dataCheckCount % 3 == 0) {
 					redirecttosearchpage('onprocess');
 				}
