@@ -1,18 +1,42 @@
 #!usr/bin/env python
-import os, sys
+import os
+import sys
 import hashlib
 import codecs
+import datetime
+import settings
+import time
+import MySQLdb
+import threading
+import requests
+import operator
+import smtplib
+import socket
+import re
+import base64
+import subprocess
+import json
+import signal
+import logging
+from random import randint
+from bs4 import BeautifulSoup
+from mailchimp import Mailchimp
+from types import *
+from datetime import datetime as dttime
+from datetime import timedelta
+from multiprocessing import Process
+from threading import Thread
+from datetime import date
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
 from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext, loader
-from django.db.models import Q, Count, Min
 from social_auth.models import UserSocialAuth
-from django.contrib.auth import login
-from types import *
-import datetime
-from datetime import datetime as dttime
+#from djnago.conf import settings
 from django.shortcuts import get_object_or_404,redirect
 from django.core.mail import send_mail,EmailMultiAlternatives
 from django.template import RequestContext
@@ -20,46 +44,25 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.context_processors import csrf
 from django.views.decorators.csrf import requires_csrf_token
-from pexproject.models import *
-from pexproject.templatetags.customfilter import floatadd, assign
 from django.contrib.auth import login as social_login,authenticate,get_user
 from django.contrib.auth import logout as auth_logout
-import settings
-from customfunction import is_scrape_vAUS,is_scrape_aeroflot,is_scrape_virginAmerica,is_scrape_etihad,is_scrape_delta,is_scrape_united,is_scrape_virgin_atlantic,is_scrape_jetblue,is_scrape_aa, is_scrape_s7, is_scrape_airchina
+from django.contrib.auth import login
+from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.csrf import csrf_exempt
-import requests
 from django.utils.html import strip_tags
-from random import randint
-from bs4 import BeautifulSoup
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from datetime import timedelta
-import time
-import MySQLdb
-import threading
-from multiprocessing import Process
-import threading
-from threading import Thread
-from datetime import date
 from django.db import connection, transaction
-import operator
-import customfunction,rewardScraper
-import smtplib
-from email.mime.text import MIMEText
-import socket
-import re
-from email.mime.multipart import MIMEMultipart
-import base64
-#from djnago.conf import settings
-import subprocess
-import json
-import signal
-import logging
-from mailchimp import Mailchimp
-
+from django.db.models import Q, Count, Min
 from django.db.models import Max, Min
 from django.utils import timezone
 from django.forms.models import model_to_dict
+
+from customfunction import is_scrape_vAUS,is_scrape_aeroflot,is_scrape_virginAmerica,is_scrape_etihad,is_scrape_delta,is_scrape_united,is_scrape_virgin_atlantic,is_scrape_jetblue,is_scrape_aa, is_scrape_s7, is_scrape_airchina
+import customfunction
+import rewardScraper
 from .form import *
+from pexproject.models import *
+from pexproject.templatetags.customfilter import floatadd, assign
 
 logger = logging.getLogger(__name__)
 
@@ -2485,5 +2488,5 @@ def admin_login(request):
 
 @staff_member_required(login_url='/Admin/login/')
 def admin_logout(request):
-    logout(request)
+    auth_logout(request)
     return HttpResponseRedirect('/Admin/')
