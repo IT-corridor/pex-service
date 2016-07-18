@@ -1,6 +1,5 @@
 from django.conf.urls import patterns, include, url
 from pexproject.views import *
-from django.views.generic.base import RedirectView
 from django.conf import settings
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.static import static
@@ -9,7 +8,7 @@ from django.conf.urls import handler404
 
 
 
-urlpatterns = patterns('',
+urlpatterns = [
     #url(r'^admin/', include(admin.site.urls)),
     
     url(r'^$', index, name='index'),
@@ -100,7 +99,7 @@ urlpatterns = patterns('',
     
     #url(r'^$','social_auth.urls',namespace='social'),
     #url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT, 'show_indexes':True}),
-)
+]
 '''
 if settings.DEBUG:
     import debug_toolbar
