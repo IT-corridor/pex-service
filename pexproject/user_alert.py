@@ -42,10 +42,10 @@ def callScraper(source_code, olddestinationCode, departdate1,searchid,source_cit
     #print source_code, olddestinationCode, departdate1,searchid
     united(source_code, olddestinationCode, departdate1,searchid)
     delta(source_code, olddestinationCode, departdate1,searchid)
-    jetblue(source_code, olddestinationCode, departdate1,searchid)
-    virginAmerica(source_code, olddestinationCode, departdate1,searchid)
-    etihad(source_city, destcity, departdate1, searchid,"maincabin")
-    virgin_atlantic(source_code, olddestinationCode, departdate1,returndate1,searchid,returnkey)
+    #jetblue(source_code, olddestinationCode, departdate1,searchid)
+    #virginAmerica(source_code, olddestinationCode, departdate1,searchid)
+    #etihad(source_city, destcity, departdate1, searchid,"maincabin")
+    #virgin_atlantic(source_code, olddestinationCode, departdate1,returndate1,searchid,returnkey)
     
 def sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,deptdate,retdate):
     retstr = ''
@@ -121,6 +121,7 @@ def sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,
 
     
 for row in users:
+    print row
     print "**************************************************"
     if oldid == row['alertid']:
         if oldsourceCode:
