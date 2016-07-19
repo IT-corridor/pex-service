@@ -153,23 +153,6 @@ class Hotel(models.Model):
     def __unicode__(self):
         return self.name
 
-class Token(models.Model):
-    token = models.CharField(max_length=100)
-    owner = models.IntegerField(default=0)
-    limit_hotel_search = models.IntegerField(default=0)
-    limit_flight_search = models.IntegerField(default=0)
-    run_hotel_search = models.IntegerField(default=0)
-    run_flight_search = models.IntegerField(default=0)
-    allowed_domain = models.CharField(max_length=150)
-    number_update = models.IntegerField(default=0)
-    created_at = models.DateTimeField(auto_now=True)
-    notes = models.TextField(null=True, blank=True)
-    closed_at = models.DateTimeField(null=True)
-
-    def __unicode__(self):
-        # return self.owner.name
-        return self.token
-
 class EmailTemplate(models.Model):
     template_id = models.AutoField(primary_key=True)
     email_code = models.CharField(max_length=100)
@@ -239,3 +222,19 @@ class User(AbstractUser):
     pexdeals = models.BooleanField(default=False)
     level = models.IntegerField(default=0,null=True, blank=True)
 
+class Token(models.Model):
+    token = models.CharField(max_length=100, unique=True)
+    owner = models.ForeignKey(User)
+    limit_hotel_search = models.IntegerField(default=0)
+    limit_flight_search = models.IntegerField(default=0)
+    run_hotel_search = models.IntegerField(default=0)
+    run_flight_search = models.IntegerField(default=0)
+    allowed_domain = models.CharField(max_length=150,null=True, blank=True)
+    number_update = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now=True)
+    notes = models.TextField(null=True, blank=True)
+    closed_at = models.DateTimeField(null=True)
+
+    def __unicode__(self):
+        # return self.owner.name
+        return self.token
