@@ -159,11 +159,11 @@ def index(request):
         lname=''
         if user1.email:
     	    request.session['username'] =user1.email
-        if user1.firstname:
-            request.session['firstname'] =user1.firstname
-            fname = user1.firstname
-        if user1.lastname:
-            lname = user1.lastname
+        if user1.first_name:
+            request.session['first_name'] =user1.first_name
+            fname = user1.first_name
+        if user1.last_name:
+            lname = user1.last_name
     	request.session['password'] = user1.password        
 	if 'pexdeal' in request.session:
 	
@@ -309,26 +309,26 @@ def signup(request):
             password = request.REQUEST['password']
             password1 = hashlib.md5(password).hexdigest()
             airport = request.REQUEST['home_airport']
-            firstname = ''
-            lastname = ''
+            first_name = ''
+            last_name = ''
             pexdeals = 0
-            if 'firstname' in request.POST:
-                firstname = request.REQUEST['firstname']
-            if 'lastname' in request.POST:
-                lastname = request.REQUEST['lastname']
+            if 'first_name' in request.POST:
+                first_name = request.REQUEST['first_name']
+            if 'last_name' in request.POST:
+                last_name = request.REQUEST['last_name']
             if 'pexdeals' in request.REQUEST:
                 pexdeals = request.REQUEST['pexdeals']
 
-            object = User(username=email,email=email, password=password1,firstname=firstname,lastname=lastname, home_airport=airport,last_login=time,pexdeals=pexdeals)
+            object = User(username=email,email=email, password=password1,first_name=first_name,last_name=last_name, home_airport=airport,last_login=time,pexdeals=pexdeals)
             object.save()
             if pexdeals == '1':
                 subscriber = Mailchimp(customfunction.mailchimp_api_key)
-                subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':email}, merge_vars={'FNAME':firstname,'LNAME':lastname})
+                subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':email}, merge_vars={'FNAME':first_name,'LNAME':last_name})
             request.session['username'] = email
             request.session['homeairpot'] = airport
             request.session['password'] = password1
-            if firstname != '':
-                request.session['firstname'] = firstname
+            if first_name != '':
+                request.session['first_name'] = first_name
             if object.user_id:
                 request.session['userid'] = object.user_id
                 msg = "Thank you, You have been successfully registered."
@@ -336,7 +336,7 @@ def signup(request):
                 obj = EmailTemplate.objects.get(email_code='signup')
                 email_sub = obj.subject
                 emailbody = obj.body
-                emailbody = emailbody.replace('[USER_NAME]',firstname)
+                emailbody = emailbody.replace('[USER_NAME]',first_name)
                 emailbody = emailbody.replace('[SITE-LINK]','<a href="http://pexportal.com/">pexportal</a>')
                 
                 html_content=''
@@ -444,9 +444,9 @@ def manageAccount(request):
             user1.home_airport = request.POST['home_ariport']
             isupdated  = user1.save()
         if 'home_ariport' not in request.POST:
-            user1.firstname = request.POST['firstname']
+            user1.first_name = request.POST['first_name']
             user1.middlename = request.POST['middlename']
-            user1.lastname = request.POST['lastname']
+            user1.last_name = request.POST['last_name']
             user1.gender = request.POST['gender']
             if request.POST['dateofbirth']:
                 user1.date_of_birth = request.POST['dateofbirth']
@@ -507,8 +507,8 @@ def login(request):
             if user > 0:
                 request.session['username'] = username
                 request.session['password'] = password1
-                if user.firstname != '':
-                    request.session['firstname'] = user.firstname
+                if user.first_name != '':
+                    request.session['first_name'] = user.first_name
                 if user.home_airport != '':
                     request.session['homeairpot'] = user.home_airport
                 request.session['userid'] = user.user_id
@@ -639,8 +639,8 @@ def sendFeedBack(request):
 
 def contactUs(request):
     context = {}
-    firstname = ''
-    lastname = ''
+    first_name = ''
+    last_name = ''
     title = ''
     company = ''
     phone = ''
@@ -652,8 +652,8 @@ def contactUs(request):
     contact_msg = ''
     html_content = ''
     if request.POST:
-        firstname = request.POST['first_name']
-        lastname = request.POST['last_name']
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
         title = request.POST['title']
         company = request.POST['company']
         message = request.POST['message']
@@ -663,9 +663,9 @@ def contactUs(request):
         phone = request.POST['phone']
         websitename = request.POST['website']
         email = request.POST['email']
-        object = Contactus(first_name=firstname,last_name=lastname,email=email,phone=phone,title=title,company=company,website=websitename,message=message,topic=topic,label_text= labeltext)
+        object = Contactus(first_name=first_name,last_name=last_name,email=email,phone=phone,title=title,company=company,website=websitename,message=message,topic=topic,label_text= labeltext)
         object.save()
-        fullname = firstname+" "+lastname
+        fullname = first_name+" "+last_name
         emailbody = message+"\n\n"+labeltext+" \n\n"+fullname+"\n"+company+"\n"+websitename
         
         resp = customfunction.sendMail(email,'info@pexportal.com',topic,emailbody,html_content)
