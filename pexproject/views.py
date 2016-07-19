@@ -2471,32 +2471,34 @@ def token(request):
 
 @login_required(login_url='/Admin/login/')
 def token_update(request, id=None):
-    token = Token()
     if id:
-        token = Token.objects.get(blog_id=id)
+        token = Token.objects.get(id=id)
+        pre_owners = token.owner.username
+    else:
+        token = Token()
+        owners = [item.owner.user_id for item in Token.objects.all()]
+        pre_owners = User.objects.filter(is_active=True, level=1).exclude(user_id__in=owners)
 
     if request.method == 'GET':
         form = TokenForm(initial=model_to_dict(token))
     else:
-        form = TokenForm(request.POST, request.FILES)
+        form = TokenForm(request.POST, instance=token)
         if form.is_valid():
-            if form.cleaned_data['blog_image_path']:
-                blog_list.blog_image_path = form.cleaned_data['blog_image_path']
-            blog_list.blog_title = form.cleaned_data['blog_title']
-            blog_list.blog_url = form.cleaned_data['blog_url']      # needs to be considered
-            blog_list.blog_position = form.cleaned_data['blog_position']
-            blog_list.blog_content = form.cleaned_data['blog_content']
-            blog_list.blog_meta_key = form.cleaned_data['blog_meta_key']
-            blog_list.blog_meta_Description = form.cleaned_data['blog_meta_Description']
-            blog_list.blog_creator = 'Waff Jason'   # needs to be modified
-            blog_list.blog_status = form.cleaned_data['blog_status']
-            if not blog_list.blog_created_time:
-                blog_list.blog_created_time = dttime.now()
-            blog_list.blog_updated_time = dttime.now()
-            blog_list.save()
-            return HttpResponseRedirect('/Admin/blog_list/')
+            token.token = form.cleaned_data['token']
+            token.owner = form.cleaned_data['owner']
+            token.limit_flight_search = form.cleaned_data['limit_flight_search']
+            token.limit_hotel_search = form.cleaned_data['limit_hotel_search']
+            token.run_hotel_search = form.cleaned_data['run_hotel_search']
+            token.run_flight_search = form.cleaned_data['run_flight_search']
+            token.allowed_domain = form.cleaned_data['allowed_domain']
+            token.notes = form.cleaned_data['notes']
+            token.number_update = token.number_update + 1 
+            if not token.id:
+                token.created_at = dttime.now()
+            token.save()
+            return HttpResponseRedirect('/Admin/token/')
 
-    return render(request, 'Admin/token_form.html', {'form':form})
+    return render(request, 'Admin/token_form.html', {'form':form, 'pre_owners':pre_owners})
 
 def token_delete(request, id):
     if request.is_ajax():        

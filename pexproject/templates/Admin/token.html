@@ -9,37 +9,39 @@
 <div class="container">
     <div class="card">
         <div class="card-header">
-            <h2>Hotel List </h2>
+            <h2>Token List </h2>
         </div>
-        <a class="btn btn-primary waves-effect" href="/Admin/hotel/new/" style="margin-left: 25px;"><i class="zmdi zmdi-plus zmdi-hc-fw"></i>Add Hotel</a>
+        <a class="btn btn-primary waves-effect" href="/Admin/token/new/" style="margin-left: 25px;"><i class="zmdi zmdi-plus zmdi-hc-fw"></i>Add Token</a>
         
         <table id="data-table-command" class="table table-striped table-vmiddle">
             <thead>
                 <tr>
                     <td data-column-id="id" data-identifier="true" data-type="numeric" data-visible="false">ID</td>
-                    <th data-column-id="name">Name</th>
-                    <th data-column-id="img" data-sortable="false" data-formatter="pix">Image</th>
-                    <th data-column-id="brand" data-order="desc">Brand</th>
-                    <th data-column-id="chain" data-visible="false">Chain</th>
-                    <th data-column-id="url">Url</th>
-                    <th data-column-id="star_rating">Star Rating</th>
-                    <th data-column-id="price">Price</th>
-                    <th data-column-id="points">Points</th>
+                    <th data-column-id="token">Token</th>
+                    <th data-column-id="owner" data-sortable="false">Owner</th>
+                    <th data-column-id="limit_flight">Limit Flight</th>
+                    <th data-column-id="limit_hotel">Limit Hotel</th>
+                    <th data-column-id="run_flight">Run Flight</th>
+                    <th data-column-id="run_hotel">Run Hotel</th>
+                    <th data-column-id="domain" data-visible="false">Domain</th>
+                    <th data-column-id="number_update">Renewed</th>
+                    <th data-column-id="created_at">Created</th>
                     <th data-column-id="commands" data-formatter="commands" data-sortable="false">Action</th>
                 </tr>
             </thead>
             <tbody>
-            {% for item in hotels %}
+            {% for item in tokens %}
                 <tr>
                     <td>{{item.id}}</td>
-                    <td>{{item.name|title}}</td>
-                    <td>{{item.img}}</td>
-                    <td>{{item.brand|title}}</td>
-                    <td>{{item.chain}}</td>
-                    <td>{{item.url}}</td>
-                    <td>{{item.star_rating}}</td>
-                    <td>{{item.cash_rate}}</td>
-                    <td>{{item.points_rate}}</td>
+                    <td>{{item.token}}</td>
+                    <td>{{item.owner.username}}</td>
+                    <td>{{item.limit_flight_search}}</td>
+                    <td>{{item.limit_hotel_search}}</td>
+                    <td>{{item.run_flight_search}}</td>
+                    <td>{{item.run_hotel_search}}</td>
+                    <td>{{item.allowed_domain}}</td>
+                    <td>{{item.number_update}}</td>
+                    <td>{{item.created_at}}</td>
                 </tr>
             {% endfor %}
             </tbody>
@@ -69,19 +71,12 @@
                         return "<button type=\"button\" class=\"btn btn-icon command-edit waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-edit\"></span></button> " + 
                             "<button type=\"button\" class=\"btn btn-icon command-delete waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-delete\"></span></button>";
                     },
-                    "pix": function (column, row) {
-                        var img_url = row.img;
-                        if(!row.img)
-                            img_url = '/static/hotelsearch/img/hotels.jpg';
-
-                        return "<img src=\"" + img_url + "\" style=\"width:60px; height:60px;\"/>";
-                    }
                 }
             }).on("loaded.rs.jquery.bootgrid", function() {
                 /* Executes after data is loaded and rendered */
                 grid.find(".command-edit").on("click", function(e)
                 {
-                    location.href = "/Admin/hotel/"+$(this).data("row-id")+"/";
+                    location.href = "/Admin/token/"+$(this).data("row-id")+"/";
                 }).end().find(".command-delete").on("click", function(e) {
                     var item_id = $(this).data("row-id");
                     //Warning Message
@@ -94,10 +89,10 @@
                         confirmButtonText: "Yes, delete it!",   
                         closeOnConfirm: false 
                     }, function(){   
-                        $.get('/Admin/hotel/'+item_id+'/delete/')
+                        $.get('/Admin/token/'+item_id+'/delete/')
                         .success(function(data){
-                            swal({title:"Deleted!", text:"The hotel has been deleted.", type:"success"}, 
-                                function() { location.href = "/Admin/hotel/"; });                             
+                            swal({title:"Deleted!", text:"The token has been deleted.", type:"success"}, 
+                                function() { location.href = "/Admin/token/"; });                             
                         });
                     });
                 });
