@@ -2290,6 +2290,7 @@ def hotel_update(request, id=None):
             hotel.chain = form.cleaned_data['chain']
             hotel.lat = form.cleaned_data['lat']
             hotel.lon = form.cleaned_data['lon']
+            hotel.address = form.cleaned_data['address']
             hotel.img = form.cleaned_data['img']
             hotel.url = form.cleaned_data['url']
             hotel.cash_rate = form.cleaned_data['cash_rate']
