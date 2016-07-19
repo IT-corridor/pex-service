@@ -19,11 +19,11 @@
 					<div class="col-sm-6 col-xs-12 nopadding">
 						<dl class="dl-horizontal">
 							<dt>First Name:</dt>
-							<dd>{%if user.firstname%} {{user.firstname|title}} {%endif%}</dd>
+							<dd>{%if user.first_name%} {{user.first_name|title}} {%endif%}</dd>
 							<dt>Middle Name:</dt>
 							<dd>{%if user.middlename%} {{user.middlename|title}} {%endif%}</dd>
 							<dt>Last Name:</dt>
-							<dd>{%if user.lastname%} {{user.lastname|title}} {%endif%}</dd>
+							<dd>{%if user.last_name%} {{user.last_name|title}} {%endif%}</dd>
 							<dt>Date of Birth:</dt>
 							<dd>{%if user.date_of_birth%} {{user.date_of_birth}} {%endif%}</dd>
 							<dt>Gender:</dt>
@@ -58,11 +58,11 @@
 					<div class="col-sm-5 col-xs-12 nopl xs-nopadding">
 						<dl class="dl-horizontal" >
 							<dt>First Name:</dt>
-							<dd><input type="text" class="form-control" name="firstname" {%if user.firstname%} value="{{user.firstname|title}}" {%endif%}></dd>
+							<dd><input type="text" class="form-control" name="first_name" {%if user.first_name%} value="{{user.first_name|title}}" {%endif%}></dd>
 							<dt>Middle Name:</dt>
 							<dd><input type="text" class="form-control" name="middlename" {%if user.middlename%} value="{{user.middlename|title}}" {%endif%}></dd>
 							<dt>Last Name:</dt>
-							<dd><input type="text" class="form-control" name="lastname" {%if user.lastname%} value="{{user.lastname|title}}" {%endif%}></dd>
+							<dd><input type="text" class="form-control" name="last_name" {%if user.last_name%} value="{{user.last_name|title}}" {%endif%}></dd>
 							<dt>Date of Birth:</dt>
 							
 							<dd><div class="inner-addon left-addon date"><i class="glyphicon glyphicon-calendar "></i><input type="text" class="form-control" id="dob" name="dateofbirth" {%if user.date_of_birth%} value="{{user.date_of_birth|date:'Y-m-d'}}" {%endif%}></div></dd>
@@ -420,8 +420,8 @@
 		});
 		$('.mailchimp').click(function(){
 			var user_email = "{{user.email}}";
-			var fname = "{{user.firstname}}";
-			var lname = "{{user.lastname}}";
+			var fname = "{{user.first_name}}";
+			var lname = "{{user.last_name}}";
 			
 			$.ajax({
 		 	type: "POST",
