@@ -48,7 +48,6 @@ from django.contrib.auth import login as social_login,authenticate,get_user
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.html import strip_tags
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -503,7 +502,7 @@ def login(request):
     	print password1
     	print username
     	try:
-            user = User.objects.get(username=username, password=password1)
+            user = User.objects.get(email=username, password=password1)
             if user > 0:
                 request.session['username'] = username
                 request.session['password'] = password1
