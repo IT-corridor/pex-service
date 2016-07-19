@@ -2483,7 +2483,7 @@ def admin_login(request):
         user = authenticate(username=username, password=password)
         if user is not None:
             if user.is_active and user.is_staff:
-                login(request, user)
+                social_login(request, user)
 
     return HttpResponseRedirect('/Admin/')
 
