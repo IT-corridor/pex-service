@@ -2379,29 +2379,51 @@ def customer(request):
     customers = User.objects.all()
     return render(request, 'Admin/customer.html', {'customers': customers})
 
-@login_required(login_url='/Admin/login/')    
+
+@staff_member_required(login_url='/Admin/login/')    
 def customer_update(request, id=None):
     customer = User()
     if id:
-        customer = User.objects.get(id=id)
+        customer = User.objects.get(user_id=id)
 
     if request.method == 'GET':
         form = CustomerForm(initial=model_to_dict(customer))
     else:
-        form = CustomerForm(request.POST)
+        password = customer.password
+        form = CustomerForm(request.POST, instance=customer)
         if form.is_valid():
-            if form.cleaned_data['image_path']:
-                google_ad.image_path = form.cleaned_data['image_path']            
-            google_ad.ad_code = form.cleaned_data['ad_code']
-            google_ad.google_code = form.cleaned_data['google_code']
-            google_ad.save()
-            return HttpResponseRedirect('/Admin/google_ad/')
+            customer.username = form.cleaned_data['username']
+            customer.first_name = form.cleaned_data['first_name']
+            customer.middlename = form.cleaned_data['middlename']
+            customer.last_name = form.cleaned_data['last_name']
+            customer.email = form.cleaned_data['email']
+            if password != form.cleaned_data['password']:
+                password = hashlib.md5(form.cleaned_data['password']).hexdigest()
+                customer.password = password
+            customer.phone = form.cleaned_data['phone']
+            customer.gender = form.cleaned_data['gender']
+            customer.date_of_birth = form.cleaned_data['date_of_birth']
+            customer.language = form.cleaned_data['language']
+            customer.country = form.cleaned_data['country']
+            customer.address1 = form.cleaned_data['address1']
+            customer.address2 = form.cleaned_data['address2']
+            customer.city = form.cleaned_data['city']
+            customer.state = form.cleaned_data['state']
+            customer.zipcode = form.cleaned_data['zipcode']
+            customer.usercode = form.cleaned_data['usercode']
+            customer.home_airport = form.cleaned_data['home_airport']
+            customer.is_active = form.cleaned_data['is_active']
+            customer.level = form.cleaned_data['level']
+            if not customer.level:
+                customer.level = 0
+            customer.save()
+            return HttpResponseRedirect('/Admin/customer/')
 
     return render(request, 'Admin/customer_form.html', {'form':form})
 
 def customer_delete(request, id):
     if request.is_ajax():        
-        User.objects.get(ad_id=id).delete()
+        User.objects.get(user_id=id).delete()
         return HttpResponse('success')
 
 @login_required(login_url='/Admin/login/')

@@ -237,5 +237,5 @@ class User(AbstractUser):
     usercode = models.CharField(max_length=20,null=True, blank=True)
     user_code_time = models.DateTimeField(null=True, blank=True)
     pexdeals = models.BooleanField(default=False)
-    level = models.IntegerField(default=0)
+    level = models.IntegerField(default=0,null=True, blank=True)
 
