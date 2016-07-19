@@ -221,6 +221,7 @@ class BlogImages(models.Model):
     image_path = models.CharField(max_length=100)
         
 class User(AbstractUser):
+    user_id = models.AutoField(primary_key=True)
     middlename = models.CharField(max_length=100,null=True,blank=True)
     gender = models.CharField(max_length=20,null=True, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
