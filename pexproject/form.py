@@ -68,7 +68,7 @@ class GoogleAdForm(ModelForm):
 class CustomerForm(ModelForm):
   class Meta:
     model = User
-    exclude = ['language', 'country', 'phone']
+    exclude = ['last_login', 'user_code_time', 'date_joined']
 
 class TokenForm(ModelForm):
   class Meta:

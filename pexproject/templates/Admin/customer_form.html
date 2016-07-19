@@ -3,6 +3,7 @@
 
 {% block extra_css %}
     <link href="/static/Admin/vendors/summernote/dist/summernote.css" rel="stylesheet">
+    <link href="/static/Admin/vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -34,6 +35,14 @@
                     </div>
                 </div>                 
                 <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Middle Name</label>
+                    <div class="col-sm-10">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" id="id_middle_name" name="middlename" value="{% if form.middlename.value %}{{form.middlename.value}}{% endif %}">
+                        </div>
+                    </div>
+                </div>                 
+                <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">Last Name</label>
                     <div class="col-sm-10">
                         <div class="fg-line">
@@ -42,10 +51,109 @@
                     </div>
                 </div>                 
                 <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
+                    <div class="col-sm-10">
+                        <div class="fg-line">
+                            <input type="email" class="form-control input-sm" required name="email" value="{{form.email.value}}">
+                        </div>
+                    </div>
+                </div>                 
+                <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">Password</label>
                     <div class="col-sm-10">
                         <div class="fg-line">
-                            <input type="password" class="form-control input-sm" id="id_password" name="password" value="{{form.password.value}}">
+                            <input type="password" class="form-control input-sm" id="id_password" required name="password" value="{{form.password.value}}">
+                        </div>
+                    </div>
+                </div>                 
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Phone</label>
+                    <div class="col-sm-10">
+                        <div class="fg-line">
+                            <input autocomplete="off" maxlength="14" class="form-control input-mask" data-mask="000-000-0000" placeholder="eg: 000-000-0000" type="text" name="phone" value="{{form.phone.value}}">
+                        </div>
+                    </div>
+                </div>                                 
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Gender</label>
+                    <div class="col-sm-2">
+                        <div class="fg-line">
+                            <select class="selectpicker" name="gender" value="{{form.gender.value}}">
+                                <option value="Male">Male</option>
+                                <option value="Femail">Female</option>
+                            </select>                            
+                        </div>
+                    </div>                  
+                </div>                 
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Birthday</label>
+                    <div class="col-sm-10">
+                        <div class="fg-line">
+                            <input autocomplete="off" maxlength="10" class="form-control input-mask" data-mask="00/00/0000" placeholder="eg: 05/23/1987" type="text" name="date_of_birth" value="{{form.date_of_birth.value|date:"m/d/Y"}}">
+                        </div>
+                    </div>
+                </div>                 
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Language</label>
+                    <div class="col-sm-10">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" name="language" value="{% if form.language.value %}{{form.language.value}}{% endif %}">
+                        </div>
+                    </div>
+                </div>                 
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Country</label>
+                    <div class="col-sm-10">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" name="country" value="{% if form.country.value %}{{form.country.value}}{% endif %}">
+                        </div>
+                    </div>
+                </div>                 
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Address 1</label>
+                    <div class="col-sm-10">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" name="address1" value="{% if form.address1.value %}{{form.address1.value}}{% endif %}">
+                        </div>
+                    </div>
+                </div>                 
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Address 2</label>
+                    <div class="col-sm-10">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" name="address2" value="{% if form.address2.value %}{{form.address2.value}}{% endif %}">
+                        </div>
+                    </div>
+                </div>                 
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">City</label>
+                    <div class="col-sm-10">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" name="city" value="{% if form.city.value %}{{form.city.value}}{% endif %}">
+                        </div>
+                    </div>
+                </div>                 
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">State</label>
+                    <div class="col-sm-10">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" name="state" value="{% if form.state.value %}{{form.state.value}}{% endif %}">
+                        </div>
+                    </div>
+                </div>                 
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Zipcode</label>
+                    <div class="col-sm-10">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" name="zipcode" value="{% if form.zipcode.value %}{{form.zipcode.value}}{% endif %}">
+                        </div>
+                    </div>
+                </div>                 
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Usercode</label>
+                    <div class="col-sm-10">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" name="usercode" value="{% if form.usercode.value %}{{form.usercode.value}}{% endif %}">
                         </div>
                     </div>
                 </div>                 
@@ -53,27 +161,30 @@
                     <label for="inputEmail3" class="col-sm-2 control-label">Home Airport</label>
                     <div class="col-sm-10">
                         <div class="fg-line">
-                            <input type="text" class="form-control input-sm" id="home_airport" required name="home_airport" value="{{form.home_airport.value}}">
+                            <input type="text" class="form-control input-sm" id="home_airport" required name="home_airport" value="{% if form.home_airport.value %}{{form.home_airport.value}}{% endif %}">
                         </div>
                     </div>
                 </div>                 
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">Is Active</label>
-                    <div class="col-sm-10">
-                        <div class="fg-line">
-                            <input type="checkbox" name="is_active" {% if form.status.value %}checked=""{% endif %}>
+                    <div class="col-sm-3">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="is_active" {% if form.is_active.value %}checked=""{% endif %}>
+                                <i class="input-helper"></i>
+                            </label>
                         </div>
-                    </div>
-                </div>                 
-                <div class="form-group">
-                    <label for="inputEmail3" class="col-sm-2 control-label">Level</label>
-                    <div class="col-sm-10">
-                        <div class="fg-line">
-                            <input type="text" class="form-control input-sm" id="id_level" name="level" value="{{form.level.value}}">
-                        </div>
-                    </div>
-                </div>                 
 
+                    </div>
+                    <div class=" col-sm-5">
+                        <div class="toggle-switch">
+                            <label for="ts1" class="ts-label">Paid Customer</label>
+                            <input id="ts1" type="checkbox" hidden="hidden" name="level" {% if form.level.value == 1 %}checked=""{% endif %} value="1">
+                            <label for="ts1" class="ts-helper"></label>
+                        </div>
+                        
+                    </div>
+                </div>                 
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-9">
                         <button type="submit" class="btn btn-primary btn-sm">{% if form.password.value %}Update Customer {% else %} Add Customer {% endif %}</button>
@@ -89,4 +200,6 @@
 {% block extra_js %}
     <script src="/static/Admin/vendors/bower_components/autosize/dist/autosize.min.js"></script>
     <script src="/static/Admin/vendors/summernote/dist/summernote-updated.min.js"></script>
+    <script src="/static/Admin/vendors/input-mask/input-mask.min.js"></script>
+    <script src="/static/Admin/vendors/bower_components/bootstrap-select/dist/js/bootstrap-select.js"></script>
 {% endblock %}        
