@@ -1,6 +1,6 @@
 $.fn.stars = function() {
 	return $(this).each(function() {
-		var width = Math.max(0, (Math.min(5, parseFloat($(this).html())))) * 16;
+		var width = Math.max(0, (Math.min(5, parseFloat($(this).prev().val())))) * 16;
 		$(this).width(width);
 		$(this).html('');
 	});
