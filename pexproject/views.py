@@ -1989,7 +1989,7 @@ def _search_hotel(place, checkin, checkout, filters):
     award_low = max(tmp, award_lowest)
     tmp = float(filters['award_high'] or award_highest)
     award_high = min(tmp, award_highest)
-
+    star_rating = filters.get('star_rating', [u'1', u'2', u'3', u'4', u'5'])
     # __debug('## chain: %s\n\n' % str(filters.chain))
     dis_place = place.split('-')[0]
 
@@ -2001,6 +2001,13 @@ def _search_hotel(place, checkin, checkout, filters):
         Q(cash_rate=0.0)|Q(cash_rate__gte=price_low), 
         Q(points_rate=0.0)|Q(points_rate__gte=award_low))
 
+    r_db_hotels = db_hotels.filter(star_rating=0)
+    for star in star_rating:
+        low = float(star) - 0.51
+        high = float(star) + 0.41
+        r_db_hotels = r_db_hotels | db_hotels.filter(star_rating__range=(low,high))
+    
+    db_hotels = r_db_hotels.order_by('-star_rating', 'cash_rate')
     # get price matrix
     # '-' if none
     price_matrix = {}
@@ -2010,7 +2017,7 @@ def _search_hotel(place, checkin, checkout, filters):
         price_matrix[item] = {'cash_rate': price_min, 'points_rate': points_min, 'title': HOTEL_CHAINS[item]}
     # __debug('price_matrix: %s\n\n' % str(price_matrix))
 
-    filters = {'price_low':price_low, 'price_high':price_high, 'award_low':award_low, 'award_high':award_high, 'radius':filters['radius'], 'chain':filters['chain'], 'price_lowest':price_lowest, 'price_highest':price_highest, 'award_lowest':award_lowest, 'award_highest':award_highest, 'dis_place':dis_place}
+    filters = {'price_low':price_low, 'price_high':price_high, 'award_low':award_low, 'award_high':award_high, 'radius':filters['radius'], 'chain':filters['chain'], 'price_lowest':price_lowest, 'price_highest':price_highest, 'award_lowest':award_lowest, 'award_highest':award_highest, 'dis_place':dis_place, 'star_rating': star_rating}
     # __debug('filters: %s\n' % str(filters))
 
     return ['', db_hotels, price_matrix, filters]
@@ -2023,7 +2030,8 @@ def search_hotel(request):
         place = form.cleaned_data['place']
         checkin = form.cleaned_data['checkin']
         checkout = form.cleaned_data['checkout']
-        filters = {'price_low':request.POST.get('price_low'), 'price_high':request.POST.get('price_high'), 'award_low':request.POST.get('award_low'), 'award_high':request.POST.get('award_high'), 'radius':int(request.POST.get('radius', 1000)), 'chain':request.POST.getlist('hotel_chain', HOTEL_CHAINS.keys())}
+        
+        filters = {'price_low':request.POST.get('price_low'), 'price_high':request.POST.get('price_high'), 'award_low':request.POST.get('award_low'), 'award_high':request.POST.get('award_high'), 'radius':int(request.POST.get('radius', 1000)), 'chain':request.POST.getlist('hotel_chain', HOTEL_CHAINS.keys()), 'star_rating': request.POST.getlist('star')}
     else:
         place = request.GET.get('place')
         place = place.split('&')[0]

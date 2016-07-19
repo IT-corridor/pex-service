@@ -21,11 +21,11 @@
 				{% csrf_token %}
 		        <div class="filter-lane">
 					<label>Number of Stars</label>
-					<div><input type="checkbox"> <span class="stars">5</span></label> </div>
-					<div><input type="checkbox"> <span class="stars">4</span></input> </div>
-					<div><input type="checkbox"> <span class="stars">3</span></input> </div>
-					<div><input type="checkbox"> <span class="stars">2</span></input> </div>
-					<div><input type="checkbox"> <span class="stars">1</span></input> </div>
+					<div><input type="checkbox" name="star" value="5" {% if '5' in filters.star_rating %} checked="true" {% endif %}> <span class="stars"></span></label> </div>
+					<div><input type="checkbox" name="star" value="4" {% if '4' in filters.star_rating %} checked="true" {% endif %}> <span class="stars"></span></input> </div>
+					<div><input type="checkbox" name="star" value="3" {% if '3' in filters.star_rating %} checked="true" {% endif %}> <span class="stars"></span></input> </div>
+					<div><input type="checkbox" name="star" value="2" {% if '2' in filters.star_rating %} checked="true" {% endif %}> <span class="stars"></span></input> </div>
+					<div><input type="checkbox" name="star" value="1" {% if '1' in filters.star_rating %} checked="true" {% endif %}> <span class="stars"></span></input> </div>
 				</div>
 				<div class="filter-lane">
 					<label>Hotel Chains</label>
@@ -201,7 +201,7 @@
 			</div>
 			<div class="col-sm-3 col-xs-5">
 				<a href="{{ hotel.url }}"><h4> {{ hotel.name }} </h4></a>
-				<div style="margin-bottom: 8px;"><span class="stars">{{hotel.star_rating}}</span></div>
+				<div style="margin-bottom: 8px;"><input type="hidden" value="{{hotel.star_rating}}"><span class="stars"></span></div>
 				<div>{% if hotel.address %} {{ hotel.address }} {% endif %}</div>
 				<a href="#" data-toggle="modal" class="share" data-target="#share-modal">share</a>
 			</div>
