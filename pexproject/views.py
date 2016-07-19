@@ -2380,7 +2380,7 @@ def customer(request):
     return render(request, 'Admin/customer.html', {'customers': customers})
 
 
-@staff_member_required(login_url='/Admin/login/')    
+@login_required(login_url='/Admin/login/')    
 def customer_update(request, id=None):
     customer = User()
     if id:
