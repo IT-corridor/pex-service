@@ -34,6 +34,7 @@ from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
+from django.http import JsonResponse
 from django.template import RequestContext, loader
 from social_auth.models import UserSocialAuth
 #from djnago.conf import settings
@@ -2562,7 +2563,7 @@ def popular_search(request):
 
     pop_searches = Searchkey.objects.filter(scrapetime__gte=start_time).values('source', 'destination').annotate(dcount=Count('*')).order_by('-dcount')[:10]
     try:
-        return HttpResponse(json.simplejson.dumps(pop_searches))
+        return HttpResponse(JsonResponse(pop_searches, safe=False), content_type="application/json")
     except Exception, e:
         print str(e), '@@@@@@@@'
         
