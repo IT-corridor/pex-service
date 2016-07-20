@@ -2556,10 +2556,10 @@ def airline_info(request):
 
 @csrf_exempt
 def popular_search(request):    
-    period = int(request.POST.get('period'))
-    print period, '@@@@@@@2'
+    period = int(request.POST.get('period'))    
     start_time = datetime.datetime.now() - timedelta(days=period)
     start_time = start_time.strftime('%Y-%m-%d %H:%M:%S')
 
     pop_searches = Searchkey.objects.filter(scrapetime__gte=start_time).values('source', 'destination').annotate(dcount=Count('*')).order_by('-dcount')[:10]
+    print pop_searches, '@@@@@@@2'
     return HttpResponse(json.dumps(pop_searches))
