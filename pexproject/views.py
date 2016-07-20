@@ -2561,4 +2561,8 @@ def popular_search(request):
     start_time = start_time.strftime('%Y-%m-%d %H:%M:%S')
 
     pop_searches = Searchkey.objects.filter(scrapetime__gte=start_time).values('source', 'destination').annotate(dcount=Count('*')).order_by('-dcount')[:10]
-    return HttpResponse(pop_searches)
+    try:
+        return HttpResponse(json.dumps(pop_searches))
+    except Exception, e:
+        print str(e), '@@@@@@@@'
+        
