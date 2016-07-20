@@ -2235,9 +2235,6 @@ def api_search_flight(request):
         return HttpResponse(json.dumps(result), 'application/json')
 
 # admin views
-@login_required(login_url='/Admin/login/')
-def Admin(request):
-    return render(request, 'Admin/dashboard.html', {})
 
 @login_required(login_url='/Admin/login/')
 def city_image(request):
@@ -2523,3 +2520,30 @@ def admin_login(request):
 def admin_logout(request):
     auth_logout(request)
     return HttpResponseRedirect('/Admin/')
+
+@login_required(login_url='/Admin/login/')
+def Admin(request):
+    stat_num_search = [['aeroflot', 736], ['airchina', 183], ['american airlines', 0], ['delta', 29861], ['etihad', 382], ['jetblue', 754], ['s7', 1790], ['united', 154182], ['Virgin America', 332], ['Virgin Australia', 6464], ['virgin_atlantic', 55]]
+    return render(request, 'Admin/dashboard.html', {'stat_num_search': stat_num_search})
+
+@csrf_exempt
+def airline_info(request):
+    air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']
+    period = int(request.POST.get('period'))
+    fare_class = request.POST.get('fare_class')
+
+    start_time = datetime.datetime.now() - timedelta(days=period)
+    start_time = start_time.strftime('%Y-%m-%d %H:%M:%S')
+
+    stat_num_search = []
+    for air_line in air_lines:
+        kwargs = {
+            'scrapetime__gte':start_time,
+            '{0}__gt'.format(fare_class):0,
+            'datasource': air_line,
+        }
+        num_search = len(list(Flightdata.objects.filter(**kwargs)))
+        stat_num_search.append([air_line, num_search])
+
+    return HttpResponse(json.dumps(stat_num_search))
+

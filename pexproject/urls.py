@@ -80,6 +80,8 @@ urlpatterns = [
     url(r'^Admin/token/(?P<id>\d+)/$', token_update, name='token_update'),
     url(r'^Admin/token/(?P<id>\d+)/delete/$', token_delete, name='token_delete'),
 
+    url(r'^stats/airline_info/$', airline_info, name='airline_info'),
+    
     url(r'^hotels/$', hotels, name='hotels'),
     url(r'^search_hotel/$', search_hotel),
     url(r'^api/hotels/$', api_search_hotel),

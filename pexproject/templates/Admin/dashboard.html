@@ -1,11 +1,15 @@
 {% extends "Admin/base.html" %}
 {% load staticfiles %} 
 
+{% block extra_css %}
+    <link href="/static/Admin/vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
 
 <div class="container">
     <div class="block-header">
-        <h2>Dash Board <small>Flot is a pure JavaScript plotting library for jQuery, with a focus on simple usage, attractive looks and interactive features.</small></h2>
+        <h2>Dash Board <small>You can get all information about PEX+ here.</small></h2>
     
         <ul class="actions">
             <li>
@@ -40,66 +44,10 @@
     </div>
     
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h2>Line Chart with curved edges <small>Curved edges made possible using curvedLines Flot plugin.</small></h2>
-            
-                    <ul class="actions">
-                        <li class="dropdown action-show">
-                            <a href="" data-toggle="dropdown">
-                                <i class="zmdi zmdi-more-vert"></i>
-                            </a>
-            
-                            <div class="dropdown-menu pull-right">
-                                <p class="p-20">
-                                    You can put anything here
-                                </p>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            
-                <div class="card-body">
-                    <div class="chart-edge">
-                        <div id="curved-line-chart" class="flot-chart"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h2>Lines Chart <small>Same above example without curved edges.</small></h2>
-                    
-                    <ul class="actions">
-                        <li class="dropdown action-show">
-                            <a href="" data-toggle="dropdown">
-                                <i class="zmdi zmdi-more-vert"></i>
-                            </a>
-            
-                            <div class="dropdown-menu pull-right">
-                                <p class="p-20">
-                                    You can put anything here
-                                </p>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                
-                <div class="card-body">
-                    <div class="chart-edge">
-                        <div id="line-chart" class="flot-chart"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h2>Bar Chart</h2>
+                    <h2>Airline Statistics</h2>
                     
                     <ul class="actions">
                         <li class="dropdown action-show">
@@ -117,8 +65,31 @@
                 </div>
                 
                 <div class="card-body card-padding-sm">
-                    <div id="bar-chart" class="flot-chart"></div>
-                    <div class="flc-bar"></div>
+                    <div class="row">
+                        <div class="col-sm-3 m-b-25">
+                            <span class="f-500 m-b-15 c-black">Period</span>
+                            
+                            <select class="selectpicker" onchange="update_line_info();" id="id_airline_info_period">
+                                <option value="1">1 Day</option>
+                                <option value="7">7 Day</option>
+                                <option value="31">1 Month</option>
+                                <option value="90">3 Months</option>
+                                <option value="180">6 Months</option>
+                                <option value="365">1 Year</option>
+                                <option value="1825">5 Years</option>
+                                <option value="3650">All time</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-3 m-b-25">
+                            <span class="f-500 m-b-15 c-black">Fare Class</span>
+                            
+                            <select class="selectpicker" onchange="update_line_info();" id="id_airline_info_fare_class">
+                                <option value="maincabin">Economy</option>
+                                <option value="firstclass">Business</option>
+                                <option value="business">First</option>
+                            </select>
+                        </div>                    </div>                    
+                    <div id="bar-chart" class="flot-chart"  style="height: 360px;"></div>                    
                 </div>
             </div>
         </div>
@@ -149,7 +120,34 @@
                 </div>
             </div>
         </div>
-        
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Dynamic Chart</h2>
+                    
+                    <ul class="actions">
+                        <li class="dropdown action-show">
+                            <a href="" data-toggle="dropdown">
+                                <i class="zmdi zmdi-more-vert"></i>
+                            </a>
+            
+                            <div class="dropdown-menu pull-right">
+                                <p class="p-20">
+                                    You can put anything here
+                                </p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="card-body card-padding-sm">
+                    <div id="dynamic-chart" class="flot-chart"></div>
+                    <div class="flc-dynamic"></div>
+                </div>
+            </div>
+        </div>
+
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
@@ -211,16 +209,22 @@
 {% block extra_js %}
 <script src="/static/Admin/vendors/bower_components/flot/jquery.flot.js"></script>
 <script src="/static/Admin/vendors/bower_components/flot/jquery.flot.resize.js"></script>
+<script src="/static/Admin/vendors/bower_components/flot/jquery.flot.categories.js"></script>
 <script src="/static/Admin/vendors/bower_components/flot/jquery.flot.pie.js"></script>
 <script src="/static/Admin/vendors/bower_components/flot.tooltip/js/jquery.flot.tooltip.min.js"></script>
 <script src="/static/Admin/vendors/bower_components/flot-orderBars/js/jquery.flot.orderBars.js"></script>
 <script src="/static/Admin/vendors/bower_components/flot.curvedlines/curvedLines.js"></script>                         
 <script src="/static/Admin/vendors/bower_components/flot-orderBars/js/jquery.flot.orderBars.js"></script>
 
+<script type="text/javascript">
+    var stat_num_search = {{stat_num_search|safe}};
+</script>
+
 <script src="/static/Admin/js/flot-charts/curved-line-chart.js"></script>
 <script src="/static/Admin/js/flot-charts/line-chart.js"></script>
 <script src="/static/Admin/js/flot-charts/bar-chart.js"></script>
 <script src="/static/Admin/js/flot-charts/dynamic-chart.js"></script>
 <script src="/static/Admin/js/flot-charts/pie-chart.js"></script>
+<script src="/static/Admin/vendors/bower_components/bootstrap-select/dist/js/bootstrap-select.js"></script>
 
 {% endblock %}   
