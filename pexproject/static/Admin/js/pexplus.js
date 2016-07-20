@@ -1,12 +1,13 @@
 update_pop_search = function(obj) {
     var period = $('#id_pop_search_period').val();
 
-    $('.page-loader').show();    
+    // $('.page-loader').show();    
 
     $.post('/stats/popular_search/', 
         {'period':period}
     ).success(function(data) {
         pop_searches = JSON.parse(data);
+        console.log(pop_searches);
         var result = '';
         for(idx in pop_searches) {
             var rank = idx*1 + 1;
