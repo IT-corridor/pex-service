@@ -2562,7 +2562,7 @@ def popular_search(request):
 
     pop_searches = Searchkey.objects.filter(scrapetime__gte=start_time).values('source', 'destination').annotate(dcount=Count('*')).order_by('-dcount')[:10]
     try:
-        return HttpResponse(data, mimetype="application/json")
+        return HttpResponse(pop_searches, mimetype="application/json")
     except Exception, e:
         print str(e), '@@@@@@@@'
         
