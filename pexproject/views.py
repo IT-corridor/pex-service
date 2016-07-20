@@ -52,8 +52,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.html import strip_tags
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db import connection, transaction
-from django.db.models import Q, Count, Min
+from django.db.models import Q, Count
 from django.db.models import Max, Min
+
 from django.utils import timezone
 from django.forms.models import model_to_dict
 
@@ -2524,7 +2525,12 @@ def admin_logout(request):
 @login_required(login_url='/Admin/login/')
 def Admin(request):
     stat_num_search = [['aeroflot', 736], ['airchina', 183], ['american airlines', 0], ['delta', 29861], ['etihad', 382], ['jetblue', 754], ['s7', 1790], ['united', 154182], ['Virgin America', 332], ['Virgin Australia', 6464], ['virgin_atlantic', 55]]
-    return render(request, 'Admin/dashboard.html', {'stat_num_search': stat_num_search})
+    pop_searches = [{'source': u'New York (NYC)', 'destination': u'Tel Aviv (TLV)', 'dcount': 149}, {'source': u'New York (NYC)', 'destination': u'Seattle (SEA)', 'dcount': 124}, {'source': u'Los Angeles (LAX)', 'destination': u'Miami (MIA)', 'dcount': 89}, {'source': u'Houston (IAH)', 'destination': u'Ft Lauderdale (FLL)', 'dcount': 82}, {'source': u'Bangkok (BKK)', 'destination': u'Tokyo (NRT)', 'dcount': 79}, {'source': u'Beijing (PEK)', 'destination': u'Moscow (MOW)', 'dcount': 78}, {'source': u'New York (JFK)', 'destination': u'Sydney (SYD)', 'dcount': 76}, {'source': u'Moscow (MOW)', 'destination': u'Beijing (NAY)', 'dcount': 68}, {'source': u'Miami (MIA)', 'destination': u'New York (LGA)', 'dcount': 68}, {'source': u'New York (NYC)', 'destination': u'Los Angeles (LAX)', 'dcount': 65}]
+
+    return render(request, 'Admin/dashboard.html', {
+        'stat_num_search': stat_num_search,
+        'pop_searches': pop_searches
+        })
 
 @csrf_exempt
 def airline_info(request):
@@ -2547,3 +2553,12 @@ def airline_info(request):
 
     return HttpResponse(json.dumps(stat_num_search))
 
+
+@csrf_exempt
+def popular_search(request):    
+    period = int(request.POST.get('period'))
+    start_time = datetime.datetime.now() - timedelta(days=period)
+    start_time = start_time.strftime('%Y-%m-%d %H:%M:%S')
+
+    pop_searches = Searchkey.objects.filter(scrapetime__gte=start_time).values('source', 'destination').annotate(dcount=Count('*')).order_by('-dcount')[:10]
+    return HttpResponse(json.dumps(pop_searches))

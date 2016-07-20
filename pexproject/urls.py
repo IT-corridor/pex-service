@@ -81,6 +81,7 @@ urlpatterns = [
     url(r'^Admin/token/(?P<id>\d+)/delete/$', token_delete, name='token_delete'),
 
     url(r'^stats/airline_info/$', airline_info, name='airline_info'),
+    url(r'^stats/popular_search/$', popular_search, name='popular_search'),
     
     url(r'^hotels/$', hotels, name='hotels'),
     url(r'^search_hotel/$', search_hotel),
