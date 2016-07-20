@@ -2557,6 +2557,7 @@ def airline_info(request):
 @csrf_exempt
 def popular_search(request):    
     period = int(request.POST.get('period'))
+    print period, '@@@@@@@2'
     start_time = datetime.datetime.now() - timedelta(days=period)
     start_time = start_time.strftime('%Y-%m-%d %H:%M:%S')
 
