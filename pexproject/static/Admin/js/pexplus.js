@@ -7,7 +7,7 @@ update_pop_search = function(obj) {
         {'period':period}
     ).success(function(data) {
         console.log(data);
-        pop_searches = data;
+        pop_searches = JSON.parse(data);
         var result = '';
         for(idx in pop_searches) {
             var rank = idx*1 + 1;
