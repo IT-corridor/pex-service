@@ -264,6 +264,15 @@
     	source: "get_airport/",
     	minLength: 2,
     	//appendTo:".modelform",
+
+	    $( "#id_country" ).autocomplete({
+	        open: function(event, ui) {
+	            $('.ui-autocomplete').off('menufocus hover mouseover');
+	        },
+	        autoFocus: true,
+	        source: "/get_countryname/",
+	        minLength: 2,        
+	    });    	
     });
 	</script>
 	
