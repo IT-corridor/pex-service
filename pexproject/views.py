@@ -698,7 +698,7 @@ def search(request):
             searchtype = request.POST.get('searchtype', '')
             cabin = request.POST['cabin']
 
-            key_json = _search(returndate, orgnid, destid, depart, searchtype, cabin)
+            key_json = _search(returndate, orgnid, destid, depart, searchtype, cabin, request)
             
             mimetype = 'application/json'
             data = json.dumps(key_json)
@@ -706,7 +706,7 @@ def search(request):
         except Exception, e:
             print str(e), '###########3'
         
-def _search(returndate, orgnid, destid, depart, searchtype, cabin):
+def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
     ''' 
     trigger scrapers or return searchkey for cached search
     return searchkeys
@@ -2262,7 +2262,7 @@ def api_search_flight(request):
         # get valid parameters
         return_date, origin, destination, depart_date, search_type, flight_class, mile_low, mile_high, airlines, depart_from, depart_to, arrival_from, arrival_to = _params[1], _params[2], _params[3], _params[4], _params[5], _params[6], _params[7], _params[8], _params[9], _params[10], _params[11], _params[12], _params[13]
 
-        keys = _search(return_date, origin, destination, depart_date, search_type, flight_class)
+        keys = _search(return_date, origin, destination, depart_date, search_type, flight_class, request)
         while(1):
             delay_threshold = delay_threshold - 1
             time.sleep(1)
