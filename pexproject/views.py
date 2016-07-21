@@ -2075,9 +2075,9 @@ def parse_place(place):
     return place
 
 FLIGHT_CLASS = {
-    'economy': 'maincabin',
-    'business': 'firstclass',
-    'firstclass': 'business'
+    'economy': ['maincabin', 'maintax'],
+    'business': ['firstclass', 'firsttax'],
+    'firstclass': ['business', 'businesstax']
 }
 
 def check_validity_token(token, service):
@@ -2177,7 +2177,7 @@ def check_validity_flight_params(request):
     if flight_class not in FLIGHT_CLASS.keys():
         return ['Flight class is not correct. It should be one of economy, business, firstclass.']
     
-    flight_class = FLIGHT_CLASS[flight_class]
+    flight_class = FLIGHT_CLASS[flight_class][0]
 
     return ['', return_date, str(origin), str(destination), depart_date, search_type, flight_class, mile_low, mile_high, airlines, depart_from, depart_to, arrival_from, arrival_to]
 
@@ -2535,7 +2535,7 @@ def Admin(request):
         'pop_searches': pop_searches,
         'air_lines': air_lines,
         'num_users': len(list(User.objects.all())),
-        'total_searches': len(list(Searchkey.objects.all()))*3.3,
+        'total_searches': len(list(Searchkey.objects.all()))*3,
         })
 
 @csrf_exempt
@@ -2583,10 +2583,11 @@ def price_history(request):
     result = {'economy': [], 'business': [], 'firstclass':[]}
 
     for searchkey in searchkeys:
-        label = str(searchkey['traveldate'].month)+'.'+str(searchkey['traveldate'].day)
+        label = str(searchkey['traveldate'].month+searchkey['traveldate'].day/100.0)
         flights = Flightdata.objects.filter(searchkeyid=searchkey['searchid__min'], datasource=airline)
         reducer = getattr(aggregator, aggregation)
         for key, val in FLIGHT_CLASS.items():
+            val = val[1]
             res = flights.filter(**{'{0}__gt'.format(val):0}).aggregate(**{val:reducer(val)})
             if res[val]:
                 result[key].append([float(label), float(res[val])])
