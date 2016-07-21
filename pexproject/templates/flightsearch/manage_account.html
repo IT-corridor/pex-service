@@ -96,7 +96,7 @@
 							<dt>Zipcode:</dt>
 							<dd><input type="number" class="form-control" {%if user.zipcode%} value= "{{user.zipcode}}" {%endif%} name="zipcode"></dd>
 							<dt>Country:</dt>
-							<dd><input type="text" class="form-control" name="country" {%if user.country%} value="{{user.country|title}}" {%endif%}></dd>
+							<dd><input type="text" class="form-control" required name="country" {%if user.country%} value="{{user.country|title}}" {%endif%}></dd>
 							<dt>Phone:</dt>
 							<dd><input type="text" class="form-control" name="phone" {%if user.phone%} value="{{user.phone}}" {%endif%}></dd>
 							<dt>Email:</dt>

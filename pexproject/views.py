@@ -68,12 +68,6 @@ from pexproject.templatetags.customfilter import floatadd, assign
 
 logger = logging.getLogger(__name__)
 
-'''
-def error(request):
-    Http404("Poll does not exist")
-    return  render_to_response('flightsearch/admin/index.html', context_instance=RequestContext(request))
-'''
-
 def get_cityname(request):
     if request.is_ajax():
         q = request.GET.get('term', '')
