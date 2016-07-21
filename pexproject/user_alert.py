@@ -42,10 +42,10 @@ def callScraper(source_code, olddestinationCode, departdate1,searchid,source_cit
     #print source_code, olddestinationCode, departdate1,searchid
     united(source_code, olddestinationCode, departdate1,searchid)
     delta(source_code, olddestinationCode, departdate1,searchid)
-    #jetblue(source_code, olddestinationCode, departdate1,searchid)
-    #virginAmerica(source_code, olddestinationCode, departdate1,searchid)
-    #etihad(source_city, destcity, departdate1, searchid,"maincabin")
-    #virgin_atlantic(source_code, olddestinationCode, departdate1,returndate1,searchid,returnkey)
+    jetblue(source_code, olddestinationCode, departdate1,searchid)
+    virginAmerica(source_code, olddestinationCode, departdate1,searchid)
+    etihad(source_city, destcity, departdate1, searchid,"maincabin")
+    virgin_atlantic(source_code, olddestinationCode, departdate1,returndate1,searchid,returnkey)
     
 def sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,deptdate,retdate):
     retstr = ''
@@ -97,7 +97,7 @@ def sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,
                                 <img alt="Pex+" src="http://pexportal.com/static/flightsearch/img/flexPointLogo.jpg" style="max-width: 100%"/>
                             </div>
                             <div style="width:100%;posiition:relative;padding:10px 20px 0px;font-family:arial;font-style:normal;font-size:15px;font-weight:200;color:#474747;">
-                                <h3>We've found flights that meets your search for:</h3>
+                                <h3>We've found flights that meet your search for:</h3>
                                 <h2 style="text-align: center;margin: 30px 0;font-weight:700;line-height:24px;letter-spacing: 0.55px;color:#39A8E0;">'''+full_source+''' - '''+full_dest+'''<br>'''+str(deptdate)+retstr+'''<br>Economy - '''+triptype+'''</h2>
                                 <h3>Get more details by searching on <a href='http://pexportal.com/' target='_blank' style="color:#39A8E0;">pexportal.com</a></h3>
                             </div>
@@ -121,7 +121,6 @@ def sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,
 
     
 for row in users:
-    print row
     print "**************************************************"
     if oldid == row['alertid']:
         if oldsourceCode:
