@@ -774,7 +774,7 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
                     returnobj.save()
                 returnkey = returnobj.searchid
             else:
-                user_id = ','+request.session.get('userid', '')+','
+                user_id = ','+str(request.session.get('userid', ''))+','
                 searchdata = Searchkey(source=destination1, destination=origin, destination_city=etihadorigin,traveldate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid, user_ids=user_id)
                 searchdata.save()
                 returnkey = searchdata.searchid
@@ -824,7 +824,7 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
                 obj.save()
             searchkeyid = obj.searchid
         else:
-            user_id = ','+request.session.get('userid', '')+','
+            user_id = ','+str(request.session.get('userid', ''))+','
             if dt1:
                 searchdata = Searchkey(source=origin, destination=destination1,destination_city=etihaddest, traveldate=dt, returndate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid, user_ids=user_id) 
             else:
