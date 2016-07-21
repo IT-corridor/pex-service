@@ -9,18 +9,11 @@ from django.contrib import admin
 
 
 urlpatterns = [
-    #url(r'^admin/', include(admin.site.urls)),
-    
     url(r'^$', index, name='index'),
-    #url(r'^$', 'pexproject.views.index'),
     url(r'', include('social_auth.urls')),
-    #url(r'^facebooklogin', facebooklogin, name='facebooklogin'),
     
     url(r'^login', login, name='login'),
-    #url(r'^google4fcc5c6791037930', include('webmaster_verification.urls')),
     url(r'^google4fcc5c6791037930$', lambda r: HttpResponse("google-site-verification: google4fcc5c6791037930.html")),
-    #url(r'^webmaster', webmaster, name='webmaster'),
-    #url(r'^ckeditor/', include('ckeditor_uploader.urls')),
     
     url(r'^subscribe', subscribe, name='subscribe'),
     url(r'^blog', blog, name='blog'),
@@ -91,7 +84,6 @@ urlpatterns = [
     
     url(r'^index', index, name='index'),
     url(r'^useralert',useralert,name='useralert'),
-    #url(r'^searchLoading',searchLoading,name='searchLoading'),
     url(r'^search',search, name='search'),
     url(r'^get_airport', get_airport, name='get_airport'),
     url(r'^getsearchresult', getsearchresult, name='getsearchresult'),
@@ -99,10 +91,6 @@ urlpatterns = [
     url(r'^share', share, name='share'),
     url(r'^filter', filter, name='filter'),
     url(r'^getFlexResult', getFlexResult, name='getFlexResult'),
-    #url(r'^apitest', apitest, name='apitest'),
-    
-    #url(r'^$','social_auth.urls',namespace='social'),
-    #url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT, 'show_indexes':True}),
 ]
 '''
 if settings.DEBUG:

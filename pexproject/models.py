@@ -209,7 +209,7 @@ class User(AbstractUser):
     gender = models.CharField(max_length=20,null=True, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
     language = models.CharField(max_length=100,null=True, blank=True)
-    country = models.CharField(max_length=100,null=True, blank=True)
+    country = models.CharField(max_length=100)
     phone = models.CharField(max_length=20,null=True, blank=True)
     home_airport = models.CharField(max_length=100,null=True, blank=True)
     address1 = models.CharField(max_length=512,null=True, blank=True)
