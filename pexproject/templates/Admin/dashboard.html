@@ -221,32 +221,7 @@
                 </div>
             </div>
         </div>        
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h2>Dynamic Chart</h2>
-                    
-                    <ul class="actions">
-                        <li class="dropdown action-show">
-                            <a href="" data-toggle="dropdown">
-                                <i class="zmdi zmdi-more-vert"></i>
-                            </a>
-            
-                            <div class="dropdown-menu pull-right">
-                                <p class="p-20">
-                                    You can put anything here
-                                </p>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                
-                <div class="card-body card-padding-sm">
-                    <div id="dynamic-chart" class="flot-chart"></div>
-                    <div class="flc-dynamic"></div>
-                </div>
-            </div>
-        </div>
+
 
         <div class="col-md-6">
             <div class="card">
@@ -308,6 +283,78 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h2>User Search History</h2>
+                    
+                    <ul class="actions">
+                        <li class="dropdown action-show">
+                            <a href="" data-toggle="dropdown">
+                                <i class="zmdi zmdi-more-vert"></i>
+                            </a>
+            
+                            <div class="dropdown-menu pull-right">
+                                <p class="p-20">
+                                    You can put anything here
+                                </p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="card-body card-padding-sm">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Search Route</th>
+                                    <th>Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id='id_pop_search_table_body'>
+                                {% for item in user_search_history %}
+                                <tr>
+                                    <td>{{ item.0 }}</td>
+                                    <td>{{ item.1 }}</td>
+                                    <td>{{ item.2 }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Dynamic Chart</h2>
+                    
+                    <ul class="actions">
+                        <li class="dropdown action-show">
+                            <a href="" data-toggle="dropdown">
+                                <i class="zmdi zmdi-more-vert"></i>
+                            </a>
+            
+                            <div class="dropdown-menu pull-right">
+                                <p class="p-20">
+                                    You can put anything here
+                                </p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="card-body card-padding-sm">
+                    <div id="dynamic-chart" class="flot-chart"></div>
+                    <div class="flc-dynamic"></div>
                 </div>
             </div>
         </div>
