@@ -2584,7 +2584,7 @@ def price_history(request):
     result = {'economy': [], 'business': [], 'firstclass':[]}
 
     for searchkey in searchkeys:
-        label = str(searchkey['traveldate'].month+searchkey['traveldate'].day/100.0)
+        label = time.mktime(searchkey['traveldate'].timetuple()) * 1000
         flights = Flightdata.objects.filter(searchkeyid=searchkey['searchid__min'], datasource=airline)
         reducer = getattr(aggregator, aggregation)
         for key, val in FLIGHT_CLASS.items():

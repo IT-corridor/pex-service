@@ -84,7 +84,7 @@ _price_history = function(data) {
             min: 0
         },
         xaxis: {
-            tickDecimals: 2
+            mode: "time"
         }
     });    
 }
