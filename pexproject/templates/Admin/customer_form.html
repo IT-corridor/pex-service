@@ -4,6 +4,8 @@
 {% block extra_css %}
     <link href="/static/Admin/vendors/summernote/dist/summernote.css" rel="stylesheet">
     <link href="/static/Admin/vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'flightsearch/admin/autocomplete/jquery-ui.min.css' %}">
+    <link rel="stylesheet" href="{% static 'flightsearch/admin/autocomplete/jquery-ui.theme.min.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -105,7 +107,7 @@
                     <label for="inputEmail3" class="col-sm-2 control-label">Country</label>
                     <div class="col-sm-10">
                         <div class="fg-line">
-                            <input type="text" class="form-control input-sm" name="country" value="{% if form.country.value %}{{form.country.value}}{% endif %}">
+                            <input type="text" class="form-control input-sm" id="id_country" name="country" value="{% if form.country.value %}{{form.country.value}}{% endif %}">
                         </div>
                     </div>
                 </div>                 
@@ -161,7 +163,7 @@
                     <label for="inputEmail3" class="col-sm-2 control-label">Home Airport</label>
                     <div class="col-sm-10">
                         <div class="fg-line">
-                            <input type="text" class="form-control input-sm" id="home_airport" required name="home_airport" value="{% if form.home_airport.value %}{{form.home_airport.value}}{% endif %}">
+                            <input type="text" class="form-control input-sm" id="id_home_airport" required name="home_airport" value="{% if form.home_airport.value %}{{form.home_airport.value}}{% endif %}">
                         </div>
                     </div>
                 </div>                 
@@ -202,4 +204,28 @@
     <script src="/static/Admin/vendors/summernote/dist/summernote-updated.min.js"></script>
     <script src="/static/Admin/vendors/input-mask/input-mask.min.js"></script>
     <script src="/static/Admin/vendors/bower_components/bootstrap-select/dist/js/bootstrap-select.js"></script>
+
+    <script src="{% static 'flightsearch/admin/autocomplete/jquery-ui.min.js' %}"></script>
+
+    <script type="text/javascript">
+    $( "#id_home_airport" ).autocomplete({
+        open: function(event, ui) {
+            $('.ui-autocomplete').off('menufocus hover mouseover');
+        },
+        autoFocus: true,
+        source: "/Admin/get_cityname/",
+        minLength: 2,        
+    });
+
+    $( "#id_country" ).autocomplete({
+        open: function(event, ui) {
+            $('.ui-autocomplete').off('menufocus hover mouseover');
+        },
+        autoFocus: true,
+        source: "/get_countryname/",
+        minLength: 2,        
+    });
+
+    </script>
+
 {% endblock %}        
