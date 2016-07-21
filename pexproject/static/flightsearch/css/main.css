@@ -153,9 +153,13 @@ margin-top: -8px;
 .mvb10px {
 	margin-bottom: 10px;
 }
+.mvb30px {
+	margin-bottom: 30px;
+}
 .mvb60px {
 	margin-bottom: 60px;
 }
+
 .mvb80px {
 	margin-bottom: 80px;
 }
@@ -188,6 +192,15 @@ margin-top: -8px;
 }
 .right-addon input {
 	padding-right: 30px;
+}
+
+.flight_alert_heading{
+	font-size: 25px;
+    font-weight: 150;
+}
+.ui-widget-header{
+	background: transparent !important;
+	border:0 !important;
 }
 
 /*BUTTONS*/

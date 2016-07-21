@@ -99,6 +99,8 @@ class UserAlert(models.Model):
     pricemile = models.IntegerField()
     source_airportid = models.IntegerField()
     destination_airportid = models.IntegerField()
+    from_airport = models.CharField(max_length=100)
+    to_airport = models.CharField(max_length=100)
     departdate = models.DateField()
     returndate = models.DateField()
     expiredate = models.DateField()

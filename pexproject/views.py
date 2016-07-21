@@ -1719,12 +1719,39 @@ def share(request):
                     returncabin = returnrecord.cabintype3
         return render_to_response('flightsearch/share.html', {'record':record, 'cabin':cabin, 'traveler':traveler, 'returnrecord':returnrecord, "price":price, "tax":tax, 'returncabin':returncabin}, context_instance=RequestContext(request))
 
+def flightAlert(request):
+    context = {}
+    record = ''
+    if request.is_ajax and 'alertid' in request.POST:
+        alertid = request.POST['alertid']
+        record = UserAlert.objects.get(pk=alertid)
+        record_json = {}
+        record_json['alertid'] = record.alertid
+        record_json['from_airport'] = record.from_airport
+        record_json['to_airport'] = record.to_airport
+        record_json['source_airportid'] = record.source_airportid
+        record_json['destination_airportid'] = record.destination_airportid
+        record_json['departdate'] = str(record.departdate)
+        record_json['returndate'] = str(record.returndate)
+        record_json['maxprice'] = str(record.pricemile)
+        data = json.dumps(record_json)
+        mimetype = 'application/json'
+        return HttpResponse(data, mimetype)
+    userid = request.session['userid']
+    alertResult1 = UserAlert.objects.filter(userid=userid)
+    alertResult = list(alertResult1)
+            
+    return render_to_response('flightsearch/flight_alert.html',{"alertResult":alertResult,"record":record},context_instance=RequestContext(request))
+
 def useralert(request):
     context = {}
+    if 'action' in request.GET and request.GET.get('action') == 'delete' and 'alertid' in request.GET:
+        alertid = request.GET['alertid']
+        UserAlert.objects.get(pk=alertid).delete()
+        
     if request.POST and  'userid' in request.session:
-	currentDate = datetime.datetime.now().date()
-	preDate = currentDate - timedelta(days=1)
-	print preDate
+    	currentDate = datetime.datetime.now().date()
+    	preDate = currentDate - timedelta(days=1)
         message = ''
         alertuser = UserAlert()
         email = request.session['username']
@@ -1734,6 +1761,8 @@ def useralert(request):
         alertuser.source_airportid = request.POST['fromid']
         alertuser.destination_airportid = request.POST['destid']
         alertuser.departdate = request.POST['alt_depardate']
+        alertuser.from_airport = request.POST['from']
+        alertuser.to_airport = request.POST['to']
         if 'pricemile' in request.POST and request.POST['pricemile']:
             alertuser.pricemile = request.POST['pricemile']
         if 'alt_returndate' in request.POST and request.POST['alt_returndate']:
@@ -1747,17 +1776,25 @@ def useralert(request):
             alertday = request.POST.getlist('alertday')
             alertuser.alertday = ','.join(alertday)
         alertuser.sent_alert_date = preDate
-        alertuser.save()
+        if 'alertid' in request.POST and request.POST['alertid']:
+            alertuser.alertid = request.POST['alertid']
+            message = "Flight price alert has been updated successfully"
+        else:
+            message = "You have successfully created a Flight price alert"
         try:
+            alertuser.save()
+            
+            '''
             html_content = ''
             email_sub = "PEX+ miles alert"
             emailbody = "Hello <b>"+email+"</b>,<br><br> you have successfully created a PEX+ flight miles alert.<br><br>Thanks,<br><b> PEX+ Team"
             resp = customfunction.sendMail('PEX+',email,email_sub,emailbody,html_content)
-            message = "you have successfully created Flight miles alert"
+           
+            '''
         except:
             message = "Something went wrong, Please try again"
-        return HttpResponseRedirect('/manageAccount?status='+message)
-    return HttpResponseRedirect(reverse('manageAccount'))
+        return HttpResponseRedirect('/flightAlert?status='+message)
+    return HttpResponseRedirect(reverse('flightAlert'))
 
 def subscribe(request):
     if request.is_ajax:
