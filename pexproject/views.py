@@ -2646,7 +2646,7 @@ def price_history(request):
         flights = Flightdata.objects.filter(searchkeyid=searchkey['searchid__min'], datasource=airline)
         reducer = getattr(aggregator, aggregation)
         for key, val in FLIGHT_CLASS.items():
-            val = val[1]
+            val = val[0]
             res = flights.filter(**{'{0}__gt'.format(val):0}).aggregate(**{val:reducer(val)})
             if res[val]:
                 result[key].append([float(label), float(res[val])])
