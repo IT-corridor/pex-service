@@ -1,10 +1,12 @@
 $(function() {
     $('#id_price_history_from').datetimepicker({
+        viewMode: 'years',
         format: "YYYY-MM-DD",
         minDate: 0,
     });
 
     $('#id_price_history_to').datetimepicker({
+        viewMode: 'years',
         format: "YYYY-MM-DD",
         useCurrent: false
     });    
