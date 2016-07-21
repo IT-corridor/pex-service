@@ -690,18 +690,21 @@ def contactUs(request):
         
 def search(request):
     if request.is_ajax():
-        returndate = request.POST['returndate']
-        orgnid = request.POST['fromMain']
-        destid = request.POST['toMain']
-        depart = request.POST['deptdate']
-        searchtype = request.POST.get('searchtype', '')
-        cabin = request.POST['cabin']
+        try:
+            returndate = request.POST['returndate']
+            orgnid = request.POST['fromMain']
+            destid = request.POST['toMain']
+            depart = request.POST['deptdate']
+            searchtype = request.POST.get('searchtype', '')
+            cabin = request.POST['cabin']
 
-        key_json = _search(returndate, orgnid, destid, depart, searchtype, cabin)
-        
-        mimetype = 'application/json'
-        data = json.dumps(key_json)
-        return HttpResponse(data, mimetype)
+            key_json = _search(returndate, orgnid, destid, depart, searchtype, cabin)
+            
+            mimetype = 'application/json'
+            data = json.dumps(key_json)
+            return HttpResponse(data, mimetype)
+        except Exception, e:
+            print str(e), '###########3'
         
 def _search(returndate, orgnid, destid, depart, searchtype, cabin):
     ''' 
