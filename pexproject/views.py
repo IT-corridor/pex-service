@@ -104,6 +104,7 @@ def get_countryname(request):
                 country['value'] = item['name']
                 result.append(country)
         data = json.dumps(result)
+        json_text.close()
     else:
         data = 'fail'
     mimetype = 'application/json'
@@ -2587,6 +2588,7 @@ def Admin(request):
     stat_num_search = [['aeroflot', 736], ['airchina', 183], ['american airlines', 0], ['delta', 29861], ['etihad', 382], ['jetblue', 754], ['s7', 1790], ['united', 154182], ['Virgin America', 332], ['Virgin Australia', 6464], ['virgin_atlantic', 55]]
     pop_searches = [{'source': u'New York (NYC)', 'destination': u'Tel Aviv (TLV)', 'dcount': 150}, {'source': u'New York (NYC)', 'destination': u'Seattle (SEA)', 'dcount': 126}, {'source': u'Los Angeles (LAX)', 'destination': u'Miami (MIA)', 'dcount': 89}, {'source': u'Houston (IAH)', 'destination': u'Ft Lauderdale (FLL)', 'dcount': 84}, {'source': u'Bangkok (BKK)', 'destination': u'Tokyo (NRT)', 'dcount': 79}, {'source': u'Beijing (PEK)', 'destination': u'Moscow (MOW)', 'dcount': 78}, {'source': u'New York (JFK)', 'destination': u'Sydney (SYD)', 'dcount': 77}, {'source': u'New York (NYC)', 'destination': u'Los Angeles (LAX)', 'dcount': 76}, {'source': u'New York (LGA)', 'destination': u'Miami (MIA)', 'dcount': 68}, {'source': u'Moscow (MOW)', 'destination': u'Beijing (NAY)', 'dcount': 68}, {'source': u'Miami (MIA)', 'destination': u'New York (LGA)', 'dcount': 68}, {'source': u'Tel Aviv (TLV)', 'destination': u'New York (NYC)', 'dcount': 59}, {'source': u'New York (NYC)', 'destination': u'San Francisco (SFO)', 'dcount': 52}, {'source': u'Los Angeles (LAX)', 'destination': u'New York (NYC)', 'dcount': 51}, {'source': u'New York (NYC)', 'destination': u'Moscow (MOW)', 'dcount': 48}, {'source': u'New York (NYC)', 'destination': u'Miami (MIA)', 'dcount': 46}, {'source': u'New York (NYC)', 'destination': u'Ft Lauderdale (FLL)', 'dcount': 45}, {'source': u'Philadelphia (PHL)', 'destination': u'Ft Lauderdale (FLL)', 'dcount': 43}, {'source': u'Moscow (MOW)', 'destination': u'Beijing (PEK)', 'dcount': 43}, {'source': u'Miami (MIA)', 'destination': u'Toronto (YYZ)', 'dcount': 40}, {'source': u'New York (NYC)', 'destination': u'Honolulu (HNL)', 'dcount': 39}, {'source': u'Los Angeles (LAX)', 'destination': u'Rome (FCO)', 'dcount': 39}, {'source': u'New York (JFK)', 'destination': u'Ft Lauderdale (FLL)', 'dcount': 38}, {'source': u'Indianapolis (IND)', 'destination': u'Bangkok (BKK)', 'dcount': 36}, {'source': u'San Francisco (SFO)', 'destination': u'Los Angeles (LAX)', 'dcount': 35}, {'source': u'Boston (BOS)', 'destination': u'Tel Aviv (TLV)', 'dcount': 34}, {'source': u'Beijing (PEK)', 'destination': u'London (LHR)', 'dcount': 33}, {'source': u'Rome (FCO)', 'destination': u'New York (JFK)', 'dcount': 31}, {'source': u'New York (NYC)', 'destination': u'Las Vegas (LAS)', 'dcount': 31}, {'source': u'New York (JFK)', 'destination': u'London (LHR)', 'dcount': 31}]
     user_search_history = get_search_history()
+    search_on_country = get_search_country()
 
     return render(request, 'Admin/dashboard.html', {
         'stat_num_search': stat_num_search,
@@ -2595,7 +2597,8 @@ def Admin(request):
         'num_users': len(list(User.objects.all())),
         'total_searches': len(list(Searchkey.objects.all()))*3,
         'user_search_history':user_search_history,
-        })
+        'search_on_country':search_on_country,
+    })
 
 def get_search_history():
     result = []
@@ -2606,6 +2609,24 @@ def get_search_history():
                 result.append([user.username, search.source+' -> '+search.destination, str(search.scrapetime)])
             else:
                 result.append(['', search.source+' -> '+search.destination, str(search.scrapetime)])
+    return result
+
+def get_search_country():
+    searches = Searchkey.objects.filter(user_ids__regex=r'[0-9]+')
+    user_dict = {}
+    for search in searches:
+        user_ids = search.user_ids.split(',')
+        for user_id in user_ids:
+            if user_id:
+                if user_id in user_dict:
+                    user_dict[user_id] = user_dict[user_id] + 1
+                else:
+                    user_dict[user_id] = 1
+
+    result = []
+    for key, val in user_dict.items():
+        country = User.objects.get(user_id=key).country
+        result.append([country, val])
     return result
 
 @csrf_exempt
@@ -2671,5 +2692,4 @@ def price_history(request):
     result = [{'label':'Economy', 'data':result['economy']}, {'label':'Business', 'data':result['business']}, {'label':'First', 'data':result['firstclass']}]
     result_tax = [{'label':'Economy', 'data':result_tax['economy']}, {'label':'Business', 'data':result_tax['business']}, {'label':'First', 'data':result_tax['firstclass']}]
 
-    print [result,result_tax], '##########'
     return HttpResponse(json.dumps([result,result_tax]))
