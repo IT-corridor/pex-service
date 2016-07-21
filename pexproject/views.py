@@ -2578,6 +2578,7 @@ def price_history(request):
     route = request.POST.get('route').split('@')
     aggregation = request.POST.get('aggregation')
 
+    print _from, _to, airline, route, aggregation, '@@@@@@@'
     searchkeys = Searchkey.objects.filter(traveldate__range=(_from, _to), source=route[0], destination=route[1]).values('traveldate').annotate(Min('searchid'), Min('scrapetime')).order_by('traveldate')
 
     result = {'economy': [], 'business': [], 'firstclass':[]}
@@ -2592,4 +2593,5 @@ def price_history(request):
             if res[val]:
                 result[key].append([float(label), float(res[val])])
     result = [{'label':'Economy', 'data':result['economy']}, {'label':'Business', 'data':result['business']}, {'label':'First', 'data':result['firstclass']}]
+    print result, '##########'
     return HttpResponse(json.dumps(result))
