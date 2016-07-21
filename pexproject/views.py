@@ -90,6 +90,24 @@ def get_cityname(request):
     mimetype = 'application/json'
     return HttpResponse(data, mimetype)
 
+def get_countryname(request):
+    if request.is_ajax():
+        q = request.GET.get('term', '')
+        file_path = '/var/www/html/python/pex/pexproject/pexproject/country_region.json'
+        json_text = open(file_path, 'r')
+        jsonData = json.loads(json_text.read())
+        result = []
+        for item in jsonData:
+            if q.lower() in item['name'].lower():
+                country = {}
+                country['label'] = item['name']
+                country['value'] = item['name']
+                result.append(country)
+        data = json.dumps(result)
+    else:
+        data = 'fail'
+    mimetype = 'application/json'
+    return HttpResponse(data, mimetype)
 
 def index(request):
     context = {}
