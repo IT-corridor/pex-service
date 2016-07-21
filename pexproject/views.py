@@ -2589,7 +2589,6 @@ def Admin(request):
 
     return render(request, 'Admin/dashboard.html', {
         'stat_num_search': stat_num_search,
-        'stat_price_history': [],
         'pop_searches': pop_searches,
         'air_lines': air_lines,
         'num_users': len(list(User.objects.all())),
@@ -2640,16 +2639,24 @@ def price_history(request):
     searchkeys = Searchkey.objects.filter(traveldate__range=(_from, _to), source=route[0], destination=route[1]).values('traveldate').annotate(Min('searchid'), Min('scrapetime')).order_by('traveldate')
 
     result = {'economy': [], 'business': [], 'firstclass':[]}
+    result_tax = {'economy': [], 'business': [], 'firstclass':[]}
 
     for searchkey in searchkeys:
         label = time.mktime(searchkey['traveldate'].timetuple()) * 1000
         flights = Flightdata.objects.filter(searchkeyid=searchkey['searchid__min'], datasource=airline)
         reducer = getattr(aggregator, aggregation)
         for key, val in FLIGHT_CLASS.items():
-            val = val[0]
-            res = flights.filter(**{'{0}__gt'.format(val):0}).aggregate(**{val:reducer(val)})
-            if res[val]:
-                result[key].append([float(label), float(res[val])])
+            field = val[0]
+            res = flights.filter(**{'{0}__gt'.format(field):0}).aggregate(**{field:reducer(field)})
+            if res[field]:
+                result[key].append([float(label), float(res[field])])
+            field = val[1]
+            res = flights.filter(**{'{0}__gt'.format(field):0}).aggregate(**{field:reducer(field)})
+            if res[field]:
+                result_tax[key].append([float(label), float(res[field])])
+
     result = [{'label':'Economy', 'data':result['economy']}, {'label':'Business', 'data':result['business']}, {'label':'First', 'data':result['firstclass']}]
-    print result, '##########'
-    return HttpResponse(json.dumps(result))
+    result_tax = [{'label':'Economy', 'data':result_tax['economy']}, {'label':'Business', 'data':result_tax['business']}, {'label':'First', 'data':result_tax['firstclass']}]
+
+    print [result,result_tax], '##########'
+    return HttpResponse(json.dumps([result,result_tax]))
