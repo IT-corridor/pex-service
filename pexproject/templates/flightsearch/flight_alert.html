@@ -1,0 +1,286 @@
+{% load staticfiles %}
+{% load humanize %}
+		{% include "flightsearch/header.html" %}
+		<title>Flight Alert|PEX+</title>
+	    <div class="container">
+	    	<div class="col-xs-12 heading-container">
+	    		{% if request.GET.status %}<h4 class="text-center">{{request.GET.status}}{%endif%}</h4>
+		    	<div class="col-xs-12 mvb30px">
+		    		<span class="flight_alert_heading pull-left">Flight Price Alert</span>
+					<a class="pull-right" href="#" data-toggle="modal" data-target="#flight-model-alert">Set A Flight Price Alert</a>
+		    	</div>
+		    	
+		    	<div class="col-xs-12">
+		    		{%if alertResult%}
+		    		{%for row in alertResult%}
+		    		<div class="col-xs-12 mvb10px account-block-bg">
+		    			<div class="col-xs-8">
+							<h4>{{row.from_airport}}  <img src="{% static 'flightsearch/img/summary-arrow.png' %}" /> {{row.to_airport}}</h4> 
+							
+							<span>{{row.departdate}} {% if row.returndate %} - {{row.returndate}} {%endif%}, 1 adult Economy,  Max price miles {{row.pricemile|intcomma}} </span>
+						</div>
+						<div class="col-xs-4 text-right mvt15p">
+							<h4><a href="#" class="action" id="{{row.alertid}}" >Change</a> | <a href="/useralert?action=delete&alertid={{row.alertid}}" >Delete</a>  </h4>
+						</div>
+					</div>
+					{% endfor %}
+					{% else %}
+					<h4>You have not created any Flight price alert</h4>
+					{% endif %}
+					
+								
+		    	</div>
+		    </div>
+	    </div>
+	</div>
+<div class="modal fade" id="flight-model-alert" tabindex="-1" role="dialog" >
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="gridSystemModalLabel">Set A Flight Price Alert</h4>
+      </div>
+      <div class="modal-body">
+      	<div class="container-fluid">
+      		<div class="row">
+		        <form action="useralert" method="post" class="modelform">
+					{% csrf_token %}
+					<input type="hidden" id="alertid" name="alertid">
+					<div class="col-xs-12 nopadding">
+						<div class="container nopadding trip-custome">
+							<div class="col-sm-12 col-xs-12 nopadding">
+					    		<div class="checkbox-inline mhr10px auto-crsr">
+					         		<label><input type="radio" id="roundTrip" class="curson" name="trip" value="roundtrip" {% if record %} {% if record.returndate %} checked="checked"{%endif%}{%else%}checked="checked" {%endif%}> Round-Trip</label>
+					        	</div>
+					     		<div class="checkbox-inline mhr10px auto-crsr">
+					         		<label><input type="radio" id="oneWay" class="curson" name="trip" value="oneway" {% if record  and record.returndate == None%} checked="checked" {%endif%}> One-Way</label>
+					       		</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-xs-12 nopadding">
+						<div class="col-xs-6 form-group">
+							<div class="ui-widget">
+								<label class="sr-only" for="from">From:</label> 
+								<input type="search" class=" form_val form-control"
+									id="alt_from" name="from" placeholder="From" autocomplete="off" {% if record and record.from_airport%} value="{{record.from_airport}}" {%endif%} required>
+								<input type="hidden" id="alt_fromid" name="fromid" {% if record and record.source_airportid%} value="{{record.source_airportid}}" {%endif%} />
+							</div>
+							
+						</div>
+						<div class="col-xs-6 form-group">
+							<div class="ui-widget">
+			                  <label class="sr-only" for="to">To:</label>
+			                  <input type="search" class="form_val form-control" id="alt_to" name="to" placeholder="To" autocomplete="off" {% if record and record.to_airport%} value="{{record.to_airport}}" {%endif%} required>
+			                  <input type="hidden" id="alt_toid" name="destid" {% if record and record.destination_airportid%} value="{{record.destination_airportid}}" {%endif%} />
+			                </div>
+						</div>
+					</div>
+					
+					<div class="col-xs-12 nopadding">
+						<div class="col-xs-6 form-group">
+							<div class="inner-addon left-addon date"><i class="glyphicon glyphicon-calendar "></i>
+							<input type="text" id="alt_depart" class="form-control" placeholder="Depart" name="alt_depardate" required >
+							</div>
+						</div>
+						<div class="col-xs-6 form-group" id="returndatediv">
+							<div class="inner-addon left-addon date"><i class="glyphicon glyphicon-calendar "></i>
+							<input type="text" id="alt_return" class="form-control" placeholder="Return" name="alt_returndate">
+							</div>
+						</div>
+					</div>
+						<div class="col-xs-12 nopadding">
+						<div class="col-xs-6 form-group">
+							<div class="inner-addon left-addon date"><i class="glyphicon glyphicon-calendar "></i>
+							<input type="text" id="alt_expire" class="form-control" placeholder="Alert Expire Date" name="alt_expire">
+							</div>
+						</div>
+						<div class="col-xs-6 form-group">
+							
+							<input type="number" id="price_mile" class="form-control" placeholder="Max Mileage Price" name="pricemile" required>
+						</div>
+						</div>
+						<!--
+						<div class="col-xs-12 nopadding">	
+						<div class="col-xs-6 form-group">
+							<select id="select_day" multiple="multiple" class="form-control" name="alertday">
+								<option value="Sunday">Sunday</option>	
+								<option value="Monday">Monday</option>
+								<option value="Tuesday">Tuesday</option>
+								<option value="Wednesday">Wednesday</option>
+								<option value="Thursday">Thursday</option>
+								<option value="Friday">Friday</option>
+								<option value="Saturday">Saturday</option>
+							</select>
+						</div>
+						
+						</div>
+						-->
+						<div class="col-xs-12 nopadding">
+							<div class="col-xs-12 form-group">
+								<button type="submit" class="btn btn-pexSearch">Save</button>
+							</div>
+						</div>
+					
+					
+				</form>
+			</div>
+		</div>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+		
+		<div class="">
+	{% include "flightsearch/footer.html" %}
+	</div>
+	
+	<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>');</script>
+    <script src="/static/flightsearch/js/vendor/bootstrap.min.js"></script>
+   	<script src="{% static 'flightsearch/js/bootstrap-multiselect.js' %}"></script>
+	
+	<script>
+		
+		
+		$("#oneWay").click(function(){
+    		if($("#oneWay").prop('checked') == true){
+    			$("#returndatediv").hide();
+    			$('#alt_return').val('');
+    		}
+    		else
+    		{
+    			
+    			$("#returndatediv").show();
+    		}
+    		
+    	});
+    	$("#roundTrip").click(function(){
+    		if($("#roundTrip").prop('checked') == true){
+    			$("#returndatediv").show();
+    		}
+    		else
+    		{
+    			$("#returndatediv").hide();
+    			$('#alt_return').val('');
+    		}
+    		
+    	});
+	</script>
+	<script>
+		$(function() {
+    
+    $( "#alt_from" ).autocomplete({
+  		 open: function(event, ui) {
+	        	$('.ui-autocomplete').off('menufocus hover mouseover');
+	        	$('#alt_fromid').val('');
+    		},
+		autoFocus: true,
+    	source: "get_airport/",
+    	minLength: 2,
+    	appendTo:".modelform",
+    	select: function(event, ui) {
+    		$('#alt_fromid').val(ui.item.id);
+    	},
+    });
+    $( "#alt_to" ).autocomplete({
+  		open: function(event, ui) {
+	        	$('.ui-autocomplete').off('menufocus hover mouseover');
+	        	$('label[class=error]').remove();
+	        	$('#alt_to').css('border-color','');
+	        	$('#alt_toid').val('');
+    		},
+
+		autoFocus: true,
+    	source: "get_airport/",
+    	minLength: 2,
+    	appendTo:".modelform",
+    	select: function(event, ui) {
+    		$('#alt_toid').val(ui.item.id);
+    	},
+    });
+  });
+  
+      
+	 $(function(){
+	 	
+               $('#alt_depart').datepicker(
+               	{
+					dateFormat: 'yy-mm-dd',
+               		minDate: 0,
+               		onSelect: function()
+               		{
+               			setTimeout(function function_name (argument) {
+							 $('#alt_return').focus();
+						   },200);
+               			
+               		},
+               		  onClose: function(selectedDate) {
+        					// Set the minDate of 'to' as the selectedDate of 'from'
+        					if (selectedDate != '')
+        					{
+        						$("#alt_return").datepicker("option", "minDate", selectedDate);
+        						$("#alt_expire").datepicker("option", "maxDate", selectedDate,"minDate",0);
+        					}
+        					else{
+        						$("#alt_return").datepicker("option", "minDate", 0);
+        						$("#alt_expire").datepicker("option", "minDate", 0);
+        					}
+        					
+    					}
+               	}
+               	
+               );
+              $('#alt_return').datepicker({
+              		dateFormat: 'yy-mm-dd',
+              		minDate:0,
+              	}) ;
+              $('#alt_expire').datepicker({
+              		minDate:0,
+              		dateFormat: 'yy-mm-dd',
+              	}) ;
+       });
+	</script>
+	<script>
+		$('.action').click(function(){
+			var recordid = $(this).attr('id');
+			
+			$.ajax({
+				type: "POST",
+		       	dataType: "json",
+		       	url: "/flightAlert/",
+		       	data:{"alertid":recordid,"csrfmiddlewaretoken":"{{csrf_token}}"}
+			}).done(function(data){
+				$('#flight-model-alert').modal('show');
+				console.log(data['returndate']);
+				if(data['returndate'] != 'None')
+				{
+					$('#roundTrip').prop('checked', true);
+					$("#returndatediv").show();
+					$("alt_return").val(data['returndate']);
+				}
+				else{
+					$('#oneWay').prop('checked', true);
+					$("#returndatediv").hide();
+    				$('#alt_return').val('');
+				}
+				$('#alt_from').val(data['from_airport']);
+				$('#alt_to').val(data['to_airport']);
+				$('#alt_toid').val(data['destination_airportid']);
+				$('#alt_fromid').val(data['source_airportid']);
+				$('#alt_depart').val(data['departdate']);
+				$('#price_mile').val(data['maxprice']);
+				$('#alertid').val(data['alertid']);
+			});
+			
+		});
+		
+	// message alert dialog 
+	//var status = "{{request.GET.status}}";
+	//console.log(status);
+	
+	
+	//$("<div>"+status+"</div>").dialog()	;
+		
+	</script>
+	
+    
