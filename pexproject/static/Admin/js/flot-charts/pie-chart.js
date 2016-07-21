@@ -44,9 +44,6 @@ $(document).ready(function(){
         });
     }    
 
-    // hard-code color indices to prevent them from shifting as
-    // countries are turned on/off
-
 
     _price_history([[],[]]);
 });
@@ -89,6 +86,9 @@ _price_history = function(data) {
             mode: "time"
         }
     });  
+
+    if (data[1].length > 0)
+        $('#id_price_history_chart_tax').css('margin-left','38px');
 
     $.plot("#id_price_history_chart_tax", data[1], {
         yaxis: {
