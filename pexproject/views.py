@@ -34,7 +34,6 @@ from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
-from django.http import JsonResponse
 from django.template import RequestContext, loader
 from social_auth.models import UserSocialAuth
 #from djnago.conf import settings
@@ -53,6 +52,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.html import strip_tags
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db import connection, transaction
+from django.db import models as aggregator
 from django.db.models import Q, Count
 from django.db.models import Max, Min
 
@@ -2525,12 +2525,17 @@ def admin_logout(request):
 
 @login_required(login_url='/Admin/login/')
 def Admin(request):
+    air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']    
     stat_num_search = [['aeroflot', 736], ['airchina', 183], ['american airlines', 0], ['delta', 29861], ['etihad', 382], ['jetblue', 754], ['s7', 1790], ['united', 154182], ['Virgin America', 332], ['Virgin Australia', 6464], ['virgin_atlantic', 55]]
     pop_searches = [{'source': u'New York (NYC)', 'destination': u'Tel Aviv (TLV)', 'dcount': 149}, {'source': u'New York (NYC)', 'destination': u'Seattle (SEA)', 'dcount': 124}, {'source': u'Los Angeles (LAX)', 'destination': u'Miami (MIA)', 'dcount': 89}, {'source': u'Houston (IAH)', 'destination': u'Ft Lauderdale (FLL)', 'dcount': 82}, {'source': u'Bangkok (BKK)', 'destination': u'Tokyo (NRT)', 'dcount': 79}, {'source': u'Beijing (PEK)', 'destination': u'Moscow (MOW)', 'dcount': 78}, {'source': u'New York (JFK)', 'destination': u'Sydney (SYD)', 'dcount': 76}, {'source': u'Moscow (MOW)', 'destination': u'Beijing (NAY)', 'dcount': 68}, {'source': u'Miami (MIA)', 'destination': u'New York (LGA)', 'dcount': 68}, {'source': u'New York (NYC)', 'destination': u'Los Angeles (LAX)', 'dcount': 65}]
 
     return render(request, 'Admin/dashboard.html', {
         'stat_num_search': stat_num_search,
-        'pop_searches': pop_searches
+        'stat_price_history': [],
+        'pop_searches': pop_searches,
+        'air_lines': air_lines,
+        'num_users': len(list(User.objects.all())),
+        'total_searches': len(list(Searchkey.objects.all()))*3.3,
         })
 
 @csrf_exempt
@@ -2562,9 +2567,28 @@ def popular_search(request):
     start_time = start_time.strftime('%Y-%m-%d %H:%M:%S')
 
     pop_searches = Searchkey.objects.filter(scrapetime__gte=start_time).values('source', 'destination').annotate(dcount=Count('*')).order_by('-dcount')[:10]
-    try:
-        pop_searches = [{'source':item['source'], 'destination':item['destination'], 'dcount':item['dcount']} for item in pop_searches]
-        return HttpResponse(json.dumps(pop_searches))
-    except Exception, e:
-        print str(e), '@@@@@@@@'
+    pop_searches = [{'source':item['source'], 'destination':item['destination'], 'dcount':item['dcount']} for item in pop_searches]
+    return HttpResponse(json.dumps(pop_searches))
         
+@csrf_exempt
+def price_history(request):    
+    _from = request.POST.get('_from')
+    _to = request.POST.get('_to') 
+    airline = request.POST.get('airline')
+    route = request.POST.get('route').split('@')
+    aggregation = request.POST.get('aggregation')
+
+    searchkeys = Searchkey.objects.filter(traveldate__range=(_from, _to), source=route[0], destination=route[1]).values('traveldate').annotate(Min('searchid'), Min('scrapetime')).order_by('traveldate')
+
+    result = {'economy': [], 'business': [], 'firstclass':[]}
+
+    for searchkey in searchkeys:
+        label = str(searchkey['traveldate'].month)+'.'+str(searchkey['traveldate'].day)
+        flights = Flightdata.objects.filter(searchkeyid=searchkey['searchid__min'], datasource=airline)
+        reducer = getattr(aggregator, aggregation)
+        for key, val in FLIGHT_CLASS.items():
+            res = flights.filter(**{'{0}__gt'.format(val):0}).aggregate(**{val:reducer(val)})
+            if res[val]:
+                result[key].append([float(label), float(res[val])])
+    result = [{'label':'Economy', 'data':result['economy']}, {'label':'Business', 'data':result['business']}, {'label':'First', 'data':result['firstclass']}]
+    return HttpResponse(json.dumps(result))
