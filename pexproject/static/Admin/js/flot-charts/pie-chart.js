@@ -48,7 +48,7 @@ $(document).ready(function(){
     // countries are turned on/off
 
 
-    _price_history(stat_price_history);
+    _price_history([[],[]]);
 });
 
 price_history = function() {
@@ -79,12 +79,25 @@ _price_history = function(data) {
         ++i;
     });
 
-    $.plot("#id_price_history_chart", data, {
+    $.plot("#id_price_history_chart", data[0], {
         yaxis: {
-            min: 0
+            tickFormatter: function (val, axis) {
+                return val + " miles";
+            },    
         },
         xaxis: {
             mode: "time"
         }
-    });    
+    });  
+
+    $.plot("#id_price_history_chart_tax", data[1], {
+        yaxis: {
+            tickFormatter: function (val, axis) {
+                return "   $"+val;
+            },    
+        },
+        xaxis: {
+            mode: "time"
+        }
+    });      
 }
