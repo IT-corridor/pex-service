@@ -85,6 +85,8 @@ urlpatterns = [
     
     url(r'^index', index, name='index'),
     url(r'^useralert',useralert,name='useralert'),
+    url(r'^flightAlert',flightAlert,name='flightAlert'),
+    #url(r'^searchLoading',searchLoading,name='searchLoading'),
     url(r'^search',search, name='search'),
     url(r'^get_airport', get_airport, name='get_airport'),
     url(r'^getsearchresult', getsearchresult, name='getsearchresult'),
