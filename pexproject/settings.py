@@ -208,6 +208,8 @@ USE_TZ = True
 
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static/')
 STATIC_URL = '/static/'
+MEDIA_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+print MEDIA_ROOT, '@@@@@@@@@@'
 #STATICFILES_DIRS = (
 #  os.path.join(PROJECT_ROOT, 'static')
 #)

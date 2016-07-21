@@ -764,11 +764,15 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin):
             obj = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, scrapetime__gte=time1)
             returnobj = Searchkey.objects.filter(source=destination1, destination=origin, traveldate=searchdate1, scrapetime__gte=time1)
 
-            if len(returnobj) > 0:
-                for retkey in returnobj:
-                     returnkey = retkey.searchid
+            if returnobj:
+                returnobj = returnobj[0]
+                if request.session.get('userid'):
+                    returnobj.user_ids = returnobj.user_ids+','+request.session.get('userid')
+                    returnobj.save()
+                returnkey = returnobj.searchid
             else:
-                searchdata = Searchkey(source=destination1, destination=origin, destination_city=etihadorigin,traveldate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid)
+                user_id = request.session.get('userid', '')
+                searchdata = Searchkey(source=destination1, destination=origin, destination_city=etihadorigin,traveldate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid, user_ids=user_id)
                 searchdata.save()
                 returnkey = searchdata.searchid
                 if is_scrape_jetblue == 1:
@@ -810,15 +814,18 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin):
         else:
             obj = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, scrapetime__gte=time1)
 
-
-        if len(obj) > 0:
-            for keyid in obj:
-                searchkeyid = keyid.searchid
+        if obj:           
+            obj = obj[0]
+            if request.session.get('userid'):
+                obj.user_ids = obj.user_ids+','+request.session.get('userid')
+                obj.save()
+            searchkeyid = obj.searchid
         else:
+            user_id = request.session.get('userid', '')
             if dt1:
-                searchdata = Searchkey(source=origin, destination=destination1,destination_city=etihaddest, traveldate=dt, returndate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid) 
+                searchdata = Searchkey(source=origin, destination=destination1,destination_city=etihaddest, traveldate=dt, returndate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid, user_ids=user_id) 
             else:
-                searchdata = Searchkey(source=origin, destination=destination1,destination_city=etihaddest, traveldate=dt, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid)
+                searchdata = Searchkey(source=origin, destination=destination1,destination_city=etihaddest, traveldate=dt, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid, user_ids=user_id)
             searchdata.save()
             searchkeyid = searchdata.searchid 
             cursor = connection.cursor()
@@ -830,8 +837,7 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin):
                     
             '''-------------------------------------'''
             customfunction.flag = 0
-    #if searchdate1:
-    #    customfunction.flag = 2
+    
             if is_scrape_jetblue == 1:
                 customfunction.flag = customfunction.flag+1
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/jetblue.py",orgncode,destcode,str(depart),str(searchkeyid)])
@@ -846,10 +852,8 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin):
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/united.py",orgncode,destcode,str(depart),str(searchkeyid)])
             if is_scrape_s7 == 1:
                 customfunction.flag = customfunction.flag+1
-                # print '@@@@@ S7 One way', originobj.cityCode, destobj.cityCode, str(searchdate), str(searchkeyid)                    
                 print '@@@@@ S7 One way', originobj.code, destobj.code, str(searchdate), str(searchkeyid)                    
-                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/s7.ru.py", originobj.code, destobj.code, str(searchdate), str(searchkeyid)])                    
-                # subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/s7.ru.py", originobj.cityCode, destobj.cityCode, str(searchdate), str(searchkeyid)])                    
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/s7.ru.py", originobj.code, destobj.code, str(searchdate), str(searchkeyid)])
             if is_scrape_aa == 1:
                 customfunction.flag = customfunction.flag+1
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/aa.py",orgncode,destcode,str(depart),str(searchkeyid)])
@@ -1910,7 +1914,7 @@ def api_search_hotel(request):
     if request.method == 'POST':        
         result = {}
 
-        _token = check_validity_token(request.META.get('HTTP_AUTHORIZATION'), 'hotel')
+        _token = check_validity_token(request.META.get('HTTP_AUTHORIZATION'), 'hotel', request)
         error_message = _token[0]
         if error_message:
             result['status'] = 'Failed'
@@ -2129,7 +2133,7 @@ FLIGHT_CLASS = {
     'firstclass': ['business', 'businesstax']
 }
 
-def check_validity_token(token, service):
+def check_validity_token(token, service, request):
     '''
     check and validate the token from the request for the service
     return 
@@ -2155,6 +2159,8 @@ def check_validity_token(token, service):
     number_request = number_request + 1
     setattr(token, 'run_%s_search' % service, number_request)
     token.save()
+
+    request.session['userid'] = token.owner.user_id
 
     if number_request > limit_request:
         return ['Your license is reached to its limit. Please extend it!']
@@ -2236,7 +2242,7 @@ def api_search_flight(request):
         delay_threshold = 30
         result = {}
 
-        _token = check_validity_token(request.META.get('HTTP_AUTHORIZATION'), 'flight')
+        _token = check_validity_token(request.META.get('HTTP_AUTHORIZATION'), 'flight', request)
         error_message = _token[0]
         if error_message:
             result['status'] = 'Failed'

@@ -76,6 +76,7 @@ class Searchkey(models.Model):
     scrapetime = models.DateTimeField()
     origin_airport_id = models.IntegerField ()
     destination_airport_id = models.IntegerField ()
+    user_ids = models.CharField(max_length=500, blank=True, null=True)
 
 class Contactus(models.Model):
     contactid = models.AutoField(primary_key=True)
