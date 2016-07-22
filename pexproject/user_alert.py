@@ -25,8 +25,9 @@ time1 = datetime.datetime.now() - timedelta(minutes=30)
 time1 = time1.strftime('%Y-%m-%d %H:%M:%S')
 
 currentDate = datetime.datetime.now().date()
-currday = currentDate.strftime("%A")
-cursor.execute("select t1.*,t2.airport_id, t2.code,t2.cityName  from  pexproject_useralert t1 inner join pexproject_airports t2 on t1.source_airportid = t2.airport_id or t1.destination_airportid = t2.airport_id where expiredate >= '"+str(currentDate)+"' and sent_alert_date < '"+str(currentDate)+"' and (alertday like '%%"+currday+"%%' or alertday='')")
+cur_year = currentDate.strftime("%Y")
+
+cursor.execute("select t1.*,t2.airport_id, t2.code,t2.cityName  from  pexproject_useralert t1 inner join pexproject_airports t2 on t1.source_airportid = t2.airport_id or t1.destination_airportid = t2.airport_id where sent_alert_date < '"+str(currentDate)+"' and CASE WHEN annual_repeat=1 THEN DATE_FORMAT(departdate, '%m-%d') >= DATE_FORMAT('"+str(currentDate)+"', '%m-%d') ELSE departdate >= '"+str(currentDate)+"' END")
 users = cursor.fetchall()
 oldid = ''
 oldsourceCode = ''
@@ -47,15 +48,15 @@ def callScraper(source_code, olddestinationCode, departdate1,searchid,source_cit
     etihad(source_city, destcity, departdate1, searchid,"maincabin")
     virgin_atlantic(source_code, olddestinationCode, departdate1,returndate1,searchid,returnkey)
     
-def sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,deptdate,retdate):
+def sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,deptdate,retdate,cabin):
     retstr = ''
     triptype=''
     if returnkey:
-        cursor.execute("select (min(p1.maincabin)+min(p2.maincabin)) as minprice from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and p2.maincabin > 0 where p1.searchkeyid="+str(searchid)+" and p1.maincabin > 0 group by p1.datasource order by minprice")   
+        cursor.execute("select (min(p1."+cabin+")+min(p2."+cabin+")) as minprice from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and p2."+cabin+" > 0 where p1.searchkeyid="+str(searchid)+" and p1."+cabin+" > 0 group by p1.datasource order by minprice")   
         retstr = ' - '+str(retdate)
         triptype = "Round-Trip"
     else:    
-        cursor.execute("select min(maincabin) as minprice, datasource from pexproject_flightdata where searchkeyid='"+str(searchid)+"' and maincabin > 0 and maincabin < "+str(pricemiles))
+        cursor.execute("select min("+cabin+") as minprice, datasource from pexproject_flightdata where searchkeyid='"+str(searchid)+"' and "+cabin+" > 0 and "+cabin+" < "+str(pricemiles))
         triptype = "One-Way"
         
     #print cursor._last_executed
@@ -63,7 +64,12 @@ def sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,
     
     ''' Send alert mail  '''
     if priceObj and priceObj['minprice'] <= pricemiles and priceObj['minprice'] != None:
-        #try:
+        cabinname = "Economy"
+        if 'business' in cabin:
+            cabinname = "First"
+        elif 'firstclass' in cabin:
+            cabinname = 'Business'
+            
         try:
             email_sub = "PEX+ Flight Alert: We found a matching flight"
             #emailbody = "<img src='static/flightsearch/img/logo.jpg' alt='' width='100' height='100' style='display: block;' /> <br><br> Hello <b>"+usermail+"</b>,<br><br> We've found flights that meets your search for:<br><br>"+full_source+" - "+full_dest+"<br>"+deptdate+retstr+" for "+triptype+".<br><br> Get more details by searching on <a href='http://pexportal.com/'>pexportal.com</a><br><br>Best Regards,<br><b>The PEX+ Team"
@@ -98,7 +104,7 @@ def sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,
                             </div>
                             <div style="width:100%;posiition:relative;padding:10px 20px 0px;font-family:arial;font-style:normal;font-size:15px;font-weight:200;color:#474747;">
                                 <h3>We've found flights that meet your search for:</h3>
-                                <h2 style="text-align: center;margin: 30px 0;font-weight:700;line-height:24px;letter-spacing: 0.55px;color:#39A8E0;">'''+full_source+''' - '''+full_dest+'''<br>'''+str(deptdate)+retstr+'''<br>Economy - '''+triptype+'''</h2>
+                                <h2 style="text-align: center;margin: 30px 0;font-weight:700;line-height:24px;letter-spacing: 0.55px;color:#39A8E0;">'''+full_source+''' - '''+full_dest+'''<br>'''+str(deptdate)+retstr+'''<br>'''+cabinname+''' - '''+triptype+'''</h2>
                                 <h3>Get more details by searching on <a href='http://pexportal.com/' target='_blank' style="color:#39A8E0;">pexportal.com</a></h3>
                             </div>
                             <div style="width:100%;position:relative;padding:10px 20px 0px;font-family:arial;font-style:normal;font-size:15px;font-weight:200;color:#474747;">
@@ -108,6 +114,13 @@ def sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,
                             </div>
                         </div>
                     </div>
+                    <div style="text-align:center;background:#eee;padding:10px 20px 10px;">
+                        <a href="http://www.twitter.com/PEXPlus"><img src="http://pexportal.com/static/flightsearch/img/twtr.png"></a>
+                        <a href="http://www.facebook.com/PEXPlus"><img src="http://pexportal.com/static/flightsearch/img/fb.png"></a>
+                        <a href="http://www.instagram.com/PEXPlus"><img src="http://pexportal.com/static/flightsearch/img/instgm.png"></a>
+                        <div style="width: 100%;min-height: 1px;border-bottom:1px solid #555;margin: 15px 0;"></div>
+                        <p>Copyright 2015-2016 PEX+. All Rights Reserved.</p>
+                    </div>
             
                 </body>
             </html>
@@ -115,12 +128,13 @@ def sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,
             '''
             html_content = ''
             resp = customfunction.sendMail('PEX+',usermail,email_sub,emailbody,html_content)
-        #except:
         except:
             print "somting wrong"
 
     
 for row in users:
+    #print row
+    #exit()
     print "**************************************************"
     if oldid == row['alertid']:
         if oldsourceCode:
@@ -132,12 +146,23 @@ for row in users:
             full_source = oldsourceCity+" ("+oldsourceCode+")"
             usermail = row['user_email']
             departdate = row['departdate']
+            cabin = row['cabin']
+            deptyear = departdate.strftime('%Y')
+            
+            if deptyear < cur_year:
+                year_diff = int(cur_year)-int(deptyear)
+                departdate = departdate.replace(departdate.year+int(year_diff))
             departdate1 = departdate.strftime('%m/%d/%Y')
+
             returndate =  row['returndate']
             returndate1 = ''
             if returndate:
+                retyear = returndate.strftime('%Y')
+                if retyear < cur_year:
+                    year_diff = int(cur_year)-int(retyear)
+                    returndate = returndate.replace(departdate.year+int(year_diff))
                 returndate1 = returndate.strftime('%m/%d/%Y')
-            alertday =  row['alertday']
+            #alertday =  row['alertday']
             pricemiles = row['pricemile']
             
             ''' check search key is exists or not'''
@@ -169,7 +194,7 @@ for row in users:
                     returnkey = returnresult['searchid']
                     
             if searchid:
-                sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,departdate1,returndate1)
+                sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,departdate1,returndate1,cabin)
             cursor.execute("update pexproject_useralert set sent_alert_date='"+str(currentDate)+"' where alertid="+str(row['alertid']))    
             db.commit()
             oldsourceCode = ''
@@ -186,12 +211,21 @@ for row in users:
             full_dest = olddestinationCity+" ("+olddestinationCode+")"
             usermail = row['user_email']
             departdate = row['departdate']
+            cabin = row['cabin']
+            deptyear = departdate.strftime('%Y')
+            if deptyear < cur_year:
+                year_diff = int(cur_year)-int(deptyear)
+                departdate = departdate.replace(departdate.year+int(year_diff))
             departdate1 = departdate.strftime('%m/%d/%Y')
             returndate1 = ''
             returndate = row['returndate']
             if returndate:
+                retyear = returndate.strftime('%Y')
+                if retyear < cur_year:
+                    year_diff = int(cur_year)-int(retyear)
+                    returndate = returndate.replace(departdate.year+int(year_diff))
                 returndate1 = returndate.strftime('%m/%d/%Y')
-            alertday = row['alertday']
+            #alertday = row['alertday']
             pricemiles = row['pricemile']
             
             ''' check search key is exists or not'''
@@ -223,7 +257,7 @@ for row in users:
                     returnkey = returnresult['searchid']
             
             if searchid:
-                sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,departdate1,returndate1)
+                sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,departdate1,returndate1,cabin)
             cursor.execute("update pexproject_useralert set sent_alert_date='"+str(currentDate)+"' where alertid="+str(row['alertid']))    
             db.commit()
             olddestinationCode = ''
