@@ -336,14 +336,14 @@
                     <div class="panel-group" role="tablist" aria-multiselectable="true">
                         {% for key, val in user_search_history.items %}
                         <div class="panel panel-collapse">
-                            <div class="panel-heading" role="tab" id="heading-{{key}}">
+                            <div class="panel-heading" role="tab" id="heading-{{forloop.counter}}">
                                 <h4 class="panel-title">
-                                    <a  class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse-{{key}}" aria-expanded="false" aria-controls="collapse-{{key}}">
+                                    <a  class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse-{{forloop.counter}}" aria-expanded="false" aria-controls="collapse-{{forloop.counter}}">
                                         {{ key }}
                                     </a>
                                 </h4>
                             </div>
-                            <div id="collapse-{{key}}" class="collapse" role="tabpanel" aria-labelledby="heading-{{key}}">
+                            <div id="collapse-{{forloop.counter}}" class="collapse" role="tabpanel" aria-labelledby="heading-{{forloop.counter}}">
                                 <div class="panel-body">
                                     <div class="table-responsive">
                                         <table class="table table-striped">
