@@ -25,8 +25,9 @@ time1 = datetime.datetime.now() - timedelta(minutes=30)
 time1 = time1.strftime('%Y-%m-%d %H:%M:%S')
 
 currentDate = datetime.datetime.now().date()
-currday = currentDate.strftime("%A")
-cursor.execute("select t1.*,t2.airport_id, t2.code,t2.cityName  from  pexproject_useralert t1 inner join pexproject_airports t2 on t1.source_airportid = t2.airport_id or t1.destination_airportid = t2.airport_id where expiredate >= '"+str(currentDate)+"' and sent_alert_date < '"+str(currentDate)+"' and (alertday like '%%"+currday+"%%' or alertday='')")
+cur_year = currentDate.strftime("%Y")
+
+cursor.execute("select t1.*,t2.airport_id, t2.code,t2.cityName  from  pexproject_useralert t1 inner join pexproject_airports t2 on t1.source_airportid = t2.airport_id or t1.destination_airportid = t2.airport_id where sent_alert_date < '"+str(currentDate)+"' and CASE WHEN annual_repeat=1 THEN DATE_FORMAT(departdate, '%m-%d') >= DATE_FORMAT('"+str(currentDate)+"', '%m-%d') ELSE departdate >= '"+str(currentDate)+"' END")
 users = cursor.fetchall()
 oldid = ''
 oldsourceCode = ''
@@ -63,7 +64,6 @@ def sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,
     
     ''' Send alert mail  '''
     if priceObj and priceObj['minprice'] <= pricemiles and priceObj['minprice'] != None:
-        #try:
         try:
             email_sub = "PEX+ Flight Alert: We found a matching flight"
             #emailbody = "<img src='static/flightsearch/img/logo.jpg' alt='' width='100' height='100' style='display: block;' /> <br><br> Hello <b>"+usermail+"</b>,<br><br> We've found flights that meets your search for:<br><br>"+full_source+" - "+full_dest+"<br>"+deptdate+retstr+" for "+triptype+".<br><br> Get more details by searching on <a href='http://pexportal.com/'>pexportal.com</a><br><br>Best Regards,<br><b>The PEX+ Team"
@@ -108,6 +108,13 @@ def sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,
                             </div>
                         </div>
                     </div>
+                    <div style="text-align:center;background:#cccccc;padding:10px 20px 10px;">
+                        <a href="http://www.twitter.com/PEXPlus"><img src="http://pexportal.com/static/flightsearch/img/twtr.png"></a>
+                        <a href="http://www.facebook.com/PEXPlus"><img src="http://pexportal.com/static/flightsearch/img/fb.png"></a>
+                        <a href="http://www.instagram.com/PEXPlus"><img src="http://pexportal.com/static/flightsearch/img/instgm.png"></a>
+                        <divstyle="width: 100%;min-height: 1px;border-bottom:1px solid #555;margin: 15px 0;"></div>
+                        <p>Copyright 2015-2016 PEX+. All Rights Reserved.</p>
+                    </div>
             
                 </body>
             </html>
@@ -115,12 +122,13 @@ def sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,
             '''
             html_content = ''
             resp = customfunction.sendMail('PEX+',usermail,email_sub,emailbody,html_content)
-        #except:
         except:
             print "somting wrong"
 
     
 for row in users:
+    #print row
+    #exit()
     print "**************************************************"
     if oldid == row['alertid']:
         if oldsourceCode:
@@ -132,12 +140,22 @@ for row in users:
             full_source = oldsourceCity+" ("+oldsourceCode+")"
             usermail = row['user_email']
             departdate = row['departdate']
+            deptyear = departdate.strftime('%Y')
+            
+            if deptyear < cur_year:
+                year_diff = int(cur_year)-int(deptyear)
+                departdate = departdate.replace(departdate.year+int(year_diff))
             departdate1 = departdate.strftime('%m/%d/%Y')
+
             returndate =  row['returndate']
             returndate1 = ''
             if returndate:
+                retyear = returndate.strftime('%Y')
+                if retyear < cur_year:
+                    year_diff = int(cur_year)-int(retyear)
+                    returndate = returndate.replace(departdate.year+int(year_diff))
                 returndate1 = returndate.strftime('%m/%d/%Y')
-            alertday =  row['alertday']
+            #alertday =  row['alertday']
             pricemiles = row['pricemile']
             
             ''' check search key is exists or not'''
@@ -186,12 +204,20 @@ for row in users:
             full_dest = olddestinationCity+" ("+olddestinationCode+")"
             usermail = row['user_email']
             departdate = row['departdate']
+            deptyear = departdate.strftime('%Y')
+            if deptyear < cur_year:
+                year_diff = int(cur_year)-int(deptyear)
+                departdate = departdate.replace(departdate.year+int(year_diff))
             departdate1 = departdate.strftime('%m/%d/%Y')
             returndate1 = ''
             returndate = row['returndate']
             if returndate:
+                retyear = returndate.strftime('%Y')
+                if retyear < cur_year:
+                    year_diff = int(cur_year)-int(retyear)
+                    returndate = returndate.replace(departdate.year+int(year_diff))
                 returndate1 = returndate.strftime('%m/%d/%Y')
-            alertday = row['alertday']
+            #alertday = row['alertday']
             pricemiles = row['pricemile']
             
             ''' check search key is exists or not'''
