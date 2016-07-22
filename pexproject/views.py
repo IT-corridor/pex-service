@@ -2646,18 +2646,22 @@ def airline_info(request):
     print period, fare_class, origin, destination, '@@@@'
     start_time = datetime.datetime.now() - timedelta(days=period)
     start_time = start_time.strftime('%Y-%m-%d %H:%M:%S')
-
     stat_num_search = []
-    searches = Searchkey.objects.filter(source=route[0], destination=route[1], scrapetime__gte=start_time)
-    searches = [item.searchid for item in searches]
-    for air_line in air_lines:
-        kwargs = {
-            '{0}__gt'.format(fare_class):0,
-            'datasource': air_line,
-            'searchkeyid__in': searches,
-        }
-        num_search = len(list(Flightdata.objects.filter(**kwargs)))
-        stat_num_search.append([air_line, num_search])
+
+    try:
+        searches = Searchkey.objects.filter(source=route[0], destination=route[1], scrapetime__gte=start_time)
+        searches = [item.searchid for item in searches]
+        for air_line in air_lines:
+            kwargs = {
+                '{0}__gt'.format(fare_class):0,
+                'datasource': air_line,
+                'searchkeyid__in': searches,
+            }
+            num_search = len(list(Flightdata.objects.filter(**kwargs)))
+            stat_num_search.append([air_line, num_search])
+    except Exception, e:
+        print str(e)
+
 
     print stat_num_search, '@@@@@@@'
     return HttpResponse(json.dumps(stat_num_search))
