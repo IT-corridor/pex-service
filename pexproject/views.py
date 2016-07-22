@@ -2592,7 +2592,7 @@ def admin_logout(request):
 @login_required(login_url='/Admin/login/')
 def Admin(request):
     air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']    
-    stat_num_search = [['aeroflot', 736], ['airchina', 183], ['american airlines', 0], ['delta', 29861], ['etihad', 382], ['jetblue', 754], ['s7', 1790], ['united', 154182], ['Virgin America', 332], ['Virgin Australia', 6464], ['virgin_atlantic', 55]]
+    stat_num_search = [['aeroflot', 0], ['airchina', 0], ['american airlines', 0], ['delta', 321], ['etihad', 0], ['jetblue', 0], ['s7', 26], ['united', 867], ['Virgin America', 0], ['Virgin Australia', 0], ['virgin_atlantic', 0]]
     pop_searches = [{'source': u'New York (NYC)', 'destination': u'Tel Aviv (TLV)', 'dcount': 150}, {'source': u'New York (NYC)', 'destination': u'Seattle (SEA)', 'dcount': 126}, {'source': u'Los Angeles (LAX)', 'destination': u'Miami (MIA)', 'dcount': 89}, {'source': u'Houston (IAH)', 'destination': u'Ft Lauderdale (FLL)', 'dcount': 84}, {'source': u'Bangkok (BKK)', 'destination': u'Tokyo (NRT)', 'dcount': 79}, {'source': u'Beijing (PEK)', 'destination': u'Moscow (MOW)', 'dcount': 78}, {'source': u'New York (JFK)', 'destination': u'Sydney (SYD)', 'dcount': 77}, {'source': u'New York (NYC)', 'destination': u'Los Angeles (LAX)', 'dcount': 76}, {'source': u'New York (LGA)', 'destination': u'Miami (MIA)', 'dcount': 68}, {'source': u'Moscow (MOW)', 'destination': u'Beijing (NAY)', 'dcount': 68}, {'source': u'Miami (MIA)', 'destination': u'New York (LGA)', 'dcount': 68}, {'source': u'Tel Aviv (TLV)', 'destination': u'New York (NYC)', 'dcount': 59}, {'source': u'New York (NYC)', 'destination': u'San Francisco (SFO)', 'dcount': 52}, {'source': u'Los Angeles (LAX)', 'destination': u'New York (NYC)', 'dcount': 51}, {'source': u'New York (NYC)', 'destination': u'Moscow (MOW)', 'dcount': 48}, {'source': u'New York (NYC)', 'destination': u'Miami (MIA)', 'dcount': 46}, {'source': u'New York (NYC)', 'destination': u'Ft Lauderdale (FLL)', 'dcount': 45}, {'source': u'Philadelphia (PHL)', 'destination': u'Ft Lauderdale (FLL)', 'dcount': 43}, {'source': u'Moscow (MOW)', 'destination': u'Beijing (PEK)', 'dcount': 43}, {'source': u'Miami (MIA)', 'destination': u'Toronto (YYZ)', 'dcount': 40}, {'source': u'New York (NYC)', 'destination': u'Honolulu (HNL)', 'dcount': 39}, {'source': u'Los Angeles (LAX)', 'destination': u'Rome (FCO)', 'dcount': 39}, {'source': u'New York (JFK)', 'destination': u'Ft Lauderdale (FLL)', 'dcount': 38}, {'source': u'Indianapolis (IND)', 'destination': u'Bangkok (BKK)', 'dcount': 36}, {'source': u'San Francisco (SFO)', 'destination': u'Los Angeles (LAX)', 'dcount': 35}, {'source': u'Boston (BOS)', 'destination': u'Tel Aviv (TLV)', 'dcount': 34}, {'source': u'Beijing (PEK)', 'destination': u'London (LHR)', 'dcount': 33}, {'source': u'Rome (FCO)', 'destination': u'New York (JFK)', 'dcount': 31}, {'source': u'New York (NYC)', 'destination': u'Las Vegas (LAS)', 'dcount': 31}, {'source': u'New York (JFK)', 'destination': u'London (LHR)', 'dcount': 31}]
     user_search_history = get_search_history()
     search_on_country = get_search_country()
@@ -2646,7 +2646,7 @@ def airline_info(request):
         fare_class = request.POST.get('fare_class')
         route = request.POST.get('route').split('@')
 
-        print period, fare_class, '@@@@'
+        print period, fare_class, route, '@@@@'
         start_time = datetime.datetime.now() - timedelta(days=period)
         start_time = start_time.strftime('%Y-%m-%d %H:%M:%S')
         searches = Searchkey.objects.filter(source=route[0], destination=route[1], scrapetime__gte=start_time)
@@ -2661,7 +2661,6 @@ def airline_info(request):
             stat_num_search.append([air_line, num_search])
     except Exception, e:
         print str(e)
-
 
     print stat_num_search, '@@@@@@@'
     return HttpResponse(json.dumps(stat_num_search))
