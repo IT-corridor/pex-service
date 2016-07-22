@@ -2649,7 +2649,7 @@ def airline_info(request):
 
     stat_num_search = []
     searches = Searchkey.objects.filter(source=route[0], destination=route[1], scrapetime__gte=start_time)
-    searches = [item.searchid for item in saerches]
+    searches = [item.searchid for item in searches]
     for air_line in air_lines:
         kwargs = {
             '{0}__gt'.format(fare_class):0,
