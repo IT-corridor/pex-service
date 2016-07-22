@@ -212,13 +212,19 @@
                             </select>
                         </div>                    
                         <div class="col-sm-4 m-b-25">
-                            <span class="f-500 m-b-15 c-black">Flight Routes</span>
-                            
-                            <select class="selectpicker" onchange="price_history();" id="id_price_history_route">
-                                {% for item in pop_searches %}
-                                <option value="{{ item.source }}@{{ item.destination }}">{{ item.source }} -> {{ item.destination }}</option>
-                                {% endfor %}
-                            </select>
+                        <span class="f-500 m-b-15 c-black">Flight Routes</span>
+                        <div class="row">
+                            <div class="col-sm-6 form-group">
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control airport_text" placeholder="From" id="id_price_history_from" autocomplete="off" onchange="price_history();">
+                                </div>
+                            </div>
+                            <div class="col-sm-6 form-group">
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control airport_text" placeholder="To" id="id_price_history_to" autocomplete="off" onchange="price_history();">
+                                </div>
+                            </div>                            
+                        </div>
                         </div> 
                         <div class="col-sm-2 m-b-25">
                             <span class="f-500 m-b-15 c-black">Prices</span>
@@ -381,33 +387,6 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <h2>Pie Chart</h2>
-                    
-                    <ul class="actions">
-                        <li class="dropdown action-show">
-                            <a href="" data-toggle="dropdown">
-                                <i class="zmdi zmdi-more-vert"></i>
-                            </a>
-            
-                            <div class="dropdown-menu pull-right">
-                                <p class="p-20">
-                                    You can put anything here
-                                </p>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                
-                <div class="card-body card-padding">
-                    <div id="pie-chart" class="flot-chart-pie"></div>
-                    <div class="flc-pie hidden-xs"></div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
                     <h2>Search Distribution on Countries</h2>
                     
                     <ul class="actions">
@@ -528,11 +507,7 @@
 </script>
 
 <script src="/static/Admin/vendors/bower_components/moment/min/moment.min.js"></script>
-<script src="/static/Admin/js/flot-charts/curved-line-chart.js"></script>
-<script src="/static/Admin/js/flot-charts/line-chart.js"></script>
-<script src="/static/Admin/js/flot-charts/bar-chart.js"></script>
 <script src="/static/Admin/js/flot-charts/dynamic-chart.js"></script>
-<script src="/static/Admin/js/flot-charts/pie-chart.js"></script>
 <script src="/static/Admin/vendors/bower_components/bootstrap-select/dist/js/bootstrap-select.js"></script>
 <script src="/static/Admin/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/static/Admin/vendors/sparklines/jquery.sparkline.min.js"></script>
