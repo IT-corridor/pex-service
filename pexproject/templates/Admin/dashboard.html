@@ -142,7 +142,17 @@
                                 <option value="firstclass">Business</option>
                                 <option value="business">First</option>
                             </select>
-                        </div>                    
+                        </div>      
+                        <div class="col-sm-4 m-b-25">
+                            <span class="f-500 m-b-15 c-black">Flight Routes</span>
+                            
+                            <select class="selectpicker" onchange="update_line_info();" id="id_airline_info_route">
+                                {% for item in pop_searches %}
+                                    <option value="{{ item.source }}@{{ item.destination }}">{{ item.source }} -> {{ item.destination }}</option>
+                                {% endfor %}
+                            </select>
+                        </div> 
+
                     </div>                    
                     <div id="bar-chart" class="flot-chart"  style="height: 320px;"></div>                    
                 </div>
