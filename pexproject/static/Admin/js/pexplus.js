@@ -86,7 +86,7 @@ user_signup_activity = function() {
     
     $('.page-loader').show();    
 
-    $.post('/stats/user_signup_activity/', 
+    $.post('/stats/signup_activity/', 
         {'_from':_from, '_to':_to}
     ).success(function(data) {
         $('.page-loader').fadeOut();
@@ -94,7 +94,7 @@ user_signup_activity = function() {
         var result = '';
         for(idx in stat_user_signup_activity) {
             var no = idx*1 + 1;
-            result += '<tr><td>'+no+'</td><td>'+stat_user_signup_activity[idx].username+'</td><td>'+stat_user_signup_activity[idx].date_joined+'</td></tr>';
+            result += '<tr><td>'+no+'</td><td>'+stat_user_signup_activity[idx][0]+'</td><td>'+stat_user_signup_activity[idx][1]+'</td></tr>';
         }
         $('#id_user_signup_table_body').html(result);
     });    

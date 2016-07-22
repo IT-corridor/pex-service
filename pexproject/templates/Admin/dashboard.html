@@ -468,11 +468,11 @@
                         <div class="input-group form-group">
                             <span class="input-group-addon"><i class="zmdi zmdi-calendar"></i></span>
                             <div class="dtp-container fg-line">
-                                <input type='text' class="form-control" placeholder="From" id="id_user_signup_from">
+                                <input type='text' class="form-control" placeholder="From" id="id_user_signup_from" onchange="user_signup_activity();">
                             </div>
                             <span class="input-group-addon"><i class="zmdi zmdi-calendar"></i></span>
                             <div class="dtp-container fg-line">
-                                <input type='text' class="form-control" placeholder="To" id="id_user_signup_to">
+                                <input type='text' class="form-control" placeholder="To" id="id_user_signup_to" onchange="user_signup_activity();">
                             </div>
                         </div>
                     </div>
@@ -487,13 +487,6 @@
                                 </tr>
                             </thead>
                             <tbody id='id_user_signup_table_body'>
-                                {% for item in search_on_country %}
-                                <tr>
-                                    <td>{{ forloop.counter }}</td>
-                                    <td>{{ item.0 }}</td>
-                                    <td>{{ item.1 }}</td>
-                                </tr>
-                                {% endfor %}
                             </tbody>
                         </table>
                     </div>

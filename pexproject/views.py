@@ -2725,3 +2725,12 @@ def price_history(request):
     result_tax = [{'label':'Economy', 'data':result_tax['economy']}, {'label':'Business', 'data':result_tax['business']}, {'label':'First', 'data':result_tax['firstclass']}]
 
     return HttpResponse(json.dumps([result,result_tax]))
+
+@csrf_exempt
+def signup_activity(request):
+    _from = request.POST.get('_from')
+    _to = request.POST.get('_to') 
+    users = User.objects.filter(date_joined__range=(_from, _to)).order_by('date_joined')
+    result = [[user.username, user.date_joined] for user in users]
+    return HttpResponse(json.dumps(result))
+    
