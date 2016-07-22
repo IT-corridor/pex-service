@@ -103,8 +103,9 @@ class UserAlert(models.Model):
     to_airport = models.CharField(max_length=100)
     departdate = models.DateField()
     returndate = models.DateField()
-    expiredate = models.DateField()
-    alertday = models.CharField(max_length=512)
+    traveller = models.IntegerField()
+    cabin = models.CharField(max_length=512)
+    annual_repeat = models.BooleanField(default=False)
     sent_alert_date = models.DateField()
 
 class FlexibleDateSearch(models.Model):
