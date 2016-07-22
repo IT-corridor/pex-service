@@ -140,8 +140,8 @@ price_history = function() {
     var _from = $('#id_price_history_from').val();
     var _to = $('#id_price_history_to').val();
     var airline = $('#id_price_history_airline').val();
-    var r_from = $('#id_price_history_from').val();
-    var r_to = $('#id_price_history_to').val();
+    var r_from = $('#id_price_history_route_from').val();
+    var r_to = $('#id_price_history_route_to').val();
     var aggregation = $('#id_price_history_aggregation').val();
 
     if (_from == '' || _to == '')
