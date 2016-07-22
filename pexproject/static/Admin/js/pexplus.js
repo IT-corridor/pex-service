@@ -20,6 +20,25 @@ $(function() {
         $('#id_price_history_from').data("DateTimePicker").maxDate(e.date);
         price_history();
     });    
+
+    $('#id_user_signup_from').datetimepicker({
+        format: "YYYY-MM-DD",
+        minDate: 0,
+    });
+
+    $('#id_user_signup_to').datetimepicker({
+        format: "YYYY-MM-DD",
+        useCurrent: false
+    });    
+
+    $("#id_user_signup_from").on("dp.change", function (e) {
+        $('#id_user_signup_to').data("DateTimePicker").minDate(e.date);
+        user_signup_activity();
+    });
+    $("#id_user_signup_to").on("dp.change", function (e) {
+        $('#id_user_signup_from').data("DateTimePicker").maxDate(e.date);
+        user_signup_activity();
+    });      
 });
 
 update_pop_search = function() {
@@ -40,3 +59,36 @@ update_pop_search = function() {
         $('.page-loader').fadeOut();
     });
 }
+
+user_signup_activity = function() {
+    var _from = $('#id_user_signup_from').val();
+    var _to = $('#id_user_signup_to').val();
+
+    if (_from == '' || _to == '')
+        return false;
+    
+    $('.page-loader').show();    
+
+    $.post('/stats/user_signup_activity/', 
+        {'_from':_from, '_to':_to}
+    ).success(function(data) {
+        $('.page-loader').fadeOut();
+        stat_user_signup_activity = JSON.parse(data);
+        var result = '';
+        for(idx in stat_user_signup_activity) {
+            var no = idx*1 + 1;
+            result += '<tr><td>'+no+'</td><td>'+stat_user_signup_activity[idx].username+'</td><td>'+stat_user_signup_activity[idx].date_joined+'</td></tr>';
+        }
+        $('#id_user_signup_table_body').html(result);
+    });    
+}
+
+$( ".airport_text" ).autocomplete({
+    open: function(event, ui) {
+        $('.ui-autocomplete').off('menufocus hover mouseover');
+    },
+        
+    autoFocus: true,
+    source: "get_airport/",
+    minLength: 2,
+});

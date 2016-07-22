@@ -2654,12 +2654,13 @@ def airline_info(request):
         air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']
         period = int(request.POST.get('period'))
         fare_class = request.POST.get('fare_class')
-        route = request.POST.get('route').split('@')
+        _from = request.POST.get('_from')
+        _to = request.POST.get('_to')
 
-        print period, fare_class, route, '@@@@'
         start_time = datetime.datetime.now() - timedelta(days=period)
         start_time = start_time.strftime('%Y-%m-%d %H:%M:%S')
-        searches = Searchkey.objects.filter(source=route[0], destination=route[1], scrapetime__gte=start_time)
+        print period, fare_class, _from, _to, start_time, '@@@@'
+        searches = Searchkey.objects.filter(source=_from, destination=_to, scrapetime__gte=start_time)
         searches = [item.searchid for item in searches]
         for air_line in air_lines:
             kwargs = {

@@ -23,11 +23,13 @@ _update_line_info = function(data) {
 update_line_info = function(obj) {
     var period = $('#id_airline_info_period').val();
     var fare_class = $('#id_airline_info_fare_class').val();
-    var route = $('#id_airline_info_route').val();
+    var _from = $('#id_search_result_from').val();
+    var _to = $('#id_search_result_to').val();
+    
     $('.page-loader').show();    
 
     $.post('/stats/airline_info/', 
-        {'period':period, 'fare_class':fare_class, 'route':route}
+        {'period':period, 'fare_class':fare_class, '_from':_from, '_to':_to}
     ).success(function(data) {
         stat_num_search = JSON.parse(data);
         _update_line_info(stat_num_search);

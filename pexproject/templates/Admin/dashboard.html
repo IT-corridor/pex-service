@@ -4,6 +4,8 @@
 {% block extra_css %}
     <link href="/static/Admin/vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css" rel="stylesheet">
     <link href="/static/Admin/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'flightsearch/admin/autocomplete/jquery-ui.min.css' %}">
+    <link rel="stylesheet" href="{% static 'flightsearch/admin/autocomplete/jquery-ui.theme.min.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -41,7 +43,6 @@
                 </ul>
             </li>
         </ul>
-    
     </div>
     
     <div class="mini-charts">
@@ -101,7 +102,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h2>Airline Statistics</h2>
+                    <h2>Airline Search Result Frequency</h2>
                     
                     <ul class="actions">
                         <li class="dropdown action-show">
@@ -143,14 +144,22 @@
                                 <option value="business">First</option>
                             </select>
                         </div>      
-                        <div class="col-sm-4 m-b-25">
-                            <span class="f-500 m-b-15 c-black">Flight Routes</span>
+
+                        <div class="col-sm-6 m-b-25">
+                        <span class="f-500 m-b-15 c-black">Flight Routes</span>
+                        <div class="row">
+                            <div class="col-sm-6 form-group">
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control airport_text" placeholder="From" id="id_search_result_from" autocomplete="off" onchange="update_line_info();">
+                                </div>
+                            </div>
+                            <div class="col-sm-6 form-group">
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control airport_text" placeholder="To" id="id_search_result_to" autocomplete="off" onchange="update_line_info();">
+                                </div>
+                            </div>
                             
-                            <select class="selectpicker" onchange="update_line_info();" id="id_airline_info_route">
-                                {% for item in pop_searches %}
-                                    <option value="{{ item.source }}@{{ item.destination }}">{{ item.source }} -> {{ item.destination }}</option>
-                                {% endfor %}
-                            </select>
+                        </div>
                         </div> 
 
                     </div>                    
@@ -439,6 +448,65 @@
             </div>
         </div>
 
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h2>User Signup Activity</h2>
+                    
+                    <ul class="actions">
+                        <li class="dropdown action-show">
+                            <a href="" data-toggle="dropdown">
+                                <i class="zmdi zmdi-more-vert"></i>
+                            </a>
+            
+                            <div class="dropdown-menu pull-right">
+                                <p class="p-20">
+                                    You can put anything here
+                                </p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="card-body card-padding-sm">
+                    <div class="col-sm-10 m-b-25">
+                        <span class="f-500 m-b-15 c-black">Period</span>
+                        <div class="input-group form-group">
+                            <span class="input-group-addon"><i class="zmdi zmdi-calendar"></i></span>
+                            <div class="dtp-container fg-line">
+                                <input type='text' class="form-control" placeholder="From" id="id_user_signup_from">
+                            </div>
+                            <span class="input-group-addon"><i class="zmdi zmdi-calendar"></i></span>
+                            <div class="dtp-container fg-line">
+                                <input type='text' class="form-control" placeholder="To" id="id_user_signup_to">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>User</th>
+                                    <th>Signed up</th>
+                                </tr>
+                            </thead>
+                            <tbody id='id_user_signup_table_body'>
+                                {% for item in search_on_country %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ item.0 }}</td>
+                                    <td>{{ item.1 }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -468,6 +536,7 @@
 <script src="/static/Admin/vendors/bower_components/bootstrap-select/dist/js/bootstrap-select.js"></script>
 <script src="/static/Admin/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/static/Admin/vendors/sparklines/jquery.sparkline.min.js"></script>
+<script src="{% static 'flightsearch/admin/autocomplete/jquery-ui.min.js' %}"></script>
 
 <script src="/static/Admin/js/pexplus.js"></script>
 <script src="/static/Admin/js/charts.js"></script>
