@@ -2618,7 +2618,7 @@ def Admin(request):
     })
 
 def get_search_history():
-    result = []
+    result = []    
     for user in User.objects.all():
         searches = Searchkey.objects.filter(user_ids__contains=','+str(user.user_id)+',').order_by('-scrapetime')
         for search in searches:
@@ -2626,6 +2626,13 @@ def get_search_history():
                 result.append([user.username, search.source+' -> '+search.destination, str(search.scrapetime)])
             else:
                 result.append(['', search.source+' -> '+search.destination, str(search.scrapetime)])
+    # for Non-Members
+    searches = Searchkey.objects.exclude(user_ids__regex=r'[0-9]+').order_by('-scrapetime')[:150]        
+    for search in searches:
+        if search == searches[0]:
+            result.append(['Non-Member', search.source+' -> '+search.destination, str(search.scrapetime)])
+        else:
+            result.append(['', search.source+' -> '+search.destination, str(search.scrapetime)])
     return result
 
 def get_search_country():
