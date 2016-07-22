@@ -2692,11 +2692,12 @@ def price_history(request):
     _from = request.POST.get('_from')
     _to = request.POST.get('_to') 
     airline = request.POST.get('airline')
-    route = request.POST.get('route').split('@')
+    r_from = request.POST.get('r_from')
+    r_to = request.POST.get('r_to') 
     aggregation = request.POST.get('aggregation')
 
-    print _from, _to, airline, route, aggregation, '@@@@@@@'
-    searchkeys = Searchkey.objects.filter(traveldate__range=(_from, _to), source=route[0], destination=route[1]).values('traveldate').annotate(Min('searchid'), Min('scrapetime')).order_by('traveldate')
+    print _from, _to, airline, r_from, r_to, aggregation, '@@@@@@@'
+    searchkeys = Searchkey.objects.filter(traveldate__range=(_from, _to), source=r_from, destination=r_to).values('traveldate').annotate(Min('searchid'), Min('scrapetime')).order_by('traveldate')
 
     result = {'economy': [], 'business': [], 'firstclass':[]}
     result_tax = {'economy': [], 'business': [], 'firstclass':[]}
