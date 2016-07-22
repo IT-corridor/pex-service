@@ -196,7 +196,6 @@ margin-top: -8px;
 
 .flight_alert_heading{
 	font-size: 25px;
-    font-weight: 150;
 }
 .ui-widget-header{
 	background: transparent !important;
@@ -2581,6 +2580,10 @@ div.ui-datepicker{
 	}
 	.arrivel-2 {
 		float: left;
+	}
+	.flight_alert_heading {
+		float:none !important;
+		display: block;
 	}
 
 }
