@@ -2648,6 +2648,7 @@ def airline_info(request):
     m = re.search('\((.+?)\)', route[1])
     destination = m.group(1)
 
+    print origin, destination, '@@@@'
     start_time = datetime.datetime.now() - timedelta(days=period)
     start_time = start_time.strftime('%Y-%m-%d %H:%M:%S')
 
@@ -2663,6 +2664,7 @@ def airline_info(request):
         num_search = len(list(Flightdata.objects.filter(**kwargs)))
         stat_num_search.append([air_line, num_search])
 
+    print stat_num_search, '@@@@@@@'
     return HttpResponse(json.dumps(stat_num_search))
 
 
