@@ -2434,7 +2434,14 @@ def google_ad_update(request, id=None):
 @login_required(login_url='/Admin/login/')
 def customer(request):
     customers = User.objects.all()
-    return render(request, 'Admin/customer.html', {'customers': customers})
+    result = []
+    for customer in customers:
+        num_search = len(list(Searchkey.objects.filter(user_ids__regex=r',%d,'%customer.user_id)))
+        customer = model_to_dict(customer)
+        customer['num_search'] = num_search
+        result.append(customer)
+
+    return render(request, 'Admin/customer.html', {'customers': result})
 
 
 @login_required(login_url='/Admin/login/')    
