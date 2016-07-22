@@ -2641,6 +2641,12 @@ def airline_info(request):
     air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']
     period = int(request.POST.get('period'))
     fare_class = request.POST.get('fare_class')
+    route = request.POST.get('route').split('@')
+
+    m = re.search('\((.+?)\)', route[0])
+    origin = m.group(1)
+    m = re.search('\((.+?)\)', route[1])
+    destination = m.group(1)
 
     start_time = datetime.datetime.now() - timedelta(days=period)
     start_time = start_time.strftime('%Y-%m-%d %H:%M:%S')
@@ -2651,6 +2657,8 @@ def airline_info(request):
             'scrapetime__gte':start_time,
             '{0}__gt'.format(fare_class):0,
             'datasource': air_line,
+            'origin': origin,
+            'destination': destination,
         }
         num_search = len(list(Flightdata.objects.filter(**kwargs)))
         stat_num_search.append([air_line, num_search])
