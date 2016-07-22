@@ -2621,12 +2621,14 @@ def get_search_history():
     result = {}
     for user in User.objects.all():
         searches = Searchkey.objects.filter(user_ids__contains=','+str(user.user_id)+',').order_by('-scrapetime')
-        saerches = [(search.source+' -> '+search.destination, str(search.scrapetime)) for search in searches]
+        if not searches:
+            continue
+        searches = [(search.source+' -> '+search.destination, str(search.scrapetime)) for search in searches]
         result[user.username] = searches
 
     # for Non-Members
     searches = Searchkey.objects.exclude(user_ids__regex=r'[0-9]+').order_by('-scrapetime')[:100]        
-    saerches = [(search.source+' -> '+search.destination, str(search.scrapetime)) for search in searches]
+    searches = [(search.source+' -> '+search.destination, str(search.scrapetime)) for search in searches]
     result['Non-Member'] = searches
 
     return result
