@@ -2646,7 +2646,7 @@ def airline_info(request):
         fare_class = request.POST.get('fare_class')
         route = request.POST.get('route').split('@')
 
-        print period, fare_class, origin, destination, '@@@@'
+        print period, fare_class, '@@@@'
         start_time = datetime.datetime.now() - timedelta(days=period)
         start_time = start_time.strftime('%Y-%m-%d %H:%M:%S')
         searches = Searchkey.objects.filter(source=route[0], destination=route[1], scrapetime__gte=start_time)
