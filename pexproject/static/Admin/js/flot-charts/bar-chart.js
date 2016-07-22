@@ -26,6 +26,9 @@ update_line_info = function(obj) {
     var _from = $('#id_search_result_from').val();
     var _to = $('#id_search_result_to').val();
     
+    if (_from == '' || _to == '')
+        return false;
+    
     $('.page-loader').show();    
 
     $.post('/stats/airline_info/', 

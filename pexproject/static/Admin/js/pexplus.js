@@ -39,6 +39,16 @@ $(function() {
         $('#id_user_signup_from').data("DateTimePicker").maxDate(e.date);
         user_signup_activity();
     });      
+
+    $( ".airport_text" ).autocomplete({
+        open: function(event, ui) {
+            $('.ui-autocomplete').off('menufocus hover mouseover');
+        },
+            
+        autoFocus: true,
+        source: "get_airport/",
+        minLength: 2,
+    });    
 });
 
 update_pop_search = function() {
@@ -83,12 +93,3 @@ user_signup_activity = function() {
     });    
 }
 
-$( ".airport_text" ).autocomplete({
-    open: function(event, ui) {
-        $('.ui-autocomplete').off('menufocus hover mouseover');
-    },
-        
-    autoFocus: true,
-    source: "get_airport/",
-    minLength: 2,
-});
