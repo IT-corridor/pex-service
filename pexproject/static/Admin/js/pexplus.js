@@ -51,6 +51,13 @@ $(function() {
     });    
 });
 
+
+$(document).ready(function(){    
+    _update_line_info(stat_num_search);
+    _price_history([[],[]]);
+});
+
+
 update_pop_search = function() {
     var period = $('#id_pop_search_period').val();
 
@@ -93,3 +100,96 @@ user_signup_activity = function() {
     });    
 }
 
+_update_line_info = function(data) {
+    $.plot("#bar-chart", [ data ], {
+        series: {
+            bars: {
+                show: true,
+                barWidth: 0.6,
+                align: "center"
+            }
+        },
+        xaxis: {
+            mode: "categories",
+            tickLength: 0
+        }
+    });
+}
+
+update_line_info = function(obj) {
+    var period = $('#id_airline_info_period').val();
+    var fare_class = $('#id_airline_info_fare_class').val();
+    var _from = $('#id_search_result_from').val();
+    var _to = $('#id_search_result_to').val();
+    
+    if (_from == '' || _to == '')
+        return false;
+    
+    $('.page-loader').show();    
+
+    $.post('/stats/airline_info/', 
+        {'period':period, 'fare_class':fare_class, '_from':_from, '_to':_to}
+    ).success(function(data) {
+        stat_num_search = JSON.parse(data);
+        _update_line_info(stat_num_search);
+        $('.page-loader').fadeOut();
+    });
+}
+
+price_history = function() {
+    var _from = $('#id_price_history_from').val();
+    var _to = $('#id_price_history_to').val();
+    var airline = $('#id_price_history_airline').val();
+    var r_from = $('#id_price_history_from').val();
+    var r_to = $('#id_price_history_to').val();
+    var aggregation = $('#id_price_history_aggregation').val();
+
+    if (_from == '' || _to == '')
+        return false;
+
+    if (r_from == '' || r_to == '')
+        return false;
+    
+    $('.page-loader').show();    
+
+    $.post('/stats/price_history/', 
+        {'_from':_from, '_to':_to, 'airline':airline, 'r_from':r_from, 'r_to':r_to, 'aggregation':aggregation}
+    ).success(function(data) {
+        $('.page-loader').fadeOut();
+        stat_price_history = JSON.parse(data);
+        _price_history(stat_price_history);
+    });
+}
+
+_price_history = function(data) {
+    var i = 0;
+    $.each(data, function(key, val) {
+        val.color = i;
+        ++i;
+    });
+
+    $.plot("#id_price_history_chart", data[0], {
+        yaxis: {
+            tickFormatter: function (val, axis) {
+                return val + " miles";
+            },    
+        },
+        xaxis: {
+            mode: "time"
+        }
+    });  
+
+    if (data[1].length > 0)
+        $('#id_price_history_chart_tax').css('margin-left','38px');
+
+    $.plot("#id_price_history_chart_tax", data[1], {
+        yaxis: {
+            tickFormatter: function (val, axis) {
+                return "   $"+val;
+            },    
+        },
+        xaxis: {
+            mode: "time"
+        }
+    });      
+}
