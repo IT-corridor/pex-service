@@ -64,6 +64,12 @@ def sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,
     
     ''' Send alert mail  '''
     if priceObj and priceObj['minprice'] <= pricemiles and priceObj['minprice'] != None:
+        cabinname = "Economy"
+        if 'business' in cabin:
+            cabinname = "First"
+        elif 'firstclass' in cabin:
+            cabinname = 'Business'
+            
         try:
             email_sub = "PEX+ Flight Alert: We found a matching flight"
             #emailbody = "<img src='static/flightsearch/img/logo.jpg' alt='' width='100' height='100' style='display: block;' /> <br><br> Hello <b>"+usermail+"</b>,<br><br> We've found flights that meets your search for:<br><br>"+full_source+" - "+full_dest+"<br>"+deptdate+retstr+" for "+triptype+".<br><br> Get more details by searching on <a href='http://pexportal.com/'>pexportal.com</a><br><br>Best Regards,<br><b>The PEX+ Team"
@@ -98,7 +104,7 @@ def sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,
                             </div>
                             <div style="width:100%;posiition:relative;padding:10px 20px 0px;font-family:arial;font-style:normal;font-size:15px;font-weight:200;color:#474747;">
                                 <h3>We've found flights that meet your search for:</h3>
-                                <h2 style="text-align: center;margin: 30px 0;font-weight:700;line-height:24px;letter-spacing: 0.55px;color:#39A8E0;">'''+full_source+''' - '''+full_dest+'''<br>'''+str(deptdate)+retstr+'''<br>'''+cabin+''' - '''+triptype+'''</h2>
+                                <h2 style="text-align: center;margin: 30px 0;font-weight:700;line-height:24px;letter-spacing: 0.55px;color:#39A8E0;">'''+full_source+''' - '''+full_dest+'''<br>'''+str(deptdate)+retstr+'''<br>'''+cabinname+''' - '''+triptype+'''</h2>
                                 <h3>Get more details by searching on <a href='http://pexportal.com/' target='_blank' style="color:#39A8E0;">pexportal.com</a></h3>
                             </div>
                             <div style="width:100%;position:relative;padding:10px 20px 0px;font-family:arial;font-style:normal;font-size:15px;font-weight:200;color:#474747;">
