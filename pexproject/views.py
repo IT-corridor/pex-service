@@ -2643,23 +2643,17 @@ def airline_info(request):
     fare_class = request.POST.get('fare_class')
     route = request.POST.get('route').split('@')
 
-    m = re.search('\((.+?)\)', route[0])
-    origin = m.group(1)
-    m = re.search('\((.+?)\)', route[1])
-    destination = m.group(1)
-
-    print origin, destination, '@@@@'
+    print period, fare_class, origin, destination, '@@@@'
     start_time = datetime.datetime.now() - timedelta(days=period)
     start_time = start_time.strftime('%Y-%m-%d %H:%M:%S')
 
     stat_num_search = []
+    searches = Searchkey.objects.filter(source=route[0], destination=route[1], scrapetime__gte=start_time)
     for air_line in air_lines:
         kwargs = {
-            'scrapetime__gte':start_time,
             '{0}__gt'.format(fare_class):0,
             'datasource': air_line,
-            'origin': origin,
-            'destination': destination,
+            'searchkeyid__in': searches,
         }
         num_search = len(list(Flightdata.objects.filter(**kwargs)))
         stat_num_search.append([air_line, num_search])
