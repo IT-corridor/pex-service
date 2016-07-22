@@ -46,7 +46,7 @@ $(function() {
         },
             
         autoFocus: true,
-        source: "get_airport/",
+        source: "/get_airport/",
         minLength: 2,
     });    
 });
