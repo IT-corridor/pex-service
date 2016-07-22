@@ -2728,9 +2728,12 @@ def price_history(request):
 
 @csrf_exempt
 def signup_activity(request):
-    _from = request.POST.get('_from')
-    _to = request.POST.get('_to') 
-    users = User.objects.filter(date_joined__range=(_from, _to)).order_by('date_joined')
-    result = [[user.username, user.date_joined] for user in users]
+    result = []
+    try:
+        _from = request.POST.get('_from')
+        _to = request.POST.get('_to') 
+        users = User.objects.filter(date_joined__range=(_from, _to)).order_by('date_joined')
+        result = [[user.username, str(user.date_joined)] for user in users]
+    except Exception, e:
+        print str(e), '######'
     return HttpResponse(json.dumps(result))
-    
