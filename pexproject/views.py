@@ -1738,6 +1738,9 @@ def flightAlert(request):
         record_json['departdate'] = str(record.departdate)
         record_json['returndate'] = str(record.returndate)
         record_json['maxprice'] = str(record.pricemile)
+        record_json['traveller'] = str(record.traveller)
+        record_json['cabin'] = str(record.cabin)
+        record_json['annual_repeat'] = str(record.annual_repeat)
         data = json.dumps(record_json)
         mimetype = 'application/json'
         return HttpResponse(data, mimetype)
@@ -1758,6 +1761,13 @@ def useralert(request):
     	preDate = currentDate - timedelta(days=1)
         message = ''
         alertuser = UserAlert()
+        alertuser.cabin = request.POST['cabintype']
+        alertuser.traveller = request.POST['passenger']
+        #print request.POST['year_repeat']
+        if 'year_repeat'in request.POST:
+            alertuser.annual_repeat = request.POST['year_repeat']
+        else:
+            alertuser.annual_repeat = 0
         email = request.session['username']
         alertuser.user_email = email
         alertuser.userid = request.session['userid']
