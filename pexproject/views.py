@@ -2620,7 +2620,7 @@ def Admin(request):
 def get_search_history():
     result = []
     for user in User.objects.all():
-        searches = Searchkey.objects.filter(user_ids__contains=','+str(user.user_id)+',')
+        searches = Searchkey.objects.filter(user_ids__contains=','+str(user.user_id)+',').order_by('-scrapetime')
         for search in searches:
             if search == searches[0]:
                 result.append([user.username, search.source+' -> '+search.destination, str(search.scrapetime)])
