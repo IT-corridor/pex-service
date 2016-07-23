@@ -54,7 +54,7 @@ $(function() {
 
 $(document).ready(function(){    
     _update_line_info(stat_num_search);
-    _price_history([[],[]]);
+    _price_history(stat_price_history);
 });
 
 
@@ -183,12 +183,12 @@ _price_history = function(data) {
     });  
 
     if (data[1].length > 0)
-        $('#id_price_history_chart_tax').css('margin-left','38px');
+        $('#id_price_history_chart_tax').css('margin-left','18px');
 
     $.plot("#id_price_history_chart_tax", data[1], {
         yaxis: {
             tickFormatter: function (val, axis) {
-                return "   $"+val;
+                return "   $"+val.toFixed(2);
             },    
         },
         xaxis: {

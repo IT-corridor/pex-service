@@ -192,12 +192,12 @@
                         <div class="row">
                             <div class="col-sm-6 form-group">
                                 <div class="dtp-container fg-line">
-                                    <input type='text' class="form-control airport_text" placeholder="From" id="id_price_history_route_from" autocomplete="off" onchange="price_history();">
+                                    <input type='text' class="form-control airport_text" placeholder="From" id="id_price_history_route_from" autocomplete="off" onchange="price_history();" value="New York (JFK)">
                                 </div>
                             </div>
                             <div class="col-sm-6 form-group">
                                 <div class="dtp-container fg-line">
-                                    <input type='text' class="form-control airport_text" placeholder="To" id="id_price_history_route_to" autocomplete="off" onchange="price_history();">
+                                    <input type='text' class="form-control airport_text" placeholder="To" id="id_price_history_route_to" autocomplete="off" onchange="price_history();" value="Moscow (MOW)">
                                 </div>
                             </div>                            
                         </div>
@@ -461,6 +461,7 @@
 
 <script type="text/javascript">
     var stat_num_search = {{stat_num_search|safe}};
+    var stat_price_history = {{stat_price_history|safe}};
 </script>
 
 <script src="/static/Admin/vendors/bower_components/moment/min/moment.min.js"></script>
