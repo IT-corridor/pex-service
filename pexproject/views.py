@@ -331,7 +331,7 @@ def signup(request):
             if 'pexdeals' in request.REQUEST:
                 pexdeals = request.REQUEST['pexdeals']
 
-            object = User(username=email,email=email, password=password1,first_name=first_name,last_name=last_name, home_airport=airport,pexdeals=pexdeals)
+            object = User(username=email,email=email, password=password1,first_name=first_name,last_name=last_name, home_airport=airport,pexdeals=pexdeals, last_login=dttime.now())
             object.save()
             if pexdeals == '1':
                 subscriber = Mailchimp(customfunction.mailchimp_api_key)
@@ -512,8 +512,6 @@ def login(request):
         if "curl" in request.POST:
             currentpath = request.REQUEST['curl']
         password1 = hashlib.md5(password).hexdigest()
-    	print password1
-    	print username
     	try:
             user = User.objects.get(email=username, password=password1)
             if user > 0:

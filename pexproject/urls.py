@@ -6,8 +6,6 @@ from django.conf.urls.static import static
 from django.conf.urls import handler404
 from django.contrib import admin
 
-
-
 urlpatterns = [
     url(r'^$', index, name='index'),
     url(r'', include('social_auth.urls')),
