@@ -2630,7 +2630,7 @@ def get_search_history():
 
     # for Non-Members
     searches = Searchkey.objects.exclude(user_ids__regex=r'[0-9]+').order_by('-scrapetime')[:100]        
-    searches = [(search.source+' -> '+search.destination, str(search.scrapetime)) for search in searches]
+    searches = [(search.source+' -> '+search.destination, search.scrapetime.strftime('%Y-%m-%d %H:%M:%S')) for search in searches]
     result['Non-Member'] = searches
 
     return result
@@ -2735,7 +2735,7 @@ def signup_activity(request):
         _from = request.POST.get('_from')
         _to = request.POST.get('_to') 
         users = User.objects.filter(date_joined__range=(_from, _to)).order_by('date_joined')
-        result = [[user.username, str(user.date_joined)] for user in users]
+        result = [[user.username, user.date_joined.strftime('%Y-%m-%d %H:%M:%S')] for user in users]
     except Exception, e:
         print str(e), '######'
     return HttpResponse(json.dumps(result))
