@@ -2723,7 +2723,7 @@ def price_history(request):
 
     result = [{'label':'Economy', 'data':result['economy']}, {'label':'Business', 'data':result['business']}, {'label':'First', 'data':result['firstclass']}]
     result_tax = [{'label':'Economy', 'data':result_tax['economy']}, {'label':'Business', 'data':result_tax['business']}, {'label':'First', 'data':result_tax['firstclass']}]
-
+    print [result,result_tax], '#########'
     return HttpResponse(json.dumps([result,result_tax]))
 
 @csrf_exempt
