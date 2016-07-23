@@ -128,6 +128,7 @@ class Search(models.Model):
     lowest_price = models.CharField(max_length=50, null=True, blank=True)
     lowest_points = models.CharField(max_length=50, null=True, blank=True)
     search_time = models.DateTimeField()
+    user_ids = models.CharField(max_length=500, null=True, blank=True)
 
     def __unicode__(self):
         return self.keyword
