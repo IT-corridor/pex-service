@@ -312,8 +312,6 @@ def signup(request):
     context = {}
     if 'username' not in request.session:
         if request.method == "POST":
-            currentdatetime = datetime.datetime.now()
-            time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
             email = request.REQUEST['username']
             user = User.objects.filter(username=email)
             if len(user) > 0:
@@ -333,7 +331,7 @@ def signup(request):
             if 'pexdeals' in request.REQUEST:
                 pexdeals = request.REQUEST['pexdeals']
 
-            object = User(username=email,email=email, password=password1,first_name=first_name,last_name=last_name, home_airport=airport,last_login=time,pexdeals=pexdeals)
+            object = User(username=email,email=email, password=password1,first_name=first_name,last_name=last_name, home_airport=airport,pexdeals=pexdeals)
             object.save()
             if pexdeals == '1':
                 subscriber = Mailchimp(customfunction.mailchimp_api_key)
@@ -519,6 +517,9 @@ def login(request):
     	try:
             user = User.objects.get(email=username, password=password1)
             if user > 0:
+                user.last_login=datetime.datetime.now()
+                user.save()
+
                 request.session['username'] = username
                 request.session['password'] = password1
                 if user.first_name != '':
