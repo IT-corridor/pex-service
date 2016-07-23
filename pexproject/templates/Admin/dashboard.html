@@ -70,30 +70,6 @@
                     </div>
                 </div>
             </div>
-            
-            <div class="col-sm-3">
-                <div class="mini-charts-item bgm-orange">
-                    <div class="clearfix">
-                        <div class="chart stats-line"></div>
-                        <div class="count">
-                            <small>Total Sales</small>
-                            <h2>$ 458,778</h2>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-sm-3">
-                <div class="mini-charts-item bgm-bluegray">
-                    <div class="clearfix">
-                        <div class="chart stats-line-2"></div>
-                        <div class="count">
-                            <small>Support Tickets</small>
-                            <h2>23,856</h2>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -102,7 +78,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h2>Airline Search Result Frequency</h2>
+                    <h2>Airline Search Result Frequency<small>The graph does not change by time period or fare class - unless a flight route (from and to) are selected</small></h2>
                     
                     <ul class="actions">
                         <li class="dropdown action-show">
@@ -150,12 +126,12 @@
                         <div class="row">
                             <div class="col-sm-6 form-group">
                                 <div class="dtp-container fg-line">
-                                    <input type='text' class="form-control airport_text" placeholder="From" id="id_search_result_from" autocomplete="off" onchange="update_line_info();">
+                                    <input type='text' class="form-control airport_text" placeholder="From" id="id_search_result_from" autocomplete="off" onchange="update_line_info();" value="All">
                                 </div>
                             </div>
                             <div class="col-sm-6 form-group">
                                 <div class="dtp-container fg-line">
-                                    <input type='text' class="form-control airport_text" placeholder="To" id="id_search_result_to" autocomplete="off" onchange="update_line_info();">
+                                    <input type='text' class="form-control airport_text" placeholder="To" id="id_search_result_to" autocomplete="off" onchange="update_line_info();" value="All">
                                 </div>
                             </div>
                             
@@ -233,9 +209,9 @@
                                 <option value="0">Points</option>
                             </select>                            
  -->                            <select class="selectpicker" onchange="price_history();" id="id_price_history_aggregation">
+                                <option value="Avg">Average</option>
                                 <option value="Max">Maximum</option>
                                 <option value="Min">Minimum</option>
-                                <option value="Avg">Average</option>
                             </select>
                         </div>                    
                    
@@ -375,33 +351,6 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <h2>Dynamic Chart</h2>
-                    
-                    <ul class="actions">
-                        <li class="dropdown action-show">
-                            <a href="" data-toggle="dropdown">
-                                <i class="zmdi zmdi-more-vert"></i>
-                            </a>
-            
-                            <div class="dropdown-menu pull-right">
-                                <p class="p-20">
-                                    You can put anything here
-                                </p>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                
-                <div class="card-body card-padding-sm">
-                    <div id="dynamic-chart" class="flot-chart"></div>
-                    <div class="flc-dynamic"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
                     <h2>Search Distribution on Countries</h2>
                     
                     <ul class="actions">
@@ -515,7 +464,6 @@
 </script>
 
 <script src="/static/Admin/vendors/bower_components/moment/min/moment.min.js"></script>
-<script src="/static/Admin/js/flot-charts/dynamic-chart.js"></script>
 <script src="/static/Admin/vendors/bower_components/bootstrap-select/dist/js/bootstrap-select.js"></script>
 <script src="/static/Admin/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/static/Admin/vendors/sparklines/jquery.sparkline.min.js"></script>

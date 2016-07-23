@@ -125,6 +125,9 @@ update_line_info = function(obj) {
     if (_from == '' || _to == '')
         return false;
     
+    if (_from == 'All' || _to == 'All')
+        return false;
+
     $('.page-loader').show();    
 
     $.post('/stats/airline_info/', 
