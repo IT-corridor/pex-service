@@ -2666,9 +2666,16 @@ def airline_info(request):
         _to = request.POST.get('_to')
 
         start_time = datetime.datetime.now() - timedelta(days=period)
-        start_time = start_time.strftime('%Y-%m-%d %H:%M:%S')
+        # start_time = start_time.strftime('%Y-%m-%d %H:%M:%S')
         print period, fare_class, _from, _to, start_time, '@@@@'
-        searches = Searchkey.objects.filter(source=_from, destination=_to, scrapetime__gte=start_time)
+
+        searches = Searchkey.objects.filter(scrapetime__gte=start_time)
+        if _from.lower() == 'all airports':
+            if _to.lower() != 'all airports':
+                searches = searches.filter(destination=_to)
+        else if _to.lower() == 'all airports':
+            searches = searches.filter(source=_from)
+
         searches = [item.searchid for item in searches]
         for air_line in air_lines:
             kwargs = {

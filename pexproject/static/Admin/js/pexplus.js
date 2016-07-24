@@ -135,9 +135,6 @@ update_line_info = function(obj) {
     if (_from == '' || _to == '')
         return false;
     
-    if (_from == 'All' || _to == 'All')
-        return false;
-
     $('.page-loader').show();    
 
     $.post('/stats/airline_info/', 
@@ -181,6 +178,7 @@ _price_history = function(data) {
         ++i;
     });
 
+    // console.log(JSON.stringify(data[0]));
     $.plot("#id_price_history_chart", data[0], {
         yaxis: {
             tickFormatter: function (val, axis) {
