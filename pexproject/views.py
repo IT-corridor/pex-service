@@ -2673,7 +2673,7 @@ def airline_info(request):
         if _from.lower() == 'all airports':
             if _to.lower() != 'all airports':
                 searches = searches.filter(destination=_to)
-        else if _to.lower() == 'all airports':
+        elif _to.lower() == 'all airports':
             searches = searches.filter(source=_from)
 
         searches = [item.searchid for item in searches]
