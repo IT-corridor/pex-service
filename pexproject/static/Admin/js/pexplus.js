@@ -101,7 +101,17 @@ user_signup_activity = function() {
 }
 
 _update_line_info = function(data) {
-    $.plot("#bar-chart", [ data ], {
+    var airlines = [['SU', 'Aeroflot'], ['CA', 'Air China'], ['AA', 'American'], ['DL', 'Delta'], ['EY', 'Etihad'], ['B6', 'JetBlue'], ['S7', 'S7'], ['UA', 'United'], ['VX', 'Virgin America'], ['DJ', 'virgin australia'],['VS', 'Virgin Atlantic']];
+
+    var idx = 1;
+    if ($(window).width() < 768) 
+        idx = 0;
+
+    var rdata = [];
+    for(i=0; i < airlines.length; i++)
+        rdata.push([airlines[i][idx], data[i]]);
+
+    $.plot("#bar-chart", [ rdata ], {
         series: {
             bars: {
                 show: true,
@@ -174,7 +184,7 @@ _price_history = function(data) {
     $.plot("#id_price_history_chart", data[0], {
         yaxis: {
             tickFormatter: function (val, axis) {
-                return val + " miles";
+                return Math.ceil(val) + " miles";
             },    
         },
         xaxis: {
