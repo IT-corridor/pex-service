@@ -312,8 +312,6 @@ def signup(request):
     context = {}
     if 'username' not in request.session:
         if request.method == "POST":
-            currentdatetime = datetime.datetime.now()
-            time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
             email = request.REQUEST['username']
             user = User.objects.filter(username=email)
             if len(user) > 0:
@@ -333,7 +331,7 @@ def signup(request):
             if 'pexdeals' in request.REQUEST:
                 pexdeals = request.REQUEST['pexdeals']
 
-            object = User(username=email,email=email, password=password1,first_name=first_name,last_name=last_name, home_airport=airport,last_login=time,pexdeals=pexdeals)
+            object = User(username=email,email=email, password=password1,first_name=first_name,last_name=last_name, home_airport=airport,pexdeals=pexdeals, last_login=dttime.now())
             object.save()
             if pexdeals == '1':
                 subscriber = Mailchimp(customfunction.mailchimp_api_key)
@@ -514,11 +512,12 @@ def login(request):
         if "curl" in request.POST:
             currentpath = request.REQUEST['curl']
         password1 = hashlib.md5(password).hexdigest()
-    	print password1
-    	print username
     	try:
             user = User.objects.get(email=username, password=password1)
             if user > 0:
+                user.last_login=datetime.datetime.now()
+                user.save()
+
                 request.session['username'] = username
                 request.session['password'] = password1
                 if user.first_name != '':
@@ -2602,8 +2601,9 @@ def admin_logout(request):
 @login_required(login_url='/Admin/login/')
 def Admin(request):
     air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']    
-    stat_num_search = [['aeroflot', 0], ['airchina', 0], ['american airlines', 0], ['delta', 321], ['etihad', 0], ['jetblue', 0], ['s7', 26], ['united', 867], ['Virgin America', 0], ['Virgin Australia', 0], ['virgin_atlantic', 0]]
+    stat_num_search = [3135, 2164, 3067, 36487, 1283, 4456, 4175, 171065, 3779, 10235, 3013]
     pop_searches = [{'source': u'New York (NYC)', 'destination': u'Tel Aviv (TLV)', 'dcount': 150}, {'source': u'New York (NYC)', 'destination': u'Seattle (SEA)', 'dcount': 126}, {'source': u'Los Angeles (LAX)', 'destination': u'Miami (MIA)', 'dcount': 89}, {'source': u'Houston (IAH)', 'destination': u'Ft Lauderdale (FLL)', 'dcount': 84}, {'source': u'Bangkok (BKK)', 'destination': u'Tokyo (NRT)', 'dcount': 79}, {'source': u'Beijing (PEK)', 'destination': u'Moscow (MOW)', 'dcount': 78}, {'source': u'New York (JFK)', 'destination': u'Sydney (SYD)', 'dcount': 77}, {'source': u'New York (NYC)', 'destination': u'Los Angeles (LAX)', 'dcount': 76}, {'source': u'New York (LGA)', 'destination': u'Miami (MIA)', 'dcount': 68}, {'source': u'Moscow (MOW)', 'destination': u'Beijing (NAY)', 'dcount': 68}, {'source': u'Miami (MIA)', 'destination': u'New York (LGA)', 'dcount': 68}, {'source': u'Tel Aviv (TLV)', 'destination': u'New York (NYC)', 'dcount': 59}, {'source': u'New York (NYC)', 'destination': u'San Francisco (SFO)', 'dcount': 52}, {'source': u'Los Angeles (LAX)', 'destination': u'New York (NYC)', 'dcount': 51}, {'source': u'New York (NYC)', 'destination': u'Moscow (MOW)', 'dcount': 48}, {'source': u'New York (NYC)', 'destination': u'Miami (MIA)', 'dcount': 46}, {'source': u'New York (NYC)', 'destination': u'Ft Lauderdale (FLL)', 'dcount': 45}, {'source': u'Philadelphia (PHL)', 'destination': u'Ft Lauderdale (FLL)', 'dcount': 43}, {'source': u'Moscow (MOW)', 'destination': u'Beijing (PEK)', 'dcount': 43}, {'source': u'Miami (MIA)', 'destination': u'Toronto (YYZ)', 'dcount': 40}, {'source': u'New York (NYC)', 'destination': u'Honolulu (HNL)', 'dcount': 39}, {'source': u'Los Angeles (LAX)', 'destination': u'Rome (FCO)', 'dcount': 39}, {'source': u'New York (JFK)', 'destination': u'Ft Lauderdale (FLL)', 'dcount': 38}, {'source': u'Indianapolis (IND)', 'destination': u'Bangkok (BKK)', 'dcount': 36}, {'source': u'San Francisco (SFO)', 'destination': u'Los Angeles (LAX)', 'dcount': 35}, {'source': u'Boston (BOS)', 'destination': u'Tel Aviv (TLV)', 'dcount': 34}, {'source': u'Beijing (PEK)', 'destination': u'London (LHR)', 'dcount': 33}, {'source': u'Rome (FCO)', 'destination': u'New York (JFK)', 'dcount': 31}, {'source': u'New York (NYC)', 'destination': u'Las Vegas (LAS)', 'dcount': 31}, {'source': u'New York (JFK)', 'destination': u'London (LHR)', 'dcount': 31}]
+    stat_price_history = [[{'data': [[1468886400000.0, 52500.0], [1469491200000.0, 52500.0], [1471219200000.0, 52500.0], [1471478400000.0, 52500.0]], 'label': 'Economy'}, {'data': [[1471219200000.0, 82500.0]], 'label': 'Business'}, {'data': [[1471219200000.0, 67500.0], [1471478400000.0, 67500.0]], 'label': 'First'}], [{'data': [[1468886400000.0, 113.7], [1469491200000.0, 114.6], [1471219200000.0, 114.6], [1471478400000.0, 114.6]], 'label': 'Economy'}, {'data': [[1471219200000.0, 114.6]], 'label': 'Business'}, {'data': [[1471219200000.0, 114.6], [1471478400000.0, 114.6]], 'label': 'First'}]]
     user_search_history = get_search_history()
     search_on_country = get_search_country()
 
@@ -2615,17 +2615,24 @@ def Admin(request):
         'total_searches': len(list(Searchkey.objects.all()))*3,
         'user_search_history':user_search_history,
         'search_on_country':search_on_country,
+        'stat_price_history': stat_price_history,
+        'stat_price_history_period': stat_price_history,
     })
 
 def get_search_history():
-    result = []
+    result = {}
     for user in User.objects.all():
-        searches = Searchkey.objects.filter(user_ids__contains=','+str(user.user_id)+',')
-        for search in searches:
-            if search == searches[0]:
-                result.append([user.username, search.source+' -> '+search.destination, str(search.scrapetime)])
-            else:
-                result.append(['', search.source+' -> '+search.destination, str(search.scrapetime)])
+        searches = Searchkey.objects.filter(user_ids__contains=','+str(user.user_id)+',').order_by('-scrapetime')
+        if not searches:
+            continue
+        searches = [(search.source+' -> '+search.destination, search.scrapetime.strftime('%Y-%m-%d %H:%M:%S')) for search in searches]
+        result[user.username] = searches
+
+    # for Non-Members
+    searches = Searchkey.objects.exclude(user_ids__regex=r'[0-9]+').order_by('-scrapetime')[:100]        
+    searches = [(search.source+' -> '+search.destination, search.scrapetime.strftime('%Y-%m-%d %H:%M:%S')) for search in searches]
+    result['Non-Member'] = searches
+
     return result
 
 def get_search_country():
@@ -2643,6 +2650,8 @@ def get_search_country():
     result = []
     for key, val in user_dict.items():
         country = User.objects.get(user_id=key).country
+        if not country:
+            country = 'Unknown'
         result.append([country, val])
     return result
 
@@ -2654,12 +2663,20 @@ def airline_info(request):
         air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']
         period = int(request.POST.get('period'))
         fare_class = request.POST.get('fare_class')
-        route = request.POST.get('route').split('@')
+        _from = request.POST.get('_from')
+        _to = request.POST.get('_to')
 
-        print period, fare_class, route, '@@@@'
         start_time = datetime.datetime.now() - timedelta(days=period)
-        start_time = start_time.strftime('%Y-%m-%d %H:%M:%S')
-        searches = Searchkey.objects.filter(source=route[0], destination=route[1], scrapetime__gte=start_time)
+        # start_time = start_time.strftime('%Y-%m-%d %H:%M:%S')
+        print period, fare_class, _from, _to, start_time, '@@@@'
+
+        searches = Searchkey.objects.filter(scrapetime__gte=start_time)
+        if _from.lower() == 'all airports':
+            if _to.lower() != 'all airports':
+                searches = searches.filter(destination=_to)
+        elif _to.lower() == 'all airports':
+            searches = searches.filter(source=_from)
+
         searches = [item.searchid for item in searches]
         for air_line in air_lines:
             kwargs = {
@@ -2668,7 +2685,7 @@ def airline_info(request):
                 'searchkeyid__in': searches,
             }
             num_search = len(list(Flightdata.objects.filter(**kwargs)))
-            stat_num_search.append([air_line, num_search])
+            stat_num_search.append(num_search)
     except Exception, e:
         print str(e)
 
@@ -2691,11 +2708,12 @@ def price_history(request):
     _from = request.POST.get('_from')
     _to = request.POST.get('_to') 
     airline = request.POST.get('airline')
-    route = request.POST.get('route').split('@')
+    r_from = request.POST.get('r_from')
+    r_to = request.POST.get('r_to') 
     aggregation = request.POST.get('aggregation')
 
-    print _from, _to, airline, route, aggregation, '@@@@@@@'
-    searchkeys = Searchkey.objects.filter(traveldate__range=(_from, _to), source=route[0], destination=route[1]).values('traveldate').annotate(Min('searchid'), Min('scrapetime')).order_by('traveldate')
+    print _from, _to, airline, r_from, r_to, aggregation, '@@@@@@@'
+    searchkeys = Searchkey.objects.filter(traveldate__range=(_from, _to), source=r_from, destination=r_to).values('traveldate').annotate(Min('searchid'), Min('scrapetime')).order_by('traveldate')
 
     result = {'economy': [], 'business': [], 'firstclass':[]}
     result_tax = {'economy': [], 'business': [], 'firstclass':[]}
@@ -2716,5 +2734,63 @@ def price_history(request):
 
     result = [{'label':'Economy', 'data':result['economy']}, {'label':'Business', 'data':result['business']}, {'label':'First', 'data':result['firstclass']}]
     result_tax = [{'label':'Economy', 'data':result_tax['economy']}, {'label':'Business', 'data':result_tax['business']}, {'label':'First', 'data':result_tax['firstclass']}]
-
+    print [result,result_tax], '#########'
     return HttpResponse(json.dumps([result,result_tax]))
+
+@csrf_exempt
+def price_history_period(request):    
+    _from = request.POST.get('_from')
+    _to = request.POST.get('_to') 
+    airline = request.POST.get('airline')
+    r_from = request.POST.get('r_from')
+    r_to = request.POST.get('r_to') 
+    aggregation = request.POST.get('aggregation')
+    period = int(request.POST.get('period'))
+
+    print _from, _to, airline, r_from, r_to, period, aggregation, '@@@@@@@'
+    searchkeys = Searchkey.objects.filter(traveldate=_from, source=r_from, destination=r_to).order_by('scrapetime')
+    if _to:
+        searchkeys = searchkeys.filter(returndate=_to).order_by('scrapetime')
+
+    r_searchkeys = []
+
+    # check the time before travel
+    for item in searchkeys:
+        if (item.scrapetime + timedelta(days=period)).date() >= item.traveldate:
+            r_searchkeys.append(item)
+
+    result = {'economy': [], 'business': [], 'firstclass':[]}
+    result_tax = {'economy': [], 'business': [], 'firstclass':[]}
+
+    traveldate = None
+    for searchkey in r_searchkeys:
+        label = time.mktime(searchkey.scrapetime.timetuple()) * 1000
+        flights = Flightdata.objects.filter(searchkeyid=searchkey.searchid, datasource=airline).exclude(origin='flag')
+        reducer = getattr(aggregator, aggregation)
+        
+        for key, val in FLIGHT_CLASS.items():
+            field = val[0]
+            res = flights.filter(**{'{0}__gt'.format(field):0}).aggregate(**{field:reducer(field)})
+            if res[field]:
+                result[key].append([float(label), float(res[field])])
+            field = val[1]
+            res = flights.filter(**{'{0}__gt'.format(field):0}).aggregate(**{field:reducer(field)})
+            if res[field]:
+                result_tax[key].append([float(label), float(res[field])])
+
+    result = [{'label':'Economy', 'data':result['economy']}, {'label':'Business', 'data':result['business']}, {'label':'First', 'data':result['firstclass']}]
+    result_tax = [{'label':'Economy', 'data':result_tax['economy']}, {'label':'Business', 'data':result_tax['business']}, {'label':'First', 'data':result_tax['firstclass']}]
+    print [result,result_tax], '#########'
+    return HttpResponse(json.dumps([result,result_tax]))
+
+@csrf_exempt
+def signup_activity(request):
+    result = []
+    try:
+        _from = request.POST.get('_from')
+        _to = request.POST.get('_to') 
+        users = User.objects.filter(date_joined__range=(_from, _to)).order_by('date_joined')
+        result = [[user.username, user.date_joined.strftime('%Y-%m-%d %H:%M:%S')] for user in users]
+    except Exception, e:
+        print str(e), '######'
+    return HttpResponse(json.dumps(result))

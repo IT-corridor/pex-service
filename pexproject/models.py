@@ -1,15 +1,7 @@
-from django.conf import settings
-#from django.contrib.sessions.models import Session
-#from django.contrib.sessions.backends.db import SessionStore
-import customfunction
-from social_auth.signals import pre_update, socialauth_registered
-from social_auth.backends.steam import SteamBackend
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
-from django.contrib import admin
+from django.utils import timezone
 
-#class User(AbstractUser):
-    #pass
 
 class Flightdata(models.Model):
     rowid = models.AutoField(primary_key=True)
@@ -128,6 +120,7 @@ class Search(models.Model):
     lowest_price = models.CharField(max_length=50, null=True, blank=True)
     lowest_points = models.CharField(max_length=50, null=True, blank=True)
     search_time = models.DateTimeField()
+    user_ids = models.CharField(max_length=500, null=True, blank=True)
 
     def __unicode__(self):
         return self.keyword
@@ -207,6 +200,42 @@ class BlogImages(models.Model):
     user_id = models.IntegerField()
     image_path = models.CharField(max_length=100)
         
+class UserManager(BaseUserManager):
+    use_in_migrations = True
+
+    def _create_user(self, username, email, password,
+                     is_staff, is_superuser, **extra_fields):
+        """
+        Creates and saves a User with the given username, email and password.
+        """
+        now = timezone.now()
+        if not username:
+            raise ValueError('The given username must be set')
+
+        fname = ''
+        lname = ''
+        if extra_fields.get('profile'):
+            profile = extra_fields.get('profile')
+            fname = profile.get('first_name', '')
+            lname = profile.get('last_name', '')
+
+        email = self.normalize_email(email)
+        user = self.model(username=username, email=email,
+                          is_staff=is_staff, is_active=True,
+                          is_superuser=is_superuser,
+                          date_joined=now, first_name=fname, last_name=lname)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_user(self, username, email=None, password=None, **extra_fields):
+        return self._create_user(username, email, password, False, False,
+                                 **extra_fields)
+
+    def create_superuser(self, username, email, password, **extra_fields):
+        return self._create_user(username, email, password, True, True,
+                                 **extra_fields)
+
 class User(AbstractUser):
     user_id = models.AutoField(primary_key=True)
     middlename = models.CharField(max_length=100,null=True,blank=True)
@@ -225,6 +254,7 @@ class User(AbstractUser):
     user_code_time = models.DateTimeField(null=True, blank=True)
     pexdeals = models.BooleanField(default=False)
     level = models.IntegerField(default=0,null=True, blank=True)
+    objects =  UserManager()
 
 class Token(models.Model):
     token = models.CharField(max_length=100, unique=True)
@@ -237,7 +267,7 @@ class Token(models.Model):
     number_update = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now=True)
     notes = models.TextField(null=True, blank=True)
-    closed_at = models.DateTimeField(null=True)
+    closed_at = models.DateTimeField(null=True)    
 
     def __unicode__(self):
         # return self.owner.name
