@@ -204,11 +204,7 @@
                         </div> 
                         <div class="col-sm-2 m-b-25">
                             <span class="f-500 m-b-15 c-black">Prices</span>
-<!--                             <select class="selectpicker" onchange="price_history();" id="id_price_history_cat">
-                                <option value="1">Price</option>
-                                <option value="0">Points</option>
-                            </select>                            
- -->                            <select class="selectpicker" onchange="price_history();" id="id_price_history_aggregation">
+                            <select class="selectpicker" onchange="price_history();" id="id_price_history_aggregation">
                                 <option value="Avg">Average</option>
                                 <option value="Max">Maximum</option>
                                 <option value="Min">Minimum</option>
@@ -223,6 +219,95 @@
             </div>
         </div>        
 
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Price History for period</h2>
+                    
+                    <ul class="actions">
+                        <li class="dropdown action-show">
+                            <a href="" data-toggle="dropdown">
+                                <i class="zmdi zmdi-more-vert"></i>
+                            </a>
+            
+                            <div class="dropdown-menu pull-right">
+                                <p class="p-20">
+                                    You can put anything here
+                                </p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="card-body card-padding">
+                    <div class="row">
+                        <div class="col-sm-3 m-b-15">
+                            <span class="f-500 m-b-15 c-black">Time before departure date</span>
+                            <select class="selectpicker form-control m-l-20" onchange="price_history_period();" id="id_price_history_period">
+                                <option value="3650">All time</option>
+                                <option value="1">1 Day</option>
+                                <option value="7">7 Day</option>
+                                <option value="31">1 Month</option>
+                                <option value="90">3 Months</option>
+                                <option value="180">6 Months</option>
+                                <option value="365">1 Year</option>
+                            </select>
+                        </div>                         
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4 m-b-25">
+                            <span class="f-500 m-b-15 c-black">Period</span>
+                            <div class="input-group form-group">
+                                <span class="input-group-addon"><i class="zmdi zmdi-calendar"></i></span>
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control" placeholder="From" id="id_price_history_from_period">
+                                </div>
+                                <span class="input-group-addon"><i class="zmdi zmdi-calendar"></i></span>
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control" placeholder="To" id="id_price_history_to_period">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2 m-b-25">
+                            <span class="f-500 m-b-15 c-black">Airlines</span>
+                            
+                            <select class="selectpicker" onchange="price_history_period();" id="id_price_history_airline_period">
+                                {% for item in air_lines %}
+                                <option value="{{ item }}">{{item|title}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>                    
+                        <div class="col-sm-4 m-b-25">
+                        <span class="f-500 m-b-15 c-black">Flight Routes</span>
+                        <div class="row">
+                            <div class="col-sm-6 form-group">
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control airport_text" placeholder="From" id="id_price_history_route_from_period" autocomplete="off" onchange="price_history_period();" value="New York (JFK)">
+                                </div>
+                            </div>
+                            <div class="col-sm-6 form-group">
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control airport_text" placeholder="To" id="id_price_history_route_to_period" autocomplete="off" onchange="price_history_period();" value="Moscow (MOW)">
+                                </div>
+                            </div>                            
+                        </div>
+                        </div> 
+                        <div class="col-sm-2 m-b-25">
+                            <span class="f-500 m-b-15 c-black">Prices</span>
+                            <select class="selectpicker" onchange="price_history_period();" id="id_price_history_aggregation_period">
+                                <option value="Avg">Average</option>
+                                <option value="Max">Maximum</option>
+                                <option value="Min">Minimum</option>
+                            </select>
+                        </div>                    
+                   
+                    </div>                    
+
+                    <div id="id_price_history_chart_period" style="height: 270px;" class="m-b-25"></div>
+                    <div id="id_price_history_chart_tax_period" style="height: 200px;"></div>
+                </div>
+            </div>
+        </div>        
 
         <div class="col-md-6">
             <div class="card">
@@ -461,6 +546,7 @@
 <script type="text/javascript">
     var stat_num_search = {{stat_num_search|safe}};
     var stat_price_history = {{stat_price_history|safe}};
+    var stat_price_history_period = {{stat_price_history_period|safe}};
 </script>
 
 <script src="/static/Admin/vendors/bower_components/moment/min/moment.min.js"></script>

@@ -2737,6 +2737,41 @@ def price_history(request):
     return HttpResponse(json.dumps([result,result_tax]))
 
 @csrf_exempt
+def price_history_period(request):    
+    _from = request.POST.get('_from')
+    _to = request.POST.get('_to') 
+    airline = request.POST.get('airline')
+    r_from = request.POST.get('r_from')
+    r_to = request.POST.get('r_to') 
+    aggregation = request.POST.get('aggregation')
+    period = int(request.POST.get('period'))
+
+    print _from, _to, airline, r_from, r_to, period, aggregation, '@@@@@@@'
+    searchkeys = Searchkey.objects.filter(traveldate__range=(_from, _to), source=r_from, destination=r_to).values('traveldate').annotate(Min('searchid'), Min('scrapetime')).order_by('traveldate')
+
+    result = {'economy': [], 'business': [], 'firstclass':[]}
+    result_tax = {'economy': [], 'business': [], 'firstclass':[]}
+
+    for searchkey in searchkeys:
+        label = time.mktime(searchkey['traveldate'].timetuple()) * 1000
+        flights = Flightdata.objects.filter(searchkeyid=searchkey['searchid__min'], datasource=airline)
+        reducer = getattr(aggregator, aggregation)
+        for key, val in FLIGHT_CLASS.items():
+            field = val[0]
+            res = flights.filter(**{'{0}__gt'.format(field):0}).aggregate(**{field:reducer(field)})
+            if res[field]:
+                result[key].append([float(label), float(res[field])])
+            field = val[1]
+            res = flights.filter(**{'{0}__gt'.format(field):0}).aggregate(**{field:reducer(field)})
+            if res[field]:
+                result_tax[key].append([float(label), float(res[field])])
+
+    result = [{'label':'Economy', 'data':result['economy']}, {'label':'Business', 'data':result['business']}, {'label':'First', 'data':result['firstclass']}]
+    result_tax = [{'label':'Economy', 'data':result_tax['economy']}, {'label':'Business', 'data':result_tax['business']}, {'label':'First', 'data':result_tax['firstclass']}]
+    print [result,result_tax], '#########'
+    return HttpResponse(json.dumps([result,result_tax]))
+
+@csrf_exempt
 def signup_activity(request):
     result = []
     try:
