@@ -306,3 +306,28 @@ _price_history = function(data) {
         }
     });      
 }
+
+update_user_search = function() {
+    var period = $('#id_search_result_period').val();
+    var r_from = $('#id_search_result_from_route').val();
+    var r_to = $('#id_search_result_to_route').val();
+    var category = $('#id_search_category').val();
+
+    $('.page-loader').show();    
+
+    $.post('/customer/stats/user_search/', 
+        {'period':period, 'r_from':r_from, 'r_to':r_to, 'category':category}
+    ).success(function(data) {
+        user_searches = JSON.parse(data);
+        var result = '';
+        for(idx in user_searches) {
+            var status = '<button class="btn bgm-gray waves-effect" style="width: 50px;">'+user_searches[idx].num_result+'</button>';
+            if (user_searches[idx].num_result > 0)
+                status = '<button class="btn bgm-blue waves-effect" style="width: 50px;">'+user_searches[idx].num_result+'</button>';
+
+            result += '<tr><td>'+(idx*1+1)+'</td><td>'+user_searches[idx].source+'->'+user_searches[idx].destination+'</td><td>'+user_searches[idx].scrapetime+'</td><td>'+user_searches[idx].traveldate+'</td><td>'+user_searches[idx].returndate+'</td><td>'+status+'</td></tr>';
+        }
+        $('#id_user_search_table_body').html(result);
+        $('.page-loader').fadeOut();
+    });
+}
