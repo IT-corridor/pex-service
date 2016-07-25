@@ -275,8 +275,12 @@ class Token(models.Model):
 
 class UserBackend(object):
     def authenticate(self, username=None, password=None):
+        if not password:
+            return None
+
         password = hashlib.md5(password).hexdigest()
         user = User.objects.filter(username=username, password=password)
+        print password, '@@@@@@@@@2'
         if user:
             return user[0]
         return None
