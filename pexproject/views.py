@@ -2588,7 +2588,7 @@ def admin_login(request):
 
         user = authenticate(username=username, password=password)
         if user is not None:
-            if user.is_active and user.is_staff:
+            if user.is_active and user.is_staff and user.level == 3:
                 social_login(request, user)
 
     return HttpResponseRedirect('/Admin/')
@@ -2877,9 +2877,8 @@ def customer_login(request):
         password = request.POST.get('password')
 
         user = authenticate(username=username, password=password)
-        print user, '######## user'
         if user:
             if user.is_active and user.level == 1:
-                login(request, user)
+                social_login(request, user)
 
     return HttpResponseRedirect('/customer/')
