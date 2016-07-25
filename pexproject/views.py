@@ -2748,14 +2748,27 @@ def price_history_period(request):
     period = int(request.POST.get('period'))
 
     print _from, _to, airline, r_from, r_to, period, aggregation, '@@@@@@@'
-    searchkeys = Searchkey.objects.filter(traveldate__range=(_from, _to), source=r_from, destination=r_to).values('traveldate').annotate(Min('searchid'), Min('scrapetime')).order_by('traveldate')
+    searchkeys = Searchkey.objects.filter(traveldate__range=(_from, _to), source=r_from, destination=r_to).order_by('traveldate', 'scrapetime')
+    r_searchkeys = []
+
+    # check the time before travel
+    for item in searchkeys:
+        if (item.scrapetime + timedelta(days=period)).date() >= item.traveldate:
+            r_searchkeys.append(item)
 
     result = {'economy': [], 'business': [], 'firstclass':[]}
     result_tax = {'economy': [], 'business': [], 'firstclass':[]}
 
-    for searchkey in searchkeys:
-        label = time.mktime(searchkey['traveldate'].timetuple()) * 1000
-        flights = Flightdata.objects.filter(searchkeyid=searchkey['searchid__min'], datasource=airline)
+    traveldate = None
+    for searchkey in r_searchkeys:
+        if traveldate == searchkey.traveldate:
+            continue
+
+        label = time.mktime(searchkey.traveldate.timetuple()) * 1000
+        flights = Flightdata.objects.filter(searchkeyid=searchkey.searchid, datasource=airline).exclude(origin='flag')
+        if flights:
+            traveldate = searchkey.traveldate
+
         reducer = getattr(aggregator, aggregation)
         for key, val in FLIGHT_CLASS.items():
             field = val[0]
