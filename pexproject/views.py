@@ -2854,7 +2854,7 @@ def customer(request):
     stat_num_search = [3135, 2164, 3067, 36487, 1283, 4456, 4175, 171065, 3779, 10235, 3013]
     stat_price_history = [[{'data': [[1468886400000.0, 52500.0], [1469491200000.0, 52500.0], [1471219200000.0, 52500.0], [1471478400000.0, 52500.0]], 'label': 'Economy'}, {'data': [[1471219200000.0, 82500.0]], 'label': 'Business'}, {'data': [[1471219200000.0, 67500.0], [1471478400000.0, 67500.0]], 'label': 'First'}], [{'data': [[1468886400000.0, 113.7], [1469491200000.0, 114.6], [1471219200000.0, 114.6], [1471478400000.0, 114.6]], 'label': 'Economy'}, {'data': [[1471219200000.0, 114.6]], 'label': 'Business'}, {'data': [[1471219200000.0, 114.6], [1471478400000.0, 114.6]], 'label': 'First'}]]
     stat_price_history_period = [[{'data': [[1468886400000.0, 52500.0], [1469491200000.0, 52500.0], [1471219200000.0, 52500.0], [1471478400000.0, 52500.0]], 'label': 'Economy'}, {'data': [[1471219200000.0, 82500.0]], 'label': 'Business'}, {'data': [[1471219200000.0, 67500.0], [1471478400000.0, 67500.0]], 'label': 'First'}], [{'data': [[1468886400000.0, 113.7], [1469491200000.0, 114.6], [1471219200000.0, 114.6], [1471478400000.0, 114.6]], 'label': 'Economy'}, {'data': [[1471219200000.0, 114.6]], 'label': 'Business'}, {'data': [[1471219200000.0, 114.6], [1471478400000.0, 114.6]], 'label': 'First'}]]
-    user_search_history = get_customer_search_history()
+    user_search_history = get_customer_search_history(user_id=request.user.user_id)
 
     return render(request, 'customer/dashboard.html', {
         'stat_num_search': stat_num_search,
@@ -2883,7 +2883,7 @@ def customer_login(request):
 
     return HttpResponseRedirect('/customer/')
 
-def get_customer_search_history(user_id='', period=3650, r_from=None, r_to=None, category=None):
+def get_customer_search_history(user_id, period=3650, r_from=None, r_to=None, category=None):
     start_time = datetime.datetime.now() - timedelta(days=period)
     searches = Searchkey.objects.filter(user_ids__contains=','+str(user_id)+',',scrapetime__gte=start_time).order_by('-scrapetime')
 
@@ -2914,7 +2914,6 @@ def user_search(request):
     category = request.POST.get('category')
     period = int(request.POST.get('period'))
     
-    print request.user.user_id, '@@@@@@@@@2'
-    result = get_customer_search_history(period=period, r_from=r_from, r_to=r_to, category=category)
+    result = get_customer_search_history(user_id=request.user.user_id, period=period, r_from=r_from, r_to=r_to, category=category)
     return HttpResponse(json.dumps(result))
 
