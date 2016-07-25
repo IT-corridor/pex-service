@@ -2808,29 +2808,29 @@ def price_history_num(request):
             if item.scrapetime.date() == dttime.now().date():
                 r_searchkeys.append(item)
 
-        traveldate = None
-        idx = 0
-        for searchkey in r_searchkeys:
-            flights = Flightdata.objects.filter(searchkeyid=searchkey.searchid, datasource=airline).exclude(origin='flag')
-            reducer = getattr(aggregator, aggregation)
-            if not flights:
-                continue
-            idx = idx + 1
-            for key, val in FLIGHT_CLASS.items():
-                field = val[0]
-                res = flights.filter(**{'{0}__gt'.format(field):0}).aggregate(**{field:reducer(field)})
-                if res[field]:
-                    result[key].append([idx, float(res[field])])
-                field = val[1]
-                res = flights.filter(**{'{0}__gt'.format(field):0}).aggregate(**{field:reducer(field)})
-                if res[field]:
-                    result_tax[key].append([idx, float(res[field])])
+        if len(r_searchkeys) > 1:
+            idx = 0
+            for searchkey in r_searchkeys:
+                flights = Flightdata.objects.filter(searchkeyid=searchkey.searchid, datasource=airline).exclude(origin='flag')
+                reducer = getattr(aggregator, aggregation)
+                if not flights:
+                    continue
+                idx = idx + 1
+                for key, val in FLIGHT_CLASS.items():
+                    field = val[0]
+                    res = flights.filter(**{'{0}__gt'.format(field):0}).aggregate(**{field:reducer(field)})
+                    if res[field]:
+                        result[key].append([idx, float(res[field])])
+                    field = val[1]
+                    res = flights.filter(**{'{0}__gt'.format(field):0}).aggregate(**{field:reducer(field)})
+                    if res[field]:
+                        result_tax[key].append([idx, float(res[field])])
 
-        result = [{'label':'Economy', 'data':result['economy']}, {'label':'Business', 'data':result['business']}, {'label':'First', 'data':result['firstclass']}]
-        result_tax = [{'label':'Economy', 'data':result_tax['economy']}, {'label':'Business', 'data':result_tax['business']}, {'label':'First', 'data':result_tax['firstclass']}]
+            result = [{'label':'Economy', 'data':result['economy']}, {'label':'Business', 'data':result['business']}, {'label':'First', 'data':result['firstclass']}]
+            result_tax = [{'label':'Economy', 'data':result_tax['economy']}, {'label':'Business', 'data':result_tax['business']}, {'label':'First', 'data':result_tax['firstclass']}]
     except Exception, e:
         print str(e), 'Error: ###############3'
-        
+
     print [result,result_tax], '#########'
     return HttpResponse(json.dumps([result,result_tax]))
 
