@@ -267,6 +267,7 @@ price_history_num = function() {
         $('.page-loader').fadeOut();
         stat_price_history = JSON.parse(data);
         _price_history_num(stat_price_history);
+        console.log(stat_price_history);
     });
 }
 
@@ -285,6 +286,7 @@ _price_history_num = function(data) {
             },    
         },
         xaxis: {
+            ticks: data[0]
             // mode: "time"
         }
     });  
