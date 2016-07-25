@@ -49,27 +49,28 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
         driver.quit()
     try:
         WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.ID, "frm_2012158061206151234")))
+        driver.execute_script('document.getElementById("frm_2012158061206151234").removeAttribute("readonly")')
+        oneway = driver.find_element_by_id("frm_oneWayFlight")
+        #oneway.click()
+        driver.execute_script("return arguments[0].click();", oneway)
+        
+        search_cabin1 = driver.find_element_by_id(search_cabin)
+        #search_cabin1.click()
+        driver.execute_script("return arguments[0].click();", search_cabin1)
+        
+        origin = driver.find_element_by_id("frm_2012158061206151234")
+        
+        driver.execute_script("return arguments[0].click();", origin)
+        #origin.click()
+        time.sleep(1)
+        origin.send_keys(str(source))
+        time.sleep(1)
+        origin.send_keys(Keys.TAB)
     except:
         storeFlag(searchkey,stime)
         return searchkey
 
-    driver.execute_script('document.getElementById("frm_2012158061206151234").removeAttribute("readonly")')
-    oneway = driver.find_element_by_id("frm_oneWayFlight")
-    #oneway.click()
-    driver.execute_script("return arguments[0].click();", oneway)
     
-    search_cabin1 = driver.find_element_by_id(search_cabin)
-    #search_cabin1.click()
-    driver.execute_script("return arguments[0].click();", search_cabin1)
-    
-    origin = driver.find_element_by_id("frm_2012158061206151234")
-    
-    driver.execute_script("return arguments[0].click();", origin)
-    #origin.click()
-    time.sleep(1)
-    origin.send_keys(str(source))
-    time.sleep(1)
-    origin.send_keys(Keys.TAB)
     flag = 0
     flag1 = 0
     sourceVal = ''
@@ -78,24 +79,28 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
         origin.send_keys(str(source))
         time.sleep(1)
         origin.send_keys(Keys.TAB)
-    while flag < 1 and flag1 < 2:
-        sourceVal = origin.get_attribute("value")   
-        if (sourceVal == '' or len(sourceVal) <= len(source)):
-            setOrigin()
-            flag1 = flag1+1
-        else:
-            flag = flag+1
-    if sourceVal == '':
+    try:
+        while flag < 1 and flag1 < 2:
+            sourceVal = origin.get_attribute("value")   
+            if (sourceVal == '' or len(sourceVal) <= len(source)):
+                setOrigin()
+                flag1 = flag1+1
+            else:
+                flag = flag+1
+        if sourceVal == '':
+            storeFlag(searchkey,stime)
+            return
+        flag = 0
+        flag1 = 0
+        driver.execute_script('return document.getElementById("frm_20121580612061235").removeAttribute("readonly")')
+        to = driver.find_element_by_id("frm_20121580612061235")
+        time.sleep(1) 
+        to.send_keys(destcode)
+        time.sleep(1)
+        to.send_keys(Keys.TAB)
+    except:
         storeFlag(searchkey,stime)
-        return
-    flag = 0
-    flag1 = 0
-    driver.execute_script('return document.getElementById("frm_20121580612061235").removeAttribute("readonly")')
-    to = driver.find_element_by_id("frm_20121580612061235")
-    time.sleep(1) 
-    to.send_keys(destcode)
-    time.sleep(1)
-    to.send_keys(Keys.TAB)
+        return searchkey
     def setDestination():
         to.clear()
         to.send_keys(destcode)
