@@ -272,3 +272,14 @@ class Token(models.Model):
     def __unicode__(self):
         # return self.owner.name
         return self.token
+
+class UserBackend(object):
+    def authenticate(self, username=None, password=None):
+        password = hashlib.md5(password).hexdigest()
+        user = User.objects.filter(username=username, password=password)
+        if user:
+            return user[0]
+        return None
+
+    def get_user(user_id):
+        return User.objects.get(user_id=user_id)
