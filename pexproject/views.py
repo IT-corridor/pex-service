@@ -2787,6 +2787,7 @@ def price_history_period(request):
 def price_history_num(request):    
     result = {'economy': [], 'business': [], 'firstclass':[]}
     result_tax = {'economy': [], 'business': [], 'firstclass':[]}
+    ticks =[]
 
     try:
         _from = request.POST.get('_from')
@@ -2816,6 +2817,7 @@ def price_history_num(request):
                 if not flights:
                     continue
                 idx = idx + 1
+                ticks.append([idx, idx])
                 for key, val in FLIGHT_CLASS.items():
                     field = val[0]
                     res = flights.filter(**{'{0}__gt'.format(field):0}).aggregate(**{field:reducer(field)})
@@ -2832,7 +2834,7 @@ def price_history_num(request):
         print str(e), 'Error: ###############3'
 
     print [result,result_tax], '#########'
-    return HttpResponse(json.dumps([result,result_tax]))
+    return HttpResponse(json.dumps([result,result_tax,ticks]))
 
 @csrf_exempt
 def signup_activity(request):
