@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.utils import timezone
-
+import hashlib
 
 class Flightdata(models.Model):
     rowid = models.AutoField(primary_key=True)
