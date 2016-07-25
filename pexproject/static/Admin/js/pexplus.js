@@ -36,7 +36,6 @@ $(function() {
 
     $("#id_price_history_from_period").on("dp.change", function (e) {
         $('#id_price_history_to_period').data("DateTimePicker").minDate(e.date);
-        $('#id_price_history_to_period').focus();
         price_history_period();
     });
     $("#id_price_history_to_period").on("dp.change", function (e) {
@@ -206,7 +205,7 @@ price_history_period = function() {
     // time before departure date
     var period = $('#id_price_history_period').val();
 
-    if (_from == '' || _to == '')
+    if (_from == '')
         return false;
 
     if (r_from == '' || r_to == '')
