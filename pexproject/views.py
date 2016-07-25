@@ -2602,7 +2602,7 @@ def admin_logout(request):
 def Admin(request):
     air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']    
     stat_num_search = [3135, 2164, 3067, 36487, 1283, 4456, 4175, 171065, 3779, 10235, 3013]
-    pop_searches = [{'source': u'New York (NYC)', 'destination': u'Tel Aviv (TLV)', 'dcount': 150}, {'source': u'New York (NYC)', 'destination': u'Seattle (SEA)', 'dcount': 126}, {'source': u'Los Angeles (LAX)', 'destination': u'Miami (MIA)', 'dcount': 89}, {'source': u'Houston (IAH)', 'destination': u'Ft Lauderdale (FLL)', 'dcount': 84}, {'source': u'Bangkok (BKK)', 'destination': u'Tokyo (NRT)', 'dcount': 79}, {'source': u'Beijing (PEK)', 'destination': u'Moscow (MOW)', 'dcount': 78}, {'source': u'New York (JFK)', 'destination': u'Sydney (SYD)', 'dcount': 77}, {'source': u'New York (NYC)', 'destination': u'Los Angeles (LAX)', 'dcount': 76}, {'source': u'New York (LGA)', 'destination': u'Miami (MIA)', 'dcount': 68}, {'source': u'Moscow (MOW)', 'destination': u'Beijing (NAY)', 'dcount': 68}, {'source': u'Miami (MIA)', 'destination': u'New York (LGA)', 'dcount': 68}, {'source': u'Tel Aviv (TLV)', 'destination': u'New York (NYC)', 'dcount': 59}, {'source': u'New York (NYC)', 'destination': u'San Francisco (SFO)', 'dcount': 52}, {'source': u'Los Angeles (LAX)', 'destination': u'New York (NYC)', 'dcount': 51}, {'source': u'New York (NYC)', 'destination': u'Moscow (MOW)', 'dcount': 48}, {'source': u'New York (NYC)', 'destination': u'Miami (MIA)', 'dcount': 46}, {'source': u'New York (NYC)', 'destination': u'Ft Lauderdale (FLL)', 'dcount': 45}, {'source': u'Philadelphia (PHL)', 'destination': u'Ft Lauderdale (FLL)', 'dcount': 43}, {'source': u'Moscow (MOW)', 'destination': u'Beijing (PEK)', 'dcount': 43}, {'source': u'Miami (MIA)', 'destination': u'Toronto (YYZ)', 'dcount': 40}, {'source': u'New York (NYC)', 'destination': u'Honolulu (HNL)', 'dcount': 39}, {'source': u'Los Angeles (LAX)', 'destination': u'Rome (FCO)', 'dcount': 39}, {'source': u'New York (JFK)', 'destination': u'Ft Lauderdale (FLL)', 'dcount': 38}, {'source': u'Indianapolis (IND)', 'destination': u'Bangkok (BKK)', 'dcount': 36}, {'source': u'San Francisco (SFO)', 'destination': u'Los Angeles (LAX)', 'dcount': 35}, {'source': u'Boston (BOS)', 'destination': u'Tel Aviv (TLV)', 'dcount': 34}, {'source': u'Beijing (PEK)', 'destination': u'London (LHR)', 'dcount': 33}, {'source': u'Rome (FCO)', 'destination': u'New York (JFK)', 'dcount': 31}, {'source': u'New York (NYC)', 'destination': u'Las Vegas (LAS)', 'dcount': 31}, {'source': u'New York (JFK)', 'destination': u'London (LHR)', 'dcount': 31}]
+    pop_searches = _popular_search(3650)
     stat_price_history = [[{'data': [[1468886400000.0, 52500.0], [1469491200000.0, 52500.0], [1471219200000.0, 52500.0], [1471478400000.0, 52500.0]], 'label': 'Economy'}, {'data': [[1471219200000.0, 82500.0]], 'label': 'Business'}, {'data': [[1471219200000.0, 67500.0], [1471478400000.0, 67500.0]], 'label': 'First'}], [{'data': [[1468886400000.0, 113.7], [1469491200000.0, 114.6], [1471219200000.0, 114.6], [1471478400000.0, 114.6]], 'label': 'Economy'}, {'data': [[1471219200000.0, 114.6]], 'label': 'Business'}, {'data': [[1471219200000.0, 114.6], [1471478400000.0, 114.6]], 'label': 'First'}]]
     user_search_history = get_search_history()
     search_on_country = get_search_country()
@@ -2648,11 +2648,14 @@ def get_search_country():
                     user_dict[user_id] = 1
 
     result = []
+    unknown = 0
     for key, val in user_dict.items():
         country = User.objects.get(user_id=key).country
         if not country:
-            country = 'Unknown'
-        result.append([country, val])
+            unknown = unknown + val
+        else:
+            result.append([country, val])
+    result.append(['Unknown', unknown])
     return result
 
 @csrf_exempt
@@ -2696,13 +2699,16 @@ def airline_info(request):
 @csrf_exempt
 def popular_search(request):    
     period = int(request.POST.get('period'))    
+    pop_searches = _popular_search(period)
+    return HttpResponse(json.dumps(pop_searches))
+        
+def _popular_search(period):        
     start_time = datetime.datetime.now() - timedelta(days=period)
     start_time = start_time.strftime('%Y-%m-%d %H:%M:%S')
 
     pop_searches = Searchkey.objects.filter(scrapetime__gte=start_time).values('source', 'destination').annotate(dcount=Count('*')).order_by('-dcount')[:10]
-    pop_searches = [{'source':item['source'], 'destination':item['destination'], 'dcount':item['dcount']} for item in pop_searches]
-    return HttpResponse(json.dumps(pop_searches))
-        
+    return [{'source':item['source'], 'destination':item['destination'], 'dcount':item['dcount']} for item in pop_searches]
+
 @csrf_exempt
 def price_history(request):    
     _from = request.POST.get('_from')
