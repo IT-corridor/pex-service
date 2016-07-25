@@ -2785,48 +2785,52 @@ def price_history_period(request):
 
 @csrf_exempt
 def price_history_num(request):    
-    _from = request.POST.get('_from')
-    _to = request.POST.get('_to') 
-    airline = request.POST.get('airline')
-    r_from = request.POST.get('r_from')
-    r_to = request.POST.get('r_to') 
-    aggregation = request.POST.get('aggregation')
-
-    print _from, _to, airline, r_from, r_to, aggregation, '@@@@@@@'
-    searchkeys = Searchkey.objects.filter(traveldate=_from, source=r_from, destination=r_to).order_by('scrapetime')
-    if _to:
-        searchkeys = searchkeys.filter(returndate=_to).order_by('scrapetime')
-
-    r_searchkeys = []
-
-    # check the time before travel
-    for item in searchkeys:
-        if item.scrapetime.date() == dttime.now().date():
-            r_searchkeys.append(item)
-
     result = {'economy': [], 'business': [], 'firstclass':[]}
     result_tax = {'economy': [], 'business': [], 'firstclass':[]}
 
-    traveldate = None
-    idx = 0
-    for searchkey in r_searchkeys:
-        flights = Flightdata.objects.filter(searchkeyid=searchkey.searchid, datasource=airline).exclude(origin='flag')
-        reducer = getattr(aggregator, aggregation)
-        if not flights:
-            continue
-        idx = idx + 1
-        for key, val in FLIGHT_CLASS.items():
-            field = val[0]
-            res = flights.filter(**{'{0}__gt'.format(field):0}).aggregate(**{field:reducer(field)})
-            if res[field]:
-                result[key].append([idx, float(res[field])])
-            field = val[1]
-            res = flights.filter(**{'{0}__gt'.format(field):0}).aggregate(**{field:reducer(field)})
-            if res[field]:
-                result_tax[key].append([idx, float(res[field])])
+    try:
+        _from = request.POST.get('_from')
+        _to = request.POST.get('_to') 
+        airline = request.POST.get('airline')
+        r_from = request.POST.get('r_from')
+        r_to = request.POST.get('r_to') 
+        aggregation = request.POST.get('aggregation')
 
-    result = [{'label':'Economy', 'data':result['economy']}, {'label':'Business', 'data':result['business']}, {'label':'First', 'data':result['firstclass']}]
-    result_tax = [{'label':'Economy', 'data':result_tax['economy']}, {'label':'Business', 'data':result_tax['business']}, {'label':'First', 'data':result_tax['firstclass']}]
+        print _from, _to, airline, r_from, r_to, aggregation, '@@@@@@@'
+        searchkeys = Searchkey.objects.filter(traveldate=_from, source=r_from, destination=r_to).order_by('scrapetime')
+        if _to:
+            searchkeys = searchkeys.filter(returndate=_to).order_by('scrapetime')
+
+        r_searchkeys = []
+
+        # check the time before travel
+        for item in searchkeys:
+            if item.scrapetime.date() == dttime.now().date():
+                r_searchkeys.append(item)
+
+        traveldate = None
+        idx = 0
+        for searchkey in r_searchkeys:
+            flights = Flightdata.objects.filter(searchkeyid=searchkey.searchid, datasource=airline).exclude(origin='flag')
+            reducer = getattr(aggregator, aggregation)
+            if not flights:
+                continue
+            idx = idx + 1
+            for key, val in FLIGHT_CLASS.items():
+                field = val[0]
+                res = flights.filter(**{'{0}__gt'.format(field):0}).aggregate(**{field:reducer(field)})
+                if res[field]:
+                    result[key].append([idx, float(res[field])])
+                field = val[1]
+                res = flights.filter(**{'{0}__gt'.format(field):0}).aggregate(**{field:reducer(field)})
+                if res[field]:
+                    result_tax[key].append([idx, float(res[field])])
+
+        result = [{'label':'Economy', 'data':result['economy']}, {'label':'Business', 'data':result['business']}, {'label':'First', 'data':result['firstclass']}]
+        result_tax = [{'label':'Economy', 'data':result_tax['economy']}, {'label':'Business', 'data':result_tax['business']}, {'label':'First', 'data':result_tax['firstclass']}]
+    except Exception, e:
+        print str(e), 'Error: ###############3'
+        
     print [result,result_tax], '#########'
     return HttpResponse(json.dumps([result,result_tax]))
 
