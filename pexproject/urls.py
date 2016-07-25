@@ -13,6 +13,7 @@ urlpatterns = [
     url(r'^customer/$', customer, name='customer'),
     url(r'^customer/login/$', customer_login, name='customer_login'),
     url(r'^customer/logout', customer_logout, name='customer_logout'),
+    url(r'^customer/stats/user_search/', user_search, name='user_search'),
     
     url(r'^login', login, name='login'),
     url(r'^google4fcc5c6791037930$', lambda r: HttpResponse("google-site-verification: google4fcc5c6791037930.html")),
