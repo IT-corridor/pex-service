@@ -44,6 +44,28 @@ $(function() {
     });    
     // --------------------------------------------------------------------- // 
 
+    $('#id_price_history_from_num').datetimepicker({
+        viewMode: 'years',
+        format: "YYYY-MM-DD",
+        minDate: 0,
+    });
+
+    $('#id_price_history_to_num').datetimepicker({
+        viewMode: 'years',
+        format: "YYYY-MM-DD",
+        useCurrent: false
+    });    
+
+    $("#id_price_history_from_num").on("dp.change", function (e) {
+        $('#id_price_history_to_num').data("DateTimePicker").minDate(e.date);
+        price_history_num();
+    });
+    $("#id_price_history_to_num").on("dp.change", function (e) {
+        $('#id_price_history_from_num').data("DateTimePicker").maxDate(e.date);
+        price_history_num();
+    });    
+    // --------------------------------------------------------------------- // 
+
     $('#id_user_signup_from').datetimepicker({
         format: "YYYY-MM-DD",
         minDate: 0,
@@ -79,6 +101,7 @@ $(document).ready(function(){
     _update_line_info(stat_num_search);
     _price_history(stat_price_history);
     _price_history_period(stat_price_history_period);
+    _price_history_num([[],[]]);
 });
 
 
@@ -220,6 +243,65 @@ price_history_period = function() {
         stat_price_history = JSON.parse(data);
         _price_history_period(stat_price_history);
     });
+}
+
+price_history_num = function() {
+    var _from = $('#id_price_history_from_num').val();
+    var _to = $('#id_price_history_to_num').val();
+    var airline = $('#id_price_history_airline_num').val();
+    var r_from = $('#id_price_history_route_from_num').val();
+    var r_to = $('#id_price_history_route_to_num').val();
+    var aggregation = $('#id_price_history_aggregation_num').val();
+
+    if (_from == '')
+        return false;
+
+    if (r_from == '' || r_to == '')
+        return false;
+    
+    $('.page-loader').show();    
+
+    $.post('/stats/price_history_num/', 
+        {'_from':_from, '_to':_to, 'airline':airline, 'r_from':r_from, 'r_to':r_to, 'aggregation':aggregation}
+    ).success(function(data) {
+        $('.page-loader').fadeOut();
+        stat_price_history = JSON.parse(data);
+        _price_history_num(stat_price_history);
+    });
+}
+
+_price_history_num = function(data) {
+    var i = 0;
+    $.each(data, function(key, val) {
+        val.color = i;
+        ++i;
+    });
+
+    // console.log(JSON.stringify(data[0]));
+    $.plot("#id_price_history_chart_num", data[0], {
+        yaxis: {
+            tickFormatter: function (val, axis) {
+                return Math.ceil(val) + " miles";
+            },    
+        },
+        xaxis: {
+            // mode: "time"
+        }
+    });  
+
+    if (data[1].length > 0)
+        $('#id_price_history_chart_tax_num').css('margin-left','18px');
+
+    $.plot("#id_price_history_chart_tax_num", data[1], {
+        yaxis: {
+            tickFormatter: function (val, axis) {
+                return "   $"+val.toFixed(2);
+            },    
+        },
+        xaxis: {
+            // mode: "time"
+        }
+    });      
 }
 
 _price_history_period = function(data) {
