@@ -286,7 +286,7 @@ _price_history_num = function(data) {
             },    
         },
         xaxis: {
-            ticks: [[1,1],[1,1]]
+            ticks: [[1,1],[2,2]]
             // mode: "time"
         }
     });  
