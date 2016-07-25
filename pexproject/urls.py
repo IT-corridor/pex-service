@@ -9,6 +9,10 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^$', index, name='index'),
     url(r'', include('social_auth.urls')),
+
+    url(r'^customer/$', customer, name='customer'),
+    url(r'^customer/login/$', customer_login, name='customer_login'),
+    url(r'^customer/logout', customer_logout, name='customer_logout'),
     
     url(r'^login', login, name='login'),
     url(r'^google4fcc5c6791037930$', lambda r: HttpResponse("google-site-verification: google4fcc5c6791037930.html")),
@@ -60,7 +64,7 @@ urlpatterns = [
     url(r'^Admin/blog_list/(?P<id>\d+)/$', blog_list_update, name='blog_list_update'),
     url(r'^Admin/blog_list/(?P<id>\d+)/delete/$', blog_list_delete, name='blog_list_delete'),
 
-    url(r'^Admin/customer/$', customer, name='customer_list'),
+    url(r'^Admin/customer/$', customer_list, name='customer_list'),
     url(r'^Admin/customer/new/$', customer_update, name='customer_new'),
     url(r'^Admin/customer/(?P<id>\d+)/$', customer_update, name='customer_update'),
     url(r'^Admin/customer/(?P<id>\d+)/delete/$', customer_delete, name='customer_delete'),

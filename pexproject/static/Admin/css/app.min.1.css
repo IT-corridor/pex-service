@@ -15318,6 +15318,17 @@ body.login-content:before {
   z-index: 0;
 }
 
+body.login-content-customer:before {
+  height: 50%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: #8BC34A;
+  content: "";
+  z-index: 0;
+}
+
 #profile-main {
   min-height: 500px;
   position: relative;

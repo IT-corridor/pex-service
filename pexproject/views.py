@@ -2441,7 +2441,7 @@ def google_ad_update(request, id=None):
     return render(request, 'Admin/google_ad_form.html', {'form':form})
 
 @login_required(login_url='/Admin/login/')
-def customer(request):
+def customer_list(request):
     customers = User.objects.all()
     result = []
     for customer in customers:
@@ -2847,3 +2847,38 @@ def signup_activity(request):
     except Exception, e:
         print str(e), '######'
     return HttpResponse(json.dumps(result))
+
+@login_required(login_url='/customer/login/')
+def customer(request):    
+    air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']
+    stat_num_search = [3135, 2164, 3067, 36487, 1283, 4456, 4175, 171065, 3779, 10235, 3013]
+    stat_price_history = [[{'data': [[1468886400000.0, 52500.0], [1469491200000.0, 52500.0], [1471219200000.0, 52500.0], [1471478400000.0, 52500.0]], 'label': 'Economy'}, {'data': [[1471219200000.0, 82500.0]], 'label': 'Business'}, {'data': [[1471219200000.0, 67500.0], [1471478400000.0, 67500.0]], 'label': 'First'}], [{'data': [[1468886400000.0, 113.7], [1469491200000.0, 114.6], [1471219200000.0, 114.6], [1471478400000.0, 114.6]], 'label': 'Economy'}, {'data': [[1471219200000.0, 114.6]], 'label': 'Business'}, {'data': [[1471219200000.0, 114.6], [1471478400000.0, 114.6]], 'label': 'First'}]]
+    stat_price_history_period = [[{'data': [[1468886400000.0, 52500.0], [1469491200000.0, 52500.0], [1471219200000.0, 52500.0], [1471478400000.0, 52500.0]], 'label': 'Economy'}, {'data': [[1471219200000.0, 82500.0]], 'label': 'Business'}, {'data': [[1471219200000.0, 67500.0], [1471478400000.0, 67500.0]], 'label': 'First'}], [{'data': [[1468886400000.0, 113.7], [1469491200000.0, 114.6], [1471219200000.0, 114.6], [1471478400000.0, 114.6]], 'label': 'Economy'}, {'data': [[1471219200000.0, 114.6]], 'label': 'Business'}, {'data': [[1471219200000.0, 114.6], [1471478400000.0, 114.6]], 'label': 'First'}]]
+    user_search_history = [('JFK->MOW', '2016-02-10',12), ('JFK->MOW', '2016-02-10',0), ('JFK->MOW', '2016-02-10',32), ('JFK->MOW', '2016-02-10',32), ('JFK->MOW', '2016-02-10',32)]
+
+    return render(request, 'customer/dashboard.html', {
+        'stat_num_search': stat_num_search,
+        'air_lines': air_lines,
+        'stat_price_history': stat_price_history,
+        'stat_price_history_period': stat_price_history_period,
+        'user_search_history':user_search_history,
+    })
+
+@login_required(login_url='/customer/login/')
+def customer_logout(request):
+    auth_logout(request)
+    return HttpResponseRedirect('/customer/')
+
+def customer_login(request):
+    if request.method == 'GET':
+        return render(request, 'customer/login.html', {})    
+    else:
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(username=username, password=password)
+        if user:
+            if user.is_active and user.level == 1:
+                login(request, user)
+
+    return HttpResponseRedirect('/customer/')

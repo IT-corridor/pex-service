@@ -1,0 +1,485 @@
+{% extends "customer/base.html" %}
+{% load staticfiles %} 
+
+{% block extra_css %}
+    <link href="/static/Admin/vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'flightsearch/admin/autocomplete/jquery-ui.min.css' %}">
+    <link rel="stylesheet" href="{% static 'flightsearch/admin/autocomplete/jquery-ui.theme.min.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="block-header">
+        <h2>Dash Board <small>You can get your information about PEX+ here.</small></h2>
+    
+        <ul class="actions">
+            <li>
+                <a href="">
+                    <i class="zmdi zmdi-trending-up"></i>
+                </a>
+            </li>
+            <li>
+                <a href="">
+                    <i class="zmdi zmdi-check-all"></i>
+                </a>
+            </li>
+            <li class="dropdown">
+                <a href="" data-toggle="dropdown">
+                    <i class="zmdi zmdi-more-vert"></i>
+                </a>
+    
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li>
+                        <a href="">Refresh</a>
+                    </li>
+                    <li>
+                        <a href="">Manage Widgets</a>
+                    </li>
+                    <li>
+                        <a href="">Widgets Settings</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Search History</h2>
+                    
+                    <ul class="actions">
+                        <li class="dropdown action-show">
+                            <a href="" data-toggle="dropdown">
+                                <i class="zmdi zmdi-more-vert"></i>
+                            </a>
+            
+                            <div class="dropdown-menu pull-right">
+                                <p class="p-20">
+                                    You can put anything here
+                                </p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="card-body card-padding-sm">
+                    <div class="row">
+                        <div class="col-sm-3 m-b-25">
+                            <span class="f-500 m-b-15 c-black">Period</span>
+                            
+                            <select class="selectpicker" onchange="update_user_search();" id="id_airline_info_period">
+                                <option value="3650">All time</option>
+                                <option value="1">1 Day</option>
+                                <option value="7">7 Day</option>
+                                <option value="31">1 Month</option>
+                                <option value="90">3 Months</option>
+                                <option value="180">6 Months</option>
+                                <option value="365">1 Year</option>
+                                <option value="1825">5 Years</option>
+                            </select>
+                        </div>
+
+                        <div class="col-sm-6 m-b-25">
+                        <span class="f-500 m-b-15 c-black">Flight Routes</span>
+                        <div class="row">
+                            <div class="col-sm-6 form-group">
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control airport_text" placeholder="From" id="id_search_result_from" autocomplete="off" onchange="update_user_search();" value="All Airports">
+                                </div>
+                            </div>
+                            <div class="col-sm-6 form-group">
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control airport_text" placeholder="To" id="id_search_result_to" autocomplete="off" onchange="update_user_search();" value="All Airports">
+                                </div>
+                            </div>                            
+                        </div>
+                        </div> 
+                        <div class="col-sm-3 m-b-25">
+                            <span class="f-500 m-b-15 c-black">Category</span>
+                            
+                            <select class="selectpicker" onchange="update_user_search();" id="id_airline_info_period">
+                                <option value="3650">All</option>
+                                <option value="1">One Way</option>
+                                <option value="7">Round Trip</option>
+                            </select>
+                        </div>
+                    </div>                    
+
+                    <div class="panel-group" role="tablist" aria-multiselectable="true">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Search Route</th>
+                                        <th>Time</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id='id_pop_search_table_body'>
+                                    {% for item in user_search_history %}
+                                    <tr>
+                                        <td>{{forloop.counter}}</td>
+                                        <td>{{ item.0 }}</td>
+                                        <td>{{ item.1 }}</td>
+                                        <td>
+                                            {% if item.2 == 0 %}
+                                                <button class="btn bgm-gray waves-effect" style="width: 50px;">{{ item.2 }}</button>    
+                                            {% else %}
+                                                <button class="btn bgm-blue waves-effect" style="width: 50px;">{{ item.2 }}</button>    
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Airline Search Result Frequency<small>The graph does not change by time period or fare class - unless a flight route (from and to) are selected</small></h2>
+                    
+                    <ul class="actions">
+                        <li class="dropdown action-show">
+                            <a href="" data-toggle="dropdown">
+                                <i class="zmdi zmdi-more-vert"></i>
+                            </a>
+            
+                            <div class="dropdown-menu pull-right">
+                                <p class="p-20">
+                                    You can put anything here
+                                </p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="card-body card-padding-sm">
+                    <div class="row">
+                        <div class="col-sm-3 m-b-25">
+                            <span class="f-500 m-b-15 c-black">Period</span>
+                            
+                            <select class="selectpicker" onchange="update_line_info();" id="id_airline_info_period">
+                                <option value="3650">All time</option>
+                                <option value="1">1 Day</option>
+                                <option value="7">7 Day</option>
+                                <option value="31">1 Month</option>
+                                <option value="90">3 Months</option>
+                                <option value="180">6 Months</option>
+                                <option value="365">1 Year</option>
+                                <option value="1825">5 Years</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-3 m-b-25">
+                            <span class="f-500 m-b-15 c-black">Fare Class</span>
+                            
+                            <select class="selectpicker" onchange="update_line_info();" id="id_airline_info_fare_class">
+                                <option value="maincabin">Economy</option>
+                                <option value="firstclass">Business</option>
+                                <option value="business">First</option>
+                            </select>
+                        </div>      
+
+                        <div class="col-sm-6 m-b-25">
+                        <span class="f-500 m-b-15 c-black">Flight Routes</span>
+                        <div class="row">
+                            <div class="col-sm-6 form-group">
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control airport_text" placeholder="From" id="id_search_result_from" autocomplete="off" onchange="update_line_info();" value="All Airports">
+                                </div>
+                            </div>
+                            <div class="col-sm-6 form-group">
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control airport_text" placeholder="To" id="id_search_result_to" autocomplete="off" onchange="update_line_info();" value="All Airports">
+                                </div>
+                            </div>
+                            
+                        </div>
+                        </div> 
+
+                    </div>                    
+                    <div id="bar-chart" class="flot-chart"  style="height: 320px;"></div>                    
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Price History</h2>
+                    
+                    <ul class="actions">
+                        <li class="dropdown action-show">
+                            <a href="" data-toggle="dropdown">
+                                <i class="zmdi zmdi-more-vert"></i>
+                            </a>
+            
+                            <div class="dropdown-menu pull-right">
+                                <p class="p-20">
+                                    You can put anything here
+                                </p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="card-body card-padding">
+                    <div class="row">
+                        <div class="col-sm-4 m-b-25">
+                            <span class="f-500 m-b-15 c-black">Period</span>
+                            <div class="input-group form-group">
+                                <span class="input-group-addon"><i class="zmdi zmdi-calendar"></i></span>
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control" placeholder="From" id="id_price_history_from">
+                                </div>
+                                <span class="input-group-addon"><i class="zmdi zmdi-calendar"></i></span>
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control" placeholder="To" id="id_price_history_to">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2 m-b-25">
+                            <span class="f-500 m-b-15 c-black">Airlines</span>
+                            
+                            <select class="selectpicker" onchange="price_history();" id="id_price_history_airline">
+                                {% for item in air_lines %}
+                                <option value="{{ item }}">{{item|title}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>                    
+                        <div class="col-sm-4 m-b-25">
+                        <span class="f-500 m-b-15 c-black">Flight Routes</span>
+                        <div class="row">
+                            <div class="col-sm-6 form-group">
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control airport_text" placeholder="From" id="id_price_history_route_from" autocomplete="off" onchange="price_history();" value="New York (JFK)">
+                                </div>
+                            </div>
+                            <div class="col-sm-6 form-group">
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control airport_text" placeholder="To" id="id_price_history_route_to" autocomplete="off" onchange="price_history();" value="Moscow (MOW)">
+                                </div>
+                            </div>                            
+                        </div>
+                        </div> 
+                        <div class="col-sm-2 m-b-25">
+                            <span class="f-500 m-b-15 c-black">Prices</span>
+                            <select class="selectpicker" onchange="price_history();" id="id_price_history_aggregation">
+                                <option value="Avg">Average</option>
+                                <option value="Max">Maximum</option>
+                                <option value="Min">Minimum</option>
+                            </select>
+                        </div>                    
+                   
+                    </div>                    
+
+                    <div id="id_price_history_chart" style="height: 270px;" class="m-b-25"></div>
+                    <div id="id_price_history_chart_tax" style="height: 200px;"></div>
+                </div>
+            </div>
+        </div>        
+
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Price by Time Before Trip</h2>
+                    
+                    <ul class="actions">
+                        <li class="dropdown action-show">
+                            <a href="" data-toggle="dropdown">
+                                <i class="zmdi zmdi-more-vert"></i>
+                            </a>
+            
+                            <div class="dropdown-menu pull-right">
+                                <p class="p-20">
+                                    You can put anything here
+                                </p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="card-body card-padding">
+                    <div class="row">
+                        <div class="col-sm-3 m-b-15">
+                            <span class="f-500 m-b-15 c-black">Time before departure date</span>
+                            <select class="selectpicker form-control m-l-20" onchange="price_history_period();" id="id_price_history_period">
+                                <option value="3650">All time</option>
+                                <option value="1">1 Day</option>
+                                <option value="7">7 Day</option>
+                                <option value="31">1 Month</option>
+                                <option value="90">3 Months</option>
+                                <option value="180">6 Months</option>
+                                <option value="365">1 Year</option>
+                            </select>
+                        </div>                         
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4 m-b-25">
+                            <span class="f-500 m-b-15 c-black">Period</span>
+                            <div class="input-group form-group">
+                                <span class="input-group-addon"><i class="zmdi zmdi-calendar"></i></span>
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control" placeholder="From" id="id_price_history_from_period">
+                                </div>
+                                <span class="input-group-addon"><i class="zmdi zmdi-calendar"></i></span>
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control" placeholder="To" id="id_price_history_to_period">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2 m-b-25">
+                            <span class="f-500 m-b-15 c-black">Airlines</span>
+                            
+                            <select class="selectpicker" onchange="price_history_period();" id="id_price_history_airline_period">
+                                {% for item in air_lines %}
+                                <option value="{{ item }}">{{item|title}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>                    
+                        <div class="col-sm-4 m-b-25">
+                        <span class="f-500 m-b-15 c-black">Flight Routes</span>
+                        <div class="row">
+                            <div class="col-sm-6 form-group">
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control airport_text" placeholder="From" id="id_price_history_route_from_period" autocomplete="off" onchange="price_history_period();" value="New York (JFK)">
+                                </div>
+                            </div>
+                            <div class="col-sm-6 form-group">
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control airport_text" placeholder="To" id="id_price_history_route_to_period" autocomplete="off" onchange="price_history_period();" value="Moscow (MOW)">
+                                </div>
+                            </div>                            
+                        </div>
+                        </div> 
+                        <div class="col-sm-2 m-b-25">
+                            <span class="f-500 m-b-15 c-black">Prices</span>
+                            <select class="selectpicker" onchange="price_history_period();" id="id_price_history_aggregation_period">
+                                <option value="Avg">Average</option>
+                                <option value="Max">Maximum</option>
+                                <option value="Min">Minimum</option>
+                            </select>
+                        </div>                    
+                   
+                    </div>                    
+
+                    <div id="id_price_history_chart_period" style="height: 270px;" class="m-b-25"></div>
+                    <div id="id_price_history_chart_tax_period" style="height: 200px;"></div>
+                </div>
+            </div>
+        </div>        
+
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Price by Number of Times Searched</h2>
+                    
+                    <ul class="actions">
+                        <li class="dropdown action-show">
+                            <a href="" data-toggle="dropdown">
+                                <i class="zmdi zmdi-more-vert"></i>
+                            </a>
+            
+                            <div class="dropdown-menu pull-right">
+                                <p class="p-20">
+                                    You can put anything here
+                                </p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="card-body card-padding">
+                    <div class="row">
+                        <div class="col-sm-4 m-b-25">
+                            <span class="f-500 m-b-15 c-black">Period</span>
+                            <div class="input-group form-group">
+                                <span class="input-group-addon"><i class="zmdi zmdi-calendar"></i></span>
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control" placeholder="From" id="id_price_history_from_num">
+                                </div>
+                                <span class="input-group-addon"><i class="zmdi zmdi-calendar"></i></span>
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control" placeholder="To" id="id_price_history_to_num">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2 m-b-25">
+                            <span class="f-500 m-b-15 c-black">Airlines</span>
+                            
+                            <select class="selectpicker" onchange="price_history_num();" id="id_price_history_airline_num">
+                                {% for item in air_lines %}
+                                <option value="{{ item }}">{{item|title}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>                    
+                        <div class="col-sm-4 m-b-25">
+                        <span class="f-500 m-b-15 c-black">Flight Routes</span>
+                        <div class="row">
+                            <div class="col-sm-6 form-group">
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control airport_text" placeholder="From" id="id_price_history_route_from_num" autocomplete="off" onchange="price_history_num();" value="New York (JFK)">
+                                </div>
+                            </div>
+                            <div class="col-sm-6 form-group">
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control airport_text" placeholder="To" id="id_price_history_route_to_num" autocomplete="off" onchange="price_history_num();" value="Moscow (MOW)">
+                                </div>
+                            </div>                            
+                        </div>
+                        </div> 
+                        <div class="col-sm-2 m-b-25">
+                            <span class="f-500 m-b-15 c-black">Prices</span>
+                            <select class="selectpicker" onchange="price_history_num();" id="id_price_history_aggregation_num">
+                                <option value="Avg">Average</option>
+                                <option value="Max">Maximum</option>
+                                <option value="Min">Minimum</option>
+                            </select>
+                        </div>                    
+                   
+                    </div>                    
+
+                    <div id="id_price_history_chart_num" style="height: 270px;" class="m-b-25"></div>
+                    <div id="id_price_history_chart_tax_num" style="height: 200px;"></div>
+                </div>
+            </div>
+        </div>        
+
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/Admin/vendors/bower_components/flot/jquery.flot.js"></script>
+<script src="/static/Admin/vendors/bower_components/flot/jquery.flot.resize.js"></script>
+<script src="/static/Admin/vendors/bower_components/flot/jquery.flot.categories.js"></script>
+<script src="/static/Admin/vendors/bower_components/flot/jquery.flot.pie.js"></script>
+<script src="/static/Admin/vendors/bower_components/flot/jquery.flot.time.js"></script>
+<script src="/static/Admin/vendors/bower_components/flot.tooltip/js/jquery.flot.tooltip.min.js"></script>
+<script src="/static/Admin/vendors/bower_components/flot-orderBars/js/jquery.flot.orderBars.js"></script>
+<script src="/static/Admin/vendors/bower_components/flot.curvedlines/curvedLines.js"></script>                         
+<script src="/static/Admin/vendors/bower_components/flot-orderBars/js/jquery.flot.orderBars.js"></script>
+
+<script type="text/javascript">
+    var stat_num_search = {{stat_num_search|safe}};
+    var stat_price_history = {{stat_price_history|safe}};
+    var stat_price_history_period = {{stat_price_history_period|safe}};
+</script>
+
+<script src="/static/Admin/vendors/bower_components/moment/min/moment.min.js"></script>
+<script src="/static/Admin/vendors/bower_components/bootstrap-select/dist/js/bootstrap-select.js"></script>
+<script src="/static/Admin/vendors/sparklines/jquery.sparkline.min.js"></script>
+<script src="{% static 'flightsearch/admin/autocomplete/jquery-ui.min.js' %}"></script>
+
+<script src="/static/Admin/js/pexplus_customer.js"></script>
+<script src="/static/Admin/js/charts.js"></script>
+{% endblock %}   
