@@ -1,89 +1,87 @@
 $(function() {
-    $('#id_price_history_from').datetimepicker({
-        viewMode: 'years',
-        format: "YYYY-MM-DD",
-        minDate: 0,
+    $('#id_price_history_from').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        dateFormat: "yy-mm-dd",
+        onClose: function(selectedDate) {
+            $("#id_price_history_to").datepicker("option", "minDate", selectedDate);
+            price_history();
+        }
     });
 
-    $('#id_price_history_to').datetimepicker({
-        viewMode: 'years',
-        format: "YYYY-MM-DD",
-        useCurrent: false
+    $('#id_price_history_to').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        dateFormat: "yy-mm-dd",
+        onClose: function(selectedDate) {
+            $("#id_price_history_from").datepicker("option", "maxDate", selectedDate);
+            price_history();
+        }
     });    
-
-    $("#id_price_history_from").on("dp.change", function (e) {
-        $('#id_price_history_to').data("DateTimePicker").minDate(e.date);
-        $('#id_price_history_to').focus();
-        price_history();
-    });
-    $("#id_price_history_to").on("dp.change", function (e) {
-        $('#id_price_history_from').data("DateTimePicker").maxDate(e.date);
-        price_history();
-    });    
-
     // --------------------------------------------------------------------- // 
-    $('#id_price_history_from_period').datetimepicker({
-        viewMode: 'years',
-        format: "YYYY-MM-DD",
-        minDate: 0,
+    $('#id_price_history_from_period').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        dateFormat: "yy-mm-dd",
+        onClose: function(selectedDate) {
+            $("#id_price_history_to_period").datepicker("option", "minDate", selectedDate);
+            price_history_period();
+        }
     });
 
-    $('#id_price_history_to_period').datetimepicker({
-        viewMode: 'years',
-        format: "YYYY-MM-DD",
-        useCurrent: false
-    });    
-
-    $("#id_price_history_from_period").on("dp.change", function (e) {
-        $('#id_price_history_to_period').data("DateTimePicker").minDate(e.date);
-        price_history_period();
-    });
-    $("#id_price_history_to_period").on("dp.change", function (e) {
-        $('#id_price_history_from_period').data("DateTimePicker").maxDate(e.date);
-        price_history_period();
+    $('#id_price_history_to_period').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        dateFormat: "yy-mm-dd",
+        onClose: function(selectedDate) {
+            $("#id_price_history_from_period").datepicker("option", "maxDate", selectedDate);
+            price_history_period();
+        }
     });    
     // --------------------------------------------------------------------- // 
 
-    $('#id_price_history_from_num').datetimepicker({
-        viewMode: 'years',
-        format: "YYYY-MM-DD",
-        minDate: 0,
+    $('#id_price_history_from_num').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        dateFormat: "yy-mm-dd",
+        onClose: function(selectedDate) {
+            $("#id_price_history_to_num").datepicker("option", "minDate", selectedDate);
+            price_history_num();
+        }
     });
 
-    $('#id_price_history_to_num').datetimepicker({
-        viewMode: 'years',
-        format: "YYYY-MM-DD",
-        useCurrent: false
+    $('#id_price_history_to_num').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        dateFormat: "yy-mm-dd",
+        onClose: function(selectedDate) {
+            $("#id_price_history_from_num").datepicker("option", "maxDate", selectedDate);
+            price_history_num();
+        }
     });    
 
-    $("#id_price_history_from_num").on("dp.change", function (e) {
-        $('#id_price_history_to_num').data("DateTimePicker").minDate(e.date);
-        price_history_num();
-    });
-    $("#id_price_history_to_num").on("dp.change", function (e) {
-        $('#id_price_history_from_num').data("DateTimePicker").maxDate(e.date);
-        price_history_num();
-    });    
     // --------------------------------------------------------------------- // 
 
-    $('#id_user_signup_from').datetimepicker({
-        format: "YYYY-MM-DD",
-        minDate: 0,
+    $('#id_user_signup_from').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        dateFormat: "yy-mm-dd",
+        onClose: function(selectedDate) {
+            $("#id_user_signup_to").datepicker("option", "minDate", selectedDate);
+            user_signup_activity();
+        }
     });
 
-    $('#id_user_signup_to').datetimepicker({
-        format: "YYYY-MM-DD",
-        useCurrent: false
+    $('#id_user_signup_to').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        dateFormat: "yy-mm-dd",
+        onClose: function(selectedDate) {
+            $("#id_user_signup_from").datepicker("option", "maxDate", selectedDate);
+            user_signup_activity();
+        }
     });    
 
-    $("#id_user_signup_from").on("dp.change", function (e) {
-        $('#id_user_signup_to').data("DateTimePicker").minDate(e.date);
-        user_signup_activity();
-    });
-    $("#id_user_signup_to").on("dp.change", function (e) {
-        $('#id_user_signup_from').data("DateTimePicker").maxDate(e.date);
-        user_signup_activity();
-    });      
 
     $( ".airport_text" ).autocomplete({
         open: function(event, ui) {
@@ -286,7 +284,7 @@ _price_history_num = function(data) {
             },    
         },
         xaxis: {
-            ticks: data[2]  // [[1,1],[2,2]]
+            ticks: data[2]  // [[1,1],[2,2]]        
         }
     });  
 
@@ -300,7 +298,7 @@ _price_history_num = function(data) {
             },    
         },
         xaxis: {
-            ticks: data[2]
+            ticks: data[2]  // [[1,1],[2,2]]
         }
     });      
 }
