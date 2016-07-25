@@ -2616,6 +2616,7 @@ def Admin(request):
         'user_search_history':user_search_history,
         'search_on_country':search_on_country,
         'stat_price_history': stat_price_history,
+        'stat_price_history_period': stat_price_history,
     })
 
 def get_search_history():
