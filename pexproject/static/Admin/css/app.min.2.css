@@ -491,7 +491,7 @@
  */
 
 html:not(.ismobile) .page-loader {
-  background: #fff;
+  /*background: #fff;*/
   position: fixed;
   width: 100%;
   height: 100%;
@@ -520,7 +520,7 @@ html:not(.ismobile) .page-loader .preloader p {
   position: relative;
   left: -9px;
   top: 22px;
-  color: #CCC;
+  /*color: #CCC;*/
 }
 
 html.ismobile .page-loader {
