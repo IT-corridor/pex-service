@@ -222,7 +222,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h2>Price History for period</h2>
+                    <h2>Price by Time Before Trip</h2>
                     
                     <ul class="actions">
                         <li class="dropdown action-show">
@@ -305,6 +305,82 @@
 
                     <div id="id_price_history_chart_period" style="height: 270px;" class="m-b-25"></div>
                     <div id="id_price_history_chart_tax_period" style="height: 200px;"></div>
+                </div>
+            </div>
+        </div>        
+
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Price by Number of Times Searched</h2>
+                    
+                    <ul class="actions">
+                        <li class="dropdown action-show">
+                            <a href="" data-toggle="dropdown">
+                                <i class="zmdi zmdi-more-vert"></i>
+                            </a>
+            
+                            <div class="dropdown-menu pull-right">
+                                <p class="p-20">
+                                    You can put anything here
+                                </p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="card-body card-padding">
+                    <div class="row">
+                        <div class="col-sm-4 m-b-25">
+                            <span class="f-500 m-b-15 c-black">Period</span>
+                            <div class="input-group form-group">
+                                <span class="input-group-addon"><i class="zmdi zmdi-calendar"></i></span>
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control" placeholder="From" id="id_price_history_from_num">
+                                </div>
+                                <span class="input-group-addon"><i class="zmdi zmdi-calendar"></i></span>
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control" placeholder="To" id="id_price_history_to_num">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2 m-b-25">
+                            <span class="f-500 m-b-15 c-black">Airlines</span>
+                            
+                            <select class="selectpicker" onchange="price_history_num();" id="id_price_history_airline_num">
+                                {% for item in air_lines %}
+                                <option value="{{ item }}">{{item|title}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>                    
+                        <div class="col-sm-4 m-b-25">
+                        <span class="f-500 m-b-15 c-black">Flight Routes</span>
+                        <div class="row">
+                            <div class="col-sm-6 form-group">
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control airport_text" placeholder="From" id="id_price_history_route_from_num" autocomplete="off" onchange="price_history_num();" value="New York (JFK)">
+                                </div>
+                            </div>
+                            <div class="col-sm-6 form-group">
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control airport_text" placeholder="To" id="id_price_history_route_to_num" autocomplete="off" onchange="price_history_num();" value="Moscow (MOW)">
+                                </div>
+                            </div>                            
+                        </div>
+                        </div> 
+                        <div class="col-sm-2 m-b-25">
+                            <span class="f-500 m-b-15 c-black">Prices</span>
+                            <select class="selectpicker" onchange="price_history_num();" id="id_price_history_aggregation_period">
+                                <option value="Avg">Average</option>
+                                <option value="Max">Maximum</option>
+                                <option value="Min">Minimum</option>
+                            </select>
+                        </div>                    
+                   
+                    </div>                    
+
+                    <div id="id_price_history_chart_num" style="height: 270px;" class="m-b-25"></div>
+                    <div id="id_price_history_chart_tax_num" style="height: 200px;"></div>
                 </div>
             </div>
         </div>        

@@ -74,6 +74,7 @@ urlpatterns = [
     url(r'^stats/popular_search/$', popular_search, name='popular_search'),
     url(r'^stats/price_history/$', price_history, name='price_history'),
     url(r'^stats/price_history_period/$', price_history_period, name='price_history_period'),
+    url(r'^stats/price_history_num/$', price_history_num, name='price_history_num'),
     url(r'^stats/signup_activity/$', signup_activity, name='signup_activity'),
 
     url(r'^get_countryname/$', get_countryname, name='get_countryname'),
