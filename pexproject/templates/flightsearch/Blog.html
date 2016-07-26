@@ -23,7 +23,7 @@
 				<!-------- blog --------->
 				<!--h5 class="Only-text">About PEX+</h5-->
 				{% if top_banner%}
-				<div class="blog-header cstm-pd-blog" style="background:{%if top_banner.featured_image %}url('{{top_banner.featured_image|safe}}'){%else%} url('{{top_banner.img_link|safe}}'){%endif%} no-repeat;background-size:cover;background-position:center;">
+				<div class="blog-header cstm-pd-blog" style="background:{%if top_banner.featured_image %}url('/{{top_banner.featured_image|safe}}'){%else%} url('{{top_banner.img_link|safe}}'){%endif%} no-repeat;background-size:cover;background-position:center;">
 					<a href="/blog/{{top_banner.blog_url}}">
 					<h1>{{top_banner.blog_title}}</h1>
 					</a>
@@ -34,7 +34,7 @@
 					{% for  data in blog %}
 					<div class="col-md-6 col-sm-6 col-xs-12 blog-box ">
 					{%if data.featured_image %}
-					<img src="{{data.featured_image|safe}}" class="img-responsive"
+					<img src="/{{data.featured_image|safe}}" class="img-responsive"
 							alt="blog">
 					<div class="info">
 							<a href="/blog/{{data.blog_url}}" class="blog-name">{{data.blog_title}} <p>{{data.postedon}}</p></a>

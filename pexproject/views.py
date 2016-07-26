@@ -2513,12 +2513,12 @@ def blog_list_update(request, id=None):
             if form.cleaned_data['blog_image_path']:
                 blog_list.blog_image_path = form.cleaned_data['blog_image_path']
             blog_list.blog_title = form.cleaned_data['blog_title']
-            blog_list.blog_url = form.cleaned_data['blog_url']      # needs to be considered
+            blog_list.blog_url = blog_list.blog_title.lower().replace(' ', '-').replace('+', '').replace('(', '').replace(')', '')
             blog_list.blog_position = form.cleaned_data['blog_position']
             blog_list.blog_content = form.cleaned_data['blog_content']
             blog_list.blog_meta_key = form.cleaned_data['blog_meta_key']
             blog_list.blog_meta_Description = form.cleaned_data['blog_meta_Description']
-            blog_list.blog_creator = 'Waff Jason'   # needs to be modified
+            blog_list.blog_creator = form.cleaned_data['blog_creator']
             blog_list.blog_status = form.cleaned_data['blog_status']
             if not blog_list.blog_created_time:
                 blog_list.blog_created_time = dttime.now()

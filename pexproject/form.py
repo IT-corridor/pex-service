@@ -29,7 +29,7 @@ class CityImageForm(ModelForm):
 class BlogForm(ModelForm):
 	class Meta:
 		model = Blogs
-		exclude = ['blog_created_time', 'blog_updated_time', 'blog_creator']
+		exclude = ['blog_created_time', 'blog_updated_time', 'blog_url']
 
 class EmailTemplateForm(ModelForm):
 	class Meta:
