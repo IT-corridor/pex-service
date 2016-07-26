@@ -28,8 +28,10 @@ time1 = time1.strftime('%Y-%m-%d %H:%M:%S')
 currentDate = datetime.datetime.now().date()
 cur_year = currentDate.strftime("%Y")
 
-cursor.execute("select t1.*,t2.airport_id, t2.code,t2.cityName  from  pexproject_useralert t1 inner join pexproject_airports t2 on t1.source_airportid = t2.airport_id or t1.destination_airportid = t2.airport_id where sent_alert_date < '"+str(currentDate)+"' and CASE WHEN annual_repeat=1 THEN DATE_FORMAT(departdate, '%m-%d') >= DATE_FORMAT('"+str(currentDate)+"', '%m-%d') ELSE departdate >= '"+str(currentDate)+"' END LIMIT 2")
+cursor.execute("select t1.*,t2.airport_id, t2.code,t2.cityName  from  pexproject_useralert t1 inner join pexproject_airports t2 on t1.source_airportid = t2.airport_id or t1.destination_airportid = t2.airport_id where sent_alert_date < '"+str(currentDate)+"' and CASE WHEN annual_repeat=1 THEN sent_alert_date < '"+str(currentDate)+"' ELSE departdate >= '"+str(currentDate)+"' END LIMIT 2")
 users = cursor.fetchall()
+#print cursor._last_executed
+
 oldid = ''
 oldsourceCode = ''
 oldsourceCity = ''
@@ -148,20 +150,18 @@ for row in users:
             usermail = row['user_email']
             departdate = row['departdate']
             cabin = row['cabin']
-            deptyear = departdate.strftime('%Y')
+            year_diff = 0
+            if departdate < currentDate:
+                year_diff = int(cur_year)+1
+                departdate = departdate.replace(int(year_diff))
             
-            if deptyear < cur_year:
-                year_diff = int(cur_year)-int(deptyear)
-                departdate = departdate.replace(departdate.year+int(year_diff))
             departdate1 = departdate.strftime('%m/%d/%Y')
 
             returndate =  row['returndate']
             returndate1 = ''
             if returndate:
-                retyear = returndate.strftime('%Y')
-                if retyear < cur_year:
-                    year_diff = int(cur_year)-int(retyear)
-                    returndate = returndate.replace(departdate.year+int(year_diff))
+                if year_diff > 0:
+                    returndate = returndate.replace(int(year_diff))
                 returndate1 = returndate.strftime('%m/%d/%Y')
             #alertday =  row['alertday']
             pricemiles = row['pricemile']
@@ -214,17 +214,17 @@ for row in users:
             departdate = row['departdate']
             cabin = row['cabin']
             deptyear = departdate.strftime('%Y')
-            if deptyear < cur_year:
-                year_diff = int(cur_year)-int(deptyear)
-                departdate = departdate.replace(departdate.year+int(year_diff))
+            year_diff = 0
+            if departdate < currentDate:
+                year_diff = int(cur_year)+1
+                departdate = departdate.replace(int(year_diff))
             departdate1 = departdate.strftime('%m/%d/%Y')
             returndate1 = ''
             returndate = row['returndate']
             if returndate:
                 retyear = returndate.strftime('%Y')
-                if retyear < cur_year:
-                    year_diff = int(cur_year)-int(retyear)
-                    returndate = returndate.replace(departdate.year+int(year_diff))
+                if year_diff > 0:
+                    returndate = returndate.replace(int(year_diff))
                 returndate1 = returndate.strftime('%m/%d/%Y')
             #alertday = row['alertday']
             pricemiles = row['pricemile']
@@ -251,8 +251,7 @@ for row in users:
                     returndate3 = ''
                     cursor.execute("insert into pexproject_searchkey (source,destination,destination_city,traveldate,returndate,scrapetime,origin_airport_id,destination_airport_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)",(full_dest,full_source,source_city,str(returndate),returndate3,str(time),destid1,originid))
                     db.commit()
-                    returnkey = cursor.lastrowid
-                    print "returndate",returndate      
+                    returnkey = cursor.lastrowid      
                     callScraper(olddestinationCode, source_code, returndate1,returnkey,destcity,source_city,cabin)
                 else:
                     returnkey = returnresult['searchid']
