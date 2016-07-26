@@ -100,8 +100,28 @@ $(document).ready(function(){
     _price_history(stat_price_history);
     _price_history_period(stat_price_history_period);
     _price_history_num([[],[]]);
+    var start_date = new Date();
+    start_date.setMonth(start_date.getMonth()-1);
+    $('#id_user_signup_from').val(get_formatted_date(start_date));
+    $('#id_user_signup_to').val(get_formatted_date(new Date()));
+    user_signup_activity();
 });
 
+get_formatted_date = function(_date) {
+    var dd = _date.getDate();
+    var mm = _date.getMonth()+1; //January is 0!
+    var yyyy = _date.getFullYear();
+
+    if(dd<10) {
+        dd='0'+dd
+    } 
+
+    if(mm<10) {
+        mm='0'+mm
+    } 
+
+    return yyyy+'-'+mm+'-'+dd;
+}
 
 update_pop_search = function() {
     var period = $('#id_pop_search_period').val();
