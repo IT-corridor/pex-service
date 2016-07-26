@@ -12,6 +12,7 @@ from jetblue import jetblue
 from virginAmerica import virginAmerica
 from virgin import virgin_atlantic
 from etihad import etihad
+from virgin_australia import virginAustralia
 import thread
 import settings
 
@@ -27,7 +28,7 @@ time1 = time1.strftime('%Y-%m-%d %H:%M:%S')
 currentDate = datetime.datetime.now().date()
 cur_year = currentDate.strftime("%Y")
 
-cursor.execute("select t1.*,t2.airport_id, t2.code,t2.cityName  from  pexproject_useralert t1 inner join pexproject_airports t2 on t1.source_airportid = t2.airport_id or t1.destination_airportid = t2.airport_id where sent_alert_date < '"+str(currentDate)+"' and CASE WHEN annual_repeat=1 THEN DATE_FORMAT(departdate, '%m-%d') >= DATE_FORMAT('"+str(currentDate)+"', '%m-%d') ELSE departdate >= '"+str(currentDate)+"' END")
+cursor.execute("select t1.*,t2.airport_id, t2.code,t2.cityName  from  pexproject_useralert t1 inner join pexproject_airports t2 on t1.source_airportid = t2.airport_id or t1.destination_airportid = t2.airport_id where sent_alert_date < '"+str(currentDate)+"' and CASE WHEN annual_repeat=1 THEN DATE_FORMAT(departdate, '%m-%d') >= DATE_FORMAT('"+str(currentDate)+"', '%m-%d') ELSE departdate >= '"+str(currentDate)+"' END LIMIT 2")
 users = cursor.fetchall()
 oldid = ''
 oldsourceCode = ''
@@ -39,15 +40,15 @@ sourceid = ''
 
 
 
-def callScraper(source_code, olddestinationCode, departdate1,searchid,source_city,destcity):
+def callScraper(source_code, olddestinationCode, departdate1,searchid,source_city,destcity,cabin):
     #print source_code, olddestinationCode, departdate1,searchid
     united(source_code, olddestinationCode, departdate1,searchid)
     delta(source_code, olddestinationCode, departdate1,searchid)
     jetblue(source_code, olddestinationCode, departdate1,searchid)
     virginAmerica(source_code, olddestinationCode, departdate1,searchid)
-    etihad(source_city, destcity, departdate1, searchid,"maincabin")
+    etihad(source_city, destcity, departdate1, searchid,cabin)
     virgin_atlantic(source_code, olddestinationCode, departdate1,returndate1,searchid,returnkey)
-    
+    virginAustralia(source_code,olddestinationCode,departdate1,searchid,cabin,"True")
 def sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,deptdate,retdate,cabin):
     retstr = ''
     triptype=''
@@ -175,7 +176,7 @@ for row in users:
                 cursor.execute("insert into pexproject_searchkey (source,destination,destination_city,traveldate,returndate,scrapetime,origin_airport_id,destination_airport_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)",(full_source,full_dest,dest_city,str(departdate),returndate,str(time),originid,destid1))
                 db.commit()
                 searchid = cursor.lastrowid
-                callScraper(oldsourceCode, dest_code, departdate1,searchid,oldsourceCity,dest_city)
+                callScraper(oldsourceCode, dest_code, departdate1,searchid,oldsourceCity,dest_city,cabin)
                 
             else:
                 searchid = result['searchid']
@@ -189,7 +190,7 @@ for row in users:
                     cursor.execute("insert into pexproject_searchkey (source,destination,destination_city,traveldate,returndate,scrapetime,origin_airport_id,destination_airport_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)",(full_dest,full_source,oldsourceCity,str(returndate),returndate3,str(time),destid1,originid))
                     db.commit()
                     returnkey = cursor.lastrowid
-                    callScraper(dest_code, oldsourceCode, returndate1,returnkey,dest_city,oldsourceCity)
+                    callScraper(dest_code, oldsourceCode, returndate1,returnkey,dest_city,oldsourceCity,cabin)
                 else:
                     returnkey = returnresult['searchid']
                     
@@ -237,7 +238,7 @@ for row in users:
                 cursor.execute("insert into pexproject_searchkey (source,destination,destination_city,traveldate,returndate,scrapetime,origin_airport_id,destination_airport_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)",(full_source,full_dest,destcity,str(departdate),returndate,str(time),originid,destid1))
                 db.commit()
                 searchid = cursor.lastrowid
-                callScraper(source_code, olddestinationCode, departdate1,searchid,source_city,destcity)
+                callScraper(source_code, olddestinationCode, departdate1,searchid,source_city,destcity,cabin)
             else:
                 searchid = result['searchid']
                 
@@ -252,7 +253,7 @@ for row in users:
                     db.commit()
                     returnkey = cursor.lastrowid
                     print "returndate",returndate      
-                    callScraper(olddestinationCode, source_code, returndate1,returnkey,destcity,source_city)
+                    callScraper(olddestinationCode, source_code, returndate1,returnkey,destcity,source_city,cabin)
                 else:
                     returnkey = returnresult['searchid']
             
