@@ -2607,7 +2607,7 @@ def Admin(request):
         'pop_searches': pop_searches,
         'air_lines': air_lines,
         'num_users': len(list(User.objects.all())),
-        'total_searches': len(list(Searchkey.objects.all()))*3,
+        'total_searches': len(list(Searchkey.objects.all())) * 3,
         'user_search_history':user_search_history,
         'search_on_country':search_on_country,
         'stat_price_history': stat_price_history,
@@ -2665,8 +2665,6 @@ def airline_info(request):
         _to = request.POST.get('_to')
 
         start_time = datetime.datetime.now() - timedelta(days=period)
-        # start_time = start_time.strftime('%Y-%m-%d %H:%M:%S')
-        print period, fare_class, _from, _to, start_time, '@@@@'
 
         searches = Searchkey.objects.filter(scrapetime__gte=start_time)
         if _from.lower() == 'all airports':
@@ -2699,8 +2697,6 @@ def popular_search(request):
         
 def _popular_search(period):        
     start_time = datetime.datetime.now() - timedelta(days=period)
-    start_time = start_time.strftime('%Y-%m-%d %H:%M:%S')
-
     pop_searches = Searchkey.objects.filter(scrapetime__gte=start_time).values('source', 'destination').annotate(dcount=Count('*')).order_by('-dcount')[:10]
     return [{'source':item['source'], 'destination':item['destination'], 'dcount':item['dcount']} for item in pop_searches]
 
@@ -2915,6 +2911,7 @@ def user_search(request):
     category = request.POST.get('category')
     period = int(request.POST.get('period'))
     
+    print request.user.level, '@@@@@@@@'
     result = get_customer_search_history(user_id=request.user.user_id, period=period, r_from=r_from, r_to=r_to, category=category)
     return HttpResponse(json.dumps(result))
 
