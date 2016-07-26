@@ -19,6 +19,7 @@ urlpatterns = [
     url(r'^google4fcc5c6791037930$', lambda r: HttpResponse("google-site-verification: google4fcc5c6791037930.html")),
     
     url(r'^subscribe', subscribe, name='subscribe'),
+    url(r'^blog', blog, name='blog'),
     url(r'^blog/$', blog, name='blog'),
     url(r'^sendFeedBack', sendFeedBack, name='sendFeedBack'),
     url(r'^mailchimp', mailchimp, name='mailchimp'),
