@@ -119,7 +119,7 @@ def sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,
                         <a href="http://www.facebook.com/PEXPlus"><img src="http://pexportal.com/static/flightsearch/img/fb.png"></a>
                         <a href="http://www.instagram.com/PEXPlus"><img src="http://pexportal.com/static/flightsearch/img/instgm.png"></a>
                         <div style="width: 100%;min-height: 1px;border-bottom:1px solid #555;margin: 15px 0;"></div>
-                        <p>Copyright 2015-2016 PEX+. All Rights Reserved.</p>
+                        <p>Copyright @ 2016 PEX+. All Rights Reserved.</p>
                     </div>
             
                 </body>
