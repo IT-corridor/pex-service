@@ -2596,7 +2596,8 @@ def admin_logout(request):
 @login_required(login_url='/Admin/login/')
 def Admin(request):
     air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']    
-    stat_num_search = [3135, 2164, 3067, 36487, 1283, 4456, 4175, 171065, 3779, 10235, 3013]
+    stat_num_search = _airline_info(request.user, 3650, 'maincabin', 'all airports', 'all airports')
+
     pop_searches = _popular_search(3650)
     stat_price_history = [[{'data': [[1468886400000.0, 52500.0], [1469491200000.0, 52500.0], [1471219200000.0, 52500.0], [1471478400000.0, 52500.0]], 'label': 'Economy'}, {'data': [[1471219200000.0, 82500.0]], 'label': 'Business'}, {'data': [[1471219200000.0, 67500.0], [1471478400000.0, 67500.0]], 'label': 'First'}], [{'data': [[1468886400000.0, 113.7], [1469491200000.0, 114.6], [1471219200000.0, 114.6], [1471478400000.0, 114.6]], 'label': 'Economy'}, {'data': [[1471219200000.0, 114.6]], 'label': 'Business'}, {'data': [[1471219200000.0, 114.6], [1471478400000.0, 114.6]], 'label': 'First'}]]
     user_search_history = get_search_history()
@@ -2655,18 +2656,24 @@ def get_search_country():
 
 @csrf_exempt
 def airline_info(request):
+    period = int(request.POST.get('period'))
+    fare_class = request.POST.get('fare_class')
+    _from = request.POST.get('_from')
+    _to = request.POST.get('_to')
+    stat_num_search = _airline_info(request.user, period, fare_class, _from, _to)
+    return HttpResponse(json.dumps(stat_num_search))
+
+def _airline_info(user, period, fare_class, _from, _to):
     stat_num_search = []
 
     try:
         air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']
-        period = int(request.POST.get('period'))
-        fare_class = request.POST.get('fare_class')
-        _from = request.POST.get('_from')
-        _to = request.POST.get('_to')
-
         start_time = datetime.datetime.now() - timedelta(days=period)
 
         searches = Searchkey.objects.filter(scrapetime__gte=start_time)
+        if user.level != 3:
+            searches = searches.filter(user_ids__contains=','+str(user.user_id)+',')
+
         if _from.lower() == 'all airports':
             if _to.lower() != 'all airports':
                 searches = searches.filter(destination=_to)
@@ -2680,14 +2687,11 @@ def airline_info(request):
                 'datasource': air_line,
                 'searchkeyid__in': searches,
             }
-            num_search = len(list(Flightdata.objects.filter(**kwargs)))
-            stat_num_search.append(num_search)
+            stat_num_search.append(Flightdata.objects.filter(**kwargs).count())
     except Exception, e:
         print str(e)
 
-    print stat_num_search, '@@@@@@@'
-    return HttpResponse(json.dumps(stat_num_search))
-
+    return stat_num_search
 
 @csrf_exempt
 def popular_search(request):    
@@ -2848,7 +2852,7 @@ def signup_activity(request):
 @login_required(login_url='/customer/login/')
 def customer(request):    
     air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']
-    stat_num_search = [3135, 2164, 3067, 36487, 1283, 4456, 4175, 171065, 3779, 10235, 3013]
+    stat_num_search = _airline_info(request.user, 3650, 'maincabin', 'all airports', 'all airports')
     stat_price_history = [[{'data': [[1468886400000.0, 52500.0], [1469491200000.0, 52500.0], [1471219200000.0, 52500.0], [1471478400000.0, 52500.0]], 'label': 'Economy'}, {'data': [[1471219200000.0, 82500.0]], 'label': 'Business'}, {'data': [[1471219200000.0, 67500.0], [1471478400000.0, 67500.0]], 'label': 'First'}], [{'data': [[1468886400000.0, 113.7], [1469491200000.0, 114.6], [1471219200000.0, 114.6], [1471478400000.0, 114.6]], 'label': 'Economy'}, {'data': [[1471219200000.0, 114.6]], 'label': 'Business'}, {'data': [[1471219200000.0, 114.6], [1471478400000.0, 114.6]], 'label': 'First'}]]
     stat_price_history_period = [[{'data': [[1468886400000.0, 52500.0], [1469491200000.0, 52500.0], [1471219200000.0, 52500.0], [1471478400000.0, 52500.0]], 'label': 'Economy'}, {'data': [[1471219200000.0, 82500.0]], 'label': 'Business'}, {'data': [[1471219200000.0, 67500.0], [1471478400000.0, 67500.0]], 'label': 'First'}], [{'data': [[1468886400000.0, 113.7], [1469491200000.0, 114.6], [1471219200000.0, 114.6], [1471478400000.0, 114.6]], 'label': 'Economy'}, {'data': [[1471219200000.0, 114.6]], 'label': 'Business'}, {'data': [[1471219200000.0, 114.6], [1471478400000.0, 114.6]], 'label': 'First'}]]
     user_search_history = get_customer_search_history(user_id=request.user.user_id)
@@ -2911,7 +2915,6 @@ def user_search(request):
     category = request.POST.get('category')
     period = int(request.POST.get('period'))
     
-    print request.user.level, '@@@@@@@@'
     result = get_customer_search_history(user_id=request.user.user_id, period=period, r_from=r_from, r_to=r_to, category=category)
     return HttpResponse(json.dumps(result))
 
