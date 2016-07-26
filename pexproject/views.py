@@ -278,7 +278,7 @@ def blog(request, title=None):
     if 'blog/' in curr_path:
         blog_title1 = curr_path.split('blog/')
     if len(blog_title1)>1:
-        print blog_title, '@@@@@@2'    
+        print blog_title1, '@@@@@@2'    
         blog_title = blog_title1[1].strip()
         try:
             blog = Blogs.objects.get(blog_url=blog_title)
