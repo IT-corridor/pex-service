@@ -770,7 +770,7 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
             if returnobj:
                 returnobj = returnobj[0]
                 if request.session.get('userid'):
-                    returnobj.user_ids = returnobj.user_ids+request.session.get('userid')+','
+                    returnobj.user_ids = returnobj.user_ids+str(request.session.get('userid'))+','
                     returnobj.save()
                 returnkey = returnobj.searchid
             else:
@@ -820,7 +820,7 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
         if obj:           
             obj = obj[0]
             if request.session.get('userid'):
-                obj.user_ids = obj.user_ids+request.session.get('userid')+','
+                obj.user_ids = obj.user_ids+str(request.session.get('userid'))+','
                 obj.save()
             searchkeyid = obj.searchid
         else:
