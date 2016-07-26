@@ -273,18 +273,17 @@ def staticPage(request):
     return  render_to_response('flightsearch/About.html',{'action':action}, context_instance=RequestContext(request))
 
 def blog(request, title=None):
-    # curr_path = request.get_full_path()
-    # if 'blog/' in curr_path:
-    #     blog_title1 = curr_path.split('blog/')
-    # if len(blog_title1)>1:
-    #     print blog_title1, '@@@@@@2'    
-    #     blog_title = blog_title1[1].strip()
-    #     try:
-    #         blog = Blogs.objects.get(blog_url=blog_title)
-    #         title = blog.blog_title
-    #         return render_to_response('flightsearch/blog_details.html',{'blog':blog}, context_instance=RequestContext(request))
-    #     except:
-    #         return render_to_response('flightsearch/blog_details.html', context_instance=RequestContext(request))
+    curr_path = request.get_full_path()
+    if 'blog/' in curr_path:
+        blog_title = curr_path.split('blog/')
+        if blog_title[1]:
+            blog_title = blog_title[1].strip()
+            try:
+                blog = Blogs.objects.get(blog_url=blog_title)
+                title = blog.blog_title
+                return render_to_response('flightsearch/blog_details.html',{'blog':blog}, context_instance=RequestContext(request))
+            except:
+                return render_to_response('flightsearch/blog_details.html', context_instance=RequestContext(request))
 
     blogs = Blogs.objects.filter(blog_status=1)
     bloglist = []
@@ -302,7 +301,6 @@ def blog(request, title=None):
         else: 
             bloglist.append({"blog_title":content.blog_title,'img_link':img_link,'postedon':content.blog_created_time,'featured_image':content.blog_image_path,'blog_url':content.blog_url,'blogid':content.blog_id})
       
-    print {"blog":bloglist,"top_banner":top_banner}, '@@@@@@@@@@@'
     return  render_to_response('flightsearch/Blog.html',{"blog":bloglist,"top_banner":top_banner}, context_instance=RequestContext(request))
 
 def signup(request):
