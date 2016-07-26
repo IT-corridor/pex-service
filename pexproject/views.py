@@ -276,36 +276,33 @@ def blog(request, title=None):
     context = {}
     curr_path = request.get_full_path()
     if 'blog/' in curr_path:
-	blog_title1 = curr_path.split('blog/')
-	if len(blog_title1)>1:
-	    blog_title = blog_title1[1].strip()
+        blog_title1 = curr_path.split('blog/')
+    if len(blog_title1)>1:
+        blog_title = blog_title1[1].strip()
         try:
             blog = Blogs.objects.get(blog_url=blog_title)
             title = blog.blog_title
             return render_to_response('flightsearch/blog_details.html',{'blog':blog}, context_instance=RequestContext(request))
         except:
             return render_to_response('flightsearch/blog_details.html', context_instance=RequestContext(request))
-	
+
     blogs = Blogs.objects.filter(blog_status=1)
     bloglist = []
     top_banner = ''
     for content in blogs:
-	blog_title = content.blog_title
-	blog_content = content.blog_content
-	#blog_url = content.blog_url
-	#metakey = content.blog_meta_key
-	#meta_desc = content.blog_meta_Description
-	#blog_creator = content.blog_creator
-	tree = BeautifulSoup(blog_content)
-	img_link = ''
-	if tree.find('img'):
-	    img_link = tree.find('img')['src']
-	if content.blog_position == True:
-	    top_banner = {"blog_title":content.blog_title,'img_link':img_link,'postedon':content.blog_created_time,'featured_image':content.blog_image_path,'blog_url':content.blog_url,'blogid':content.blog_id}
-	else: 
-	    bloglist.append({"blog_title":content.blog_title,'img_link':img_link,'postedon':content.blog_created_time,'featured_image':content.blog_image_path,'blog_url':content.blog_url,'blogid':content.blog_id})
-	
-    
+        blog_title = content.blog_title
+        blog_content = content.blog_content
+
+        tree = BeautifulSoup(blog_content)
+        img_link = ''
+        if tree.find('img'):
+            img_link = tree.find('img')['src']
+        if content.blog_position == True:
+            top_banner = {"blog_title":content.blog_title,'img_link':img_link,'postedon':content.blog_created_time,'featured_image':content.blog_image_path,'blog_url':content.blog_url,'blogid':content.blog_id}
+        else: 
+            bloglist.append({"blog_title":content.blog_title,'img_link':img_link,'postedon':content.blog_created_time,'featured_image':content.blog_image_path,'blog_url':content.blog_url,'blogid':content.blog_id})
+      
+    print {"blog":bloglist,"top_banner":top_banner}, '@@@@@@@@@@@'
     return  render_to_response('flightsearch/Blog.html',{"blog":bloglist,"top_banner":top_banner}, context_instance=RequestContext(request))
 
 def signup(request):
