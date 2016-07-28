@@ -2801,8 +2801,6 @@
 		var stoplenght = stoppage.length;
 		var airlinelenght = airline.length;
 		
-		console.log("action=" + encodeURI('infinite_scroll')+min_prc_param+max_prc_param + "&page_no=" + encodeURI(pageNumber) + "&loop_file=loop&csrfmiddlewaretoken={{ csrf_token }}&depaturemin=" + depaturemin + "&depaturemax=" + depaturemax +"&arivalmin="+arivalmin+"&arivalmax="+arivalmax+"&airlines=" + airline +"&fareCodes="+fareCodes +"&stoppage=" + stoppage + row_val + multicity);
-
 		$.ajax({
 			url : urls,
 			type : 'POST',
@@ -3242,11 +3240,9 @@ function getflexData(){
 			data : "returndate=" + encodeURI(returndateval)+"&searchtype="+encodeURI(searchtype)+ "&rndtripkey=" + encodeURI(rdtrip) + "&cabin=" + encodeURI(cabintypeval) + "&triptype=" + encodeURI(trip) + "&fromMain=" + encodeURI(sourceid) + "&toMain=" + encodeURI(destinationid) + "&deptdate=" + encodeURI(departdateval) + "&csrfmiddlewaretoken=" + encodeURI(CSRF_TOKEN),
 			success : function(data) {
 				searchtype = data['searchtype'];
-		    	console.log(data['returnkey']);
 		        multikey = data['departkey']; //data[0];
 		        searchid1 = multikey.split(',');
 		        searchid = searchid1[0];
-		        console.log(searchid);
 		        var returnid='';
 		        
 		        if(data['returnkey'])
