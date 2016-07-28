@@ -7,7 +7,7 @@
 	    		{% if request.GET.status %}<h4 class="text-center">{{request.GET.status}}{%endif%}</h4>
 		    	<div class="col-xs-12 mvb30px nopadding">
 		    		<span class="flight_alert_heading pull-left">Flight Price Alert</span>
-					<a class="pull-right" href="#" data-toggle="modal" data-target="#flight-model-alert">Set A Flight Price Alert</a>
+					<a class="pull-right" href="#" data-toggle="modal" data-target="#flight-model-alert" id="flight_alert_link">Set A Flight Price Alert</a>
 		    	</div>
 		    	
 		    	<div class="col-xs-12 nopadding">
@@ -20,7 +20,7 @@
 							<span>{{row.departdate}}{% if row.returndate %} - {{row.returndate}}{%endif%}, {{row.traveller}} {%if row.traveller == 1%}adult{%else%}travelers{%endif%} {%if row.cabin == 'maincabin' %}Economy{%elif row.cabin == 'firstclass'%}Business{%elif row.cabin == 'business'%}First{%endif%},  Max price miles {{row.pricemile|intcomma}} </span>
 						</div>
 						<div class="col-sm-4 col-xs-12 text-right mvt15p">
-							<h4><a href="#" class="action" id="{{row.alertid}}" >Change</a> | <a href="/useralert?action=delete&alertid={{row.alertid}}" >Delete</a>  </h4>
+							<h4><a href="#" class="action" id="{{row.alertid}}" >Change</a> | <a href="/useralert?action=delete&alertid={{row.alertid}}" class="delete_button">Delete</a>  </h4>
 						</div>
 					</div>
 					{% endfor %}
@@ -203,7 +203,7 @@
 			             </div>
 						<div class="col-xs-12 nopadding">
 							<div class="col-xs-12 form-group">
-								<button type="submit" class="btn btn-pexSearch">Save</button>
+								<button type="submit" class="btn btn-pexSearch" id="save_button">Save</button>
 							</div>
 						</div>
 					
@@ -223,9 +223,36 @@
 	<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>');</script>
     <script src="/static/flightsearch/js/vendor/bootstrap.min.js"></script>
    	<script src="{% static 'flightsearch/js/bootstrap-multiselect.js' %}"></script>
+   	<script src="{% static 'flightsearch/js/bootbox.js' %}"></script>
 	
 	<script>
-		
+	//@@@@@@@@@@@@@@@@@ Delete Flight Price Alerts @@@@@@@@@@@@@@@
+	
+		$('.delete_button').click(function(e){
+			e.preventDefault();
+			var link = $(this).attr('href');
+			bootbox.confirm("Are you sure you want to delete this FLight Price Alerts?", function(result) {
+				if(result == true)
+				{
+					document.location.href = link;
+				}
+				
+				
+			});
+		});
+	
+	
+	//--------------------------------------------------------------
+	
+		$('#flight_alert_link').click(function(){
+			$('.modelform').trigger("reset");
+			$('#passenger').val("1");
+			//$(':input').not(':button, :submit, :reset, :hidden, :checkbox, :radio').val('');
+    		//$(':checkbox, :radio').prop('checked', false);
+    		$("#returndatediv").show();
+    		$('#save_button').text('Save');
+    		travelinfo();
+		});
 		
 		$("#oneWay").click(function(){
     		if($("#oneWay").prop('checked') == true){
@@ -364,6 +391,7 @@
 					$('#annual_repeat').prop('checked', true);
 				}
 				travelinfo();
+				$('#save_button').text('Update');
 			});
 			
 		});

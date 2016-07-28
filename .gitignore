@@ -1,5 +1,6 @@
 db.sqlite3
 pexproject/static/flightsearch/uploads
+pexproject/settings.py
 *.pyc
 *.py~
 *.html~

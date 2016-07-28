@@ -12,6 +12,7 @@ from jetblue import jetblue
 from virginAmerica import virginAmerica
 from virgin import virgin_atlantic
 from etihad import etihad
+from virgin_australia import virginAustralia
 import thread
 import settings
 
@@ -27,8 +28,10 @@ time1 = time1.strftime('%Y-%m-%d %H:%M:%S')
 currentDate = datetime.datetime.now().date()
 cur_year = currentDate.strftime("%Y")
 
-cursor.execute("select t1.*,t2.airport_id, t2.code,t2.cityName  from  pexproject_useralert t1 inner join pexproject_airports t2 on t1.source_airportid = t2.airport_id or t1.destination_airportid = t2.airport_id where sent_alert_date < '"+str(currentDate)+"' and CASE WHEN annual_repeat=1 THEN DATE_FORMAT(departdate, '%m-%d') >= DATE_FORMAT('"+str(currentDate)+"', '%m-%d') ELSE departdate >= '"+str(currentDate)+"' END")
+cursor.execute("select t1.*,t2.airport_id, t2.code,t2.cityName  from  pexproject_useralert t1 inner join pexproject_airports t2 on t1.source_airportid = t2.airport_id or t1.destination_airportid = t2.airport_id where sent_alert_date < '"+str(currentDate)+"' and CASE WHEN annual_repeat=1 THEN sent_alert_date < '"+str(currentDate)+"' ELSE departdate >= '"+str(currentDate)+"' END LIMIT 2")
 users = cursor.fetchall()
+#print cursor._last_executed
+
 oldid = ''
 oldsourceCode = ''
 oldsourceCity = ''
@@ -39,15 +42,15 @@ sourceid = ''
 
 
 
-def callScraper(source_code, olddestinationCode, departdate1,searchid,source_city,destcity):
+def callScraper(source_code, olddestinationCode, departdate1,searchid,source_city,destcity,cabin):
     #print source_code, olddestinationCode, departdate1,searchid
     united(source_code, olddestinationCode, departdate1,searchid)
     delta(source_code, olddestinationCode, departdate1,searchid)
     jetblue(source_code, olddestinationCode, departdate1,searchid)
     virginAmerica(source_code, olddestinationCode, departdate1,searchid)
-    etihad(source_city, destcity, departdate1, searchid,"maincabin")
+    etihad(source_city, destcity, departdate1, searchid,cabin)
     virgin_atlantic(source_code, olddestinationCode, departdate1,returndate1,searchid,returnkey)
-    
+    virginAustralia(source_code,olddestinationCode,departdate1,searchid,cabin,"True")
 def sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,deptdate,retdate,cabin):
     retstr = ''
     triptype=''
@@ -119,7 +122,7 @@ def sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,
                         <a href="http://www.facebook.com/PEXPlus"><img src="http://pexportal.com/static/flightsearch/img/fb.png"></a>
                         <a href="http://www.instagram.com/PEXPlus"><img src="http://pexportal.com/static/flightsearch/img/instgm.png"></a>
                         <div style="width: 100%;min-height: 1px;border-bottom:1px solid #555;margin: 15px 0;"></div>
-                        <p>Copyright 2015-2016 PEX+. All Rights Reserved.</p>
+                        <p>Copyright @ 2016 PEX+. All Rights Reserved.</p>
                     </div>
             
                 </body>
@@ -147,20 +150,18 @@ for row in users:
             usermail = row['user_email']
             departdate = row['departdate']
             cabin = row['cabin']
-            deptyear = departdate.strftime('%Y')
+            year_diff = 0
+            if departdate < currentDate:
+                year_diff = int(cur_year)+1
+                departdate = departdate.replace(int(year_diff))
             
-            if deptyear < cur_year:
-                year_diff = int(cur_year)-int(deptyear)
-                departdate = departdate.replace(departdate.year+int(year_diff))
             departdate1 = departdate.strftime('%m/%d/%Y')
 
             returndate =  row['returndate']
             returndate1 = ''
             if returndate:
-                retyear = returndate.strftime('%Y')
-                if retyear < cur_year:
-                    year_diff = int(cur_year)-int(retyear)
-                    returndate = returndate.replace(departdate.year+int(year_diff))
+                if year_diff > 0:
+                    returndate = returndate.replace(int(year_diff))
                 returndate1 = returndate.strftime('%m/%d/%Y')
             #alertday =  row['alertday']
             pricemiles = row['pricemile']
@@ -175,7 +176,7 @@ for row in users:
                 cursor.execute("insert into pexproject_searchkey (source,destination,destination_city,traveldate,returndate,scrapetime,origin_airport_id,destination_airport_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)",(full_source,full_dest,dest_city,str(departdate),returndate,str(time),originid,destid1))
                 db.commit()
                 searchid = cursor.lastrowid
-                callScraper(oldsourceCode, dest_code, departdate1,searchid,oldsourceCity,dest_city)
+                callScraper(oldsourceCode, dest_code, departdate1,searchid,oldsourceCity,dest_city,cabin)
                 
             else:
                 searchid = result['searchid']
@@ -189,7 +190,7 @@ for row in users:
                     cursor.execute("insert into pexproject_searchkey (source,destination,destination_city,traveldate,returndate,scrapetime,origin_airport_id,destination_airport_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)",(full_dest,full_source,oldsourceCity,str(returndate),returndate3,str(time),destid1,originid))
                     db.commit()
                     returnkey = cursor.lastrowid
-                    callScraper(dest_code, oldsourceCode, returndate1,returnkey,dest_city,oldsourceCity)
+                    callScraper(dest_code, oldsourceCode, returndate1,returnkey,dest_city,oldsourceCity,cabin)
                 else:
                     returnkey = returnresult['searchid']
                     
@@ -213,17 +214,17 @@ for row in users:
             departdate = row['departdate']
             cabin = row['cabin']
             deptyear = departdate.strftime('%Y')
-            if deptyear < cur_year:
-                year_diff = int(cur_year)-int(deptyear)
-                departdate = departdate.replace(departdate.year+int(year_diff))
+            year_diff = 0
+            if departdate < currentDate:
+                year_diff = int(cur_year)+1
+                departdate = departdate.replace(int(year_diff))
             departdate1 = departdate.strftime('%m/%d/%Y')
             returndate1 = ''
             returndate = row['returndate']
             if returndate:
                 retyear = returndate.strftime('%Y')
-                if retyear < cur_year:
-                    year_diff = int(cur_year)-int(retyear)
-                    returndate = returndate.replace(departdate.year+int(year_diff))
+                if year_diff > 0:
+                    returndate = returndate.replace(int(year_diff))
                 returndate1 = returndate.strftime('%m/%d/%Y')
             #alertday = row['alertday']
             pricemiles = row['pricemile']
@@ -237,7 +238,7 @@ for row in users:
                 cursor.execute("insert into pexproject_searchkey (source,destination,destination_city,traveldate,returndate,scrapetime,origin_airport_id,destination_airport_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)",(full_source,full_dest,destcity,str(departdate),returndate,str(time),originid,destid1))
                 db.commit()
                 searchid = cursor.lastrowid
-                callScraper(source_code, olddestinationCode, departdate1,searchid,source_city,destcity)
+                callScraper(source_code, olddestinationCode, departdate1,searchid,source_city,destcity,cabin)
             else:
                 searchid = result['searchid']
                 
@@ -250,9 +251,8 @@ for row in users:
                     returndate3 = ''
                     cursor.execute("insert into pexproject_searchkey (source,destination,destination_city,traveldate,returndate,scrapetime,origin_airport_id,destination_airport_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)",(full_dest,full_source,source_city,str(returndate),returndate3,str(time),destid1,originid))
                     db.commit()
-                    returnkey = cursor.lastrowid
-                    print "returndate",returndate      
-                    callScraper(olddestinationCode, source_code, returndate1,returnkey,destcity,source_city)
+                    returnkey = cursor.lastrowid      
+                    callScraper(olddestinationCode, source_code, returndate1,returnkey,destcity,source_city,cabin)
                 else:
                     returnkey = returnresult['searchid']
             
