@@ -1739,9 +1739,10 @@ def flightAlert(request):
         mimetype = 'application/json'
         return HttpResponse(data, mimetype)
     userid = request.session['userid']
+    #print "userid",userid
     alertResult1 = UserAlert.objects.filter(userid=userid)
     alertResult = list(alertResult1)
-            
+    #print alertResult        
     return render_to_response('flightsearch/flight_alert.html',{"alertResult":alertResult,"record":record},context_instance=RequestContext(request))
 
 def useralert(request):
