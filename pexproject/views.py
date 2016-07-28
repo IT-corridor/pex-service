@@ -1619,9 +1619,6 @@ def getsearchresult(request):
                 record = Flightdata.objects.raw("select p1.*,p1.maintax as maintax1, p1.firsttax as firsttax1, p1.businesstax as businesstax1,p1.rowid as newid ,case when datasource = 'delta' then " + deltaorderprice + "  else " + unitedorderprice + " end as finalprice, "+taxes+" as totaltaxes from pexproject_flightdata as p1 where " + querylist + " order by finalprice ," + taxes + ",departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset))
                 print '$$$ (synthesis): ', "select p1.*,p1.maintax as maintax1, p1.firsttax as firsttax1, p1.businesstax as businesstax1,p1.rowid as newid ,case when datasource = 'delta' then " + deltaorderprice + "  else " + unitedorderprice + " end as finalprice, "+taxes+" as totaltaxes from pexproject_flightdata as p1 where " + querylist + " order by finalprice ," + taxes + ",departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset)
             mainlist = list(record)
-            print 'querylist ##3', querylist
-            print 'sql ##3', "select p1.*,CONCAT(p1.rowid,'_',p2.rowid) as newid,p2.origin as origin1,p2.rowid as rowid1, p2.stoppage as stoppage1,p2.flighno as flighno1, p2.cabintype1 as cabintype11,p2.cabintype2 as cabintype21,p2.cabintype3 as cabintype31, p2.destination as destination1, p2.departure as departure1, p2.arival as arival1, p2.duration as duration1, p2.maincabin as maincabin1, p2.maintax as maintax1, p2.firsttax as firsttax1, p2.businesstax as businesstax1,p2.departdetails as departdetails1,p2.arivedetails as arivedetails1, p2.planedetails as planedetails1,p2.operatedby as operatedby1," + totalfare + " as finalprice,  "+totaltax+" as totaltaxes from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ='" + returnkeyid1 + "' and " + returnfare + " > '0'  where  p1.searchkeyid = '" + searchkey + "' and " + departfare + " > 0 and " + querylist + " order by finalprice ,totaltaxes, departure, p2.departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset)
-            print 'mainlist ##3', [(item.finalprice, item.newid) for item in mainlist]
             
         progress_value = '' 
         if 'progress_value' in request.POST:
@@ -2184,7 +2181,7 @@ def check_validity_flight_params(request):
     search_type = params.get('search_type', 'exactdate')
     flight_class = params.get('class')
     mile_low = params.get('mile_low') or '0'
-    mile_high = params.get('mile_high') or '1000000'
+    mile_high = params.get('mile_high') or '10000000'
     airlines = params.get('airlines') or ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']
     depart_from = params.get('depart_from') or '00:00:00'
     depart_to = params.get('depart_to') or '23:59:59'
@@ -2245,6 +2242,7 @@ def api_search_flight(request):
             result['message'] = error_message
             return HttpResponse(json.dumps(result), 'application/json')
 
+        fare_class = params.get('class')
         _params = check_validity_flight_params(request)
         error_message = _params[0]
         if error_message:
@@ -2264,22 +2262,63 @@ def api_search_flight(request):
             if scrape_status[1] == 'completed' or not delay_threshold:
                 break
 
-        kwargs = {
-            'searchkeyid': keys['departkey'], 
-            '{0}__range'.format(flight_class):(mile_low, mile_high),
-            'datasource__in': airlines,
-            'departure__range': (depart_from, depart_to),
-            'arival__range': (arrival_from, arrival_to)
-        }
+        if not keys['returnkey']:
+            kwargs = {
+                'searchkeyid': keys['departkey'], 
+                '{0}__range'.format(flight_class):(mile_low, mile_high),
+                'datasource__in': airlines,
+                'departure__range': (depart_from, depart_to),
+                'arival__range': (arrival_from, arrival_to)
+            }
 
-        __debug('## filters for flight api: %s\n' % str(kwargs)) 
-        flights = Flightdata.objects.filter(**kwargs)
-        flights = [model_to_dict(item, exclude=['rowid', 'scrapetime', 'searchkeyid']) for item in flights]
+            __debug('## filters for flight api: %s\n' % str(kwargs)) 
+            flights = Flightdata.objects.filter(**kwargs)
+            flights = [model_to_dict(item, exclude=['rowid', 'scrapetime', 'searchkeyid']) for item in flights]
 
-        # convert each property to string for json dump
-        for flight in flights:
-            for k,v in flight.items():
-                flight[k] = str(v)
+            # convert each property to string for json dump
+            for flight in flights:
+                for k,v in flight.items():
+                    flight[k] = str(v)
+        else:
+            totalfare = "p1." + FLIGHT_CLASS[fare_class][0] + "+p2." + FLIGHT_CLASS[fare_class][0]
+            totaltax = "p1." + FLIGHT_CLASS[fare_class][1] + "+p2." + FLIGHT_CLASS[fare_class][1]
+            returnfare = "p2." + FLIGHT_CLASS[fare_class][0]
+            departfare = "p1." + FLIGHT_CLASS[fare_class][0]
+            querylist = 'p1.datasource IN %s AND p1.departure >=%s AND p1.departure <=%s AND p1.arival >=%s AND p1.arival <=%s AND %s >= %s AND %s <= %s' % (str(tuple(airlines)), depart_from, depart_to, arrival_from, arrival_to, totalfare, mile_low, totalfare, mile_high)
+
+            _flights = Flightdata.objects.raw("select p1.*,p2.origin as return_origin, p2.stoppage as return_stoppage,p2.flighno as return_fligh_no, p2.destination as return_destination, p2.departure as return_departure, p2.arival as return_arrival, p2.duration as return_duration,p2.departdetails as return_departdetails,p2.arivedetails as return_arrivaldetails, p2.planedetails as return_planedetails,p2.operatedby as return_operatedby," + totalfare + " as total_miles,  "+totaltax+" as total_taxes from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ='" + keys['returnkey'] + "' and " + returnfare + " > '0'  where  p1.searchkeyid = '" + keys['departkey'] + "' and " + departfare + " > 0 and " + querylist + " order by total_miles ,total_taxes, p1.departure, p2.departure ASC")
+
+            flights = []
+            for item in _flights:
+                _item = {}
+                _item['origin'] = item.origin
+                _item['stoppage'] = item.stoppage
+                _item['flight_no'] = item.flighno
+                _item['destination'] = item.destination
+                _item['departure'] = item.departure
+                _item['arival'] = item.arival
+                _item['duration'] = item.duration
+                _item['departdetails'] = item.departdetails
+                _item['arivedetails'] = item.arivedetails
+                _item['planedetails'] = item.planedetails
+                _item['operatedby'] = item.operatedby
+
+                _item['return_origin'] = item.return_origin
+                _item['return_stoppage'] = item.return_stoppage
+                _item['return_flight_no'] = item.return_fligh_no
+                _item['return_destination'] = item.return_destination
+                _item['return_departure'] = item.return_departure
+                _item['return_arrival'] = item.return_arrival
+                _item['return_duration'] = item.return_duration
+                _item['return_departdetails'] = item.return_departdetails
+                _item['return_arrivaldetails'] = item.return_arrivaldetails
+                _item['return_planedetails'] = item.return_planedetails
+                _item['return_operatedby'] = item.return_operatedby
+
+                _item['total_miles'] = item.total_miles
+                _item['total_taxes'] = item.total_taxes
+                
+                flights.append(_item)
 
         result['status'] = 'Success'
         result['filters'] = kwargs#filters
