@@ -2242,7 +2242,7 @@ def api_search_flight(request):
             result['message'] = error_message
             return HttpResponse(json.dumps(result), 'application/json')
 
-        fare_class = params.get('class')
+        fare_class = json.loads(request.body).get('class')
         _params = check_validity_flight_params(request)
         error_message = _params[0]
         if error_message:
