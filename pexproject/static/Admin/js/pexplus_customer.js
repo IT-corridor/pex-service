@@ -140,7 +140,7 @@ price_history = function() {
     
     $('.page-loader').show();    
 
-    $.post('/customer/stats/price_history/', 
+    $.post('/stats/price_history/', 
         {'_from':_from, '_to':_to, 'airline':airline, 'r_from':r_from, 'r_to':r_to, 'aggregation':aggregation}
     ).success(function(data) {
         $('.page-loader').fadeOut();
