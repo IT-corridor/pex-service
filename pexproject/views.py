@@ -2800,20 +2800,27 @@ def _price_history_period(user, _from, _to, airline, r_from, r_to, aggregation, 
 
 @csrf_exempt
 def price_history_num(request):    
+    _from = request.POST.get('_from')
+    _to = request.POST.get('_to') 
+    airline = request.POST.get('airline')
+    r_from = request.POST.get('r_from')
+    r_to = request.POST.get('r_to') 
+    aggregation = request.POST.get('aggregation')
+
+    print _from, _to, airline, r_from, r_to, aggregation, '@@@@@@@'
+    result = _price_history_num(request.user, _from, _to, airline, r_from, r_to, aggregation)
+    return HttpResponse(json.dumps(result))
+
+def _price_history_num(user, _from, _to, airline, r_from, r_to, aggregation):    
     result = {'economy': [], 'business': [], 'firstclass':[]}
     result_tax = {'economy': [], 'business': [], 'firstclass':[]}
     ticks =[]
 
     try:
-        _from = request.POST.get('_from')
-        _to = request.POST.get('_to') 
-        airline = request.POST.get('airline')
-        r_from = request.POST.get('r_from')
-        r_to = request.POST.get('r_to') 
-        aggregation = request.POST.get('aggregation')
-
-        print _from, _to, airline, r_from, r_to, aggregation, '@@@@@@@'
         searchkeys = Searchkey.objects.filter(traveldate=_from, source=r_from, destination=r_to).order_by('scrapetime')
+        if user.level != 3:
+            searchkeys = searchkeys.filter(user_ids__contains=','+str(user.user_id)+',')
+
         if _to:
             searchkeys = searchkeys.filter(returndate=_to).order_by('scrapetime')
 
@@ -2848,8 +2855,7 @@ def price_history_num(request):
     except Exception, e:
         print str(e), 'Error: ###############3'
 
-    print [result,result_tax], '#########'
-    return HttpResponse(json.dumps([result,result_tax,ticks]))
+    return [result, result_tax, ticks]
 
 @csrf_exempt
 def signup_activity(request):
