@@ -2599,7 +2599,7 @@ def Admin(request):
     stat_num_search = _airline_info(request.user, 3650, 'maincabin', 'all airports', 'all airports')
 
     pop_searches = _popular_search(3650)
-    stat_price_history = [[{'data': [[1468886400000.0, 52500.0], [1469491200000.0, 52500.0], [1471219200000.0, 52500.0], [1471478400000.0, 52500.0]], 'label': 'Economy'}, {'data': [[1471219200000.0, 82500.0]], 'label': 'Business'}, {'data': [[1471219200000.0, 67500.0], [1471478400000.0, 67500.0]], 'label': 'First'}], [{'data': [[1468886400000.0, 113.7], [1469491200000.0, 114.6], [1471219200000.0, 114.6], [1471478400000.0, 114.6]], 'label': 'Economy'}, {'data': [[1471219200000.0, 114.6]], 'label': 'Business'}, {'data': [[1471219200000.0, 114.6], [1471478400000.0, 114.6]], 'label': 'First'}]]
+    stat_price_history = _price_history(request.user, '2016-04-05', '2026-04-05', 'aeroflot', 'New York (JFK)', 'Moscow (MOW)', 'Avg') 
     user_search_history = get_search_history()
     search_on_country = get_search_country()
 
@@ -2714,7 +2714,15 @@ def price_history(request):
     aggregation = request.POST.get('aggregation')
 
     print _from, _to, airline, r_from, r_to, aggregation, '@@@@@@@'
+    result = _price_history(request.user, _from, _to, airline, r_from, r_to, aggregation)
+    print result, '#########'
+    return HttpResponse(json.dumps(result))
+
+@csrf_exempt
+def _price_history(user, _from, _to, airline, r_from, r_to, aggregation):    
     searchkeys = Searchkey.objects.filter(traveldate__range=(_from, _to), source=r_from, destination=r_to).values('traveldate').annotate(Min('searchid'), Min('scrapetime')).order_by('traveldate')
+    if user.level != 3:
+        searches = searches.filter(user_ids__contains=','+str(user.user_id)+',')
 
     result = {'economy': [], 'business': [], 'firstclass':[]}
     result_tax = {'economy': [], 'business': [], 'firstclass':[]}
@@ -2735,8 +2743,7 @@ def price_history(request):
 
     result = [{'label':'Economy', 'data':result['economy']}, {'label':'Business', 'data':result['business']}, {'label':'First', 'data':result['firstclass']}]
     result_tax = [{'label':'Economy', 'data':result_tax['economy']}, {'label':'Business', 'data':result_tax['business']}, {'label':'First', 'data':result_tax['firstclass']}]
-    print [result,result_tax], '#########'
-    return HttpResponse(json.dumps([result,result_tax]))
+    return [result,result_tax]
 
 @csrf_exempt
 def price_history_period(request):    
@@ -2853,7 +2860,7 @@ def signup_activity(request):
 def customer(request):    
     air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']
     stat_num_search = _airline_info(request.user, 3650, 'maincabin', 'all airports', 'all airports')
-    stat_price_history = [[{'data': [[1468886400000.0, 52500.0], [1469491200000.0, 52500.0], [1471219200000.0, 52500.0], [1471478400000.0, 52500.0]], 'label': 'Economy'}, {'data': [[1471219200000.0, 82500.0]], 'label': 'Business'}, {'data': [[1471219200000.0, 67500.0], [1471478400000.0, 67500.0]], 'label': 'First'}], [{'data': [[1468886400000.0, 113.7], [1469491200000.0, 114.6], [1471219200000.0, 114.6], [1471478400000.0, 114.6]], 'label': 'Economy'}, {'data': [[1471219200000.0, 114.6]], 'label': 'Business'}, {'data': [[1471219200000.0, 114.6], [1471478400000.0, 114.6]], 'label': 'First'}]]
+    stat_price_history = _price_history(request.user, '2016-04-05', '2026-04-05', 'aeroflot', 'New York (JFK)', 'Moscow (MOW)', 'Avg') 
     stat_price_history_period = [[{'data': [[1468886400000.0, 52500.0], [1469491200000.0, 52500.0], [1471219200000.0, 52500.0], [1471478400000.0, 52500.0]], 'label': 'Economy'}, {'data': [[1471219200000.0, 82500.0]], 'label': 'Business'}, {'data': [[1471219200000.0, 67500.0], [1471478400000.0, 67500.0]], 'label': 'First'}], [{'data': [[1468886400000.0, 113.7], [1469491200000.0, 114.6], [1471219200000.0, 114.6], [1471478400000.0, 114.6]], 'label': 'Economy'}, {'data': [[1471219200000.0, 114.6]], 'label': 'Business'}, {'data': [[1471219200000.0, 114.6], [1471478400000.0, 114.6]], 'label': 'First'}]]
     user_search_history = get_customer_search_history(user_id=request.user.user_id)
 
