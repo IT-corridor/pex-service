@@ -2757,7 +2757,14 @@ def price_history_period(request):
     period = int(request.POST.get('period'))
 
     print _from, _to, airline, r_from, r_to, period, aggregation, '@@@@@@@'
+    result = _price_history_period(request.user, _from, _to, airline, r_from, r_to, aggregation, period)
+    return HttpResponse(json.dumps(result))
+
+def _price_history_period(user, _from, _to, airline, r_from, r_to, aggregation, period):    
     searchkeys = Searchkey.objects.filter(traveldate=_from, source=r_from, destination=r_to).order_by('scrapetime')
+    if user.level != 3:
+        searchkeys = searchkeys.filter(user_ids__contains=','+str(user.user_id)+',')
+
     if _to:
         searchkeys = searchkeys.filter(returndate=_to).order_by('scrapetime')
 
@@ -2789,8 +2796,7 @@ def price_history_period(request):
 
     result = [{'label':'Economy', 'data':result['economy']}, {'label':'Business', 'data':result['business']}, {'label':'First', 'data':result['firstclass']}]
     result_tax = [{'label':'Economy', 'data':result_tax['economy']}, {'label':'Business', 'data':result_tax['business']}, {'label':'First', 'data':result_tax['firstclass']}]
-    print [result,result_tax], '#########'
-    return HttpResponse(json.dumps([result,result_tax]))
+    return [result,result_tax]
 
 @csrf_exempt
 def price_history_num(request):    
@@ -2862,14 +2868,12 @@ def customer(request):
     air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']
     stat_num_search = _airline_info(request.user, 3650, 'maincabin', 'all airports', 'all airports')
     stat_price_history = _price_history(request.user, '2016-04-05', '2026-04-05', 'aeroflot', 'New York (JFK)', 'Moscow (MOW)', 'Avg') 
-    stat_price_history_period = [[{'data': [[1468886400000.0, 52500.0], [1469491200000.0, 52500.0], [1471219200000.0, 52500.0], [1471478400000.0, 52500.0]], 'label': 'Economy'}, {'data': [[1471219200000.0, 82500.0]], 'label': 'Business'}, {'data': [[1471219200000.0, 67500.0], [1471478400000.0, 67500.0]], 'label': 'First'}], [{'data': [[1468886400000.0, 113.7], [1469491200000.0, 114.6], [1471219200000.0, 114.6], [1471478400000.0, 114.6]], 'label': 'Economy'}, {'data': [[1471219200000.0, 114.6]], 'label': 'Business'}, {'data': [[1471219200000.0, 114.6], [1471478400000.0, 114.6]], 'label': 'First'}]]
     user_search_history = get_customer_search_history(user_id=request.user.user_id)
 
     return render(request, 'customer/dashboard.html', {
         'stat_num_search': stat_num_search,
         'air_lines': air_lines,
         'stat_price_history': stat_price_history,
-        'stat_price_history_period': stat_price_history_period,
         'user_search_history':user_search_history,
     })
 
