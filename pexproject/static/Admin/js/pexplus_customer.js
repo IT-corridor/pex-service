@@ -77,7 +77,7 @@ $(function() {
 $(document).ready(function(){    
     _update_line_info(stat_num_search);
     _price_history(stat_price_history);
-    _price_history_period(stat_price_history_period);
+    _price_history_period([[],[]]);
     _price_history_num([[],[]]);
 });
 
@@ -167,7 +167,7 @@ price_history_period = function() {
     
     $('.page-loader').show();    
 
-    $.post('/customer/stats/price_history_period/', 
+    $.post('/stats/price_history_period/', 
         {'_from':_from, '_to':_to, 'airline':airline, 'r_from':r_from, 'r_to':r_to, 'aggregation':aggregation, 'period': period}
     ).success(function(data) {
         $('.page-loader').fadeOut();
