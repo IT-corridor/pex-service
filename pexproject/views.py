@@ -2295,8 +2295,8 @@ def api_search_flight(request):
                 _item['stoppage'] = item.stoppage
                 _item['flight_no'] = item.flighno
                 _item['destination'] = item.destination
-                _item['departure'] = item.departure
-                _item['arival'] = item.arival
+                _item['departure'] = str(item.departure)
+                _item['arival'] = str(item.arival)
                 _item['duration'] = item.duration
                 _item['departdetails'] = item.departdetails
                 _item['arivedetails'] = item.arivedetails
@@ -2307,8 +2307,8 @@ def api_search_flight(request):
                 _item['return_stoppage'] = item.return_stoppage
                 _item['return_flight_no'] = item.return_fligh_no
                 _item['return_destination'] = item.return_destination
-                _item['return_departure'] = item.return_departure
-                _item['return_arrival'] = item.return_arrival
+                _item['return_departure'] = str(item.return_departure)
+                _item['return_arrival'] = str(item.return_arrival)
                 _item['return_duration'] = item.return_duration
                 _item['return_departdetails'] = item.return_departdetails
                 _item['return_arrivaldetails'] = item.return_arrivaldetails
