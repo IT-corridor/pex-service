@@ -1,4 +1,5 @@
 db.sqlite3
+pexproject/customfunction.py
 pexproject/static/flightsearch/uploads
 pexproject/settings.py
 *.pyc
