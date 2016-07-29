@@ -13,7 +13,8 @@ from virginAmerica import virginAmerica
 from virgin import virgin_atlantic
 from etihad import etihad
 from aa import aa
-from airchina_rt import airchina
+from airchina import airchina
+from aeroflot import aeroflot
 from virgin_australia import virginAustralia
 import thread
 import settings
@@ -52,6 +53,8 @@ def callScraper(source_code, olddestinationCode, departdate1,searchid,source_cit
     virgin_atlantic(source_code, olddestinationCode, departdate1,returndate1,searchid,returnkey)
     virginAustralia(source_code,olddestinationCode,departdate1,searchid,cabin,"True")
     aa(source_code, olddestinationCode, departdate1,searchid)
+    airchina(source_code, olddestinationCode, departdate1,searchid)
+    aeroflot(source_code, olddestinationCode, departdate1,searchid)
     
 def sendAlertEmail(searchid,returnkey,pricemiles,full_source,full_dest,usermail,deptdate,retdate,cabin):
     retstr = ''
