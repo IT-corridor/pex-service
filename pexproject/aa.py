@@ -209,12 +209,12 @@ def scrapeFlight(page_contents,searchid,tax):
         db.commit()
         print len(value_string),"row inserted"
     
-        
-if __name__=='__main__':
+
+def aa(source,dest,departdate,searchkey):
     currentdatetime = datetime.datetime.now()
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
-    searchid = sys.argv[4]
-    dt = datetime.datetime.strptime(sys.argv[3], '%m/%d/%Y')
+    searchid = searchkey
+    dt = datetime.datetime.strptime(departdate, '%m/%d/%Y')
     date = dt.strftime('%m/%d/%Y')
     selectdate = dt.strftime('X%m-X%d-%Y').replace('X0','X').replace('X','')
     month = dt.strftime("%b")
@@ -229,12 +229,13 @@ if __name__=='__main__':
     try:
         driver.get(url)
         #driver.implicitly_wait(5)
+        WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.ID, "awardFlightSearchForm.originAirport")))
         origin  = driver.find_element_by_id("awardFlightSearchForm.originAirport")
         origin.clear()
-        origin.send_keys(sys.argv[1]) 
+        origin.send_keys(source) 
         destination = driver.find_element_by_id("awardFlightSearchForm.destinationAirport")
     
-        destination.send_keys(sys.argv[2])
+        destination.send_keys(dest)
     
     
         # oneway  = driver.find_element_by_id("flightSearchForm.tripType.oneWay")
@@ -326,4 +327,8 @@ if __name__=='__main__':
         db.commit()
     display.stop()            
     driver.quit()
+    
+        
+if __name__=='__main__':
+    aa(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
         
