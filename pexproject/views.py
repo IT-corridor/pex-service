@@ -2321,9 +2321,7 @@ def api_search_flight(request):
                 flights.append(_item)
 
         result['status'] = 'Success'
-        # result['filters'] = kwargs#filters
         result['flights'] = flights
-        # result['price_matrix'] = price_matrix
 
         return HttpResponse(json.dumps(result), 'application/json')
 
