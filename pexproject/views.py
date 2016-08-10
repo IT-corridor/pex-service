@@ -2259,7 +2259,7 @@ def api_search_flight(request):
             time.sleep(1)
             # check the status of the scraping
             scrape_status = _check_data(keys['departkey'], keys['returnkey'], flight_class, '')
-            if scrape_status[1] == 'completed' or not delay_threshold:
+            if scrape_status[1] == 'completed' or delay_threshold < 0:
                 break
 
         if not keys['returnkey']:
