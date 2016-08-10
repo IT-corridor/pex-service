@@ -2183,6 +2183,8 @@ def check_validity_flight_params(request):
     mile_low = params.get('mile_low') or '0'
     mile_high = params.get('mile_high') or '10000000'
     airlines = params.get('airlines') or ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']
+    airlines = [item.encode('ascii', 'ignore') for item in airlines]
+
     depart_from = params.get('depart_from') or '00:00:00'
     depart_to = params.get('depart_to') or '23:59:59'
     arrival_from = params.get('arrival_from') or '00:00:00'
@@ -2286,7 +2288,6 @@ def api_search_flight(request):
             departfare = "p1." + FLIGHT_CLASS[fare_class][0]
             querylist = "p1.datasource IN %s AND p1.departure >='%s' AND p1.departure <='%s' AND p1.arival >='%s' AND p1.arival <='%s' AND %s >= %s AND %s <= %s" % (str(tuple(airlines)), depart_from, depart_to, arrival_from, arrival_to, totalfare, mile_low, totalfare, mile_high)
 
-            print querylist, '@@@@@@'
             _flights = Flightdata.objects.raw("select p1.*,p2.origin as return_origin, p2.stoppage as return_stoppage,p2.flighno as return_fligh_no, p2.destination as return_destination, p2.departure as return_departure, p2.arival as return_arrival, p2.duration as return_duration,p2.departdetails as return_departdetails,p2.arivedetails as return_arrivaldetails, p2.planedetails as return_planedetails,p2.operatedby as return_operatedby," + totalfare + " as total_miles,  "+totaltax+" as total_taxes from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ='" + str(keys['returnkey']) + "' and " + returnfare + " > '0'  where  p1.searchkeyid = '" + keys['departkey'] + "' and " + departfare + " > 0 and " + querylist + " order by total_miles ,total_taxes, p1.departure, p2.departure ASC")
 
             flights = []
