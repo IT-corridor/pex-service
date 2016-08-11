@@ -1092,7 +1092,7 @@ $("#submitid").click(function(event) {
 	    		event.preventDefault();	
 	    		return false;
 	    	}
-	    	if($('#departMain').val().length<1 || current_date > $('#departMain').val())
+	    	if($('#departMain').val().length<1 )
 	    	{
 	    		$('#departMain').css('border-color','red');
 	    		$('#departMain').focus();
@@ -1101,7 +1101,7 @@ $("#submitid").click(function(event) {
 	    	}
 	    	if('roundTripBtn' == triptypeval)
 	    	{
-	    		if($('#returnMain').val().length<1 || $('#departMain').val() > $('#returnMain').val())
+	    		if($('#returnMain').val().length<1 )
 		    	{
 		    		$('#returnMain').focus();
 		    		$('#returnMain').css('border-color','red');
