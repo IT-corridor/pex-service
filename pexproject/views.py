@@ -2183,6 +2183,7 @@ def check_validity_flight_params(request):
     mile_low = params.get('mile_low') or '0'
     mile_high = params.get('mile_high') or '10000000'
     airlines = params.get('airlines') or ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']
+    airlines.append('valid_line')
     airlines = [item.encode('ascii', 'ignore') for item in airlines]
 
     depart_from = params.get('depart_from') or '00:00:00'
