@@ -2183,6 +2183,9 @@ def check_validity_flight_params(request):
     mile_low = params.get('mile_low') or '0'
     mile_high = params.get('mile_high') or '10000000'
     airlines = params.get('airlines') or ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']
+    airlines.append('valid_line')
+    airlines = [item.encode('ascii', 'ignore') for item in airlines]
+
     depart_from = params.get('depart_from') or '00:00:00'
     depart_to = params.get('depart_to') or '23:59:59'
     arrival_from = params.get('arrival_from') or '00:00:00'
@@ -2259,7 +2262,7 @@ def api_search_flight(request):
             time.sleep(1)
             # check the status of the scraping
             scrape_status = _check_data(keys['departkey'], keys['returnkey'], flight_class, '')
-            if scrape_status[1] == 'completed' or not delay_threshold:
+            if scrape_status[1] == 'completed' or delay_threshold < 0:
                 break
 
         if not keys['returnkey']:
@@ -2321,9 +2324,7 @@ def api_search_flight(request):
                 flights.append(_item)
 
         result['status'] = 'Success'
-        # result['filters'] = kwargs#filters
         result['flights'] = flights
-        # result['price_matrix'] = price_matrix
 
         return HttpResponse(json.dumps(result), 'application/json')
 
