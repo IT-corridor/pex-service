@@ -86,6 +86,46 @@ select.c_caret {
     background: url(images/caret.png) no-repeat right;
 }
 
+.view-amenity {
+    text-decoration: none; 
+    color: #39A8E0; 
+    margin-left: 26px;
+    margin-top: 12px;
+}
+
+.ui-accordion .ui-accordion-content {
+    padding: 3px 5px;
+    font-size: 14px;
+}
+
+.ui-accordion-header input {
+    float: left;
+    display: block;
+}
+
+.ui-accordion-header span {
+    position: static;
+    float: right;
+}
+
+.filter-amenity-body {
+    margin-left:10px; 
+    font-size: 13px;
+    display: none;
+}
+
+.filter-amenity-heading {
+    margin-left: 0;
+    font-size: 15px;
+}
+
+.filter-amenity-heading .glyphicon {
+    cursor: pointer;
+    margin-left: 10px;
+/*    margin-top: 15px;
+    padding-top: 5px;
+*/}
+
 @media only screen and (max-width: 767px) {
     .wide {
         display: none;
@@ -104,6 +144,6 @@ select.c_caret {
 
     .hotel-search-panel {
         padding: 6px 14px;
-    }
-    
+    }    
 }
+

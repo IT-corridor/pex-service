@@ -144,6 +144,27 @@ $(function(){
       close: function() {
         $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
       }
+    });
+
+    $('.filter-amenity-heading input').click(function() {
+    	var checked = $(this).prop('checked');
+
+    	$(this).parent().parent().children('.filter-amenity-body').each(function() {
+    		$(this).children('input').prop('checked', checked);
+    	});    	
     });  	  
+
+    $('.filter-amenity-heading span.glyphicon').click(function() {
+    	var stat = $(this).prop('class');
+    	if (stat.includes('glyphicon-triangle-bottom')) {
+    		$(this).removeClass('glyphicon-triangle-bottom');
+    		$(this).addClass('glyphicon-triangle-top');
+    		$(this).parent().parent().children('.filter-amenity-body').show();
+    	} else {
+    		$(this).addClass('glyphicon-triangle-bottom');
+    		$(this).removeClass('glyphicon-triangle-top');    		
+    		$(this).parent().parent().children('.filter-amenity-body').hide();
+    	}
+    });
 });
 
