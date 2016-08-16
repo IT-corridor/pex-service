@@ -1814,18 +1814,6 @@ def hotels(request):
 
     return render(request, 'hotelsearch/hotel_home.html', {'form': HotelSearchForm(), 'searches': searches})
 
-HOTEL_CHAINS = {
-    'ihg':  'IHG Rewards Club', 
-    'spg':  'Starwood Preferred Guest', 
-    'hh':   'Hilton HHonors', 
-    'cp':   'Choice Privileges', 
-    'cc':   'Club Carlson', 
-    'mr':   'Marriott Rewards', 
-    'hy':   'Hyatt Gold Passport', 
-    'ac':   'Le Club Accor', 
-    'wy':   'Wyndham Rewards',
-}
-
 def __debug(message):
     '''check the place'''
     try:
@@ -2048,6 +2036,7 @@ def _search_hotel(place, checkin, checkout, filters):
         Q(cash_rate=0.0)|Q(cash_rate__gte=price_low), 
         Q(points_rate=0.0)|Q(points_rate__gte=award_low))
 
+    # filter by star rating
     r_db_hotels = db_hotels.filter(star_rating=0)
     for star in star_rating:
         low = float(star) - 0.51
@@ -2055,6 +2044,17 @@ def _search_hotel(place, checkin, checkout, filters):
         r_db_hotels = r_db_hotels | db_hotels.filter(star_rating__range=(low,high))
     
     db_hotels = r_db_hotels.order_by('-star_rating', 'cash_rate')
+
+    print db_hotels.count()
+    # filter by amenities
+    r_db_hotels = db_hotels.all()
+
+    for hotel in r_db_hotels:
+        amenities = HotelAmenity.objects.filter(hotel=hotel)
+        amenities = [am.amenity for am in amenities]
+        if not set(filters['amenity']).issubset(set(amenities)):
+            db_hotels = db_hotels.exclude(id=hotel.id)
+
     # get price matrix
     # '-' if none
     price_matrix = {}
@@ -2064,10 +2064,32 @@ def _search_hotel(place, checkin, checkout, filters):
         price_matrix[item] = {'cash_rate': price_min, 'points_rate': points_min, 'title': HOTEL_CHAINS[item]}
     # __debug('price_matrix: %s\n\n' % str(price_matrix))
 
-    filters = {'price_low':price_low, 'price_high':price_high, 'award_low':award_low, 'award_high':award_high, 'radius':filters['radius'], 'chain':filters['chain'], 'price_lowest':price_lowest, 'price_highest':price_highest, 'award_lowest':award_lowest, 'award_highest':award_highest, 'dis_place':dis_place, 'star_rating': star_rating}
+    filters = {
+        'price_low':price_low, 
+        'price_high':price_high, 
+        'award_low':award_low, 
+        'award_high':award_high, 
+        'radius':filters['radius'], 
+        'chain':filters['chain'], 
+        'amenity':filters['amenity'],
+        'price_lowest':price_lowest, 
+        'price_highest':price_highest, 
+        'award_lowest':award_lowest, 
+        'award_highest':award_highest, 
+        'dis_place':dis_place, 
+        'star_rating': star_rating
+    }
     # __debug('filters: %s\n' % str(filters))
 
-    return ['', db_hotels, price_matrix, filters]
+    r_db_hotels = []
+    for item in db_hotels:
+        amenities = HotelAmenity.objects.filter(hotel=item)
+        amenities = [am.amenity for am in amenities]
+        _item = model_to_dict(item)
+        _item['amenity'] = amenities
+        r_db_hotels.append(_item)
+
+    return ['', r_db_hotels, price_matrix, filters]
 
 def search_hotel(request):
     if request.method == 'POST':
@@ -2078,7 +2100,7 @@ def search_hotel(request):
         checkin = form.cleaned_data['checkin']
         checkout = form.cleaned_data['checkout']
         
-        filters = {'price_low':request.POST.get('price_low'), 'price_high':request.POST.get('price_high'), 'award_low':request.POST.get('award_low'), 'award_high':request.POST.get('award_high'), 'radius':int(request.POST.get('radius', 1000)), 'chain':request.POST.getlist('hotel_chain', HOTEL_CHAINS.keys()), 'star_rating': request.POST.getlist('star')}
+        filters = {'price_low':request.POST.get('price_low'), 'price_high':request.POST.get('price_high'), 'award_low':request.POST.get('award_low'), 'award_high':request.POST.get('award_high'), 'radius':int(request.POST.get('radius', 1000)), 'chain':request.POST.getlist('hotel_chain', HOTEL_CHAINS.keys()), 'star_rating': request.POST.getlist('star'), 'amenity': request.POST.getlist('amenity')}
     else:
         place = request.GET.get('place')
         place = place.split('&')[0]
@@ -2088,17 +2110,31 @@ def search_hotel(request):
         checkin = request.GET.get('checkin') or dttime.today().strftime('%Y-%m-%d')
         checkout = request.GET.get('checkout') or (dttime.today() + timedelta(days=2)).strftime('%Y-%m-%d')
         form = HotelSearchForm(initial={'place':place, 'checkin': checkin, 'checkout': checkout})
-        filters = {'price_low':'', 'price_high':'', 'award_low':'', 'award_high':'', 'radius': 1000, 'chain': HOTEL_CHAINS.keys()}
+        filters = {'price_low':'', 'price_high':'', 'award_low':'', 'award_high':'', 'radius': 1000, 'chain': HOTEL_CHAINS.keys(), 'amenity': []}
+
+    # return render(request, 'hotelsearch/hotel_result.html', {'hotels': [], 'form': form, 'price_matrix': [], 'filters': {'price_low':12, 'price_high':12313, 'award_low':123, 'award_high':312321, 'radius':[], 'chain':[], 'price_lowest':231, 'price_highest':312312, 'award_lowest':123, 'award_highest':12312312, 'dis_place':12, 'star_rating': 5}})    
 
     result = _search_hotel(place, checkin, checkout, filters)
 
     error_message = result[0]
     if error_message:
         form.errors['Error: '] = error_message
-        return render(request, 'hotelsearch/hotel_result.html', {'hotels': [], 'form': form, 'price_matrix': {}, 'filters': {}})
+        return render(request, 'hotelsearch/hotel_result.html', {
+            'hotels': [], 
+            'form': form, 
+            'price_matrix': {}, 
+            'chains': HOTEL_CHAINS,
+            'amenities': HOTEL_AMENITIES,
+            'filters': {}})
     else:
         db_hotels, price_matrix, filters = result[1], result[2], result[3]
-        return render(request, 'hotelsearch/hotel_result.html', {'hotels': db_hotels, 'form': form, 'price_matrix': price_matrix, 'filters': filters})    
+        return render(request, 'hotelsearch/hotel_result.html', {
+            'hotels': db_hotels, 
+            'form': form, 
+            'price_matrix': price_matrix, 
+            'chains': HOTEL_CHAINS,
+            'amenities': HOTEL_AMENITIES,
+            'filters': filters})    
 
 def get_value(str_value):
     '''
@@ -2379,7 +2415,10 @@ def hotel_update(request, id=None):
 
     if request.method == 'GET':
         form = HotelForm(initial=model_to_dict(hotel))
+        amenities = HotelAmenity.objects.filter(hotel=hotel)
+        amenities = [item.amenity for item in amenities]
     else:
+        amenities = request.POST.getlist('amenity')
         form = HotelForm(request.POST, request.FILES)
         if form.is_valid():
             hotel.prop_id = form.cleaned_data['prop_id']
@@ -2395,9 +2434,19 @@ def hotel_update(request, id=None):
             hotel.points_rate = form.cleaned_data['points_rate']
             hotel.star_rating = form.cleaned_data['star_rating']
             hotel.save()
+
+            # update hotel amenities
+            HotelAmenity.objects.filter(hotel=hotel).delete()
+            for item in amenities:
+                HotelAmenity.objects.create(hotel=hotel, amenity=item)
+
             return HttpResponseRedirect('/Admin/hotel/')
 
-    return render(request, 'Admin/hotel_form.html', {'form':form})
+    return render(request, 'Admin/hotel_form.html', {
+        'form':form,
+        'amenities':HOTEL_AMENITIES,
+        'old_amenities':amenities
+    })
 
 @login_required(login_url='/Admin/login/')
 def email_template(request):

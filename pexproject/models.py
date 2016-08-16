@@ -3,6 +3,91 @@ from django.db import models
 from django.utils import timezone
 import hashlib
 
+HOTEL_CHAINS = {
+    'ihg':  'IHG Rewards Club', 
+    'spg':  'Starwood Preferred Guest', 
+    'hh':   'Hilton HHonors', 
+    'cp':   'Choice Privileges', 
+    'cc':   'Club Carlson', 
+    'mr':   'Marriott Rewards', 
+    'hy':   'Hyatt Gold Passport', 
+    'ac':   'Le Club Accor', 
+    'wy':   'Wyndham Rewards',
+}
+
+HOTEL_AMENITIES =  {
+    "VR Game Amenity": {
+        "Pokemon Go":  [
+            'Pokestop',
+            'Gym',
+            'Generally High Lure Module Usage']
+        },
+
+    "Amenities": {
+        "Wifi": [
+            "Wireless internet in public areas (Free Public Wifi)", 
+            "Free wireless internet (Free Wifi)",
+            'High speed internet (Free)',
+            'Wireless internet in public areas (Paid Public Wifi)',
+            'Paid wireless internet (Paid Wifi)',
+            'High speed internet (Paid)'],
+
+        "Complimentary Breakfast": [
+            'Complimentary breakfast',
+            'Complimentary continental breakfast',
+            'Complimentary full american breakfast',
+            'Complimentary buffet breakfast'],
+
+        "Free Parking": ['Free parking'],
+
+        "Public or Free Transportation": [
+            'Free transportation',
+            'Train access',
+            'Ferry'],
+
+        "Business Friendly": [
+            'Conference facilities',
+            'Early check-in',
+            'Late check-out available',
+            'Desk with electrical outlet',
+            'Executive floor',
+            'Package/Parcel services',
+            'Shoe shine stand',
+            'Dry cleaning',
+            'Business center',
+            'Business services',
+            'Office rental',
+            'Ironing board'],
+
+        "Accessible": [
+            'Bilingual staff',
+            'Brailed elevators',
+            'Accessible facilities',
+            'Ramp access',
+            'Translation services',
+            'Wheelchair access',
+            'Accessible rooms',
+            'Hearing impaired services'],
+
+        "Activities": [
+            'Casino',
+            'Exercise gym',
+            'Heated pool',
+            'Nightclub',
+            'Playground',
+            'Pool',
+            'Sauna',
+            'Shopping mall',
+            'Spa',
+            'Beauty shop/salon',
+            'Snow sports',
+            'Tennis court',
+            'Water sports',
+            'Golf',
+            'Horseback riding']},        
+}
+
+
 class Flightdata(models.Model):
     rowid = models.AutoField(primary_key=True)
     scrapetime = models.DateTimeField()
@@ -150,6 +235,13 @@ class Hotel(models.Model):
     def __unicode__(self):
         return self.name
 
+class HotelAmenity(models.Model):
+    hotel = models.ForeignKey(Hotel)
+    amenity = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return self.hotel.name+" : "+self.amenity 
+        
 class EmailTemplate(models.Model):
     template_id = models.AutoField(primary_key=True)
     email_code = models.CharField(max_length=100)

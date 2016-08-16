@@ -38,3 +38,11 @@ register.filter('floatadd', floatadd)
 register.filter('assign', assign)
 register.filter('split', split)
 register.filter('assignval', assignval)
+
+@register.filter(name='slug')
+def slug(value):
+    return value.split("(")[0].strip().lower().replace(' ','-')
+
+@register.filter(name='brief_name')
+def brief_name(value):
+    return value.split("(")[0].strip()

@@ -1,5 +1,6 @@
 {% extends "hotelsearch/base.html" %}
 {% load staticfiles %} 
+{% load customfilter %} 
 
 {% block content %}
 <script type="text/javascript" src="http://maps.google.com/maps/api/js"></script>
@@ -20,23 +21,23 @@
 				{% csrf_token %}
 		        <div class="filter-lane">
 					<label>Number of Stars</label>
-					<div><input type="checkbox" name="star" value="5" {% if '5' in filters.star_rating %} checked="true" {% endif %}> <span class="stars"></span></input> </div>
-					<div><input type="checkbox" name="star" value="4" {% if '4' in filters.star_rating %} checked="true" {% endif %}> <span class="stars"></span></input> </div>
-					<div><input type="checkbox" name="star" value="3" {% if '3' in filters.star_rating %} checked="true" {% endif %}> <span class="stars"></span></input> </div>
-					<div><input type="checkbox" name="star" value="2" {% if '2' in filters.star_rating %} checked="true" {% endif %}> <span class="stars"></span></input> </div>
-					<div><input type="checkbox" name="star" value="1" {% if '1' in filters.star_rating %} checked="true" {% endif %}> <span class="stars"></span></input> </div>
+					{% for item in "54321"|make_list %}
+						<div>
+							<input type="checkbox" name="star" value="{{item}}" {% if item in filters.star_rating %} checked="true" {% endif %}> 
+								<span class="stars"></span>
+							</input> 
+						</div>
+					{% endfor %}
 				</div>
 				<div class="filter-lane">
 					<label>Hotel Chains</label>
-					<div><input type="checkbox" name="hotel_chain" value="ihg" {% if 'ihg' in filters.chain %} checked="true" {% endif %}> IHG Rewards Club </input> </div>
-					<div><input type="checkbox" name="hotel_chain" value="spg" {% if 'spg' in filters.chain %} checked="true" {% endif %} > Starwood Preferred Guest </input> </div>
-					<div><input type="checkbox" name="hotel_chain" value="hh" {% if 'hh' in filters.chain %} checked="true" {% endif %}> Hilton HHonors </input> </div>
-					<div><input type="checkbox" name="hotel_chain" value="cp" {% if 'cp' in filters.chain %} checked="true" {% endif %}> Choice Privileges </input> </div>
-					<div><input type="checkbox" name="hotel_chain" value="cc" {% if 'cc' in filters.chain %} checked="true" {% endif %}> Club Carlson </input> </div>
-					<div><input type="checkbox" name="hotel_chain" value="mr" {% if 'mr' in filters.chain %} checked="true" {% endif %}> Marriott Rewards </input> </div>
-					<div><input type="checkbox" name="hotel_chain" value="hy" {% if 'hy' in filters.chain %} checked="true" {% endif %}> Hyatt Gold Passport </input> </div>
-					<div><input type="checkbox" name="hotel_chain" value="ac" {% if 'ac' in filters.chain %} checked="true" {% endif %}> Le Club Accor </input> </div>
-					<div><input type="checkbox" name="hotel_chain" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Wyndham Rewards </input> </div>
+					{% for key, value in chains.items %}
+						<div>
+							<input type="checkbox" name="hotel_chain" value="{{key}}" {% if key in filters.chain %} checked="true" {% endif %}>
+							 	{{ value }}
+							</input> 
+						</div>
+					{% endfor %}
 				</div>
 				<input type="hidden" id="id_price_low" name="price_low" value="{{ filters.price_low }}">    
 				<input type="hidden" id="id_price_high" name="price_high" value="{{ filters.price_high }}">    
@@ -76,88 +77,26 @@
 					</select>
 					</div>
 				</div>     
-				<div class="filter-lane">
-					<label>Amenities</label>
-					<div class="filter-amenity">
-						<div class="filter-amenity-heading"><input type="checkbox" name="amenity" value="ihg" {% if 'ihg' in filters.chain %} checked="true" {% endif %}> Wifi </input> <span class="glyphicon glyphicon-triangle-bottom"></span></div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="spg" {% if 'spg' in filters.chain %} checked="true" {% endif %} > Wireless internet in public areas (Free Public Wifi) </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="hh" {% if 'hh' in filters.chain %} checked="true" {% endif %}> Free wireless internet (Free Wifi) </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="cp" {% if 'cp' in filters.chain %} checked="true" {% endif %}> High speed internet (Free) </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="cc" {% if 'cc' in filters.chain %} checked="true" {% endif %}> Wireless internet in public areas (Paid Public Wifi) </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="mr" {% if 'mr' in filters.chain %} checked="true" {% endif %}> Paid wireless internet (Paid Wifi) </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="hy" {% if 'hy' in filters.chain %} checked="true" {% endif %}> High speed internet (Paid) </input> </div>
+				{% for key0, value0 in amenities.items %}
+					<div class="filter-lane">
+						<label>{{ key0 }}</label>
+						{% for key1, value1 in value0.items %}
+							<div class="filter-amenity">
+								<div class="filter-amenity-heading">
+									<input type="checkbox"> {{ key1 }} </input> 
+									<span class="glyphicon glyphicon-triangle-bottom">
+								</div>						
+								{% for value2 in value1 %}
+								<div class="filter-amenity-body">
+									<input type="checkbox" name="amenity" value="{{ value2 }}" {% if value2 in filters.amenity %} checked="true" {% endif %} > 	
+										{{ value2 }}
+									</input> 
+								</div>
+								{% endfor %}
+							</div>
+						{% endfor %}
 					</div>
-					<div class="filter-amenity">
-						<div class="filter-amenity-heading"><input type="checkbox" name="amenity" value="ac" {% if 'ac' in filters.chain %} checked="true" {% endif %}> Complimentary Breakfast </input> <span class="glyphicon glyphicon-triangle-bottom"></span></div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Complimentary continental breakfast </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Complimentary full american breakfast </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Complimentary buffet breakfast </input> </div>
-					</div>
-					<div class="filter-amenity">
-						<div class="filter-amenity-heading"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Free Parking </input> <span class="glyphicon glyphicon-triangle-bottom"></span> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Free Parking </input> </div>
-					</div>
-					<div class="filter-amenity">
-						<div class="filter-amenity-heading"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Public or Free Transportation </input><span class="glyphicon glyphicon-triangle-bottom"></span> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Free transportation </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Train access </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Ferry </input> </div>
-					</div>
-					<div class="filter-amenity">
-						<div class="filter-amenity-heading"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Business Friendly </input> <span class="glyphicon glyphicon-triangle-bottom"></span></div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Conference facilities </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Early check-in </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Late check-out available </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Executive floor </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Package/Parcel services </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Shoe shine stand </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Dry cleaning </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Business center </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Business services </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Office rental </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Ironing board </input> </div>
-					</div>
-					<div class="filter-amenity">
-						<div class="filter-amenity-heading"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Accessible </input> <span class="glyphicon glyphicon-triangle-bottom"></span></div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Bilingual staff </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Brailed elevators </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Accessible facilities </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Ramp access </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Translation services </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Wheelchair access </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Accessible rooms </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Hearing impaired services </input> </div>
-					</div>
-					<div class="filter-amenity">
-						<div class="filter-amenity-heading"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Activities </input> <span class="glyphicon glyphicon-triangle-bottom"></span></div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Casino </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Exercise gym </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Heated pool </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Nightclub </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Playground </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Pool </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Sauna </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Shopping mall </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Spa </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Beauty shop/salon </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Snow sports </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Tennis court </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Water sports </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Golf </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Horseback riding </input> </div>
-					</div>
-				</div>
-				<div class="filter-lane">
-					<label>VR Game Amenity</label>
-					<div class="filter-amenity">
-						<div class="filter-amenity-heading"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Pokemon Go </input> <span class="glyphicon glyphicon-triangle-bottom"></div>
-						
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Pokestop </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Gym </input> </div>
-						<div class="filter-amenity-body"><input type="checkbox" name="amenity" value="wy" {% if 'wy' in filters.chain %} checked="true" {% endif %}> Generally High Lure Module Usage </input> </div>
-					</div>
-				</div>
-
+				{% endfor %}
 				<button class="btn btn-default filter-submit" type="submit">Filter</button>
 			</form>
 		</div>
@@ -199,22 +138,20 @@
 		          <div class="col-sm-2 col-xs-6 " tabindex="4" style="padding: 0 3px;">
 		            <div class="form-group no-margin"  id="cabintab">
 		                <select name='rooms' class="form-control c_caret" required="true">
-		                    <option value="1">1 Guest</option>
-		                    <option value="2">2 Guests</option>
-		                    <option value="3">3 Guests</option>
-		                    <option value="4">4 Guests</option>
-		                    <option value="5">5 Guests</option>                        
+		                	<option value="1">{{ item }} Guest</option>
+		                	{% for item in "2345"|make_list %}
+		                		<option value="{{ item }}">{{ item }} Guests</option>
+		                	{% endfor %}
 		                </select>                    
 		            </div>                          
 		          </div>          
 		          <div class="col-sm-2 col-xs-6 " tabindex="5" style="padding: 0 3px;">
 		            <div class="form-group no-margin"  id="cabintab">
 		                <select name='guests' class="form-control  c_caret" required="true">
-		                    <option value="1">1 Room</option>
-		                    <option value="2">2 Rooms</option>
-		                    <option value="3">3 Rooms</option>
-		                    <option value="4">4 Rooms</option>
-		                    <option value="5">5 Rooms</option>                        
+		                	<option value="1">1 Room</option>
+		                	{% for item in "2345"|make_list %}
+		                		<option value="{{ item }}">{{ item }} Rooms</option>
+		                	{% endfor %}
 		                </select>   
 		            </div>                          
 		          </div>
@@ -301,12 +238,9 @@
 		</div>
 		<div class="row" style="margin-top: 20px;">
 			<div class="col-sm-8 wide" id="hotel_amenity_{{ forloop.counter }}" style="display: none;">
-				<div class="col-sm-4 col-xs-6" style="margin-top: 10px;"><img src="/static/hotelsearch/img/wifi.png" style="margin-right: 5px;">Pad Wi-Fi</div>
-				<div class="col-sm-4 col-xs-6" style="margin-top: 10px;"><img src="/static/hotelsearch/img/air-conditioned.png" style="margin-right: 5px;">Air Conditioner</div>
-				<div class="col-sm-4 col-xs-6" style="margin-top: 10px;"><img src="/static/hotelsearch/img/parking.png" style="margin-right: 5px;">Paid Parking</div>
-				<div class="col-sm-4 col-xs-6" style="margin-top: 10px;"><img src="/static/hotelsearch/img/accessible.png" style="margin-right: 5px;">Accessible</div>
-				<div class="col-sm-4 col-xs-6" style="margin-top: 10px;"><img src="/static/hotelsearch/img/business.png" style="margin-right: 5px;">Business Center</div>
-				<div class="col-sm-4 col-xs-6" style="margin-top: 10px;"><img src="/static/hotelsearch/img/laundry.png" style="margin-right: 5px;">Laundary Service</div>
+				{% for item in hotel.amenity %}
+				<div class="col-sm-4 col-xs-6" style="margin-top: 10px;"><img src="/static/hotelsearch/img/{{item|slug}}.png" style="margin-right: 5px;">{{ item|brief_name }}</div>
+				{% endfor %}
 			</div>
 		</div>
 		<hr>
