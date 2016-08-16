@@ -1995,7 +1995,8 @@ def _search_hotel(place, checkin, checkout, filters):
             _hotel['cash_points_rate'] = hotel['cashPointsRate']
             _hotel['url'] = hotel['url']
 
-            db_hotel = Hotel.objects.filter(search=search.id, prop_id=_hotel['prop_id'])
+            # db_hotel = Hotel.objects.filter(search=search.id, prop_id=_hotel['prop_id'])
+            db_hotel = Hotel.objects.filter(prop_id=_hotel['prop_id'])            
             if db_hotel:
                 db_hotel.update(**_hotel)
             else:
@@ -2045,7 +2046,6 @@ def _search_hotel(place, checkin, checkout, filters):
     
     db_hotels = r_db_hotels.order_by('-star_rating', 'cash_rate')
 
-    print db_hotels.count()
     # filter by amenities
     r_db_hotels = db_hotels.all()
 
