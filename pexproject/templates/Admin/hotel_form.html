@@ -19,9 +19,15 @@
             <div class="card-body card-padding">
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">Property ID</label>
-                    <div class="col-sm-10">
+                    <div class="col-sm-4">
                         <div class="fg-line">
                             <input type="text" class="form-control input-sm" id="id_prop_id" required name="prop_id" value="{{form.prop_id.value}}">
+                        </div>
+                    </div>
+                    <label for="inputEmail3" class="col-sm-2 control-label">Star Rating</label>
+                    <div class="col-sm-4">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" id="id_star_rating" required name="star_rating" value="{{form.star_rating.value}}">
                         </div>
                     </div>
                 </div>                 
@@ -34,45 +40,13 @@
                     </div>
                 </div>                 
                 <div class="form-group">
-                    <label for="inputEmail3" class="col-sm-2 control-label">Brand</label>
-                    <div class="col-sm-10">
-                        <div class="fg-line">
-                            <input type="text" class="form-control input-sm" id="id_brand" name="brand" value="{{form.brand.value}}">
-                        </div>
-                    </div>
-                </div>                 
-                <div class="form-group">
-                    <label for="inputEmail3" class="col-sm-2 control-label">Hotel Chain</label>
-                    <div class="col-sm-10">
-                        <div class="fg-line">
-                            <input type="text" class="form-control input-sm" id="id_chain" required name="chain" value="{{form.chain.value}}">
-                        </div>
-                    </div>
-                </div>                 
-                <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">Address</label>
                     <div class="col-sm-10">
                         <div class="fg-line">
                             <input type="text" class="form-control input-sm" id="id_address" name="address" value="{{form.address.value}}">
                         </div>
                     </div>
-                </div>                 
-                <div class="form-group">
-                    <label for="inputEmail3" class="col-sm-2 control-label">Latitude</label>
-                    <div class="col-sm-10">
-                        <div class="fg-line">
-                            <input type="text" class="form-control input-sm" id="id_lat" name="lat" value="{{form.lat.value}}">
-                        </div>
-                    </div>
-                </div>                 
-                <div class="form-group">
-                    <label for="inputEmail3" class="col-sm-2 control-label">Longitude</label>
-                    <div class="col-sm-10">
-                        <div class="fg-line">
-                            <input type="text" class="form-control input-sm" id="id_lon" name="lon" value="{{form.lon.value}}">
-                        </div>
-                    </div>
-                </div>                 
+                </div>                                 
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">Image Url</label>
                     <div class="col-sm-10">
@@ -90,29 +64,77 @@
                     </div>
                 </div>                 
                 <div class="form-group">
-                    <label for="inputEmail3" class="col-sm-2 control-label">Price</label>
-                    <div class="col-sm-10">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Brand</label>
+                    <div class="col-sm-4">
                         <div class="fg-line">
-                            <input type="text" class="form-control input-sm" id="id_cash_rate" required name="cash_rate" value="{{form.cash_rate.value}}">
+                            <input type="text" class="form-control input-sm" id="id_brand" name="brand" value="{{form.brand.value}}">
+                        </div>
+                    </div>
+                    <label for="inputEmail3" class="col-sm-2 control-label">Hotel Chain</label>
+                    <div class="col-sm-4">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" id="id_chain" required name="chain" value="{{form.chain.value}}">
                         </div>
                     </div>
                 </div>                 
                 <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Latitude</label>
+                    <div class="col-sm-4">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" id="id_lat" name="lat" value="{{form.lat.value}}">
+                        </div>
+                    </div>
+                    <label for="inputEmail3" class="col-sm-2 control-label">Longitude</label>
+                    <div class="col-sm-4">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" id="id_lon" name="lon" value="{{form.lon.value}}">
+                        </div>
+                    </div>
+                </div>                 
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Price</label>
+                    <div class="col-sm-4">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" id="id_cash_rate" required name="cash_rate" value="{{form.cash_rate.value}}">
+                        </div>
+                    </div>
                     <label for="inputEmail3" class="col-sm-2 control-label">Points</label>
-                    <div class="col-sm-10">
+                    <div class="col-sm-4">
                         <div class="fg-line">
                             <input type="text" class="form-control input-sm" id="id_points_rate" required name="points_rate" value="{{form.points_rate.value}}">
                         </div>
                     </div>
                 </div>                 
+                {% for key0, value0 in amenities.items %}
                 <div class="form-group">
-                    <label for="inputEmail3" class="col-sm-2 control-label">Star Rating</label>
+                    <label for="inputEmail3" class="col-sm-2 control-label">{{ key0 }}</label>
                     <div class="col-sm-10">
-                        <div class="fg-line">
-                            <input type="text" class="form-control input-sm" id="id_star_rating" required name="star_rating" value="{{form.star_rating.value}}">
+                    {% for key1, value1 in value0.items %}
+                        <div>
+                        <div class="col-sm-12 amenity-heading" style="margin-top: 15px;">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox">
+                                    <i class="input-helper"></i><b>{{ key1 }}</b>
+                                </label>
+                            </div>
+                        </div><div class="clearfix"></div>    
+                        <hr style="margin: 5px 5px;">
+                        {% for value2 in value1 %}
+                        <div class="col-sm-3 amenity-body">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="amenity" {% if value2 in old_amenities %} checked=""{% endif %} value="{{ value2 }}">
+                                    <i class="input-helper"></i>{{ value2 }}
+                                </label>
+                            </div>
                         </div>
+                        {% endfor %}
+                        </div>
+                    {% endfor %}
                     </div>
                 </div>                 
+                {% endfor %}
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-9">
                         <button type="submit" class="btn btn-primary btn-sm">{% if form.name.value %}Update Hotel {% else %} Add Hotel {% endif %}</button>
@@ -128,4 +150,14 @@
 {% block extra_js %}
     <script src="/static/Admin/vendors/bower_components/autosize/dist/autosize.min.js"></script>
     <script src="/static/Admin/vendors/summernote/dist/summernote-updated.min.js"></script>
+    <!-- <script src="/static/Admin/js/pexplus.js"></script> -->
+    <script type="text/javascript">
+    $('.amenity-heading input').click(function() {
+        var checked = $(this).prop('checked');
+        
+        $(this).parent().parent().parent().parent().children('.amenity-body').each(function() {
+            $(this).find('input').prop('checked', checked);
+        });     
+    });       
+    </script>
 {% endblock %}        
