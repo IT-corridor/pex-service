@@ -46,6 +46,14 @@ function search_hotel()
 	$('#search-form').submit();
 }
 
+function toggle_title(obj, title1, title2) {
+	var text = $(obj).html();
+	if (text == title1)
+		$(obj).html(title2);
+	else
+		$(obj).html(title1);	
+}
+
 $(function(){
 	var url_on_tweet = $('#twitter_share').attr('href');
 	if (url_on_tweet != undefined) {
