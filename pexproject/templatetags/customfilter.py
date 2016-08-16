@@ -41,7 +41,7 @@ register.filter('assignval', assignval)
 
 @register.filter(name='slug')
 def slug(value):
-    return value.split("(")[0].strip().lower().replace(' ','-')
+    return value.split("(")[0].strip().lower().replace(' ','-').replace('/','-')
 
 @register.filter(name='brief_name')
 def brief_name(value):
