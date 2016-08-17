@@ -84,7 +84,7 @@
 							<div class="filter-amenity">
 								<div class="filter-amenity-heading">
 									<input type="checkbox"> {{ key1 }} </input> 
-									<span class="glyphicon glyphicon-triangle-bottom">
+									<img src="/static/hotelsearch/css/images/caret.png" style="float: right;">
 								</div>						
 								{% for value2 in value1 %}
 								<div class="filter-amenity-body">
@@ -223,7 +223,7 @@
 				<a href="{{ hotel.url }}"><h4> {{ hotel.name }} </h4></a>
 				<div style="margin-bottom: 8px;"><input type="hidden" value="{{hotel.star_rating}}"><span class="stars"></span></div>
 				<div>{% if hotel.address %} {{ hotel.address }} {% endif %}</div>
-				<a href="#" data-toggle="modal" class="share" data-target="#share-modal">share</a>
+				<a href="#" data-toggle="modal" class="share" data-target="#share-modal">Share</a>
 			</div>
 			<div class="col-sm-3 wide">
 				{% if hotel.img %}
@@ -236,14 +236,14 @@
 				<div id="map{{ forloop.counter }}" style="height:125px;"></div>
 			</div>
 		</div>
-		<div class="row" style="margin-top: 20px;">
-			<div class="col-sm-8 wide" id="hotel_amenity_{{ forloop.counter }}" style="display: none;">
+		<div class="row">
+			<div class="col-sm-8 wide" id="hotel_amenity_{{ forloop.counter }}" style="margin-top: 20px; display: none;">
 				{% for item in hotel.amenity %}
 				<div class="col-sm-4 col-xs-6" style="margin-top: 10px;"><img src="/static/hotelsearch/img/{{item|slug}}.png" style="margin-right: 5px;">{{ item|brief_name }}</div>
 				{% endfor %}
 			</div>
 		</div>
-		<hr>
+		<hr style="margin: 0;">
 		{% endfor %}
 	</div>
 	</div>

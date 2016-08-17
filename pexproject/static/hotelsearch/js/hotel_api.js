@@ -162,15 +162,13 @@ $(function(){
     	});    	
     });  	  
 
-    $('.filter-amenity-heading span.glyphicon').click(function() {
-    	var stat = $(this).prop('class');
-    	if (stat.includes('glyphicon-triangle-bottom')) {
-    		$(this).removeClass('glyphicon-triangle-bottom');
-    		$(this).addClass('glyphicon-triangle-top');
+    $('.filter-amenity-heading img').click(function() {
+    	var stat = $(this).prop('src');
+    	if (stat.includes('caret.png')) {
+    		$(this).prop('src', '/static/hotelsearch/css/images/caret_up.png');
     		$(this).parent().parent().children('.filter-amenity-body').show();
     	} else {
-    		$(this).addClass('glyphicon-triangle-bottom');
-    		$(this).removeClass('glyphicon-triangle-top');    		
+    		$(this).prop('src', '/static/hotelsearch/css/images/caret.png');    		
     		$(this).parent().parent().children('.filter-amenity-body').hide();
     	}
     });
