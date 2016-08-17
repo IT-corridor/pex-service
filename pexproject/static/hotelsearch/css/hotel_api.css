@@ -89,7 +89,7 @@ select.c_caret {
 .view-amenity {
     text-decoration: none; 
     color: #39A8E0; 
-    margin-left: 26px;
+    /*margin-left: 26px;*/
     margin-top: 12px;
 }
 
