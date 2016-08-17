@@ -43,7 +43,7 @@
                     <label for="inputEmail3" class="col-sm-2 control-label">Address</label>
                     <div class="col-sm-10">
                         <div class="fg-line">
-                            <input type="text" class="form-control input-sm" id="id_address" name="address" value="{{form.address.value}}">
+                            <input type="text" class="form-control input-sm" id="id_address" name="address" value="{% if form.address.value %} {{ form.address.value }} {% endif %}">
                         </div>
                     </div>
                 </div>                                 
