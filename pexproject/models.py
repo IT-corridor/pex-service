@@ -230,7 +230,7 @@ class Hotel(models.Model):
     award_cat = models.CharField(max_length=30)
     distance = models.IntegerField()
     star_rating = models.FloatField(default=0.0)
-    search = models.ForeignKey(Search)
+    search = models.CharField(max_length=100)
 
     def __unicode__(self):
         return self.name

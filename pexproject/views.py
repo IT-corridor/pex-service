@@ -1953,7 +1953,7 @@ def _search_hotel(place, checkin, checkout, filters):
         search = search[0]
         if search.search_time >= time_60m:
             # cached
-            db_hotels = Hotel.objects.filter(search=search.id)
+            db_hotels = Hotel.objects.filter(search__contains=',%d,'%search.id)
         else:
             # need to update search time
             search.search_time = time
@@ -1975,7 +1975,7 @@ def _search_hotel(place, checkin, checkout, filters):
 
         if not hotels:
             # delete empty search including spam search
-            if not Hotel.objects.filter(search=search):
+            if not Hotel.objects.filter(search__contains=',%d,'%search.id):
                 search.delete()
             return ['There is no hotel in the place. Please check fields again.']      
 
@@ -1998,11 +1998,14 @@ def _search_hotel(place, checkin, checkout, filters):
             # db_hotel = Hotel.objects.filter(search=search.id, prop_id=_hotel['prop_id'])
             db_hotel = Hotel.objects.filter(prop_id=_hotel['prop_id'])            
             if db_hotel:
+                _hotel['search'] = db_hotel[0].search
+                if not str(search.id) in _hotel['search'].split(','):
+                    _hotel['search'] = _hotel['search']+'%d,'%search.id
                 db_hotel.update(**_hotel)
             else:
-                Hotel.objects.create(search=search, **_hotel)
+                Hotel.objects.create(search=',%d,'%search.id, **_hotel)
 
-        db_hotels = Hotel.objects.filter(search=search.id)
+        db_hotels = Hotel.objects.filter(search__contains=',%d,'%search.id)
 
     # filter the result
     price_lowest = db_hotels.filter(~Q(cash_rate=0.0)).aggregate(Min('cash_rate'))['cash_rate__min']
@@ -2025,7 +2028,11 @@ def _search_hotel(place, checkin, checkout, filters):
     award_low = max(tmp, award_lowest)
     tmp = float(filters['award_high'] or award_highest)
     award_high = min(tmp, award_highest)
-    star_rating = filters.get('star_rating', [u'1', u'2', u'3', u'4', u'5'])
+    star_rating = filters.get('star_rating')
+    star_rating = [item.encode('ascii', 'ignore') for item in star_rating]
+    if star_rating == []:
+        star_rating = ['1', '2', '3', '4', '5']
+
     # __debug('## chain: %s\n\n' % str(filters.chain))
     dis_place = place.split('-')[0]
 
