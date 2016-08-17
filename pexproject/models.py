@@ -32,7 +32,7 @@ HOTEL_AMENITIES =  {
             'Paid wireless internet (Paid Wifi)',
             'High speed internet (Paid)'],
 
-        "Complimentary Breakfast": [
+        "Free Breakfast": [
             'Complimentary breakfast',
             'Complimentary continental breakfast',
             'Complimentary full american breakfast',
