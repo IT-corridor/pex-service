@@ -2028,7 +2028,7 @@ def _search_hotel(place, checkin, checkout, filters):
     award_low = max(tmp, award_lowest)
     tmp = float(filters['award_high'] or award_highest)
     award_high = min(tmp, award_highest)
-    star_rating = filters.get('star_rating')
+    star_rating = filters.get('star_rating', ['1', '2', '3', '4', '5'])
     star_rating = [item.encode('ascii', 'ignore') for item in star_rating]
     if star_rating == []:
         star_rating = ['1', '2', '3', '4', '5']
