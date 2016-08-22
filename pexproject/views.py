@@ -285,7 +285,7 @@ def blog(request, title=None):
             except:
                 return render_to_response('flightsearch/blog_details.html', context_instance=RequestContext(request))
 
-    blogs = Blogs.objects.filter(blog_status=1)
+    blogs = Blogs.objects.filter(blog_status=1).order_by('-blog_created_time');
     bloglist = []
     top_banner = ''
     for content in blogs:
