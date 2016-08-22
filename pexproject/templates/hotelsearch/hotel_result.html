@@ -78,7 +78,7 @@
 					</div>
 				</div>     
 				{% for key0, value0 in amenities.items %}
-					<div class="filter-lane">
+					<div class="filter-lane" id="id-{{key0|slug}}">
 						<label>{{ key0 }}</label>
 						{% for key1, value1 in value0.items %}
 							<div class="filter-amenity">
@@ -95,6 +95,12 @@
 								{% endfor %}
 							</div>
 						{% endfor %}
+
+						{% if key0 == 'Basic Amenities' %}
+							<a href="#id-advanced-amenities" onclick="$('#id-advanced-amenities').toggle();$('#id-basic-amenities').toggle();">Advanced Amenities</a>
+						{% elif key0 == 'Advanced Amenities' %}
+							<a href="#id-basic-amenities" onclick="$('#id-basic-amenities').toggle();$('#id-advanced-amenities').toggle();">Basic Amenities</a>
+						{% endif %}
 					</div>
 				{% endfor %}
 				<button class="btn btn-default filter-submit" type="submit">Filter</button>

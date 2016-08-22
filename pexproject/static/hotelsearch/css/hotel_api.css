@@ -126,6 +126,16 @@ select.c_caret {
     padding-top: 5px;
 */}
 
+#id-advanced-amenities {
+    display: none;
+}
+
+.filter-lane a {
+    margin-top: 20px; 
+    display: block;
+    text-align: center;
+}
+
 @media only screen and (max-width: 767px) {
     .wide {
         display: none;
