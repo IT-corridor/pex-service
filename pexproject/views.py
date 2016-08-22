@@ -2278,6 +2278,20 @@ def check_validity_flight_params(request):
 @csrf_exempt
 def api_search_flight(request):
     if request.method == 'POST':
+        logos = {
+            'aeroflot': 'aeroflot.png',
+            'airchina': 'airchinaLogo.gif',
+            'american airlines': 'aa.jpg',
+            'delta': 'deltaLogo.jpg',
+            'etihad': 'etihad.jpg',
+            'jetblue': 'jetblue.jpg',
+            's7': 's7Logo.svg',
+            'united': 'unitedLogo.png',
+            'Virgin America': 'va.jpg',
+            'Virgin Australia': 'VAUS.png',
+            'virgin_atlantic': 'virgin.png'        
+        }
+
         delay_threshold = 30
         result = {}
 
@@ -2323,6 +2337,7 @@ def api_search_flight(request):
 
             # convert each property to string for json dump
             for flight in flights:
+                flight['image'] = 'pexportal.com/static/flightsearch/img/'+logos[flight['datasource']]
                 for k,v in flight.items():
                     flight[k] = str(v)
         else:
@@ -2348,6 +2363,7 @@ def api_search_flight(request):
                 _item['arivedetails'] = item.arivedetails
                 _item['planedetails'] = item.planedetails
                 _item['operatedby'] = item.operatedby
+                _item['image'] = 'pexportal.com/static/flightsearch/img/'+logos[item.datasource]
 
                 _item['return_origin'] = item.return_origin
                 _item['return_stoppage'] = item.return_stoppage
