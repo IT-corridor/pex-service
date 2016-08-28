@@ -2320,13 +2320,13 @@ def api_search_flight(request):
 
         qpx_prices = {}
         while(1):
-            delay_threshold = delay_threshold - 1
             # get qpx price
-            if delay_threshold == 10:
+            if delay_threshold == 30:
                 origin_ = Airports.objects.get(airport_id=origin).code
                 destination_ = Airports.objects.get(airport_id=destination).code
                 qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date)
 
+            delay_threshold = delay_threshold - 1
             time.sleep(1)
             # check the status of the scraping
             scrape_status = _check_data(keys['departkey'], keys['returnkey'], flight_class, '')
