@@ -18,6 +18,8 @@ import subprocess
 import json
 import signal
 import logging
+from apiclient.discovery import build
+
 from random import randint
 from bs4 import BeautifulSoup
 from mailchimp import Mailchimp
@@ -2315,9 +2317,13 @@ def api_search_flight(request):
 
         keys = _search(return_date, origin, destination, depart_date, search_type, flight_class, request)
         print return_date, origin, destination, depart_date, '@@@@@@@2'
-        
+
         while(1):
             delay_threshold = delay_threshold - 1
+            if delay_threshold == 10:
+                origin_ = Airports.objects.get(airport_id=origin).code
+                destination_ = Airports.objects.get(airport_id=destination).code
+                qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date)
             time.sleep(1)
             # check the status of the scraping
             scrape_status = _check_data(keys['departkey'], keys['returnkey'], flight_class, '')
@@ -2340,6 +2346,9 @@ def api_search_flight(request):
             # convert each property to string for json dump
             for flight in flights:
                 flight['image'] = 'pexportal.com/static/flightsearch/img/'+logos[flight['datasource']]
+                price_key = get_qpx_price_key(flight['planedetails'])
+                flight['price'] = qpx_prices[price_key]
+
                 for k,v in flight.items():
                     flight[k] = str(v)
         else:
@@ -2381,6 +2390,9 @@ def api_search_flight(request):
 
                 _item['total_miles'] = item.total_miles
                 _item['total_taxes'] = item.total_taxes
+
+                price_key = get_qpx_price_key(item.planedetails) + get_qpx_price_key(item.return_planedetails)
+                _item['price'] = qpx_prices[price_key]
 
                 flights.append(_item)
 
@@ -3038,3 +3050,70 @@ def user_search(request):
     result = get_customer_search_history(user_id=request.user.user_id, period=period, r_from=r_from, r_to=r_to, category=category)
     return HttpResponse(json.dumps(result))
 
+
+def get_qpx_prices(return_date, origin, destination, depart_date):    
+    date = datetime.datetime.strptime(depart_date, '%m/%d/%Y')
+    date = date.strftime('%Y-%m-%d')
+
+    slice_ = [{
+                "origin": origin,
+                "destination": destination,
+                "date": date,
+            }]
+
+    if return_date:
+        date = datetime.datetime.strptime(return_date, '%m/%d/%Y')
+        date = date.strftime('%Y-%m-%d')
+        slice_.append({
+            "origin": destination,
+            "destination": origin,
+            "date": date,
+        })
+
+    service = build('qpxExpress', 'v1', developerKey='AIzaSyDVk2iIE4B590k77n8WaZMYgxT_dw--xcc')
+
+    body = {
+      "request": {
+        "passengers": {
+          "adultCount": 1,
+          "infantInLapCount": 0,
+          "infantInSeatCount": 0,
+          "childCount": 0,
+          "seniorCount": 0
+        },
+        "solutions": 500,
+        "refundable": False
+      }
+    }
+    body['request']['slice'] = slice_
+
+    response = service.trips().search(body=body).execute()
+    # print json.dumps(response, sort_keys=True, indent=4)
+
+    qpx_prices = {}
+
+    for flight in response['trips']['tripOption']:
+        saleTotal = flight['saleTotal']
+        route = ''
+        for slice_ in flight['slice']:
+            for segment in slice_['segment']:
+                carrier = segment['flight']['carrier']
+                number = segment['flight']['number']
+                route = route + carrier + number + '@'
+            route = route + '--'
+        qpx_prices[route] = saleTotal
+
+    return qpx_prices
+
+def get_qpx_price_key(planedetails):
+    """
+    get key string for qpx_prices
+    e.g) EY 487 | 789 (11h 30m)@EY 19 | 388 (8h 5m)
+    """
+    flights = planedetails.split('@')
+    key_ = ''
+
+    for flight in flights:
+        carrier = flight.split('|')[0].replace(' ', '')
+        key_ = key_ + carrier+ '@'
+    return key_ + '--'
