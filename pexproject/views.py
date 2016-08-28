@@ -3104,7 +3104,7 @@ def get_qpx_prices(return_date, origin, destination, depart_date):
                 number = segment['flight']['number']
                 route = route + carrier + number + '@'
             route = route + '--'
-        qpx_prices[route] = saleTotal
+        qpx_prices[route.encode('ascii', 'ignore')] = saleTotal
     print qpx_prices, '############'
     return qpx_prices
 
