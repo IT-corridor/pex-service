@@ -2314,6 +2314,8 @@ def api_search_flight(request):
         return_date, origin, destination, depart_date, search_type, flight_class, mile_low, mile_high, airlines, depart_from, depart_to, arrival_from, arrival_to = _params[1], _params[2], _params[3], _params[4], _params[5], _params[6], _params[7], _params[8], _params[9], _params[10], _params[11], _params[12], _params[13]
 
         keys = _search(return_date, origin, destination, depart_date, search_type, flight_class, request)
+        print return_date, origin, destination, depart_date, '@@@@@@@2'
+        
         while(1):
             delay_threshold = delay_threshold - 1
             time.sleep(1)
