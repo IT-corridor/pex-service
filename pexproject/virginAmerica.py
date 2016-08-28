@@ -225,7 +225,7 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid):
     
                         "########### Flight Details #############################"
                         aircraftType = flightDetails["aircraftType"]
-                        flightNo = "Flight "+str(flightDetails["flightNum"])
+                        flightNo = "VX "+str(flightDetails["flightNum"])
                         flightDisplay = flightNo+" | "+aircraftType+" ("+duration+")"
                         flightArray.append(flightDisplay)
                         
@@ -277,13 +277,13 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid):
                             flightNum = flightDetails[k]['flightSegment']["flightNum"]
                             if k == 0:
                                 source = departure
-                                flightNo = "Flight "+str(flightNum)
+                                flightNo = "VX "+str(flightNum)
                                 departureTime = departTimeFormat
                             classOfService = flightDetails[k]['flightSegment']["classOfService"]
                             elapsedTime = flightDetails[k]['flightSegment']["elapsedTime"]
                             aircraftType = flightDetails[k]['flightSegment']["aircraftType"]
                             flightairTime = str((int(elapsedTime)/60))+"h "+str((int(elapsedTime)%60))+"m"
-                            flightDisplay = "Flight "+str(flightNum)+" | "+aircraftType+" ("+flightairTime+")"
+                            flightDisplay = "VX "+str(flightNum)+" | "+aircraftType+" ("+flightairTime+")"
                             flightArray.append(flightDisplay)
                             
                             tripDuration = tripDuration+timedelta+elapsedTime
