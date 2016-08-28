@@ -138,7 +138,7 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                         if 'With layover' in fltno:
                             fltno = fltno.replace('With layover','')
                         planetype = depttd.find("span",{"class":"equipType"}).text
-                        planeinfo = fltno+" | "+planetype
+                        planeinfo = 'B6 '+fltno+" | "+planetype
                     if arivetd:
                         arivetime = arivetd.find("div",{"class":"time"}).text
                         arival_time = arivetime 
