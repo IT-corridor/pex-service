@@ -2350,7 +2350,7 @@ def api_search_flight(request):
             for flight in flights:
                 flight['image'] = 'pexportal.com/static/flightsearch/img/'+logos[flight['datasource']]
                 price_key = get_qpx_price_key(flight['planedetails'])
-                flight['price'] = qpx_prices[price_key]
+                flight['price'] = qpx_prices[price_key.encode('ascii', 'ignore')]
 
                 for k,v in flight.items():
                     flight[k] = str(v)
@@ -2395,7 +2395,7 @@ def api_search_flight(request):
                 _item['total_taxes'] = item.total_taxes
 
                 price_key = get_qpx_price_key(item.planedetails) + get_qpx_price_key(item.return_planedetails)
-                _item['price'] = qpx_prices[price_key]
+                _item['price'] = qpx_prices[price_key.encode('ascii', 'ignore')]
 
                 flights.append(_item)
 
