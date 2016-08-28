@@ -3089,7 +3089,7 @@ def get_qpx_prices(return_date, origin, destination, depart_date):
       }
     }
     body['request']['slice'] = slice_
-
+    print body, '@@@@@@@@@@@@@@@@@@@@2'
     response = service.trips().search(body=body).execute()
     # print json.dumps(response, sort_keys=True, indent=4)
 
