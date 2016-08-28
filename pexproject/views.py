@@ -3105,7 +3105,7 @@ def get_qpx_prices(return_date, origin, destination, depart_date):
                 route = route + carrier + number + '@'
             route = route + '--'
         qpx_prices[route] = saleTotal
-
+    print qpx_prices, '############'
     return qpx_prices
 
 def get_qpx_price_key(planedetails):
