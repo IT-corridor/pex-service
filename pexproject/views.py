@@ -2831,9 +2831,7 @@ def price_history(request):
     r_to = request.POST.get('r_to') 
     aggregation = request.POST.get('aggregation')
 
-    print _from, _to, airline, r_from, r_to, aggregation, '@@@@@@@'
     result = _price_history(request.user, _from, _to, airline, r_from, r_to, aggregation)
-    print result, '#########'
     return HttpResponse(json.dumps(result))
 
 @csrf_exempt
@@ -2924,7 +2922,6 @@ def price_history_num(request):
     r_to = request.POST.get('r_to') 
     aggregation = request.POST.get('aggregation')
 
-    print _from, _to, airline, r_from, r_to, aggregation, '@@@@@@@'
     result = _price_history_num(request.user, _from, _to, airline, r_from, r_to, aggregation)
     return HttpResponse(json.dumps(result))
 
@@ -3089,7 +3086,6 @@ def get_qpx_prices(return_date, origin, destination, depart_date):
       }
     }
     body['request']['slice'] = slice_
-    print body, '@@@@@@@@@@@@@@@@@@@@2'
     response = service.trips().search(body=body).execute()
     # print json.dumps(response, sort_keys=True, indent=4)
 
@@ -3105,7 +3101,6 @@ def get_qpx_prices(return_date, origin, destination, depart_date):
                 route = route + carrier + number + '@'
             route = route + '--'
         qpx_prices[route.encode('ascii', 'ignore')] = saleTotal
-    print qpx_prices, '############'
     return qpx_prices
 
 def get_qpx_price_key(planedetails):
