@@ -591,6 +591,8 @@ def forgotPassword(request):
     else:
         msg = "forgot password"
     return HttpResponseRedirect('/index?fpmsg='+msg) 
+
+    
 def createPassword(request):
     context = {}
     msg = ''
@@ -613,6 +615,8 @@ def createPassword(request):
             user1.save()
             msg = "Your password has been reset successfully."
     return render_to_response('flightsearch/create_password.html',{'message':msg},context_instance=RequestContext(request))    
+
+
 def sendFeedBack(request):
     context = {}
     alert_msg = ''

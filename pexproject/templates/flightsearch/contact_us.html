@@ -28,7 +28,7 @@
 							<div class="form col-xs-12 col-md-6 ">
 								{% if contact_msg %}<div class="alert alert-success alert-dismissible fade in" role="alert">{{contact_msg}}</div>{% endif %}
 							<div class=" col-xs-12 col-md-12 nopadding">
-								<form action="contactUs" method="post">
+								<form action="/contactUs" method="post">
 									{% csrf_token %}
 								  <div class="form-group col-xs-12 col-md-6">
 									<label for="first name">First Name</label>
