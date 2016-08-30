@@ -141,12 +141,12 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
                 fareClassCode.append(bookingCode1)
                 segOrigin = segments[counter]["departureCode"]
                 segDepartDate = segments[counter]["departureDate"]
-                segDetailFormat = segDepartDate+" | from "+segOrigin
+                segDetailFormat = segDepartDate[:-3]+" | from "+segOrigin
                 originDetails.append(segDetailFormat)
                 
                 segDest = segments[counter]["arrivalCode"]
                 segArive = segments[counter]["arrivalDate"]
-                destdetailFormat = segArive+" | at "+segDest
+                destdetailFormat = segArive[:-3]+" | at "+segDest
                 destDetails.append(destdetailFormat)
                 if len(operatorArray) >= operatorcounter:
                     operatingCarrier.append(operatorArray[operatorcounter]) 

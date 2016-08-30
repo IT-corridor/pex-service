@@ -126,7 +126,12 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                             origin_code = origin_code.replace('(','')
                         if ')' in origin_code:
                             origin_code = origin_code.replace(')','')
-                        deptdetail = str(date)+" | "+depttime+" from "+origin_fullname
+
+                        departinfo_time = str(date)+" "+depttime
+                        departinfo_time = datetime.datetime.strptime(departinfo_time, '%d-%m-%Y %I:%M %p')
+                        departinfo_time = departinfo_time.strftime('%Y/%m/%d %H:%M')
+
+                        deptdetail = departinfo_time + " | from "+origin_fullname
                         departdetails.append(deptdetail)
                         fltno = depttd.find("span",{"class":"flightCode"}).text
                         fltdetal = depttd.find("a")['onclick']
@@ -152,7 +157,12 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                             dest_code = dest_code.replace('(','')
                         if ')' in dest_code:
                             dest_code = dest_code.replace(')','')
-                        arivedetail = str(date)+" | "+arival_time+" at "+arive_fullname
+
+                        departinfo_time = str(date)+" "+arival_time
+                        departinfo_time = datetime.datetime.strptime(departinfo_time, '%d-%m-%Y %I:%M %p')
+                        departinfo_time = departinfo_time.strftime('%Y/%m/%d %H:%M')
+
+                        arivedetail = departinfo_time+" | at "+arive_fullname
                         arivedetails.append(arivedetail)
                         echoFareCode.append("Blue")
                         businessFareCode.append("Blue plus")

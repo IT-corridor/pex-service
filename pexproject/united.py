@@ -16,8 +16,6 @@ from pyvirtualdisplay import Display
 import json
 
 def united(origin, destination, searchdate, searchkey):
-    #return searchkey
-    print searchdate
     dt = datetime.datetime.strptime(searchdate, '%m/%d/%Y')
     date = dt.strftime('%Y-%m-%d')
     date_format = dt.strftime('%a, %b %-d')
@@ -245,6 +243,10 @@ def united(origin, destination, searchdate, searchkey):
             FlightDate = segmentJsonObj[k]["FlightDate"]
             OriginDescription = segmentJsonObj[k]["OriginDescription"]
             OperatingCarrierCode = segmentJsonObj[k]["OperatingCarrierCode"]
+
+            departinfo_time = datetime.datetime.strptime(FlightDate, '%m/%d/%Y %H:%M')
+            FlightDate = departinfo_time.strftime('%Y/%m/%d %H:%M')
+
             deptdetail = FlightDate+" | from "+OriginDescription
             departdetails.append(deptdetail)
             stopstation = segmentJsonObj[k]["Stops"]
@@ -256,15 +258,23 @@ def united(origin, destination, searchdate, searchkey):
                     for l in range(0,len(stopnJsonobj)):
                         stopOrigin = stopnJsonobj[l]["OriginDescription"]
                         stopFlightDate = stopnJsonobj[l]["FlightDate"]
-                        stopOriginDetails = stopFlightDate+" from "+stopOrigin
+                        stopFlightDate = datetime.datetime.strptime(stopFlightDate, '%m/%d/%Y %H:%M')
+                        stopFlightDate = stopFlightDate.strftime('%Y/%m/%d %H:%M')
+
+                        stopOriginDetails = stopFlightDate+" | from "+stopOrigin
                         departdetails.append(stopOriginDetails)
                         arivaildetails.append(stopOrigin)
                         stopDestination = stopnJsonobj[l]["DestinationDescription"]
                         if stopnJsonobj[l]["Destination"].strip() == lastdestination.strip():
-                            destdetail = lastdestdatetime+" at "+stopDestination
+                            lastdestdatetime = datetime.datetime.strptime(lastdestdatetime, '%m/%d/%Y %H:%M')
+                            lastdestdatetime = lastdestdatetime.strftime('%Y/%m/%d %H:%M')                            
+                            destdetail = lastdestdatetime+" | at "+stopDestination
                             arivaildetails.append(destdetail)
                         else:
-                            fullAriveinfo = DestinationDateTime+" at "+stopDestination
+                            DestinationDateTime = datetime.datetime.strptime(DestinationDateTime, '%m/%d/%Y %H:%M')
+                            DestinationDateTime = DestinationDateTime.strftime('%Y/%m/%d %H:%M')                            
+
+                            fullAriveinfo = DestinationDateTime+" | at "+stopDestination
                             arivaildetails.append(fullAriveinfo)
                         stopOperator = stopnJsonobj[l]["OperatingCarrierDescription"]
                         if stopOperator != None:
@@ -282,9 +292,13 @@ def united(origin, destination, searchdate, searchkey):
             else:
                 DestinationDescription = segmentJsonObj[k]["DestinationDescription"]
                 if segmentJsonObj[k]["Destination"].strip() == lastdestination.strip():
-                    destdetail = lastdestdatetime+" at "+DestinationDescription
+                    lastdestdatetime = datetime.datetime.strptime(lastdestdatetime, '%m/%d/%Y %H:%M')
+                    lastdestdatetime = lastdestdatetime.strftime('%Y/%m/%d %H:%M')                    
+                    destdetail = lastdestdatetime+" | at "+DestinationDescription
                 else:
-                    destdetail = DestinationDateTime+" at "+DestinationDescription
+                    DestinationDateTime = datetime.datetime.strptime(DestinationDateTime, '%m/%d/%Y %H:%M')
+                    DestinationDateTime = DestinationDateTime.strftime('%Y/%m/%d %H:%M')                    
+                    destdetail = DestinationDateTime+" | at "+DestinationDescription
                 arivaildetails.append(destdetail)
                 
             operatedby = segmentJsonObj[k]["OperatingCarrierDescription"]
