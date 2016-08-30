@@ -235,23 +235,32 @@ def delta(orgn, dest, searchdate, searchkey):
                             orgnCode = legdetail['origin']['airportCode']
                             cityname = legdetail['origin']['nearByCities'][0]['name']
                             cityCode = legdetail['origin']['nearByCities'][0]['country']['region']['code']
-                            fromAirport = cityname+" "+cityCode+" ("+orgnCode+")"
+                            fromAirport = orgnCode
                              
                         if 'destination' in legdetail:
                             destCode = legdetail['destination']['airportCode']
                             destcityname = legdetail['destination']['nearByCities'][0]['name']
                             destcityCode = legdetail['destination']['nearByCities'][0]['country']['region']['code']
-                            destAirport = destcityname+" "+destcityCode+" ("+orgnCode+")"
+                            destAirport = orgnCode
                         
                         duration = legdetail['duration']
                         schedDepartureTime = legdetail['schedDepartureTime']
                         schedDepartureDate = legdetail['schedDepartureDate']
                         schedArrivalTime = legdetail['schedArrivalTime']
                         schedArrivalDate = legdetail['schedArrivalDate']
+
                         '@@@@@@@ departDetails format @@@@@@@'
-                        fromDetail = schedDepartureDate+" "+schedDepartureTime+" | from  "+fromAirport
+                        departinfo_time = schedDepartureDate+" "+schedDepartureTime
+                        departinfo_time = datetime.datetime.strptime(departinfo_time, '%a %b %d %Y %I:%M%p')
+                        departinfo_time = departinfo_time.strftime('%Y/%m/%d %H:%M')
+
+                        fromDetail = departinfo_time+" | from  "+fromAirport
                         departDetail.append(fromDetail)
-                        toDetails = schedArrivalDate+" "+schedArrivalTime+" | at "+destAirport
+                        departinfo_time = schedArrivalDate+" "+schedArrivalTime
+                        departinfo_time = datetime.datetime.strptime(departinfo_time, '%a %b %d %Y %I:%M%p')
+                        departinfo_time = departinfo_time.strftime('%Y/%m/%d %H:%M')
+
+                        toDetails = departinfo_time+" | at "+destAirport
                         ariveDetail.append(toDetails)
                         aircraft = legdetail['aircraft']['shortName']
                         airlineCode = legdetail['marketAirline']['airline']['airlineCode']

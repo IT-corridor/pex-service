@@ -171,12 +171,12 @@ def aeroflot(ocity_code, dcity_code, searchdate, searchkey):
                 bookingClassCabin = segments[counter]['allClassOfService']
                 segOrigin = segments[counter]["departureCode"]
                 segDepartDate = segments[counter]["departureDate"]
-                segDetailFormat = segDepartDate+" | from "+segOrigin
+                segDetailFormat = segDepartDate[:-3]+" | from "+segOrigin
                 originDetails.append(segDetailFormat)
                 
                 segDest = segments[counter]["arrivalCode"]
                 segArive = segments[counter]["arrivalDate"]
-                destdetailFormat = segArive+" at "+segDest
+                destdetailFormat = segArive[:-3]+" at "+segDest
                 destDetails.append(destdetailFormat)
                 if len(operatorArray) > count:
                     operatorCarrier.append(operatorArray[count])
