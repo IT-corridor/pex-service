@@ -684,6 +684,7 @@ def contactUs(request):
         object = Contactus(first_name=first_name,last_name=last_name,email=email,phone=phone,title=title,company=company,website=websitename,message=message,topic=topic,label_text= labeltext)
         object.save()
 
+        contact_info = contact_info + "Email: {}<br>".format(email) if email else contact_info
         contact_info = contact_info + "Phone Number: {}<br>".format(phone) if phone else contact_info
         contact_info = contact_info + "Company: {}<br>".format(company) if company else contact_info
         contact_info = contact_info + "Website: {}<br>".format(websitename) if websitename else contact_info
@@ -696,9 +697,6 @@ def contactUs(request):
         emailbody = emailbody.replace('[USERNAME]',fullname)
         emailbody = emailbody.replace('[CONTACT_MESSAGE]',emailbody_)
         emailbody = emailbody.replace('[CONTACT_INFO]',contact_info)
-
-        print topic, '@@@'
-        print emailbody,'@@@'
 
         resp = customfunction.sendMail(email,'info@pexportal.com', topic, emailbody, html_content)
 
