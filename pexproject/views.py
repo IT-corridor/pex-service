@@ -592,7 +592,7 @@ def forgotPassword(request):
         msg = "forgot password"
     return HttpResponseRedirect('/index?fpmsg='+msg) 
 
-    
+
 def createPassword(request):
     context = {}
     msg = ''
@@ -634,18 +634,23 @@ def sendFeedBack(request):
             text = strip_tags(text)
             body = body+'\n'+text
     
+        # send email to pexportal
         obj = EmailTemplate.objects.get(email_code='feedback')
-        email_sub = obj.subject
         emailbody = obj.body
         emailbody = emailbody.replace('[USERNAME]',from_emailid)
         emailbody = emailbody.replace('[FEEDBACK_MESSAGE]',body)
-        resp = customfunction.sendMail(from_emailid,'info@pexportal.com',topic,emailbody,html_content)
+        print topic, '@@@'
+        print emailbody, '@@@'
+        print html_content, '@@@'
+        resp = customfunction.sendMail(from_emailid, 'info@pexportal.com', topic, emailbody, html_content)
+
         if resp == "sent":
-            obj1 = EmailTemplate.objects.get(email_code='feedback_reply')
-            email_sub1 = obj1.subject
-            emailbody1 = obj1.body
-            emailbody1 = emailbody1.replace('[USERNAME]',from_emailid)
-            customfunction.sendMail('info@pexportal.com',from_emailid,email_sub1,emailbody1,html_content)
+            # send email to the customer
+            reply_template = EmailTemplate.objects.get(email_code='feedback_reply')
+            reply_subject = reply_template.subject
+            reply_body = reply_template.body
+            reply_body = reply_body.replace('[USERNAME]',from_emailid)
+            customfunction.sendMail('info@pexportal.com', from_emailid, reply_subject, reply_body, html_content)
             alert_msg = "Thanks for giving us feedback"
         else:
             alert_msg = "There is some technical problem. Please try again"
