@@ -639,9 +639,6 @@ def sendFeedBack(request):
         emailbody = obj.body
         emailbody = emailbody.replace('[USERNAME]',from_emailid)
         emailbody = emailbody.replace('[FEEDBACK_MESSAGE]',body)
-        print topic, '@@@'
-        print emailbody, '@@@'
-        print html_content, '@@@'
         resp = customfunction.sendMail(from_emailid, 'info@pexportal.com', topic, emailbody, html_content)
 
         if resp == "sent":
@@ -670,6 +667,8 @@ def contactUs(request):
     topic = ''
     contact_msg = ''
     html_content = ''
+    contact_info = ''
+
     if request.POST:
         first_name = request.POST['first_name']
         last_name = request.POST['last_name']
@@ -684,11 +683,32 @@ def contactUs(request):
         email = request.POST['email']
         object = Contactus(first_name=first_name,last_name=last_name,email=email,phone=phone,title=title,company=company,website=websitename,message=message,topic=topic,label_text= labeltext)
         object.save()
+
+        contact_info = contact_info + "Phone Number: {}<br>".format(phone) if phone else contact_info
+        contact_info = contact_info + "Company: {}<br>".format(company) if company else contact_info
+        contact_info = contact_info + "Website: {}<br>".format(websitename) if websitename else contact_info
+
         fullname = first_name+" "+last_name
-        emailbody = message+"\n\n"+labeltext+" \n\n"+fullname+"\n"+company+"\n"+websitename
-        
-        resp = customfunction.sendMail(email,'info@pexportal.com',topic,emailbody,html_content)
+        emailbody_ = message+"<br>"+labeltext+"<br>"
+        # send email to pexportal
+        obj = EmailTemplate.objects.get(email_code='contactus')
+        emailbody = obj.body
+        emailbody = emailbody.replace('[USERNAME]',fullname)
+        emailbody = emailbody.replace('[CONTACT_MESSAGE]',emailbody_)
+        emailbody = emailbody.replace('[CONTACT_INFO]',contact_info)
+
+        print topic, '@@@'
+        print emailbody,'@@@'
+
+        resp = customfunction.sendMail(email,'info@pexportal.com', topic, emailbody, html_content)
+
         if resp == "sent":
+            # send email to the customer
+            reply_template = EmailTemplate.objects.get(email_code='feedback_reply')
+            reply_subject = reply_template.subject
+            reply_body = reply_template.body
+            reply_body = reply_body.replace('[USERNAME]',email)
+            customfunction.sendMail('info@pexportal.com', email, reply_subject, reply_body, html_content)            
             contact_msg = "Your information has been sent successfully"
         else:
             contact_msg = "There is some technical problem. Please try again"    
