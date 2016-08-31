@@ -241,7 +241,7 @@ def delta(orgn, dest, searchdate, searchkey):
                             destCode = legdetail['destination']['airportCode']
                             destcityname = legdetail['destination']['nearByCities'][0]['name']
                             destcityCode = legdetail['destination']['nearByCities'][0]['country']['region']['code']
-                            destAirport = orgnCode
+                            destAirport = destCode
                         
                         duration = legdetail['duration']
                         schedDepartureTime = legdetail['schedDepartureTime']
