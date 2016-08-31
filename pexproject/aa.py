@@ -9,23 +9,21 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import urllib
 import time
-import MySQLdb
 from django.db import connection, transaction
 import datetime
-import customfunction 
 from datetime import timedelta
 from selenium.webdriver.support.ui import Select
 import re
-import customfunction
 from pyvirtualdisplay import Display
 
-db = customfunction.dbconnection()
-cursor = db.cursor()
+# local
+# import MySQLdb
+# import customfunction 
+
+# db = customfunction.dbconnection()
+# cursor = db.cursor()
 
 def scrapeFlight(page_contents,searchid,tax):
-    db = customfunction.dbconnection()
-    cursor = db.cursor()
-
     currentdatetime = datetime.datetime.now()
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     flightcontainer = page_contents.findAll("div",{"class":"aa_flightListContainer"})
@@ -196,21 +194,23 @@ def scrapeFlight(page_contents,searchid,tax):
         planedetails = '@'.join(flightdetail)
         operatedbytext='@'.join(operatedby)
         
-        #print "****************************************************************************************************"
+        print "****************************************************************************************************"
         value_string.append((flightno, str(searchid), stime, stoppage, "test", departcode, dest_code, departtime1, dest_time1, totaltime, str(maincabin),str(maintax), str(business),str(businesstax), str(first),str(firsttax), cabintype1, cabintype2, cabintype3, "american airlines", departdetails, arivedetails, planedetails, operatedbytext,economy_fare_class,business_fare_class,fisrt_fare_class,eco_fare_code,bus_fare_code,first_fare_code))
         
         if len(value_string)> 50 :
-            cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code,eco_fare_code,business_fare_code,first_fare_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
-            db.commit()
+            # local
+            # cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code,eco_fare_code,business_fare_code,first_fare_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
+            # db.commit()
+            print value_string
             value_string = []
             print len(value_string),"row inserted"
     if len(value_string) > 0:
-        cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code,eco_fare_code,business_fare_code,first_fare_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
-        db.commit()
+        # cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code,eco_fare_code,business_fare_code,first_fare_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
+        # db.commit()
         print len(value_string),"row inserted"
     
 
-def aa(source,dest,departdate,searchkey):
+def aa(source, dest, departdate, searchkey):
     currentdatetime = datetime.datetime.now()
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     searchid = searchkey
@@ -221,55 +221,53 @@ def aa(source,dest,departdate,searchkey):
     day = dt.strftime("X%d").replace('X0','X').replace('X','')
     year = dt.strftime("%Y")
     url = "https://www.aa.com/reservation/awardFlightSearchAccess.do"
-    display = Display(visible=0, size=(800, 600))
-    display.start()
+    # display = Display(visible=0, size=(800, 600))
+    # display.start()
     driver = webdriver.Chrome()
     #driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
     #driver.set_window_size(1120, 1080)
-    try:
-        driver.get(url)
-        #driver.implicitly_wait(5)
-        WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.ID, "awardFlightSearchForm.originAirport")))
-        origin  = driver.find_element_by_id("awardFlightSearchForm.originAirport")
-        origin.clear()
-        origin.send_keys(source) 
-        destination = driver.find_element_by_id("awardFlightSearchForm.destinationAirport")
-    
-        destination.send_keys(dest)
-    
-    
-        # oneway  = driver.find_element_by_id("flightSearchForm.tripType.oneWay")
-        oneway = driver.find_element_by_id("awardFlightSearchForm.tripType.oneWay")
-        #oneway.click()
-        driver.execute_script("arguments[0].click();", oneway);
-    
-        exactdate = driver.find_element_by_id("awardFlightSearchForm.datesFlexible.false")
-        #exactdate.click()
-        driver.execute_script("arguments[0].click();", exactdate);
-    
-    
-    
-        select_month = Select(driver.find_element_by_id("awardFlightSearchForm.flightParams.flightDateParams.travelMonth"))
-        select_month.select_by_visible_text(month)
-    
-        select_date = Select(driver.find_element_by_id("awardFlightSearchForm.flightParams.flightDateParams.travelDay"))
-        #select_date.select_by_visible_text(str(day))
-        for optn in select_date.options:
-            val = optn.get_attribute('value')
-            if val == day:
-                optn.click()
-                break
-    
-        submit = driver.find_element_by_id("awardFlightSearchForm.button.go")
-        submit.click()
-        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "selectedPanel")))
-    except:
-        print "No flights found on american airlines"
-        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "american airlines", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
-        db.commit()
-        display.stop()
-        driver.quit()
-        exit()
+    # try:
+    driver.get(url)
+    #driver.implicitly_wait(5)
+    WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.ID, "awardFlightSearchForm.originAirport")))
+    origin  = driver.find_element_by_id("awardFlightSearchForm.originAirport")
+    origin.clear()
+    origin.send_keys(source) 
+    destination = driver.find_element_by_id("awardFlightSearchForm.destinationAirport")
+    destination.send_keys(dest)
+
+    # oneway  = driver.find_element_by_id("flightSearchForm.tripType.oneWay")
+    oneway = driver.find_element_by_id("awardFlightSearchForm.tripType.oneWay")
+    #oneway.click()
+    driver.execute_script("arguments[0].click();", oneway);
+
+    exactdate = driver.find_element_by_id("awardFlightSearchForm.datesFlexible.false")
+    #exactdate.click()
+    driver.execute_script("arguments[0].click();", exactdate);
+
+    select_month = Select(driver.find_element_by_id("awardFlightSearchForm.flightParams.flightDateParams.travelMonth"))
+    select_month.select_by_visible_text(month)
+
+    select_date = Select(driver.find_element_by_id("awardFlightSearchForm.flightParams.flightDateParams.travelDay"))
+    #select_date.select_by_visible_text(str(day))
+    for optn in select_date.options:
+        val = optn.get_attribute('value')
+        if val == day:
+            optn.click()
+            break
+
+    submit = driver.find_element_by_id("awardFlightSearchForm.button.go")
+    submit.click()
+    WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "selectedPanel")))
+    # except:
+    #     print "No flights found on american airlines"
+        # local
+        # cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "american airlines", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
+        # db.commit()
+        # display.stop()
+        # driver.quit()
+        # exit()
+
     time.sleep(1)
     html_page = driver.page_source
     pagecontent = BeautifulSoup(html_page,"lxml")
@@ -319,16 +317,17 @@ def aa(source,dest,departdate,searchkey):
                         #print "++++++++++++++++++"+link_text+"+++++++++++++++++++++++++++++++++++"
                     page1_Obj = driver.find_element_by_link_text("Page 1")
                     page1_Obj.click()
-    #else:                
     except:
         print "process end"
-    finally:
-        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "american airlines", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
-        db.commit()
+    #     local
+    # finally:
+        # cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "american airlines", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
+        # db.commit()
     display.stop()            
     driver.quit()
     
         
 if __name__=='__main__':
-    aa(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
-        
+    # aa(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
+    aa('PEK', 'LAX', '10/19/2016', 12345)        
+
