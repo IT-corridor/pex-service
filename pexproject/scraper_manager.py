@@ -11,9 +11,9 @@ for proc in psutil.process_iter():
         # ppid, cwd, username
         pinfo = proc.as_dict(attrs=['pid', 'ppid', 'name', 'create_time', 'username', 'cwd'])
         # elapsed time in minutes
-        pinfo['create_time'] = int((current_time - pinfo['create_time']) / 60 )
+        pinfo['create_time'] = int((current_time - pinfo['create_time']))
 
-        if pinfo['username'] == 'www-data' and pinfo['create_time'] > 3 and pinfo['name'] in names:
+        if pinfo['username'] == 'www-data' and pinfo['create_time'] > 150 and pinfo['name'] in names:
             print pinfo['pid'], pinfo['name']
             proc.kill()
 
