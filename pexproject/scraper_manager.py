@@ -1,7 +1,7 @@
 import psutil
 import time
 
-names = ['chrome', 'nacl_helper', 'Xvfb', 'chromedriver', 'cat', 'phantomjs']
+names = ['chrome', 'nacl_helper', 'Xvfb', 'chromedriver', 'cat', 'phantomjs', 'python']
 
 for proc in psutil.process_iter():
     # current time in seconds
