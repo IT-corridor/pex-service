@@ -1,6 +1,7 @@
 import psutil
 import time
 
+names = ['chrome', 'nacl_helper', 'Xvfb', 'chromedriver', 'cat', 'phantomjs']
 
 for proc in psutil.process_iter():
     # current time in seconds
@@ -8,12 +9,15 @@ for proc in psutil.process_iter():
 
     try:
         # ppid, cwd, username
-        pinfo = proc.as_dict(attrs=['pid', 'name', 'create_time', 'username', 'cwd'])
+        pinfo = proc.as_dict(attrs=['pid', 'ppid', 'name', 'create_time', 'username', 'cwd'])
+        # elapsed time in minutes
+        pinfo['create_time'] = int((current_time - pinfo['create_time']) / 60 )
+
+        if pinfo['username'] == 'www-data' and pinfo['create_time'] > 7 and pinfo['name'] in names:
+            print pinfo['pid'], pinfo['name']
+            proc.kill()
+
     except psutil.NoSuchProcess:
         pass
-    else:
-        # elapsed time in
-        pinfo['create_time'] = int((current_time - pinfo['create_time']) / 60 )
-        print(pinfo)
 
 
