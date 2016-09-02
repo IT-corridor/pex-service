@@ -13,7 +13,7 @@ for proc in psutil.process_iter():
         # elapsed time in minutes
         pinfo['create_time'] = int((current_time - pinfo['create_time']) / 60 )
 
-        if pinfo['username'] == 'www-data' and pinfo['create_time'] > 7 and pinfo['name'] in names:
+        if pinfo['username'] == 'www-data' and pinfo['create_time'] > 5 and pinfo['name'] in names:
             print pinfo['pid'], pinfo['name']
             proc.kill()
 
