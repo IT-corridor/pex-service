@@ -1,23 +1,26 @@
 import psutil
 import time
 
-names = ['chrome', 'nacl_helper', 'Xvfb', 'chromedriver', 'cat', 'phantomjs', 'python']
+names = ['Xvfb', 'chromedriver']
 
 for proc in psutil.process_iter():
     # current time in seconds
     current_time = time.time()
 
     try:
-        # ppid, cwd, username
         pinfo = proc.as_dict(attrs=['pid', 'ppid', 'name', 'create_time', 'username', 'cwd'])
-        # elapsed time in minutes
-        pinfo['create_time'] = int((current_time - pinfo['create_time']))
 
-        if pinfo['username'] == 'www-data' and pinfo['create_time'] > 150 and pinfo['name'] in names:
-            print pinfo['pid'], pinfo['name']
-            proc.kill()
+        if pinfo['username'] == 'www-data' and pinfo['name'] in names:
+            # elapsed time in minutes
+            pinfo['create_time'] = int((current_time - pinfo['create_time']))
+            # if orphan process
+            if pinfo['ppid'] == 1:
+                kill_children(proc)
 
     except psutil.NoSuchProcess:
         pass
 
+def kill_children(proc):
+    for sub_proc in proc.children(True):
+        sub_proc.kill()
 
