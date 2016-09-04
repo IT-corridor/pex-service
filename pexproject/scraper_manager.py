@@ -18,10 +18,14 @@ for proc in psutil.process_iter():
 
         # if pinfo['username'] == 'www-data' and pinfo['name'] in names:
         if pinfo['name'] in names:
-            # elapsed time in minutes
-            pinfo['create_time'] = int((current_time - pinfo['create_time']))
             # if orphan process
             if pinfo['ppid'] == 1:
+                kill_children(proc)
+        # for long-running processes
+        elif pinfo['name'] == 'python' and pinfo['username'] == 'www-data':
+            # elapsed time in seconds
+            duration = int((current_time - pinfo['create_time']))
+            if duration > 300:
                 kill_children(proc)
 
     except psutil.NoSuchProcess:
