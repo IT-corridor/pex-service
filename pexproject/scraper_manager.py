@@ -1,9 +1,12 @@
 import psutil
 import time
 
+
 def kill_children(proc):
     for sub_proc in proc.children(True):
         sub_proc.kill()
+    proc.kill()
+
 
 for proc in psutil.process_iter():
     names = ['Xvfb', 'chromedriver']
