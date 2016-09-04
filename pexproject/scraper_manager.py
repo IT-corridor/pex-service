@@ -1,9 +1,12 @@
 import psutil
 import time
 
-names = ['Xvfb', 'chromedriver']
+def kill_children(proc):
+    for sub_proc in proc.children(True):
+        sub_proc.kill()
 
 for proc in psutil.process_iter():
+    names = ['Xvfb', 'chromedriver']
     # current time in seconds
     current_time = time.time()
 
@@ -19,8 +22,4 @@ for proc in psutil.process_iter():
 
     except psutil.NoSuchProcess:
         pass
-
-def kill_children(proc):
-    for sub_proc in proc.children(True):
-        sub_proc.kill()
 
