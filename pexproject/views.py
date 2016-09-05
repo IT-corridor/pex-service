@@ -1989,7 +1989,7 @@ def _search_hotel(place, checkin, checkout, filters):
     price_low = max(tmp, price_lowest)
     tmp = float(filters['price_high'] or price_highest)
     price_high = min(tmp, price_highest)
-    tmp = float(filters['award_low'] or award_lowest)
+    tmp = float(filters['award_low'] or award_lowest or 0)
     award_low = max(tmp, award_lowest)
     tmp = float(filters['award_high'] or award_highest)
     award_high = min(tmp, award_highest)
