@@ -8,6 +8,9 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^$', index, name='index'),
+    url(r'^index', index, name='index'),
+    url(r'^flights', index, name='flights'),
+
     url(r'', include('social_auth.urls')),
 
     url(r'^customer/$', customer, name='customer'),
@@ -32,7 +35,6 @@ urlpatterns = [
     url(r'^staticPage', staticPage, name='staticPage'),
     url(r'^contactUs', contactUs, name='contactUs'),
     url(r'^logout', logout, name='logout'),
-    url(r'^flights', flights, name='flights'),
 
     url(r'^Admin/$', Admin, name='Admin'),
     url(r'^Admin/login/$', admin_login, name='admin_login'),
@@ -90,7 +92,6 @@ urlpatterns = [
     url(r'^api/hotels/$', api_search_hotel),
     url(r'^api/flights/$', api_search_flight),
     
-    url(r'^index', index, name='index'),
     url(r'^useralert',useralert,name='useralert'),
     url(r'^flightAlert',flightAlert,name='flightAlert'),
     #url(r'^searchLoading',searchLoading,name='searchLoading'),
