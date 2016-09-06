@@ -9,11 +9,8 @@ from django.views.generic import TemplateView
 
 
 urlpatterns = [
-    url(r'^$', index, name='index'),
-    url(r'^index', index, name='index'),
-    url(r'^flights', index, name='flights'),
-    url(r'^new_index$', TemplateView.as_view(template_name='flightsearch/home.html'),
-            name='home'),
+    url(r'^$', TemplateView.as_view(template_name='flightsearch/home.html'), name='index'),
+    url(r'^flights', TemplateView.as_view(template_name='flightsearch/home.html'), name='flights'),
     url(r'^destination_tiles$', destination_tiles, name='destination_tiles'),
     url(r'', include('social_auth.urls')),
 
