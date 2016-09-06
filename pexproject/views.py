@@ -188,18 +188,23 @@ def index(request):
 
 @csrf_exempt
 def destination_tiles(request):
-    _searches = Searchkey.objects.order_by('-searchid')[:8]
+    _searches = Searchkey.objects.order_by('-searchid')[:24]
     searches = []
     for search in _searches:
         _search = { 'final_dest': search.destination_city, 'searchkeyid': search.searchid, 'image_path': None }
         _tmp = CityImages.objects.filter(city_name=search.destination_city)
         if _tmp:
             _search['image_path'] = _tmp[0].image_path.url
-        _tmp = Flightdata.objects.filter(~Q(origin='flag'), ~Q(maincabin=0), Q(searchkeyid=search.searchid) ).order_by('maincabin')[0]
+        _tmp = Flightdata.objects.filter(~Q(origin='flag'), ~Q(maincabin=0), Q(searchkeyid=search.searchid) ).order_by('maincabin')
+        if not _tmp:
+            continue
+        _tmp = _tmp[0]
         _search['maintax'] = _tmp.maintax
         _search['maincabin'] = _tmp.maincabin
         searches.append(_search)
-
+        if len(searches) == 8:
+            break
+    print searches, '@@@@@@@'
     return render(request, 'flightsearch/destination_tiles.html', { 'searchObj': searches })
 
 def staticPage(request):
