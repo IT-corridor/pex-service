@@ -5,12 +5,16 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.static import static
 from django.conf.urls import handler404
 from django.contrib import admin
+from django.views.generic import TemplateView
+
 
 urlpatterns = [
     url(r'^$', index, name='index'),
     url(r'^index', index, name='index'),
     url(r'^flights', index, name='flights'),
-
+    url(r'^new_index$', TemplateView.as_view(template_name='flightsearch/home.html'),
+            name='home'),
+    url(r'^destination_tiles$', destination_tiles, name='destination_tiles'),
     url(r'', include('social_auth.urls')),
 
     url(r'^customer/$', customer, name='customer'),

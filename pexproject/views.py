@@ -115,8 +115,6 @@ def get_countryname(request):
 def index(request):
     context = {}
     user = User()
-    image = ''
-    image = GoogleAd.objects.filter(ad_code="index")
 
     ''' Fetch recent results'''
     searches = []
@@ -186,7 +184,81 @@ def index(request):
 	    subscriber = Mailchimp(customfunction.mailchimp_api_key)
 	    subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':username}, merge_vars={'FNAME':fname,'LNAME':lname})
        	   
-    return  render_to_response('flightsearch/index.html',{'image':image,'searchObj':searches,'title':"Search Flights on PEX+"}, context_instance=RequestContext(request))
+    return  render_to_response('flightsearch/index.html',{'image':'','searchObj':searches,'title':"Search Flights on PEX+"}, context_instance=RequestContext(request))
+
+def destination_tiles(request):
+    context = {}
+    user = User()
+
+    ''' Fetch recent results'''
+    searches = []
+    recordFromActiveTable = 0
+    img_cityName = []
+    
+    recent_searches = Searchkey.objects.raw("select ps.destination, ps.searchid,ps.destination,ps.destination_city as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from pexproject_flightdata as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from pexproject_flightdata as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin order by pf1.scrapetime desc)  as pfs1 on pfs1.searchkeyid = ps.searchid group by destination_city order by ps.scrapetime desc limit 8")
+    recent_searches1 = list(recent_searches)
+    for s in recent_searches1:
+        if s.final_dest:
+            img_cityName.append(s.final_dest)
+    img_cityName2 = "','".join(img_cityName)
+    recordFromActiveTable = len(recent_searches1)
+    dataFromAcradeTable = ''
+    
+    if recordFromActiveTable < 8:
+        nextLimit = 8 - recordFromActiveTable 
+        dataFromAcradeTable1 = Searchkey.objects.raw("select ps.destination, ps.searchid,ps.destination,ps.destination_city as final_dest,pfs1.maincabin as maincabin,pfs1.maintax from pexproject_searchkey as ps inner join (select pf1.* from arcade_flight_data as pf1 inner join (select  (min(if(pf.maincabin > 0 ,pf.maincabin,NULL))) as maincabin, searchkeyid from arcade_flight_data as pf  where pf.origin <> 'flag' and pf.maincabin >0  group by pf.searchkeyid) pfs on pf1.searchkeyid = pfs.searchkeyid and pf1.maincabin = pfs.maincabin order by pf1.scrapetime desc)  as pfs1 on pfs1.searchkeyid = ps.searchid where ps.destination_city not in ('"+img_cityName2+"') group by destination order by ps.scrapetime desc limit "+str(nextLimit))
+        dataFromAcradeTable = list(dataFromAcradeTable1)
+
+    
+    if dataFromAcradeTable:
+        for city in dataFromAcradeTable:
+            img_cityName.append(city.final_dest)
+         
+    img_cityName1 = "','".join(img_cityName)
+    cityobj = CityImages.objects.raw("select city_image_id,image_path,city_name from pexproject_cityimages where city_image_id IN( select max(city_image_id) from pexproject_cityimages where city_name in  ('"+img_cityName1+"') and status= '1' group by city_name ) ")
+    cityobj1 = list(cityobj)
+    for s in recent_searches1:
+        img_path =''
+        for data in cityobj1:
+            if s.final_dest == data.city_name:
+               img_path = data.image_path 
+               break
+        searches.append({'final_dest':s.final_dest,'maintax':s.maintax,'searchkeyid':s.searchid,'maincabin':s.maincabin,'image_path':img_path})     
+    for rcd in dataFromAcradeTable:
+        img_path =''
+        for data in cityobj1:
+            if rcd.final_dest == data.city_name:
+               img_path = data.image_path 
+               break
+        searches.append({'final_dest':rcd.final_dest,'maintax':rcd.maintax,'searchkeyid':rcd.searchid,'maincabin':rcd.maincabin,'image_path':img_path})
+    
+    if request.is_ajax() and 'pexdeals' in request.REQUEST:
+        request.session['pexdeal'] = request.REQUEST['pexdeals']
+        mimetype = 'application/json'
+        data = "success"
+        json.dumps(data)
+        return HttpResponse(data, mimetype)
+    if request.user.username:
+        username = request.user.username
+        if request.user.user_id:
+            request.session['userid']= request.user.user_id
+        user1 = User.objects.get(username=username)
+        fname=''
+        lname=''
+        if user1.email:
+            request.session['username'] =user1.email
+        if user1.first_name:
+            request.session['first_name'] =user1.first_name
+            fname = user1.first_name
+        if user1.last_name:
+            lname = user1.last_name
+        request.session['password'] = user1.password        
+    if 'pexdeal' in request.session:
+    
+        subscriber = Mailchimp(customfunction.mailchimp_api_key)
+        subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':username}, merge_vars={'FNAME':fname,'LNAME':lname})
+           
+    return  render_to_response('flightsearch/destination_tiles.html',{'image':'','searchObj':searches}, context_instance=RequestContext(request))
 
 def staticPage(request):
     context = {}
@@ -1766,7 +1838,6 @@ def multicity(request):
     
     return render_to_response('flightsearch/multicity.html', context_instance=RequestContext(request)) 
         
-    
 # hotels views  
 
 def hotels(request):
