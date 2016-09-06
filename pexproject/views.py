@@ -259,6 +259,7 @@ def destination_tiles(request):
         subscriber = Mailchimp(customfunction.mailchimp_api_key)
         subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':username}, merge_vars={'FNAME':fname,'LNAME':lname})
            
+    print searches, '@@@@@@@@@'
     return  render_to_response('flightsearch/destination_tiles.html',{'image':'','searchObj':searches}, context_instance=RequestContext(request))
 
 def staticPage(request):
