@@ -114,11 +114,18 @@ def get_countryname(request):
 
 @csrf_exempt
 def destination_tiles(request):
-    _searches = Searchkey.objects.order_by('-searchid')[:24]
+    _searches = Searchkey.objects.order_by('-searchid')[:40]
     searches = []
+    cities = []
     for search in _searches:
+        # avoid duplicate cities
+        if search.destination_city in cities:
+            continue
+        cities.append(search.destination_city)
+        
         _search = { 'final_dest': search.destination_city, 'searchkeyid': search.searchid, 'image_path': None }
         _tmp = CityImages.objects.filter(city_name=search.destination_city)
+
         if _tmp:
             _search['image_path'] = _tmp[0].image_path.url
         _tmp = Flightdata.objects.filter(~Q(origin='flag'), ~Q(maincabin=0), Q(searchkeyid=search.searchid) ).order_by('maincabin')
