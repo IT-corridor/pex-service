@@ -186,6 +186,7 @@ def index(request):
        	   
     return  render_to_response('flightsearch/index.html',{'image':'','searchObj':searches,'title':"Search Flights on PEX+"}, context_instance=RequestContext(request))
 
+@csrf_exempt
 def destination_tiles(request):
     context = {}
     user = User()
