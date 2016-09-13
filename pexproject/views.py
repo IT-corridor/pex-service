@@ -1726,8 +1726,6 @@ def multicity(request):
 # hotels views  
 
 def hotels(request):
-    print get_client_ip(request), '###### - hotels'
-    print '@@@@@@', request.COOKIES, '@@@@@@'
     searches = Search.objects.all().order_by('-frequency')[:8]
     searches = [[item.keyword, item.image, float(item.lowest_price), int(float(item.lowest_points))/1000, item.keyword.split('-')[0]] for item in searches]
 
@@ -2022,6 +2020,9 @@ def _search_hotel(place, checkin, checkout, filters):
     return ['', r_db_hotels, price_matrix, filters]
 
 def search_hotel(request):
+    print get_client_ip(request), '###### - search_hotel'
+    print '@@@@@@', request.COOKIES, '@@@@@@'
+    
     if request.method == 'POST':
         form = HotelSearchForm(request.POST)
         if not form.is_valid():
