@@ -2022,7 +2022,10 @@ def _search_hotel(place, checkin, checkout, filters):
 def search_hotel(request):
     print get_client_ip(request), '###### - search_hotel'
     print '@@@@@@', request.COOKIES, '@@@@@@'
-    
+    print request.user, '$$$$$$'
+    if request.user:
+        print request.user.level, '@#@#@#@#'
+
     if request.method == 'POST':
         form = HotelSearchForm(request.POST)
         if not form.is_valid():
