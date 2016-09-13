@@ -603,6 +603,10 @@ def contactUs(request):
 def search(request):
     print get_client_ip(request), '###### - search'
     print '@@@@@@', request.COOKIES, '@@@@@@'
+    print request.user, '$$$$$$'
+    if request.user:
+        print request.user.level, '@#@#@#@#'
+    
     if request.is_ajax():
         try:
             returndate = request.POST['returndate']
@@ -1044,9 +1048,6 @@ def getFlexResult(request):
         
 
 def getsearchresult(request):
-    print get_client_ip(request), '###### - getsearchresult'
-    print '@@@@@@', request.COOKIES, '@@@@@@'
-
     context = {}
     cabin = []
     taxes = ''
