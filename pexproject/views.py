@@ -70,6 +70,7 @@ from pexproject.templatetags.customfilter import floatadd, assign
 
 logger = logging.getLogger(__name__)
 
+
 def get_cityname(request):
     if request.is_ajax():
         q = request.GET.get('term', '')
@@ -92,6 +93,7 @@ def get_cityname(request):
     mimetype = 'application/json'
     return HttpResponse(data, mimetype)
 
+
 def get_countryname(request):
     if request.is_ajax():
         q = request.GET.get('term', '')
@@ -111,6 +113,7 @@ def get_countryname(request):
         data = 'fail'
     mimetype = 'application/json'
     return HttpResponse(data, mimetype)
+
 
 @csrf_exempt
 def destination_tiles(request):
@@ -140,6 +143,7 @@ def destination_tiles(request):
 
     return render(request, 'flightsearch/destination_tiles.html', { 'searchObj': searches })
 
+
 def staticPage(request):
     context = {}
     page = ''
@@ -161,6 +165,7 @@ def staticPage(request):
             return  render_to_response('flightsearch/'+page+'.html',{'action':action}, context_instance=RequestContext(request))
         return  render_to_response('flightsearch/Help.html',{'action':action}, context_instance=RequestContext(request))
     return  render_to_response('flightsearch/About.html',{'action':action}, context_instance=RequestContext(request))
+
 
 def blog(request, title=None):
     curr_path = request.get_full_path()
@@ -192,6 +197,7 @@ def blog(request, title=None):
             bloglist.append({"blog_title":content.blog_title,'img_link':img_link,'postedon':content.blog_created_time,'featured_image':content.blog_image_path,'blog_url':content.blog_url,'blogid':content.blog_id})
       
     return  render_to_response('flightsearch/Blog.html',{"blog":bloglist,"top_banner":top_banner}, context_instance=RequestContext(request))
+
 
 def signup(request):
     context = {}
@@ -248,6 +254,7 @@ def signup(request):
         return HttpResponseRedirect(reverse('index'))
     else:
         return HttpResponseRedirect(reverse('index'))
+
 
 def myRewardPoint(request):
     cursor = connection.cursor()
@@ -316,6 +323,7 @@ def myRewardPoint(request):
         datasource.append(row[3])
     return render_to_response('flightsearch/myrewardpoint.html',{'updatemsg':updatemsg,'datasource':datasource,'points':points,'temp_message':temp_message}, context_instance=RequestContext(request))
 
+
 def manageAccount(request):
     cursor = connection.cursor()
     context = {}
@@ -361,6 +369,7 @@ def manageAccount(request):
     user1 = User.objects.get(pk =request.session['userid'])  
     return render_to_response('flightsearch/manage_account.html',{'message':msg,'user':user1,'issocial':issocial,'subscription':subscription}, context_instance=RequestContext(request))
 
+
 def mailchimp(request):
     context = {}
     if request.is_ajax():
@@ -382,6 +391,7 @@ def mailchimp(request):
         
         json.dumps(data)
         return HttpResponse(data, mimetype)
+
 
 def login(request):
     context = {}
@@ -427,6 +437,7 @@ def login(request):
     else:
         return HttpResponseRedirect(reverse('index'))
 
+
 def logout(request):
     context = {} 
     auth_logout(request)
@@ -435,6 +446,7 @@ def logout(request):
         del request.session['homeairpot']
     	del request.session['password']  
     return HttpResponseRedirect(reverse('index'))
+
 
 def forgotPassword(request):
     context = {}
@@ -544,6 +556,7 @@ def sendFeedBack(request):
             alert_msg = "There is some technical problem. Please try again"
     return render_to_response('flightsearch/feedback.html',{'alert_msg':alert_msg}, context_instance=RequestContext(request))
 
+
 def contactUs(request):
     context = {}
     first_name = ''
@@ -603,6 +616,7 @@ def contactUs(request):
             contact_msg = "There is some technical problem. Please try again"    
     return render_to_response('flightsearch/contact_us.html',{'contact_msg':contact_msg}, context_instance=RequestContext(request))  
         
+
 def search(request):
     _ret = check_limit(request, 'flight')
     if _ret: # not success (0)
@@ -905,6 +919,7 @@ def get_airport(request):
     mimetype = 'application/json'
     return HttpResponse(data, mimetype)
 
+
 def searchLoading(request):
     context = {}
     if request.method == "POST":
@@ -954,6 +969,7 @@ def searchLoading(request):
     else:
         return render_to_response('flightsearch/index.html')
 
+
 def checkData(request):
     if request.is_ajax():
         cabin = request.POST['cabin']
@@ -967,6 +983,7 @@ def checkData(request):
 
         return HttpResponse(data, mimetype)    
     
+
 def _check_data(recordkey, returnkey, cabin, allkey):
     '''
     check and return the current status for the search
@@ -1019,6 +1036,7 @@ def _check_data(recordkey, returnkey, cabin, allkey):
         iscomplete = "completed"
 
     return [data1, iscomplete]
+
 
 def getFlexResult(request):
     if request.is_ajax():
@@ -1673,6 +1691,7 @@ def share(request):
                     returncabin = returnrecord.cabintype3
         return render_to_response('flightsearch/share.html', {'record':record, 'cabin':cabin, 'traveler':traveler, 'returnrecord':returnrecord, "price":price, "tax":tax, 'returncabin':returncabin}, context_instance=RequestContext(request))
 
+
 def flightAlert(request):
     context = {}
     record = ''
@@ -1700,6 +1719,7 @@ def flightAlert(request):
     alertResult = list(alertResult1)
     #print alertResult        
     return render_to_response('flightsearch/flight_alert.html',{"alertResult":alertResult,"record":record},context_instance=RequestContext(request))
+
 
 def useralert(request):
     context = {}
@@ -1761,12 +1781,14 @@ def useralert(request):
         return HttpResponseRedirect('/flightAlert?status='+message)
     return HttpResponseRedirect(reverse('flightAlert'))
 
+
 def subscribe(request):
     if request.is_ajax:
         email = request.POST['emailid']
         subscriber = Mailchimp(customfunction.mailchimp_api_key)
         subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':email})
     exit()
+
 
 def multicity(request):
     context = {}
@@ -1785,6 +1807,7 @@ def hotels(request):
 
     return render(request, 'hotelsearch/hotel_home.html', {'form': HotelSearchForm(), 'searches': searches})
 
+
 def __debug(message):
     '''check the place'''
     try:
@@ -1799,6 +1822,7 @@ def __debug(message):
     except Exception, e:
         print '### DEBUG error %s' % str(e)
 
+
 def is_number(s):
     if not s:
         return True
@@ -1808,6 +1832,7 @@ def is_number(s):
         return False
     return True
 
+
 def is_date(date_text, date_format='%Y-%m-%d'):
     try:
         parsed_date = dttime.strptime(date_text, date_format).date()
@@ -1815,12 +1840,14 @@ def is_date(date_text, date_format='%Y-%m-%d'):
         return False
     return parsed_date >= dttime.today().date()
 
+
 def is_time(time_text, time_format='%H:%M:%S'):
     try:
         parsed_time = dttime.strptime(time_text, time_format)
     except Exception:
         return False
     return True
+
 
 def check_validity_hotel_params(request):
     '''
@@ -1861,6 +1888,7 @@ def check_validity_hotel_params(request):
     filters = {'price_low':price_low, 'price_high':price_high, 'award_low':award_low, 'award_high':award_high, 'radius': float(radius), 'chain': chain }
     return ['', place, checkin, checkout, filters]
 
+
 @csrf_exempt
 def api_search_hotel(request):
     if request.method == 'POST':        
@@ -1896,6 +1924,7 @@ def api_search_hotel(request):
 
         return HttpResponse(json.dumps(result), 'application/json')
         
+
 def _search_hotel(place, checkin, checkout, filters):
     '''
     search hotels upon arguments
@@ -2069,6 +2098,7 @@ def _search_hotel(place, checkin, checkout, filters):
 
     return ['', r_db_hotels, price_matrix, filters]
 
+
 def search_hotel(request):
     _ret = check_limit(request, 'hotel')
     if _ret: # not success (0)
@@ -2130,6 +2160,7 @@ def search_hotel(request):
             'amenities': HOTEL_AMENITIES,
             'filters': filters})    
 
+
 def get_value(str_value):
     '''
     get float value from the string (cash, point)
@@ -2139,6 +2170,7 @@ def get_value(str_value):
     '''
     str_value = re.sub(r"[^0-9.]", "", '0'+str_value)
     return float(str_value)
+
 
 def parse_place(place):
     '''
@@ -2150,11 +2182,13 @@ def parse_place(place):
         place = place.replace(item, replacement[item])
     return place
 
+
 FLIGHT_CLASS = {
     'economy': ['maincabin', 'maintax'],
     'business': ['firstclass', 'firsttax'],
     'firstclass': ['business', 'businesstax']
 }
+
 
 def check_validity_token(token, service, request):
     '''
@@ -2189,6 +2223,7 @@ def check_validity_token(token, service, request):
         return ['Your license is reached to its limit. Please extend it!']
     # check domain
     return ['']
+
 
 def check_validity_flight_params(request):
     '''
@@ -2261,6 +2296,7 @@ def check_validity_flight_params(request):
     flight_class = FLIGHT_CLASS[flight_class][0]
 
     return ['', return_date, str(origin), str(destination), depart_date, search_type, flight_class, mile_low, mile_high, airlines, depart_from, depart_to, arrival_from, arrival_to]
+
 
 @csrf_exempt
 def api_search_flight(request):
@@ -2396,11 +2432,13 @@ def city_image(request):
     city_images = CityImages.objects.all()
     return render(request, 'Admin/city_image.html', {'city_images': city_images})
 
+
 def city_image_delete(request, id):
     if request.is_ajax():        
         CityImages.objects.get(city_image_id=id).delete()
         return HttpResponse('success')
     
+
 @login_required(login_url='/Admin/login/')
 def city_image_update(request, id=None):
     city_image = CityImages()
@@ -2422,15 +2460,18 @@ def city_image_update(request, id=None):
 
     return render(request, 'Admin/city_image_form.html', {'form':form})
 
+
 @login_required(login_url='/Admin/login/')
 def hotel(request):
     hotels = Hotel.objects.all()
     return render(request, 'Admin/hotel.html', {'hotels': hotels})
 
+
 def hotel_delete(request, id):
     if request.is_ajax():        
         Hotel.objects.get(id=id).delete()
         return HttpResponse('success')
+
 
 @login_required(login_url='/Admin/login/')    
 def hotel_update(request, id=None):
@@ -2473,15 +2514,18 @@ def hotel_update(request, id=None):
         'old_amenities':amenities
     })
 
+
 @login_required(login_url='/Admin/login/')
 def email_template(request):
     email_templates = EmailTemplate.objects.all()
     return render(request, 'Admin/email_template.html', {'email_templates': email_templates})
 
+
 def email_template_delete(request, id):
     if request.is_ajax():        
         EmailTemplate.objects.get(template_id=id).delete()
         return HttpResponse('success')
+
 
 @login_required(login_url='/Admin/login/')    
 def email_template_update(request, id=None):
@@ -2503,20 +2547,24 @@ def email_template_update(request, id=None):
 
     return render(request, 'Admin/email_template_form.html', {'form':form})
 
+
 @login_required(login_url='/Admin/login/')
 def static_page(request):
     static_pages = Pages.objects.all()
     return render(request, 'Admin/static_page.html', {'static_pages': static_pages})
+
 
 @login_required(login_url='/Admin/login/')
 def google_ad(request):
     google_ads = GoogleAd.objects.all()
     return render(request, 'Admin/google_ad.html', {'google_ads': google_ads})
 
+
 def google_ad_delete(request, id):
     if request.is_ajax():        
         GoogleAd.objects.get(ad_id=id).delete()
         return HttpResponse('success')
+
 
 @login_required(login_url='/Admin/login/')    
 def google_ad_update(request, id=None):
@@ -2537,6 +2585,7 @@ def google_ad_update(request, id=None):
             return HttpResponseRedirect('/Admin/google_ad/')
 
     return render(request, 'Admin/google_ad_form.html', {'form':form})
+
 
 @login_required(login_url='/Admin/login/')
 def customer_list(request):
@@ -2592,15 +2641,18 @@ def customer_update(request, id=None):
 
     return render(request, 'Admin/customer_form.html', {'form':form})
 
+
 def customer_delete(request, id):
     if request.is_ajax():        
         User.objects.get(user_id=id).delete()
         return HttpResponse('success')
 
+
 @login_required(login_url='/Admin/login/')
 def blog_list(request):
     blog_list = Blogs.objects.all()
     return render(request, 'Admin/blog_list.html', {'blog_list': blog_list})
+
 
 @login_required(login_url='/Admin/login/')
 def blog_list_update(request, id=None):
@@ -2631,15 +2683,18 @@ def blog_list_update(request, id=None):
 
     return render(request, 'Admin/blog_list_form.html', {'form':form})
 
+
 def blog_list_delete(request, id):
     if request.is_ajax():        
         Blogs.objects.get(blog_id=id).delete()
         return HttpResponse('success')
 
+
 @login_required(login_url='/Admin/login/')
 def token(request):
     tokens = Token.objects.all()
     return render(request, 'Admin/token.html', {'tokens': tokens})
+
 
 @login_required(login_url='/Admin/login/')
 def token_update(request, id=None):
@@ -2672,10 +2727,12 @@ def token_update(request, id=None):
 
     return render(request, 'Admin/token_form.html', {'form':form, 'pre_owners':pre_owners})
 
+
 def token_delete(request, id):
     if request.is_ajax():        
         Token.objects.get(id=id).delete()
         return HttpResponse('success')
+
 
 def admin_login(request):
     if request.method == 'GET':
@@ -2691,10 +2748,12 @@ def admin_login(request):
 
     return HttpResponseRedirect('/Admin/')
 
+
 @login_required(login_url='/Admin/login/')
 def admin_logout(request):
     auth_logout(request)
     return HttpResponseRedirect('/Admin/')
+
 
 @login_required(login_url='/Admin/login/')
 def Admin(request):
@@ -2718,6 +2777,7 @@ def Admin(request):
         'stat_price_history_period': [[], []],
     })
 
+
 def get_search_history():
     result = {}
     for user in User.objects.all():
@@ -2733,6 +2793,7 @@ def get_search_history():
     result['Non-Member'] = searches
 
     return result
+
 
 def get_search_country():
     searches = Searchkey.objects.filter(user_ids__regex=r'[0-9]+')
@@ -2757,6 +2818,7 @@ def get_search_country():
     result.append(['Unknown', unknown])
     return result
 
+
 @csrf_exempt
 def airline_info(request):
     period = int(request.POST.get('period'))
@@ -2765,6 +2827,7 @@ def airline_info(request):
     _to = request.POST.get('_to')
     stat_num_search = _airline_info(request.user, period, fare_class, _from, _to)
     return HttpResponse(json.dumps(stat_num_search))
+
 
 def _airline_info(user, period, fare_class, _from, _to):
     stat_num_search = []
@@ -2796,16 +2859,19 @@ def _airline_info(user, period, fare_class, _from, _to):
 
     return stat_num_search
 
+
 @csrf_exempt
 def popular_search(request):    
     period = int(request.POST.get('period'))    
     pop_searches = _popular_search(period)
     return HttpResponse(json.dumps(pop_searches))
         
+
 def _popular_search(period):        
     start_time = datetime.datetime.now() - timedelta(days=period)
     pop_searches = Searchkey.objects.filter(scrapetime__gte=start_time).values('source', 'destination').annotate(dcount=Count('*')).order_by('-dcount')[:10]
     return [{'source':item['source'], 'destination':item['destination'], 'dcount':item['dcount']} for item in pop_searches]
+
 
 @csrf_exempt
 def price_history(request):    
@@ -2818,6 +2884,7 @@ def price_history(request):
 
     result = _price_history(request.user, _from, _to, airline, r_from, r_to, aggregation)
     return HttpResponse(json.dumps(result))
+
 
 @csrf_exempt
 def _price_history(user, _from, _to, airline, r_from, r_to, aggregation):    
@@ -2846,6 +2913,7 @@ def _price_history(user, _from, _to, airline, r_from, r_to, aggregation):
     result_tax = [{'label':'Economy', 'data':result_tax['economy']}, {'label':'Business', 'data':result_tax['business']}, {'label':'First', 'data':result_tax['firstclass']}]
     return [result,result_tax]
 
+
 @csrf_exempt
 def price_history_period(request):    
     _from = request.POST.get('_from')
@@ -2859,6 +2927,7 @@ def price_history_period(request):
     print _from, _to, airline, r_from, r_to, period, aggregation, '@@@@@@@'
     result = _price_history_period(request.user, _from, _to, airline, r_from, r_to, aggregation, period)
     return HttpResponse(json.dumps(result))
+
 
 def _price_history_period(user, _from, _to, airline, r_from, r_to, aggregation, period):    
     searchkeys = Searchkey.objects.filter(traveldate=_from, source=r_from, destination=r_to).order_by('scrapetime')
@@ -2898,6 +2967,7 @@ def _price_history_period(user, _from, _to, airline, r_from, r_to, aggregation, 
     result_tax = [{'label':'Economy', 'data':result_tax['economy']}, {'label':'Business', 'data':result_tax['business']}, {'label':'First', 'data':result_tax['firstclass']}]
     return [result,result_tax]
 
+
 @csrf_exempt
 def price_history_num(request):    
     _from = request.POST.get('_from')
@@ -2909,6 +2979,7 @@ def price_history_num(request):
 
     result = _price_history_num(request.user, _from, _to, airline, r_from, r_to, aggregation)
     return HttpResponse(json.dumps(result))
+
 
 def _price_history_num(user, _from, _to, airline, r_from, r_to, aggregation):    
     result = {'economy': [], 'business': [], 'firstclass':[]}
@@ -2956,6 +3027,7 @@ def _price_history_num(user, _from, _to, airline, r_from, r_to, aggregation):
 
     return [result, result_tax, ticks]
 
+
 @csrf_exempt
 def signup_activity(request):
     result = []
@@ -2967,6 +3039,7 @@ def signup_activity(request):
     except Exception, e:
         print str(e), '######'
     return HttpResponse(json.dumps(result))
+
 
 @login_required(login_url='/customer/login/')
 def customer(request):    
@@ -2982,10 +3055,12 @@ def customer(request):
         'user_search_history':user_search_history,
     })
 
+
 @login_required(login_url='/customer/login/')
 def customer_logout(request):
     auth_logout(request)
     return HttpResponseRedirect('/customer/')
+
 
 def customer_login(request):
     if request.method == 'GET':
@@ -3000,6 +3075,7 @@ def customer_login(request):
                 social_login(request, user)
 
     return HttpResponseRedirect('/customer/')
+
 
 def get_customer_search_history(user_id, period=3650, r_from=None, r_to=None, category=None):
     start_time = datetime.datetime.now() - timedelta(days=period)
@@ -3024,6 +3100,7 @@ def get_customer_search_history(user_id, period=3650, r_from=None, r_to=None, ca
         result.append(search)
 
     return result
+
 
 @csrf_exempt
 def user_search(request):
@@ -3087,6 +3164,7 @@ def get_qpx_prices(return_date, origin, destination, depart_date):
             route = route + '--'
         qpx_prices[route.encode('ascii', 'ignore')] = saleTotal
     return qpx_prices
+
 
 def get_qpx_price_key(planedetails):
     """
