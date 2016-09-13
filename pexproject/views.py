@@ -2074,7 +2074,7 @@ def search_hotel(request):
     if _ret: # not success (0)
         error_message = 'You reached hotel search limit!'
         if _ret == 2:
-            error_message += 'Please sign up and get more access!'
+            error_message += '  Please sign up and get more access!'
 
         form = HotelSearchForm()
         form.errors['Error: '] = error_message

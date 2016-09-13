@@ -330,15 +330,6 @@
 	</p>
 
 <script> 
-var price_low = {{filters.price_low}};
-var price_high = {{filters.price_high}};
-var award_low = {{filters.award_low}};
-var award_high = {{filters.award_high}};
-var price_lowest = {{filters.price_lowest}};
-var price_highest = {{filters.price_highest}};
-var award_lowest = {{filters.award_lowest}};
-var award_highest = {{filters.award_highest}};
-
 $(document).ready(function() {
     $( ".amenity-accordion" ).accordion({
       collapsible: true
@@ -411,5 +402,14 @@ $(document).ready(function() {
 
 	// $('#map').hide();
 });
+
+var price_low = {{filters.price_low}};
+var price_high = {{filters.price_high}};
+var award_low = {{filters.award_low}};
+var award_high = {{filters.award_high}};
+var price_lowest = {{filters.price_lowest}};
+var price_highest = {{filters.price_highest}};
+var award_lowest = {{filters.award_lowest}};
+var award_highest = {{filters.award_highest}};
 </script>           
 {% endblock %}      
