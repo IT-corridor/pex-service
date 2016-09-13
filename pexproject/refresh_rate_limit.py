@@ -4,5 +4,5 @@ import customfunction
 db = customfunction.dbconnection()
 
 cursor = db.cursor()
-cursor.execute("delete pexproject_accessratelimit;")
+cursor.execute("delete from pexproject_accessratelimit;")
 db.commit()
