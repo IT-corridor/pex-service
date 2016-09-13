@@ -606,7 +606,7 @@ def contactUs(request):
 def search(request):
     _ret = check_limit(request, 'flight')
     if _ret: # not success (0)
-        return HttpResponse(_ret, status_code=405)
+        return HttpResponse(_ret, status=405)
 
     if request.is_ajax():
         try:
