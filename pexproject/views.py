@@ -2078,13 +2078,14 @@ def search_hotel(request):
 
         form = HotelSearchForm()
         form.errors['Error: '] = error_message
+        filters = {'price_low':'', 'price_high':'', 'award_low':'', 'award_high':'', 'radius': 1000, 'chain': HOTEL_CHAINS.keys(), 'amenity': []}
         return render(request, 'hotelsearch/hotel_result.html', {
             'hotels': [], 
             'form': form, 
             'price_matrix': {}, 
             'chains': HOTEL_CHAINS,
             'amenities': HOTEL_AMENITIES,
-            'filters': {}})
+            'filters': filters})
 
     if request.method == 'POST':
         form = HotelSearchForm(request.POST)
