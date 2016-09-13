@@ -601,6 +601,8 @@ def contactUs(request):
     return render_to_response('flightsearch/contact_us.html',{'contact_msg':contact_msg}, context_instance=RequestContext(request))  
         
 def search(request):
+    print get_client_ip(request), '###### - search'
+    print '@@@@@@', request.COOKIES, '@@@@@@'
     if request.is_ajax():
         try:
             returndate = request.POST['returndate']
@@ -1042,6 +1044,9 @@ def getFlexResult(request):
         
 
 def getsearchresult(request):
+    print get_client_ip(request), '###### - getsearchresult'
+    print '@@@@@@', request.COOKIES, '@@@@@@'
+
     context = {}
     cabin = []
     taxes = ''
@@ -1721,7 +1726,7 @@ def multicity(request):
 # hotels views  
 
 def hotels(request):
-    print get_client_ip(request), '######'
+    print get_client_ip(request), '###### - hotels'
     print '@@@@@@', request.COOKIES, '@@@@@@'
     searches = Search.objects.all().order_by('-frequency')[:8]
     searches = [[item.keyword, item.image, float(item.lowest_price), int(float(item.lowest_points))/1000, item.keyword.split('-')[0]] for item in searches]
