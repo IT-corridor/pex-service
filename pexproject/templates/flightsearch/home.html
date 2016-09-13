@@ -667,10 +667,11 @@
                 //refreshIntervalId = setInterval(datacheck, 5000,searchid,returnid);
             },
             error: function(ret) {
+                console.log(ret);
                 if (ret == "1")
                     alert('You reached the flight search limit!');
                 else 
-                    alert('You reached the flight search limit! Please sign up and get more access!');
+                    alert('You reached the flight search limit!\nPlease sign up and get more access!');
                 return false;
             }
 
