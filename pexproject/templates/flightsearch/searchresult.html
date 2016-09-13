@@ -427,7 +427,7 @@
 
 									<div class="form-group flight-search-xswd xs-pl5">
 
-										<button id="submitid" class="form_val btn  btn-pexSearch xs-fw" tabindex="13">
+										<button id="changebtnid" class="form_val btn  btn-pexSearch xs-fw" tabindex="13">
 											Change
 										</button>
 									</div>
@@ -3150,7 +3150,7 @@ function getflexData(){
 				if(data[1] == 'key_expired')
 				{
 					clearInterval(refreshIntervalId);
-					$('submitid').click();
+					$('changebtnid').click();
 
 					setSearchData();
 				}
@@ -3210,11 +3210,7 @@ function getflexData(){
 	var cabintypeval = '';
 	var searchidval = '';
 	var returnidval = '';
-	var searchtype = '';
-	var multikey = '';
-	
-	$("#submitid").click(function(event) {
-		searchtype = "{{request.GET.searchtype}}";
+	$("#changebtnid").click(function(event) {
 		//event.preventDefault();
 		setSearchData();
 	});
@@ -3232,6 +3228,59 @@ function getflexData(){
 		cabintypeval = $('#cabintype option:selected').val();
 		searchData();
 	}
+
+	function searchData() {
+		$('#changebtnid').prop('disabled', true);
+		$("#content1").empty();
+		var searchtype = "{{request.GET.searchtype}}";
+
+		$.ajax({
+			type : "POST",
+			url : "/search/",
+			data : "returndate=" + encodeURI(returndateval)+"&searchtype="+encodeURI(searchtype)+ "&rndtripkey=" + encodeURI(rdtrip) + "&cabin=" + encodeURI(cabintypeval) + "&triptype=" + encodeURI(trip) + "&fromMain=" + encodeURI(sourceid) + "&toMain=" + encodeURI(destinationid) + "&deptdate=" + encodeURI(departdateval) + "&csrfmiddlewaretoken=" + encodeURI(CSRF_TOKEN),
+			success : function(data) {
+				searchtype = data['searchtype'];
+		        multikey = data['departkey']; //data[0];
+		        searchid1 = multikey.split(',');
+		        searchid = searchid1[0];
+		        var returnid='';
+		        
+		        if(data['returnkey'])
+		        {
+		        	returnid = data['returnkey'];
+		        }
+	    		getsearchresult(searchid,returnid,searchtype);
+				//getsearchresult(searchidval, returnidval);
+				//refreshIntervalId = setInterval(datacheck, 5000,searchid,returnid);
+			},
+            error: function(ret) {
+	            msg = 'You reached the flight search limit!'
+	            if (ret.responseText == "2")
+	                msg += '\nPlease sign up and get more access!';
+
+	            var r = confirm(msg);
+	            if (r == true) 
+	                $('#login-modal').modal();
+
+	            return false;
+            }			
+		});
+	}
+
+	function getsearchresult(searchidval, returnidval,searchtype) {
+		multicity = '';
+		if (multikey.indexOf(",") >= 0) {
+			multicity = "&multicity=" + encodeURI(multikey);
+		}
+		if (searchidval != '') {
+			$('#searchid').val(searchid);
+			var location = "getsearchresult?keyid=" + encodeURI(searchidval) + "&cabin=" + encodeURI(cabintypeval) + "&passenger=" + encodeURI($('#passenger').val()) + multicity;
+			if (returnidval != '') {
+				location = location + "&returnkey=" + encodeURI(returnidval);
+			}
+			location = location+"&searchtype="+encodeURI(searchtype);
+			window.location.href = location;
+		}
+	}
 		
 </script>
-<script src="{% static 'flightsearch/js/flight_search.js' %}"></script>
