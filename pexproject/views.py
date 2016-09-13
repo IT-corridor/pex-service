@@ -2078,8 +2078,23 @@ def search_hotel(request):
     print get_client_ip(request), '###### - search_hotel'
     print '@@@@@@', request.COOKIES, '@@@@@@'
     print request.session['userid'], request.session['level'], '$$$$$$'
-    # if request.user:
-    #     print request.user.level, '@#@#@#@#'
+
+
+    _ret = check_limit(request, 'hotel')
+    if _ret: # not success (0)
+        error_message = 'You reached search limit!'
+        if _ret == 2:
+            error_message += 'Please sign up and get more access!'
+            
+        form = HotelSearchForm()
+        form.errors['Error: '] = error_message
+        return render(request, 'hotelsearch/hotel_result.html', {
+            'hotels': [], 
+            'form': form, 
+            'price_matrix': {}, 
+            'chains': HOTEL_CHAINS,
+            'amenities': HOTEL_AMENITIES,
+            'filters': {}})
 
     if request.method == 'POST':
         form = HotelSearchForm(request.POST)
