@@ -411,6 +411,8 @@ def login(request):
                 if user.home_airport != '':
                     request.session['homeairpot'] = user.home_airport
                 request.session['userid'] = user.user_id
+                request.session['level'] = user.level
+
                 if currentpath:
                     return HttpResponseRedirect(currentpath)
                 return HttpResponseRedirect(reverse('index'))
