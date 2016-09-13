@@ -1721,6 +1721,8 @@ def multicity(request):
 # hotels views  
 
 def hotels(request):
+    print get_client_ip(request), '######'
+    print '@@@@@@', request.COOKIES, '@@@@@@'
     searches = Search.objects.all().order_by('-frequency')[:8]
     searches = [[item.keyword, item.image, float(item.lowest_price), int(float(item.lowest_points))/1000, item.keyword.split('-')[0]] for item in searches]
 
@@ -3029,3 +3031,12 @@ def get_qpx_price_key(planedetails):
         carrier = flight.split('|')[0].replace(' ', '')
         key_ = key_ + carrier+ '@'
     return key_ + '--'
+
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[-1].strip()
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
