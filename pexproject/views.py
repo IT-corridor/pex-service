@@ -2072,7 +2072,7 @@ def _search_hotel(place, checkin, checkout, filters):
 def search_hotel(request):
     _ret = check_limit(request, 'hotel')
     if _ret: # not success (0)
-        error_message = 'You reached search limit!'
+        error_message = 'You reached hotel search limit!'
         if _ret == 2:
             error_message += 'Please sign up and get more access!'
 
