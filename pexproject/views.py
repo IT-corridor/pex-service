@@ -228,6 +228,7 @@ def signup(request):
                 request.session['first_name'] = first_name
             if object.user_id:
                 request.session['userid'] = object.user_id
+                request.session['level'] = object.level
                 msg = "Thank you, You have been successfully registered."
                 emailbody=''
                 obj = EmailTemplate.objects.get(email_code='signup')
@@ -603,10 +604,10 @@ def contactUs(request):
 def search(request):
     print get_client_ip(request), '###### - search'
     print '@@@@@@', request.COOKIES, '@@@@@@'
-    print request.session, '$$$$$$'
+    print request.session['userid'], request.session['level'], '$$$$$$'
     # if request.user:
     #     print request.user.level, '@#@#@#@#'
-    
+
     if request.is_ajax():
         try:
             returndate = request.POST['returndate']
@@ -2023,7 +2024,7 @@ def _search_hotel(place, checkin, checkout, filters):
 def search_hotel(request):
     print get_client_ip(request), '###### - search_hotel'
     print '@@@@@@', request.COOKIES, '@@@@@@'
-    print request.session, '$$$$$$'
+    print request.session['userid'], request.session['level'], '$$$$$$'
     # if request.user:
     #     print request.user.level, '@#@#@#@#'
 
