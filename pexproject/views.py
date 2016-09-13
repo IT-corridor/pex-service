@@ -604,11 +604,6 @@ def contactUs(request):
     return render_to_response('flightsearch/contact_us.html',{'contact_msg':contact_msg}, context_instance=RequestContext(request))  
         
 def search(request):
-    print get_client_ip(request), '###### - search'
-    print '@@@@@@', request.COOKIES, '@@@@@@'
-    print request.session['userid'], request.session['level'], '$$$$$$'
-    # if 'userid' in request.session:
-    #     print request.user.level, '@#@#@#@#'
     _ret = check_limit(request, 'flight')
     if _ret: # not success (0)
         return HttpResponse(_ret, status_code=405)
@@ -2075,17 +2070,12 @@ def _search_hotel(place, checkin, checkout, filters):
     return ['', r_db_hotels, price_matrix, filters]
 
 def search_hotel(request):
-    print get_client_ip(request), '###### - search_hotel'
-    print '@@@@@@', request.COOKIES, '@@@@@@'
-    print request.session['userid'], request.session['level'], '$$$$$$'
-
-
     _ret = check_limit(request, 'hotel')
     if _ret: # not success (0)
         error_message = 'You reached search limit!'
         if _ret == 2:
             error_message += 'Please sign up and get more access!'
-            
+
         form = HotelSearchForm()
         form.errors['Error: '] = error_message
         return render(request, 'hotelsearch/hotel_result.html', {
