@@ -666,6 +666,13 @@
                 redirecttosearchpage(searchid, returnid, searchtype);
                 //refreshIntervalId = setInterval(datacheck, 5000,searchid,returnid);
             },
+            error: function(ret) {
+                if (ret == 1)
+                    alert('You reached your limit!');
+                else 
+                    alert('You reached your limit! Please sign up and get more access!');
+                return false;
+            }
 
         });
 

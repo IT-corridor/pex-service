@@ -607,8 +607,11 @@ def search(request):
     print get_client_ip(request), '###### - search'
     print '@@@@@@', request.COOKIES, '@@@@@@'
     print request.session['userid'], request.session['level'], '$$$$$$'
-    # if request.user:
+    # if 'userid' in request.session:
     #     print request.user.level, '@#@#@#@#'
+    _ret = check_limit(request, 'flight')
+    if _ret: # not success (0)
+        return HttpResponse(_ret, status_code=405)
 
     if request.is_ajax():
         try:
@@ -627,6 +630,54 @@ def search(request):
         except Exception, e:
             print str(e), '###########3'
         
+
+def check_limit(request, service):
+    """
+    check rate limit for searches on ui
+    return  0 if ok
+            1 if limited and signed up
+            2 if limited and not signed up
+    """
+    id = get_id(request)
+    print id, 'ID: ####'
+    arl = AccessRateLimit.objects.filter(id=id)
+    if arl:
+        arl = arl[0]
+        limit_request = getattr(arl, 'limit_search')
+        number_request = getattr(arl, 'run_%s_search' % service)
+
+        if limit_request == number_request:
+            return 1 if 'userid' in request.session else 2
+        else:            
+            number_request = number_request + 1
+            setattr(arl, 'run_%s_search' % service, number_request)
+            arl.save()
+    else:
+        limit = get_limit(request)
+        print limit, 'LIMIT: ####'
+        AccessRateLimit.objects.create(id=id, limit_search=limit)
+    return 0
+
+
+def get_id(request):
+    """
+    return id for AccessRateLimit model
+    userid if signed up
+    ip + cookie if not signed up
+    """
+    if 'userid' in request.session:
+        return request.session['userid']
+    else:
+        return get_client_ip(request) + '-' + request.COOKIES['_ga']
+
+
+def get_limit(request):
+    if 'userid' in request.session:
+        return 10 if not request.session['level'] else 100
+    else:
+        return 3
+
+
 def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
     ''' 
     trigger scrapers or return searchkey for cached search
