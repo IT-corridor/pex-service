@@ -2781,18 +2781,18 @@ def Admin(request):
 
 
 def get_search_history():
-    result = {}
+    result = []
     for user in User.objects.all().order_by('username'):
         searches = Searchkey.objects.filter(user_ids__contains=','+str(user.user_id)+',').order_by('-scrapetime')
         if not searches:
             continue
         searches = [(search.source+' -> '+search.destination, search.scrapetime.strftime('%Y-%m-%d %H:%M:%S')) for search in searches]
-        result[user.username] = searches
+        result.append([user.username, searches])
 
     # for Non-Members
     searches = Searchkey.objects.exclude(user_ids__regex=r'[0-9]+').order_by('-scrapetime')[:100]        
     searches = [(search.source+' -> '+search.destination, search.scrapetime.strftime('%Y-%m-%d %H:%M:%S')) for search in searches]
-    result['Non-Member'] = searches
+    result.append(['Non-Member', searches])
 
     return result
 

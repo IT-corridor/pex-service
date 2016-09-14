@@ -563,12 +563,12 @@
                 
                 <div class="card-body card-padding-sm">
                     <div class="panel-group" role="tablist" aria-multiselectable="true">
-                        {% for key, val in user_search_history.items %}
+                        {% for entry in user_search_history %}
                         <div class="panel panel-collapse">
                             <div class="panel-heading" role="tab" id="heading-{{forloop.counter}}">
                                 <h4 class="panel-title">
                                     <a  class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse-{{forloop.counter}}" aria-expanded="false" aria-controls="collapse-{{forloop.counter}}">
-                                        {{ key }}
+                                        {{ entry.0 }}
                                     </a>
                                 </h4>
                             </div>
@@ -583,7 +583,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody id='id_pop_search_table_body'>
-                                                {% for item in val %}
+                                                {% for item in entry.1 %}
                                                 <tr>
                                                     <td>{{ item.0 }}</td>
                                                     <td>{{ item.1 }}</td>
