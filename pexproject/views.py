@@ -2809,16 +2809,19 @@ def get_search_country():
                 else:
                     user_dict[user_id] = 1
 
-    result = []
-    unknown = 0
+    country_dict = {}
     for key, val in user_dict.items():
-        country = User.objects.get(user_id=key).country
-        if not country:
-            unknown = unknown + val
+        country = User.objects.get(user_id=key).country or 'Unknown'
+
+        country = country.strip()
+        country = 'USA' if country == 'United States' else country
+
+        if country in country_dict:
+            country_dict[country] += val
         else:
-            result.append([country, val])
-    result.append(['Unknown', unknown])
-    return result
+            country_dict[country] = val
+
+    return country_dict
 
 
 @csrf_exempt
