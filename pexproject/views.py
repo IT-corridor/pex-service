@@ -3036,7 +3036,7 @@ def signup_activity(request):
     try:
         _from = request.POST.get('_from')
         _to = request.POST.get('_to') 
-        users = User.objects.filter(date_joined__range=(_from, _to)).order_by('date_joined')
+        users = User.objects.filter(date_joined__range=(_from, _to)).order_by('-date_joined')
         result = [[user.username, user.date_joined.strftime('%Y-%m-%d %H:%M:%S')] for user in users]
     except Exception, e:
         print str(e), '######'
