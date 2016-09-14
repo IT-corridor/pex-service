@@ -492,12 +492,13 @@ class UserBackend(object):
         return User.objects.get(user_id=user_id)
 
 
-class AccessRateLimit(models.Model):
-    id = models.CharField(primary_key=True, max_length=100)
-    run_flight_search = models.IntegerField(default=1)
-    run_hotel_search = models.IntegerField(default=1)
+class AccessRateLimit(models.Model):    
+    cookie_id = models.CharField(primary_key=True, max_length=100)
+    user_id = models.IntegerField(default=-1)
+    run_flight_search = models.IntegerField(default=0)
+    run_hotel_search = models.IntegerField(default=0)
     limit_search = models.IntegerField()
 
     def __unicode__(self):
-        return self.id
+        return self.cookie_id
 

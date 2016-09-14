@@ -619,7 +619,7 @@ def contactUs(request):
 
 def search(request):
     _ret = check_limit(request, 'flight')
-    if _ret: # not success (0)
+    if _ret: # not success
         return HttpResponse(_ret, status=405)
 
     if request.is_ajax():
@@ -647,37 +647,41 @@ def check_limit(request, service):
             1 if limited and signed up
             2 if limited and not signed up
     """
-    id = get_id(request)
-    print id, 'ID: ####'
-    arl = AccessRateLimit.objects.filter(id=id)
+    cookie_id, user_id = get_ids(request)
+    # print id, 'ID: ####'
+    arl = AccessRateLimit.objects.filter(cookie_id=cookie_id)
     if arl:
         arl = arl[0]
-        limit_request = getattr(arl, 'limit_search')
-        number_request = getattr(arl, 'run_%s_search' % service)
+        if user_id < arl.user_id:           # sign in -> sign out
+            return 2
+        else:
+            if user_id > arl.user_id:       # sign in
+                arl.user_id = user_id
+                arl.limit_search = get_limit(request)
 
-        if limit_request == number_request:
-            return 1 if 'userid' in request.session else 2
-        else:            
-            number_request = number_request + 1
-            setattr(arl, 'run_%s_search' % service, number_request)
-            arl.save()
+            limit_request = arl.limit_search    # normal or sign in
+            number_request = getattr(arl, 'run_%s_search' % service)
+
+            if limit_request == number_request:
+                return 1 if 'userid' in request.session else 2
+            else:            
+                number_request = number_request + 1
+                setattr(arl, 'run_%s_search' % service, number_request)
+                arl.save()
     else:
         limit = get_limit(request)
-        print limit, 'LIMIT: ####'
-        AccessRateLimit.objects.create(id=id, limit_search=limit)
-    return 0
+        arl = AccessRateLimit(cookie_id=cookie_id, user_id=user_id, limit_search=limit)
+        setattr(arl, 'run_%s_search' % service, 1)
+        arl.save()
 
 
-def get_id(request):
+def get_ids(request):
     """
-    return id for AccessRateLimit model
-    userid if signed up
-    ip + cookie if not signed up
+    return id from ip and cookie and user_id if signed in
     """
-    if 'userid' in request.session:
-        return request.session['userid']
-    else:
-        return get_client_ip(request) + '-' + request.COOKIES['_ga']
+    user_id = int(request.session['userid']) if 'userid' in request.session else -1
+    cookie_id = get_client_ip(request) + '-' + request.COOKIES['_ga']
+    return cookie_id, user_id
 
 
 def get_limit(request):
@@ -2101,7 +2105,7 @@ def _search_hotel(place, checkin, checkout, filters):
 
 def search_hotel(request):
     _ret = check_limit(request, 'hotel')
-    if _ret: # not success (0)
+    if _ret: # not success
         error_message = 'You reached hotel search limit!'
         if _ret == 2:
             error_message += '   Please sign up and get more access!'
