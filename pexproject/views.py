@@ -117,7 +117,7 @@ def get_countryname(request):
 
 @csrf_exempt
 def destination_tiles(request):
-    _searches = Searchkey.objects.order_by('-searchid')[:40]
+    _searches = Searchkey.objects.order_by('-searchid')
     searches = []
     cities = []
     for search in _searches:
