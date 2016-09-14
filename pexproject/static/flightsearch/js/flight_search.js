@@ -22,13 +22,15 @@ function searchData() {
             //refreshIntervalId = setInterval(datacheck, 5000,searchid,returnid);
         },
         error: function (ret) {
-            msg = 'You reached the flight search limit!'
-            if (ret.responseText == "2")
+            msg = 'You reached the daily flight search limit!';
+            if (ret.responseText == "2") {                  
                 msg += '\nPlease sign up and get more access!';
-
-            var r = confirm(msg);
-            if (r == true) 
-                $('#login-modal').modal();
+                var r = confirm(msg);
+                if (r == true) 
+                    $('#login-modal').modal();
+            } else {
+                alert(msg);
+            }
 
             return false;
         }
