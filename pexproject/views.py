@@ -2782,7 +2782,7 @@ def Admin(request):
 
 def get_search_history():
     result = {}
-    for user in User.objects.all():
+    for user in User.objects.all().order_by('username'):
         searches = Searchkey.objects.filter(user_ids__contains=','+str(user.user_id)+',').order_by('-scrapetime')
         if not searches:
             continue
