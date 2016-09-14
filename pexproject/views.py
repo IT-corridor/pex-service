@@ -2340,17 +2340,15 @@ def api_search_flight(request):
         # get valid parameters
         return_date, origin, destination, depart_date, search_type, flight_class, mile_low, mile_high, airlines, depart_from, depart_to, arrival_from, arrival_to = _params[1], _params[2], _params[3], _params[4], _params[5], _params[6], _params[7], _params[8], _params[9], _params[10], _params[11], _params[12], _params[13]
 
-        keys = _search(return_date, origin, destination, depart_date, search_type, flight_class, request)
-        print return_date, origin, destination, depart_date, '@@@@@@@2'
+        keys = _search(return_date, origin, destination, depart_date, search_type, flight_class, request)        
 
         qpx_prices = {}
-        while(1):
-            # get qpx price
-            if delay_threshold == 30:
-                origin_ = Airports.objects.get(airport_id=origin).code
-                destination_ = Airports.objects.get(airport_id=destination).code
-                qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date)
+        # get qpx price
+        origin_ = Airports.objects.get(airport_id=origin).code
+        destination_ = Airports.objects.get(airport_id=destination).code
+        qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date)
 
+        while(1):
             delay_threshold = delay_threshold - 1
             time.sleep(1)
             # check the status of the scraping
@@ -3152,21 +3150,25 @@ def get_qpx_prices(return_date, origin, destination, depart_date):
       }
     }
     body['request']['slice'] = slice_
-    response = service.trips().search(body=body).execute()
-    # print json.dumps(response, sort_keys=True, indent=4)
 
     qpx_prices = {}
 
-    for flight in response['trips']['tripOption']:
-        saleTotal = flight['saleTotal']
-        route = ''
-        for slice_ in flight['slice']:
-            for segment in slice_['segment']:
-                carrier = segment['flight']['carrier']
-                number = segment['flight']['number']
-                route = route + carrier + number + '@'
-            route = route + '--'
-        qpx_prices[route.encode('ascii', 'ignore')] = saleTotal
+    try:
+        response = service.trips().search(body=body).execute()
+
+        for flight in response['trips']['tripOption']:
+            saleTotal = flight['saleTotal']
+            route = ''
+            for slice_ in flight['slice']:
+                for segment in slice_['segment']:
+                    carrier = segment['flight']['carrier']
+                    number = segment['flight']['number']
+                    route = route + carrier + number + '@'
+                route = route + '--'
+            qpx_prices[route] = saleTotal
+    except Exception, e:
+        qpx_prices['error'] = 'Daily limit is reached!'
+
     return qpx_prices
 
 
