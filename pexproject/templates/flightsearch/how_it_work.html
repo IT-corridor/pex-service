@@ -428,7 +428,7 @@ Fusce at metus velit. Nullam condimentum tellus vel orci ultrices, et suscipit n
 	        	$('.ui-autocomplete').off('menufocus hover mouseover');
     		},
 		autoFocus: true,
-    	source: "get_airport/",
+    	source: "/get_airport/",
     	minLength: 2,
     	select: function(event, ui) {
     		$('#fromid').val(ui.item.id);
@@ -440,7 +440,7 @@ Fusce at metus velit. Nullam condimentum tellus vel orci ultrices, et suscipit n
     		},
 
 		autoFocus: true,
-    	source: "get_airport/",
+    	source: "/get_airport/",
     	minLength: 2,
     	select: function(event, ui) {
     		$('#toid').val(ui.item.id);
