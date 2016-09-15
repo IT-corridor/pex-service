@@ -287,26 +287,78 @@
 	</div>
 	<div class="col-md-10 col-sm-10  col-xs-12 about-content nopadding">
 	<h5 style="background:#F0F6FC;margin-bottom:10px;">Getting Started</h5>
-		<iframe width="100%" height="315" src="https://www.youtube.com/embed/mcixldqDIEQ" frameborder="0" allowfullscreen></iframe>
+		<img src="/static/flightsearch/img/banner-about.jpg" class="img-responsive">
+		<!--/ <iframe width="100%" height="315" rc="/static/flightsearch/img/banner-about.jpg" frameborder="0" allowfullscreen></iframe> -->
 	 <div class="content-div">
-		<p>We’re a tech company focused on making award travel and redemption better. We search other sites which allow award travel, including airlines, to show you all the information you need to make the best award travel decisions.
-<br>
-<br>
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas dolor lorem, finibus vulputate purus ac, faucibus egestas eros. Nullam faucibus pharetra lorem, quis interdum est ornare vitae. Nam bibendum auctor placerat. Nullam tempor, erat dignissim pulvinar consectetur, nisi massa maximus ante, cursus cursus est ligula non massa. Phasellus vitae urna ultricies, bibendum est malesuada, iaculis arcu. Sed nec consectetur leo. Pellentesque vulputate pretium diam, vel finibus elit vehicula ut. Etiam euismod pellentesque pharetra. Duis non nibh malesuada, consectetur nulla sodales, congue massa. Sed consequat euismod neque ac ullamcorper. Nullam at diam a ipsum bibendum mollis eget a neque. Integer tempus volutpat lacus non tempus. Vestibulum fermentum tellus et urna tincidunt, tempus consectetur enim finibus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Etiam rutrum diam justo, sit amet dictum augue feugiat et. Nullam elementum efficitur mauris at condimentum.
-<br>
-<br>
-Aenean rhoncus auctor ornare. Suspendisse a quam ullamcorper libero lacinia porttitor vel blandit tortor. Sed ut risus ante. Nunc risus elit, tincidunt vitae rhoncus eget, gravida in massa. Sed et ex lorem. Vivamus at pretium elit, eget tristique nulla. Curabitur aliquam et nulla ac fermentum. Duis posuere nunc eget ex pellentesque, non lobortis augue tristique. Curabitur sit amet pretium enim, in pretium lectus.
-<br>
-<br>
-Fusce at metus velit. Nullam condimentum tellus vel orci ultrices, et suscipit nibh fringilla. Vivamus in enim sed nunc viverra tempus vitae eget eros. Quisque et lacinia lacus, nec maximus augue. Suspendisse vestibulum gravida egestas. Cras sit amet pulvinar felis, eget bibendum quam. Fusce ultricies erat eget faucibus mollis. Nunc dictum maximus interdum. Maecenas tristique pellentesque enim at aliquam. Vestibulum vitae velit eleifend eros venenatis tincidunt. Vestibulum fermentum neque vel auctor mattis.</p>
+		<p><font size="4"><b>Performing A Flight Search</b></font><br /><br />
+
+		One of the primary functions of PEX+ is to help our users more easily and quickly find their preferred award flight*. Let's walk through the process of doing a flight search.<br />
+		*Note: If you're new to loyalty programs and frequent flyer miles, see our guide <a href="http://pexportal.com/blog/Apr-2016/the-beginners-holy-grail-of-frequent-flyer-miles">The Beginner's Holy Grail of Frequent Flyer Miles</a>.
+		<ol style="font-size: 14px">
+			<li>
+			On either the <a href="pexportal.com">homepage</a> or the <a href="pexportal.com/flights">flights page</a>, make sure you see the search form.<br /><br />
+			<img src="{% static 'flightsearch/img/searchform.png' %}" width="100%">
+			</li><br />
+			<li>Select the type of flight you're searching for. You can choose between one-way, round-trip, and multi-city. Each option will change the form fields accourdingly.</li><br />
+			<li>Enter your search into the appropriate fields. Note that as you're entering your city or airport code into each of the appropriate form field(s), a dropdown with options will display under each corresponding form field. You must select the appropriate airport or city option from the dropdown.<br /><br />
+			<img src="{% static 'flightsearch/img/gettingstarteddropdown.png' %}" width="100%"><br /><br />
+			There's a calendar dropdown for selecting each, departing and returning dates.<br /><br />
+			<img src="{% static 'flightsearch/img/gettingstartedcalendardropdown.png' %}" width="100%">
+			</li><br />
+			<li>The default selected fare class is economy (aka. coach) and the default number of passengers selected is one adult. If you need to change the fare class and/or the number of travelers, select the form field to display the dropdown of options.<br /><br />
+			<center><img src="{% static 'flightsearch/img/gettingstartedfareclasspassengerdropdown.png' %}" width="50%"></center><br /><br />
+			Then select your fare class and add the appropriate number of passengers. Once you've finished this, click or press the apply button to apply these changes to your search.
+			</li><br />
+			<li>Select whether you want to perform an exact date search or a flexible date search and then click the search button.</li><br />
+		</ol><br />
+		Upon initiating your search, you'll be taken to the search results page. You will see a search loading popup to let you know your search results are loading; this will disappear in approximately fifteen seconds. While you wait, you're welcome to sign-up for an email notification from us for when the price decreases for your flight as well as sign up for our newsletter.<br /><br />
+		<img src="{% static 'flightsearch/img/gettingstartedsearchloading.png' %}" width="100%"><br /><br />
+		Once the search loading pop-up disappears after the fifteen seconds, you'll be able to browse through your search results and use the filters to narrow down your flight options. All search result options are live and if you see the option it's available with the corresponding airline.<br /><br />
+		<img src="{% static 'flightsearch/img/gettingstartedflightresults.png' %}" width="100%"><br /><br />
+		If you want a quick overview of the lowest available award prices for each fare class for your flight search, lick on the price matrix link.<br /><br />
+		<center><img src="{% static 'flightsearch/img/gettingstartedflightmatrix.png' %}" width="50%"></center><br /><br />
+		If you performed a flexible date search ("flex search") you can click on the award availability calendar to view award availability for your search from all of the airlines we currently offer.<br /><br />
+		<center><img src="{% static 'flightsearch/img/gettingstartedavailibilitycal.png' %}" width="50%"></center><br /><br />
+		To know which airline's mileage currency to use for a flight option, let the airline logos be your guide. In the below example, we have a flight from New York to Beijing. The flight is operated by Air China. However, the logo displayed is United Airlines. Therefore, this search result is a United codeshare flight with Air China and the price displayed is in United MileagePlus frequent flyer miles. The dollar price displayed is the total taxes, surcharges, and fees for purchasing this flight - all dollar prices are in, or converted to, U.S. dollars.<br /><br />
+		<img src="{% static 'flightsearch/img/gettingstartedflightresultex.png' %}" width="100%"><br /><br />
+		</p>
+		<p><font size="4"><b>Flight Search Pricing</b></font><br /><br />
+		PEX+ offers a freemium pricing structure for flight searches as follows:<br /><br />
+		<u>Non-PEX+ Account Holder</u> Daily free search limit of three searches.<br /><br />
+		<u>Free PEX+ Account Holder</u> Daily free search limit of ten searches. PEX+ account holders must be logged in to receive their extra free searches - otherwise logged-out free account holders are subject to the same daily limit of non-PEX+ account holders. In addition to more free daily searches, logged-in free PEX+ account holders have access to the price alerts tool and loyalty program balance syncing.<br /><br />
+		If you're a power user that needs additional flight searches, please consider upgrading to a paid PEX+ account. <a href="http://pexportal.com/staticPage/contact_us">Contact us</a> for more details on how to upgrade to a paid PEX+ account. 
+		</p>
+		<br /><br /><br />
+		<p><font size="4"><b>Performing A Hotel Search</b></font><br /><br />
+
+		Another valuable function of PEX+ is to help our users more easily and quickly find their preferred hotel stay*. Let's walk through the process of doing a hotel search.<br />
+		<ol style="font-size: 14px">
+			<li>On either the <a href="pexportal.com/hotels">hotels page</a>, make sure you see the search form.<br /><br />
+			<img src="{% static 'flightsearch/img/hotelsearchform.png' %}" width="100%">
+			</li><br />
+			<li>Enter your search into the appropriate fields. Note that as you're entering your city, airport code, or U.S. postal code into the "Where To" text field, a dropdown with options will display under the form field. You must select the appropriate option from the dropdown.<br /><br />
+			<center><img src="{% static 'flightsearch/img/gettingstartedhoteldropdown.png' %}" width="50%"></center><br /><br />
+			There's a calendar dropdown for selecting each, check-in and check-out dates.<br /><br />
+			<center><img src="{% static 'flightsearch/img/gettingstartedhotelcalendardropdown.png' %}" width="50%"></center>
+			</li><br />
+			<li>The default selected number of guests is one and number of rooms is one. If you need to change the number of guests and/or the number of rooms, select each form field to display their dropdowns and change them.
+			Once you've completed this, click or press the search button. 
+			</li><br />
+		</ol>
+		Upon initiating your search, you'll it will take up to thirty seconds for the search results to appear (you will see your browser working). Once the search results load, you'll be able to browse through your search results and use the filters to narrow down your hotel options. All search result options are live and if you see the option it's available with the corresponding hotel.<br /><br />
+		<img src="{% static 'flightsearch/img/gettingstartedhotelresults.png' %}" width="100%"><br /><br />
+		If you want a quick overview of the lowest available award and dollar prices for each hotel chain, click on the price matrix link.<br /><br />
+		<center><img src="{% static 'flightsearch/img/gettingstartedhotelmatrix.png' %}" width="50%"></center><br /><br />
+		You can also view a map with the hotel locations in the surrounding area of your search. You can hide this map by clicking on the hide map link.<br /><br />
+		<center><img src="{% static 'flightsearch/img/gettingstartedhotelmap.png' %}" width="50%"></center><br /><br />
+		If you'd like to view the hotel amenities for a specific hotel search ruselt, click on the view amenities link.<br /><br />
+		<center><img src="{% static 'flightsearch/img/gettingstartedhotelamenities.png' %}" width="50%"></center><br /><br />
+		When you've selected the hotel you'd like to book, click on the "Book With Points" button to book with points or "Book With Dollars" to book with dollars. Note that all dollar prices are in, or converted to, U.S. dollars.<center><img src="{% static 'flightsearch/img/gettingstartedhotelbooking.png' %}" width="50%"></center><br /><br />
+		</p>
 	 </div>
-	 
 	 
 	</div>
 	
-	
-	
-
  </div>    
     
     <!-- /container -->
