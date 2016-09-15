@@ -1986,7 +1986,7 @@ def _search_hotel(place, checkin, checkout, filters):
         for hotel in hotels:
             _hotel = {}
             _hotel['prop_id'] = hotel['propID']
-            _hotel['cash_rate'] = get_value(hotel['cashRate'])
+            _hotel['cash_rate'] = get_value(hotel['cashRate']) or 1000000
             _hotel['points_rate'] = int(get_value(hotel['pointsRate']))
             _hotel['distance'] = int(get_value(hotel['distance']))
             _hotel['chain'] = hotel['propID'].split('-')[0].strip()

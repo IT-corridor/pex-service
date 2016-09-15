@@ -215,7 +215,7 @@
 				<a href="{{ hotel.url }}" style="text-decoration: none;">
 				<div class="price-range">
 					<p class="title">Book With Dollars</p>
-					{% if hotel.cash_rate %}
+					{% if hotel.cash_rate != 1000000 %}
 						<p style="margin: 0;">Cash Rate: <span>${{ hotel.cash_rate }}</span></p>
 					{% else %}
 						<p style="margin: 0;">Click to view rates</p>
