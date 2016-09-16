@@ -3,6 +3,7 @@ from django.db import models
 from django.utils import timezone
 import hashlib
 
+
 HOTEL_CHAINS = {
     'ihg':  'IHG Rewards Club', 
     'spg':  'Starwood Preferred Guest', 
@@ -14,6 +15,7 @@ HOTEL_CHAINS = {
     'ac':   'Le Club Accor', 
     'wy':   'Wyndham Rewards',
 }
+
 
 HOTEL_AMENITIES =  {
     "VR Game Amenity": {
@@ -241,6 +243,7 @@ class Flightdata(models.Model):
         return self.planedetails.split('@')
     '''
 
+
 class Airports(models.Model):
     airport_id = models.IntegerField (primary_key=True)
     code = models.CharField(max_length=4)
@@ -254,6 +257,7 @@ class Airports(models.Model):
     lon = models.CharField(max_length=200)
     numAirports = models.IntegerField()
     city = models.BooleanField(default=True)
+
        
 class Searchkey(models.Model):
     searchid = models.AutoField(primary_key=True)
@@ -266,6 +270,7 @@ class Searchkey(models.Model):
     origin_airport_id = models.IntegerField ()
     destination_airport_id = models.IntegerField ()
     user_ids = models.CharField(max_length=500, blank=True, null=True)
+
 
 class Contactus(models.Model):
     contactid = models.AutoField(primary_key=True)
@@ -297,6 +302,7 @@ class UserAlert(models.Model):
     annual_repeat = models.BooleanField(default=False)
     sent_alert_date = models.DateField()
 
+
 class FlexibleDateSearch(models.Model):
     dataid = models.AutoField(primary_key=True)
     scrapertime = models.DateTimeField()
@@ -310,6 +316,7 @@ class FlexibleDateSearch(models.Model):
     firstflex = models.CharField(max_length=100)
     datasource = models.CharField(max_length=50, null=True, blank=True)
     
+
 class Search(models.Model):
     keyword = models.CharField(max_length=300)
     frequency = models.IntegerField(default=0)
@@ -325,6 +332,7 @@ class Search(models.Model):
     class Meta:
         verbose_name = 'Hotel Search'
         verbose_name_plural = 'Hotel Searches'
+
 
 class Hotel(models.Model):
     prop_id = models.CharField(max_length=50)
@@ -347,13 +355,15 @@ class Hotel(models.Model):
     def __unicode__(self):
         return self.name
 
+
 class HotelAmenity(models.Model):
     hotel = models.ForeignKey(Hotel)
     amenity = models.CharField(max_length=100)
 
     def __unicode__(self):
         return self.hotel.name+" : "+self.amenity 
-        
+   
+
 class EmailTemplate(models.Model):
     template_id = models.AutoField(primary_key=True)
     email_code = models.CharField(max_length=100)
@@ -361,11 +371,13 @@ class EmailTemplate(models.Model):
     body = models.TextField()
     placeholder = models.TextField()
 
+
 class GoogleAd(models.Model):
     ad_id = models.AutoField(primary_key=True)
     ad_code = models.CharField(max_length=100)
     image_path = models.FileField(upload_to='static/flightsearch/uploads/', null=True, blank=True)
     google_code = models.CharField(max_length=512)
+
 
 class Pages(models.Model):
     pageid = models.AutoField(primary_key=True)
@@ -374,6 +386,7 @@ class Pages(models.Model):
     top_content=models.TextField()
     page_text=models.TextField()
     placeholder=models.CharField(max_length=512)
+
 
 class Blogs(models.Model):
     blog_id = models.AutoField(primary_key=True)
@@ -389,6 +402,7 @@ class Blogs(models.Model):
     blog_updated_time = models.DateTimeField()
     blog_status = models.BooleanField(default=False)
 
+
 class CityImages(models.Model):
     city_image_id = models.AutoField(primary_key=True)
     image_path = models.FileField(upload_to='static/flightsearch/uploads/', null=True, blank=True)
@@ -399,11 +413,13 @@ class CityImages(models.Model):
     def __unicode__(self):
         return self.city_name
 
+
 class BlogImages(models.Model):
     image_id = models.AutoField(primary_key=True)
     user_id = models.IntegerField()
     image_path = models.CharField(max_length=100)
-        
+      
+
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
@@ -440,6 +456,7 @@ class UserManager(BaseUserManager):
         return self._create_user(username, email, password, True, True,
                                  **extra_fields)
 
+
 class User(AbstractUser):
     user_id = models.AutoField(primary_key=True)
     middlename = models.CharField(max_length=100,null=True,blank=True)
@@ -460,6 +477,7 @@ class User(AbstractUser):
     level = models.IntegerField(default=0,null=True, blank=True)
     objects =  UserManager()
 
+
 class Token(models.Model):
     token = models.CharField(max_length=100, unique=True)
     owner = models.ForeignKey(User)
@@ -476,6 +494,7 @@ class Token(models.Model):
     def __unicode__(self):
         # return self.owner.name
         return self.token
+
 
 class UserBackend(object):
     def authenticate(self, username=None, password=None):
