@@ -2012,8 +2012,8 @@ def _search_hotel(place, checkin, checkout, filters):
         db_hotels = Hotel.objects.filter(search__contains=',%d,'%search.id)
 
     # filter the result
-    price_lowest = db_hotels.filter(~Q(cash_rate=0.0)).aggregate(Min('cash_rate'))['cash_rate__min']
-    price_highest = db_hotels.aggregate(Max('cash_rate'))['cash_rate__max']
+    price_lowest = db_hotels.aggregate(Min('cash_rate'))['cash_rate__min']
+    price_highest = db_hotels.filter(~Q(cash_rate=1000000)).aggregate(Max('cash_rate'))['cash_rate__max']
     award_lowest = db_hotels.filter(~Q(points_rate=0)).aggregate(Min('points_rate'))['points_rate__min']
     award_highest = db_hotels.aggregate(Max('points_rate'))['points_rate__max']
 
@@ -2104,7 +2104,7 @@ def _search_hotel(place, checkin, checkout, filters):
 
 
 def search_hotel(request):
-    _ret = check_limit(request, 'hotel')
+    _ret = False #check_limit(request, 'hotel')
     if _ret: # not success
         error_message = 'You reached hotel search limit!'
         if _ret == 2:
