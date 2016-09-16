@@ -2736,6 +2736,29 @@ def token_delete(request, id):
         return HttpResponse('success')
 
 
+@login_required(login_url='/Admin/login/')
+def searchlimit(request):
+    searchlimits = SearchLimit.objects.all()
+    return render(request, 'Admin/searchlimit.html', {'searchlimits': searchlimits})
+
+
+@login_required(login_url='/Admin/login/')
+def searchlimit_update(request, id=None):
+    searchlimit = SearchLimit.objects.get(id=id)
+
+    if request.method == 'GET':
+        form = SearchLimitForm(initial=model_to_dict(searchlimit))
+    else:
+        form = SearchLimitForm(request.POST, instance=searchlimit)
+        if form.is_valid():
+            searchlimit.user_class = form.cleaned_data['user_class']
+            searchlimit.limit = form.cleaned_data['limit']
+            searchlimit.save()
+            return HttpResponseRedirect('/Admin/searchlimit/')
+
+    return render(request, 'Admin/searchlimit_form.html', {'form':form})
+
+
 def admin_login(request):
     if request.method == 'GET':
         return render(request, 'Admin/login.html', {})    

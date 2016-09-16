@@ -52,3 +52,8 @@ class TokenForm(ModelForm):
 		exclude = ['number_update', 'created_at', 'closed_at']
 
 
+class SearchLimitForm(ModelForm):
+	class Meta:
+		model = SearchLimit
+		exclude = []
+

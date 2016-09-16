@@ -80,6 +80,9 @@ urlpatterns = [
     url(r'^Admin/token/(?P<id>\d+)/$', token_update, name='token_update'),
     url(r'^Admin/token/(?P<id>\d+)/delete/$', token_delete, name='token_delete'),
 
+    url(r'^Admin/searchlimit/$', searchlimit, name='searchlimit_list'),
+    url(r'^Admin/searchlimit/(?P<id>\d+)/$', searchlimit_update, name='searchlimit_update'),
+
     url(r'^stats/airline_info/$', airline_info, name='airline_info'),
     url(r'^stats/popular_search/$', popular_search, name='popular_search'),
     url(r'^stats/price_history/$', price_history, name='price_history'),

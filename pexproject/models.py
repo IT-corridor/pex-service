@@ -516,8 +516,14 @@ class AccessRateLimit(models.Model):
     user_id = models.IntegerField(default=-1)
     run_flight_search = models.IntegerField(default=0)
     run_hotel_search = models.IntegerField(default=0)
-    limit_search = models.IntegerField()
 
     def __unicode__(self):
         return self.cookie_id
 
+
+class SearchLimit(models.Model):
+    user_class = models.CharField(max_length=50, unique=True)
+    limit = models.IntegerField()
+
+    def __unicode__(self):
+        return self.user_class
