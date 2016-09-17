@@ -618,7 +618,7 @@ def contactUs(request):
         
 
 def search(request):
-    _ret = False#check_limit(request, 'flight')
+    _ret = check_limit(request, 'flight')
     if _ret: # not success
         return HttpResponse(_ret, status=405)
 
@@ -648,31 +648,37 @@ def check_limit(request, service):
             2 if limited and not signed up
     """
     cookie_id, user_id = get_ids(request)
-    # print id, 'ID: ####'
-    arl = AccessRateLimit.objects.filter(cookie_id=cookie_id)
-    if arl:
-        arl = arl[0]
-        if user_id < arl.user_id:           # sign in -> sign out
-            return 2
-        else:
-            if user_id > arl.user_id:       # sign in
-                arl.user_id = user_id
-                arl.limit_search = get_limit(request)
-
-            limit_request = arl.limit_search    # normal or sign in
-            number_request = getattr(arl, 'run_%s_search' % service)
-
-            if limit_request == number_request:
-                return 1 if 'userid' in request.session else 2
-            else:            
-                number_request = number_request + 1
-                setattr(arl, 'run_%s_search' % service, number_request)
-                arl.save()
+    
+    if user_id > -1 and request.user.level > 0:     # paying user
+        if request.user.search_run >= request.user.search_limit:
+            return 3
+        request.user.search_run = request.user.search_run + 1
+        request.user.save()
     else:
-        limit = get_limit(request)
-        arl = AccessRateLimit(cookie_id=cookie_id, user_id=user_id, limit_search=limit)
-        setattr(arl, 'run_%s_search' % service, 1)
-        arl.save()
+        arl = AccessRateLimit.objects.filter(cookie_id=cookie_id)
+        if arl:
+            arl = arl[0]
+            if user_id < arl.user_id:               # sign in -> sign out
+                return 2
+            else:
+                limit_search = SearchLimit.objects.get(user_class='Logged out Users')
+                if user_id > 0:
+                    limit_search = SearchLimit.objects.get(user_class='Logged in Users')
+
+                if user_id > arl.user_id:           # sign in
+                    arl.user_id = user_id
+
+                number_request = getattr(arl, 'run_%s_search' % service)
+
+                if limit_request == number_request:
+                    return 1 if 'userid' in request.session else 2
+                else:            
+                    setattr(arl, 'run_%s_search' % service, number_request+1)
+                    arl.save()
+        else:   # search for the first time
+            arl = AccessRateLimit(cookie_id=cookie_id, user_id=user_id)
+            setattr(arl, 'run_%s_search' % service, 1)
+            arl.save()
 
 
 def get_ids(request):
@@ -682,13 +688,6 @@ def get_ids(request):
     user_id = int(request.session['userid']) if 'userid' in request.session else -1
     cookie_id = get_client_ip(request) + '-' + request.COOKIES['_ga']
     return cookie_id, user_id
-
-
-def get_limit(request):
-    if 'userid' in request.session:
-        return 10 if not request.session['level'] else 100
-    else:
-        return 3
 
 
 def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):

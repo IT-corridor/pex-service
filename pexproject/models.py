@@ -475,6 +475,8 @@ class User(AbstractUser):
     user_code_time = models.DateTimeField(null=True, blank=True)
     pexdeals = models.BooleanField(default=False)
     level = models.IntegerField(default=0,null=True, blank=True)
+    search_limit = models.IntegerField(default=10)
+    search_run = models.IntegerField(default=0)
     objects =  UserManager()
 
 
