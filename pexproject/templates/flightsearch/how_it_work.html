@@ -37,7 +37,7 @@
         </div>
         <div class="col-xs-12 xs-nopadding nopadding">
         	<div class="col-xs-12 xs-nopadding nopadding">
-				<form class="form-horizontal" role="form" action="searchLoadingPage" method="post" >
+				<form class="form-horizontal" role="form" method="post" >
 		        	{% csrf_token %}
 			         <div class="col-xs-12 nopadding">
 							<div class="container nopadding trip-custome">
@@ -410,27 +410,133 @@
 		$(".travelers-holder").removeClass('open');
 	});
 
-    </script>
-    <script>
-    $("#submitid").click(function(event) {
-    	if($('#from').val().length<1)
-    	{
-    		//$('#frommsg').append("Please enter the Source field");
-    		$('#from').focus();
-    		event.preventDefault();
-    	} 
-    	if($('#to').val().length<1)
-    	{
-    		$('#to').focus();
-    		event.preventDefault();	
-    	}
-    	if($('#departMain').val().length<1)
-    	{
-    		$('#departMain').focus();
-    		event.preventDefault();	
-    	}
-				
+
+  var CSRF_TOKEN = "{{ csrf_token }}";
+  var triptype = '';
+  var destinationid = '';
+  var sourceid = '';
+  var returndateval = '';
+  var departdateval = '';
+  var rdtrip = '';
+  var trip = '';
+  var cabintypeval = '';
+  var searchid ='';
+  var returnid = '';
+  
+$("#submitid").click(function(event) {
+            
+        triptype = $("input[type='radio'][name='trip']:checked");
+        
+        if (triptype.length > 0) {
+            triptypeval = triptype.val();
+        }
+        var appendErrorLabel = '<label id="from-error" class="error" for="from">Please enter a valid airport</label>';
+        if($('#fromid').val().length<1 || $('#from').val() == '')
+        {   
+            $('#from').valid();
+            $('#from').css('border-color','red');
+            $('label[class=error]').remove();
+            $('#from').after(appendErrorLabel);
+            event.preventDefault();
+            return false;
+        }
+         
+        if($('#toid').val().length<1 || $('#to').val() == '')
+        {
+            $('#to').valid();
+            $('label[class=error]').remove();
+            $('#to').after(appendErrorLabel);
+            $('#to').css('border-color','red');
+            event.preventDefault(); 
+            return false;
+        }
+        if($('#toid').val() == $('#fromid').val())
+        {
+            $('label[class=error]').remove();
+            $('#to').after('<label id="from-error" class="error" for="from">From and To city cannot be same</label>');
+            $('#to').css('border-color','red');
+            event.preventDefault(); 
+            return false;
+        }
+        if($('#departMain').val().length<1)
+        {
+            $('#departMain').focus();
+            event.preventDefault();
+            return false;   
+        }
+        if('roundTripBtn' == triptypeval)
+        {
+            if($('#returnMain').val().length<1)
+            {
+                $('#returnMain').focus();
+                event.preventDefault();
+                return false;   
+            }
+        }
+        else{
+            $('#returnMain').val('');
+        }
+        sourceid = $('#fromid').val();
+        destinationid = $('#toid').val();   
+        returndateval = $('#returnMain').val();
+        departdateval = $('#departMain').val();
+        cabintypeval = $('#cabintype option:selected').val();
+        searchData();
     });
+  
+  function searchData(){
+    $('#submitid').prop('disabled', true);
+    $.ajax({
+        type: "POST",
+        url: "/search/",
+        data: "returndate="+ encodeURI(returndateval)+"&rndtripkey="+encodeURI(rdtrip) +"&cabin="+encodeURI(cabintypeval)+"&triptype="+ encodeURI(trip)+ "&fromMain="+ encodeURI(sourceid)+ "&toMain=" + encodeURI(destinationid)+ "&deptdate=" + encodeURI(departdateval) + "&csrfmiddlewaretoken=" + encodeURI(CSRF_TOKEN),
+        success: function(data){
+        multikey = data['departkey'];
+        searchid1 = multikey.split(',');
+        searchid = searchid1[0];
+        console.log(searchid);
+        var returnid='';
+         if (data['returnkey']) {
+            returnid = data['returnkey'];
+        }
+        redirecttosearchpage(searchid,returnid); 
+         //refreshIntervalId = setInterval(datacheck, 5000,searchid,returnid); 
+    },
+        error: function (ret) {
+            msg = 'You reached the daily flight search limit!';
+            if (ret.responseText == "2") {                  
+                msg += '\nPlease sign up and get more access!';
+                var r = confirm(msg);
+                if (r == true) 
+                    $('#login-modal').modal();
+            } else if (ret.responseText == "1") {
+                alert(msg);
+            } else {
+                alert('You reached the flight search limit!\nPlease purchase more!');
+            }
+
+            return false;
+        }
+   });
+ 
+  } 
+  function redirecttosearchpage(searchid,returnkey){
+    multicity='';
+    if(multikey.indexOf(",") >= 0){
+        multicity = "&multicity="+encodeURI(multikey);
+    }
+    if(searchid != '')
+    {  
+    $('#searchid').val(searchid);
+    var location = "/getsearchresult?keyid="+ encodeURI(searchid)+"&cabin="+encodeURI(cabintypeval)+"&passenger="+encodeURI($('#passenger').val())+multicity;
+    if(returnkey != ''){ location = location+"&returnkey="+encodeURI(returnkey);}
+    window.location.href = location; 
+    }
+}
+
+</script>
+
+    <script>
     $(document).ready(function(){
     	if($("#ow").prop('checked') == true){
     			$("#return").hide();
