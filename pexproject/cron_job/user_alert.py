@@ -5,7 +5,11 @@ import os, sys
 import MySQLdb
 import datetime
 from datetime import timedelta
-import customfunction
+
+from os import sys, path
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+from scrapers import customfunction 
+
 from united import united
 from delta import delta
 from jetblue import jetblue
