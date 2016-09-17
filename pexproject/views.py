@@ -2591,14 +2591,7 @@ def google_ad_update(request, id=None):
 @login_required(login_url='/Admin/login/')
 def customer_list(request):
     customers = User.objects.all()
-    result = []
-    for customer in customers:
-        num_search = len(list(Searchkey.objects.filter(user_ids__regex=r',%d,'%customer.user_id)))
-        customer = model_to_dict(customer)
-        customer['num_search'] = num_search
-        result.append(customer)
-
-    return render(request, 'Admin/customer.html', {'customers': result})
+    return render(request, 'Admin/customer.html', {'customers': customers})
 
 
 @login_required(login_url='/Admin/login/')    
@@ -2635,6 +2628,8 @@ def customer_update(request, id=None):
             customer.home_airport = form.cleaned_data['home_airport']
             customer.is_active = form.cleaned_data['is_active']
             customer.level = form.cleaned_data['level']
+            customer.search_limit = form.cleaned_data['search_limit']
+            customer.search_run = form.cleaned_data['search_run']            
             if not customer.level:
                 customer.level = 0
             customer.save()

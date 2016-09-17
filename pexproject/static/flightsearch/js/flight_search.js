@@ -28,8 +28,10 @@ function searchData() {
                 var r = confirm(msg);
                 if (r == true) 
                     $('#login-modal').modal();
-            } else {
+            } else if (ret.responseText == "1") {
                 alert(msg);
+            } else {
+                alert('You reached the flight search limit!\nPlease purchase more!');
             }
 
             return false;
