@@ -1,5 +1,4 @@
-import MySQLdb
-import customfunction 
+from ..scrapers import customfunction 
 
 db = customfunction.dbconnection()
 
