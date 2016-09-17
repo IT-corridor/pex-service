@@ -649,10 +649,10 @@ def check_limit(request, service):
     """
     cookie_id, user_id = get_ids(request)
     
-    if user_id > -1 and request.user.level > 0:     # paying user
-        if request.user.search_run >= request.user.search_limit:
+    if user_id > -1 and int(request.session['level']) > 0:     # paying user
+        user = User.objects.get(user_id=user_id)
+        if user.search_run >= user.search_limit:
             return 3
-        user = User.objects.get(user_id=request.user.user_id)
         print user.search_run, 'pre update @@@@@'
         user.search_run = user.search_run + 1
         user.save()
