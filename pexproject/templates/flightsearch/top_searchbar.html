@@ -11,10 +11,10 @@
                     <div class="col-sm-12 col-xs-12 ">
                         <div class="col-xs-12 pl5 nopadding">
                             {%if message %}
-                            <h4class"alert-danger">{{message}}</h4>
-                    {%endif%}
-                    <h1 class=""><b>Find the best way to travel using your rewards points and miles.</b></h1>
-                </div>
+                            <h4 class="alert-danger">{{message}}</h4>
+                            {%endif%}
+                            <h1 class=""><b>Find the best way to travel using your rewards points and miles.</b></h1>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -225,14 +225,11 @@
 
 
 <script>
-    
-        $('#mc').click(function() {
-            var location = "flights?action=mc";
-            window.location.href = location;
-        });
-        
-        
-    </script>
+    $('#mc').click(function () {
+        var location = "flights?action=mc";
+        window.location.href = location;
+    });
+</script>
 
 <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>');</script>
 
@@ -532,10 +529,6 @@ $("#submitid").click(function(event) {
         cabintypeval = $('#cabintype option:selected').val();
         searchData();
     });
-    
-  
-  
- 
   
   function searchData(){
     $('#submitid').prop('disabled', true);
@@ -544,27 +537,28 @@ $("#submitid").click(function(event) {
         url: "/search/",
         data: "returndate="+ encodeURI(returndateval)+"&rndtripkey="+encodeURI(rdtrip) +"&cabin="+encodeURI(cabintypeval)+"&triptype="+ encodeURI(trip)+ "&fromMain="+ encodeURI(sourceid)+ "&toMain=" + encodeURI(destinationid)+ "&deptdate=" + encodeURI(departdateval) + "&csrfmiddlewaretoken=" + encodeURI(CSRF_TOKEN),
         success: function(data){
-        multikey = data[0];
+        multikey = data['departkey'];
         searchid1 = multikey.split(',');
         searchid = searchid1[0];
         console.log(searchid);
         var returnid='';
-        if(data[1])
-        {
-            returnid = data[1];
+         if (data['returnkey']) {
+            returnid = data['returnkey'];
         }
         redirecttosearchpage(searchid,returnid); 
          //refreshIntervalId = setInterval(datacheck, 5000,searchid,returnid); 
     },
-           error: function (ret) {
+        error: function (ret) {
             msg = 'You reached the daily flight search limit!';
             if (ret.responseText == "2") {                  
                 msg += '\nPlease sign up and get more access!';
                 var r = confirm(msg);
                 if (r == true) 
                     $('#login-modal').modal();
-            } else {
+            } else if (ret.responseText == "1") {
                 alert(msg);
+            } else {
+                alert('You reached the flight search limit!\nPlease purchase more!');
             }
 
             return false;
