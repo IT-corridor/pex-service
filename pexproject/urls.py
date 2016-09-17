@@ -9,6 +9,7 @@ from django.views.generic import TemplateView
 
 
 urlpatterns = [
+    url(r'^admin/', admin.site.urls),
     url(r'^$', TemplateView.as_view(template_name='flightsearch/home.html'), name='index'),
     url(r'^index$', TemplateView.as_view(template_name='flightsearch/home.html'), name='index'),
     url(r'^flights', TemplateView.as_view(template_name='flightsearch/home.html'), name='flights'),
@@ -99,7 +100,7 @@ urlpatterns = [
     
     url(r'^useralert',useralert,name='useralert'),
     url(r'^flightAlert',flightAlert,name='flightAlert'),
-    #url(r'^searchLoading',searchLoading,name='searchLoading'),
+    
     url(r'^search',search, name='search'),
     url(r'^get_airport', get_airport, name='get_airport'),
     url(r'^getsearchresult', getsearchresult, name='getsearchresult'),
