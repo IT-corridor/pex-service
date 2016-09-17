@@ -618,7 +618,7 @@ def contactUs(request):
         
 
 def search(request):
-    _ret = check_limit(request, 'flight')
+    _ret = False#check_limit(request, 'flight')
     if _ret: # not success
         return HttpResponse(_ret, status=405)
 
