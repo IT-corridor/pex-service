@@ -653,10 +653,8 @@ def check_limit(request, service):
         user = User.objects.get(user_id=user_id)
         if user.search_run >= user.search_limit:
             return 3
-        print user.search_run, 'pre update @@@@@'
         user.search_run = user.search_run + 1
         user.save()
-        print user.search_run, 'after update @@@@@'
     else:
         arl = AccessRateLimit.objects.filter(cookie_id=cookie_id)
         if arl:
@@ -664,16 +662,16 @@ def check_limit(request, service):
             if user_id < arl.user_id:               # sign in -> sign out
                 return 2
             else:
-                limit_search = SearchLimit.objects.get(user_class='Logged out Users')
+                limit_search = SearchLimit.objects.get(user_class='Logged out Users').limit
                 if user_id > 0:
-                    limit_search = SearchLimit.objects.get(user_class='Logged in Users')
+                    limit_search = SearchLimit.objects.get(user_class='Logged in Users').limit
 
                 if user_id > arl.user_id:           # sign in
                     arl.user_id = user_id
 
                 number_request = getattr(arl, 'run_%s_search' % service)
 
-                if limit_search == number_request:
+                if number_request >= limit_search:
                     return 1 if 'userid' in request.session else 2
                 else:            
                     setattr(arl, 'run_%s_search' % service, number_request+1)
