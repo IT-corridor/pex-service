@@ -1,8 +1,9 @@
+
 #!usr/bin/env python
 import MySQLdb
 import datetime
 from datetime import timedelta
-from .. import customfunction
+import customfunction
 
 
 db = customfunction.dbconnection()

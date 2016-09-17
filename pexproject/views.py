@@ -61,8 +61,8 @@ from django.db.models import Max, Min
 from django.utils import timezone
 from django.forms.models import model_to_dict
 
-from customfunction import is_scrape_vAUS,is_scrape_aeroflot,is_scrape_virginAmerica,is_scrape_etihad,is_scrape_delta,is_scrape_united,is_scrape_virgin_atlantic,is_scrape_jetblue,is_scrape_aa, is_scrape_s7, is_scrape_airchina
-import customfunction
+from .scrapers.customfunction import is_scrape_vAUS,is_scrape_aeroflot,is_scrape_virginAmerica,is_scrape_etihad,is_scrape_delta,is_scrape_united,is_scrape_virgin_atlantic,is_scrape_jetblue,is_scrape_aa, is_scrape_s7, is_scrape_airchina
+from .scrapers import customfunction
 import rewardScraper
 from .form import *
 from pexproject.models import *

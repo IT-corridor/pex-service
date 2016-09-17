@@ -18,7 +18,7 @@ from pyvirtualdisplay import Display
 
 # local
 # import MySQLdb
-# from .. import customfunction 
+# import customfunction 
 
 # db = customfunction.dbconnection()
 # cursor = db.cursor()

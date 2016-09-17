@@ -16,7 +16,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from django.db import connection, transaction
-from .. import customfunction
+import customfunction
 #from pyvirtualdisplay import Display
 import socket
 

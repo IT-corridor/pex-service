@@ -18,7 +18,7 @@ DEV_LOCAL = False
 # DEV_LOCAL = True
 
 if not DEV_LOCAL:
-    from .. import customfunction
+    import customfunction
 
 HOME_URL = 'http://ebooking.airchina.com.cn/AMRWeb/shopping/search/showSearchPage_amrshop.action'
 SET_LANG_URL = 'http://ebooking.airchina.com.cn/AMRWeb/ajaxChangeLang_amrshop.action?request_locale=en_US'

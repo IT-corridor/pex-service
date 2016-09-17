@@ -1,5 +1,5 @@
 import MySQLdb
-from .. import customfunction 
+import customfunction 
 
 db = customfunction.dbconnection()
 

@@ -5,7 +5,7 @@ import os, sys
 import MySQLdb
 import datetime
 from datetime import timedelta
-from .. import customfunction
+import customfunction
 from united import united
 from delta import delta
 from jetblue import jetblue

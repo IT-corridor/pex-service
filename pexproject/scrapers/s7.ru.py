@@ -19,7 +19,7 @@ DEV_LOCAL = False
 # DEV_LOCAL = True
 
 if not DEV_LOCAL:
-    from .. import customfunction
+    import customfunction
 
 def get_city_s7_code(citycode=None):
     file_path = 'location.json' if DEV_LOCAL else '/var/www/html/python/pex/pexproject/pexproject/data/location.json'

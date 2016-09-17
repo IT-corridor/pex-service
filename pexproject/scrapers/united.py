@@ -5,7 +5,7 @@ from selenium import webdriver
 import datetime
 from datetime import timedelta
 import time
-from .. import customfunction  
+import customfunction  
 import MySQLdb
 import re
 from selenium.webdriver.common.keys import Keys
