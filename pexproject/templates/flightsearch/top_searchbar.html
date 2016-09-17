@@ -574,7 +574,7 @@ $("#submitid").click(function(event) {
     if(searchid != '')
     {  
     $('#searchid').val(searchid);
-    var location = "getsearchresult?keyid="+ encodeURI(searchid)+"&cabin="+encodeURI(cabintypeval)+"&passenger="+encodeURI($('#passenger').val())+multicity;
+    var location = "/getsearchresult?keyid="+ encodeURI(searchid)+"&cabin="+encodeURI(cabintypeval)+"&passenger="+encodeURI($('#passenger').val())+multicity;
     if(returnkey != ''){ location = location+"&returnkey="+encodeURI(returnkey);}
     window.location.href = location; 
     }
