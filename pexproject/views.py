@@ -652,8 +652,9 @@ def check_limit(request, service):
     if user_id > -1 and request.user.level > 0:     # paying user
         if request.user.search_run >= request.user.search_limit:
             return 3
-        request.user.search_run = request.user.search_run + 1
-        request.user.save()
+        user = User.objects.get(user_id=request.user.user_id)
+        user.search_run = user.search_run + 1
+        user.save()
     else:
         arl = AccessRateLimit.objects.filter(cookie_id=cookie_id)
         if arl:
