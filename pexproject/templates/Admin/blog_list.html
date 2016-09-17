@@ -65,14 +65,14 @@
                 },
                 formatters: {
                     "commands": function(column, row) {
-                        return "<button type=\"button\" class=\"btn btn-icon command-edit waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-edit\"></span></button> " + 
-                            "<button type=\"button\" class=\"btn btn-icon command-delete waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-delete\"></span></button>";
+                        action_html = "<button type=\"button\" class=\"btn btn-icon command-edit waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-edit\"></span></button> ";
+                        {% if perms.search.delete_blogs %}
+                            action_html += "<button type=\"button\" class=\"btn btn-icon command-delete waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-delete\"></span></button>";
+                        {% endif %}
+                        return action_html; 
                     },
                     "pix": function (column, row) {
-                        if(row.featured_image[0]=="/")
-                            return "<img src=\"" + row.featured_image + "\" style=\"width:60px; height:60px;\"/>";
-                        else
-                            return "<img src=\"/" + row.featured_image + "\" style=\"width:60px; height:60px;\"/>";
+                        return "<img src=\"/" + row.featured_image + "\" style=\"width:60px; height:60px;\"/>";
                     }
                 }
             }).on("loaded.rs.jquery.bootgrid", function() {
