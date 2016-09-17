@@ -670,7 +670,7 @@ def check_limit(request, service):
 
                 number_request = getattr(arl, 'run_%s_search' % service)
 
-                if limit_request == number_request:
+                if limit_search == number_request:
                     return 1 if 'userid' in request.session else 2
                 else:            
                     setattr(arl, 'run_%s_search' % service, number_request+1)
