@@ -66,7 +66,7 @@
                 formatters: {
                     "commands": function(column, row) {
                         action_html = "<button type=\"button\" class=\"btn btn-icon command-edit waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-edit\"></span></button> ";
-                        {% if perms.search.delete_blogs %}
+                        {% if perms.pexproject.delete_blogs %}
                             action_html += "<button type=\"button\" class=\"btn btn-icon command-delete waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-delete\"></span></button>";
                         {% endif %}
                         return action_html; 

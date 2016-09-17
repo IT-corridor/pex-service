@@ -333,34 +333,34 @@
 
                 <ul class="main-menu">
                     <li><a href="/Admin/"><i class="zmdi zmdi-home"></i> Dashboard</a></li>
-                    {% if perms.search.add_emailtemplate %}
+                    {% if perms.pexproject.add_emailtemplate %}
                     <li><a href="/Admin/email_template/"><i class="zmdi zmdi-email zmdi-hc-fw"></i> Email Template</a></li>
                     {% endif %}
-                    {% if perms.search.add_pages %}
+                    {% if perms.pexproject.add_pages %}
                     <li><a href="/Admin/static_page/"><i class="zmdi zmdi-format-underlined"></i> Static Pages</a></li>
                     {% endif %}
-                    {% if perms.search.add_cityimages %}
+                    {% if perms.pexproject.add_cityimages %}
                     <li><a href="/Admin/city_image/"><i class="zmdi zmdi-city zmdi-hc-fw"></i> City Images</a></li>
                     {% endif %}
-                    {% if perms.search.add_hotel %}
+                    {% if perms.pexproject.add_hotel %}
                     <li><a href="/Admin/hotel/"><i class="zmdi zmdi-hotel zmdi-hc-fw"></i> Hotels</a></li>
                     {% endif %}
-                    {% if perms.search.add_googlead %}
+                    {% if perms.pexproject.add_googlead %}
                     <li><a href="/Admin/google_ad/"><i class="zmdi zmdi-view-list"></i>Google Ads</a></li>
                     {% endif %}
-                    {% if perms.search.add_blogs %}
+                    {% if perms.pexproject.add_blogs %}
                     <li><a href="/Admin/blog_list/"><i class="zmdi zmdi-collection-text"></i>Blog List</a></li>                    
                     {% endif %}
                     <li class="sub-menu">
                         <a href=""><i class="zmdi zmdi-swap-alt"></i>User Management</a>
                         <ul>
-                            {% if perms.search.add_user %}
+                            {% if perms.pexproject.add_user %}
                             <li><a href="/Admin/customer/">Users & Customers</a></li>
                             {% endif %}
-                            {% if perms.search.add_token %}
+                            {% if perms.pexproject.add_token %}
                             <li><a href="/Admin/token/">Token Management</a></li>
                             {% endif %}
-                            {% if perms.search.add_searchlimit %}
+                            {% if perms.pexproject.add_searchlimit %}
                             <li><a href="/Admin/searchlimit/">Search Limit Management</a></li>
                             {% endif %}
                         </ul>

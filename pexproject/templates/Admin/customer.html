@@ -80,7 +80,7 @@
                     "commands": function(column, row) {
                         var level_color = ['bgm-lightgreen', 'bgm-lightblue', '', 'bgm-pink']
                         action_html = "<button type=\"button\" class=\"btn btn-icon command-edit "+level_color[row.level] +" waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-edit\"></span></button> ";
-                        {% if perms.search.delete_user %}
+                        {% if perms.pexproject.delete_user %}
                             action_html += "<button type=\"button\" class=\"btn btn-icon command-delete waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-delete\"></span></button>";
                         {% endif %}
                         return action_html; 
