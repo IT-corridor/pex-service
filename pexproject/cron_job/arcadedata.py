@@ -2,7 +2,7 @@
 import MySQLdb
 import datetime
 from datetime import timedelta
-import customfunction
+from .. import customfunction
 
 
 db = customfunction.dbconnection()

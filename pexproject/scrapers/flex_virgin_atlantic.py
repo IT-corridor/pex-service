@@ -5,7 +5,7 @@ import datetime
 from datetime import timedelta
 import time
 import MySQLdb
-import customfunction
+from .. import customfunction
 from pyvirtualdisplay import Display
 
 def flex_virgin_atlantic(src,dest,searchdate,searchkey):

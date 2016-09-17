@@ -19,7 +19,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from django.db import connection, transaction
 from multiprocessing import Process
 import threading
-import customfunction
+from .. import customfunction
 import Queue
 #from pyvirtualdisplay import Display
 import socket

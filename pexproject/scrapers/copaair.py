@@ -22,7 +22,7 @@ DEV_LOCAL = False
 DEV_LOCAL = True
 
 if not DEV_LOCAL:
-    import customfunction
+    from .. import customfunction
 
 TAXES = {
     'AE': 'maintax',        # Economy

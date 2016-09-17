@@ -6,7 +6,7 @@ from datetime import timedelta
 import time
 import MySQLdb
 import re
-import customfunction
+from .. import customfunction
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
