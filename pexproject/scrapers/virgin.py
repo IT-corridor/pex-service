@@ -51,6 +51,8 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
             url = "http://www.virgin-atlantic.com/us/en/book-your-travel/book-your-flight/flight-search-results.html?departure="+origin+"&arrival="+dest+"&adult=1&departureDate="+str(date)+"&search_type=redeemMiles&classType=10&classTypeReturn=10&bookingPanelLocation=Undefined&isreturn=yes&returnDate="+str(retdate)
         else:
             url = "http://www.virgin-atlantic.com/us/en/book-your-travel/book-your-flight/flight-search-results.html?departure="+origin+"&arrival="+dest+"&adult=1&departureDate="+str(date)+"&search_type=redeemMiles&classType=10&classTypeReturn=10&bookingPanelLocation=BookYourFlight&isreturn=no"
+
+        print url, '@@@@@@@@@@@@@22'    
         #display = Display(visible=0, size=(800, 600))
         #display.start()
         #driver = webdriver.Chrome()

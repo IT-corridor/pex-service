@@ -21,7 +21,7 @@ mailchimp_username = "pradeep@techencephalon.com"
 
 is_scrape_delta =1
 is_scrape_united = 1
-is_scrape_virgin_atlantic = 0
+is_scrape_virgin_atlantic = 1
 is_scrape_virginAmerica = 1
 is_scrape_jetblue = 0
 is_scrape_vAUS = 1
