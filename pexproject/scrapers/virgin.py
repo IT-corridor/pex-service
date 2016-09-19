@@ -315,7 +315,7 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
 
                 arivedetail = departinfo_time+" | at "+ariving_at                
                 arivelist.append(arivedetail)
-                planetext = fl_flightno+"|"+planeno+"("+fl_duration+")" 
+                planetext = fl_flightno+" | "+planeno+"("+fl_duration+")" 
                 planelist.append(planetext)
                 counter = counter+1
             departdetails = '@'.join(departdlist)
