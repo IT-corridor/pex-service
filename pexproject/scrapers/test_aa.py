@@ -17,7 +17,8 @@ import re
 from pyvirtualdisplay import Display
 
 # url = "https://www.aa.com/reservation/awardFlightSearchAccess.do"
-url = 'https://book.jetblue.com/shop/search/#/'
+# url = 'https://book.jetblue.com/shop/search/#/'
+url = 'http://www.virgin-atlantic.com/gb/en/book-your-travel/book-your-flight/flight-search-results.html?departure=LON&arrival=LAX&adult=1&departureDate=17/10/16&search_type=redeemMiles&classType=10&classTypeReturn=10&bookingPanelLocation=Undefined&isreturn=no' 
 display = Display(visible=0, size=(800, 600))
 display.start()
 driver = webdriver.Chrome()
