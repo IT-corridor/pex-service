@@ -924,56 +924,6 @@ def get_airport(request):
     return HttpResponse(data, mimetype)
 
 
-def searchLoading(request):
-    context = {}
-    if request.method == "POST":
-        trip = ''
-        date=''
-        date1 = ''
-        datelist= ''
-        roundtripkey = ''
-        if 'multicy' in request.POST:
-            originlist = request.POST.getlist('fromMain')
-            destinationlist = request.POST.getlist('toMain')
-            datelist = request.POST.getlist('deptdate')
-            passenger = request.POST['passenger']
-            cabintype = request.POST['cabintype']
-            orgn = ','.join(originlist)
-            dest = ','.join(destinationlist)
-            
-        else:
-            orgn = request.POST['fromMain'] 
-            dest = request.POST['toMain'] 
-            depart = request.POST['deptdate']
-            passenger = request.POST['passenger']
-            cabintype = ''
-            if 'cabintype' in request.POST:
-                cabintype = request.POST['cabintype']
-            roundtripkey = ''
-            if 'keyid' in request.POST:
-                roundtripkey = request.POST['keyid']
-            if 'trip' in request.POST:
-                trip = request.POST['trip']
-            if 'returndate' in  request.POST:
-                retdate = request.POST['returndate']
-                if retdate:
-                    returndate = datetime.datetime.strptime(retdate, '%m/%d/%Y')
-                    date1 = returndate.strftime('%Y/%m/%d')
-        if len(datelist)>0:
-            dates = []
-            for dt3 in datelist:
-                dt4 = datetime.datetime.strptime(dt3, '%m/%d/%Y')
-                date3 = dt4.strftime('%Y/%m/%d')
-                dates.append(date3)
-                date = ','.join(dates)
-        else: 
-            dt = datetime.datetime.strptime(depart, '%m/%d/%Y')
-            date = dt.strftime('%Y/%m/%d')
-        return render_to_response('flightsearch/searchloading.html', {'searchdate':date, 'sname':orgn, 'dname':dest, 'returndate':date1, 'triptype':trip, 'roundtripkey':roundtripkey, 'cabintype':cabintype, 'passenger':passenger}, context_instance=RequestContext(request))
-    else:
-        return render_to_response('flightsearch/index.html')
-
-
 def checkData(request):
     if request.is_ajax():
         cabin = request.POST['cabin']

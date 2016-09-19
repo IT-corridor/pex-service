@@ -1,7 +1,7 @@
-</div>
-		{% load staticfiles %}
-		
-		<footer class="container-fluid nopadding container-footer">
+        </div>
+        {% load staticfiles %}
+        
+        <footer class="container-fluid nopadding container-footer">
         <div class="container footer-custome">
               <nav class="navbar navbar-footer">
                 <div class="col-xs-12 nopadding">
@@ -21,9 +21,9 @@
              <div class="col-xs-12 text-center for-desktop-view" style="">
                     <ul class="nav navbar-nav navbar-footerimg social-icon">
                      <li class=""><a href="http://www.twitter.com/PEXPlus" rel="nofollow"><img src="{% static 'flightsearch/img/twtr.png' %}"></a></li>
-					<li class=""><a href="http://www.facebook.com/PEXPlus" rel="nofollow"><img src="{% static 'flightsearch/img/fb.png' %}"></a></li>
-					<li class=""><a href="http://www.instagram.com/PEXPlus" rel="nofollow"><img src="{% static 'flightsearch/img/instgm.png' %}"></a></li>
-					<li class=""><a href="http://eepurl.com/bKCPCP" target="_blank" rel="nofollow" class="navbar-footerfont"><!-- <span class="glyphicon glyphicon-info-sign"></span> --> GET PEX+ UPDATES</a></li><br />
+                    <li class=""><a href="http://www.facebook.com/PEXPlus" rel="nofollow"><img src="{% static 'flightsearch/img/fb.png' %}"></a></li>
+                    <li class=""><a href="http://www.instagram.com/PEXPlus" rel="nofollow"><img src="{% static 'flightsearch/img/instgm.png' %}"></a></li>
+                    <li class=""><a href="http://eepurl.com/bKCPCP" target="_blank" rel="nofollow" class="navbar-footerfont"><!-- <span class="glyphicon glyphicon-info-sign"></span> --> GET PEX+ UPDATES</a></li><br />
                     </ul>
                 </div>
                   </div>
@@ -50,102 +50,102 @@
                 </div>
           </div>
         </footer> 
-      	<!-- Modal -->
+        <!-- Modal -->
 <div class="modal fade" id="login-modal" tabindex="-1" role="dialog"
-	aria-labelledby="myModalLabel">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-body">
-				<button type="button" class="close" data-dismiss="modal"
-					aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-				<div class="row">
-					<div class="col-sm-6 col-sm-push-6 col-xs-12 login-section">
-						<!-- Nav tabs -->
-						<ul class="nav nav-tabs signup-logn-tabs" role="tablist">
-							<li role="presentation" class="active" id="signuptab"><a href="#signup"
-								aria-controls="signup" role="tab" data-toggle="tab">Sign up</a></li>
-							<li role="presentation" id="logintab"><a href="#login" aria-controls="login"
-								role="tab" data-toggle="tab">Login</a></li>
-						</ul>
+    aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal"
+                    aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <div class="row">
+                    <div class="col-sm-6 col-sm-push-6 col-xs-12 login-section">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs signup-logn-tabs" role="tablist">
+                            <li role="presentation" class="active" id="signuptab"><a href="#signup"
+                                aria-controls="signup" role="tab" data-toggle="tab">Sign up</a></li>
+                            <li role="presentation" id="logintab"><a href="#login" aria-controls="login"
+                                role="tab" data-toggle="tab">Login</a></li>
+                        </ul>
 
-						<!-- Tab panes -->
-						<div class="tab-content">
-							<div role="tabpanel" class="tab-pane active" id="signup">
-								
-								{%if 'signup_msg' in request.GET %}
-									<span class="show-msg">{{request.GET.signup_msg}}</span>
-								{%endif%}
-								<form action="/signup" method="post" class="modelform">
-									{% csrf_token %}
-									<div class="form-group">
-										<input type="text" class="form-control" placeholder="First Name" name="first_name" required >
-									</div>
-									<div class="form-group">
-										<input type="text" class="form-control" placeholder="Last Name" name="last_name" required>
-									</div>
-									<div class="form-group">
-										<input type="email" class="form-control" placeholder="Email" name="username" required >
-									</div>
-									<div class="form-group">
-										<input type="password" class="form-control" placeholder="Password" name="password" required>
-									</div>
-									<div class="form-group">
-										<input type="search" class="form-control" placeholder="Home Airport" id="home_airpot" name="home_airport" autocomplete="off">
-									</div>
-									<div class="checkbox">
-										<label><input type="checkbox" name="pexdeals" value="1"> Email me PEX+ amazing deals</label>
-									</div>
-									<div class="form-group text-center">
-										<button type="submit" class="btn btn-info">Sign up</button>
-									</div>
-									<hr>
-									<div class="form-group text-center">
-										<h5>Or Login with</h5>
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane active" id="signup">
+                                
+                                {%if 'signup_msg' in request.GET %}
+                                    <span class="show-msg">{{request.GET.signup_msg}}</span>
+                                {%endif%}
+                                <form action="/signup" method="post" class="modelform">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="First Name" name="first_name" required >
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Last Name" name="last_name" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="email" class="form-control" placeholder="Email" name="username" required >
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="password" class="form-control" placeholder="Password" name="password" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="search" class="form-control" placeholder="Home Airport" id="home_airpot" name="home_airport" autocomplete="off">
+                                    </div>
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="pexdeals" value="1"> Email me PEX+ amazing deals</label>
+                                    </div>
+                                    <div class="form-group text-center">
+                                        <button type="submit" class="btn btn-info">Sign up</button>
+                                    </div>
+                                    <hr>
+                                    <div class="form-group text-center">
+                                        <h5>Or Login with</h5>
 
-										<a href="{% url 'socialauth_begin' 'facebook' %}" class="pexdeal"><span class="social-login facebook">Facebook</span></a> 
-										<a href="{% url 'socialauth_begin' 'google-oauth2' %}?next={{ request.path   }}" class="pexdeal"><span class="social-login google">Google+</span></a>
-									</div>									
-								</form>
-							</div>
-							<div role="tabpanel" class="tab-pane" id="login">
-								{% if 'msg' in request.GET %}
-									<div class="show-msg">{{request.GET.msg}} </div>
-								{% endif %}
-								<div class="show-msg" id="loginmsg"></div>
-								<form action="/login" method="post">
-									{% csrf_token %}
-									<input type="hidden" name="curl" value="{{request.get_full_path}}" id="curl">
-									<div class="form-group">
-										<input type="email" class="form-control" placeholder="Email" name="username" required>
-									</div>
-									<div class="form-group" id="password" >
-										<input type="password" class="form-control" placeholder="Password" name="password" required>
-									</div>
-									<input type="hidden" name="url" value="{{request.path}}">
-									<div class="form-group">
-										<a href="#" id="forgot_password">Forgot Password?</a>
-									</div>
-									<div class="form-group text-center">
-										<button type="submit" class="btn btn-info">Log in</button>
-									</div>
-									<hr>
-									</form>
-									<div class="form-group text-center">
-										<h5>Or Login with</h5>
-										<a href="{% url 'socialauth_begin' 'facebook' %}">	<span class="social-login facebook">Facebook</span> </a>
-										<a href="{% url 'socialauth_begin' 'google-oauth2' %}"><span class="social-login google">Google+</span></a>
-									</div>									
-								
-							</div>
-						</div>
-					</div>
-					<div class="col-sm-6 col-sm-pull-6 col-xs-12"></div>
-				</div>
-			</div>
-		</div>
-	</div>
+                                        <a href="{% url 'socialauth_begin' 'facebook' %}" class="pexdeal"><span class="social-login facebook">Facebook</span></a> 
+                                        <a href="{% url 'socialauth_begin' 'google-oauth2' %}?next={{ request.path   }}" class="pexdeal"><span class="social-login google">Google+</span></a>
+                                    </div>                                  
+                                </form>
+                            </div>
+                            <div role="tabpanel" class="tab-pane" id="login">
+                                {% if 'msg' in request.GET %}
+                                    <div class="show-msg">{{request.GET.msg}} </div>
+                                {% endif %}
+                                <div class="show-msg" id="loginmsg"></div>
+                                <form action="/login" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="curl" value="{{request.get_full_path}}" id="curl">
+                                    <div class="form-group">
+                                        <input type="email" class="form-control" placeholder="Email" name="username" required>
+                                    </div>
+                                    <div class="form-group" id="password" >
+                                        <input type="password" class="form-control" placeholder="Password" name="password" required>
+                                    </div>
+                                    <input type="hidden" name="url" value="{{request.path}}">
+                                    <div class="form-group">
+                                        <a href="#" id="forgot_password">Forgot Password?</a>
+                                    </div>
+                                    <div class="form-group text-center">
+                                        <button type="submit" class="btn btn-info">Log in</button>
+                                    </div>
+                                    <hr>
+                                    </form>
+                                    <div class="form-group text-center">
+                                        <h5>Or Login with</h5>
+                                        <a href="{% url 'socialauth_begin' 'facebook' %}">  <span class="social-login facebook">Facebook</span> </a>
+                                        <a href="{% url 'socialauth_begin' 'google-oauth2' %}"><span class="social-login google">Google+</span></a>
+                                    </div>                                  
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-sm-pull-6 col-xs-12"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 
@@ -158,7 +158,7 @@
       </div>
       
       <form action="/forgotPassword" method="post" class="form-group" id="forgot_password_form">
-      	{% csrf_token %}
+        {% csrf_token %}
       <div class="modal-body col-xs-12">
         <input type="email" name="email" class="form-group" required/>
       </div>
@@ -178,100 +178,100 @@
 
 <script>
 
-	var resetpassword = "{{request.GET.fpmsg}}"; 
-	var welcome_msg = "{{request.GET.welcome_msg}}";
-	var lmsg = "{{request.GET.msg}}";
-	var smsg = "{{request.GET.signup_msg}}";
-	$(function(){
-		$(document).ready(function() {
-			if (lmsg != '')
-			{
-				$('#login-modal').modal('show');
-				activeLogin();
-			}
-			if (smsg != '')
-			{
-				$('#login-modal').modal('show');
-				activeSignup();	
-			}
-		  if(resetpassword != ''){
-		  	$('#forgetpassword').modal('show');
-		  	resetpassword='';
-		  }
-		  if("{{request.GET.welcome_msg}}" != ''){
-		  	$('#forgetpassword').modal('show');
-		  	$('#forgot_password_form').hide();
-		  	setTimeout(function() {$('#forgetpassword').modal('hide');}, 5000);
-		  }
-		});
-	});
-	$('#forgot_password').click(function(){
-		$('#forgetpassword').modal('show');
-		$('#login-modal').modal('hide');
-	});
-	
-	</script>
+    var resetpassword = "{{request.GET.fpmsg}}"; 
+    var welcome_msg = "{{request.GET.welcome_msg}}";
+    var lmsg = "{{request.GET.msg}}";
+    var smsg = "{{request.GET.signup_msg}}";
+    $(function(){
+        $(document).ready(function() {
+            if (lmsg != '')
+            {
+                $('#login-modal').modal('show');
+                activeLogin();
+            }
+            if (smsg != '')
+            {
+                $('#login-modal').modal('show');
+                activeSignup(); 
+            }
+          if(resetpassword != ''){
+            $('#forgetpassword').modal('show');
+            resetpassword='';
+          }
+          if("{{request.GET.welcome_msg}}" != ''){
+            $('#forgetpassword').modal('show');
+            $('#forgot_password_form').hide();
+            setTimeout(function() {$('#forgetpassword').modal('hide');}, 5000);
+          }
+        });
+    });
+    $('#forgot_password').click(function(){
+        $('#forgetpassword').modal('show');
+        $('#login-modal').modal('hide');
+    });
+    
+    </script>
 
-	<script>
-	 $(".signuplogin").click(function(){
-	var which_button_is_clicked=$(this).attr('id');
-	
-	 if($.trim(which_button_is_clicked)=="loginbtn"){ 
-	 	activeLogin();
-	}
-	else if($.trim(which_button_is_clicked)=="signupbtn")
-	{
-	 	activeSignup();
-	}
+    <script>
+     $(".signuplogin").click(function(){
+    var which_button_is_clicked=$(this).attr('id');
+    
+     if($.trim(which_button_is_clicked)=="loginbtn"){ 
+        activeLogin();
+    }
+    else if($.trim(which_button_is_clicked)=="signupbtn")
+    {
+        activeSignup();
+    }
 });
 function activeLogin(){
-	$('#signup').removeClass('active');
-	$('#signuptab').removeClass('active');
-	$('#login').addClass('active');
-	$('#logintab').addClass('active');
+    $('#signup').removeClass('active');
+    $('#signuptab').removeClass('active');
+    $('#login').addClass('active');
+    $('#logintab').addClass('active');
 }
 
 function activeSignup(){
-	$('#login').removeClass('active');
-	$('#logintab').removeClass('active');
-	$('#signup').addClass('active');
-	$('#signuptab').addClass('active');
-}	
+    $('#login').removeClass('active');
+    $('#logintab').removeClass('active');
+    $('#signup').addClass('active');
+    $('#signuptab').addClass('active');
+}   
 
 $( "#home_airpot" ).autocomplete({
-  		 open: function(event, ui) {
-	        	$('.ui-autocomplete').off('menufocus hover mouseover');
-    		},
-		autoFocus: true,
-    	source: "/get_airport/",
-    	minLength: 2,
-    	appendTo:".modelform",
+         open: function(event, ui) {
+                $('.ui-autocomplete').off('menufocus hover mouseover');
+            },
+        autoFocus: true,
+        source: "/get_airport/",
+        minLength: 2,
+        appendTo:".modelform",
     });
 
  
 $(".pexdeal").click(function(e){
-	e.preventDefault();
-	$link = $(this);
-	var pex_option = confirm("Do you want to subscribe, to receive PEX+ amazing deals?");
-	
-	if (pex_option == true) 
-		{	
-				$.ajax({
-		       	type: "POST",
-		       	dataType: "text",
-		       	url: "/index/",
-		        data: "pexdeals=1&csrfmiddlewaretoken="+encodeURI("{{csrf_token}}")
-		        }).done(function(data){
-			      	 window.location.href = $link.attr('href');
-	
-			      }) ;
-			    
-			} 
-	else{
-		window.location.href = $link.attr('href');
-	}
+    e.preventDefault();
+    $link = $(this);
+    var pex_option = confirm("Do you want to subscribe, to receive PEX+ amazing deals?");
+    
+    if (pex_option == true) 
+        {   
+                $.ajax({
+                type: "POST",
+                dataType: "text",
+                url: "/index/",
+                data: "pexdeals=1&csrfmiddlewaretoken="+encodeURI("{{csrf_token}}")
+                }).done(function(data){
+                     window.location.href = $link.attr('href');
+    
+                  }) ;
+                
+            } 
+    else{
+        window.location.href = $link.attr('href');
+    }
 });
 </script>
-	</body>
+    </body>
 </html>
 
