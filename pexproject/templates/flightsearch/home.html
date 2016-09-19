@@ -19,7 +19,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-xs-12 xs-nopadding nopadding">
+            <div class="col-xs-12 xs-nopadding nopadding mvb10px">
                 <div class="col-xs-12 nopaddig visible-xs form-side">
                     <p class="pull-left">
                         Search Flights
@@ -665,5 +665,9 @@
         cabintypeval = $('#cabintype option:selected').val();
         searchData();
     });
+    $(".flight-search-show").click(function() {
+        $(".flight-search-panel").toggleClass('in');
+    });
+
 </script>
 <script src="{% static 'flightsearch/js/flight_search.js' %}"></script>
