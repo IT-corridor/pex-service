@@ -17,8 +17,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from django.db import connection, transaction
 import customfunction
-#from pyvirtualdisplay import Display
-import socket
 
 
 def jetblue(from_airport,to_airport,searchdate,searchid):
@@ -264,11 +262,9 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
             print "final row inserted"
             db.commit()
     except:
-        print "please change your seach filter"
+        print "please change your search filter"
     storeFlag(searchid,stime)
     return searchid
-
-
 
 
 if __name__=='__main__':

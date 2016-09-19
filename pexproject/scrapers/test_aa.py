@@ -16,7 +16,8 @@ from selenium.webdriver.support.ui import Select
 import re
 from pyvirtualdisplay import Display
 
-url = "https://www.aa.com/reservation/awardFlightSearchAccess.do"
+# url = "https://www.aa.com/reservation/awardFlightSearchAccess.do"
+url = 'https://book.jetblue.com/shop/search/#/'
 display = Display(visible=0, size=(800, 600))
 display.start()
 driver = webdriver.Chrome()
