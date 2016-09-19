@@ -20,7 +20,7 @@
                 </div>
             </div>
             <div class="col-xs-12 xs-nopadding nopadding">
-                <div class="container visible-xs">
+<!--                 <div class="container visible-xs">
                 <div class="col-xs-12 nopaddig form-side">
                     <p class="pull-left">
                         Search Flights
@@ -31,7 +31,7 @@
                 </div>
                 </div>
                 <div class="col-xs-12 nopadding xs-collapse flight-search-panel mvb10px">            
-                <!-- <div class="col-xs-12 xs-nopadding nopadding"> -->
+ -->                <div class="col-xs-12 xs-nopadding nopadding">
                     <form class="form-horizontal" role="form" action="#" method="post" id="flightSearchForm">
                         {% csrf_token %}
                         <div class="col-xs-12 nopadding">
@@ -667,9 +667,9 @@
         cabintypeval = $('#cabintype option:selected').val();
         searchData();
     });
-    $(".flight-search-show").click(function() {
-        $(".flight-search-panel").toggleClass('in');
-    });
+    // $(".flight-search-show").click(function() {
+    //     $(".flight-search-panel").toggleClass('in');
+    // });
 
 </script>
 <script src="{% static 'flightsearch/js/flight_search.js' %}"></script>
