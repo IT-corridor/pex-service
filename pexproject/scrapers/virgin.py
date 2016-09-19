@@ -1,30 +1,27 @@
 #!/usr/bin/env python
 import os, sys
-from subprocess import call
-from bs4 import BeautifulSoup
-from selenium import webdriver
 import selenium
 import datetime
-from datetime import timedelta
 import time
-import MySQLdb
 import re
+import urllib
+import codecs
+
+from bs4 import BeautifulSoup
+from selenium import webdriver
 from selenium.webdriver.common.proxy import *
 from datetime import date
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from django.db import connection, transaction
-from multiprocessing import Process
-import threading
-import customfunction
-import Queue
-#from pyvirtualdisplay import Display
-import socket
-import urllib
-#import settings
+
+DEBUG = False
+DEBUG = True
+DEV_LOCAL = False
+# DEV_LOCAL = True
+
+if DEV_LOCAL:
+    import pdb
+
+if not DEV_LOCAL:
+    import customfunction
 
 def storeFlag(searchkey,stime):
     db = customfunction.dbconnection()
@@ -36,41 +33,42 @@ def storeFlag(searchkey,stime):
 def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
     driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
     driver.set_window_size(1120, 1080)
-    try:
+    # sys.stdout=codecs.getwriter('utf-8')(sys.stdout)
+    currentdatetime = datetime.datetime.now()
+    stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
+    # try:
+    if not DEV_LOCAL:
         db = customfunction.dbconnection()
         cursor = db.cursor()
-        #cursor = connection.cursor()
-        dt = datetime.datetime.strptime(searchdate, '%m/%d/%Y')
-        date = dt.strftime('%d/%m/%Y')
-        if returndate:
-            dt1 = datetime.datetime.strptime(returndate, '%m/%d/%Y')
-            retdate = dt1.strftime('%d/%m/%Y') 
-        currentdatetime = datetime.datetime.now()
-        stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
-        if returndate:
-            url = "http://www.virgin-atlantic.com/us/en/book-your-travel/book-your-flight/flight-search-results.html?departure="+origin+"&arrival="+dest+"&adult=1&departureDate="+str(date)+"&search_type=redeemMiles&classType=10&classTypeReturn=10&bookingPanelLocation=Undefined&isreturn=yes&returnDate="+str(retdate)
-        else:
-            url = "http://www.virgin-atlantic.com/us/en/book-your-travel/book-your-flight/flight-search-results.html?departure="+origin+"&arrival="+dest+"&adult=1&departureDate="+str(date)+"&search_type=redeemMiles&classType=10&classTypeReturn=10&bookingPanelLocation=BookYourFlight&isreturn=no"
+    dt = datetime.datetime.strptime(searchdate, '%m/%d/%Y')
+    date = dt.strftime('%d/%m/%Y')
+    if returndate:
+        dt1 = datetime.datetime.strptime(returndate, '%m/%d/%Y')
+        retdate = dt1.strftime('%d/%m/%Y') 
+    if returndate:
+        url = "http://www.virgin-atlantic.com/us/en/book-your-travel/book-your-flight/flight-search-results.html?departure="+origin+"&arrival="+dest+"&adult=1&departureDate="+str(date)+"&search_type=redeemMiles&classType=10&classTypeReturn=10&bookingPanelLocation=Undefined&isreturn=yes&returnDate="+str(retdate)
+    else:
+        url = "http://www.virgin-atlantic.com/us/en/book-your-travel/book-your-flight/flight-search-results.html?departure="+origin+"&arrival="+dest+"&adult=1&departureDate="+str(date)+"&search_type=redeemMiles&classType=10&classTypeReturn=10&bookingPanelLocation=BookYourFlight&isreturn=no"
 
-        print url, '@@@@@@@@@@@@@22'    
-        #display = Display(visible=0, size=(800, 600))
-        #display.start()
-        #driver = webdriver.Chrome()
-        driver.get(url)
-        time.sleep(2)
-        html_page = driver.page_source
-        soup = BeautifulSoup(html_page,"lxml")
-    except:
-        print "before data page"
-        print "searchkey",searchkey
-        print "returnkey",returnkey
-        storeFlag(searchkey,stime)
-        if returnkey:
-            storeFlag(returnkey,stime)
-            print "return key stored"
-        driver.quit()
-        return
-    
+    # print url, '@@@@@@@@@@@@@22'    
+
+    driver.get(url)
+    time.sleep(2)
+    html_page = driver.page_source
+
+    soup = BeautifulSoup(html_page,"lxml")
+    # except:
+    #     print "before data page"
+    #     print "searchkey",searchkey
+    #     print "returnkey",returnkey
+    #     if not DEV_LOCAL:
+    #         storeFlag(searchkey,stime)
+    #         if returnkey:
+    #             storeFlag(returnkey,stime)
+    #             print "return key stored"
+    #     driver.quit()
+    #     return
+
     def virgindata(tbody,keyid):
         recordcount = 1
         value_string = []
@@ -81,8 +79,6 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
                 if tbody.findAll("tr",{"class":"indirectRoute "}):
                     trbody = tbody.findAll("tr",{"class":"indirectRoute "})
         except:
-            #storeFlag(keyid,stime)
-            #driver.quit()
             return keyid
         for row in trbody:
             econo = 0
@@ -93,7 +89,7 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
             firsttax = 0  
             stp = ''
             lyover= ''
-            details = row.find("th",{"class":"flightSearchDetails"})
+            details = row.find("td",{"class":"flightSearchDetails"})    # error
             economy = ''
             #============= price block ================================================================
             if row.find("td",{"class":"cellOption economy  hasLowestCostMessage"}):
@@ -305,9 +301,19 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
                 fl_flightno1 = flight_no.find("span",{"class":"flightNumber"})
                 planeno = (''.join(fl_flightno1.find('br').next_siblings))
                 fl_flightno = (fl_flightno1.text).replace(planeno,'')
-                deptdetail = departing_date+"|"+detaildetptime+" "+deptextraday+" from "+departing_from
+
+                departinfo_time = departing_date+" "+detaildetptime
+                departinfo_time = datetime.datetime.strptime(departinfo_time, '%A %d %B %Y %H:%M')
+                departinfo_time = departinfo_time.strftime('%Y/%m/%d %H:%M')
+
+                deptdetail = departinfo_time+" | from "+departing_from
                 departdlist.append(deptdetail)
-                arivedetail = departing_date+"|"+detailarivetime+" "+ariveextraday+" at "+ariving_at
+
+                departinfo_time = departing_date+" "+detailarivetime
+                departinfo_time = datetime.datetime.strptime(departinfo_time, '%A %d %B %Y %H:%M')
+                departinfo_time = departinfo_time.strftime('%Y/%m/%d %H:%M')
+
+                arivedetail = departinfo_time+" | at "+ariving_at                
                 arivelist.append(arivedetail)
                 planetext = fl_flightno+"|"+planeno+"("+fl_duration+")" 
                 planelist.append(planetext)
@@ -325,20 +331,29 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
                 value_string = []
                 recordcount = 1
         if len(value_string) > 0:
-            cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);",value_string )
-            db.commit()
+            if not DEV_LOCAL:
+                cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);",value_string )
+                db.commit()
+            # print value_string
         #driver.quit()
             
     tbody = soup.findAll("tbody",{"class":"flightStatusTbody"})
     if searchkey:
         if len(tbody) > 0:
             virgindata(tbody[0],searchkey)
-        storeFlag(searchkey,stime)
+        if not DEV_LOCAL:    
+            storeFlag(searchkey,stime)
     if returnkey:
         if len(tbody)> 1 :
             virgindata(tbody[1],returnkey)
-        storeFlag(returnkey,stime)
+        if not DEV_LOCAL:    
+            storeFlag(returnkey,stime)
     driver.quit()
     return searchkey
+
+
 if __name__=='__main__':
     virgin_atlantic(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5],sys.argv[6])
+    # if DEV_LOCAL:
+    #     pdb.set_trace()    
+    # virgin_atlantic('LON', 'LAX', '10/18/2016', '', '1231', '')

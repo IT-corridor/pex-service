@@ -398,7 +398,7 @@ def login(request):
     user = User()
     user = authenticate()
     currentpath = ''
-    print "user", user
+    # print "user", user
     if user is not None:
         if user.is_active:
             social_login(request,user)	
@@ -464,7 +464,7 @@ def forgotPassword(request):
                 return HttpResponseRedirect('/index?msg=Invalid username')
                 #return render_to_response('flightsearch/index.html', {'msg':"Invalid username"}, context_instance=RequestContext(request))
         text = ''
-        print "user",user
+        # print "user",user
         if user > 0:
             #subject = "Manage Your Password"
             obj = EmailTemplate.objects.get(email_code='forgotPassword')
@@ -731,18 +731,18 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
         etihadorigin = originobj.cityName
         orgncode = originobj.code
         origin = originobj.cityName + " (" + originobj.code + ")"
-        print '@@@@', orgn, origin, '@@@@'
+        # print '@@@@', orgn, origin, '@@@@'
 
         dest = destobj.cityName + ", " + destobj.cityCode + ", " + destobj.countryCode + "  (" + destobj.code + ")"
         etihaddest = destobj.cityName
         destcode = destobj.code
         destination1 = destobj.cityName + " (" + destobj.code + ")"
-        print '####', dest, destination1, '####'
+        # print '####', dest, destination1, '####'
         
         dt = datetime.datetime.strptime(depart, '%m/%d/%Y')
         date = dt.strftime('%m/%d/%Y')
         searchdate = dt.strftime('%Y-%m-%d')        
-        print '$$$$', searchdate, '$$$$'
+        # print '$$$$', searchdate, '$$$$'
         
         currentdatetime = datetime.datetime.now()
         time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
@@ -778,7 +778,7 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/united.py",destcode, orgncode, str(returndate), str(returnkey)])
                 if is_scrape_s7 == 1:
                     customfunction.flag = customfunction.flag+1
-                    print '@@@@@ S7 Round trip', destobj.code, originobj.code, str(searchdate1), str(returnkey)                        
+                    # print '@@@@@ S7 Round trip', destobj.code, originobj.code, str(searchdate1), str(returnkey)                        
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/s7.ru.py",destobj.code, originobj.code, str(searchdate1), str(returnkey)])
                     # subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/s7.ru.py",destobj.cityCode, originobj.cityCode, str(searchdate1), str(returnkey)])
                 if is_scrape_aa == 1:
@@ -840,7 +840,7 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/united.py",orgncode,destcode,str(depart),str(searchkeyid)])
             if is_scrape_s7 == 1:
                 customfunction.flag = customfunction.flag+1
-                print '@@@@@ S7 One way', originobj.code, destobj.code, str(searchdate), str(searchkeyid)                    
+                # print '@@@@@ S7 One way', originobj.code, destobj.code, str(searchdate), str(searchkeyid)                    
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/s7.ru.py", originobj.code, destobj.code, str(searchdate), str(searchkeyid)])
             if is_scrape_aa == 1:
                 customfunction.flag = customfunction.flag+1
@@ -854,12 +854,12 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
             if is_scrape_aeroflot == 1:
                 if not searchdate1:
                     customfunction.flag = customfunction.flag+1 
-                    print '@@@@@ Aeroflot One Way', originobj.code, destobj.code, str(searchdate), str(searchkeyid)
+                    # print '@@@@@ Aeroflot One Way', originobj.code, destobj.code, str(searchdate), str(searchkeyid)
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/aeroflot.py", originobj.code, destobj.code, str(searchdate), str(searchkeyid)])
             if is_scrape_airchina == 1:
                 if not searchdate1:
                     customfunction.flag = customfunction.flag+1 
-                    print '@@@@@ AirChina One Way', originobj.code, destobj.code, str(searchdate), str(searchkeyid)
+                    # print '@@@@@ AirChina One Way', originobj.code, destobj.code, str(searchdate), str(searchkeyid)
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/aeroflot_rt.py", originobj.code, destobj.code, str(searchdate), str(searchkeyid)])
                 
         if is_scrape_virgin_atlantic == 1:
@@ -877,7 +877,7 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
                     customfunction.flag = customfunction.flag+1
                     Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='aeroflot').delete()
                     Flightdata.objects.filter(searchkeyid=returnkey,datasource='aeroflot').delete()            
-                    print '@@@@@ Aeroflot Round Trip', orgncode, destcode, str(searchdate), str(searchkeyid), str(searchdate1), str(returnkey)
+                    # print '@@@@@ Aeroflot Round Trip', orgncode, destcode, str(searchdate), str(searchkeyid), str(searchdate1), str(returnkey)
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/aeroflot_rt.py", orgncode, destcode, str(searchdate),str(searchkeyid), str(searchdate1), str(returnkey)])
             if is_scrape_airchina == 1:
                 flight_to = Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='airchina')
@@ -886,7 +886,7 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
                     customfunction.flag = customfunction.flag+1
                     Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='airchina').delete()
                     Flightdata.objects.filter(searchkeyid=returnkey,datasource='airchina').delete()            
-                    print '@@@@@ AirChina Round Trip', orgncode, destcode, str(searchdate), str(searchkeyid), str(searchdate1), str(returnkey)
+                    # print '@@@@@ AirChina Round Trip', orgncode, destcode, str(searchdate), str(searchkeyid), str(searchdate1), str(returnkey)
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/aeroflot_rt.py", orgncode, destcode, str(searchdate),str(searchkeyid), str(searchdate1), str(returnkey)])
 
         if len(departlist) > 0 :
@@ -1609,9 +1609,9 @@ def getsearchresult(request):
                     join = ' AND '
                 cabintype = " and " + cabinclass + " > 0"
                 querylist = querylist+cabintype
-                print '$$$(class filtered): ', querylist
+                # print '$$$(class filtered): ', querylist
                 record = Flightdata.objects.raw("select p1.*,p1.maintax as maintax1, p1.firsttax as firsttax1, p1.businesstax as businesstax1,p1.rowid as newid ,case when datasource = 'delta' then " + deltaorderprice + "  else " + unitedorderprice + " end as finalprice, "+taxes+" as totaltaxes from pexproject_flightdata as p1 where " + querylist + " order by finalprice ," + taxes + ",departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset))
-                print '$$$ (synthesis): ', "select p1.*,p1.maintax as maintax1, p1.firsttax as firsttax1, p1.businesstax as businesstax1,p1.rowid as newid ,case when datasource = 'delta' then " + deltaorderprice + "  else " + unitedorderprice + " end as finalprice, "+taxes+" as totaltaxes from pexproject_flightdata as p1 where " + querylist + " order by finalprice ," + taxes + ",departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset)
+                # print '$$$ (synthesis): ', "select p1.*,p1.maintax as maintax1, p1.firsttax as firsttax1, p1.businesstax as businesstax1,p1.rowid as newid ,case when datasource = 'delta' then " + deltaorderprice + "  else " + unitedorderprice + " end as finalprice, "+taxes+" as totaltaxes from pexproject_flightdata as p1 where " + querylist + " order by finalprice ," + taxes + ",departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset)
             mainlist = list(record)
             
         progress_value = '' 
@@ -1654,7 +1654,7 @@ def getsearchresult(request):
             title = multiSearchTitle
             
         if request.is_ajax():
-            print '$$$ (ajax parameter-data, multirecod)', [(item.rowid, item.searchkeyid, item.datasource, item.flighno) for item in mainlist] 
+            # print '$$$ (ajax parameter-data, multirecod)', [(item.rowid, item.searchkeyid, item.datasource, item.flighno) for item in mainlist] 
             return render_to_response('flightsearch/search.html', {'action':action,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value, 'multisearch':multisearch, 'data':mainlist,'multirecod':mainlist, 'multicity':multicity, 'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request))
 
         if 'userid' in request.session and  'actionfor' not in request.POST:
@@ -1756,7 +1756,7 @@ def useralert(request):
             alertuser.pricemile = request.POST['pricemile']
         if 'alt_returndate' in request.POST and request.POST['alt_returndate']:
             alertuser.returndate = request.POST['alt_returndate']
-            print "alt_returndate",request.POST['alt_returndate']
+            # print "alt_returndate",request.POST['alt_returndate']
         if 'alt_expire' in request.POST and request.POST['alt_expire']:
             alertuser.expiredate = request.POST['alt_expire']
         else:
@@ -2947,7 +2947,7 @@ def price_history_period(request):
     aggregation = request.POST.get('aggregation')
     period = int(request.POST.get('period'))
 
-    print _from, _to, airline, r_from, r_to, period, aggregation, '@@@@@@@'
+    # print _from, _to, airline, r_from, r_to, period, aggregation, '@@@@@@@'
     result = _price_history_period(request.user, _from, _to, airline, r_from, r_to, aggregation, period)
     return HttpResponse(json.dumps(result))
 
