@@ -1,510 +1,469 @@
+{% extends "flightsearch/base.html" %}
 {% load staticfiles %}
 {% load humanize %}
-		{% include "flightsearch/header.html" %}
-		<title>Flight Alert|PEX+</title>
-	    <div class="container">
-	    	<div class="col-xs-12 heading-container nopadding">
-	    		{% if request.GET.status %}<h4 class="text-center">{{request.GET.status}}{%endif%}</h4>
-		    	<div class="col-xs-12 mvb30px nopadding">
-		    		<span class="flight_alert_heading pull-left">Flight Price Alert</span>
-					<a class="pull-right" href="#" data-toggle="modal" data-target="#flight-model-alert" id="flight_alert_link">Set A Flight Price Alert</a>
-		    	</div>
-		    	
-		    	<div class="col-xs-12 nopadding">
-		    		{%if alertResult%}
-		    		{%for row in alertResult%}
-		    		<div class="col-xs-12 mvb10px account-block-bg">
-		    			<div class="col-sm-8 col-xs-12 nopadding">
-							<h4>{{row.from_airport}}  <img src="{% static 'flightsearch/img/summary-arrow.png' %}" /> {{row.to_airport}}</h4> 
-							
-							<span>{{row.departdate}}{% if row.returndate %} - {{row.returndate}}{%endif%}, {{row.traveller}} {%if row.traveller == 1%}adult{%else%}travelers{%endif%} {%if row.cabin == 'maincabin' %}Economy{%elif row.cabin == 'firstclass'%}Business{%elif row.cabin == 'business'%}First{%endif%},  Max price miles {{row.pricemile|intcomma}} </span>
-						</div>
-						<div class="col-sm-4 col-xs-12 text-right mvt15p">
-							<h4><a href="#" class="action" id="{{row.alertid}}" >Change</a> | <a href="/useralert?action=delete&alertid={{row.alertid}}" class="delete_button">Delete</a>  </h4>
-						</div>
-					</div>
-					{% endfor %}
-					{% else %}
-					<h4>You have not created any Flight price alert</h4>
-					{% endif %}
-					
-								
-		    	</div>
-		    </div>
-	    </div>
-	</div>
-<div class="modal fade" id="flight-model-alert" tabindex="-1" role="dialog" >
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="gridSystemModalLabel">Set A Flight Price Alert</h4>
-      </div>
-      <div class="modal-body">
-      	<div class="container-fluid">
-      		<div class="row">
-		        <form action="useralert" method="post" class="modelform">
-					{% csrf_token %}
-					<input type="hidden" id="alertid" name="alertid">
-					<div class="col-xs-12 nopadding">
-						<div class="container nopadding trip-custome">
-							<div class="col-sm-12 col-xs-12 nopadding">
-					    		<div class="checkbox-inline mhr10px auto-crsr">
-					         		<label><input type="radio" id="roundTrip" class="curson" name="trip" value="roundtrip" {% if record %} {% if record.returndate %} checked="checked"{%endif%}{%else%}checked="checked" {%endif%}> Round-Trip</label>
-					        	</div>
-					     		<div class="checkbox-inline mhr10px auto-crsr">
-					         		<label><input type="radio" id="oneWay" class="curson" name="trip" value="oneway" {% if record  and record.returndate == None%} checked="checked" {%endif%}> One-Way</label>
-					       		</div>
-							</div>
-						</div>
-					</div>
-					<div class="col-xs-12 nopadding">
-						<div class="col-xs-6 form-group">
-							<div class="ui-widget">
-								<label class="sr-only" for="from">From:</label> 
-								<input type="search" class=" form_val form-control"
-									id="alt_from" name="from" placeholder="From" autocomplete="off" {% if record and record.from_airport%} value="{{record.from_airport}}" {%endif%} required>
-								<input type="hidden" id="alt_fromid" name="fromid" {% if record and record.source_airportid%} value="{{record.source_airportid}}" {%endif%} />
-							</div>
-							
-						</div>
-						<div class="col-xs-6 form-group">
-							<div class="ui-widget">
-			                  <label class="sr-only" for="to">To:</label>
-			                  <input type="search" class="form_val form-control" id="alt_to" name="to" placeholder="To" autocomplete="off" {% if record and record.to_airport%} value="{{record.to_airport}}" {%endif%} required>
-			                  <input type="hidden" id="alt_toid" name="destid" {% if record and record.destination_airportid%} value="{{record.destination_airportid}}" {%endif%} />
-			                </div>
-						</div>
-					</div>
-					
-					<div class="col-xs-12 nopadding">
-						<div class="col-xs-6 form-group">
-							<div class="inner-addon left-addon date"><i class="glyphicon glyphicon-calendar "></i>
-							<input type="text" id="alt_depart" class="form-control" placeholder="Depart" name="alt_depardate" required >
-							</div>
-						</div>
-						<div class="col-xs-6 form-group" id="returndatediv">
-							<div class="inner-addon left-addon date"><i class="glyphicon glyphicon-calendar "></i>
-							<input type="text" id="alt_return" class="form-control" placeholder="Return" name="alt_returndate">
-							</div>
-						</div>
-					</div>
-							<div class="col-xs-12 nopadding">
-							<div class="col-xs-6 form-group">
-								
-								<input type="number" id="price_mile" class="form-control" placeholder="Max Mileage Price" name="pricemile" required>
-							</div>
-							<div class="col-xs-6 form-group">
-							<div class="checkbox">
-							    <label>
-							     <input type="checkbox" name="year_repeat" id="annual_repeat" class="curson" value="1">  Repeat Annually 
-							    </label>
-							  </div>
-							</div>
-						</div>
-						<div class="col-xs-12 nopadding">
-						<div class="col-xs-6">
-						<div class="col-xs-12 form-group nopadding for_cabin_class" id="cabintab" tabindex="5">
-			                <div class="form-group travelers-dpdn-details no-margin" class="ui-widget">
-			                  <div class="dropdown travelers-holder form-control ">
-			                  	<span class="curson" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="travelar">1 adult, Economy</span> <span class="caret"></span></span>
-			                  	<div class="travelers-down-menu dropdown-menu for_cabin_class" aria-labelledby="dropdownMenu1">
-			                  		<div class="col-xs-12 down-menu-block">
-										<span class="col-xs-4 nopadding">Class</span>
-										<span class="col-xs-8 text-right nopr curson"><select class="custom-field-control curson" id="cabintype" name="cabintype" tabindex="6">
+
+<title>Flight Alert|PEX+</title>
+{% block content %}
+
+<div class="container">
+    <div class="col-xs-12 heading-container nopadding">
+        {% if request.GET.status %}
+        <h4 class="text-center">{{request.GET.status}}</h4>
+        {%endif%}
+        <div class="col-xs-12 mvb30px nopadding">
+            <span class="flight_alert_heading pull-left">Flight Price Alert</span>
+            <a class="pull-right" href="#" data-toggle="modal" data-target="#flight-model-alert" id="flight_alert_link">Set A Flight Price Alert</a>
+        </div>
+        <div class="col-xs-12 nopadding">
+            {%if alertResult%} {%for row in alertResult%}
+            <div class="col-xs-12 mvb10px account-block-bg">
+                <div class="col-sm-8 col-xs-12 nopadding">
+                    <h4>{{row.from_airport}}  <img src="{% static 'flightsearch/img/summary-arrow.png' %}" /> {{row.to_airport}}</h4>
+                    <span>{{row.departdate}}{% if row.returndate %} - {{row.returndate}}{%endif%}, {{row.traveller}} {%if row.traveller == 1%}adult{%else%}travelers{%endif%} {%if row.cabin == 'maincabin' %}Economy{%elif row.cabin == 'firstclass'%}Business{%elif row.cabin == 'business'%}First{%endif%},  Max price miles {{row.pricemile|intcomma}} </span>
+                </div>
+                <div class="col-sm-4 col-xs-12 text-right mvt15p">
+                    <h4><a href="#" class="action" id="{{row.alertid}}" >Change</a> | <a href="/useralert?action=delete&alertid={{row.alertid}}" class="delete_button">Delete</a>  </h4>
+                </div>
+            </div>
+            {% endfor %} {% else %}
+            <h4>You have not created any Flight price alert</h4> {% endif %}
+        </div>
+    </div>
+</div>
+</div>
+<div class="modal fade" id="flight-model-alert" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="gridSystemModalLabel">Set A Flight Price Alert</h4>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <form action="useralert" method="post" class="modelform">
+                            {% csrf_token %}
+                            <input type="hidden" id="alertid" name="alertid">
+                            <div class="col-xs-12 nopadding">
+                                <div class="container nopadding trip-custome">
+                                    <div class="col-sm-12 col-xs-12 nopadding">
+                                        <div class="checkbox-inline mhr10px auto-crsr">
+                                            <label>
+                                                <input type="radio" id="roundTrip" class="curson" name="trip" value="roundtrip" {% if record %} {% if record.returndate %} checked="checked" {%endif%}{%else%}checked="checked" {%endif%}> Round-Trip</label>
+                                        </div>
+                                        <div class="checkbox-inline mhr10px auto-crsr">
+                                            <label>
+                                                <input type="radio" id="oneWay" class="curson" name="trip" value="oneway" {% if record and record.returndate==N one%} checked="checked" {%endif%}> One-Way</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 nopadding">
+                                <div class="col-xs-6 form-group">
+                                    <div class="ui-widget">
+                                        <label class="sr-only" for="from">From:</label>
+                                        <input type="search" class=" form_val form-control" id="alt_from" name="from" placeholder="From" autocomplete="off" {% if record and record.from_airport%} value="{{record.from_airport}}" {%endif%} required>
+                                        <input type="hidden" id="alt_fromid" name="fromid" {% if record and record.source_airportid%} value="{{record.source_airportid}}" {%endif%} />
+                                    </div>
+                                </div>
+                                <div class="col-xs-6 form-group">
+                                    <div class="ui-widget">
+                                        <label class="sr-only" for="to">To:</label>
+                                        <input type="search" class="form_val form-control" id="alt_to" name="to" placeholder="To" autocomplete="off" {% if record and record.to_airport%} value="{{record.to_airport}}" {%endif%} required>
+                                        <input type="hidden" id="alt_toid" name="destid" {% if record and record.destination_airportid%} value="{{record.destination_airportid}}" {%endif%} />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 nopadding">
+                                <div class="col-xs-6 form-group">
+                                    <div class="inner-addon left-addon date"><i class="glyphicon glyphicon-calendar "></i>
+                                        <input type="text" id="alt_depart" class="form-control" placeholder="Depart" name="alt_depardate" required>
+                                    </div>
+                                </div>
+                                <div class="col-xs-6 form-group" id="returndatediv">
+                                    <div class="inner-addon left-addon date"><i class="glyphicon glyphicon-calendar "></i>
+                                        <input type="text" id="alt_return" class="form-control" placeholder="Return" name="alt_returndate">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 nopadding">
+                                <div class="col-xs-6 form-group">
+                                    <input type="number" id="price_mile" class="form-control" placeholder="Max Mileage Price" name="pricemile" required>
+                                </div>
+                                <div class="col-xs-6 form-group">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="year_repeat" id="annual_repeat" class="curson" value="1"> Repeat Annually
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 nopadding">
+                                <div class="col-xs-6">
+                                    <div class="col-xs-12 form-group nopadding for_cabin_class" id="cabintab" tabindex="5">
+                                        <div class="form-group travelers-dpdn-details no-margin" class="ui-widget">
+                                            <div class="dropdown travelers-holder form-control ">
+                                                <span class="curson" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="travelar">1 adult, Economy</span> <span class="caret"></span></span>
+                                                <div class="travelers-down-menu dropdown-menu for_cabin_class" aria-labelledby="dropdownMenu1">
+                                                    <div class="col-xs-12 down-menu-block">
+                                                        <span class="col-xs-4 nopadding">Class</span>
+                                                        <span class="col-xs-8 text-right nopr curson"><select class="custom-field-control curson" id="cabintype" name="cabintype" tabindex="6">
 											<option class="cabin curson" value="maincabin">Economy</option>
 											<option class="cabin curson" value="firstclass">Business</option>
 											<option  class="cabin curson" value="business">First</option>
-											</select></span>                  			
-			                  		</div>
-			                  		<div class="col-xs-12 alert alert-warning"> </div>
-			                  		<div class="col-xs-12 down-menu-block">
-			                  			<p>
-										<span class="col-xs-4 nopadding">Adults</span>
-										<span class="col-xs-5 text-right nopadding">
+											</select></span>
+                                                    </div>
+                                                    <div class="col-xs-12 alert alert-warning"> </div>
+                                                    <div class="col-xs-12 down-menu-block">
+                                                        <p>
+                                                            <span class="col-xs-4 nopadding">Adults</span>
+                                                            <span class="col-xs-5 text-right nopadding">
 											<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
-											<input type="text" class="field-width custom-field-control numberHolder qty" value="1" id="adults" tabindex="7">
-											<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>								
-										</span>
-										<span class="col-xs-3 nopr">18+</span> 
-										</p>                 			
-			                  		</div>
-			                  		<div class="col-xs-12 down-menu-block">
-			                  			<p>
-										<span class="col-xs-4 nopadding">Seniors</span>
-										<span class="col-xs-5 text-right nopadding">
+                                                            <input type="text" class="field-width custom-field-control numberHolder qty" value="1" id="adults" tabindex="7">
+                                                            <span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
+                                                            </span>
+                                                            <span class="col-xs-3 nopr">18+</span>
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-xs-12 down-menu-block">
+                                                        <p>
+                                                            <span class="col-xs-4 nopadding">Seniors</span>
+                                                            <span class="col-xs-5 text-right nopadding">
 											<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
-											<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="senior" tabindex="8">
-											<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>								
-											
-										</span>
-										<span class="col-xs-3 nopr">65+</span> 
-										</p>                 			
-			                  		</div>
-			                  		<div class="col-xs-12 down-menu-block">
-			                  			<p>
-										<span class="col-xs-4 nopadding">Youths</span>
-										<span class="col-xs-5 text-right nopadding">
+                                                            <input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="senior" tabindex="8">
+                                                            <span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
+                                                            </span>
+                                                            <span class="col-xs-3 nopr">65+</span>
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-xs-12 down-menu-block">
+                                                        <p>
+                                                            <span class="col-xs-4 nopadding">Youths</span>
+                                                            <span class="col-xs-5 text-right nopadding">
 											<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
-											<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="youth" tabindex="9">
-											<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>								
-											
-										</span>
-										<span class="col-xs-3 nopr">12-17</span>  
-										</p>                			
-			                  		</div>
-			                  		<div class="col-xs-12 down-menu-block">
-			                  			<p>
-										<span class="col-xs-4 nopadding">Children</span>
-										<span class="col-xs-5 text-right nopadding">
+                                                            <input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="youth" tabindex="9">
+                                                            <span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
+                                                            </span>
+                                                            <span class="col-xs-3 nopr">12-17</span>
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-xs-12 down-menu-block">
+                                                        <p>
+                                                            <span class="col-xs-4 nopadding">Children</span>
+                                                            <span class="col-xs-5 text-right nopadding">
 											<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
-											<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="children" tabindex="10">								
-											<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
-											
-										</span>
-										<span class="col-xs-3 nopr">2-11</span>
-										</p>                  			
-			                  		</div>
-			                  		<div class="col-xs-12 down-menu-block">
-			                  			<p>
-										<span class="col-xs-4 nopadding">Seat infants</span>
-										<span class="col-xs-5 text-right nopadding">
+                                                            <input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="children" tabindex="10">
+                                                            <span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
+                                                            </span>
+                                                            <span class="col-xs-3 nopr">2-11</span>
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-xs-12 down-menu-block">
+                                                        <p>
+                                                            <span class="col-xs-4 nopadding">Seat infants</span>
+                                                            <span class="col-xs-5 text-right nopadding">
 											<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
-											<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="seatinfants" tabindex="11">								
-											<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
-											
-										</span>
-										<span class="col-xs-3 nopr">under 2</span>  
-										</p>                			
-			                  		</div>
-			                  		<div class="col-xs-12 down-menu-block">
-			                  			<p>
-										<span class="col-xs-4 nopadding">Lap infants</span>
-										<span class="col-xs-5 text-right nopadding">
+                                                            <input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="seatinfants" tabindex="11">
+                                                            <span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
+                                                            </span>
+                                                            <span class="col-xs-3 nopr">under 2</span>
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-xs-12 down-menu-block">
+                                                        <p>
+                                                            <span class="col-xs-4 nopadding">Lap infants</span>
+                                                            <span class="col-xs-5 text-right nopadding">
 											<span class="btn btn-default btn-xs minus"><span class="glyphicon glyphicon-minus"></span></span>
-											<input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="lapinfants" tabindex="12">								
-											<span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
-											
-										</span>
-										<span class="col-xs-3 nopr">under 2</span> 
-										</p>                 			
-			                  		</div>
-			                  		<div class="col-xs-12 down-menu-block">
-			                  			
-			                  				<span class="btn btn-pexSearch" id="apply_traveler">Apply</span>
-			                  			
-			                  		</div>
-			                  		<input type="hidden" id="passenger" name="passenger" value="">
-			                  	</div>
-			                  </div>
-			                </div>
-			               </div>
-			              </div>
-			             </div>
-						<div class="col-xs-12 nopadding">
-							<div class="col-xs-12 form-group">
-								<button type="submit" class="btn btn-pexSearch" id="save_button">Save</button>
-							</div>
-						</div>
-					
-					
-				</form>
-			</div>
-		</div>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-		
-		<div class="">
-	{% include "flightsearch/footer.html" %}
-	</div>
-	
-	<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>');</script>
-    <script src="/static/flightsearch/js/vendor/bootstrap.min.js"></script>
-   	<script src="{% static 'flightsearch/js/bootstrap-multiselect.js' %}"></script>
-   	<script src="{% static 'flightsearch/js/bootbox.js' %}"></script>
-	
-	<script>
-	//@@@@@@@@@@@@@@@@@ Delete Flight Price Alerts @@@@@@@@@@@@@@@
-	
-		$('.delete_button').click(function(e){
-			e.preventDefault();
-			var link = $(this).attr('href');
-			bootbox.confirm("Are you sure you want to delete this FLight Price Alerts?", function(result) {
-				if(result == true)
-				{
-					document.location.href = link;
-				}
-				
-				
-			});
-		});
-	
-	
-	//--------------------------------------------------------------
-	
-		$('#flight_alert_link').click(function(){
-			$('.modelform').trigger("reset");
-			$('#passenger').val("1");
-			//$(':input').not(':button, :submit, :reset, :hidden, :checkbox, :radio').val('');
-    		//$(':checkbox, :radio').prop('checked', false);
-    		$("#returndatediv").show();
-    		$('#save_button').text('Save');
-    		travelinfo();
-		});
-		
-		$("#oneWay").click(function(){
-    		if($("#oneWay").prop('checked') == true){
-    			$("#returndatediv").hide();
-    			$('#alt_return').val('');
-    		}
-    		else
-    		{
-    			
-    			$("#returndatediv").show();
-    		}
-    		
-    	});
-    	$("#roundTrip").click(function(){
-    		if($("#roundTrip").prop('checked') == true){
-    			$("#returndatediv").show();
-    		}
-    		else
-    		{
-    			$("#returndatediv").hide();
-    			$('#alt_return').val('');
-    		}
-    		
-    	});
-	</script>
-	<script>
-		$(function() {
-    
-    $( "#alt_from" ).autocomplete({
-  		 open: function(event, ui) {
-	        	$('.ui-autocomplete').off('menufocus hover mouseover');
-	        	$('#alt_fromid').val('');
-    		},
-		autoFocus: true,
-    	source: "/get_airport/",
-    	minLength: 2,
-    	appendTo:".modelform",
-    	select: function(event, ui) {
-    		$('#alt_fromid').val(ui.item.id);
-    	},
-    });
-    $( "#alt_to" ).autocomplete({
-  		open: function(event, ui) {
-	        	$('.ui-autocomplete').off('menufocus hover mouseover');
-	        	$('label[class=error]').remove();
-	        	$('#alt_to').css('border-color','');
-	        	$('#alt_toid').val('');
-    		},
+                                                            <input type="text" class="field-width custom-field-control numberHolder qty" value="0" id="lapinfants" tabindex="12">
+                                                            <span class="btn btn-default btn-xs add"><span class="glyphicon glyphicon-plus"></span></span>
+                                                            </span>
+                                                            <span class="col-xs-3 nopr">under 2</span>
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-xs-12 down-menu-block">
+                                                        <span class="btn btn-pexSearch" id="apply_traveler">Apply</span>
+                                                    </div>
+                                                    <input type="hidden" id="passenger" name="passenger" value="">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 nopadding">
+                                <div class="col-xs-12 form-group">
+                                    <button type="submit" class="btn btn-pexSearch" id="save_button">Save</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
 
-		autoFocus: true,
-    	source: "/get_airport/",
-    	minLength: 2,
-    	appendTo:".modelform",
-    	select: function(event, ui) {
-    		$('#alt_toid').val(ui.item.id);
-    	},
+<script src="{% static 'flightsearch/js/bootstrap-multiselect.js' %}"></script>
+<script src="{% static 'flightsearch/js/bootbox.js' %}"></script>
+<script>
+//@@@@@@@@@@@@@@@@@ Delete Flight Price Alerts @@@@@@@@@@@@@@@
+
+$('.delete_button').click(function(e) {
+    e.preventDefault();
+    var link = $(this).attr('href');
+    bootbox.confirm("Are you sure you want to delete this FLight Price Alerts?", function(result) {
+        if (result == true) {
+            document.location.href = link;
+        }
+
+
     });
-  });
-  
-      
-	 $(function(){
-	 	
-               $('#alt_depart').datepicker(
-               	{
-					dateFormat: 'yy-mm-dd',
-               		minDate: 0,
-               		onSelect: function()
-               		{
-               			setTimeout(function function_name (argument) {
-							 $('#alt_return').focus();
-						   },200);
-               			
-               		},
-               		  onClose: function(selectedDate) {
-        					// Set the minDate of 'to' as the selectedDate of 'from'
-        					if (selectedDate != '')
-        					{
-        						$("#alt_return").datepicker("option", "minDate", selectedDate);
-        						$("#alt_expire").datepicker("option", "maxDate", selectedDate,"minDate",0);
-        					}
-        					else{
-        						$("#alt_return").datepicker("option", "minDate", 0);
-        						$("#alt_expire").datepicker("option", "minDate", 0);
-        					}
-        					
-    					}
-               	}
-               	
-               );
-              $('#alt_return').datepicker({
-              		dateFormat: 'yy-mm-dd',
-              		minDate:0,
-              	}) ;
-              $('#alt_expire').datepicker({
-              		minDate:0,
-              		dateFormat: 'yy-mm-dd',
-              	}) ;
-       });
-	</script>
-	<script>
-	var total;
-		$('.action').click(function(){
-			var recordid = $(this).attr('id');
-			
-			$.ajax({
-				type: "POST",
-		       	dataType: "json",
-		       	url: "/flightAlert/",
-		       	data:{"alertid":recordid,"csrfmiddlewaretoken":"{{csrf_token}}"}
-			}).done(function(data){
-				$('#flight-model-alert').modal('show');
-				if(data['returndate'] != 'None')
-				{
-					$('#roundTrip').prop('checked', true);
-					$("#returndatediv").show();
-					$("#alt_return").val(data['returndate']);
-				}
-				else{
-					$('#oneWay').prop('checked', true);
-					$("#returndatediv").hide();
-    				$('#alt_return').val('');
-				}
-				$('#alt_from').val(data['from_airport']);
-				$('#alt_to').val(data['to_airport']);
-				$('#alt_toid').val(data['destination_airportid']);
-				$('#alt_fromid').val(data['source_airportid']);
-				$('#alt_depart').val(data['departdate']);
-				$('#price_mile').val(data['maxprice']);
-				$('#alertid').val(data['alertid']);
-				$('#passenger').val(data['traveller']);
-				$('#adults').val(data['traveller']);
-				total = data['traveller'];
-				$('#cabintype').val(data['cabin']);
-				
-				if(data['annual_repeat'] == 'True'){
-					$('#annual_repeat').prop('checked', true);
-				}
-				travelinfo();
-				$('#save_button').text('Update');
-			});
-			
-		});
-		
-	// message alert dialog 
-	//var status = "{{request.GET.status}}";
-	//console.log(status);
-	
-	
-	//$("<div>"+status+"</div>").dialog()	;
-		
-	</script>
-	<script>
-        
-        
-        $( "#cabintab" ).focus(function(){
-		$(".travelers-holder").addClass('open');
-		return false;
-	});
-	$( "#cabintab" ).click(function(){
-		$(".travelers-holder").addClass('open');
-		return false;
-	});
-	
-	$(".form_val").focus(function(){
-		if(!$(this).hasClass("cabin_type")){ $(".travelers-holder").removeClass('open'); }
-	});
-	
-	$('#apply_traveler').click(function(){
-		$(".travelers-holder").removeClass('open');
-	});
-	
-	
+});
+
+
+//--------------------------------------------------------------
+
+$('#flight_alert_link').click(function() {
+    $('.modelform').trigger("reset");
+    $('#passenger').val("1");
+    //$(':input').not(':button, :submit, :reset, :hidden, :checkbox, :radio').val('');
+    //$(':checkbox, :radio').prop('checked', false);
+    $("#returndatediv").show();
+    $('#save_button').text('Save');
+    travelinfo();
+});
+
+$("#oneWay").click(function() {
+    if ($("#oneWay").prop('checked') == true) {
+        $("#returndatediv").hide();
+        $('#alt_return').val('');
+    } else {
+
+        $("#returndatediv").show();
+    }
+
+});
+$("#roundTrip").click(function() {
+    if ($("#roundTrip").prop('checked') == true) {
+        $("#returndatediv").show();
+    } else {
+        $("#returndatediv").hide();
+        $('#alt_return').val('');
+    }
+
+});
+
+$(function() {
+
+    $("#alt_from").autocomplete({
+        open: function(event, ui) {
+            $('.ui-autocomplete').off('menufocus hover mouseover');
+            $('#alt_fromid').val('');
+        },
+        autoFocus: true,
+        source: "/get_airport/",
+        minLength: 2,
+        appendTo: ".modelform",
+        select: function(event, ui) {
+            $('#alt_fromid').val(ui.item.id);
+        },
+    });
+    $("#alt_to").autocomplete({
+        open: function(event, ui) {
+            $('.ui-autocomplete').off('menufocus hover mouseover');
+            $('label[class=error]').remove();
+            $('#alt_to').css('border-color', '');
+            $('#alt_toid').val('');
+        },
+
+        autoFocus: true,
+        source: "/get_airport/",
+        minLength: 2,
+        appendTo: ".modelform",
+        select: function(event, ui) {
+            $('#alt_toid').val(ui.item.id);
+        },
+    });
+});
+
+
+$(function() {
+
+    $('#alt_depart').datepicker({
+            dateFormat: 'yy-mm-dd',
+            minDate: 0,
+            onSelect: function() {
+                setTimeout(function function_name(argument) {
+                    $('#alt_return').focus();
+                }, 200);
+
+            },
+            onClose: function(selectedDate) {
+                // Set the minDate of 'to' as the selectedDate of 'from'
+                if (selectedDate != '') {
+                    $("#alt_return").datepicker("option", "minDate", selectedDate);
+                    $("#alt_expire").datepicker("option", "maxDate", selectedDate, "minDate", 0);
+                } else {
+                    $("#alt_return").datepicker("option", "minDate", 0);
+                    $("#alt_expire").datepicker("option", "minDate", 0);
+                }
+
+            }
+        }
+
+    );
+    $('#alt_return').datepicker({
+        dateFormat: 'yy-mm-dd',
+        minDate: 0,
+    });
+    $('#alt_expire').datepicker({
+        minDate: 0,
+        dateFormat: 'yy-mm-dd',
+    });
+});
+
+var total;
+$('.action').click(function() {
+    var recordid = $(this).attr('id');
+
+    $.ajax({
+        type: "POST",
+        dataType: "json",
+        url: "/flightAlert/",
+        data: {
+            "alertid": recordid,
+            "csrfmiddlewaretoken": "{{csrf_token}}"
+        }
+    }).done(function(data) {
+        $('#flight-model-alert').modal('show');
+        if (data['returndate'] != 'None') {
+            $('#roundTrip').prop('checked', true);
+            $("#returndatediv").show();
+            $("#alt_return").val(data['returndate']);
+        } else {
+            $('#oneWay').prop('checked', true);
+            $("#returndatediv").hide();
+            $('#alt_return').val('');
+        }
+        $('#alt_from').val(data['from_airport']);
+        $('#alt_to').val(data['to_airport']);
+        $('#alt_toid').val(data['destination_airportid']);
+        $('#alt_fromid').val(data['source_airportid']);
+        $('#alt_depart').val(data['departdate']);
+        $('#price_mile').val(data['maxprice']);
+        $('#alertid').val(data['alertid']);
+        $('#passenger').val(data['traveller']);
+        $('#adults').val(data['traveller']);
+        total = data['traveller'];
+        $('#cabintype').val(data['cabin']);
+
+        if (data['annual_repeat'] == 'True') {
+            $('#annual_repeat').prop('checked', true);
+        }
+        travelinfo();
+        $('#save_button').text('Update');
+    });
+
+});
+
+$("#cabintab").focus(function() {
+    $(".travelers-holder").addClass('open');
+    return false;
+});
+$("#cabintab").click(function() {
+    $(".travelers-holder").addClass('open');
+    return false;
+});
+
+$(".form_val").focus(function() {
+    if (!$(this).hasClass("cabin_type")) {
+        $(".travelers-holder").removeClass('open');
+    }
+});
+
+$('#apply_traveler').click(function() {
+    $(".travelers-holder").removeClass('open');
+});
+
+
 //@@increase decrease on buttom click
-    $(function () {
-    $('.add').on('click',function(){
-    	total = tatalpassenger();
-    	if(total < 6 )
-    	{
-        var $qty=$(this).closest('p').find('.qty');
-        var currentVal = parseInt($qty.val());
-        if (!isNaN(currentVal)) {
-            $qty.val(currentVal + 1);
+$(function() {
+    $('.add').on('click', function() {
+        total = tatalpassenger();
+        if (total < 6) {
+            var $qty = $(this).closest('p').find('.qty');
+            var currentVal = parseInt($qty.val());
+            if (!isNaN(currentVal)) {
+                $qty.val(currentVal + 1);
+            }
+            travelinfo();
         }
-        travelinfo();
-       }
     });
-    $('.minus').on('click',function(){
-    	total = tatalpassenger();
-    	if(total > 0){
-        var $qty=$(this).closest('p').find('.qty');
-        var currentVal = parseInt($qty.val());
-        if (!isNaN(currentVal) && currentVal > 0) {
-            $qty.val(currentVal - 1);
+    $('.minus').on('click', function() {
+        total = tatalpassenger();
+        if (total > 0) {
+            var $qty = $(this).closest('p').find('.qty');
+            var currentVal = parseInt($qty.val());
+            if (!isNaN(currentVal) && currentVal > 0) {
+                $qty.val(currentVal - 1);
+            }
+
+            travelinfo();
         }
-        
-        travelinfo();
-       }
     });
-    
+
 });
-$('#cabintype').on('change',function(){
-	travelinfo();
+$('#cabintype').on('change', function() {
+    travelinfo();
 });
 
-$(document).ready(function(){
-	$('#passenger').val('1');
-	$(".alert-warning").hide();
+$(document).ready(function() {
+    $('#passenger').val('1');
+    $(".alert-warning").hide();
 });
 //@@@Cabin select@@@@
-function travelinfo(){
-	total = tatalpassenger();
-	
-	$('#passenger').val(total);
-	var text;
-	if(total == 1){
-		text = "traveler";
-	}
-	else{
-		text = "travelers";
-	}
-	var selectedcabin = $("#cabintype option:selected").text();
-	var html = "<span id='travelar'>"+total+" "+text+", "+selectedcabin+"</span>";
-	$('#travelar').replaceWith(html);
-	if(total == 0){
-		var msg='';
-		$('#submitid').prop('disabled', true);
-		$(".alert-warning").empty();
-		msg="You must select atleast one traveler";
-		$(".alert-warning").append(msg);
-		$(".alert-warning").show();
-	}
-	else{
-		$('#submitid').prop('disabled', false);
-		$(".alert-warning").hide();
-	}
+function travelinfo() {
+    total = tatalpassenger();
+
+    $('#passenger').val(total);
+    var text;
+    if (total == 1) {
+        text = "traveler";
+    } else {
+        text = "travelers";
+    }
+    var selectedcabin = $("#cabintype option:selected").text();
+    var html = "<span id='travelar'>" + total + " " + text + ", " + selectedcabin + "</span>";
+    $('#travelar').replaceWith(html);
+    if (total == 0) {
+        var msg = '';
+        $('#submitid').prop('disabled', true);
+        $(".alert-warning").empty();
+        msg = "You must select atleast one traveler";
+        $(".alert-warning").append(msg);
+        $(".alert-warning").show();
+    } else {
+        $('#submitid').prop('disabled', false);
+        $(".alert-warning").hide();
+    }
 }
 //@@@Total Passenger@@@@
 function tatalpassenger() {
-var sum = 0;
-$('.numberHolder').each(function(){
-    sum += parseFloat($(this).val());
-});
-return sum;
+    var sum = 0;
+    $('.numberHolder').each(function() {
+        sum += parseFloat($(this).val());
+    });
+    return sum;
 };
- 
+
 //@@not close on click dropdown
 
-  $('.dropdown-menu .down-menu-block').click(function(e) {
-        e.stopPropagation();
-    });
+$('.dropdown-menu .down-menu-block').click(function(e) {
+    e.stopPropagation();
+});
+</script>
 
-
-    </script>
-	
-    
+{% endblock %}

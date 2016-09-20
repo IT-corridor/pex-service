@@ -1,206 +1,181 @@
+{% extends "flightsearch/base.html" %}
 {% load staticfiles %}
 {% load humanize %}
-		{% include "flightsearch/header.html" %}
-		<title>Reward Points | PEX+</title>
-	    <div class="col-xs-12 nopadding form-cstm-mng" style="">
-	    <h3 class="text-center">My Reward Points</h3>
-	    {% if updatemsg %}<h4 class="text-center"> {{updatemsg}}</h4> {%endif%}
-		<div class="col-xs-12 col-sm-10 col-sm-push-1 mng-act fr-pd" style="padding: 30px 10px !important;">
-			
-			
-			{% if message %}
-			<div class="alert alert-warning">{{message}}</div>
-			{% endif %}
-			
-			<div class="col-xs-12 text-right cstm-btn">
-				{% if points %}
-				<a href="myRewardPoint?account=all">	
-				   <button class="btn btn-pexSearch" id="sync_all_points">Refresh All Points </button>
-				</a>
-				{% endif %}
-				<button class="btn btn-pexSearch" id="add_account">Add Account</button>
-			</div>
-			<div class="col-xs-12 form-group" id="addaccount" style="padding: 0 0 0 0">
-			
-			<div class="col-xs-12 nopaddig" style="padding-bottom: 20px">
-				<span style="margin-bottom: 40px">{{temp_message}} </span>	
-			</div>
-			
-		<form class="form-inline" id="syncform" method="post" action="myRewardPoint">
-		  {% csrf_token %}
-		  <input type="hidden" name="action" id="action" value="">
-		  <div class="col-md-12 col-xs-12 nopadding form-reward">
-		  <div class="col-md-3 form-group">
-		    <label for="username">Username</label>
-		    <input type="text" name="username" class="form-control" id="" placeholder="USERNAME" required>
-		  </div>
-		  <div class="col-md-3 form-group">
-		    <label for="username">Account Number</label>
-		    <input type="text" name="skymiles_number" class="form-control" id="" placeholder="ACCOUNT NUMBER" required>
-		  </div>
-		  <div class="col-md-3 form-group">
-		    <label for="password">Password</label>
-		    <input type="password" name="password" class="form-control" id="" placeholder="PASSWORD" required>
-		  </div>
-		  <div class="col-md-3 form-group" id="dropdown">
-		    <label for="password">Select Airline</label>
-		    <select name="airline" class="form-control" required id="airline_Select">
-		    	<option value="">Select Airline</option>
-		    	{% if 'delta' not in datasource%}
-		    		<option value="delta">Delta</option>
-		    	{% endif %}
-		    	{% if 'united' not in datasource%}
-		    		<option value="united">United</option>
-		    	{% endif %}
-		    	{% if 'virgin' not in datasource%}
-		    	<option value="virgin">Virgin Atlantic</option>
-		    	{%endif%}
-		    </select>
-		    </div>
-			</div>
-		  <div class="form-group pd-fm-btn" style="margin-top:15px;">
-			<button type="submit" id="syncdata" class="btn btn-pexSearch">Sync</button>
-			<span type="submit" class="btn btn-pexSearch cancel">Cancel</span>
-		  </div>
-		  
-		</form>
-		</div>
-			<div class="col-xs-12  nopadding">
-			<div class="table-responsive">
-			  <table class="table">
-			    <thead>
-			    	<tr>
-				    	<th class="text-center">Airlines</th>
-				    	<th class="text-center">Points</th>
-				    	<th class="text-center">Last Updated</th>
-				    	<th class="text-center">Action</th>
-			    	</tr>
-			    </thead>
-			    <tbody>
-			    	{% if points %}
-				{% for row in points%}
-			    <tr id="{{row.3}}_div">
-			    	<td class="text-center">{{row.3|title}}</td>
-			    	<td class="text-center">{{row.2}} Miles</td>
-			    	<td class="text-center">{{row.4}}</td>
-			    	<td class="text-center"><a href="#" id="{{row.3}}" class="update">Update</a> | <a href="myRewardPoint?airline={{row.3}}&userid={{request.session.userid}}" id="{{row.3}}">Sync Points</a> | <a href="#" id="{{row.3}}_{{ request.session.userid }}" class="deactivate">Delete</a></td>
-			    </tr>
-			    {% endfor %}
-				{% endif %}	
-			    </tbody>
-			  </table>
-			</div>
-		</div>
-		
-		</div>	
-		
-		</div>
-		</div>
-		
-		<div class="modal fade bs-example-modal-sm" id="point-loading-model" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-		  <div class="modal-dialog modal-sm">
-		    <div class="modal-content text-center col-xs-12">
-		    
-				 <img id="loading-image" src="{% static 'flightsearch/js/images/loading.gif' %}" alt="Loading..." />
-				 <p class="mvt10px text-center mvt15px">Please wait while we fetch your points...</p> 
-		    	
-		    </div>
-		  </div>
-		</div>
-		
-		<div class="">
-	{% include "flightsearch/footer.html" %}
-	</div>
-	<script>
-	
-		$('#sync_all_points').click(function(){
-			$('#point-loading-model').modal('show');
-		});
-		$('#syncform').submit(function(){
-			$('#point-loading-model').modal('show');
-			$('#syncdata').prop('disabled', true);
-		});
-		$(document).ready(function(){
-			var action = '';
-			var update_action = '';
-			update_action = "{{updatemsg}}";
-			action ="{{temp_message}}";
-			if (action == '')
-			{
-				$('#addaccount').hide();
-				
-			}
-			if(update_action == '' || update_action.indexOf("successfully") >= 0){
-				$('#upaccount').hide();
-			}
-					
-		});
-		$('#add_account').click(function(){
-			$('#action').val('add');
-			 $('#addaccount').show();
-			 $('#dropdown').show();
-			 $(this).hide();
-		});
-		$(".cancel").click(function(){		
-			 $('#addaccount').hide();
-			 $('#add_account').show();
-			 $('#upaccount').hide();
-			 $('#up_account').show();
-		});
-		$('#up_account').click(function(){
-			$('#upaccount').show();
-			$('#up_account').hide();
-		});
-		
-		$('.update').click(function(){
-			var html= '';
-            var id = ($(this).attr('id'));
-            $('#action').val('update');
-			var exist = '';
-			$('#airline_Select  option').each(function(){
-				  if (this.value == id) {
-				  	exist = 'true';    
-				  }
-				});
-				if (exist == '')
-				{
-					$('#airline_Select').append('<option value="'+id+'" selected>'+id+'</option>');
-				}
-				else{
-					$('#airline_Select>option:eq('+id+')').attr('selected', true);
-				}
-				$('#addaccount').show();
+{% block content %}
+
+<title>Reward Points | PEX+</title>
+<div class="col-xs-12 nopadding form-cstm-mng" style="">
+    <h3 class="text-center">My Reward Points</h3> {% if updatemsg %}
+    <h4 class="text-center"> {{updatemsg}}</h4> {%endif%}
+    <div class="col-xs-12 col-sm-10 col-sm-push-1 mng-act fr-pd" style="padding: 30px 10px !important;">
+        {% if message %}
+        <div class="alert alert-warning">{{message}}</div>
+        {% endif %}
+        <div class="col-xs-12 text-right cstm-btn">
+            {% if points %}
+            <a href="myRewardPoint?account=all">
+                <button class="btn btn-pexSearch" id="sync_all_points">Refresh All Points </button>
+            </a>
+            {% endif %}
+            <button class="btn btn-pexSearch" id="add_account">Add Account</button>
+        </div>
+        <div class="col-xs-12 form-group" id="addaccount" style="padding: 0 0 0 0">
+            <div class="col-xs-12 nopaddig" style="padding-bottom: 20px">
+                <span style="margin-bottom: 40px">{{temp_message}} </span>
+            </div>
+            <form class="form-inline" id="syncform" method="post" action="myRewardPoint">
+                {% csrf_token %}
+                <input type="hidden" name="action" id="action" value="">
+                <div class="col-md-12 col-xs-12 nopadding form-reward">
+                    <div class="col-md-3 form-group">
+                        <label for="username">Username</label>
+                        <input type="text" name="username" class="form-control" id="" placeholder="USERNAME" required>
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <label for="username">Account Number</label>
+                        <input type="text" name="skymiles_number" class="form-control" id="" placeholder="ACCOUNT NUMBER" required>
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <label for="password">Password</label>
+                        <input type="password" name="password" class="form-control" id="" placeholder="PASSWORD" required>
+                    </div>
+                    <div class="col-md-3 form-group" id="dropdown">
+                        <label for="password">Select Airline</label>
+                        <select name="airline" class="form-control" required id="airline_Select">
+                            <option value="">Select Airline</option>
+                            {% if 'delta' not in datasource%}
+                            <option value="delta">Delta</option>
+                            {% endif %} {% if 'united' not in datasource%}
+                            <option value="united">United</option>
+                            {% endif %} {% if 'virgin' not in datasource%}
+                            <option value="virgin">Virgin Atlantic</option>
+                            {%endif%}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group pd-fm-btn" style="margin-top:15px;">
+                    <button type="submit" id="syncdata" class="btn btn-pexSearch">Sync</button>
+                    <span type="submit" class="btn btn-pexSearch cancel">Cancel</span>
+                </div>
+            </form>
+        </div>
+        <div class="col-xs-12  nopadding">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Airlines</th>
+                            <th class="text-center">Points</th>
+                            <th class="text-center">Last Updated</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if points %} {% for row in points%}
+                        <tr id="{{row.3}}_div">
+                            <td class="text-center">{{row.3|title}}</td>
+                            <td class="text-center">{{row.2}} Miles</td>
+                            <td class="text-center">{{row.4}}</td>
+                            <td class="text-center"><a href="#" id="{{row.3}}" class="update">Update</a> | <a href="myRewardPoint?airline={{row.3}}&userid={{request.session.userid}}" id="{{row.3}}">Sync Points</a> | <a href="#" id="{{row.3}}_{{ request.session.userid }}" class="deactivate">Delete</a></td>
+                        </tr>
+                        {% endfor %} {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<div class="modal fade bs-example-modal-sm" id="point-loading-model" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content text-center col-xs-12">
+            <img id="loading-image" src="{% static 'flightsearch/js/images/loading.gif' %}" alt="Loading..." />
+            <p class="mvt10px text-center mvt15px">Please wait while we fetch your points...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+$('#sync_all_points').click(function() {
+    $('#point-loading-model').modal('show');
+});
+$('#syncform').submit(function() {
+    $('#point-loading-model').modal('show');
+    $('#syncdata').prop('disabled', true);
+});
+$(document).ready(function() {
+    var action = '';
+    var update_action = '';
+    update_action = "{{updatemsg}}";
+    action = "{{temp_message}}";
+    if (action == '') {
+        $('#addaccount').hide();
+
+    }
+    if (update_action == '' || update_action.indexOf("successfully") >= 0) {
+        $('#upaccount').hide();
+    }
+
+});
+$('#add_account').click(function() {
+    $('#action').val('add');
+    $('#addaccount').show();
+    $('#dropdown').show();
+    $(this).hide();
+});
+$(".cancel").click(function() {
+    $('#addaccount').hide();
+    $('#add_account').show();
+    $('#upaccount').hide();
+    $('#up_account').show();
+});
+$('#up_account').click(function() {
+    $('#upaccount').show();
+    $('#up_account').hide();
+});
+
+$('.update').click(function() {
+    var html = '';
+    var id = ($(this).attr('id'));
+    $('#action').val('update');
+    var exist = '';
+    $('#airline_Select  option').each(function() {
+        if (this.value == id) {
+            exist = 'true';
+        }
+    });
+    if (exist == '') {
+        $('#airline_Select').append('<option value="' + id + '" selected>' + id + '</option>');
+    } else {
+        $('#airline_Select>option:eq(' + id + ')').attr('selected', true);
+    }
+    $('#addaccount').show();
+});
+
+$('.deactivate').click(function() {
+    var airline = $(this).attr('id');
+    airlines = airline.split('_');
+
+
+    var r = confirm("Are You sure, you want to deactivate your account!");
+    if (r == true) {
+        $("#" + airlines[0] + "_div").hide();
+        //$("#"+airline).parent('.rewardpoint').hide();
+        $.ajax({
+            type: "POST",
+            dataType: "text",
+            url: "/myRewardPoint/",
+            data: "act=" + encodeURI("deactive") + "&csrfmiddlewaretoken=" + encodeURI("{{csrf_token}}") + "&acct=" + encodeURI(airlines[0])
+        }).done(function(data) {
+            $("#" + airlines[0] + "_div").remove();
+            $('#airline_Select').append($('<option>', {
+                value: airlines[0],
+                text: airlines[0]
+            }));
         });
 
-		
-		
-		
-		$('.deactivate').click(function(){
-			var airline = $(this).attr('id');
-			airlines = airline.split('_');
-			
-		
-			var r = confirm("Are You sure, you want to deactivate your account!");
-			if (r == true) 
-			{	
-				$("#"+airlines[0]+"_div").hide();
-				//$("#"+airline).parent('.rewardpoint').hide();
-				$.ajax({
-		       	type: "POST",
-		       	dataType: "text",
-		       	url: "/myRewardPoint/",
-		        data: "act="+encodeURI("deactive")+"&csrfmiddlewaretoken="+encodeURI("{{csrf_token}}")+"&acct="+encodeURI(airlines[0])
-		        }).done(function(data){
-			      	$("#"+airlines[0]+"_div").remove();
-			      	$('#airline_Select').append($('<option>', {
-					    value: airlines[0],
-					    text: airlines[0]
-					}));
-			      }) ;
-			    
-			} 
-		});
-	</script>
-	<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>');</script>
-    <script src="/static/flightsearch/js/vendor/bootstrap.min.js"></script>
-    
+    }
+});
+</script>
+
+{% endblock %}

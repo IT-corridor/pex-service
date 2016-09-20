@@ -1,152 +1,108 @@
-{% load customfilter %}
-{% load staticfiles %}
-{% load humanize %}
-		
+{% load customfilter %} {% load staticfiles %} {% load humanize %}
 <style>
-	.add { margin-left: -6px;}
+.add {
+    margin-left: -6px;
+}
 </style>
-
 <div class="col-md-12 col-xs-12 centr-info">
-	<img src="{% static 'flightsearch/img/ad11.jpg' %}"  style="margin-top:5px;margin-bottom:5px;width:100%; max-height: 150px;" alt="Responsive image"  class="img-responsive">
+    <img src="{% static 'flightsearch/img/ad11.jpg' %}" style="margin-top:5px;margin-bottom:5px;width:100%; max-height: 150px;" alt="Responsive image" class="img-responsive">
 </div>
-
 {% if data %}
-	<input type="hidden" id="datafound">								
-	
-	{% for row in data %}
-		<div class="col-md-12 col-xs-12 centr-info responsive-color-img">
-			<div class="col-sm-3 col-xs-5 visible-xs visible-sm nopl">
-				<div class="col-xs-12 nopadding text-center" itemscope itemtype ="http://schema.org/Airline">
-					
-					{% if row.datasource == "united" %}
-						<img itemprop="logo" src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">
-					{% endif %}
-					{% if row.datasource == "s7" %}
-						<img itemprop="logo" src="{% static 'flightsearch/img/s7Logo.svg' %}" class="img-responsive" alt="Responsive image" style="background-color: white !important;">
-					{% endif %}
-					{% if row.datasource == "airchina" %}
-						<img itemprop="logo" src="{% static 'flightsearch/img/airchinaLogo.gif' %}" class="img-responsive" alt="Responsive image" style="background-color: white !important;">
-					{% endif %}
-					{% if row.datasource == "virgin_atlantic" %}
-						<img itemprop="logo" src="{% static 'flightsearch/img/virgin.png' %}" class="img-responsive" alt="Responsive image">
-					{% endif %}
-					{% if row.datasource == "Virgin America" %}
-						<img itemprop="logo" src="{% static 'flightsearch/img/va.jpg' %}" class="img-responsive" alt="Responsive image">
-					{% endif %}
-					{% if row.datasource == "american airlines" %}
-						<img itemprop="logo" src="{% static 'flightsearch/img/aa.jpg' %}" class="img-responsive" alt="Responsive image">
-					{% endif %}
-					{% if row.datasource == "delta" %}
-						<img itemprop="logo" src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">
-					{% endif %}
-					{% if row.datasource == "etihad" %}
-						<img itemprop="logo" src="{% static 'flightsearch/img/etihad.jpg' %}" class="img-responsive" alt="Responsive image">
-					{% endif %}
-					{% if row.datasource == "jetblue" %}
-						<img itemprop="logo" src="{% static 'flightsearch/img/jetblue.jpg' %}" class="img-responsive" alt="Responsive image">
-					{% endif %}
-					{% if row.datasource == "Virgin Australia" %}
-						<img itemprop="logo" src="{% static 'flightsearch/img/VAUS.png' %}" class="img-responsive" alt="Responsive image">
-					{% endif %}
-					{% if row.datasource == "aeroflot" %}
-						<img itemprop="logo" src="{% static 'flightsearch/img/aeroflot.png' %}" class="img-responsive" alt="Responsive image">
-					{% endif %}
-				</div>
-			</div>
-			<div class="col-md-12 col-sm-9 col-xs-7 nopadding" itemscope itemtype ="http://schema.org/Flight">
-				<p class="flight-name" itemprop="flightNumber">
-					{{row.flighno}} <!--FIRST FLIGHT OPTION RESULT-->
-				</p>
-			</div>
-			<div class="col-md-5 col-xs-12 nopadding hidden-xs hidden-sm">
-				<div class="col-sm-8 col-sm-8 col-xs-12 nopl">
-					<div class="col-md-12 col-xs-12 nopadding">
-						<div class="col-xs-12 nopadding xs-margin-25px">
-							<!-- new code  -->
-							<div class="col-xs-12 nopadding mvb10px na-ra" itemscope itemtype ="http://schema.org/FlightReservation">
-									<p class="flight-rate" itemprop="totalPrice">
-										{{row.finalprice|intcomma}} Miles +<span>${{row.totaltaxes|floatformat:2}}</span> 
-									</p>
-							</div> 
-						</div>
-					</div>
-				</div>
-				<div class="col-md-4 col-sm-4 col-xs-12 nopl">
-					<div class="col-xs-12 nopadding text-center mvb10px" itemscope itemtype ="http://schema.org/Airline">
-						
-						{% if row.datasource == "united" %}
-							<img itemprop="logo" src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
-						{% if row.datasource == "s7" %}
-							<img itemprop="logo" src="{% static 'flightsearch/img/s7Logo.svg' %}" class="img-responsive" alt="Responsive image" style="background-color: white !important;">
-						{% endif %}						
-						{% if row.datasource == "airchina" %}
-							<img itemprop="logo" src="{% static 'flightsearch/img/airchinaLogo.gif' %}" class="img-responsive" alt="Responsive image" style="background-color: white !important;">
-						{% endif %}																		
-						{% if row.datasource == "delta" %}
-							<img itemprop="logo" src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
-						{% if row.datasource == "etihad" %}
-							<img itemprop="logo" src="{% static 'flightsearch/img/etihad.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
-						{% if row.datasource == "virgin_atlantic" %}
-							<img itemprop="logo" src="{% static 'flightsearch/img/virgin.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
-						{% if row.datasource == "Virgin America" %}
-							<img itemprop="logo" src="{% static 'flightsearch/img/va.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
-						{% if row.datasource == "american airlines" %}
-							<img itemprop="logo" src="{% static 'flightsearch/img/aa.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
-						{% if row.datasource == "jetblue" %}
-							<img itemprop="logo" src="{% static 'flightsearch/img/jetblue.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
-						{% if row.datasource == "Virgin Australia" %}
-							<img itemprop="logo" src="{% static 'flightsearch/img/VAUS.png' %}" class="img-responsive" alt="Responsive image">
-						{% endif %}
-						{% if row.datasource == "aeroflot" %}
-							<img itemprop="logo" src="{% static 'flightsearch/img/aeroflot.png' %}" class="img-responsive" alt="Responsive image">
-						{% endif %}
-					</div>
-				</div>
-			</div>
-			
-			<div class="col-md-7 col-xs-12 nopadding">
-				{% if multicity %}
-					{% for i in recordlen  %}
-					{% with row.origin|lookup:i as sources %}
-					<div class="col-xs-12 nopadding flight-div-repeat"> 
-						<div class="col-md-8 col-sm-8 col-xs-12 nopadding">
-							<div class="col-xs-12 nopadding">
-								<div class="arrivel col-sm-5 nopadding col-xs-4" itemscope itemtype ="http://schema.org/Flight">
-									<p itemprop="departureAirport">
-										{{sources.origin}}
-									</p>
-									<p>
-										<time itemprop="departureTime">{{sources.departure}}</time>
-									</p>
-								</div>
-								<div class="arrow-div col-sm-2 col-xs-1 text-center nopadding">&#8594;</div>
-								<div class="arrivel-2 col-sm-4 nopadding text-right col-xs-4 xs-text-center" itemscope itemtype ="http://schema.org/Flight">
-									<p itemprop="arrivalAirport">
-										{{sources.destination}}
-									</p>
-									<p>
-										<time itemprop="arrivalTime">{{sources.arival}}</time>
-									</p>
-								</div>
-								<div class="col-xs-3 nopadding visible-xs text-right">
-									<div class="col-xs-12 nopadding non-stop text-right">
-										<p>
-											{{sources.stoppage}}
-										</p>
-									</div>
-									<div class="col-xs-12 nopadding non-stop" itemscope itemtype ="http://schema.org/Flight">
-										<p itemprop="estimatedFlightDuration">
-											{{sources.duration}}
-										</p>
-									</div>
-								</div>
-							</div>
-							
-							{% if returndate == '' and multicity == '' %}	
-							<div class="col-xs-12 nopadding mvt10px for-mobile-view"> <!-- main data only mobile -->
-								<div class="col-xs-12 nopadding text-center custome-edit-block">
-									<div class="col-xs-12 nopadding mvb10px na-ra">
-										<h5 class="econo edit-width-econo">
+<input type="hidden" id="datafound"> {% for row in data %}
+<div class="col-md-12 col-xs-12 centr-info responsive-color-img">
+    <div class="col-sm-3 col-xs-5 visible-xs visible-sm nopl">
+        <div class="col-xs-12 nopadding text-center" itemscope itemtype="http://schema.org/Airline">
+            {% if row.datasource == "united" %}
+            <img itemprop="logo" src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if row.datasource == "s7" %}
+            <img itemprop="logo" src="{% static 'flightsearch/img/s7Logo.svg' %}" class="img-responsive" alt="Responsive image" style="background-color: white !important;"> {% endif %} {% if row.datasource == "airchina" %}
+            <img itemprop="logo" src="{% static 'flightsearch/img/airchinaLogo.gif' %}" class="img-responsive" alt="Responsive image" style="background-color: white !important;"> {% endif %} {% if row.datasource == "virgin_atlantic" %}
+            <img itemprop="logo" src="{% static 'flightsearch/img/virgin.png' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if row.datasource == "Virgin America" %}
+            <img itemprop="logo" src="{% static 'flightsearch/img/va.jpg' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if row.datasource == "american airlines" %}
+            <img itemprop="logo" src="{% static 'flightsearch/img/aa.jpg' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if row.datasource == "delta" %}
+            <img itemprop="logo" src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if row.datasource == "etihad" %}
+            <img itemprop="logo" src="{% static 'flightsearch/img/etihad.jpg' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if row.datasource == "jetblue" %}
+            <img itemprop="logo" src="{% static 'flightsearch/img/jetblue.jpg' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if row.datasource == "Virgin Australia" %}
+            <img itemprop="logo" src="{% static 'flightsearch/img/VAUS.png' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if row.datasource == "aeroflot" %}
+            <img itemprop="logo" src="{% static 'flightsearch/img/aeroflot.png' %}" class="img-responsive" alt="Responsive image"> {% endif %}
+        </div>
+    </div>
+    <div class="col-md-12 col-sm-9 col-xs-7 nopadding" itemscope itemtype="http://schema.org/Flight">
+        <p class="flight-name" itemprop="flightNumber">
+            {{row.flighno}}
+            <!--FIRST FLIGHT OPTION RESULT-->
+        </p>
+    </div>
+    <div class="col-md-5 col-xs-12 nopadding hidden-xs hidden-sm">
+        <div class="col-sm-8 col-sm-8 col-xs-12 nopl">
+            <div class="col-md-12 col-xs-12 nopadding">
+                <div class="col-xs-12 nopadding xs-margin-25px">
+                    <!-- new code  -->
+                    <div class="col-xs-12 nopadding mvb10px na-ra" itemscope itemtype="http://schema.org/FlightReservation">
+                        <p class="flight-rate" itemprop="totalPrice">
+                            {{row.finalprice|intcomma}} Miles +<span>${{row.totaltaxes|floatformat:2}}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-4 col-xs-12 nopl">
+            <div class="col-xs-12 nopadding text-center mvb10px" itemscope itemtype="http://schema.org/Airline">
+                {% if row.datasource == "united" %}
+                <img itemprop="logo" src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if row.datasource == "s7" %}
+                <img itemprop="logo" src="{% static 'flightsearch/img/s7Logo.svg' %}" class="img-responsive" alt="Responsive image" style="background-color: white !important;"> {% endif %} {% if row.datasource == "airchina" %}
+                <img itemprop="logo" src="{% static 'flightsearch/img/airchinaLogo.gif' %}" class="img-responsive" alt="Responsive image" style="background-color: white !important;"> {% endif %} {% if row.datasource == "delta" %}
+                <img itemprop="logo" src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if row.datasource == "etihad" %}
+                <img itemprop="logo" src="{% static 'flightsearch/img/etihad.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if row.datasource == "virgin_atlantic" %}
+                <img itemprop="logo" src="{% static 'flightsearch/img/virgin.png' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if row.datasource == "Virgin America" %}
+                <img itemprop="logo" src="{% static 'flightsearch/img/va.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if row.datasource == "american airlines" %}
+                <img itemprop="logo" src="{% static 'flightsearch/img/aa.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if row.datasource == "jetblue" %}
+                <img itemprop="logo" src="{% static 'flightsearch/img/jetblue.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if row.datasource == "Virgin Australia" %}
+                <img itemprop="logo" src="{% static 'flightsearch/img/VAUS.png' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if row.datasource == "aeroflot" %}
+                <img itemprop="logo" src="{% static 'flightsearch/img/aeroflot.png' %}" class="img-responsive" alt="Responsive image"> {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7 col-xs-12 nopadding">
+        {% if multicity %} {% for i in recordlen %} {% with row.origin|lookup:i as sources %}
+        <div class="col-xs-12 nopadding flight-div-repeat">
+            <div class="col-md-8 col-sm-8 col-xs-12 nopadding">
+                <div class="col-xs-12 nopadding">
+                    <div class="arrivel col-sm-5 nopadding col-xs-4" itemscope itemtype="http://schema.org/Flight">
+                        <p itemprop="departureAirport">
+                            {{sources.origin}}
+                        </p>
+                        <p>
+                            <time itemprop="departureTime">{{sources.departure}}</time>
+                        </p>
+                    </div>
+                    <div class="arrow-div col-sm-2 col-xs-1 text-center nopadding">&#8594;</div>
+                    <div class="arrivel-2 col-sm-4 nopadding text-right col-xs-4 xs-text-center" itemscope itemtype="http://schema.org/Flight">
+                        <p itemprop="arrivalAirport">
+                            {{sources.destination}}
+                        </p>
+                        <p>
+                            <time itemprop="arrivalTime">{{sources.arival}}</time>
+                        </p>
+                    </div>
+                    <div class="col-xs-3 nopadding visible-xs text-right">
+                        <div class="col-xs-12 nopadding non-stop text-right">
+                            <p>
+                                {{sources.stoppage}}
+                            </p>
+                        </div>
+                        <div class="col-xs-12 nopadding non-stop" itemscope itemtype="http://schema.org/Flight">
+                            <p itemprop="estimatedFlightDuration">
+                                {{sources.duration}}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% if returndate == '' and multicity == '' %}
+                <div class="col-xs-12 nopadding mvt10px for-mobile-view">
+                    <!-- main data only mobile -->
+                    <div class="col-xs-12 nopadding text-center custome-edit-block">
+                        <div class="col-xs-12 nopadding mvb10px na-ra">
+                            <h5 class="econo edit-width-econo">
 											{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' %}
 												{{row.cabintype1}}
 											{% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %}
@@ -157,38 +113,35 @@
 												{% endif %}
 											{% endif %}
 										</h5>
-										<div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
-										<p class="flight-rate" itemprop="totalPrice">
-											{{row.finalprice|intcomma}} Miles +<span>${{row.totaltaxes|floatformat:2}}</span>
-
-										</p>
-										</div>
-									</div>
-								</div>
-							</div>  
-							{% endif %}		
-						</div>
-						<div class="col-md-4 col-sm-4 col-xs-12 text-center nopr hidden-xs">
-							<div class="col-xs-12 nopadding non-stop">
-								<p>
-									{{sources.stoppage}}
-								</p>
-								<div class="col-xs-12 nopadding non-stop" itemscope itemtype ="http://schema.org/Flight">
-									<p itemprop="estimatedFlightDuration">
-										{{sources.duration}}
-									</p>
-								</div>
-							</div>
-						</div>
-					</div>
-					{% endwith %}
-					{% endfor %}
-					
-					{% if multicity %}
-					<div class="col-xs-12 nopadding mvt10px for-mobile-view"> <!-- main data only mobile -->
-						<div class="col-xs-12 nopadding text-center custome-edit-block">
-							<div class="col-xs-12 nopadding mvb10px na-ra">
-								<h5 class="econo edit-width-econo">
+                            <div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
+                                <p class="flight-rate" itemprop="totalPrice">
+                                    {{row.finalprice|intcomma}} Miles +<span>${{row.totaltaxes|floatformat:2}}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-md-4 col-sm-4 col-xs-12 text-center nopr hidden-xs">
+                <div class="col-xs-12 nopadding non-stop">
+                    <p>
+                        {{sources.stoppage}}
+                    </p>
+                    <div class="col-xs-12 nopadding non-stop" itemscope itemtype="http://schema.org/Flight">
+                        <p itemprop="estimatedFlightDuration">
+                            {{sources.duration}}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endwith %} {% endfor %} {% if multicity %}
+        <div class="col-xs-12 nopadding mvt10px for-mobile-view">
+            <!-- main data only mobile -->
+            <div class="col-xs-12 nopadding text-center custome-edit-block">
+                <div class="col-xs-12 nopadding mvb10px na-ra">
+                    <h5 class="econo edit-width-econo">
 									{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' %}
 										{{row.cabintype1}}
 									{% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %}
@@ -199,55 +152,54 @@
 										{% endif %}
 									{% endif %}
 								</h5>
-								<div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
-									<p class="flight-rate" itemprop="totalPrice">
-										{{row.finalprice|intcomma}} Miles +<span>${{row.totaltaxes|floatformat:2}}</span>
-									</p>
-								</div>
-							</div>
-						</div>
-					</div>  
-					{% endif%}
-				{% else %}
-					<div class="col-xs-12 nopadding flight-div-repeat"> 
-						<div class="col-md-8 col-sm-8 col-xs-12 nopadding">
-							<div class="col-xs-12 nopadding">
-								<div class="arrivel col-sm-5 nopadding col-xs-4" itemscope itemtype ="http://schema.org/Flight">
-									<p itemprop="departureAirport">
-										{{row.origin}}
-									</p>
-									<p>
-										<time itemprop="departureTime">{{row.departure}}</time>
-									</p>
-								</div>
-								<div class="arrow-div col-sm-2 col-xs-1 text-center nopadding">&#8594;</div>
-								<div class="arrivel-2 col-sm-4 nopadding text-right col-xs-4 xs-text-center" itemscope itemtype ="http://schema.org/Flight">
-									<p itemprop="arrivalAirport">
-										{{row.destination}}
-									</p>
-									<p>
-										<time itemprop="arrivalTime">{{row.arival}}</time>
-									</p>
-								</div>
-								<div class="col-xs-3 nopadding visible-xs text-right">
-									<div class="col-xs-12 nopadding non-stop text-right">
-										<p>
-											{{row.stoppage}}
-										</p>
-									</div>
-									<div class="col-xs-12 nopadding non-stop" itemscope itemtype ="http://schema.org/Flight">
-										<p itemprop="estimatedFlightDuration">
-											{{row.duration}}
-										</p>
-									</div>
-								</div>
-							</div>
-							
-							{% if returndate == '' or request.GET.rowid %}	
-								<div class="col-xs-12 nopadding mvt10px for-mobile-view"> <!-- main data only mobile -->
-									<div class="col-xs-12 nopadding text-center custome-edit-block">
-									<div class="col-xs-12 nopadding mvb10px na-ra">
-										<h5 class="econo edit-width-econo">
+                    <div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
+                        <p class="flight-rate" itemprop="totalPrice">
+                            {{row.finalprice|intcomma}} Miles +<span>${{row.totaltaxes|floatformat:2}}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif%} {% else %}
+        <div class="col-xs-12 nopadding flight-div-repeat">
+            <div class="col-md-8 col-sm-8 col-xs-12 nopadding">
+                <div class="col-xs-12 nopadding">
+                    <div class="arrivel col-sm-5 nopadding col-xs-4" itemscope itemtype="http://schema.org/Flight">
+                        <p itemprop="departureAirport">
+                            {{row.origin}}
+                        </p>
+                        <p>
+                            <time itemprop="departureTime">{{row.departure}}</time>
+                        </p>
+                    </div>
+                    <div class="arrow-div col-sm-2 col-xs-1 text-center nopadding">&#8594;</div>
+                    <div class="arrivel-2 col-sm-4 nopadding text-right col-xs-4 xs-text-center" itemscope itemtype="http://schema.org/Flight">
+                        <p itemprop="arrivalAirport">
+                            {{row.destination}}
+                        </p>
+                        <p>
+                            <time itemprop="arrivalTime">{{row.arival}}</time>
+                        </p>
+                    </div>
+                    <div class="col-xs-3 nopadding visible-xs text-right">
+                        <div class="col-xs-12 nopadding non-stop text-right">
+                            <p>
+                                {{row.stoppage}}
+                            </p>
+                        </div>
+                        <div class="col-xs-12 nopadding non-stop" itemscope itemtype="http://schema.org/Flight">
+                            <p itemprop="estimatedFlightDuration">
+                                {{row.duration}}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% if returndate == '' or request.GET.rowid %}
+                <div class="col-xs-12 nopadding mvt10px for-mobile-view">
+                    <!-- main data only mobile -->
+                    <div class="col-xs-12 nopadding text-center custome-edit-block">
+                        <div class="col-xs-12 nopadding mvb10px na-ra">
+                            <h5 class="econo edit-width-econo">
 											{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' %}
 												{{row.cabintype1}}
 											{% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %}
@@ -258,85 +210,85 @@
 												{% endif %}
 											{% endif %}
 										</h5>
-										<div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
-										<p class="flight-rate" itemprop="totalPrice">
-											{{row.finalprice|intcomma}} Miles +<span>${{row.totaltaxes|floatformat:2}}</span>
-										</p>
-										</div>
-									</div>																		
-									</div>
-								</div>  
-							{% endif %}		
-						</div>
-						<div class="col-md-4 col-sm-4 col-xs-12 text-center nopr hidden-xs">
-							<div class="col-xs-12 nopadding non-stop">
-								<p>
-									{{row.stoppage}}
-								</p>
-								<div class="col-xs-12 nopadding non-stop" itemscope itemtype ="http://schema.org/Flight">
-									<p itemprop="estimatedFlightDuration">
-										{{row.duration}}
-									</p>
-								</div>
-							</div>
-						</div>
-					</div>		
-				{% endif %}	
-				
-				<!-- terurn data block -->
-				{% if returndate and row.origin1 %}		 
-					<div class="col-xs-12 nopadding flight-div-repeat"> 
-						<div class="col-md-8 col-sm-8 col-xs-12 nopadding">
-							<div class="col-xs-12 nopadding">
-								<div class="arrivel col-sm-5 nopadding col-xs-4" itemscope itemtype ="http://schema.org/Flight">
-									<p itemprop="departureAirport">
-										{{row.origin1}}
-									</p>
-									<p>
-										<time itemprop="departureTime">{{row.departure1}}</time>
-									</p>
-								</div>
-								<div class="arrow-div col-sm-2 col-xs-1 text-center nopadding">&#8594;</div>
-								<div class="arrivel-2 col-sm-4 nopadding text-right col-xs-4 xs-text-center" itemscope itemtype ="http://schema.org/Flight">
-									<p itemprop="arrivalAirport">
-										{{row.destination1}}
-									</p>
-									<p>
-										<time itemprop="arrivalTime">{{row.arival1}}</time>
-									</p>
-								</div>
-								<div class="col-xs-3 nopadding visible-xs text-right">
-									<div class="col-xs-12 nopadding non-stop text-right">
-										<p>
-											{{row.stoppage1}}
-										</p>
-									</div>
-									<div class="col-xs-12 nopadding non-stop" itemscope itemtype ="http://schema.org/Flight">
-										<p itemprop="estimatedFlightDuration">
-											{{row.duration1}}
-										</p>
-									</div>
-								</div>
-							</div>				
-						</div>
-						<div class="col-md-4 col-sm-4 col-xs-12 text-center nopr hidden-xs">
-							<div class="col-xs-12 nopadding non-stop">
-								<p>
-									{{row.stoppage1}}
-								</p>
-								<div class="col-xs-12 nopadding non-stop" itemscope itemtype ="http://schema.org/Flight">
-									<p itemprop="estimatedFlightDuration">
-										{{row.duration1}}
-									</p>
-								</div>
-							</div>
-						</div>
-					</div> <!-- end retun block -->
-					
-					<div class="col-xs-12 nopadding mvt10px for-mobile-view"> <!-- main data only mobile  if return in present -->
-						<div class="col-xs-12 nopadding text-center custome-edit-block"> 
-							<div class="col-xs-12 nopadding mvb10px na-ra">
-								<h5 class="econo edit-width-econo">
+                            <div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
+                                <p class="flight-rate" itemprop="totalPrice">
+                                    {{row.finalprice|intcomma}} Miles +<span>${{row.totaltaxes|floatformat:2}}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-md-4 col-sm-4 col-xs-12 text-center nopr hidden-xs">
+                <div class="col-xs-12 nopadding non-stop">
+                    <p>
+                        {{row.stoppage}}
+                    </p>
+                    <div class="col-xs-12 nopadding non-stop" itemscope itemtype="http://schema.org/Flight">
+                        <p itemprop="estimatedFlightDuration">
+                            {{row.duration}}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <!-- terurn data block -->
+        {% if returndate and row.origin1 %}
+        <div class="col-xs-12 nopadding flight-div-repeat">
+            <div class="col-md-8 col-sm-8 col-xs-12 nopadding">
+                <div class="col-xs-12 nopadding">
+                    <div class="arrivel col-sm-5 nopadding col-xs-4" itemscope itemtype="http://schema.org/Flight">
+                        <p itemprop="departureAirport">
+                            {{row.origin1}}
+                        </p>
+                        <p>
+                            <time itemprop="departureTime">{{row.departure1}}</time>
+                        </p>
+                    </div>
+                    <div class="arrow-div col-sm-2 col-xs-1 text-center nopadding">&#8594;</div>
+                    <div class="arrivel-2 col-sm-4 nopadding text-right col-xs-4 xs-text-center" itemscope itemtype="http://schema.org/Flight">
+                        <p itemprop="arrivalAirport">
+                            {{row.destination1}}
+                        </p>
+                        <p>
+                            <time itemprop="arrivalTime">{{row.arival1}}</time>
+                        </p>
+                    </div>
+                    <div class="col-xs-3 nopadding visible-xs text-right">
+                        <div class="col-xs-12 nopadding non-stop text-right">
+                            <p>
+                                {{row.stoppage1}}
+                            </p>
+                        </div>
+                        <div class="col-xs-12 nopadding non-stop" itemscope itemtype="http://schema.org/Flight">
+                            <p itemprop="estimatedFlightDuration">
+                                {{row.duration1}}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-4 col-xs-12 text-center nopr hidden-xs">
+                <div class="col-xs-12 nopadding non-stop">
+                    <p>
+                        {{row.stoppage1}}
+                    </p>
+                    <div class="col-xs-12 nopadding non-stop" itemscope itemtype="http://schema.org/Flight">
+                        <p itemprop="estimatedFlightDuration">
+                            {{row.duration1}}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end retun block -->
+        <div class="col-xs-12 nopadding mvt10px for-mobile-view">
+            <!-- main data only mobile  if return in present -->
+            <div class="col-xs-12 nopadding text-center custome-edit-block">
+                <div class="col-xs-12 nopadding mvb10px na-ra">
+                    <h5 class="econo edit-width-econo">
 								{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' %}
 									{{row.cabintype1}}
 								{% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %}
@@ -347,820 +299,705 @@
 									{% endif %}
 								{% endif %}
 								</h5>
-								<div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
-									<p class="flight-rate" itemprop="totalPrice">
-										{{row.finalprice|intcomma}} Miles +<span>${{row.totaltaxes|floatformat:2}}</span> 
-									</p>
-								</div>
-							</div>														
-						</div>
-					</div>  
-				{% endif%}	
-
-				<a class="show-details" role="button" data-toggle="collapse" href="#{{row.newid}}" aria-expanded="false" aria-controls="collapseExample">SHOW DETAILS</a>
-				<h4 class="econo hidden-xs"> 			
+                    <div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
+                        <p class="flight-rate" itemprop="totalPrice">
+                            {{row.finalprice|intcomma}} Miles +<span>${{row.totaltaxes|floatformat:2}}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif%}
+        <a class="show-details" role="button" data-toggle="collapse" href="#{{row.newid}}" aria-expanded="false" aria-controls="collapseExample">SHOW DETAILS</a>
+        <h4 class="econo hidden-xs"> 			
 					{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
 					{{row.cabintype1}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{row.cabintype2}} {% else%}{{row.cabintype3}} {% endif %}
-				</h4>	
-					
-				<div class="col-xs-12 pop-hover nopadding">
-					<div class="collapse" id="{{row.newid}}">
-						<!-- Lower change -->			
-						{% if row.multidetail_list %}
-							{% for i in recordlen  %}
-								{% with row.multidetail_list|lookup:i as details %}
-									<h2>Flight {{i|add:1}}</h2>
-										
-									<div class="table-responsive table-date-search">
-										<table class="table">
-												{% with details.departdetails|split:'@' as mylist%}
-												{% with details.arivedetails|split:'@' as mylist1%}
-												{% with details.planedetails|split:'@' as mylist2%}
-												{% with details.operatedby|split:'@' as mylist3%}
-												
-												{% with details.economy_code|split:'@' as mylist4%}
-												{% with details.business_code|split:'@' as mylist5%}
-												{% with details.first_code|split:'@' as mylist6%}
-												<tr itemscope itemtype="http://schema.org/Flight">
-														<td><b>Departs: </b></td>
-														<td><time itemprop="departureTime">{{mylist.0}}</time></td>
-												</tr>
-							
-							
-												<tr itemscope itemtype="http://schema.org/Flight">
-							
-														<td><b>Arrives:</b></td>
-														<td><time itemprop="arrivalTime">{{mylist1.0}}</time></td>
-												</tr>
-												<tr itemscope itemtype="http://schema.org/Flight">
-														<td itemprop="flightNumber"><b>Flight:</b></td>
-														<td>{{mylist2.0}}</td>
-												</tr>
-												{% if request.GET.cabin == 'maincabin' and mylist4.0 %}
-													<tr>
-														  <td><b>Fare Class:</b></td>
-														   <td>{{mylist4.0}}</td>
-													</tr>
-												{% elif request.GET.cabin == 'firstclass' and mylist5.0%}
-													<tr>
-														  <td><b>Fare Class:</b></td>
-														  <td>{{mylist5.0}}</td>
-													</tr>
-												{% else %}
-													{% if request.GET.cabin == 'business' and mylist6.0%}
-														<tr>
-														  <td><b>Fare Class:</b></td>
-														  <td>{{mylist6.0}}</td>
-													</tr>
-													{% endif%}
-												{% endif %}
-												{% if mylist3.0 %}
-														<tr>
-																<td><b>Operated By:</b></td>
-																<td>{{mylist3.0}}</td>
-														</tr>
-												{% endif %}
-												{% if mylist1.1 %}
-												<tr>
-														<td></td>
-														<td>
-																<h5><b>Change planes </b></h5>
-														</td>
-												</tr>
-												<tr itemscope itemtype="http://schema.org/Flight">
-														<td><b>Departs: </b></td>
-														<td><time itemprop="departureTime">{{mylist.1}}</time></td>
-												</tr>
-							
-							
-												<tr itemscope itemtype="http://schema.org/Flight">
-														<td><b>Arrives:</b></td>
-														<td><time itemprop="arrivalTime">{{mylist1.1}}</time></td>
-												</tr>
-												<tr>
-														<td><b>Flight:</b></td>
-														<td>{{mylist2.1}}</td>
-												</tr>
-												{% if request.GET.cabin == 'maincabin' and mylist4.1 %}
-													<tr>
-														  <td><b>Fare Class:</b></td>
-														   <td>{{mylist4.1}}</td>
-													</tr>
-												{% elif request.GET.cabin == 'firstclass' and mylist5.1%}
-													<tr>
-														  <td><b>Fare Class:</b></td>
-														  <td>{{mylist5.1}}</td>
-													</tr>
-												{% else %}
-													{% if mylist6.1%}
-														<tr>
-														  <td><b>Fare Class:</b></td>
-														  <td>{{mylist6.1}}</td>
-													</tr>
-													{% endif%}
-												{% endif %}
-												{% if mylist3.1 %}
-														<tr>
-																<td><b>Operated By:</b></td>
-																<td>{{mylist3.1}}</td>
-														</tr>
-												{% endif %}
-							
-												{% endif %}
-												{% if mylist.2 %}
-												<tr>
-														<td></td>
-														<td>
-																<h5><b>Change planes </b></h5>
-														</td>
-												</tr>
-												<tr itemscope itemtype="http://schema.org/Flight">
-														<td><b>Departs: </b></td>
-														<td><time itemprop="departureTime">{{mylist.2}}</time></td>
-												</tr>
-							
-							
-												<tr itemscope itemtype="http://schema.org/Flight">
-														<td><b>Arrives:</b></td>
-														<td><time itemprop="arrivalTime">{{mylist1.2}}</time></td>
-												</tr>
-												<tr>
-														<td><b>Flight:</b></td>
-														<td>{{mylist2.2}}</td>
-												</tr>
-												{% if request.GET.cabin == 'maincabin' and mylist4.2 %}
-													<tr>
-														  <td><b>Fare Class:</b></td>
-														   <td>{{mylist4.2}}</td>
-													</tr>
-												{% elif request.GET.cabin == 'firstclass' and mylist5.2%}
-													<tr>
-														  <td><b>Fare Class:</b></td>
-														  <td>{{mylist5.2}}</td>
-													</tr>
-												{% else %}
-													{% if mylist6.2%}
-														<tr>
-														  <td><b>Fare Class:</b></td>
-														  <td>{{mylist6.2}}</td>
-													</tr>
-													{% endif%}
-												{% endif %}
-												
-												{% if mylist3.2 %}
-														<tr>
-																<td><b>Operated By:</b></td>
-																<td>{{mylist3.2}}</td>
-														</tr>
-												{% endif %}
-												{% endif %}
-												{% if mylist.3 %}
-												<tr>
-														<td></td>
-														<td>
-																<h5><b>Change planes </b></h5>
-														</td>
-												</tr>
-												<tr itemscope itemtype="http://schema.org/Flight">
-														<td><b>Departs: </b></td>
-														<td><time itemprop="departureTime">{{mylist.3}}</time></td>
-												</tr>
-							
-							
-												<tr itemscope itemtype="http://schema.org/Flight">
-														<td><b>Arrives:</b></td>
-														<td><time itemprop="arrivalTime">{{mylist1.3}}</time></td>
-												</tr>
-												<tr>
-														<td><b>Flight:</b></td>
-														<td>{{mylist2.3}}</td>
-												</tr>
-												{% if request.GET.cabin == 'maincabin' and mylist4.3 %}
-													<tr>
-														  <td><b>Fare Class:</b></td>
-														   <td>{{mylist4.3}}</td>
-													</tr>
-												{% elif request.GET.cabin == 'firstclass' and mylist5.3%}
-													<tr>
-														  <td><b>Fare Class:</b></td>
-														  <td>{{mylist5.3}}</td>
-													</tr>
-												{% else %}
-													{% if mylist6.3%}
-														<tr>
-														  <td><b>Fare Class:</b></td>
-														  <td>{{mylist6.3}}</td>
-													</tr>
-													{% endif%}
-												{% endif %}
-												{% if mylist3.3 %}
-														<tr>
-																<td><b>Operated By:</b></td>
-																<td>{{mylist3.3}}</td>
-														</tr>
-												{% endif %}
-												{% endif %}
-												
-												{% if mylist.4 %}
-												<tr>
-														<td></td>
-														<td>
-																<h5><b>Change planes </b></h5>
-														</td>
-												</tr>
-												<tr itemscope itemtype="http://schema.org/Flight">
-														<td><b>Departs: </b></td>
-														<td><time itemprop="departureTime">{{mylist.4}}</time></td>
-												</tr>
-							
-							
-												<tr itemscope itemtype="http://schema.org/Flight">
-														<td><b>Arrives:</b></td>
-														<td><time itemprop="arrivalTime">{{mylist1.4}}</time></td>
-												</tr>
-												<tr>
-														<td><b>Flight:</b></td>
-														<td>{{mylist2.4}}</td>
-												</tr>
-												{% if request.GET.cabin == 'maincabin' and mylist4.4 %}
-													<tr>
-														  <td><b>Fare Class:</b></td>
-														   <td>{{mylist4.4}}</td>
-													</tr>
-												{% elif request.GET.cabin == 'firstclass' and mylist5.4%}
-													<tr>
-														  <td><b>Fare Class:</b></td>
-														  <td>{{mylist5.4}}</td>
-													</tr>
-												{% else %}
-													{% if mylist6.4%}
-														<tr>
-														  <td><b>Fare Class:</b></td>
-														  <td>{{mylist6.4}}</td>
-													</tr>
-													{% endif%}
-												{% endif %}
-												{% if mylist3.4 %}
-														<tr>
-																<td><b>Operated By:</b></td>
-																<td>{{mylist3.4}}</td>
-														</tr>
-												{% endif %}
-												{% endif %}
-							
-							
-												{% endwith %}
-												{% endwith %}
-												{% endwith %}
-												{% endwith %}
-												{% endwith %}
-												{% endwith %}
-												{% endwith %}
-										</table>
-									</div>															
-								{%endwith%}
-							{% endfor %}
-							<a href="#" data-toggle="modal" class="share" data-target="#share-modal" id="{{row.rowid}}">share</a>
-						{% else %}
-							<!-- upper change -->	
-							<div class="well" itemscope itemtype="http://schema.org/Flight">
-								<h2>DEPART</h2>
-								<p itemprop="flightNumber">
-										{{row.datasource|title}} | {{row.flighno}} (
-											{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
-												{{row.cabintype1}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{row.cabintype2}} {% else%}{{row.cabintype3}} {% endif %})					
-								</p>
-								<div class="table-responsive table-date-search">					
-									<table class="table">
-										{% with row.departdetails|split:'@' as mylist%}
-										{% with row.arivedetails|split:'@' as mylist1%}
-										{% with row.planedetails|split:'@' as mylist2%}
-										{% with row.operatedby|split:'@' as mylist3%}
-										{% with row.economy_code|split:'@' as mylist4%}
-										{% with row.business_code|split:'@' as mylist5%}
-										{% with row.first_code|split:'@' as mylist6%} 
-										<tr itemscope itemtype="http://schema.org/Flight">
-											<td><b>Departs: </b></td>
-											<td><time itemprop="departureTime">{{mylist.0}}</time></td>
-										</tr>
-										
-										
-										<tr itemscope itemtype="http://schema.org/Flight">
-										
-											<td><b>Arrives:</b></td>
-											<td><time itemprop="arrivalTime">{{mylist1.0}}</time></td>
-										</tr>
-										<tr itemscope itemtype="http://schema.org/Flight">
-											<td itemprop="flightNumber"><b>Flight:</b></td>
-											<td>{{mylist2.0}}</td>
-										</tr>
-										{% if request.GET.cabin == 'maincabin' and mylist4.0 %}
-														<tr>
-															  <td><b>Fare Class:</b></td>
-															   <td>{{mylist4.0}}</td>
-														</tr>
-													{% elif request.GET.cabin == 'firstclass' and mylist5.0%}
-														<tr>
-															  <td><b>Fare Class:</b></td>
-															  <td>{{mylist5.0}}</td>
-														</tr>
-													{% else %}
-														{% if mylist6.0%}
-															<tr>
-															  <td><b>Fare Class:</b></td>
-															  <td>{{mylist6.0}}</td>
-														</tr>
-														{% endif%}
-													{% endif %}
-										{% if mylist3.0 %}
-											<tr>
-												<td><b>Operated By:</b></td>
-												<td>{{mylist3.0}}</td>
-											</tr>
-										{% endif %}
-										{% if row.stoppage == '1 STOP' or row.stoppage == '2 STOPS' or row.stoppage == '3 STOPS' or row.stoppage == '4 STOPS'%}
-										<tr>
-											<td></td>
-											<td>
-												<h5><b>Change planes </b></h5>
-											</td>
-										</tr>
-										<tr itemscope itemtype="http://schema.org/Flight">
-											<td><b>Departs: </b></td>
-											<td><time itemprop="departureTime">{{mylist.1}}</time></td>
-										</tr>
-										
-										
-										<tr itemscope itemtype="http://schema.org/Flight">
-											<td><b>Arrives:</b></td>
-											<td><time itemprop="arrivalTime">{{mylist1.1}}</time></td>
-										</tr>
-										<tr>
-											<td><b>Flight:</b></td>
-											<td>{{mylist2.1}}</td>
-										</tr>
-										{% if request.GET.cabin == 'maincabin' and mylist4.1 %}
-														<tr>
-															  <td><b>Fare Class:</b></td>
-															   <td>{{mylist4.1}}</td>
-														</tr>
-													{% elif request.GET.cabin == 'firstclass' and mylist5.1%}
-														<tr>
-															  <td><b>Fare Class:</b></td>
-															  <td>{{mylist5.1}}</td>
-														</tr>
-													{% else %}
-														{% if mylist6.1%}
-															<tr>
-															  <td><b>Fare Class:</b></td>
-															  <td>{{mylist6.1}}</td>
-														</tr>
-														{% endif%}
-													{% endif %}
-										{% if mylist3.1 %}
-											<tr>
-												<td><b>Operated By:</b></td>
-												<td>{{mylist3.1}}</td>
-											</tr>
-										{% endif %}
-										
-										{% endif %}
-										{% if row.stoppage == '2 STOPS' or row.stoppage == '3 STOPS' or row.stoppage == '4 STOPS' %}
-										<tr>
-											<td></td>
-											<td>
-												<h5><b>Change planes </b></h5>
-											</td>
-										</tr>
-										<tr itemscope itemtype="http://schema.org/Flight">
-											<td><b>Departs: </b></td>
-											<td><time itemprop="departureTime">{{mylist.2}}</time></td>
-										</tr>
-										
-										
-										<tr itemscope itemtype="http://schema.org/Flight">
-											<td><b>Arrives:</b></td>
-											<td><time itemprop="arrivalTime">{{mylist1.2}}</time></td>
-										</tr>
-										<tr>
-											<td><b>Flight:</b></td>
-											<td>{{mylist2.2}}</td>
-										</tr>
-										{% if request.GET.cabin == 'maincabin' and mylist4.2 %}
-														<tr>
-															  <td><b>Fare Class:</b></td>
-															   <td>{{mylist4.2}}</td>
-														</tr>
-													{% elif request.GET.cabin == 'firstclass' and mylist5.2%}
-														<tr>
-															  <td><b>Fare Class:</b></td>
-															  <td>{{mylist5.2}}</td>
-														</tr>
-													{% else %}
-														{% if mylist6.2%}
-															<tr>
-															  <td><b>Fare Class:</b></td>
-															  <td>{{mylist6.2}}</td>
-														</tr>
-														{% endif%}
-													{% endif %}
-										{% if mylist3.2 %}
-											<tr>
-												<td><b>Operated By:</b></td>
-												<td>{{mylist3.2}}</td>
-											</tr>
-										{% endif %}
-										{% endif %}
-										{% if row.stoppage == '3 STOPS' or row.stoppage == '4 STOPS' and mylist.3 %}
-										<tr>
-											<td></td>
-											<td>
-												<h5><b>Change planes </b></h5>
-											</td>
-										</tr>
-										<tr itemscope itemtype="http://schema.org/Flight">
-											<td><b>Departs: </b></td>
-											<td><time itemprop="departureTime">{{mylist.3}}</time></td>
-										</tr>
-										
-										
-										<tr itemscope itemtype="http://schema.org/Flight">
-											<td><b>Arrives:</b></td>
-											<td><time itemprop="arrivalTime">{{mylist1.3}}</time></td>
-										</tr>
-										<tr>
-											<td><b>Flight:</b></td>
-											<td>{{mylist2.3}}</td>
-										</tr>
-										{% if request.GET.cabin == 'maincabin' and mylist4.3 %}
-														<tr>
-															  <td><b>Fare Class:</b></td>
-															   <td>{{mylist4.3}}</td>
-														</tr>
-													{% elif request.GET.cabin == 'firstclass' and mylist5.3%}
-														<tr>
-															  <td><b>Fare Class:</b></td>
-															  <td>{{mylist5.3}}</td>
-														</tr>
-													{% else %}
-														{% if mylist6.3%}
-															<tr>
-															  <td><b>Fare Class:</b></td>
-															  <td>{{mylist6.3}}</td>
-														</tr>
-														{% endif%}
-													{% endif %}
-										{% if mylist3.3 %}
-											<tr>
-												<td><b>Operated By:</b></td>
-												<td>{{mylist3.3}}</td>
-											</tr>
-										{% endif %}
-										{% endif %}
-										
-										{% if row.stoppage == '4 STOPS' and mylist.4 %}
-										<tr>
-											<td></td>
-											<td>
-												<h5><b>Change planes </b></h5>
-											</td>
-										</tr>
-										<tr itemscope itemtype="http://schema.org/Flight">
-											<td><b>Departs: </b></td>
-											<td><time itemprop="departureTime">{{mylist.4}}</time></td>
-										</tr>
-										
-										
-										<tr itemscope itemtype="http://schema.org/Flight">
-											<td><b>Arrives:</b></td>
-											<td><time itemprop="arrivalTime">{{mylist1.4}}</time></td>
-										</tr>
-										<tr>
-											<td><b>Flight:</b></td>
-											<td>{{mylist2.4}}</td>
-										</tr>
-										{% if request.GET.cabin == 'maincabin' and mylist4.4 %}
-														<tr>
-															  <td><b>Fare Class:</b></td>
-															   <td>{{mylist4.4}}</td>
-														</tr>
-													{% elif request.GET.cabin == 'firstclass' and mylist5.4%}
-														<tr>
-															  <td><b>Fare Class:</b></td>
-															  <td>{{mylist5.4}}</td>
-														</tr>
-													{% else %}
-														{% if mylist6.4%}
-															<tr>
-															  <td><b>Fare Class:</b></td>
-															  <td>{{mylist6.4}}</td>
-														</tr>
-														{% endif%}
-													{% endif %}
-										{% if mylist3.4 %}
-											<tr>
-												<td><b>Operated By:</b></td>
-												<td>{{mylist3.4}}</td>
-											</tr>
-										{% endif %}
-										{% endif %}
-										
-										
-										{% endwith %}
-										{% endwith %}
-										{% endwith %}
-										{% endwith %}
-										{% endwith %}
-										{% endwith %}
-										{% endwith %}
-									</table>					
-								</div>
-								
-								<!--  FOR RETURN DELTA BLOCK -->
-								{% if returndate and row.origin1 %}
-									<div class="well" itemscope itemtype="http://schema.org/Flight">
-										<h2>RETURN</h2>
-										<p itemprop="flightNumber">
-											{{row.datasource|title}} | {{row.flighno1}} 
-											({% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
-											{{row.cabintype11}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{row.cabintype21}} {% else%}{{row.cabintype31}} {% endif %})
-										</p>
-										<div class="table-responsive table-date-search">
-											<table class="table">
-
-												{% with row.departdetails1|split:'@' as mylist%}
-												{% with row.arivedetails1|split:'@' as mylist1%}
-												{% with row.planedetails1|split:'@' as mylist2%}
-												{% with row.operatedby1|split:'@' as mylist3%}
-												{% with row.economy_code|split:'@' as mylist4%}
-												{% with row.business_code|split:'@' as mylist5%}
-												{% with row.first_code|split:'@' as mylist6%} 
-												<tr itemscope itemtype="http://schema.org/Flight">
-													<td><b>Departs: </b></td>
-													<td><time itemprop="departureTime">{{mylist.0}}</time></td>
-												</tr>
-												<tr itemscope itemtype="http://schema.org/Flight">
-												
-													<td><b>Arrives:</b></td>
-													<td><time itemprop="arrivalTime">{{mylist1.0}}</time></td>
-												</tr>
-												<tr itemscope itemtype="http://schema.org/Flight">
-													<td itemprop="flightNumber"><b>Flight:</b></td>
-													<td>{{mylist2.0}}</td>
-												</tr>
-												{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'  and mylist4.0 %}
-																<tr>
-																	  <td><b>Fare Class:</b></td>
-																	   <td>{{mylist4.0}}</td>
-																</tr>
-															{% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' and mylist5.0%}
-																<tr>
-																	  <td><b>Fare Class:</b></td>
-																	  <td>{{mylist5.0}}</td>
-																</tr>
-															{% else %}
-																{% if mylist6.0%}
-																	<tr>
-																	  <td><b>Fare Class:</b></td>
-																	  <td>{{mylist6.0}}</td>
-																</tr>
-																{% endif%}
-															{% endif %}
-												{% if mylist3.0 %}
-												<tr>
-													<td><b>Operated By:</b></td>
-													<td>{{mylist3.0}}</td>
-												</tr>
-												{%endif%}
-												{% if row.stoppage1 == '1 STOP' or row.stoppage1 == '2 STOPS' or row.stoppage1 == '3 STOPS' or row.stoppage1 == '4 STOPS'%}
-												<tr>
-													<td></td>
-													<td>
-														<h5><b>Change planes </b></h5>
-													</td>
-												</tr>
-												<tr itemscope itemtype="http://schema.org/Flight">
-													<td><b>Departs: </b></td>
-													<td><time itemprop="departureTime">{{mylist.1}}</time></td>
-												</tr>
-												
-												
-												<tr itemscope itemtype="http://schema.org/Flight">
-													<td><b>Arrives:</b></td>
-													<td><time itemprop="arrivalTime">{{mylist1.1}}</time></td>
-												</tr>
-												<tr>
-													<td><b>Flight:</b></td>
-													<td>{{mylist2.1}}</td>
-												</tr>
-												{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' and mylist4.1 %}
-																<tr>
-																	  <td><b>Fare Class:</b></td>
-																	   <td>{{mylist4.1}}</td>
-																</tr>
-															{% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' and mylist5.1%}
-																<tr>
-																	  <td><b>Fare Class:</b></td>
-																	  <td>{{mylist5.1}}</td>
-																</tr>
-															{% else %}
-																{% if mylist6.1%}
-																	<tr>
-																	  <td><b>Fare Class:</b></td>
-																	  <td>{{mylist6.1}}</td>
-																</tr>
-																{% endif%}
-															{% endif %}
-												{% if mylist3.1 %}
-													<tr>
-														<td><b>Operated By:</b></td>
-														<td>{{mylist3.1}}</td>
-													</tr>
-												{% endif%}
-												
-												{% endif %}
-												{% if row.stoppage1 == '2 STOPS' or row.stoppage1 == '3 STOPS' or row.stoppage1 == '4 STOPS'%}
-												<tr>
-													<td></td>
-													<td>
-														<h5><b>Change planes </b></h5>
-													</td>
-												</tr>
-												<tr itemscope itemtype="http://schema.org/Flight">
-													<td><b>Departs: </b></td>
-													<td><time itemprop="departureTime">{{mylist.2}}</time></td>
-												</tr>
-												
-												
-												<tr itemscope itemtype="http://schema.org/Flight">
-													<td><b>Arrives:</b></td>
-													<td><time itemprop="arrivalTime">{{mylist1.2}}</time></td>
-												</tr>
-												<tr>
-													<td><b>Flight:</b></td>
-													<td>{{mylist2.2}}</td>
-												</tr>
-												{% if request.GET.cabin == 'maincabin' and mylist4.2 %}
-																<tr>
-																	  <td><b>Fare Class:</b></td>
-																	   <td>{{mylist4.3}}</td>
-																</tr>
-															{% elif request.GET.cabin == 'firstclass' and mylist5.2%}
-																<tr>
-																	  <td><b>Fare Class:</b></td>
-																	  <td>{{mylist5.2}}</td>
-																</tr>
-															{% else %}
-																{% if mylist6.2%}
-																	<tr>
-																	  <td><b>Fare Class:</b></td>
-																	  <td>{{mylist6.2}}</td>
-																</tr>
-																{% endif%}
-															{% endif %}
-												{% if mylist3.2 %}
-													<tr>
-														<td><b>Operated By:</b></td>
-														<td>{{mylist3.2}}</td>
-													</tr>
-												{% endif %}
-												{% endif %}
-												{% if row.stoppage1 == '3 STOPS' or row.stoppage1 == '4 STOPS' and mylist.3 %}
-												<tr>
-													<td></td>
-													<td>
-														<h5><b>Change planes </b></h5>
-													</td>
-												</tr>
-												<tr itemscope itemtype="http://schema.org/Flight">
-													<td><b>Departs: </b></td>
-													<td><time itemprop="departureTime">{{mylist.3}}</time></td>
-												</tr>
-												
-														
-														<tr itemscope itemtype="http://schema.org/Flight">
-															<td><b>Arrives:</b></td>
-															<td><time itemprop="arrivalTime">{{mylist1.3}}</time></td>
-														</tr>
-														<tr>
-															<td><b>Flight:</b></td>
-															<td>{{mylist2.3}}</td>
-														</tr>
-														{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' and mylist4.3 %}
-																		<tr>
-																			  <td><b>Fare Class:</b></td>
-																			   <td>{{mylist4.3}}</td>
-																		</tr>
-																	{% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' and mylist5.3%}
-																		<tr>
-																			  <td><b>Fare Class:</b></td>
-																			  <td>{{mylist5.3}}</td>
-																		</tr>
-																	{% else %}
-																		{% if mylist6.3%}
-																			<tr>
-																			  <td><b>Fare Class:</b></td>
-																			  <td>{{mylist6.3}}</td>
-																		</tr>
-																		{% endif%}
-																	{% endif %}
-														{% if mylist3.3 %}
-															<tr>
-																<td><b>Operated By:</b></td>
-																<td>{{mylist3.3}}</td>
-															</tr>
-														{% endif %}
-														{% endif %}
-														
-													{% if row.stoppage1 == '4 STOPS' and mylist.4 %}
-														<tr>
-															<td></td>
-															<td>
-																<h5><b>Change planes </b></h5>
-															</td>
-														</tr>
-														<tr itemscope itemtype="http://schema.org/Flight">
-															<td><b>Departs: </b></td>
-															<td><time itemprop="departureTime">{{mylist.4}}</time></td>
-														</tr>
-														
-														
-														<tr itemscope itemtype="http://schema.org/Flight">
-															<td><b>Arrives:</b></td>
-															<td><time itemprop="arrivalTime">{{mylist1.4}}</time></td>
-														</tr>
-														<tr>
-															<td><b>Flight:</b></td>
-															<td>{{mylist2.4}}</td>
-														</tr>
-														{% if request.GET.cabin == 'maincabin' and mylist4.4 %}
-																		<tr>
-																			  <td><b>Fare Class:</b></td>
-																			   <td>{{mylist4.4}}</td>
-																		</tr>
-																	{% elif request.GET.cabin == 'firstclass' and mylist5.4%}
-																		<tr>
-																			  <td><b>Fare Class:</b></td>
-																			  <td>{{mylist5.4}}</td>
-																		</tr>
-																	{% else %}
-																		{% if mylist6.4%}
-																			<tr>
-																			  <td><b>Fare Class:</b></td>
-																			  <td>{{mylist6.4}}</td>
-																		</tr>
-																		{% endif%}
-																	{% endif %}
-														{% if mylist3.4 %}
-															<tr>
-																<td><b>Operated By:</b></td>
-																<td>{{mylist3.4}}</td>
-															</tr>
-														{% endif %}
-														{% endif %}
-												
-												
-												{% endwith %}
-												{% endwith %}
-												{% endwith %}
-												{% endwith %}
-												{% endwith %}
-												{% endwith %}
-												{% endwith %}
-											</table>
-										</div>
-									</div>
-								{% endif %}
-								<!-- RETTUN  BLOCK END  -->
-								
-								{% if action == 'depart' %}
-									<div>
-										<form action="getsearchresult?keyid={{row.searchkeyid}}&cabin={{request.GET.cabin}}&passenger={{request.GET.passenger}}{% if returndata %}&returnkey={{returndata}}{%endif%}" method="post">
-											{% csrf_token %}
-											<input type="hidden" name="rowid"  value="{{row.rowid}}">
-											<input type="hidden" name="price" 
-											{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%} 
-											 value="{{row.maincabin}}" {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass'%} 
-											 value="{{row.firstclass}}"{% else %}{% if request.GET.cabin == 'business' or cabin == 'business'%} 
-											 value="{{row.business}}"{%endif%}{% endif %}>
-											<input type="hidden" name="tax">
-											<input type="hidden" name="action"  value="return">
-											<input type="hidden" name="datasource"  value="{{row.datasource}}">
-											<button type"submit" value="{{searchrow.searchid}}" name="return" class="btn btn-pexSearch">Other Options For Return Flight</button>
-										</form>
-									</div>
-								{% endif %}
-								<a href="#" data-toggle="modal" class="share" data-target="#share-modal" id="{{row.rowid}}">share</a>
-								<input type="hidden" value="Anyone want to meet me in  {{search.0.destination}}? I found a great flight for Miles {{row.finalprice|intcomma}} on Pex." class="{{row.finalprice|intcomma}}">
-							</div>
-						{% endif %}
-					</div>
-				</div>
-			</div>
-		</div>
-	{% endfor %}	
-{% endif %}	
-
-{% if data|assignval == 0 %}
-	<input type="hidden" id="nodata" name="nodata" />	
-{% endif %}	
+				</h4>
+        <div class="col-xs-12 pop-hover nopadding">
+            <div class="collapse" id="{{row.newid}}">
+                <!-- Lower change -->
+                {% if row.multidetail_list %} {% for i in recordlen %} {% with row.multidetail_list|lookup:i as details %}
+                <h2>Flight {{i|add:1}}</h2>
+                <div class="table-responsive table-date-search">
+                    <table class="table">
+                        {% with details.departdetails|split:'@' as mylist%} {% with details.arivedetails|split:'@' as mylist1%} {% with details.planedetails|split:'@' as mylist2%} {% with details.operatedby|split:'@' as mylist3%} {% with details.economy_code|split:'@' as mylist4%} {% with details.business_code|split:'@' as mylist5%} {% with details.first_code|split:'@' as mylist6%}
+                        <tr itemscope itemtype="http://schema.org/Flight">
+                            <td><b>Departs: </b></td>
+                            <td>
+                                <time itemprop="departureTime">{{mylist.0}}</time>
+                            </td>
+                        </tr>
+                        <tr itemscope itemtype="http://schema.org/Flight">
+                            <td><b>Arrives:</b></td>
+                            <td>
+                                <time itemprop="arrivalTime">{{mylist1.0}}</time>
+                            </td>
+                        </tr>
+                        <tr itemscope itemtype="http://schema.org/Flight">
+                            <td itemprop="flightNumber"><b>Flight:</b></td>
+                            <td>{{mylist2.0}}</td>
+                        </tr>
+                        {% if request.GET.cabin == 'maincabin' and mylist4.0 %}
+                        <tr>
+                            <td><b>Fare Class:</b></td>
+                            <td>{{mylist4.0}}</td>
+                        </tr>
+                        {% elif request.GET.cabin == 'firstclass' and mylist5.0%}
+                        <tr>
+                            <td><b>Fare Class:</b></td>
+                            <td>{{mylist5.0}}</td>
+                        </tr>
+                        {% else %} {% if request.GET.cabin == 'business' and mylist6.0%}
+                        <tr>
+                            <td><b>Fare Class:</b></td>
+                            <td>{{mylist6.0}}</td>
+                        </tr>
+                        {% endif%} {% endif %} {% if mylist3.0 %}
+                        <tr>
+                            <td><b>Operated By:</b></td>
+                            <td>{{mylist3.0}}</td>
+                        </tr>
+                        {% endif %} {% if mylist1.1 %}
+                        <tr>
+                            <td></td>
+                            <td>
+                                <h5><b>Change planes </b></h5>
+                            </td>
+                        </tr>
+                        <tr itemscope itemtype="http://schema.org/Flight">
+                            <td><b>Departs: </b></td>
+                            <td>
+                                <time itemprop="departureTime">{{mylist.1}}</time>
+                            </td>
+                        </tr>
+                        <tr itemscope itemtype="http://schema.org/Flight">
+                            <td><b>Arrives:</b></td>
+                            <td>
+                                <time itemprop="arrivalTime">{{mylist1.1}}</time>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>Flight:</b></td>
+                            <td>{{mylist2.1}}</td>
+                        </tr>
+                        {% if request.GET.cabin == 'maincabin' and mylist4.1 %}
+                        <tr>
+                            <td><b>Fare Class:</b></td>
+                            <td>{{mylist4.1}}</td>
+                        </tr>
+                        {% elif request.GET.cabin == 'firstclass' and mylist5.1%}
+                        <tr>
+                            <td><b>Fare Class:</b></td>
+                            <td>{{mylist5.1}}</td>
+                        </tr>
+                        {% else %} {% if mylist6.1%}
+                        <tr>
+                            <td><b>Fare Class:</b></td>
+                            <td>{{mylist6.1}}</td>
+                        </tr>
+                        {% endif%} {% endif %} {% if mylist3.1 %}
+                        <tr>
+                            <td><b>Operated By:</b></td>
+                            <td>{{mylist3.1}}</td>
+                        </tr>
+                        {% endif %} {% endif %} {% if mylist.2 %}
+                        <tr>
+                            <td></td>
+                            <td>
+                                <h5><b>Change planes </b></h5>
+                            </td>
+                        </tr>
+                        <tr itemscope itemtype="http://schema.org/Flight">
+                            <td><b>Departs: </b></td>
+                            <td>
+                                <time itemprop="departureTime">{{mylist.2}}</time>
+                            </td>
+                        </tr>
+                        <tr itemscope itemtype="http://schema.org/Flight">
+                            <td><b>Arrives:</b></td>
+                            <td>
+                                <time itemprop="arrivalTime">{{mylist1.2}}</time>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>Flight:</b></td>
+                            <td>{{mylist2.2}}</td>
+                        </tr>
+                        {% if request.GET.cabin == 'maincabin' and mylist4.2 %}
+                        <tr>
+                            <td><b>Fare Class:</b></td>
+                            <td>{{mylist4.2}}</td>
+                        </tr>
+                        {% elif request.GET.cabin == 'firstclass' and mylist5.2%}
+                        <tr>
+                            <td><b>Fare Class:</b></td>
+                            <td>{{mylist5.2}}</td>
+                        </tr>
+                        {% else %} {% if mylist6.2%}
+                        <tr>
+                            <td><b>Fare Class:</b></td>
+                            <td>{{mylist6.2}}</td>
+                        </tr>
+                        {% endif%} {% endif %} {% if mylist3.2 %}
+                        <tr>
+                            <td><b>Operated By:</b></td>
+                            <td>{{mylist3.2}}</td>
+                        </tr>
+                        {% endif %} {% endif %} {% if mylist.3 %}
+                        <tr>
+                            <td></td>
+                            <td>
+                                <h5><b>Change planes </b></h5>
+                            </td>
+                        </tr>
+                        <tr itemscope itemtype="http://schema.org/Flight">
+                            <td><b>Departs: </b></td>
+                            <td>
+                                <time itemprop="departureTime">{{mylist.3}}</time>
+                            </td>
+                        </tr>
+                        <tr itemscope itemtype="http://schema.org/Flight">
+                            <td><b>Arrives:</b></td>
+                            <td>
+                                <time itemprop="arrivalTime">{{mylist1.3}}</time>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>Flight:</b></td>
+                            <td>{{mylist2.3}}</td>
+                        </tr>
+                        {% if request.GET.cabin == 'maincabin' and mylist4.3 %}
+                        <tr>
+                            <td><b>Fare Class:</b></td>
+                            <td>{{mylist4.3}}</td>
+                        </tr>
+                        {% elif request.GET.cabin == 'firstclass' and mylist5.3%}
+                        <tr>
+                            <td><b>Fare Class:</b></td>
+                            <td>{{mylist5.3}}</td>
+                        </tr>
+                        {% else %} {% if mylist6.3%}
+                        <tr>
+                            <td><b>Fare Class:</b></td>
+                            <td>{{mylist6.3}}</td>
+                        </tr>
+                        {% endif%} {% endif %} {% if mylist3.3 %}
+                        <tr>
+                            <td><b>Operated By:</b></td>
+                            <td>{{mylist3.3}}</td>
+                        </tr>
+                        {% endif %} {% endif %} {% if mylist.4 %}
+                        <tr>
+                            <td></td>
+                            <td>
+                                <h5><b>Change planes </b></h5>
+                            </td>
+                        </tr>
+                        <tr itemscope itemtype="http://schema.org/Flight">
+                            <td><b>Departs: </b></td>
+                            <td>
+                                <time itemprop="departureTime">{{mylist.4}}</time>
+                            </td>
+                        </tr>
+                        <tr itemscope itemtype="http://schema.org/Flight">
+                            <td><b>Arrives:</b></td>
+                            <td>
+                                <time itemprop="arrivalTime">{{mylist1.4}}</time>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>Flight:</b></td>
+                            <td>{{mylist2.4}}</td>
+                        </tr>
+                        {% if request.GET.cabin == 'maincabin' and mylist4.4 %}
+                        <tr>
+                            <td><b>Fare Class:</b></td>
+                            <td>{{mylist4.4}}</td>
+                        </tr>
+                        {% elif request.GET.cabin == 'firstclass' and mylist5.4%}
+                        <tr>
+                            <td><b>Fare Class:</b></td>
+                            <td>{{mylist5.4}}</td>
+                        </tr>
+                        {% else %} {% if mylist6.4%}
+                        <tr>
+                            <td><b>Fare Class:</b></td>
+                            <td>{{mylist6.4}}</td>
+                        </tr>
+                        {% endif%} {% endif %} {% if mylist3.4 %}
+                        <tr>
+                            <td><b>Operated By:</b></td>
+                            <td>{{mylist3.4}}</td>
+                        </tr>
+                        {% endif %} {% endif %} {% endwith %} {% endwith %} {% endwith %} {% endwith %} {% endwith %} {% endwith %} {% endwith %}
+                    </table>
+                </div>
+                {%endwith%} {% endfor %}
+                <a href="#" data-toggle="modal" class="share" data-target="#share-modal" id="{{row.rowid}}">share</a> {% else %}
+                <!-- upper change -->
+                <div class="well" itemscope itemtype="http://schema.org/Flight">
+                    <h2>DEPART</h2>
+                    <p itemprop="flightNumber">
+                        {{row.datasource|title}} | {{row.flighno}} ( {% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%} {{row.cabintype1}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{row.cabintype2}} {% else%}{{row.cabintype3}} {% endif %})
+                    </p>
+                    <div class="table-responsive table-date-search">
+                        <table class="table">
+                            {% with row.departdetails|split:'@' as mylist%} {% with row.arivedetails|split:'@' as mylist1%} {% with row.planedetails|split:'@' as mylist2%} {% with row.operatedby|split:'@' as mylist3%} {% with row.economy_code|split:'@' as mylist4%} {% with row.business_code|split:'@' as mylist5%} {% with row.first_code|split:'@' as mylist6%}
+                            <tr itemscope itemtype="http://schema.org/Flight">
+                                <td><b>Departs: </b></td>
+                                <td>
+                                    <time itemprop="departureTime">{{mylist.0}}</time>
+                                </td>
+                            </tr>
+                            <tr itemscope itemtype="http://schema.org/Flight">
+                                <td><b>Arrives:</b></td>
+                                <td>
+                                    <time itemprop="arrivalTime">{{mylist1.0}}</time>
+                                </td>
+                            </tr>
+                            <tr itemscope itemtype="http://schema.org/Flight">
+                                <td itemprop="flightNumber"><b>Flight:</b></td>
+                                <td>{{mylist2.0}}</td>
+                            </tr>
+                            {% if request.GET.cabin == 'maincabin' and mylist4.0 %}
+                            <tr>
+                                <td><b>Fare Class:</b></td>
+                                <td>{{mylist4.0}}</td>
+                            </tr>
+                            {% elif request.GET.cabin == 'firstclass' and mylist5.0%}
+                            <tr>
+                                <td><b>Fare Class:</b></td>
+                                <td>{{mylist5.0}}</td>
+                            </tr>
+                            {% else %} {% if mylist6.0%}
+                            <tr>
+                                <td><b>Fare Class:</b></td>
+                                <td>{{mylist6.0}}</td>
+                            </tr>
+                            {% endif%} {% endif %} {% if mylist3.0 %}
+                            <tr>
+                                <td><b>Operated By:</b></td>
+                                <td>{{mylist3.0}}</td>
+                            </tr>
+                            {% endif %} {% if row.stoppage == '1 STOP' or row.stoppage == '2 STOPS' or row.stoppage == '3 STOPS' or row.stoppage == '4 STOPS'%}
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <h5><b>Change planes </b></h5>
+                                </td>
+                            </tr>
+                            <tr itemscope itemtype="http://schema.org/Flight">
+                                <td><b>Departs: </b></td>
+                                <td>
+                                    <time itemprop="departureTime">{{mylist.1}}</time>
+                                </td>
+                            </tr>
+                            <tr itemscope itemtype="http://schema.org/Flight">
+                                <td><b>Arrives:</b></td>
+                                <td>
+                                    <time itemprop="arrivalTime">{{mylist1.1}}</time>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>Flight:</b></td>
+                                <td>{{mylist2.1}}</td>
+                            </tr>
+                            {% if request.GET.cabin == 'maincabin' and mylist4.1 %}
+                            <tr>
+                                <td><b>Fare Class:</b></td>
+                                <td>{{mylist4.1}}</td>
+                            </tr>
+                            {% elif request.GET.cabin == 'firstclass' and mylist5.1%}
+                            <tr>
+                                <td><b>Fare Class:</b></td>
+                                <td>{{mylist5.1}}</td>
+                            </tr>
+                            {% else %} {% if mylist6.1%}
+                            <tr>
+                                <td><b>Fare Class:</b></td>
+                                <td>{{mylist6.1}}</td>
+                            </tr>
+                            {% endif%} {% endif %} {% if mylist3.1 %}
+                            <tr>
+                                <td><b>Operated By:</b></td>
+                                <td>{{mylist3.1}}</td>
+                            </tr>
+                            {% endif %} {% endif %} {% if row.stoppage == '2 STOPS' or row.stoppage == '3 STOPS' or row.stoppage == '4 STOPS' %}
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <h5><b>Change planes </b></h5>
+                                </td>
+                            </tr>
+                            <tr itemscope itemtype="http://schema.org/Flight">
+                                <td><b>Departs: </b></td>
+                                <td>
+                                    <time itemprop="departureTime">{{mylist.2}}</time>
+                                </td>
+                            </tr>
+                            <tr itemscope itemtype="http://schema.org/Flight">
+                                <td><b>Arrives:</b></td>
+                                <td>
+                                    <time itemprop="arrivalTime">{{mylist1.2}}</time>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>Flight:</b></td>
+                                <td>{{mylist2.2}}</td>
+                            </tr>
+                            {% if request.GET.cabin == 'maincabin' and mylist4.2 %}
+                            <tr>
+                                <td><b>Fare Class:</b></td>
+                                <td>{{mylist4.2}}</td>
+                            </tr>
+                            {% elif request.GET.cabin == 'firstclass' and mylist5.2%}
+                            <tr>
+                                <td><b>Fare Class:</b></td>
+                                <td>{{mylist5.2}}</td>
+                            </tr>
+                            {% else %} {% if mylist6.2%}
+                            <tr>
+                                <td><b>Fare Class:</b></td>
+                                <td>{{mylist6.2}}</td>
+                            </tr>
+                            {% endif%} {% endif %} {% if mylist3.2 %}
+                            <tr>
+                                <td><b>Operated By:</b></td>
+                                <td>{{mylist3.2}}</td>
+                            </tr>
+                            {% endif %} {% endif %} {% if row.stoppage == '3 STOPS' or row.stoppage == '4 STOPS' and mylist.3 %}
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <h5><b>Change planes </b></h5>
+                                </td>
+                            </tr>
+                            <tr itemscope itemtype="http://schema.org/Flight">
+                                <td><b>Departs: </b></td>
+                                <td>
+                                    <time itemprop="departureTime">{{mylist.3}}</time>
+                                </td>
+                            </tr>
+                            <tr itemscope itemtype="http://schema.org/Flight">
+                                <td><b>Arrives:</b></td>
+                                <td>
+                                    <time itemprop="arrivalTime">{{mylist1.3}}</time>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>Flight:</b></td>
+                                <td>{{mylist2.3}}</td>
+                            </tr>
+                            {% if request.GET.cabin == 'maincabin' and mylist4.3 %}
+                            <tr>
+                                <td><b>Fare Class:</b></td>
+                                <td>{{mylist4.3}}</td>
+                            </tr>
+                            {% elif request.GET.cabin == 'firstclass' and mylist5.3%}
+                            <tr>
+                                <td><b>Fare Class:</b></td>
+                                <td>{{mylist5.3}}</td>
+                            </tr>
+                            {% else %} {% if mylist6.3%}
+                            <tr>
+                                <td><b>Fare Class:</b></td>
+                                <td>{{mylist6.3}}</td>
+                            </tr>
+                            {% endif%} {% endif %} {% if mylist3.3 %}
+                            <tr>
+                                <td><b>Operated By:</b></td>
+                                <td>{{mylist3.3}}</td>
+                            </tr>
+                            {% endif %} {% endif %} {% if row.stoppage == '4 STOPS' and mylist.4 %}
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <h5><b>Change planes </b></h5>
+                                </td>
+                            </tr>
+                            <tr itemscope itemtype="http://schema.org/Flight">
+                                <td><b>Departs: </b></td>
+                                <td>
+                                    <time itemprop="departureTime">{{mylist.4}}</time>
+                                </td>
+                            </tr>
+                            <tr itemscope itemtype="http://schema.org/Flight">
+                                <td><b>Arrives:</b></td>
+                                <td>
+                                    <time itemprop="arrivalTime">{{mylist1.4}}</time>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>Flight:</b></td>
+                                <td>{{mylist2.4}}</td>
+                            </tr>
+                            {% if request.GET.cabin == 'maincabin' and mylist4.4 %}
+                            <tr>
+                                <td><b>Fare Class:</b></td>
+                                <td>{{mylist4.4}}</td>
+                            </tr>
+                            {% elif request.GET.cabin == 'firstclass' and mylist5.4%}
+                            <tr>
+                                <td><b>Fare Class:</b></td>
+                                <td>{{mylist5.4}}</td>
+                            </tr>
+                            {% else %} {% if mylist6.4%}
+                            <tr>
+                                <td><b>Fare Class:</b></td>
+                                <td>{{mylist6.4}}</td>
+                            </tr>
+                            {% endif%} {% endif %} {% if mylist3.4 %}
+                            <tr>
+                                <td><b>Operated By:</b></td>
+                                <td>{{mylist3.4}}</td>
+                            </tr>
+                            {% endif %} {% endif %} {% endwith %} {% endwith %} {% endwith %} {% endwith %} {% endwith %} {% endwith %} {% endwith %}
+                        </table>
+                    </div>
+                    <!--  FOR RETURN DELTA BLOCK -->
+                    {% if returndate and row.origin1 %}
+                    <div class="well" itemscope itemtype="http://schema.org/Flight">
+                        <h2>RETURN</h2>
+                        <p itemprop="flightNumber">
+                            {{row.datasource|title}} | {{row.flighno1}} ({% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%} {{row.cabintype11}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{row.cabintype21}} {% else%}{{row.cabintype31}} {% endif %})
+                        </p>
+                        <div class="table-responsive table-date-search">
+                            <table class="table">
+                                {% with row.departdetails1|split:'@' as mylist%} {% with row.arivedetails1|split:'@' as mylist1%} {% with row.planedetails1|split:'@' as mylist2%} {% with row.operatedby1|split:'@' as mylist3%} {% with row.economy_code|split:'@' as mylist4%} {% with row.business_code|split:'@' as mylist5%} {% with row.first_code|split:'@' as mylist6%}
+                                <tr itemscope itemtype="http://schema.org/Flight">
+                                    <td><b>Departs: </b></td>
+                                    <td>
+                                        <time itemprop="departureTime">{{mylist.0}}</time>
+                                    </td>
+                                </tr>
+                                <tr itemscope itemtype="http://schema.org/Flight">
+                                    <td><b>Arrives:</b></td>
+                                    <td>
+                                        <time itemprop="arrivalTime">{{mylist1.0}}</time>
+                                    </td>
+                                </tr>
+                                <tr itemscope itemtype="http://schema.org/Flight">
+                                    <td itemprop="flightNumber"><b>Flight:</b></td>
+                                    <td>{{mylist2.0}}</td>
+                                </tr>
+                                {% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' and mylist4.0 %}
+                                <tr>
+                                    <td><b>Fare Class:</b></td>
+                                    <td>{{mylist4.0}}</td>
+                                </tr>
+                                {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' and mylist5.0%}
+                                <tr>
+                                    <td><b>Fare Class:</b></td>
+                                    <td>{{mylist5.0}}</td>
+                                </tr>
+                                {% else %} {% if mylist6.0%}
+                                <tr>
+                                    <td><b>Fare Class:</b></td>
+                                    <td>{{mylist6.0}}</td>
+                                </tr>
+                                {% endif%} {% endif %} {% if mylist3.0 %}
+                                <tr>
+                                    <td><b>Operated By:</b></td>
+                                    <td>{{mylist3.0}}</td>
+                                </tr>
+                                {%endif%} {% if row.stoppage1 == '1 STOP' or row.stoppage1 == '2 STOPS' or row.stoppage1 == '3 STOPS' or row.stoppage1 == '4 STOPS'%}
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <h5><b>Change planes </b></h5>
+                                    </td>
+                                </tr>
+                                <tr itemscope itemtype="http://schema.org/Flight">
+                                    <td><b>Departs: </b></td>
+                                    <td>
+                                        <time itemprop="departureTime">{{mylist.1}}</time>
+                                    </td>
+                                </tr>
+                                <tr itemscope itemtype="http://schema.org/Flight">
+                                    <td><b>Arrives:</b></td>
+                                    <td>
+                                        <time itemprop="arrivalTime">{{mylist1.1}}</time>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><b>Flight:</b></td>
+                                    <td>{{mylist2.1}}</td>
+                                </tr>
+                                {% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' and mylist4.1 %}
+                                <tr>
+                                    <td><b>Fare Class:</b></td>
+                                    <td>{{mylist4.1}}</td>
+                                </tr>
+                                {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' and mylist5.1%}
+                                <tr>
+                                    <td><b>Fare Class:</b></td>
+                                    <td>{{mylist5.1}}</td>
+                                </tr>
+                                {% else %} {% if mylist6.1%}
+                                <tr>
+                                    <td><b>Fare Class:</b></td>
+                                    <td>{{mylist6.1}}</td>
+                                </tr>
+                                {% endif%} {% endif %} {% if mylist3.1 %}
+                                <tr>
+                                    <td><b>Operated By:</b></td>
+                                    <td>{{mylist3.1}}</td>
+                                </tr>
+                                {% endif%} {% endif %} {% if row.stoppage1 == '2 STOPS' or row.stoppage1 == '3 STOPS' or row.stoppage1 == '4 STOPS'%}
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <h5><b>Change planes </b></h5>
+                                    </td>
+                                </tr>
+                                <tr itemscope itemtype="http://schema.org/Flight">
+                                    <td><b>Departs: </b></td>
+                                    <td>
+                                        <time itemprop="departureTime">{{mylist.2}}</time>
+                                    </td>
+                                </tr>
+                                <tr itemscope itemtype="http://schema.org/Flight">
+                                    <td><b>Arrives:</b></td>
+                                    <td>
+                                        <time itemprop="arrivalTime">{{mylist1.2}}</time>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><b>Flight:</b></td>
+                                    <td>{{mylist2.2}}</td>
+                                </tr>
+                                {% if request.GET.cabin == 'maincabin' and mylist4.2 %}
+                                <tr>
+                                    <td><b>Fare Class:</b></td>
+                                    <td>{{mylist4.3}}</td>
+                                </tr>
+                                {% elif request.GET.cabin == 'firstclass' and mylist5.2%}
+                                <tr>
+                                    <td><b>Fare Class:</b></td>
+                                    <td>{{mylist5.2}}</td>
+                                </tr>
+                                {% else %} {% if mylist6.2%}
+                                <tr>
+                                    <td><b>Fare Class:</b></td>
+                                    <td>{{mylist6.2}}</td>
+                                </tr>
+                                {% endif%} {% endif %} {% if mylist3.2 %}
+                                <tr>
+                                    <td><b>Operated By:</b></td>
+                                    <td>{{mylist3.2}}</td>
+                                </tr>
+                                {% endif %} {% endif %} {% if row.stoppage1 == '3 STOPS' or row.stoppage1 == '4 STOPS' and mylist.3 %}
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <h5><b>Change planes </b></h5>
+                                    </td>
+                                </tr>
+                                <tr itemscope itemtype="http://schema.org/Flight">
+                                    <td><b>Departs: </b></td>
+                                    <td>
+                                        <time itemprop="departureTime">{{mylist.3}}</time>
+                                    </td>
+                                </tr>
+                                <tr itemscope itemtype="http://schema.org/Flight">
+                                    <td><b>Arrives:</b></td>
+                                    <td>
+                                        <time itemprop="arrivalTime">{{mylist1.3}}</time>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><b>Flight:</b></td>
+                                    <td>{{mylist2.3}}</td>
+                                </tr>
+                                {% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' and mylist4.3 %}
+                                <tr>
+                                    <td><b>Fare Class:</b></td>
+                                    <td>{{mylist4.3}}</td>
+                                </tr>
+                                {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' and mylist5.3%}
+                                <tr>
+                                    <td><b>Fare Class:</b></td>
+                                    <td>{{mylist5.3}}</td>
+                                </tr>
+                                {% else %} {% if mylist6.3%}
+                                <tr>
+                                    <td><b>Fare Class:</b></td>
+                                    <td>{{mylist6.3}}</td>
+                                </tr>
+                                {% endif%} {% endif %} {% if mylist3.3 %}
+                                <tr>
+                                    <td><b>Operated By:</b></td>
+                                    <td>{{mylist3.3}}</td>
+                                </tr>
+                                {% endif %} {% endif %} {% if row.stoppage1 == '4 STOPS' and mylist.4 %}
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <h5><b>Change planes </b></h5>
+                                    </td>
+                                </tr>
+                                <tr itemscope itemtype="http://schema.org/Flight">
+                                    <td><b>Departs: </b></td>
+                                    <td>
+                                        <time itemprop="departureTime">{{mylist.4}}</time>
+                                    </td>
+                                </tr>
+                                <tr itemscope itemtype="http://schema.org/Flight">
+                                    <td><b>Arrives:</b></td>
+                                    <td>
+                                        <time itemprop="arrivalTime">{{mylist1.4}}</time>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><b>Flight:</b></td>
+                                    <td>{{mylist2.4}}</td>
+                                </tr>
+                                {% if request.GET.cabin == 'maincabin' and mylist4.4 %}
+                                <tr>
+                                    <td><b>Fare Class:</b></td>
+                                    <td>{{mylist4.4}}</td>
+                                </tr>
+                                {% elif request.GET.cabin == 'firstclass' and mylist5.4%}
+                                <tr>
+                                    <td><b>Fare Class:</b></td>
+                                    <td>{{mylist5.4}}</td>
+                                </tr>
+                                {% else %} {% if mylist6.4%}
+                                <tr>
+                                    <td><b>Fare Class:</b></td>
+                                    <td>{{mylist6.4}}</td>
+                                </tr>
+                                {% endif%} {% endif %} {% if mylist3.4 %}
+                                <tr>
+                                    <td><b>Operated By:</b></td>
+                                    <td>{{mylist3.4}}</td>
+                                </tr>
+                                {% endif %} {% endif %} {% endwith %} {% endwith %} {% endwith %} {% endwith %} {% endwith %} {% endwith %} {% endwith %}
+                            </table>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <!-- RETTUN  BLOCK END  -->
+                    {% if action == 'depart' %}
+                    <div>
+                        <form action="getsearchresult?keyid={{row.searchkeyid}}&cabin={{request.GET.cabin}}&passenger={{request.GET.passenger}}{% if returndata %}&returnkey={{returndata}}{%endif%}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="rowid" value="{{row.rowid}}">
+                            <input type="hidden" name="price" {% if request.GET.cabin=='maincabin' or cabin=='maincabin' %} value="{{row.maincabin}}" {% elif request.GET.cabin=='firstclass' or cabin=='firstclass' %} value="{{row.firstclass}}" {% else %}{% if request.GET.cabin=='business' or cabin=='business' %} value="{{row.business}}" {%endif%}{% endif %}>
+                            <input type="hidden" name="tax">
+                            <input type="hidden" name="action" value="return">
+                            <input type="hidden" name="datasource" value="{{row.datasource}}">
+                            <button type "submit" value="{{searchrow.searchid}}" name="return" class="btn btn-pexSearch">Other Options For Return Flight</button>
+                        </form>
+                    </div>
+                    {% endif %}
+                    <a href="#" data-toggle="modal" class="share" data-target="#share-modal" id="{{row.rowid}}">share</a>
+                    <input type="hidden" value="Anyone want to meet me in  {{search.0.destination}}? I found a great flight for Miles {{row.finalprice|intcomma}} on Pex." class="{{row.finalprice|intcomma}}">
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %} {% endif %} {% if data|assignval == 0 %}
+<input type="hidden" id="nodata" name="nodata" /> {% endif %}

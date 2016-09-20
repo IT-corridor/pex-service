@@ -1,74 +1,55 @@
-{% load staticfiles %} {% include "flightsearch/header.html" %}
+{% extends "flightsearch/base.html" %}
+{% load staticfiles %}
 
 <title>PEX+ Award Travel Blog</title>
 
-<!-- BODY SECTION/-->
+{% block content %}
 <!-- search form/-->
-<div class="col-sm-10 col-sm-push-2 col-xs-12 nopadding static-page-jumbo">
-	{% include "flightsearch/top_searchbar.html" %}
+<div class="col-sm-10 col-sm-push-2 col-xs-12 nopadding ">
+    {% include "flightsearch/top_searchbar.html" %}
 </div>
-
 <!-- search form/-->
 <div class="container-fluid" style="margin-top: 30px;">
-	<!-- tabs left -->
-
-	<div class="tabbable tabs-left">
-
-		<div class="">
-
-
-			<div
-				class="col-md-10 col-sm-10 tab-pane  col-xs-12 col-md-push-2  col-sm-push-2 about-content  "
-				id="d">
-				<!-------- blog --------->
-				<!--h5 class="Only-text">About PEX+</h5-->
-				{% if top_banner%}
-				<div class="blog-header cstm-pd-blog" style="background:{%if top_banner.featured_image %}url('/{{top_banner.featured_image|safe}}'){%else%} url('{{top_banner.img_link|safe}}'){%endif%} no-repeat;background-size:cover;background-position:center;">
-					<a href="/blog/{{top_banner.blog_url}}">
-					<h1>{{top_banner.blog_title}}</h1>
-					</a>
-				</div>
-				{%endif%}
-				<div class="content-div row">
-				{% if blog %}
-					{% for  data in blog %}
-					<div class="col-md-6 col-sm-6 col-xs-12 blog-box ">
-					{%if data.featured_image %}
-					<img src="/{{data.featured_image|safe}}" class="img-responsive"
-							alt="blog">
-					<div class="info">
-							<a href="/blog/{{data.blog_url}}" class="blog-name">{{data.blog_title}} <p>{{data.postedon}}</p></a>
-						</div>
-					
-					{% elif data.img_link%}
-						<img src="{{data.img_link|safe}}" class="img-responsive"
-							alt="blog">
-						
-						<div class="info">
-							<a href="/blog/{{data.blog_url}}" class="blog-name">{{data.blog_title}} <p>{{data.postedon}}</p></a>
-						</div>
-					{%else%}
-					<div class="col-md-6 col-sm-6 col-xs-12 blog-box text-center">
-					<a href="/blog/{{data.blog_url}}" class="blog-name">{{data.blog_title}} <p>{{data.postedon}}</p></a>
-					</div>
-					{%endif%}
-					</div>
-					{%endfor%}
-				{% endif%}
-					
-				</div>
-			</div>
-			<!-------- blog --------->
-	</div>
-		{% include "flightsearch/sidebar-menu.html" %}
-	</div>
-	<!-- /tabs -->
-
-	<!-- /row -->
+    <!-- tabs left -->
+    <div class="tabbable tabs-left">
+        <div class="">
+            <div class="col-md-10 col-sm-10 tab-pane  col-xs-12 col-md-push-2  col-sm-push-2 about-content  " id="d">
+                <!-------- blog --------->
+                <!--h5 class="Only-text">About PEX+</h5-->
+                {% if top_banner%}
+                <div class="blog-header cstm-pd-blog" style="background:{%if top_banner.featured_image %}url('/{{top_banner.featured_image|safe}}'){%else%} url('{{top_banner.img_link|safe}}'){%endif%} no-repeat;background-size:cover;background-position:center;">
+                    <a href="/blog/{{top_banner.blog_url}}">
+                        <h1>{{top_banner.blog_title}}</h1>
+                    </a>
+                </div>
+                {%endif%}
+                <div class="content-div row">
+                    {% if blog %} {% for data in blog %}
+                    <div class="col-md-6 col-sm-6 col-xs-12 blog-box ">
+                        {%if data.featured_image %}
+                        <img src="/{{data.featured_image|safe}}" class="img-responsive" alt="blog">
+                        <div class="info">
+                            <a href="/blog/{{data.blog_url}}" class="blog-name">{{data.blog_title}} <p>{{data.postedon}}</p></a>
+                        </div>
+                        {% elif data.img_link%}
+                        <img src="{{data.img_link|safe}}" class="img-responsive" alt="blog">
+                        <div class="info">
+                            <a href="/blog/{{data.blog_url}}" class="blog-name">{{data.blog_title}} <p>{{data.postedon}}</p></a>
+                        </div>
+                        {%else%}
+                        <div class="col-md-6 col-sm-6 col-xs-12 blog-box text-center">
+                            <a href="/blog/{{data.blog_url}}" class="blog-name">{{data.blog_title}} <p>{{data.postedon}}</p></a>
+                        </div>
+                        {%endif%}
+                    </div>
+                    {%endfor%} {% endif%}
+                </div>
+            </div>
+        </div>
+        {% include "flightsearch/sidebar-menu.html" %}
+    </div>
+    <!-- /tabs -->
+    <!-- /row -->
 </div>
-
 <!-- /container -->
-
-
-
-{% include "flightsearch/footer.html" %}
+{% endblock %}

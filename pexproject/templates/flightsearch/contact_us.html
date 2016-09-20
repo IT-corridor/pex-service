@@ -1,193 +1,166 @@
-{% load staticfiles %} {% include "flightsearch/header.html" %}
+{% extends "flightsearch/base.html" %}
+{% load staticfiles %}
+
 <title>Contact Us | PEX+</title>
 
-<!-- BODY SECTION/-->
+{% block content %}
 <!-- search form/-->
-
-<div class="col-sm-10 col-sm-push-2 col-xs-12 nopadding static-page-jumbo">
-	{% include "flightsearch/top_searchbar.html" %}
+<div class="col-sm-10 col-sm-push-2 col-xs-12 nopadding ">
+    {% include "flightsearch/top_searchbar.html" %}
 </div>
-
 <!-- search form/-->
 <div class="container-fluid" style="margin-top: 30px;">
-	<!-- tabs left -->
-
-	<div class="tabbable tabs-left">
-
-		<div class="">
-
-
-						<div class="col-md-10 col-sm-10 tab-pane active col-sm-push-2 col-md-push-2 col-xs-12 about-content nopadding " id="p">
-					
-					<h5>Contact Us</h5>
-					<img src="/static/flightsearch/img/banner-about.jpg"  class="img-responsive">
-					<div class="row" style="margin-top:30px">
-						<div class="col-xs-12 col-md-12 " >
-						<div class="form-contact col-xs-12 col-md-12 nopadding" >
-						
-							<div class="form col-xs-12 col-md-6 ">
-								{% if contact_msg %}<div class="alert alert-success alert-dismissible fade in" role="alert">{{contact_msg}}</div>{% endif %}
-							<div class=" col-xs-12 col-md-12 nopadding">
-								<form action="/contactUs" method="post">
-									{% csrf_token %}
-								  <div class="form-group col-xs-12 col-md-6">
-									<label for="first name">First Name*</label>
-									<input type="text" class="form-control" name="first_name" placeholder="First Name" required>
-								  </div>
-								  <div class="form-group col-xs-12 col-md-6">
-									<label for="last name">Last Name*</label>
-									<input type="text" class="form-control" name="last_name" placeholder="Last Name" required>
-								  </div>
-								  <div class="form-group col-xs-12 col-md-6">
-									<label for="email">Email*</label>
-									<input type="email" class="form-control" name="email" placeholder="Email" required>
-								  </div>
-								  <div class="form-group col-xs-12 col-md-6">
-									<label for="phone">Phone</label>
-									<input type="text" class="form-control" name="phone" placeholder="Phone">
-								  </div>
-								  <div class="form-group col-xs-12 col-md-6">
-									<label for="title">Title</label>
-									<input type="text" class="form-control" name="title" placeholder="Title">
-								  </div>
-								  <div class="form-group  col-xs-12 col-md-6">
-									<label for="exampleInputPassword1">Company</label>
-									<input type="text" class="form-control" name="company" placeholder="Company">
-								  </div>
-								  <div class="form-group  col-xs-12 col-md-12">
-									<label for="website">Website</label>
-									<input type="text" class="form-control" name="website" placeholder="Website">
-								  </div>
-								  	  <div class="form-group col-xs-12 col-md-12">
-										<label for="subject">Subject</label>
-										 <select class="form-control" id="feedback_option" name="topic">
-										  <option value="General" id="1">General</option>
-										  <option value="I have a question about a booking" id="2">I have a question about a booking</option>
-										  <option value="I found a price inaccuracy" id="3">I found a price inaccuracy</option>
-										  <option value="I want to add/edit my Hotel or Property" id="4">I want to add/edit my Hotel or Property</option>
-										  <option value="I want to buy an ad" id="5">I want to buy an ad</option>
-										</select>
-									  </div>
-									  	  <div class="form-group for-msg-feed" id="textarea" >
-		  
-										</div>
-											  <input type="hidden" name="label_text" id="text" > 
-										  <div class="form-group message-bx  col-xs-12 col-md-12" id="message">
-											<label for="exampleInputFile">Message</label>
-											<textarea class="form-control" rows="4" name="message"></textarea>
-										  </div>
-										  <div class="col-xs-12 col-md-12">
-											<button type="submit" class="btn btn-default">Submit</button>
-										</div>
-								</form>
-							
-							</div>
-							</div>
-							<div class="form col-xs-12 col-md-6 contact">
-								<div class="cntc-info-about">
-									<div class="col-md-12 col-xs-12 nopadding">
-										<div class="col-xs-3"><strong>Email:</strong></div>
-										<div class="col-xs-9"><p> info@pexportal.com</p></div>
-									</div>
-									<!--div class="col-md-12 col-xs-12 nopadding">
-										<div class="col-xs-3"><strong>Address:</strong> </div>
-										<div class="col-xs-9"><p> 5177 Richmond Avenue, Suite 770 <br/> Houston, TX 77056</p>
-											<p>407 Lincoln Road, Suite 11-B </br>
-									Miami Beach, FL 33139</p>
-										</div>
-									</div-->
-
-
-									</div>
-							</div>
-						</div>
-						</div>
-					
-			<div class="col-md-4 col-xs-12 address-data">
-				 <div class="col-md-12 nopadding">
-					<div class="thumbnail">
-					<div id="houstonmap" style="width:100%;height:220px;"></div>
-					  <div class="caption">
-						<h3>Houston, Texas</h3>
-						<p class="address">5177 Richmond Avenue, Suite 770 <br/> Houston, TX 77056</p>
-						<!--
-						<a href="#" class="" role="button">Map <span class="glyphicon right" aria-hidden="true"></span></a>
-					    -->
-					  </div>
-					</div>
-				  </div>
-			</div>
-			<div class="col-md-4  col-xs-12 address-data">
-				 <div class="col-md-12 nopadding">
-					<div class="thumbnail">
-					<div id="miami" style="width:100%;height:220px;"></div>
-					  <div class="caption">
-						<h3>Miami</h3>
-						<p class="address">407 Lincoln Road, Suite 11-B <br/> Miami Beach, FL 33139</p>
-						<!--
-						<a href="#" class="" role="button">Map <span class="glyphicon right" aria-hidden="true"></span></a> 
-					  -->
-					  </div>
-					</div>
-				  </div>
-			</div>
-	 </div>
-				</div>
-	</div>
-		{% include "flightsearch/sidebar-menu.html" %}
-	</div>
-	<!-- /tabs -->
-
-	<!-- /row -->
+    <!-- tabs left -->
+    <div class="tabbable tabs-left">
+        <div class="">
+            <div class="col-md-10 col-sm-10 tab-pane active col-sm-push-2 col-md-push-2 col-xs-12 about-content nopadding " id="p">
+                <h5>Contact Us</h5>
+                <img src="/static/flightsearch/img/banner-about.jpg" class="img-responsive">
+                <div class="row" style="margin-top:30px">
+                    <div class="col-xs-12 col-md-12 ">
+                        <div class="form-contact col-xs-12 col-md-12 nopadding">
+                            <div class="form col-xs-12 col-md-6 ">
+                                {% if contact_msg %}
+                                <div class="alert alert-success alert-dismissible fade in" role="alert">{{contact_msg}}
+                                </div>
+                                {% endif %}
+                                <div class=" col-xs-12 col-md-12 nopadding">
+                                    <form action="/contactUs" method="post">
+                                        {% csrf_token %}
+                                        <div class="form-group col-xs-12 col-md-6">
+                                            <label for="first name">First Name*</label>
+                                            <input type="text" class="form-control" name="first_name" placeholder="First Name" required>
+                                        </div>
+                                        <div class="form-group col-xs-12 col-md-6">
+                                            <label for="last name">Last Name*</label>
+                                            <input type="text" class="form-control" name="last_name" placeholder="Last Name" required>
+                                        </div>
+                                        <div class="form-group col-xs-12 col-md-6">
+                                            <label for="email">Email*</label>
+                                            <input type="email" class="form-control" name="email" placeholder="Email" required>
+                                        </div>
+                                        <div class="form-group col-xs-12 col-md-6">
+                                            <label for="phone">Phone</label>
+                                            <input type="text" class="form-control" name="phone" placeholder="Phone">
+                                        </div>
+                                        <div class="form-group col-xs-12 col-md-6">
+                                            <label for="title">Title</label>
+                                            <input type="text" class="form-control" name="title" placeholder="Title">
+                                        </div>
+                                        <div class="form-group  col-xs-12 col-md-6">
+                                            <label for="exampleInputPassword1">Company</label>
+                                            <input type="text" class="form-control" name="company" placeholder="Company">
+                                        </div>
+                                        <div class="form-group  col-xs-12 col-md-12">
+                                            <label for="website">Website</label>
+                                            <input type="text" class="form-control" name="website" placeholder="Website">
+                                        </div>
+                                        <div class="form-group col-xs-12 col-md-12">
+                                            <label for="subject">Subject</label>
+                                            <select class="form-control" id="feedback_option" name="topic">
+                                                <option value="General" id="1">General</option>
+                                                <option value="I have a question about a booking" id="2">I have a question about a booking</option>
+                                                <option value="I found a price inaccuracy" id="3">I found a price inaccuracy</option>
+                                                <option value="I want to add/edit my Hotel or Property" id="4">I want to add/edit my Hotel or Property</option>
+                                                <option value="I want to buy an ad" id="5">I want to buy an ad</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group for-msg-feed" id="textarea">
+                                        </div>
+                                        <input type="hidden" name="label_text" id="text">
+                                        <div class="form-group message-bx  col-xs-12 col-md-12" id="message">
+                                            <label for="exampleInputFile">Message</label>
+                                            <textarea class="form-control" rows="4" name="message"></textarea>
+                                        </div>
+                                        <div class="col-xs-12 col-md-12">
+                                            <button type="submit" class="btn btn-default">Submit</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="form col-xs-12 col-md-6 contact">
+                                <div class="cntc-info-about">
+                                    <div class="col-md-12 col-xs-12 nopadding">
+                                        <div class="col-xs-3"><strong>Email:</strong></div>
+                                        <div class="col-xs-9">
+                                            <p> info@pexportal.com</p>
+                                        </div>
+                                    </div>                                   
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-xs-12 address-data">
+                        <div class="col-md-12 nopadding">
+                            <div class="thumbnail">
+                                <div id="houstonmap" style="width:100%;height:220px;"></div>
+                                <div class="caption">
+                                    <h3>Houston, Texas</h3>
+                                    <p class="address">5177 Richmond Avenue, Suite 770
+                                        <br/> Houston, TX 77056</p>                                   
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4  col-xs-12 address-data">
+                        <div class="col-md-12 nopadding">
+                            <div class="thumbnail">
+                                <div id="miami" style="width:100%;height:220px;"></div>
+                                <div class="caption">
+                                    <h3>Miami</h3>
+                                    <p class="address">407 Lincoln Road, Suite 11-B
+                                        <br/> Miami Beach, FL 33139</p>                                
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% include "flightsearch/sidebar-menu.html" %}
+    </div>
+    <!-- /tabs -->
+    <!-- /row -->
 </div>
-
 <!-- /container -->
 
-
-
-{% include "flightsearch/footer.html" %}
-	<!-- FeedBack Option text-->   
-  	<script>
-  	$(document).ready(function(){
-  		$('#textarea').hide();
-    	var option1 = "";
-    	var option2 = "<p><b></b>Note you may have booked on another site</p><p>It's possible that you may have searched on PEX+ but booked through another provider. Check your email inbox for your booking receipt. If you completed the booking on another site, contact the provider. You can also find the provider by checking your credit card statement.</p><p>If you did complete your booking through PEX+, you can look-up your booking online by confirmation number or email address.</p>";
-    	var option3 = "<p>We could not find any recent fares from your click history.  Please provide details in the 'Comment' field below.</p>";
-    	var option4 = "<p>Everything you need to know to get started and/or enhance your hotel's listing in PEX+. You can update your hotel's information, learn how to get listed in PEX+ core results, or advertise your hotel as a featured result.</p>";
-    	var option5 = "";
-    	$('#feedback_option').change(function(){
-    		$('#textarea').empty();
-    		$('#textarea').hide();
-    		var val = $(this).children(":selected").attr("id");
-    		if(val == 2)
-    		{
-    			$('#text').val(option2);
-    			$('#textarea').append(option2);
-    			$('#message').hide();
-    			$('#textarea').show();
-    		}
-    		if(val == 1)
-    		{
-    			$('#message').show();
-    			$('#textarea').hide();
-    		}
-    		if(val == 4)
-    		{
-    			$('#text').val(option4);
-    			$('#textarea').append(option4);
-    			$('#message').hide();
-    			$('#textarea').show();
-    		}
-    		if(val == 3)
-    		{
-    			$('#text').val(option3);
-    			$('#textarea').append(option3);
-    			$('#message').show();
-    			$('#textarea').show();
-    		}
-    		
-    	});
-    });	
-    </script>
-    <!-- FeedBack Option text-->  
-    
+<!-- FeedBack Option text-->
+<script>
+$(document).ready(function() {
+    $('#textarea').hide();
+    var option1 = "";
+    var option2 = "<p><b></b>Note you may have booked on another site</p><p>It's possible that you may have searched on PEX+ but booked through another provider. Check your email inbox for your booking receipt. If you completed the booking on another site, contact the provider. You can also find the provider by checking your credit card statement.</p><p>If you did complete your booking through PEX+, you can look-up your booking online by confirmation number or email address.</p>";
+    var option3 = "<p>We could not find any recent fares from your click history.  Please provide details in the 'Comment' field below.</p>";
+    var option4 = "<p>Everything you need to know to get started and/or enhance your hotel's listing in PEX+. You can update your hotel's information, learn how to get listed in PEX+ core results, or advertise your hotel as a featured result.</p>";
+    var option5 = "";
+    $('#feedback_option').change(function() {
+        $('#textarea').empty();
+        $('#textarea').hide();
+        var val = $(this).children(":selected").attr("id");
+        if (val == 2) {
+            $('#text').val(option2);
+            $('#textarea').append(option2);
+            $('#message').hide();
+            $('#textarea').show();
+        }
+        if (val == 1) {
+            $('#message').show();
+            $('#textarea').hide();
+        }
+        if (val == 4) {
+            $('#text').val(option4);
+            $('#textarea').append(option4);
+            $('#message').hide();
+            $('#textarea').show();
+        }
+        if (val == 3) {
+            $('#text').val(option3);
+            $('#textarea').append(option3);
+            $('#message').show();
+            $('#textarea').show();
+        }
+    });
+});
+</script>
+<!-- FeedBack Option text-->
+{% endblock %}

@@ -1,56 +1,45 @@
-{% load staticfiles %} {% include "flightsearch/header.html" %}
+{% extends "flightsearch/base.html" %}
+{% load staticfiles %}
+
 <title>Pricing Policy PEX+</title>
-
-<!-- BODY SECTION/-->
+{% block content %}
 <!-- search form/-->
-
-<div class="col-sm-10 col-sm-push-2 col-xs-12 nopadding static-page-jumbo">
-	{% include "flightsearch/top_searchbar.html" %}
+<div class="col-sm-10 col-sm-push-2 col-xs-12 nopadding ">
+    {% include "flightsearch/top_searchbar.html" %}
 </div>
-
 <!-- search form/-->
 <div class="container-fluid" style="margin-top: 30px;">
-	<!-- tabs left -->
-
-	<div class="tabbable tabs-left">
-
-		<div class="">
-
-
-			<div
-				class="col-md-10 col-sm-10 tab-pane  col-xs-12 col-md-push-2 col-sm-push-2 about-content nopadding "
-				id="t">
-				<!----------- help ------>
-				<h5 class="Only-text">Pricing Policy</h5>
-				<div class="content-div ">
-					<div class="policy-content">
-						<h3>We’re not the seller </h3>
-						<p>At PEX+ we don’t set prices, so it’s not possible for us to guarantee what other companies are selling.</p>
-					</div>
-					<div class="policy-content">
-						<h3>We aggregate tons of data for you </h3>
-						<p>Our service lets you quickly and easily compare results from hundreds of travel sites at once. In this sense, PEX+ is a search engine and we don't guarantee prices we find.</p>
-					</div>
-					<div class="policy-content">
-						<h3>Why aren’t prices accurate 100% of the time? </h3>
-						<p>Prices on airline seats, hotel rooms and car rentals can change frequently. Several people may also be trying to buy the same travel option simultaneously. As a result, you may find on occasion that certain prices are no longer available.</p>
-					</div>
-					<div class="policy-content">
-						<h3>More questions or if you have a bad price to report to us </h3>
-						<p>Please send us an email and someone from our team will get back to you promptly.</p>
-					</div>
-				</div>
-			</div> <!----------- help ------>
-	</div>
-		{% include "flightsearch/sidebar-menu.html" %}
-	</div>
-	<!-- /tabs -->
-
-	<!-- /row -->
+    <!-- tabs left -->
+    <div class="tabbable tabs-left">
+        <div class="">
+            <div class="col-md-10 col-sm-10 tab-pane  col-xs-12 col-md-push-2 col-sm-push-2 about-content nopadding " id="t">
+                <!----------- help ------>
+                <h5 class="Only-text">Pricing Policy</h5>
+                <div class="content-div ">
+                    <div class="policy-content">
+                        <h3>We’re not the seller </h3>
+                        <p>At PEX+ we don’t set prices, so it’s not possible for us to guarantee what other companies are selling.</p>
+                    </div>
+                    <div class="policy-content">
+                        <h3>We aggregate tons of data for you </h3>
+                        <p>Our service lets you quickly and easily compare results from hundreds of travel sites at once. In this sense, PEX+ is a search engine and we don't guarantee prices we find.</p>
+                    </div>
+                    <div class="policy-content">
+                        <h3>Why aren’t prices accurate 100% of the time? </h3>
+                        <p>Prices on airline seats, hotel rooms and car rentals can change frequently. Several people may also be trying to buy the same travel option simultaneously. As a result, you may find on occasion that certain prices are no longer available.</p>
+                    </div>
+                    <div class="policy-content">
+                        <h3>More questions or if you have a bad price to report to us </h3>
+                        <p>Please send us an email and someone from our team will get back to you promptly.</p>
+                    </div>
+                </div>
+            </div>
+            <!----------- help ------>
+        </div>
+        {% include "flightsearch/sidebar-menu.html" %}
+    </div>
+    <!-- /tabs -->
+    <!-- /row -->
 </div>
-
 <!-- /container -->
-
-
-
-{% include "flightsearch/footer.html" %}
+{% endblock %}

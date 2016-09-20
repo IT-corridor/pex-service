@@ -1,82 +1,67 @@
-{% load staticfiles %} {% include "flightsearch/header.html" %}
+{% extends "flightsearch/base.html" %}
+{% load staticfiles %}
 <title>Press Contact | PEX+</title>
-
-<!-- BODY SECTION/-->
+{% block content %}
 <!-- search form/-->
-
-<div class="col-sm-10 col-sm-push-2 col-xs-12 nopadding static-page-jumbo">
-	{% include "flightsearch/top_searchbar.html" %}
+<div class="col-sm-10 col-sm-push-2 col-xs-12 nopadding ">
+    {% include "flightsearch/top_searchbar.html" %}
 </div>
-
 <!-- search form/-->
 <div class="container-fluid" style="margin-top: 30px;">
-	<!-- tabs left -->
-
-	<div class="tabbable tabs-left">
-
-		<div class="">
-
-
-			<div
-				class="col-md-10 col-sm-10 tab-pane  col-xs-12 col-md-push-2 col-sm-push-2 about-content nopadding "
-				id="e">
-				<!----------- press ------>
-				<h5 class="Only-text">Press Contact</h5>
-				<div class="content-div press-contact" >
-				
-				<h3>PEX+ Logo </h3> 
-				<span><a href="{% static 'flightsearch/img/logoMain.png' %}" target="_blank" download="pexLogo.png" class="pull-right">Download</a></span>
-				
-				<p class="img"><img src="/static/flightsearch/img/logoMain.png" alt="" class="img-responsive"></p>
-					<p>This is our primary logo.</p> 
-					
-				</div>
-				<div class="content-div press-contact-img col-md-12 col-xs-12 nopadding" style="padding-top:0px;" >
-				<div class="dwnld-div">
-					<h3>PEX+ Web</h3>
-					<a href="" class="pull-right">Download all</a>
-				</div>
-					
-						<div class="col-md-6 col-xs-12">
-							<a href="{% static 'flightsearch/img/sc-1.jpg' %}",target="_blank">
-							<p class="img"><img src="{% static 'flightsearch/img/sc-1.jpg' %} " alt="" class="img-responsive" ></p></a>
-							<a href="{% static 'flightsearch/img/sc-1.jpg' %}",target="_blank" download="homepage.jpg">
-							<p>Download</p></a>
-						</div>
-						<div class="col-md-6 col-xs-12">
-							<a href="{% static 'flightsearch/img/sc-2.jpg' %}",target="_blank">
-								<p class="img"><img src="{% static 'flightsearch/img/sc-2.jpg' %}" alt="" class="img-responsive"></p></a>
-							<a href="{% static 'flightsearch/img/sc-2.jpg' %}",target="_blank" download="search.jpg">
-								<p>Download</p>
-							</a>
-						</div>
-					
-				</div>
-				<div class="content-div press-contact-img col-md-12 col-xs-12 nopadding" >
-				<div class="dwnld-div">
-					<h3>PEX+ Mobile</h3>
-				<!--	<a href="" class="pull-right">Download all</a> -->
-				</div>
-					
-						<div class="col-md-6 col-xs-12">
-							<a href="{% static 'flightsearch/img/mb-1.png' %}",target="_blank">
-							<p class="img"><img src="{% static 'flightsearch/img/mb-1.png' %}" alt="" class="img-responsive"></p></a>
-						<a href="{% static 'flightsearch/img/mb-1.png' %}",target="_blank" download="search1.png">	
-							<p>Download</p></a>
-						</div>
-					
-				</div>
-			</div>
-	</div>
-		{% include "flightsearch/sidebar-menu.html" %}
-	</div>
-	<!-- /tabs -->
-
-	<!-- /row -->
+    <!-- tabs left -->
+    <div class="tabbable tabs-left">
+        <div class="">
+            <div class="col-md-10 col-sm-10 tab-pane  col-xs-12 col-md-push-2 col-sm-push-2 about-content nopadding " id="e">
+                <!----------- press ------>
+                <h5 class="Only-text">Press Contact</h5>
+                <div class="content-div press-contact">
+                    <h3>PEX+ Logo </h3>
+                    <span><a href="{% static 'flightsearch/img/logoMain.png' %}" target="_blank" download="pexLogo.png" class="pull-right">Download</a></span>
+                    <p class="img"><img src="/static/flightsearch/img/logoMain.png" alt="" class="img-responsive"></p>
+                    <p>This is our primary logo.</p>
+                </div>
+                <div class="content-div press-contact-img col-md-12 col-xs-12 nopadding" style="padding-top:0px;">
+                    <div class="dwnld-div">
+                        <h3>PEX+ Web</h3>
+                        <a href="" class="pull-right">Download all</a>
+                    </div>
+                    <div class="col-md-6 col-xs-12">
+                        <a href="{% static 'flightsearch/img/sc-1.jpg' %}" ,target="_blank">
+                            <p class="img"><img src="{% static 'flightsearch/img/sc-1.jpg' %} " alt="" class="img-responsive"></p>
+                        </a>
+                        <a href="{% static 'flightsearch/img/sc-1.jpg' %}" ,target="_blank" download="homepage.jpg">
+                            <p>Download</p>
+                        </a>
+                    </div>
+                    <div class="col-md-6 col-xs-12">
+                        <a href="{% static 'flightsearch/img/sc-2.jpg' %}" ,target="_blank">
+                            <p class="img"><img src="{% static 'flightsearch/img/sc-2.jpg' %}" alt="" class="img-responsive"></p>
+                        </a>
+                        <a href="{% static 'flightsearch/img/sc-2.jpg' %}" ,target="_blank" download="search.jpg">
+                            <p>Download</p>
+                        </a>
+                    </div>
+                </div>
+                <div class="content-div press-contact-img col-md-12 col-xs-12 nopadding">
+                    <div class="dwnld-div">
+                        <h3>PEX+ Mobile</h3>
+                        <!--	<a href="" class="pull-right">Download all</a> -->
+                    </div>
+                    <div class="col-md-6 col-xs-12">
+                        <a href="{% static 'flightsearch/img/mb-1.png' %}" ,target="_blank">
+                            <p class="img"><img src="{% static 'flightsearch/img/mb-1.png' %}" alt="" class="img-responsive"></p>
+                        </a>
+                        <a href="{% static 'flightsearch/img/mb-1.png' %}" ,target="_blank" download="search1.png">
+                            <p>Download</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% include "flightsearch/sidebar-menu.html" %}
+    </div>
+    <!-- /tabs -->
+    <!-- /row -->
 </div>
-
 <!-- /container -->
-
-
-
-{% include "flightsearch/footer.html" %}
+{% endblock %}

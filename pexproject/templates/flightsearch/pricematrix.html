@@ -1,25 +1,19 @@
-{% load customfilter %}
-{% load staticfiles %}
-{% load humanize %}
-
-<table class="table div-table" cellspacing="2" id="pricematrix">										  		
-	<tr class="div-table-row row">
-		<th class="bc-whi left-heading"></th>
-		<th class="bc-whi">Economy</th>
-		<th class="bc-whi">Business</th>
-		<th class="bc-whi">First</th>
-	</tr>
-
-	{% for datasource, cabins in price_matrix.items %}
-	<tr class="div-table-row row">
-		<td class="bc-whi left-heading"> {{datasource|title }}</td>
-		{% for cabin in cabins %}
-			{% if cabin %}
-			<td class="color-grey-1">{{cabin|intcomma}}</td>
-			{% else%}
-			<td class="color-grey-1">-</td>
-			{% endif %}
-		{% endfor %}
-	</tr>
-	{% endfor %}
+{% load customfilter %} {% load staticfiles %} {% load humanize %}
+<table class="table div-table" cellspacing="2" id="pricematrix">
+    <tr class="div-table-row row">
+        <th class="bc-whi left-heading"></th>
+        <th class="bc-whi">Economy</th>
+        <th class="bc-whi">Business</th>
+        <th class="bc-whi">First</th>
+    </tr>
+    {% for datasource, cabins in price_matrix.items %}
+    <tr class="div-table-row row">
+        <td class="bc-whi left-heading"> {{datasource|title }}</td>
+        {% for cabin in cabins %} {% if cabin %}
+        <td class="color-grey-1">{{cabin|intcomma}}</td>
+        {% else%}
+        <td class="color-grey-1">-</td>
+        {% endif %} {% endfor %}
+    </tr>
+    {% endfor %}
 </table>

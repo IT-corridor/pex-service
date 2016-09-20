@@ -1,284 +1,288 @@
-		{% load staticfiles %}
-		{% load humanize %}
-		<link rel="stylesheet" href="{% static 'flightsearch/css/bootstrap-multiselect.css' %}">
-		{% include "flightsearch/header.html" %}
-		{% include "flightsearch/top_searchbar.html" %}
-		<title>Manage Account | PEX+</title>
-	    <div class="col-xs-12 nopadding manage-account">
-		<div class="container">
-			<div class="col-xs-12 nopadding">
-				<div id="hello1" class="text-center alert"></div>
-				<div class="col-xs-12 account-block-bg" id="infodiv">
-					<h2 class="title">Your Account Information <a href="#" class="pull-right editinfo" id="accountinfo">Edit</a></h2>
-					<div class="col-xs-12 nopadding">
-					<div class="col-sm-6 col-xs-12 nopadding">
-						<dl class="dl-horizontal">
-							<dt>First Name:</dt>
-							<dd>{%if user.first_name%} {{user.first_name|title}} {%endif%}</dd>
-							<dt>Middle Name:</dt>
-							<dd>{%if user.middlename%} {{user.middlename|title}} {%endif%}</dd>
-							<dt>Last Name:</dt>
-							<dd>{%if user.last_name%} {{user.last_name|title}} {%endif%}</dd>
-							<dt>Date of Birth:</dt>
-							<dd>{%if user.date_of_birth%} {{user.date_of_birth}} {%endif%}</dd>
-							<dt>Gender:</dt>
-							<dd>{%if user.gender%} {{user.gender|title}} {%endif%}</dd>
-						</dl>
-					</div>
-					<div class="col-sm-6 col-xs-12 nopr xs-nopadding">
-						<dl class="dl-horizontal">
-							<dt>Address:</dt>
-							<dd>
-								{%if user.address1%}{{user.address1|title}}{%endif%}{%if user.address2%},<br>{{user.address2|title}}{%endif%}
-								{%if user.city%}, {{user.city|title}}{%endif%}{%if user.state%}<br> {{user.state|title}}{%endif%}{%if user.zipcode%} - {{user.zipcode|title}}{%endif%}
-							</dd>
-							<dt>Country:</dt>
-							<dd>{%if user.country%}{{user.country|title}}{%endif%}</dd>
-							<dt>Phone:</dt>
-							<dd>{%if user.phone%}{{user.phone}}{%endif%}</dd>
-							<dt>Email:</dt>
-							<dd>{%if user.email%}{{user.email}}{%endif%}</dd>
-						</dl>
-						
-					</div>
-				</div>
-				</div>
-				<div class="col-xs-12 account-block-bg edit" id="edit_infodiv">
-				 <div id="hello" class="text-center alert"></div>
-				<form method="post" action="manageAccount">
-				<h2 class="title">Your Account Information <span class="hidden-xs"> <span class="btn btn-link pull-right cancel_info" id="">Cancel</span> <button type="submit" class="btn btn-link pull-right saveinfo">Save</button></span></h2>
-				<div class="col-xs-12 nopadding" >
-				
-					{% csrf_token %}
-					<div class="col-sm-5 col-xs-12 nopl xs-nopadding">
-						<dl class="dl-horizontal" >
-							<dt>First Name:</dt>
-							<dd><input type="text" class="form-control" name="first_name" {%if user.first_name%} value="{{user.first_name|title}}" {%endif%}></dd>
-							<dt>Middle Name:</dt>
-							<dd><input type="text" class="form-control" name="middlename" {%if user.middlename%} value="{{user.middlename|title}}" {%endif%}></dd>
-							<dt>Last Name:</dt>
-							<dd><input type="text" class="form-control" name="last_name" {%if user.last_name%} value="{{user.last_name|title}}" {%endif%}></dd>
-							<dt>Date of Birth:</dt>
-							
-							<dd><div class="inner-addon left-addon date"><i class="glyphicon glyphicon-calendar "></i><input type="text" class="form-control" id="dob" name="dateofbirth" {%if user.date_of_birth%} value="{{user.date_of_birth|date:'Y-m-d'}}" {%endif%}></div></dd>
-							
-							<dt>Gender:</dt>
-							<dd>
-								<div class="col-sm-12 col-xs-12 nopadding">
-			                <div class="checkbox-inline mhr10px auto-crsr nopadding">
-			                  <label class="nopaddig"><input type="radio" id="male" class="curson" name="gender" value="Male" {%if user.gender and user.gender == 'Male'%} checked="checked" {%endif%}>Male</label>
-			                </div>
-			                <div class="checkbox-inline mhr10px auto-crsr">
-			                  <label><input type="radio" id="female" class="curson" name="gender" value="Female" {%if user.gender and user.gender == 'Female'%} checked="checked" {%endif%}> Female</label>
-			                </div>
-			              </div>
-			              
-			              		<!--
+{% extends "flightsearch/base.html" %}
+{% load staticfiles %}
+{% load humanize %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'flightsearch/css/bootstrap-multiselect.css' %}"> 
+{% include "flightsearch/top_searchbar.html" %}
+<title>Manage Account | PEX+</title>
+<div class="col-xs-12 nopadding manage-account">
+    <div class="container">
+        <div class="col-xs-12 nopadding">
+            <div id="hello1" class="text-center alert"></div>
+            <div class="col-xs-12 account-block-bg" id="infodiv">
+                <h2 class="title">Your Account Information <a href="#" class="pull-right editinfo" id="accountinfo">Edit</a></h2>
+                <div class="col-xs-12 nopadding">
+                    <div class="col-sm-6 col-xs-12 nopadding">
+                        <dl class="dl-horizontal">
+                            <dt>First Name:</dt>
+                            <dd>{%if user.first_name%} {{user.first_name|title}} {%endif%}</dd>
+                            <dt>Middle Name:</dt>
+                            <dd>{%if user.middlename%} {{user.middlename|title}} {%endif%}</dd>
+                            <dt>Last Name:</dt>
+                            <dd>{%if user.last_name%} {{user.last_name|title}} {%endif%}</dd>
+                            <dt>Date of Birth:</dt>
+                            <dd>{%if user.date_of_birth%} {{user.date_of_birth}} {%endif%}</dd>
+                            <dt>Gender:</dt>
+                            <dd>{%if user.gender%} {{user.gender|title}} {%endif%}</dd>
+                        </dl>
+                    </div>
+                    <div class="col-sm-6 col-xs-12 nopr xs-nopadding">
+                        <dl class="dl-horizontal">
+                            <dt>Address:</dt>
+                            <dd>
+                                {%if user.address1%}{{user.address1|title}}{%endif%}{%if user.address2%},
+                                <br>{{user.address2|title}}{%endif%} {%if user.city%}, {{user.city|title}}{%endif%}{%if user.state%}
+                                <br> {{user.state|title}}{%endif%}{%if user.zipcode%} - {{user.zipcode|title}}{%endif%}
+                            </dd>
+                            <dt>Country:</dt>
+                            <dd>{%if user.country%}{{user.country|title}}{%endif%}</dd>
+                            <dt>Phone:</dt>
+                            <dd>{%if user.phone%}{{user.phone}}{%endif%}</dd>
+                            <dt>Email:</dt>
+                            <dd>{%if user.email%}{{user.email}}{%endif%}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 account-block-bg edit" id="edit_infodiv">
+                <div id="hello" class="text-center alert"></div>
+                <form method="post" action="manageAccount">
+                    <h2 class="title">Your Account Information <span class="hidden-xs"> <span class="btn btn-link pull-right cancel_info" id="">Cancel</span> <button type="submit" class="btn btn-link pull-right saveinfo">Save</button></span></h2>
+                    <div class="col-xs-12 nopadding">
+                        {% csrf_token %}
+                        <div class="col-sm-5 col-xs-12 nopl xs-nopadding">
+                            <dl class="dl-horizontal">
+                                <dt>First Name:</dt>
+                                <dd>
+                                    <input type="text" class="form-control" name="first_name" {%if user.first_name%} value="{{user.first_name|title}}" {%endif%}>
+                                </dd>
+                                <dt>Middle Name:</dt>
+                                <dd>
+                                    <input type="text" class="form-control" name="middlename" {%if user.middlename%} value="{{user.middlename|title}}" {%endif%}>
+                                </dd>
+                                <dt>Last Name:</dt>
+                                <dd>
+                                    <input type="text" class="form-control" name="last_name" {%if user.last_name%} value="{{user.last_name|title}}" {%endif%}>
+                                </dd>
+                                <dt>Date of Birth:</dt>
+                                <dd>
+                                    <div class="inner-addon left-addon date"><i class="glyphicon glyphicon-calendar "></i>
+                                        <input type="text" class="form-control" id="dob" name="dateofbirth" {%if user.date_of_birth%} value="{{user.date_of_birth|date:'Y-m-d'}}" {%endif%}>
+                                    </div>
+                                </dd>
+                                <dt>Gender:</dt>
+                                <dd>
+                                    <div class="col-sm-12 col-xs-12 nopadding">
+                                        <div class="checkbox-inline mhr10px auto-crsr nopadding">
+                                            <label class="nopaddig">
+                                                <input type="radio" id="male" class="curson" name="gender" value="Male" {%if user.gender and user.gender=='Male' %} checked="checked" {%endif%}>Male</label>
+                                        </div>
+                                        <div class="checkbox-inline mhr10px auto-crsr">
+                                            <label>
+                                                <input type="radio" id="female" class="curson" name="gender" value="Female" {%if user.gender and user.gender=='Female' %} checked="checked" {%endif%}> Female</label>
+                                        </div>
+                                    </div>
+                                    <!--
 								<input type="text" class="form-control" name="gender" {%if user.gender%} value="{{user.gender|title}}" {%endif%}></dd>
 								-->
-						</dl>
-					</div>
-					<div class="col-sm-5 col-sm-push-1 col-xs-12 nopr xs-nopadding">
-						<dl class="dl-horizontal">
-							<dt>Address1:</dt>
-							<dd><input type="text" class="form-control" name="address1" {%if user.address1%} value="{{user.address1}}"{%endif%}> </dd>
-							<dt>Address2:</dt>
-							<dd><input type="text" class="form-control" name="address2" {%if user.address2%} value="{{user.address2}}" {%endif%}></dd>
-							<dt>City:</dt>
-							<dd><input type="text" class="form-control" name="city" {%if user.city%} value="{{user.city}}" {%endif%}></dd>
-							<dt>State/Province:</dt>
-							<dd><input type="text" class="form-control" {%if user.state%} value= "{{user.state}}" {%endif%} name="state"></dd>
-							<dt>Zipcode:</dt>
-							<dd><input type="number" class="form-control" {%if user.zipcode%} value= "{{user.zipcode}}" {%endif%} name="zipcode"></dd>
-							<dt>Country:</dt>
-							<dd><input type="text" id="id_country" class="form-control" required name="country" {%if user.country%} value="{{user.country|title}}" {%endif%}></dd>
-							<dt>Phone:</dt>
-							<dd><input type="text" class="form-control" name="phone" {%if user.phone%} value="{{user.phone}}" {%endif%}></dd>
-							<dt>Email:</dt>
-							<dd><input type="email" id="email" class="form-control" name="email" {%if user.email%} value="{{user.email}}" {%endif%}><br><a href="#" id="password_change">Change Password</a></dd>
-						</dl>
-						<!--
-						<dl class="dl-horizontal password_block edit">
-							
-							<dt>Current Password:</dt>
-							<dd><input type="password" class="form-control pass" name="current_password"/></dd>
-							<dt>New Password:</dt>
-							<dd><input type="password" class="form-control pass" name="new_password"/></dd>
-							<dt>confirm Password:</dt>
-							<dd><input type="password" class="form-control pass" name="new_password"/></dd>
-						</dl>
-						-->
-					</div>
-					
-					<div class="col-xs-12 nopadding visible-xs">
-						<button type="submit" class="btn btn-pexSearch saveinfo">Save</button>
-						<span class="btn btn-pexSearch cancel_info" id="">Cancel</span>
-                   </div>
-
-				</form>
-				</div>
-				</div>
-				<div class="col-xs-12 account-block-bg" id="prefrenceinfo">
-					<h2 class="title">Your Account Prefrences <a href="#" class="pull-right" id="prefrence">Edit</a></h2>
-					<div class="col-xs-12 nopadding">
-						<div class="col-sm-6 col-xs-12 nopl">
-							<dl class="dl-horizontal">
-								<dt>Home Airport:</dt>
-								<dd>{%if user.home_airport%}{{user.home_airport}}{%endif%}</dd>
-								
-								
-								<dt>Subscriptions:</dt>
-								{% if subscription != '' %}
-								<dd>You have subscribed for PEX+ Deals and Updates</dd>
-								{%else%}
-								<dd>None<br><a href="#" class="mailchimp">Sign-up for PEX+updates</a></dd>
-								{%endif%}
-							</dl>
-							
-						</div>
-					</div>
-				</div>
-				<div class="col-xs-12 account-block-bg edit" id="edit_prefrenceinfo">
-					<form action="manageAccount" method="post">
-					<h2 class="title">Your Account Prefrences <span class="hidden-xs"><span class="btn btn-link pull-right cancel_preference">Cancel</span> <button type="submit" class="btn btn-link pull-right">Save</button></span> </h2>
-					<div class="col-xs-12 nopadding">
-						<div class="col-sm-5 col-xs-12 nopl">
-							<dl class="dl-horizontal" >
-								
-									{% csrf_token %}
-									<dt>Home Airport:</dt>
-									<dd><input type="text" class="form-control" id="airport" name="home_ariport" {%if user.home_airport%} value="{{user.home_airport|title}}" {%endif%}></dd>
-									<dt>Subscriptions:</dt>
-									
-									{% if subscription != '' %}
-								<dd>You have subscribed for PEX+ Deals and Updates</dd>
-								{%else%}
-								<dd>None<br><a href="#" class="mailchimp">Sign-up for PEX+updates</a></dd>
-								{%endif%}
-									
-									
-							</dl>
-							<span class="visible-xs">
+                            </dl>
+                        </div>
+                        <div class="col-sm-5 col-sm-push-1 col-xs-12 nopr xs-nopadding">
+                            <dl class="dl-horizontal">
+                                <dt>Address1:</dt>
+                                <dd>
+                                    <input type="text" class="form-control" name="address1" {%if user.address1%} value="{{user.address1}}" {%endif%}> </dd>
+                                <dt>Address2:</dt>
+                                <dd>
+                                    <input type="text" class="form-control" name="address2" {%if user.address2%} value="{{user.address2}}" {%endif%}>
+                                </dd>
+                                <dt>City:</dt>
+                                <dd>
+                                    <input type="text" class="form-control" name="city" {%if user.city%} value="{{user.city}}" {%endif%}>
+                                </dd>
+                                <dt>State/Province:</dt>
+                                <dd>
+                                    <input type="text" class="form-control" {%if user.state%} value="{{user.state}}" {%endif%} name="state">
+                                </dd>
+                                <dt>Zipcode:</dt>
+                                <dd>
+                                    <input type="number" class="form-control" {%if user.zipcode%} value="{{user.zipcode}}" {%endif%} name="zipcode">
+                                </dd>
+                                <dt>Country:</dt>
+                                <dd>
+                                    <input type="text" id="id_country" class="form-control" required name="country" {%if user.country%} value="{{user.country|title}}" {%endif%}>
+                                </dd>
+                                <dt>Phone:</dt>
+                                <dd>
+                                    <input type="text" class="form-control" name="phone" {%if user.phone%} value="{{user.phone}}" {%endif%}>
+                                </dd>
+                                <dt>Email:</dt>
+                                <dd>
+                                    <input type="email" id="email" class="form-control" name="email" {%if user.email%} value="{{user.email}}" {%endif%}>
+                                    <br><a href="#" id="password_change">Change Password</a></dd>
+                            </dl>                           
+                        </div>
+                        <div class="col-xs-12 nopadding visible-xs">
+                            <button type="submit" class="btn btn-pexSearch saveinfo">Save</button>
+                            <span class="btn btn-pexSearch cancel_info" id="">Cancel</span>
+                        </div>
+                </form>
+                </div>
+            </div>
+            <div class="col-xs-12 account-block-bg" id="prefrenceinfo">
+                <h2 class="title">Your Account Prefrences <a href="#" class="pull-right" id="prefrence">Edit</a></h2>
+                <div class="col-xs-12 nopadding">
+                    <div class="col-sm-6 col-xs-12 nopl">
+                        <dl class="dl-horizontal">
+                            <dt>Home Airport:</dt>
+                            <dd>{%if user.home_airport%}{{user.home_airport}}{%endif%}</dd>
+                            <dt>Subscriptions:</dt>
+                            {% if subscription != '' %}
+                            <dd>You have subscribed for PEX+ Deals and Updates</dd>
+                            {%else%}
+                            <dd>None
+                                <br><a href="#" class="mailchimp">Sign-up for PEX+updates</a></dd>
+                            {%endif%}
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 account-block-bg edit" id="edit_prefrenceinfo">
+                <form action="manageAccount" method="post">
+                    <h2 class="title">Your Account Prefrences <span class="hidden-xs"><span class="btn btn-link pull-right cancel_preference">Cancel</span> <button type="submit" class="btn btn-link pull-right">Save</button></span> </h2>
+                    <div class="col-xs-12 nopadding">
+                        <div class="col-sm-5 col-xs-12 nopl">
+                            <dl class="dl-horizontal">
+                                {% csrf_token %}
+                                <dt>Home Airport:</dt>
+                                <dd>
+                                    <input type="text" class="form-control" id="airport" name="home_ariport" {%if user.home_airport%} value="{{user.home_airport|title}}" {%endif%}>
+                                </dd>
+                                <dt>Subscriptions:</dt>
+                                {% if subscription != '' %}
+                                <dd>You have subscribed for PEX+ Deals and Updates</dd>
+                                {%else%}
+                                <dd>None
+                                    <br><a href="#" class="mailchimp">Sign-up for PEX+updates</a></dd>
+                                {%endif%}
+                            </dl>
+                            <span class="visible-xs">
 									<button type="submit" class="btn btn-pexSearch">Save</button>
                                     <span class="btn btn-pexSearch cancel_preference" id=""> Cancel</span>
-								</span>
-						</div>
-					</div>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
-	
-	
-	
-	<script src="{% static 'flightsearch/js/bootstrap-multiselect.js' %}"></script>
-	{% include "flightsearch/footer.html" %}
-	
-	
-	<script>
-		$(document).ready(function(){
-			var message = "{{request.GET.status}}";
-			if(message != '')
-			{
-				alert(message);
-			}
-			
-			$('.edit').hide();
-			
-		});
-		$('#prefrence').click(function(){
-			$('#edit_prefrenceinfo').show();
-			$('#prefrenceinfo').hide();
-			
-		});
-		$('#accountinfo').click(function(){
-			$('#edit_infodiv').show();
-			$('#infodiv').hide();
-			
-		});
-		$('.cancel_info').click(function(){
-			location.reload();
-			//$('#edit_infodiv').hide();
-			//$('#infodiv').show();
-			
-		});
-		$('.cancel_preference').click(function(){
-			location.reload();
-			//$('#edit_prefrenceinfo').hide();
-			//$('#prefrenceinfo').show();
-			
-		});
-		$('.mailchimp').click(function(){
-			var user_email = "{{user.email}}";
-			var fname = "{{user.first_name}}";
-			var lname = "{{user.last_name}}";
-			
-			$.ajax({
-		 	type: "POST",
-		 	dataType: "text",
-		 	url: "mailchimp",
-		 	data: "&csrfmiddlewaretoken={{ csrf_token }}"+"&email="+encodeURI(user_email)+"&fname="+encodeURI(fname)+"&lname="+encodeURI(lname),
-		 	success: function(data){
-				console.log(data);
-				$("#hello1").addClass("alert-warning");
-		 		$( "#hello1" ).empty();
-		 		$( "#hello1" ).append(data);
-				setTimeout(function(){$('#hello1').fadeOut();},8000);
-				}
-			});
-			
-		});
-		$('#password_change').click(function(){
-			var user_email = "{{user.email}}";
-			//$(".password_block").show();
-			$.ajax({
-		 	type: "POST",
-		 	dataType: "text",
-		 	url: "forgotPassword",
-		 	data: "&csrfmiddlewaretoken={{ csrf_token }}"+"&email="+encodeURI(user_email),
-		 	success: function(data){
-				console.log(data);
-				$("#hello").addClass("alert-success");
-		 		$( "#hello" ).empty();
-		 		$( "#hello" ).append(data);
-				setTimeout(function(){$('#hello').fadeOut();},5000);
-				}
-			});
-		}); 
-		$('.saveinfo').click(function(){
-			if ($('.password_block').is(':hidden')){
-			$('.pass').prop("disabled", true);
-			//$('#confirm_password').prop("disabled", true);
-		}
-		});
-	</script>
-	<script>
-		
-		$('#dob').datepicker({ dateFormat: 'yy-mm-dd', changeYear: true, yearRange: "1930:2030" });
-		$( "#airport" ).autocomplete({
-	  		open: function(event, ui) {
-		        	$('.ui-autocomplete').off('menufocus hover mouseover');
-	    	},
-			autoFocus: true,
-	    	source: "/get_airport/",
-	    	minLength: 2,
-	    	//appendTo:".modelform",
+                            </span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{% static 'flightsearch/js/bootstrap-multiselect.js' %}"></script>
+<script>
+$(document).ready(function() {
+    var message = "{{request.GET.status}}";
+    if (message != '') {
+        alert(message);
+    }
 
-	    });
+    $('.edit').hide();
 
-	    $( "#id_country" ).autocomplete({
-	        open: function(event, ui) {
-	            $('.ui-autocomplete').off('menufocus hover mouseover');
-	        },
-	        autoFocus: true,
-	        source: "/get_countryname/",
-	        minLength: 2,        
-	    });    	
+});
+$('#prefrence').click(function() {
+    $('#edit_prefrenceinfo').show();
+    $('#prefrenceinfo').hide();
 
-	</script>
-	
-	
-	
-	
-	
+});
+$('#accountinfo').click(function() {
+    $('#edit_infodiv').show();
+    $('#infodiv').hide();
+
+});
+$('.cancel_info').click(function() {
+    location.reload();
+    //$('#edit_infodiv').hide();
+    //$('#infodiv').show();
+
+});
+$('.cancel_preference').click(function() {
+    location.reload();
+    //$('#edit_prefrenceinfo').hide();
+    //$('#prefrenceinfo').show();
+
+});
+$('.mailchimp').click(function() {
+    var user_email = "{{user.email}}";
+    var fname = "{{user.first_name}}";
+    var lname = "{{user.last_name}}";
+
+    $.ajax({
+        type: "POST",
+        dataType: "text",
+        url: "mailchimp",
+        data: "&csrfmiddlewaretoken={{ csrf_token }}" + "&email=" + encodeURI(user_email) + "&fname=" + encodeURI(fname) + "&lname=" + encodeURI(lname),
+        success: function(data) {
+            console.log(data);
+            $("#hello1").addClass("alert-warning");
+            $("#hello1").empty();
+            $("#hello1").append(data);
+            setTimeout(function() {
+                $('#hello1').fadeOut();
+            }, 8000);
+        }
+    });
+
+});
+$('#password_change').click(function() {
+    var user_email = "{{user.email}}";
+    //$(".password_block").show();
+    $.ajax({
+        type: "POST",
+        dataType: "text",
+        url: "forgotPassword",
+        data: "&csrfmiddlewaretoken={{ csrf_token }}" + "&email=" + encodeURI(user_email),
+        success: function(data) {
+            console.log(data);
+            $("#hello").addClass("alert-success");
+            $("#hello").empty();
+            $("#hello").append(data);
+            setTimeout(function() {
+                $('#hello').fadeOut();
+            }, 5000);
+        }
+    });
+});
+$('.saveinfo').click(function() {
+    if ($('.password_block').is(':hidden')) {
+        $('.pass').prop("disabled", true);
+        //$('#confirm_password').prop("disabled", true);
+    }
+});
+
+$('#dob').datepicker({
+    dateFormat: 'yy-mm-dd',
+    changeYear: true,
+    yearRange: "1930:2030"
+});
+$("#airport").autocomplete({
+    open: function(event, ui) {
+        $('.ui-autocomplete').off('menufocus hover mouseover');
+    },
+    autoFocus: true,
+    source: "/get_airport/",
+    minLength: 2,
+    //appendTo:".modelform",
+
+});
+
+$("#id_country").autocomplete({
+    open: function(event, ui) {
+        $('.ui-autocomplete').off('menufocus hover mouseover');
+    },
+    autoFocus: true,
+    source: "/get_countryname/",
+    minLength: 2,
+});
+</script>
+{% endblock %}

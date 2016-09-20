@@ -1,97 +1,77 @@
-{% load staticfiles %} {% include "flightsearch/header.html" %}
+{% extends "flightsearch/base.html" %}
+{% load staticfiles %}
+
 <title>Team | PEX+</title>
-
-<!-- BODY SECTION/-->
+{% block content %}
 <!-- search form/-->
-
-<div class="col-sm-10 col-sm-push-2 col-xs-12 nopadding static-page-jumbo">
-	{% include "flightsearch/top_searchbar.html" %}
+<div class="col-sm-10 col-sm-push-2 col-xs-12 nopadding ">
+    {% include "flightsearch/top_searchbar.html" %}
 </div>
-
 <!-- search form/-->
 <div class="container-fluid" style="margin-top: 30px;">
-	<!-- tabs left -->
-
-	<div class="tabbable tabs-left">
-
-		<div class="">
-
-
-			<div
-				class="col-md-10 col-sm-10 tab-pane col-xs-12 col-md-push-2 col-sm-push-2 about-content nopadding  team-c"
-				id="b">
-				<!----------team------------>
-				<h5 class="Only-text">Team</h5>
-				<div class="content-div text-center">
-					<h3 style="margin:0px 0px 15px;">Founder & President</h3>
-					<div class="row">
-						<div class="col-sm-6 col-md-4 for-center team ">
-							<div class="thumbnail">
-								<img src="/static/flightsearch/img/JessB.jpg" alt="team">
-								<div class="caption">
-									<h3>Jessica Coane</h3>
-									<p></p>
-									<a href="https://www.linkedin.com/in/jessicacoane" target="blank"  class="link" role="button"><img
-										src="/static/flightsearch/img/link.png"></a> <a href="https://twitter.com/aCarpathian"
-										class="twin-2" target="blank"  role="button"><img
-										src="/static/flightsearch/img/twin-2.png"></a>
-								</div>
-							</div>
-						</div>
-					
-					<h3 style="margin:20px 0px 15px;">Advisors</h3>
-					<div class="col-sm-4 col-md-4 team">
-						<div class="thumbnail">
-							<img src="/static/flightsearch/img/Marc-Ross.jpg" alt="team">
-							<div class="caption">
-								<h3>Marc Ross-Smith</h3>
-								<p>Founder at RewardBase, StayCorp, and SMSFun.</p>
-								<a href="https://www.linkedin.com/in/markrosssmith" target="blank" class="link" role="button"><img
-									src="/static/flightsearch/img/link.png"></a> <a href="https://twitter.com/drdoot"
-									class="twin-2" target="blank"  role="button"><img
-									src="/static/flightsearch/img/twin-2.png"></a>
-							</div>
-						</div>
-					</div>
-					<div class="col-sm-4 col-md-4 team">
-						<div class="thumbnail">
-							<img src="/static/flightsearch/img/ReidP.jpg" alt="team">
-							<div class="caption">
-								<h3>Reid Pennebaker</h3>
-								<p>Mainspring Partners; Former Investor Relations for United
-									Airlines</p>
-								<a href="https://www.linkedin.com/in/pennebaker" class="link" target="blank"  role="button"><img
-									src="/static/flightsearch/img/link.png"></a> 
-							</div>
-						</div>
-					</div>
-					<div class="col-sm-4 col-md-4">
-						<div class="thumbnail">
-							<img src="/static/flightsearch/img/MaurL.jpg" alt="team">
-							<div class="caption">
-								<h3>Mauricio Lovato</h3>
-								<p>Business Strategy and Development, Technocycle</p>
-								<a href="https://www.linkedin.com/in/mauriciolovato" target="blank"  class="link" role="button"><img
-									src="/static/flightsearch/img/link.png"></a> <a href="https://twitter.com/mo2074"
-									class="twin-2" target="blank"  role="button"><img
-									src="/static/flightsearch/img/twin-2.png"></a>
-							</div>
-						</div>
-					</div>
-					</div>
-				</div>
-			</div>
-			<!----------team------------>
-	</div>
-		{% include "flightsearch/sidebar-menu.html" %}
-	</div>
-	<!-- /tabs -->
-
-	<!-- /row -->
+    <!-- tabs left -->
+    <div class="tabbable tabs-left">
+        <div class="">
+            <div class="col-md-10 col-sm-10 tab-pane col-xs-12 col-md-push-2 col-sm-push-2 about-content nopadding  team-c" id="b">
+                <!----------team------------>
+                <h5 class="Only-text">Team</h5>
+                <div class="content-div text-center">
+                    <h3 style="margin:0px 0px 15px;">Founder & President</h3>
+                    <div class="row">
+                        <div class="col-sm-6 col-md-4 for-center team ">
+                            <div class="thumbnail">
+                                <img src="/static/flightsearch/img/JessB.jpg" alt="team">
+                                <div class="caption">
+                                    <h3>Jessica Coane</h3>
+                                    <p></p>
+                                    <a href="https://www.linkedin.com/in/jessicacoane" target="blank" class="link" role="button"><img src="/static/flightsearch/img/link.png"></a>
+                                    <a href="https://twitter.com/aCarpathian" class="twin-2" target="blank" role="button"><img src="/static/flightsearch/img/twin-2.png"></a>
+                                </div>
+                            </div>
+                        </div>
+                        <h3 style="margin:20px 0px 15px;">Advisors</h3>
+                        <div class="col-sm-4 col-md-4 team">
+                            <div class="thumbnail">
+                                <img src="/static/flightsearch/img/Marc-Ross.jpg" alt="team">
+                                <div class="caption">
+                                    <h3>Marc Ross-Smith</h3>
+                                    <p>Founder at RewardBase, StayCorp, and SMSFun.</p>
+                                    <a href="https://www.linkedin.com/in/markrosssmith" target="blank" class="link" role="button"><img src="/static/flightsearch/img/link.png"></a>
+                                    <a href="https://twitter.com/drdoot" class="twin-2" target="blank" role="button"><img src="/static/flightsearch/img/twin-2.png"></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 col-md-4 team">
+                            <div class="thumbnail">
+                                <img src="/static/flightsearch/img/ReidP.jpg" alt="team">
+                                <div class="caption">
+                                    <h3>Reid Pennebaker</h3>
+                                    <p>Mainspring Partners; Former Investor Relations for United Airlines
+                                    </p>
+                                    <a href="https://www.linkedin.com/in/pennebaker" class="link" target="blank" role="button"><img src="/static/flightsearch/img/link.png"></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 col-md-4">
+                            <div class="thumbnail">
+                                <img src="/static/flightsearch/img/MaurL.jpg" alt="team">
+                                <div class="caption">
+                                    <h3>Mauricio Lovato</h3>
+                                    <p>Business Strategy and Development, Technocycle</p>
+                                    <a href="https://www.linkedin.com/in/mauriciolovato" target="blank" class="link" role="button"><img src="/static/flightsearch/img/link.png"></a>
+                                    <a href="https://twitter.com/mo2074" class="twin-2" target="blank" role="button"><img src="/static/flightsearch/img/twin-2.png"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!----------team------------>
+        </div>
+        {% include "flightsearch/sidebar-menu.html" %}
+    </div>
+    <!-- /tabs -->
+    <!-- /row -->
 </div>
-
 <!-- /container -->
-
-
-
-{% include "flightsearch/footer.html" %}
+{% endblock %}

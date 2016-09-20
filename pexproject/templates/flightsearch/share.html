@@ -1,614 +1,549 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<title>Pex Search Details</title>
-		{% include "flightsearch/header.html" %}
-		{% load customfilter %}
-		{% load staticfiles %}
-		{% load humanize %}
-		
-	</head>
+{% extends "flightsearch/base.html" %}
+{% load staticfiles %}
+{% load customfilter %}
+{% load humanize %}
 
-	<body>
-		<style>
-			.add {
-				margin-left: -6px;
-			}
-		</style>
-		<div class="main-holder">
-			<div class="col-xs-12 nopadding">
-				<div class="container">
-					<div class="col-xs-12 nopadding">
-						<div class="col-md-12 col-xs-12 centr-info responsive-color-img">
-							<div class="col-xs-12 nopadding">
-					<div class="col-sm-3 col-xs-5 visible-xs visible-sm nopl">
-						<div class="col-xs-12 nopadding text-center" itemscope itemtype ="http://schema.org/Airline">
-							{% if record.datasource == "united" %}
-							<img itemprop="logo" src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">
-							{% endif %}
-							{% if record.datasource == "delta" %}
-							<img itemprop="logo" src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">
-							{% endif %}
-						</div>
-					</div>
-					<div class="col-md-12 col-sm-9 col-xs-7 nopadding" itemscope itemtype ="http://schema.org/Flight">
-						<p class="flight-name" itemprop="flightNumber">
-							{{record.flighno}} <!--FIRST FLIGHT OPTION RESULT-->
-						</p>
-					</div>
-					<div class="col-md-5 col-xs-12 nopadding hidden-xs hidden-sm">
-						<div class="col-sm-8 col-sm-8 col-xs-12 nopl">
-							<div class="col-md-12 col-xs-12 nopadding">
-								<div class="col-xs-12 nopadding xs-margin-25px">
-									<div class="col-xs-12 nopadding mvb10px na-ra" itemscope itemtype ="http://schema.org/FlightReservation">
-										<p class="flight-rate" itemprop="totalPrice">
-										{% if cabin == 'maincabin'%}	
-											{{record.maincabin|intcomma}} Miles + <span>${{record.maintax|floatformat:2}}</span>
-										{% elif cabin == 'firstclass' %}
-											{{record.firstclass}} Miles + <span>${{record.firsttax|floatformat:2}}</span>
-										{% else %}
-											{% if cabin == 'business' %}
-												{{record.business}} Miles + <span>${{record.businesstax|floatformat:2}}</span>
-											{% endif %}
-										{% endif %}
-											
-										</p>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-4 col-sm-4 col-xs-12 nopl">
-							<div class="col-xs-12 nopadding text-center mvb10px" itemscope itemtype ="http://schema.org/Airline">
-								{% if record.datasource == "united" %}
-								<img itemprop="logo" src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
-								{% if record.datasource == "delta" %}
-								<img itemprop="logo" src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
-							</div>
-						</div>
-					</div>
-					<div class="col-md-7 col-xs-12 nopadding">
-
-						<div class="col-xs-12 nopadding flight-div-repeat">
-							<div class="col-md-8 col-sm-8 col-xs-12 nopadding">
-								<div class="col-xs-12 nopadding">
-									<div class="arrivel col-sm-5 nopadding col-xs-4" itemscope itemtype ="http://schema.org/Flight">
-										<p itemprop="departureAirport">
-											{{record.origin}}
-										</p>
-										<p>
-											<time itemprop="departureTime">
-												{{record.departure}}
-											</time>
-										</p>
-									</div>
-									<div class="arrow-div col-sm-2 col-xs-1 text-center nopadding">
-										&#8594;
-									</div>
-									<div class="arrivel-2 col-sm-4 nopadding text-right col-xs-4 xs-text-center" itemscope itemtype ="http://schema.org/Flight">
-										<p itemprop="arrivalAirport">
-											{{record.destination}}
-										</p>
-										<p>
-											<time itemprop="arrivalTime">
-												{{record.arival}}
-											</time>
-										</p>
-									</div>
-									<div class="col-xs-3 nopadding visible-xs text-right">
-										<div class="col-xs-12 nopadding non-stop text-right">
-											<p>
-												{{record.stoppage}}
-											</p>
-										</div>
-										<div class="col-xs-12 nopadding non-stop" itemscope itemtype ="http://schema.org/Flight">
-											<p itemprop="estimatedFlightDuration">
-												{{record.duration}}
-											</p>
-										</div>
-									</div>
-								</div>
-
-								{% if returndate == '' %}
-								<div class="col-xs-12 nopadding mvt10px for-mobile-view">
-									<!-- main data only mobile -->
-									<div class="col-xs-12 nopadding text-center custome-edit-block">
-										{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' %}
-
-										<div class="col-xs-12 nopadding mvb10px na-ra">
-											<h5 class="econo edit-width-econo">{{record.cabintype1}}</h5>
-											<div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
-												<p class="flight-rate" itemprop="totalPrice">
-													{{price|intcomma}} Miles + <span>${{tax|floatformat:2}}</span>
-												</p>
-											</div>
-										</div>
-										{% endif%}
-									</div>
-								</div>
-								{% endif %}
-							</div>
-							<div class="col-md-4 col-sm-4 col-xs-12 text-center nopr hidden-xs">
-								<div class="col-xs-12 nopadding non-stop">
-									<p>
-										{{record.stoppage}}
-									</p>
-									<div class="col-xs-12 nopadding non-stop" itemscope itemtype ="http://schema.org/Flight">
-										<p itemprop="estimatedFlightDuration">
-											{{record.duration}}
-										</p>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<!-- terurn data block -->
-						{% if returndate %}
-						{% if record.datasource == "united" and unitedreturn %}
-						{% with unitedreturn as returnrecord %}
-						<div class="col-xs-12 nopadding flight-div-repeat">
-							<div class="col-md-8 col-sm-8 col-xs-12 nopadding">
-								<div class="col-xs-12 nopadding">
-									<div class="arrivel col-sm-5 nopadding col-xs-4" itemscope itemtype ="http://schema.org/Flight">
-										<p itemprop="departureAirport">
-											{{returnrecord.0.origin}}
-										</p>
-										<p>
-											<time itemprop="departureTime">
-												{{returnrecord.0.departure}}
-											</time>
-										</p>
-									</div>
-									<div class="arrow-div col-sm-2 col-xs-1 text-center nopadding">
-										&#8594;
-									</div>
-									<div class="arrivel-2 col-sm-4 nopadding text-right col-xs-4 xs-text-center" itemscope itemtype ="http://schema.org/Flight">
-										<p itemprop="arrivalAirport">
-											{{returnrecord.0.destination}}
-										</p>
-										<p>
-											<time itemprop="arrivalTime">
-												{{returnrecord.0.arival}}
-											</time>
-										</p>
-									</div>
-									<div class="col-xs-3 nopadding visible-xs text-right">
-										<div class="col-xs-12 nopadding non-stop text-right">
-											<p>
-												{{returnrecord.0.stoppage}}
-											</p>
-										</div>
-										<div class="col-xs-12 nopadding non-stop" itemscope itemtype ="http://schema.org/Flight">
-											<p itemprop="estimatedFlightDuration">
-												{{returnrecord.0.duration}}
-											</p>
-										</div>
-									</div>
-								</div>
-
-							</div>
-							<div class="col-md-4 col-sm-4 col-xs-12 text-center nopr hidden-xs">
-								<div class="col-xs-12 nopadding non-stop">
-									<p>
-										{{returnrecord.0.stoppage}}
-									</p>
-									<div class="col-xs-12 nopadding non-stop" itemscope itemtype ="http://schema.org/Flight">
-										<p itemprop="estimatedFlightDuration">
-											{{returnrecord.0.duration}}
-										</p>
-									</div>
-								</div>
-							</div>
-						</div>
-						<!-- end retun block -->
-						{%endwith%}
-						{% endif%}
-						{% if record.datasource == "delta" and deltareturn %}
-						{% with deltareturn as returnrecord %}
-						<div class="col-xs-12 nopadding flight-div-repeat">
-							<div class="col-md-8 col-sm-8 col-xs-12 nopadding">
-								<div class="col-xs-12 nopadding">
-									<div class="arrivel col-sm-5 nopadding col-xs-4" itemscope itemtype ="http://schema.org/Flight">
-										<p itemprop="departureAirport">
-											{{returnrecord.0.origin}}
-										</p>
-										<p>
-											<time itemprop="departureTime">
-												{{returnrecord.0.departure}}
-											</time>
-										</p>
-									</div>
-									<div class="arrow-div col-sm-2 col-xs-1 text-center nopadding">
-										&#8594;
-									</div>
-									<div class="arrivel-2 col-sm-4 nopadding text-right col-xs-4 xs-text-center" itemscope itemtype ="http://schema.org/Flight">
-										<p itemprop="arrivalAirport">
-											{{returnrecord.0.destination}}
-										</p>
-										<p>
-											<time itemprop="arrivalTime">
-												{{returnrecord.0.arival}}
-											</time>
-										</p>
-									</div>
-									<div class="col-xs-3 nopadding visible-xs text-right">
-										<div class="col-xs-12 nopadding non-stop text-right">
-											<p>
-												{{returnrecord.0.stoppage}}
-											</p>
-										</div>
-										<div class="col-xs-12 nopadding non-stop" itemscope itemtype ="http://schema.org/Flight">
-											<p itemprop="estimatedFlightDuration">
-												{{returnrecord.0.duration}}
-											</p>
-										</div>
-									</div>
-								</div>
-
-							</div>
-							<div class="col-md-4 col-sm-4 col-xs-12 text-center nopr hidden-xs">
-								<div class="col-xs-12 nopadding non-stop">
-									<p>
-										{{returnrecord.0.stoppage}}
-									</p>
-									<div class="col-xs-12 nopadding non-stop" itemscope itemtype ="http://schema.org/Flight">
-										<p itemprop="estimatedFlightDuration">
-								ol-sm-6			{{returnrecord.0.duration}}
-										</p>
-									</div>
-								</div>
-							</div>
-						</div>
-						<!-- end retun block -->
-						{%endwith%}
-						{% endif%}
-
-						<div class="col-xs-12 nopadding mvt10px for-mobile-view">
-							<!-- main data only mobile  if return in present -->
-							<div class="col-xs-12 nopadding text-center custome-edit-block">
-								{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' %}
-
-								<div class="col-xs-12 nopadding mvb10px na-ra">
-									<h5 class="econo edit-width-econo">{{record.cabintype1}}</h5>
-									<div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
-										<p class="flight-rate" itemprop="totalPrice">
-											{% if record.datasource == "delta" %}
-											{{record.maincabin|add:deltaminval|intcomma}} Miles + <span>${{record.maintax|floatadd:deltatax|floatformat:2}}</span> {%else%}{{record.maincabin|add:unitedminval|intcomma}} Miles + <span>${{record.maintax|floatadd:unitedtax|floatformat:2}}</span> {%endif%}
-										</p>
-									</div>
-								</div>
-								{% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %}
-
-								<div class="ol-sm-6col-xs-12 nopadding mvb10px na-ra">
-									<h5 class="econo edit-width-econo">{{record.cabintype2}}</h5>
-									<div class="right-data-responsive">
-										<p class="flight-rate">
-											{% if record.datasource == "delta" %}
-											{{record.firstclass|add:deltaminval|intcomma}} Miles + <span>${{record.firsttax|floatadd:deltatax|floatformat:2}}</span> {%else%}{{record.firstclass|add:unitedminval|intcomma}} Miles + <span>${{record.firsttax|floatadd:unitedtax|floatformat:2}}</span> {%endif%}
-										</p>
-									</div>
-								</div>
-
-								{% else %}
-								{% if request.GET.cabin == 'business' or cabin == 'business' %}
-
-								<div class="col-xs-12 nopadding mvb10px na-ra">
-									<h5 class="econo edit-width-econo">{{record.cabintype3}}</h5>
-									<div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
-										<p class="flight-rate" itemprop="totalPrice">
-											{% if record.datasource == "delta" %}
-											{{record.business|add:deltaminval|intcomma}} Miles + <span>${{record.businesstax|floatadd:deltatax|floatformat:2}}</span> {%else%}{{record.business|add:unitedminval|intcomma}} Miles + <span>${{record.businesstax|floatadd:unitedtax|floatformat:2}}</span> {%endif%}
-										</p>
-									</div>
-								</div>
-								{% endif %}
-								{% endif%}
-							</div>
-						</div>
-						{% endif%}
-
-						
-						<h4 class="econo hidden-xs"> {% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
+<title>Pex Search Details</title>
+{% block content %}
+    <style>
+    .add {
+        margin-left: -6px;
+    }
+    </style>
+    <div class="main-holder">
+        <div class="col-xs-12 nopadding">
+            <div class="container">
+                <div class="col-xs-12 nopadding">
+                    <div class="col-md-12 col-xs-12 centr-info responsive-color-img">
+                        <div class="col-xs-12 nopadding">
+                            <div class="col-sm-3 col-xs-5 visible-xs visible-sm nopl">
+                                <div class="col-xs-12 nopadding text-center" itemscope itemtype="http://schema.org/Airline">
+                                    {% if record.datasource == "united" %}
+                                    <img itemprop="logo" src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if record.datasource == "delta" %}
+                                    <img itemprop="logo" src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image"> {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-9 col-xs-7 nopadding" itemscope itemtype="http://schema.org/Flight">
+                                <p class="flight-name" itemprop="flightNumber">
+                                    {{record.flighno}}
+                                    <!--FIRST FLIGHT OPTION RESULT-->
+                                </p>
+                            </div>
+                            <div class="col-md-5 col-xs-12 nopadding hidden-xs hidden-sm">
+                                <div class="col-sm-8 col-sm-8 col-xs-12 nopl">
+                                    <div class="col-md-12 col-xs-12 nopadding">
+                                        <div class="col-xs-12 nopadding xs-margin-25px">
+                                            <div class="col-xs-12 nopadding mvb10px na-ra" itemscope itemtype="http://schema.org/FlightReservation">
+                                                <p class="flight-rate" itemprop="totalPrice">
+                                                    {% if cabin == 'maincabin'%} {{record.maincabin|intcomma}} Miles + <span>${{record.maintax|floatformat:2}}</span> {% elif cabin == 'firstclass' %} {{record.firstclass}} Miles + <span>${{record.firsttax|floatformat:2}}</span> {% else %} {% if cabin == 'business' %} {{record.business}} Miles + <span>${{record.businesstax|floatformat:2}}</span> {% endif %} {% endif %}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-4 col-xs-12 nopl">
+                                    <div class="col-xs-12 nopadding text-center mvb10px" itemscope itemtype="http://schema.org/Airline">
+                                        {% if record.datasource == "united" %}
+                                        <img itemprop="logo" src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if record.datasource == "delta" %}
+                                        <img itemprop="logo" src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-7 col-xs-12 nopadding">
+                                <div class="col-xs-12 nopadding flight-div-repeat">
+                                    <div class="col-md-8 col-sm-8 col-xs-12 nopadding">
+                                        <div class="col-xs-12 nopadding">
+                                            <div class="arrivel col-sm-5 nopadding col-xs-4" itemscope itemtype="http://schema.org/Flight">
+                                                <p itemprop="departureAirport">
+                                                    {{record.origin}}
+                                                </p>
+                                                <p>
+                                                    <time itemprop="departureTime">
+                                                        {{record.departure}}
+                                                    </time>
+                                                </p>
+                                            </div>
+                                            <div class="arrow-div col-sm-2 col-xs-1 text-center nopadding">
+                                                &#8594;
+                                            </div>
+                                            <div class="arrivel-2 col-sm-4 nopadding text-right col-xs-4 xs-text-center" itemscope itemtype="http://schema.org/Flight">
+                                                <p itemprop="arrivalAirport">
+                                                    {{record.destination}}
+                                                </p>
+                                                <p>
+                                                    <time itemprop="arrivalTime">
+                                                        {{record.arival}}
+                                                    </time>
+                                                </p>
+                                            </div>
+                                            <div class="col-xs-3 nopadding visible-xs text-right">
+                                                <div class="col-xs-12 nopadding non-stop text-right">
+                                                    <p>
+                                                        {{record.stoppage}}
+                                                    </p>
+                                                </div>
+                                                <div class="col-xs-12 nopadding non-stop" itemscope itemtype="http://schema.org/Flight">
+                                                    <p itemprop="estimatedFlightDuration">
+                                                        {{record.duration}}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% if returndate == '' %}
+                                        <div class="col-xs-12 nopadding mvt10px for-mobile-view">
+                                            <!-- main data only mobile -->
+                                            <div class="col-xs-12 nopadding text-center custome-edit-block">
+                                                {% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' %}
+                                                <div class="col-xs-12 nopadding mvb10px na-ra">
+                                                    <h5 class="econo edit-width-econo">{{record.cabintype1}}</h5>
+                                                    <div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
+                                                        <p class="flight-rate" itemprop="totalPrice">
+                                                            {{price|intcomma}} Miles + <span>${{tax|floatformat:2}}</span>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                {% endif%}
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 col-xs-12 text-center nopr hidden-xs">
+                                        <div class="col-xs-12 nopadding non-stop">
+                                            <p>
+                                                {{record.stoppage}}
+                                            </p>
+                                            <div class="col-xs-12 nopadding non-stop" itemscope itemtype="http://schema.org/Flight">
+                                                <p itemprop="estimatedFlightDuration">
+                                                    {{record.duration}}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- terurn data block -->
+                                {% if returndate %} {% if record.datasource == "united" and unitedreturn %} {% with unitedreturn as returnrecord %}
+                                <div class="col-xs-12 nopadding flight-div-repeat">
+                                    <div class="col-md-8 col-sm-8 col-xs-12 nopadding">
+                                        <div class="col-xs-12 nopadding">
+                                            <div class="arrivel col-sm-5 nopadding col-xs-4" itemscope itemtype="http://schema.org/Flight">
+                                                <p itemprop="departureAirport">
+                                                    {{returnrecord.0.origin}}
+                                                </p>
+                                                <p>
+                                                    <time itemprop="departureTime">
+                                                        {{returnrecord.0.departure}}
+                                                    </time>
+                                                </p>
+                                            </div>
+                                            <div class="arrow-div col-sm-2 col-xs-1 text-center nopadding">
+                                                &#8594;
+                                            </div>
+                                            <div class="arrivel-2 col-sm-4 nopadding text-right col-xs-4 xs-text-center" itemscope itemtype="http://schema.org/Flight">
+                                                <p itemprop="arrivalAirport">
+                                                    {{returnrecord.0.destination}}
+                                                </p>
+                                                <p>
+                                                    <time itemprop="arrivalTime">
+                                                        {{returnrecord.0.arival}}
+                                                    </time>
+                                                </p>
+                                            </div>
+                                            <div class="col-xs-3 nopadding visible-xs text-right">
+                                                <div class="col-xs-12 nopadding non-stop text-right">
+                                                    <p>
+                                                        {{returnrecord.0.stoppage}}
+                                                    </p>
+                                                </div>
+                                                <div class="col-xs-12 nopadding non-stop" itemscope itemtype="http://schema.org/Flight">
+                                                    <p itemprop="estimatedFlightDuration">
+                                                        {{returnrecord.0.duration}}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 col-xs-12 text-center nopr hidden-xs">
+                                        <div class="col-xs-12 nopadding non-stop">
+                                            <p>
+                                                {{returnrecord.0.stoppage}}
+                                            </p>
+                                            <div class="col-xs-12 nopadding non-stop" itemscope itemtype="http://schema.org/Flight">
+                                                <p itemprop="estimatedFlightDuration">
+                                                    {{returnrecord.0.duration}}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- end retun block -->
+                                {%endwith%} {% endif%} {% if record.datasource == "delta" and deltareturn %} {% with deltareturn as returnrecord %}
+                                <div class="col-xs-12 nopadding flight-div-repeat">
+                                    <div class="col-md-8 col-sm-8 col-xs-12 nopadding">
+                                        <div class="col-xs-12 nopadding">
+                                            <div class="arrivel col-sm-5 nopadding col-xs-4" itemscope itemtype="http://schema.org/Flight">
+                                                <p itemprop="departureAirport">
+                                                    {{returnrecord.0.origin}}
+                                                </p>
+                                                <p>
+                                                    <time itemprop="departureTime">
+                                                        {{returnrecord.0.departure}}
+                                                    </time>
+                                                </p>
+                                            </div>
+                                            <div class="arrow-div col-sm-2 col-xs-1 text-center nopadding">
+                                                &#8594;
+                                            </div>
+                                            <div class="arrivel-2 col-sm-4 nopadding text-right col-xs-4 xs-text-center" itemscope itemtype="http://schema.org/Flight">
+                                                <p itemprop="arrivalAirport">
+                                                    {{returnrecord.0.destination}}
+                                                </p>
+                                                <p>
+                                                    <time itemprop="arrivalTime">
+                                                        {{returnrecord.0.arival}}
+                                                    </time>
+                                                </p>
+                                            </div>
+                                            <div class="col-xs-3 nopadding visible-xs text-right">
+                                                <div class="col-xs-12 nopadding non-stop text-right">
+                                                    <p>
+                                                        {{returnrecord.0.stoppage}}
+                                                    </p>
+                                                </div>
+                                                <div class="col-xs-12 nopadding non-stop" itemscope itemtype="http://schema.org/Flight">
+                                                    <p itemprop="estimatedFlightDuration">
+                                                        {{returnrecord.0.duration}}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 col-xs-12 text-center nopr hidden-xs">
+                                        <div class="col-xs-12 nopadding non-stop">
+                                            <p>
+                                                {{returnrecord.0.stoppage}}
+                                            </p>
+                                            <div class="col-xs-12 nopadding non-stop" itemscope itemtype="http://schema.org/Flight">
+                                                <p itemprop="estimatedFlightDuration">
+                                                    ol-sm-6 {{returnrecord.0.duration}}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- end retun block -->
+                                {%endwith%} {% endif%}
+                                <div class="col-xs-12 nopadding mvt10px for-mobile-view">
+                                    <!-- main data only mobile  if return in present -->
+                                    <div class="col-xs-12 nopadding text-center custome-edit-block">
+                                        {% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' %}
+                                        <div class="col-xs-12 nopadding mvb10px na-ra">
+                                            <h5 class="econo edit-width-econo">{{record.cabintype1}}</h5>
+                                            <div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
+                                                <p class="flight-rate" itemprop="totalPrice">
+                                                    {% if record.datasource == "delta" %} {{record.maincabin|add:deltaminval|intcomma}} Miles + <span>${{record.maintax|floatadd:deltatax|floatformat:2}}</span> {%else%}{{record.maincabin|add:unitedminval|intcomma}} Miles + <span>${{record.maintax|floatadd:unitedtax|floatformat:2}}</span> {%endif%}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %}
+                                        <div class="ol-sm-6col-xs-12 nopadding mvb10px na-ra">
+                                            <h5 class="econo edit-width-econo">{{record.cabintype2}}</h5>
+                                            <div class="right-data-responsive">
+                                                <p class="flight-rate">
+                                                    {% if record.datasource == "delta" %} {{record.firstclass|add:deltaminval|intcomma}} Miles + <span>${{record.firsttax|floatadd:deltatax|floatformat:2}}</span> {%else%}{{record.firstclass|add:unitedminval|intcomma}} Miles + <span>${{record.firsttax|floatadd:unitedtax|floatformat:2}}</span> {%endif%}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        {% else %} {% if request.GET.cabin == 'business' or cabin == 'business' %}
+                                        <div class="col-xs-12 nopadding mvb10px na-ra">
+                                            <h5 class="econo edit-width-econo">{{record.cabintype3}}</h5>
+                                            <div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
+                                                <p class="flight-rate" itemprop="totalPrice">
+                                                    {% if record.datasource == "delta" %} {{record.business|add:deltaminval|intcomma}} Miles + <span>${{record.businesstax|floatadd:deltatax|floatformat:2}}</span> {%else%}{{record.business|add:unitedminval|intcomma}} Miles + <span>${{record.businesstax|floatadd:unitedtax|floatformat:2}}</span> {%endif%}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        {% endif %} {% endif%}
+                                    </div>
+                                </div>
+                                {% endif%}
+                                <h4 class="econo hidden-xs"> {% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
 						{{record.cabintype1}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{record.cabintype2}} {% else%}{{record.cabintype3}} {% endif %}</h4>
-						</div>
-					</div>
-					{% if returnrecord %}
-					<div class="col-xs-12 nopadding">
-					<div class="col-sm-3 col-xs-5 visible-xs visible-sm nopl">
-						<div class="col-xs-12 nopadding text-center" itemscope itemtype ="http://schema.org/Airline">
-							{% if returnrecord.datasource == "united" %}
-							<img itemprop="logo" src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">
-							{% endif %}
-							{% if returnrecord.datasource == "delta" %}
-							<img itemprop="logo" src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">
-							{% endif %}
-						</div>
-					</div>
-					<div class="col-md-12 col-sm-9 col-xs-7 nopadding" itemscope itemtype ="http://schema.org/Flight">
-						<p class="flight-name" itemprop="flightNumber">
-							{{returnrecord.flighno}} <!--FIRST FLIGHT OPTION RESULT-->
-						</p>
-					</div>
-					<div class="col-md-5 col-xs-12 nopadding hidden-xs hidden-sm">
-						<div class="col-sm-8 col-sm-8 col-xs-12 nopl">
-							<div class="col-md-12 col-xs-12 nopadding">
-								<div class="col-xs-12 nopadding xs-margin-25px">
-									<div class="col-xs-12 nopadding mvb10px na-ra" itemscope itemtype ="http://schema.org/FlightReservation">
-										<p class="flight-rate" itemprop="totalPrice">
-										{{price|intcomma}} Miles + <span>${{tax|floatformat:2}}</span>
-											
-										</p>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-4 col-sm-4 col-xs-12 nopl">
-							<div class="col-xs-12 nopadding text-center mvb10px" itemscope itemtype ="http://schema.org/Airline">
-								{% if returnrecord.datasource == "united" %}
-								<img itemprop="logo" src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
-								{% if returnrecord.datasource == "delta" %}
-								<img itemprop="logo" src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
-							</div>
-						</div>
-					</div>
-					<div class="col-md-7 col-xs-12 nopadding">
-
-						<div class="col-xs-12 nopadding flight-div-repeat">
-							<div class="col-md-8 col-sm-8 col-xs-12 nopadding">
-								<div class="col-xs-12 nopadding">
-									<div class="arrivel col-sm-5 nopadding col-xs-4" itemscope itemtype ="http://schema.org/Flight">
-										<p itemprop="departureAirport">
-											{{returnrecord.origin}}
-										</p>
-										<p>
-											<time itemprop="departureTime">
-												{{returnrecord.departure}}
-											</time>
-										</p>
-									</div>
-									<div class="arrow-div col-sm-2 col-xs-1 text-center nopadding">
-										&#8594;
-									</div>
-									<div class="arrivel-2 col-sm-4 nopadding text-right col-xs-4 xs-text-center" itemscope itemtype ="http://schema.org/Flight">
-										<p itemprop="arrivalAirport">
-											{{returnrecord.destination}}
-										</p>
-										<p>
-											<time itemprop="arrivalTime">
-												{{returnrecord.arival}}
-											</time>
-										</p>
-									</div>
-									<div class="col-xs-3 nopadding visible-xs text-right">
-										<div class="col-xs-12 nopadding non-stop text-right">
-											<p>
-												{{returnrecord.stoppage}}
-											</p>
-										</div>
-										<div class="col-xs-12 nopadding non-stop" itemscope itemtype ="http://schema.org/Flight">
-											<p itemprop="estimatedFlightDuration">
-												{{returnrecord.duration}}
-											</p>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="col-md-4 col-sm-4 col-xs-12 text-center nopr hidden-xs">
-								<div class="col-xs-12 nopadding non-stop">
-									<p>
-										{{returnrecord.stoppage}}
-									</p>
-									<div class="col-xs-12 nopadding non-stop" itemscope itemtype ="http://schema.org/Flight">
-										<p itemprop="estimatedFlightDuration">
-											{{returnrecord.duration}}
-										</p>
-									</div>
-								</div>
-							</div>
-							<h4 class="econo hidden-xs"> {{returncabin}} </h4>
-						</div>
-						</div>
-					</div>
-					{% endif %}
-					
-					<div class="col-xs-12 nopadding">
-						<div class="col-xs-12 col-sm-6 pop-hover nopadding">
-								<div class="well" itemscope itemtype="http://schema.org/Flight">
-									<h2>DEPART</h2>
-									<p itemprop="flightNumber">
-										{{record.datasource|title}} | {{record.flighno}} ({% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
-										{{record.cabintype1}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{record.cabintype2}} {% else%}{{record.cabintype3}} {% endif %})
-									</p>
-									<div class="table-responsive table-date-search">
-										<table class="table">
-											{% with record.departdetails|split:'@' as mylist%}
-											{% with record.arivedetails|split:'@' as mylist1%}
-											{% with record.planedetails|split:'@' as mylist2%}
-											<tr itemscope itemtype="http://schema.org/Flight">
-												<td><b>Depart: </b></td>
-												<td>
-												<time itemprop="departureTime">
-													{{mylist.0}}
-												</time></td>
-											</tr>
-
-											<tr itemscope itemtype="http://schema.org/Flight">
-
-												<td><b>Arives:</b></td>
-												<td>
-												<time itemprop="arrivalTime">
-													{{mylist1.0}}
-												</time></td>
-											</tr>
-											<tr itemscope itemtype="http://schema.org/Flight">
-												<td itemprop="flightNumber"><b>Flight:</b></td>
-												<td>{{mylist2.0}}</td>
-											</tr>
-											{% if record.stoppage == '1 STOP' or record.stoppage == '2 STOPS' %}
-											<tr>
-												<td></td>
-												<td><h5><b>Change planes </b></h5></td>
-											</tr>
-											<tr itemscope itemtype="http://schema.org/Flight">
-												<td><b>Depart: </b></td>
-												<td>
-												<time itemprop="departureTime">
-													{{mylist.1}}
-												</time></td>
-											</tr>
-
-											<tr itemscope itemtype="http://schema.org/Flight">
-												<td><b>Arives:</b></td>
-												<td>
-												<time itemprop="arrivalTime">
-													{{mylist1.1}}
-												</time></td>
-											</tr>
-											<tr>
-												<td><b>Flight:</b></td>
-												<td>{{mylist2.1}}</td>
-											</tr>
-
-											{% endif %}
-											{% if record.stoppage == '2 STOPS' %}
-											<tr>
-												<td></td>
-												<td><h5><b>Change planes </b></h5></td>
-											</tr>
-											<tr itemscope itemtype="http://schema.org/Flight">
-												<td><b>Depart: </b></td>
-												<td>
-												<time itemprop="departureTime">
-													{{mylist.2}}
-												</time></td>
-											</tr>
-
-											<tr itemscope itemtype="http://schema.org/Flight">
-												<td><b>Arives:</b></td>
-												<td>
-												<time itemprop="arrivalTime">
-													{{mylist1.2}}
-												</time></td>
-											</tr>
-											<tr>
-												<td><b>Flight:</b></td>
-												<td>{{mylist2.2}}</td>
-											</tr>
-
-											{% endif %}
-
-											{% endwith %}
-											{% endwith %}
-											{% endwith %}
-
-										</table>
-									</div>
-								</div>
-							</div>
-						{% if returnrecord %}
-						<div class="col-xs-12 col-sm-6 pop-hover nopadding">
-								<div class="well" itemscope itemtype="http://schema.org/Flight">
-									<h2>RETURN</h2>
-									<p itemprop="flightNumber">
-										{{returnrecord.datasource|title}} | {{returnrecord.flighno}} ({% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
-										{{returnrecord.cabintype1}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{returnrecord.cabintype2}} {% else%}{{returnrecord.cabintype3}} {% endif %})
-									</p>
-									<div class="table-responsive table-date-search">
-										<table class="table">
-											{% with returnrecord.departdetails|split:'@' as mylist%}
-											{% with returnrecord.arivedetails|split:'@' as mylist1%}
-											{% with returnrecord.planedetails|split:'@' as mylist2%}
-											<tr itemscope itemtype="http://schema.org/Flight">
-												<td><b>Depart: </b></td>
-												<td>
-												<time itemprop="departureTime">
-													{{mylist.0}}
-												</time></td>
-											</tr>
-
-											<tr itemscope itemtype="http://schema.org/Flight">
-
-												<td><b>Arives:</b></td>
-												<td>
-												<time itemprop="arrivalTime">
-													{{mylist1.0}}
-												</time></td>
-											</tr>
-											<tr itemscope itemtype="http://schema.org/Flight">
-												<td itemprop="flightNumber"><b>Flight:</b></td>
-												<td>{{mylist2.0}}</td>
-											</tr>
-											{% if returnrecord.stoppage == '1 STOP' or returnrecord.stoppage == '2 STOPS' %}
-											<tr>
-												<td></td>
-												<td><h5><b>Change planes </b></h5></td>
-											</tr>
-											<tr itemscope itemtype="http://schema.org/Flight">
-												<td><b>Depart: </b></td>
-												<td>
-												<time itemprop="departureTime">
-													{{mylist.1}}
-												</time></td>
-											</tr>
-
-											<tr itemscope itemtype="http://schema.org/Flight">
-												<td><b>Arives:</b></td>
-												<td>
-												<time itemprop="arrivalTime">
-													{{mylist1.1}}
-												</time></td>
-											</tr>
-											<tr>
-												<td><b>Flight:</b></td>
-												<td>{{mylist2.1}}</td>
-											</tr>
-
-											{% endif %}
-											{% if returnrecord.stoppage == '2 STOPS' %}
-											<tr>
-												<td></td>
-												<td><h5><b>Change planes </b></h5></td>
-											</tr>
-											<tr itemscope itemtype="http://schema.org/Flight">
-												<td><b>Depart: </b></td>
-												<td>
-												<time itemprop="departureTime">
-													{{mylist.2}}
-												</time></td>
-											</tr>
-
-											<tr itemscope itemtype="http://schema.org/Flight">
-												<td><b>Arives:</b></td>
-												<td>
-												<time itemprop="arrivalTime">
-													{{mylist1.2}}
-												</time></td>
-											</tr>
-											<tr>
-												<td><b>Flight:</b></td>
-												<td>{{mylist2.2}}</td>
-											</tr>
-
-											{% endif %}
-
-											{% endwith %}
-											{% endwith %}
-											{% endwith %}
-
-										</table>
-									</div>
-							</div>
-						</div>
-						{% endif %}
-						
-					</div>
-					<span class="btn btn-default"><a href="https://www.facebook.com/sharer/sharer.php?u=http://pexportal.com/share?selectedid={{request.GET.selectedid}}%26cabin={{request.GET.cabin}}%26passenger={{request.GET.passenger}}{% if request.GET.returnrowid %}%26returnrowid={{request.GET.returnrowid}}{%endif%}">Share with facebook</a></span>
-					<span class="btn btn-default"><a href="https://twitter.com/home?status=http://pexportal.com/share?selectedid={{request.GET.selectedid}}%26cabin={{request.GET.cabin}}%26passenger={{request.GET.passenger}}{% if request.GET.returnrowid %}%26returnrowid={{request.GET.returnrowid}}{%endif%}">Share with twitter </a></span>
-					</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		{% include "flightsearch/footer.html" %}
-	</body>
-</html>
+                            </div>
+                        </div>
+                        {% if returnrecord %}
+                        <div class="col-xs-12 nopadding">
+                            <div class="col-sm-3 col-xs-5 visible-xs visible-sm nopl">
+                                <div class="col-xs-12 nopadding text-center" itemscope itemtype="http://schema.org/Airline">
+                                    {% if returnrecord.datasource == "united" %}
+                                    <img itemprop="logo" src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if returnrecord.datasource == "delta" %}
+                                    <img itemprop="logo" src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image"> {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-9 col-xs-7 nopadding" itemscope itemtype="http://schema.org/Flight">
+                                <p class="flight-name" itemprop="flightNumber">
+                                    {{returnrecord.flighno}}
+                                    <!--FIRST FLIGHT OPTION RESULT-->
+                                </p>
+                            </div>
+                            <div class="col-md-5 col-xs-12 nopadding hidden-xs hidden-sm">
+                                <div class="col-sm-8 col-sm-8 col-xs-12 nopl">
+                                    <div class="col-md-12 col-xs-12 nopadding">
+                                        <div class="col-xs-12 nopadding xs-margin-25px">
+                                            <div class="col-xs-12 nopadding mvb10px na-ra" itemscope itemtype="http://schema.org/FlightReservation">
+                                                <p class="flight-rate" itemprop="totalPrice">
+                                                    {{price|intcomma}} Miles + <span>${{tax|floatformat:2}}</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-4 col-xs-12 nopl">
+                                    <div class="col-xs-12 nopadding text-center mvb10px" itemscope itemtype="http://schema.org/Airline">
+                                        {% if returnrecord.datasource == "united" %}
+                                        <img itemprop="logo" src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if returnrecord.datasource == "delta" %}
+                                        <img itemprop="logo" src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-7 col-xs-12 nopadding">
+                                <div class="col-xs-12 nopadding flight-div-repeat">
+                                    <div class="col-md-8 col-sm-8 col-xs-12 nopadding">
+                                        <div class="col-xs-12 nopadding">
+                                            <div class="arrivel col-sm-5 nopadding col-xs-4" itemscope itemtype="http://schema.org/Flight">
+                                                <p itemprop="departureAirport">
+                                                    {{returnrecord.origin}}
+                                                </p>
+                                                <p>
+                                                    <time itemprop="departureTime">
+                                                        {{returnrecord.departure}}
+                                                    </time>
+                                                </p>
+                                            </div>
+                                            <div class="arrow-div col-sm-2 col-xs-1 text-center nopadding">
+                                                &#8594;
+                                            </div>
+                                            <div class="arrivel-2 col-sm-4 nopadding text-right col-xs-4 xs-text-center" itemscope itemtype="http://schema.org/Flight">
+                                                <p itemprop="arrivalAirport">
+                                                    {{returnrecord.destination}}
+                                                </p>
+                                                <p>
+                                                    <time itemprop="arrivalTime">
+                                                        {{returnrecord.arival}}
+                                                    </time>
+                                                </p>
+                                            </div>
+                                            <div class="col-xs-3 nopadding visible-xs text-right">
+                                                <div class="col-xs-12 nopadding non-stop text-right">
+                                                    <p>
+                                                        {{returnrecord.stoppage}}
+                                                    </p>
+                                                </div>
+                                                <div class="col-xs-12 nopadding non-stop" itemscope itemtype="http://schema.org/Flight">
+                                                    <p itemprop="estimatedFlightDuration">
+                                                        {{returnrecord.duration}}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 col-xs-12 text-center nopr hidden-xs">
+                                        <div class="col-xs-12 nopadding non-stop">
+                                            <p>
+                                                {{returnrecord.stoppage}}
+                                            </p>
+                                            <div class="col-xs-12 nopadding non-stop" itemscope itemtype="http://schema.org/Flight">
+                                                <p itemprop="estimatedFlightDuration">
+                                                    {{returnrecord.duration}}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <h4 class="econo hidden-xs"> {{returncabin}} </h4>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <div class="col-xs-12 nopadding">
+                            <div class="col-xs-12 col-sm-6 pop-hover nopadding">
+                                <div class="well" itemscope itemtype="http://schema.org/Flight">
+                                    <h2>DEPART</h2>
+                                    <p itemprop="flightNumber">
+                                        {{record.datasource|title}} | {{record.flighno}} ({% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%} {{record.cabintype1}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{record.cabintype2}} {% else%}{{record.cabintype3}} {% endif %})
+                                    </p>
+                                    <div class="table-responsive table-date-search">
+                                        <table class="table">
+                                            {% with record.departdetails|split:'@' as mylist%} {% with record.arivedetails|split:'@' as mylist1%} {% with record.planedetails|split:'@' as mylist2%}
+                                            <tr itemscope itemtype="http://schema.org/Flight">
+                                                <td><b>Depart: </b></td>
+                                                <td>
+                                                    <time itemprop="departureTime">
+                                                        {{mylist.0}}
+                                                    </time>
+                                                </td>
+                                            </tr>
+                                            <tr itemscope itemtype="http://schema.org/Flight">
+                                                <td><b>Arives:</b></td>
+                                                <td>
+                                                    <time itemprop="arrivalTime">
+                                                        {{mylist1.0}}
+                                                    </time>
+                                                </td>
+                                            </tr>
+                                            <tr itemscope itemtype="http://schema.org/Flight">
+                                                <td itemprop="flightNumber"><b>Flight:</b></td>
+                                                <td>{{mylist2.0}}</td>
+                                            </tr>
+                                            {% if record.stoppage == '1 STOP' or record.stoppage == '2 STOPS' %}
+                                            <tr>
+                                                <td></td>
+                                                <td>
+                                                    <h5><b>Change planes </b></h5></td>
+                                            </tr>
+                                            <tr itemscope itemtype="http://schema.org/Flight">
+                                                <td><b>Depart: </b></td>
+                                                <td>
+                                                    <time itemprop="departureTime">
+                                                        {{mylist.1}}
+                                                    </time>
+                                                </td>
+                                            </tr>
+                                            <tr itemscope itemtype="http://schema.org/Flight">
+                                                <td><b>Arives:</b></td>
+                                                <td>
+                                                    <time itemprop="arrivalTime">
+                                                        {{mylist1.1}}
+                                                    </time>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Flight:</b></td>
+                                                <td>{{mylist2.1}}</td>
+                                            </tr>
+                                            {% endif %} {% if record.stoppage == '2 STOPS' %}
+                                            <tr>
+                                                <td></td>
+                                                <td>
+                                                    <h5><b>Change planes </b></h5></td>
+                                            </tr>
+                                            <tr itemscope itemtype="http://schema.org/Flight">
+                                                <td><b>Depart: </b></td>
+                                                <td>
+                                                    <time itemprop="departureTime">
+                                                        {{mylist.2}}
+                                                    </time>
+                                                </td>
+                                            </tr>
+                                            <tr itemscope itemtype="http://schema.org/Flight">
+                                                <td><b>Arives:</b></td>
+                                                <td>
+                                                    <time itemprop="arrivalTime">
+                                                        {{mylist1.2}}
+                                                    </time>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Flight:</b></td>
+                                                <td>{{mylist2.2}}</td>
+                                            </tr>
+                                            {% endif %} {% endwith %} {% endwith %} {% endwith %}
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if returnrecord %}
+                            <div class="col-xs-12 col-sm-6 pop-hover nopadding">
+                                <div class="well" itemscope itemtype="http://schema.org/Flight">
+                                    <h2>RETURN</h2>
+                                    <p itemprop="flightNumber">
+                                        {{returnrecord.datasource|title}} | {{returnrecord.flighno}} ({% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%} {{returnrecord.cabintype1}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{returnrecord.cabintype2}} {% else%}{{returnrecord.cabintype3}} {% endif %})
+                                    </p>
+                                    <div class="table-responsive table-date-search">
+                                        <table class="table">
+                                            {% with returnrecord.departdetails|split:'@' as mylist%} {% with returnrecord.arivedetails|split:'@' as mylist1%} {% with returnrecord.planedetails|split:'@' as mylist2%}
+                                            <tr itemscope itemtype="http://schema.org/Flight">
+                                                <td><b>Depart: </b></td>
+                                                <td>
+                                                    <time itemprop="departureTime">
+                                                        {{mylist.0}}
+                                                    </time>
+                                                </td>
+                                            </tr>
+                                            <tr itemscope itemtype="http://schema.org/Flight">
+                                                <td><b>Arives:</b></td>
+                                                <td>
+                                                    <time itemprop="arrivalTime">
+                                                        {{mylist1.0}}
+                                                    </time>
+                                                </td>
+                                            </tr>
+                                            <tr itemscope itemtype="http://schema.org/Flight">
+                                                <td itemprop="flightNumber"><b>Flight:</b></td>
+                                                <td>{{mylist2.0}}</td>
+                                            </tr>
+                                            {% if returnrecord.stoppage == '1 STOP' or returnrecord.stoppage == '2 STOPS' %}
+                                            <tr>
+                                                <td></td>
+                                                <td>
+                                                    <h5><b>Change planes </b></h5></td>
+                                            </tr>
+                                            <tr itemscope itemtype="http://schema.org/Flight">
+                                                <td><b>Depart: </b></td>
+                                                <td>
+                                                    <time itemprop="departureTime">
+                                                        {{mylist.1}}
+                                                    </time>
+                                                </td>
+                                            </tr>
+                                            <tr itemscope itemtype="http://schema.org/Flight">
+                                                <td><b>Arives:</b></td>
+                                                <td>
+                                                    <time itemprop="arrivalTime">
+                                                        {{mylist1.1}}
+                                                    </time>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Flight:</b></td>
+                                                <td>{{mylist2.1}}</td>
+                                            </tr>
+                                            {% endif %} {% if returnrecord.stoppage == '2 STOPS' %}
+                                            <tr>
+                                                <td></td>
+                                                <td>
+                                                    <h5><b>Change planes </b></h5></td>
+                                            </tr>
+                                            <tr itemscope itemtype="http://schema.org/Flight">
+                                                <td><b>Depart: </b></td>
+                                                <td>
+                                                    <time itemprop="departureTime">
+                                                        {{mylist.2}}
+                                                    </time>
+                                                </td>
+                                            </tr>
+                                            <tr itemscope itemtype="http://schema.org/Flight">
+                                                <td><b>Arives:</b></td>
+                                                <td>
+                                                    <time itemprop="arrivalTime">
+                                                        {{mylist1.2}}
+                                                    </time>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Flight:</b></td>
+                                                <td>{{mylist2.2}}</td>
+                                            </tr>
+                                            {% endif %} {% endwith %} {% endwith %} {% endwith %}
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <span class="btn btn-default"><a href="https://www.facebook.com/sharer/sharer.php?u=http://pexportal.com/share?selectedid={{request.GET.selectedid}}%26cabin={{request.GET.cabin}}%26passenger={{request.GET.passenger}}{% if request.GET.returnrowid %}%26returnrowid={{request.GET.returnrowid}}{%endif%}">Share with facebook</a></span>
+                        <span class="btn btn-default"><a href="https://twitter.com/home?status=http://pexportal.com/share?selectedid={{request.GET.selectedid}}%26cabin={{request.GET.cabin}}%26passenger={{request.GET.passenger}}{% if request.GET.returnrowid %}%26returnrowid={{request.GET.returnrowid}}{%endif%}">Share with twitter </a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
