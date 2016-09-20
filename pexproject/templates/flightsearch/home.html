@@ -1,10 +1,6 @@
 {% extends "flightsearch/base.html" %} {% load customfilter %} {% load staticfiles %} {% load humanize %} {% block content %}
 <!-- BODY SECTION/-->
 {% include "flightsearch/top_searchbar.html" %}
-<script type="text/javascript">
-$('.form-side').remove();
-$('.flight-search-panel').removeClass('xs-collapse');
-</script>
 <div class="col-xs-12 nopadding">
     <!-- /container -->
     <div class="container mvb60px mediaadd" id="add-section"></div>
@@ -80,6 +76,9 @@ $('.flight-search-panel').removeClass('xs-collapse');
 ga('create', 'UA-XXXXX-X', 'auto');
 ga('send', 'pageview');
 
+$('.form-side').remove();
+$('.flight-search-panel').removeClass('xs-collapse');
 </script>
+
 <script src="{% static 'flightsearch/js/flight_search.js' %}"></script>
 {% endblock %}
