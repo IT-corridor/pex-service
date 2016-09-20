@@ -200,6 +200,10 @@ def blog(request, title=None):
     return  render_to_response('flightsearch/Blog.html',{"blog":bloglist,"top_banner":top_banner}, context_instance=RequestContext(request))
 
 
+def index(request):
+    return render(request, 'flightsearch/home.html')    
+
+
 def signup(request):
     context = {}
     if 'username' not in request.session:
