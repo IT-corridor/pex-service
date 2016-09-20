@@ -140,7 +140,8 @@ def destination_tiles(request):
         searches.append(_search)
         if len(searches) == 8:
             break
-
+            
+    print searches, '@@@@@@@'
     return render(request, 'flightsearch/destination_tiles.html', { 'searchObj': searches })
 
 
@@ -1955,6 +1956,15 @@ def _search_hotel(place, checkin, checkout, filters):
                 _hotel['search'] = db_hotel[0].search
                 if not str(search.id) in _hotel['search'].split(','):
                     _hotel['search'] = _hotel['search']+'%d,'%search.id
+
+                _hotel['name'] = db_hotel[0].name
+                if not _hotel['img']:
+                    _hotel['img'] = db_hotel[0].img
+                if not _hotel['lat']:
+                    _hotel['lat'] = db_hotel[0].lat
+                if not _hotel['lon']:
+                    _hotel['lon'] = db_hotel[0].lon
+
                 db_hotel.update(**_hotel)
             else:
                 Hotel.objects.create(search=',%d,'%search.id, **_hotel)
