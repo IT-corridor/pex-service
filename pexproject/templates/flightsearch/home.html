@@ -1,11 +1,15 @@
-{% extends "flightsearch/base.html" %} {% load customfilter %} {% load staticfiles %} {% load humanize %} {% block content %}
-<!-- BODY SECTION/-->
-{% include "flightsearch/top_searchbar.html" %}
-<div class="col-xs-12 nopadding">
-    <!-- /container -->
-    <div class="container mvb60px mediaadd" id="add-section"></div>
-</div>
+{% extends "flightsearch/base.html" %} 
+{% load customfilter %} 
+{% load staticfiles %} 
+{% load humanize %} 
+{% block content %}
 
+{% include "flightsearch/top_searchbar.html" %}
+<div class="main-holder container-fluid">
+    <div class="col-xs-12 nopadding">
+        <div class="container mvb60px mediaadd" id="add-section"></div>
+    </div>
+</div>
 <div class="main-holder container-fluid" style="background-color: #39A8E0">
     <div class="col-md-12">
         <div class="col-md-2 col-sm-4 col-xs-6" style="height: 60px;">
