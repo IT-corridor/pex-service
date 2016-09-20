@@ -43,6 +43,9 @@
         
         <script src="{% static 'flightsearch/js/jquery-2.1.4.min.js' %}"></script>
         <script src="{% static 'flightsearch/js/vendor/bootstrap.min.js' %}"></script>
+        <script src="{% static 'flightsearch/js/jquery.autocomplete.js' %}"></script>
+        <script src="{% static 'flightsearch/js/jquery-ui.min.js' %}"></script>
+        
     </head>
 
     <body itemscope itemtype="http://schema.org/WebPage">        
@@ -299,8 +302,6 @@
     var csrf = "{{csrf_token}}";
 </script>
 
-<script src="{% static 'flightsearch/js/jquery.autocomplete.js' %}"></script>
-<script src="{% static 'flightsearch/js/jquery-ui.min.js' %}"></script>
 <script src="{% static 'flightsearch/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js' %}"></script>
 <script src="{% static 'flightsearch/admin/js/jquery.validate.min.js' %}"></script>
 <script src="{% static 'flightsearch/js/base.js' %}"></script>
