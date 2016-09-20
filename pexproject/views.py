@@ -622,6 +622,7 @@ def contactUs(request):
     return render_to_response('flightsearch/contact_us.html',{'contact_msg':contact_msg}, context_instance=RequestContext(request))  
         
 
+@csrf_exempt
 def search(request):
     _ret = check_limit(request, 'flight')
     if _ret: # not success
