@@ -325,7 +325,7 @@ function redirecttosearchpage(searchid, returnkey, searchtype) {
     }
     if (searchid != '') {
         $('#searchid').val(searchid);
-        var location = "getsearchresult?keyid=" + encodeURI(searchid) + "&cabin=" + encodeURI(cabintypeval) + "&passenger=" + encodeURI($('#passenger').val()) + multicity;
+        var location = "/getsearchresult?keyid=" + encodeURI(searchid) + "&cabin=" + encodeURI(cabintypeval) + "&passenger=" + encodeURI($('#passenger').val()) + multicity;
         if (returnkey != '') {
             location = location + "&returnkey=" + encodeURI(returnkey);
         }
