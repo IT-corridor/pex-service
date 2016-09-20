@@ -40,7 +40,7 @@
                                     {% for point in pointlist%}
                                     <div class="cutom-ui-mil">
                                         <dt class="dl-horizontal" style="text-transform: uppercase;">
-                                            {% if point.3 == 'virgin'%} {{point.3}} Atlantic Airline: {%else%} {{point.3}} Airline: {%endif%}
+                                            {% if point.3  ==  'virgin'%} {{point.3}} Atlantic Airline: {%else%} {{point.3}} Airline: {%endif%}
                                         </dt>
                                         <dd class="text-right">
                                             {{point.2}} MILES
@@ -68,7 +68,7 @@
                                     <input type="hidden" name="progress_value" id="progress_hidden_val" value="">
                                     <input type="hidden" name="passenger" id="traveller" value="">
                                     <input type="hidden" name="cabin" {% if cabin %} value="{{cabin}}" {% else %}value="{{request.GET.cabin}}" {% endif%}>
-                                    <input type="hidden" name="action" {% if 'action' in request.GET and request.GET.action=='depart' %}value="{{request.GET.action}}" {% else%} value="{{action}}" {%endif%}>
+                                    <input type="hidden" name="action" {% if 'action' in request.GET and request.GET.action  ==  'depart' %}value="{{request.GET.action}}" {% else%} value="{{action}}" {%endif%}>
                                     <input type="hidden" name="tax" id="fltrtax" {% if request.GET.tax %} value="{{request.GET.tax}}" {%else%} value="{{tax}}" {% endif%}>
                                     <input type="hidden" name="price" id="fltrprice" {% if request.GET.price %} value="{{request.GET.price}}" {%else%} value="{{minprice}}" {% endif%}>
                                     <input type="hidden" name="searchkeyval" value="{{ searchrow.searchid }}" id="searchkey" /> {% if returndata %}
@@ -122,17 +122,17 @@
                                         </div>
                                         <div class="checkbox">
                                             <label>
-                                                <input type='checkbox' class="chk-stoppage" name="stoppage" value="NONSTOP" {% for row in filterkey.stoppage %} {% if row=='NONSTOP' %} checked="checked" {% endif %}{%endfor %}>
+                                                <input type='checkbox' class="chk-stoppage" name="stoppage" value="NONSTOP" {% for row in filterkey.stoppage %} {% if row == 'NONSTOP' %} checked="checked" {% endif %}{%endfor %}>
                                                 <span></span> NONSTOP </label>
                                         </div>
                                         <div class="checkbox">
                                             <label>
-                                                <input type='checkbox' class="chk-stoppage" name="stoppage" value="1 STOP" {% for row in filterkey.stoppage %} {% if row=='1 STOP' %} checked="checked" {% endif %}{%endfor %}>
+                                                <input type='checkbox' class="chk-stoppage" name="stoppage" value="1 STOP" {% for row in filterkey.stoppage %} {% if row == '1 STOP' %} checked="checked" {% endif %}{%endfor %}>
                                                 <span></span> 1 STOP </label>
                                         </div>
                                         <div class="checkbox">
                                             <label>
-                                                <input type='checkbox' class="chk-stoppage" name="stoppage" value="2 STOPS" {% for row in filterkey.stoppage %} {% if row=='2 STOPS' %} checked="checked" {% endif %}{%endfor %}>
+                                                <input type='checkbox' class="chk-stoppage" name="stoppage" value="2 STOPS" {% for row in filterkey.stoppage %} {% if row == '2 STOPS' %} checked="checked" {% endif %}{%endfor %}>
                                                 <span></span> 2+ STOPS </label>
                                         </div>
                                     </div>
@@ -149,57 +149,57 @@
                                         </div>
                                         <div class="checkbox">
                                             <label>
-                                                <input type='checkbox' class="chk-airlines" name="airlines" value="delta" {% for row in filterkey.datasource %} {% if row=='delta' %} checked="checked" {% endif %}{%endfor %}>
+                                                <input type='checkbox' class="chk-airlines" name="airlines" value="delta" {% for row in filterkey.datasource %} {% if row == 'delta' %} checked="checked" {% endif %}{%endfor %}>
                                                 <span></span> DELTA AIRLINES </label>
                                         </div>
                                         <div class="checkbox">
                                             <label>
-                                                <input type='checkbox' class="chk-airlines" name="airlines" value="jetblue" {% for row in filterkey.datasource %} {% if row=='jetblue' %} checked="checked" {% endif %}{%endfor %}>
+                                                <input type='checkbox' class="chk-airlines" name="airlines" value="jetblue" {% for row in filterkey.datasource %} {% if row == 'jetblue' %} checked="checked" {% endif %}{%endfor %}>
                                                 <span></span> JETBLUE AIRLINES </label>
                                         </div>
                                         <div class="checkbox">
                                             <label>
-                                                <input type='checkbox' class="chk-airlines" name="airlines" value="united" {% for row in filterkey.datasource %} {% if row=='united' %} checked="checked" {% endif %}{%endfor %}>
+                                                <input type='checkbox' class="chk-airlines" name="airlines" value="united" {% for row in filterkey.datasource %} {% if row == 'united' %} checked="checked" {% endif %}{%endfor %}>
                                                 <span></span> UNITED AIRLINES </label>
                                         </div>
                                         <div class="checkbox">
                                             <label>
-                                                <input type='checkbox' class="chk-airlines" name="airlines" value="s7" {% for row in filterkey.datasource %} {% if row=='s7' %} checked="checked" {% endif %}{%endfor %}>
+                                                <input type='checkbox' class="chk-airlines" name="airlines" value="s7" {% for row in filterkey.datasource %} {% if row == 's7' %} checked="checked" {% endif %}{%endfor %}>
                                                 <span></span> S7 AIRLINES </label>
                                         </div>
                                         <div class="checkbox">
                                             <label>
-                                                <input type='checkbox' class="chk-airlines" name="airlines" value="airchina" {% for row in filterkey.datasource %} {% if row=='airchina' %} checked="checked" {% endif %}{%endfor %}>
+                                                <input type='checkbox' class="chk-airlines" name="airlines" value="airchina" {% for row in filterkey.datasource %} {% if row == 'airchina' %} checked="checked" {% endif %}{%endfor %}>
                                                 <span></span> AIRCHINA AIRLINES </label>
                                         </div>
                                         <div class="checkbox">
                                             <label>
-                                                <input type='checkbox' class="chk-airlines" name="airlines" value="etihad" {% for row in filterkey.datasource %} {% if row=='etihad' %} checked="checked" {% endif %}{%endfor %}>
+                                                <input type='checkbox' class="chk-airlines" name="airlines" value="etihad" {% for row in filterkey.datasource %} {% if row == 'etihad' %} checked="checked" {% endif %}{%endfor %}>
                                                 <span></span> ETIHAD AIRLINES </label>
                                         </div>
                                         <div class="checkbox">
                                             <label>
-                                                <input type='checkbox' class="chk-airlines" name="airlines" value="virgin_atlantic" {% for row in filterkey.datasource %} {% if row=='virgin_atlantic' %} checked="checked" {% endif %}{%endfor %}>
+                                                <input type='checkbox' class="chk-airlines" name="airlines" value="virgin_atlantic" {% for row in filterkey.datasource %} {% if row == 'virgin_atlantic' %} checked="checked" {% endif %}{%endfor %}>
                                                 <span></span> VIRGIN ATLANTIC AIRLINES </label>
                                         </div>
                                         <div class="checkbox">
                                             <label>
-                                                <input type='checkbox' class="chk-airlines" name="airlines" value="Virgin America" {% for row in filterkey.datasource %} {% if row=='Virgin America' %} checked="checked" {% endif %}{%endfor %}>
+                                                <input type='checkbox' class="chk-airlines" name="airlines" value="Virgin America" {% for row in filterkey.datasource %} {% if row == 'Virgin America' %} checked="checked" {% endif %}{%endfor %}>
                                                 <span></span> VIRGIN AMERICA AIRLINES </label>
                                         </div>
                                         <div class="checkbox">
                                             <label>
-                                                <input type='checkbox' class="chk-airlines" name="airlines" value="Virgin Australia" {% for row in filterkey.datasource %} {% if row=='Virgin Australia' %} checked="checked" {% endif %}{%endfor %}>
+                                                <input type='checkbox' class="chk-airlines" name="airlines" value="Virgin Australia" {% for row in filterkey.datasource %} {% if row == 'Virgin Australia' %} checked="checked" {% endif %}{%endfor %}>
                                                 <span></span> VIRGIN AUSTRALIA AIRLINES </label>
                                         </div>
                                         <div class="checkbox">
                                             <label>
-                                                <input type='checkbox' class="chk-airlines" name="airlines" value="american airlines" {% for row in filterkey.datasource %} {% if row=='american airlines' %} checked="checked" {% endif %}{%endfor %}>
+                                                <input type='checkbox' class="chk-airlines" name="airlines" value="american airlines" {% for row in filterkey.datasource %} {% if row == 'american airlines' %} checked="checked" {% endif %}{%endfor %}>
                                                 <span></span> AMERICAN AIRLINES </label>
                                         </div>
                                         <div class="checkbox">
                                             <label>
-                                                <input type='checkbox' class="chk-airlines" name="airlines" value="aeroflot" {% for row in filterkey.datasource %} {% if row=='aeroflot' %} checked="checked" {% endif %}{%endfor %}>
+                                                <input type='checkbox' class="chk-airlines" name="airlines" value="aeroflot" {% for row in filterkey.datasource %} {% if row == 'aeroflot' %} checked="checked" {% endif %}{%endfor %}>
                                                 <span></span> AEROFLOT AIRLINES </label>
                                         </div>
                                     </div>
@@ -235,7 +235,7 @@
                                 {% endfor %}
                                 <div class="main-plc-name">
                                     <div class="name-area">
-                                        {% if request.GET.cabin == "maincabin"%}
+                                        {% if request.GET.cabin  ==  "maincabin"%}
                                         <p>
                                             Economy
                                         </p>
@@ -318,9 +318,9 @@
                                                         <span class="col-xs-4 nopadding">Class</span>
                                                         <span class="col-xs-8 text-right nopr">
                                                             <select class="custom-field-control notclose curson" id="cabintype" name="cabintype" tabindex="6">
-                                                                <option class="cabin" value="maincabin" {% if request.GET.cabin == "maincabin" or cabin == "maincabin" %} selected="selected" {% endif %}>Economy</option>
-                                                                <option class="cabin" value="firstclass" {% if request.GET.cabin == "firstclass" or cabin == "firstclass" %} selected="selected" {% endif %}>Business</option>
-                                                                <option  class="cabin" value="business" {% if request.GET.cabin == "business" or cabin == "business" %} selected="selected" {% endif %}>First</option>
+                                                                <option class="cabin" value="maincabin" {% if request.GET.cabin  ==  "maincabin" or cabin  ==  "maincabin" %} selected="selected" {% endif %}>Economy</option>
+                                                                <option class="cabin" value="firstclass" {% if request.GET.cabin  ==  "firstclass" or cabin  ==  "firstclass" %} selected="selected" {% endif %}>Business</option>
+                                                                <option  class="cabin" value="business" {% if request.GET.cabin  ==  "business" or cabin  ==  "business" %} selected="selected" {% endif %}>First</option>
                                                             </select></span>
                                                     </div>
                                                     <div class="col-xs-12 alert alert-warning"></div>
@@ -399,7 +399,7 @@
                                     </div>
                                 </form>
                                 <!--
-                                <h4>{% if action == 'return' %}Return : {% endif %}{{searchrow.source}} &#10230; {{searchrow.destination}} </h4>
+                                <h4>{% if action  ==  'return' %}Return : {% endif %}{{searchrow.source}} &#10230; {{searchrow.destination}} </h4>
                                 <h4> {{searchrow.traveldate}}<!--<input type="text" id="datepicker" name="date" value="{{searchdate}}"></h4>-->
                             </div>
                         </div>
@@ -420,7 +420,7 @@
                                 </div>
                             </div>
                             <!--  price matrix -->
-                            {% if 'searchtype' in request.GET and request.GET.searchtype == 'flexibledate'%}
+                            {% if 'searchtype' in request.GET and request.GET.searchtype  ==  'flexibledate'%}
                             <div class="col-sm-6 col-xs-12 nopadding">
                                 <a class="price-calendar pull-right" role="button" data-toggle="collapse" href="#flexcalendar" aria-expanded="false" aria-controls="flexcalendar"> Award Availabilty Calendar</a>
                                 <div class="col-xs-12 nopadding collapse" id="flexcalendar">
@@ -451,15 +451,15 @@
                         <div class="col-xs-12 selected-flights bgclr">
                             <div class="col-xs-12 nopadding visible-xs visible-sm">
                                 <div class="col-sm-3 col-xs-5 text-left nopl ">
-                                    {% if selectedrow.datasource == "united" %}
-                                    <img src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if selectedrow.datasource == "s7" %}
-                                    <img src="{% static 'flightsearch/img/s7Logo.svg' %}" class="img-responsive" alt="Responsive image" style="background-color: white !important;">{% endif %} {% if selectedrow.datasource == "airchina" %}
-                                    <img src="{% static 'flightsearch/img/airchinaLogo.gif' %}" class="img-responsive" alt="Responsive image" style="background-color: white !important;">{% endif %} {% if selectedrow.datasource == "virgin_atlantic" %}
-                                    <img src="{% static 'flightsearch/img/virgin.png' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if selectedrow.datasource == "delta" %}
-                                    <img src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if selectedrow.datasource == "jetblue" %}
-                                    <img src="{% static 'flightsearch/img/jetblue.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if selectedrow.datasource == "etihad" %}
-                                    <img src="{% static 'flightsearch/img/etihad.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if selectedrow.datasource == "Virgin America" %}
-                                    <img src="{% static 'flightsearch/img/va.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if selectedrow.datasource == "Virgin Australia" %}
+                                    {% if selectedrow.datasource  ==  "united" %}
+                                    <img src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if selectedrow.datasource  ==  "s7" %}
+                                    <img src="{% static 'flightsearch/img/s7Logo.svg' %}" class="img-responsive" alt="Responsive image" style="background-color: white !important;">{% endif %} {% if selectedrow.datasource  ==  "airchina" %}
+                                    <img src="{% static 'flightsearch/img/airchinaLogo.gif' %}" class="img-responsive" alt="Responsive image" style="background-color: white !important;">{% endif %} {% if selectedrow.datasource  ==  "virgin_atlantic" %}
+                                    <img src="{% static 'flightsearch/img/virgin.png' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if selectedrow.datasource  ==  "delta" %}
+                                    <img src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if selectedrow.datasource  ==  "jetblue" %}
+                                    <img src="{% static 'flightsearch/img/jetblue.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if selectedrow.datasource  ==  "etihad" %}
+                                    <img src="{% static 'flightsearch/img/etihad.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if selectedrow.datasource  ==  "Virgin America" %}
+                                    <img src="{% static 'flightsearch/img/va.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if selectedrow.datasource  ==  "Virgin Australia" %}
                                     <img src="{% static 'flightsearch/img/VAUS.png' %}" class="img-responsive" alt="Responsive image">{% endif %}
                                 </div>
                                 <div class="col-sm-9 col-xs-7 nopr">
@@ -503,17 +503,17 @@
                                 </div>
                             </div>
                             <div class="col-md-2 col-xs-6 text-left xs-nopadding hidden-xs hidden-sm xs-margin-20">
-                                {% if selectedrow.datasource == "united" %}
-                                <img src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if selectedrow.datasource == "s7" %}
-                                <img src="{% static 'flightsearch/img/s7Logo.svg' %}" class="img-responsive" style="background-color: white !important;" alt="Responsive image">{% endif %} {% if selectedrow.datasource == "airchina" %}
-                                <img src="{% static 'flightsearch/img/airchinaLogo.gif' %}" class="img-responsive" style="background-color: white !important;" alt="Responsive image">{% endif %} {% if selectedrow.datasource == "delta" %}
-                                <img src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if selectedrow.datasource == "etihad" %}
-                                <img src="{% static 'flightsearch/img/etihad.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if selectedrow.datasource == "jetblue" %}
-                                <img src="{% static 'flightsearch/img/jetblue.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if selectedrow.datasource == "virgin_atlantic" %}
-                                <img src="{% static 'flightsearch/img/virgin.png' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if selectedrow.datasource == "Virgin America" %}
-                                <img src="{% static 'flightsearch/img/va.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if selectedrow.datasource == "american airlines" %}
-                                <img src="{% static 'flightsearch/img/aa.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if selectedrow.datasource == "Virgin Australia" %}
-                                <img itemprop="logo" src="{% static 'flightsearch/img/VAUS.png' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if selectedrow.datasource == "aeroflot" %}
+                                {% if selectedrow.datasource  ==  "united" %}
+                                <img src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if selectedrow.datasource  ==  "s7" %}
+                                <img src="{% static 'flightsearch/img/s7Logo.svg' %}" class="img-responsive" style="background-color: white !important;" alt="Responsive image">{% endif %} {% if selectedrow.datasource  ==  "airchina" %}
+                                <img src="{% static 'flightsearch/img/airchinaLogo.gif' %}" class="img-responsive" style="background-color: white !important;" alt="Responsive image">{% endif %} {% if selectedrow.datasource  ==  "delta" %}
+                                <img src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if selectedrow.datasource  ==  "etihad" %}
+                                <img src="{% static 'flightsearch/img/etihad.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if selectedrow.datasource  ==  "jetblue" %}
+                                <img src="{% static 'flightsearch/img/jetblue.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if selectedrow.datasource  ==  "virgin_atlantic" %}
+                                <img src="{% static 'flightsearch/img/virgin.png' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if selectedrow.datasource  ==  "Virgin America" %}
+                                <img src="{% static 'flightsearch/img/va.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if selectedrow.datasource  ==  "american airlines" %}
+                                <img src="{% static 'flightsearch/img/aa.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if selectedrow.datasource  ==  "Virgin Australia" %}
+                                <img itemprop="logo" src="{% static 'flightsearch/img/VAUS.png' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if selectedrow.datasource  ==  "aeroflot" %}
                                 <img itemprop="logo" src="{% static 'flightsearch/img/aeroflot.png' %}" class="img-responsive" alt="Responsive image"> {% endif %}
                                 <h5>OUTBOUND</h5>
                             </div>
@@ -537,19 +537,19 @@
                                     </div>
                                     <div class="col-md-7 col-sm-12 col-xs-12 nopadding hidden-xs hidden-sm">
                                         <div class="col-xs-12 nopadding text-center">
-                                            {% if request.GET.cabin == 'maincabin' %}
+                                            {% if request.GET.cabin  ==  'maincabin' %}
                                             <div class="col-xs-12 nopadding na-ra">
                                                 <p class="flight-rate">
                                                     {{selectedrow.maincabin|intcomma}} Miles + <span>${{selectedrow.maintax|floatformat:2}}</span>
                                                 </p>
                                             </div>
-                                            <h5 class="econom">{{selectedrow.cabintype1}}</h5> {% endif %} {% if request.GET.cabin == 'firstclass' %}
+                                            <h5 class="econom">{{selectedrow.cabintype1}}</h5> {% endif %} {% if request.GET.cabin  ==  'firstclass' %}
                                             <div class="col-xs-12 nopadding na-ra">
                                                 <p class="flight-rate">
                                                     {{selectedrow.firstclass|intcomma}} Miles + <span>${{selectedrow.firsttax|floatformat:2}}</span>
                                                 </p>
                                             </div>
-                                            <h5 class="econom"> {{selectedrow.cabintype2}} </h5> {% endif %} {% if request.GET.cabin == 'business' %}
+                                            <h5 class="econom"> {{selectedrow.cabintype2}} </h5> {% endif %} {% if request.GET.cabin  ==  'business' %}
                                             <div class="col-xs-12 nopadding na-ra">
                                                 <p class="flight-rate">
                                                     {{selectedrow.business|intcomma}} Miles + <span>${{selectedrow.businesstax|floatformat:2}}</span>
@@ -560,21 +560,21 @@
                                     </div>
                                     <div class="col-sm-12 col-xs-12 nopadding mvt10px visible-sm visible-xs">
                                         <div class="col-xs-12 nopadding text-center">
-                                            {% if request.GET.cabin == 'maincabin' %}
+                                            {% if request.GET.cabin  ==  'maincabin' %}
                                             <div class="col-xs-12 nopadding na-ra text-right">
                                                 <h5 class="econo pull-left nopl nomt"> {{selectedrow.cabintype1}} </h5>
                                                 <p class="flight-rate pull-right">
                                                     {{selectedrow.maincabin|intcomma}} Miles + <span>${{selectedrow.maintax|floatformat:2}}</span>
                                                 </p>
                                             </div>
-                                            {% endif %} {% if request.GET.cabin == 'firstclass' %}
+                                            {% endif %} {% if request.GET.cabin  ==  'firstclass' %}
                                             <div class="col-xs-6 nopadding na-ra text-right">
                                                 <h5 class="econo pull-left nopl nomt"> {{selectedrow.cabintype2}} </h5>
                                                 <p class="flight-rate pull-right">
                                                     {{selectedrow.firstclass|intcomma}} Miles + <span>${{selectedrow.firsttax|floatformat:2}}</span>
                                                 </p>
                                             </div>
-                                            {% endif %} {% if request.GET.cabin == 'business' %}
+                                            {% endif %} {% if request.GET.cabin  ==  'business' %}
                                             <div class="col-xs-6 nopadding na-ra text-right">
                                                 <h5 class="econo pull-left nopl nomt"> {{selectedrow.cabintype3}} </h5>
                                                 <p class="flight-rate pull-right">
@@ -592,7 +592,7 @@
                                     <div class="well">
                                         <h2>DEPART</h2>
                                         <p>
-                                            {{selectedrow.datasource|title}} | {{selectedrow.flighno}} ( {% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%} {{selectedrow.cabintype1}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{selectedrow.cabintype2}} {% else%}{{selectedrow.cabintype3}} {% endif %})
+                                            {{selectedrow.datasource|title}} | {{selectedrow.flighno}} ( {% if request.GET.cabin  ==  'maincabin' or cabin  ==  'maincabin'%} {{selectedrow.cabintype1}} {% elif request.GET.cabin  ==  'firstclass' or cabin  ==  'firstclass' %} {{selectedrow.cabintype2}} {% else%}{{selectedrow.cabintype3}} {% endif %})
                                         </p>
                                         <div class="table-responsive table-date-search">
                                             <table class="table">
@@ -622,7 +622,7 @@
                                                     <td><b>Operated By:</b></td>
                                                     <td>{{mylist3.0}}</td>
                                                 </tr>
-                                                {% endif %} {% if selectedrow.stoppage == '1 STOP' or selectedrow.stoppage == '2 STOPS' or selectedrow.stoppage == '3 STOPS' or selectedrow.stoppage == '4 STOPS'%}
+                                                {% endif %} {% if selectedrow.stoppage  ==  '1 STOP' or selectedrow.stoppage  ==  '2 STOPS' or selectedrow.stoppage  ==  '3 STOPS' or selectedrow.stoppage  ==  '4 STOPS'%}
                                                 <tr>
                                                     <td></td>
                                                     <td>
@@ -653,7 +653,7 @@
                                                     <td><b>Operated By:</b></td>
                                                     <td>{{mylist3.1}}</td>
                                                 </tr>
-                                                {% endif %} {% endif %} {% if selectedrow.stoppage == '2 STOPS' or selectedrow.stoppage == '3 STOPS' or selectedrow.stoppage == '4 STOPS'%}
+                                                {% endif %} {% endif %} {% if selectedrow.stoppage  ==  '2 STOPS' or selectedrow.stoppage  ==  '3 STOPS' or selectedrow.stoppage  ==  '4 STOPS'%}
                                                 <tr>
                                                     <td></td>
                                                     <td>
@@ -684,7 +684,7 @@
                                                     <td><b>Operated By:</b></td>
                                                     <td>{{mylist3.2}}</td>
                                                 </tr>
-                                                {% endif %} {% endif %} {% if selectedrow.stoppage == '3 STOPS' or selectedrow.stoppage == '4 STOPS' %}
+                                                {% endif %} {% endif %} {% if selectedrow.stoppage  ==  '3 STOPS' or selectedrow.stoppage  ==  '4 STOPS' %}
                                                 <tr>
                                                     <td></td>
                                                     <td>
@@ -715,7 +715,7 @@
                                                     <td><b>Operated By:</b></td>
                                                     <td>{{mylist3.3}}</td>
                                                 </tr>
-                                                {% endif %} {% endif %} {% if selectedrow.stoppage == '4 STOPS' %}
+                                                {% endif %} {% endif %} {% if selectedrow.stoppage  ==  '4 STOPS' %}
                                                 <tr>
                                                     <td></td>
                                                     <td>
@@ -759,17 +759,17 @@
                         <div class="col-md-12 col-xs-12 centr-info responsive-color-img contentdiv">
                             <div class="col-sm-3 col-xs-5 visible-xs visible-sm nopl">
                                 <div class="col-xs-12 nopadding text-center" itemscope itemtype="http://schema.org/Airline">
-                                    {% if row.datasource == "united" %}
-                                    <img itemprop="logo" src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if row.datasource == "s7" %}
-                                    <img src="{% static 'flightsearch/img/s7Logo.svg' %}" class="img-responsive" alt="Responsive image" style="background-color: white !important;">{% endif %} {% if row.datasource == "airchina" %}
-                                    <img src="{% static 'flightsearch/img/airchinaLogo.gif' %}" class="img-responsive" style="background-color: white !important;" alt="Responsive image">{% endif %} {% if row.datasource == "virgin_atlantic" %}
-                                    <img itemprop="logo" src="{% static 'flightsearch/img/virgin.png' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if row.datasource == "american airlines" %}
-                                    <img itemprop="logo" src="{% static 'flightsearch/img/aa.jpg' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if row.datasource == "Virgin America" %}
-                                    <img itemprop="logo" src="{% static 'flightsearch/img/va.jpg' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if row.datasource == "delta" %}
-                                    <img itemprop="logo" src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if row.datasource == "etihad" %}
-                                    <img itemprop="logo" src="{% static 'flightsearch/img/etihad.jpg' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if row.datasource == "jetblue" %}
-                                    <img itemprop="logo" src="{% static 'flightsearch/img/jetblue.jpg' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if row.datasource == "Virgin Australia" %}
-                                    <img itemprop="logo" src="{% static 'flightsearch/img/VAUS.png' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if row.datasource == "aeroflot" %}
+                                    {% if row.datasource  ==  "united" %}
+                                    <img itemprop="logo" src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if row.datasource  ==  "s7" %}
+                                    <img src="{% static 'flightsearch/img/s7Logo.svg' %}" class="img-responsive" alt="Responsive image" style="background-color: white !important;">{% endif %} {% if row.datasource  ==  "airchina" %}
+                                    <img src="{% static 'flightsearch/img/airchinaLogo.gif' %}" class="img-responsive" style="background-color: white !important;" alt="Responsive image">{% endif %} {% if row.datasource  ==  "virgin_atlantic" %}
+                                    <img itemprop="logo" src="{% static 'flightsearch/img/virgin.png' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if row.datasource  ==  "american airlines" %}
+                                    <img itemprop="logo" src="{% static 'flightsearch/img/aa.jpg' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if row.datasource  ==  "Virgin America" %}
+                                    <img itemprop="logo" src="{% static 'flightsearch/img/va.jpg' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if row.datasource  ==  "delta" %}
+                                    <img itemprop="logo" src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if row.datasource  ==  "etihad" %}
+                                    <img itemprop="logo" src="{% static 'flightsearch/img/etihad.jpg' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if row.datasource  ==  "jetblue" %}
+                                    <img itemprop="logo" src="{% static 'flightsearch/img/jetblue.jpg' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if row.datasource  ==  "Virgin Australia" %}
+                                    <img itemprop="logo" src="{% static 'flightsearch/img/VAUS.png' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if row.datasource  ==  "aeroflot" %}
                                     <img itemprop="logo" src="{% static 'flightsearch/img/aeroflot.png' %}" class="img-responsive" alt="Responsive image"> {% endif %}
                                 </div>
                             </div>
@@ -794,17 +794,17 @@
                                 </div>
                                 <div class="col-md-4 col-sm-4 col-xs-12 nopl">
                                     <div class="col-xs-12 nopadding text-center mvb10px" itemscope itemtype="http://schema.org/Airline">
-                                        {% if row.datasource == "united" %}
-                                        <img itemprop="logo" src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if row.datasource == "s7" %}
-                                        <img src="{% static 'flightsearch/img/s7Logo.svg' %}" class="img-responsive" alt="Responsive image" style="background-color: white !important;">{% endif %} {% if row.datasource == "airchina" %}
-                                        <img src="{% static 'flightsearch/img/airchinaLogo.gif' %}" class="img-responsive" alt="Responsive image" style="background-color: white !important;">{% endif %} {% if row.datasource == "delta" %}
-                                        <img itemprop="logo" src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if row.datasource == "etihad" %}
-                                        <img itemprop="logo" src="{% static 'flightsearch/img/etihad.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if row.datasource == "Virgin America" %}
-                                        <img itemprop="logo" src="{% static 'flightsearch/img/va.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if row.datasource == "american airlines" %}
-                                        <img itemprop="logo" src="{% static 'flightsearch/img/aa.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if row.datasource == "virgin_atlantic" %}
-                                        <img itemprop="logo" src="{% static 'flightsearch/img/virgin.png' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if row.datasource == "jetblue" %}
-                                        <img itemprop="logo" src="{% static 'flightsearch/img/jetblue.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if row.datasource == "Virgin Australia" %}
-                                        <img itemprop="logo" src="{% static 'flightsearch/img/VAUS.png' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if row.datasource == "aeroflot" %}
+                                        {% if row.datasource  ==  "united" %}
+                                        <img itemprop="logo" src="{% static 'flightsearch/img/unitedLogo.png' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if row.datasource  ==  "s7" %}
+                                        <img src="{% static 'flightsearch/img/s7Logo.svg' %}" class="img-responsive" alt="Responsive image" style="background-color: white !important;">{% endif %} {% if row.datasource  ==  "airchina" %}
+                                        <img src="{% static 'flightsearch/img/airchinaLogo.gif' %}" class="img-responsive" alt="Responsive image" style="background-color: white !important;">{% endif %} {% if row.datasource  ==  "delta" %}
+                                        <img itemprop="logo" src="{% static 'flightsearch/img/deltaLogo.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if row.datasource  ==  "etihad" %}
+                                        <img itemprop="logo" src="{% static 'flightsearch/img/etihad.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if row.datasource  ==  "Virgin America" %}
+                                        <img itemprop="logo" src="{% static 'flightsearch/img/va.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if row.datasource  ==  "american airlines" %}
+                                        <img itemprop="logo" src="{% static 'flightsearch/img/aa.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if row.datasource  ==  "virgin_atlantic" %}
+                                        <img itemprop="logo" src="{% static 'flightsearch/img/virgin.png' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if row.datasource  ==  "jetblue" %}
+                                        <img itemprop="logo" src="{% static 'flightsearch/img/jetblue.jpg' %}" class="img-responsive" alt="Responsive image">{% endif %} {% if row.datasource  ==  "Virgin Australia" %}
+                                        <img itemprop="logo" src="{% static 'flightsearch/img/VAUS.png' %}" class="img-responsive" alt="Responsive image"> {% endif %} {% if row.datasource  ==  "aeroflot" %}
                                         <img itemprop="logo" src="{% static 'flightsearch/img/aeroflot.png' %}" class="img-responsive" alt="Responsive image"> {% endif %}
                                     </div>
                                 </div>
@@ -850,17 +850,17 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {% if returndate == '' and multicity == '' %}
+                                        {% if returndate  ==  '' and multicity  ==  '' %}
                                         <div class="col-xs-12 nopadding mvt10px for-mobile-view">
                                             <!-- main data only mobile -->
                                             <div class="col-xs-12 nopadding text-center custome-edit-block">
                                                 <div class="col-xs-12 nopadding mvb10px na-ra">
-                                                    <h5 class="econo edit-width-econo"> {% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' %}
+                                                    <h5 class="econo edit-width-econo"> {% if request.GET.cabin  ==  'maincabin' or cabin  ==  'maincabin' %}
                                                     {{row.cabintype1}}
-                                                    {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %}
+                                                    {% elif request.GET.cabin  ==  'firstclass' or cabin  ==  'firstclass' %}
                                                     {{row.cabintype2}}
                                                     {% else %}
-                                                    {% if request.GET.cabin == 'business' or cabin == 'business' %}
+                                                    {% if request.GET.cabin  ==  'business' or cabin  ==  'business' %}
                                                     {{row.cabintype3}}
                                                     {% endif %}
                                                     {% endif %} </h5>
@@ -892,12 +892,12 @@
                                     <!-- main data only mobile -->
                                     <div class="col-xs-12 nopadding text-center custome-edit-block">
                                         <div class="col-xs-12 nopadding mvb10px na-ra">
-                                            <h5 class="econo edit-width-econo"> {% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' %}
+                                            <h5 class="econo edit-width-econo"> {% if request.GET.cabin  ==  'maincabin' or cabin  ==  'maincabin' %}
                                             {{row.cabintype1}}
-                                            {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %}
+                                            {% elif request.GET.cabin  ==  'firstclass' or cabin  ==  'firstclass' %}
                                             {{row.cabintype2}}
                                             {% else %}
-                                            {% if request.GET.cabin == 'business' or cabin == 'business' %}
+                                            {% if request.GET.cabin  ==  'business' or cabin  ==  'business' %}
                                             {{row.cabintype3}}
                                             {% endif %}
                                             {% endif %} </h5>
@@ -949,17 +949,17 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {% if returndate == '' or request.GET.rowid%}
+                                        {% if returndate  ==  '' or request.GET.rowid%}
                                         <div class="col-xs-12 nopadding mvt10px for-mobile-view">
                                             <!-- main data only mobile -->
                                             <div class="col-xs-12 nopadding text-center custome-edit-block">
                                                 <div class="col-xs-12 nopadding mvb10px na-ra">
-                                                    <h5 class="econo edit-width-econo"> {% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' %}
+                                                    <h5 class="econo edit-width-econo"> {% if request.GET.cabin  ==  'maincabin' or cabin  ==  'maincabin' %}
                                                     {{row.cabintype1}}
-                                                    {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %}
+                                                    {% elif request.GET.cabin  ==  'firstclass' or cabin  ==  'firstclass' %}
                                                     {{row.cabintype2}}
                                                     {% else %}
-                                                    {% if request.GET.cabin == 'business' or cabin == 'business' %}
+                                                    {% if request.GET.cabin  ==  'business' or cabin  ==  'business' %}
                                                     {{row.cabintype3}}
                                                     {% endif %}
                                                     {% endif %} </h5>
@@ -1047,12 +1047,12 @@
                                     <!-- main data only mobile  if return in present -->
                                     <div class="col-xs-12 nopadding text-center custome-edit-block">
                                         <div class="col-xs-12 nopadding mvb10px na-ra">
-                                            <h5 class="econo edit-width-econo"> {% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' %}
+                                            <h5 class="econo edit-width-econo"> {% if request.GET.cabin  ==  'maincabin' or cabin  ==  'maincabin' %}
                                             {{row.cabintype1}}
-                                            {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %}
+                                            {% elif request.GET.cabin  ==  'firstclass' or cabin  ==  'firstclass' %}
                                             {{row.cabintype2}}
                                             {% else %}
-                                            {% if request.GET.cabin == 'business' or cabin == 'business' %}
+                                            {% if request.GET.cabin  ==  'business' or cabin  ==  'business' %}
                                             {{row.cabintype3}}
                                             {% endif %}
                                             {% endif %} </h5>
@@ -1066,8 +1066,8 @@
                                 </div>
                                 {% endif%}
                                 <a class="show-details" role="button" data-toggle="collapse" href="#{{row.newid}}" aria-expanded="false" aria-controls="collapseExample">SHOW DETAILS</a>
-                                <h4 class="econo hidden-xs"> {% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
-                                {{row.cabintype1}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{row.cabintype2}} {% else%}{{row.cabintype3}} {% endif %}</h4>
+                                <h4 class="econo hidden-xs"> {% if request.GET.cabin  ==  'maincabin' or cabin  ==  'maincabin'%}
+                                {{row.cabintype1}} {% elif request.GET.cabin  ==  'firstclass' or cabin  ==  'firstclass' %} {{row.cabintype2}} {% else%}{{row.cabintype3}} {% endif %}</h4>
                                 <div class="col-xs-12 pop-hover nopadding">
                                     <div class="collapse" id="{{row.newid}}">
                                         <!-- Lower change -->
@@ -1096,12 +1096,12 @@
                                                     <td itemprop="flightNumber"><b>Flight:</b></td>
                                                     <td>{{mylist2.0}}</td>
                                                 </tr>
-                                                {% if request.GET.cabin == 'maincabin' and mylist4.0 %}
+                                                {% if request.GET.cabin  ==  'maincabin' and mylist4.0 %}
                                                 <tr>
                                                     <td><b>Fare Class:</b></td>
                                                     <td>{{mylist4.0}}</td>
                                                 </tr>
-                                                {% elif request.GET.cabin == 'firstclass' and mylist5.0%}
+                                                {% elif request.GET.cabin  ==  'firstclass' and mylist5.0%}
                                                 <tr>
                                                     <td><b>Fare Class:</b></td>
                                                     <td>{{mylist5.0}}</td>
@@ -1142,12 +1142,12 @@
                                                     <td><b>Flight:</b></td>
                                                     <td>{{mylist2.1}}</td>
                                                 </tr>
-                                                {% if request.GET.cabin == 'maincabin' and mylist4.1 %}
+                                                {% if request.GET.cabin  ==  'maincabin' and mylist4.1 %}
                                                 <tr>
                                                     <td><b>Fare Class:</b></td>
                                                     <td>{{mylist4.1}}</td>
                                                 </tr>
-                                                {% elif request.GET.cabin == 'firstclass' and mylist5.1%}
+                                                {% elif request.GET.cabin  ==  'firstclass' and mylist5.1%}
                                                 <tr>
                                                     <td><b>Fare Class:</b></td>
                                                     <td>{{mylist5.1}}</td>
@@ -1188,12 +1188,12 @@
                                                     <td><b>Flight:</b></td>
                                                     <td>{{mylist2.2}}</td>
                                                 </tr>
-                                                {% if request.GET.cabin == 'maincabin' and mylist4.2 %}
+                                                {% if request.GET.cabin  ==  'maincabin' and mylist4.2 %}
                                                 <tr>
                                                     <td><b>Fare Class:</b></td>
                                                     <td>{{mylist4.2}}</td>
                                                 </tr>
-                                                {% elif request.GET.cabin == 'firstclass' and mylist5.2%}
+                                                {% elif request.GET.cabin  ==  'firstclass' and mylist5.2%}
                                                 <tr>
                                                     <td><b>Fare Class:</b></td>
                                                     <td>{{mylist5.2}}</td>
@@ -1234,12 +1234,12 @@
                                                     <td><b>Flight:</b></td>
                                                     <td>{{mylist2.3}}</td>
                                                 </tr>
-                                                {% if request.GET.cabin == 'maincabin' and mylist4.3 %}
+                                                {% if request.GET.cabin  ==  'maincabin' and mylist4.3 %}
                                                 <tr>
                                                     <td><b>Fare Class:</b></td>
                                                     <td>{{mylist4.3}}</td>
                                                 </tr>
-                                                {% elif request.GET.cabin == 'firstclass' and mylist5.3%}
+                                                {% elif request.GET.cabin  ==  'firstclass' and mylist5.3%}
                                                 <tr>
                                                     <td><b>Fare Class:</b></td>
                                                     <td>{{mylist5.3}}</td>
@@ -1280,12 +1280,12 @@
                                                     <td><b>Flight:</b></td>
                                                     <td>{{mylist2.4}}</td>
                                                 </tr>
-                                                {% if request.GET.cabin == 'maincabin' and mylist4.4 %}
+                                                {% if request.GET.cabin  ==  'maincabin' and mylist4.4 %}
                                                 <tr>
                                                     <td><b>Fare Class:</b></td>
                                                     <td>{{mylist4.4}}</td>
                                                 </tr>
-                                                {% elif request.GET.cabin == 'firstclass' and mylist5.4%}
+                                                {% elif request.GET.cabin  ==  'firstclass' and mylist5.4%}
                                                 <tr>
                                                     <td><b>Fare Class:</b></td>
                                                     <td>{{mylist5.4}}</td>
@@ -1309,7 +1309,7 @@
                                         <div class="well" itemscope itemtype="http://schema.org/Flight">
                                             <h2>DEPART</h2>
                                             <p itemprop="flightNumber">
-                                                {{row.datasource|title}} | {{row.flighno}} ( {% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%} {{row.cabintype1}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{row.cabintype2}} {% else%}{{row.cabintype3}} {% endif %})
+                                                {{row.datasource|title}} | {{row.flighno}} ( {% if request.GET.cabin  ==  'maincabin' or cabin  ==  'maincabin'%} {{row.cabintype1}} {% elif request.GET.cabin  ==  'firstclass' or cabin  ==  'firstclass' %} {{row.cabintype2}} {% else%}{{row.cabintype3}} {% endif %})
                                             </p>
                                             <div class="table-responsive table-date-search">
                                                 <table class="table">
@@ -1334,12 +1334,12 @@
                                                         <td itemprop="flightNumber"><b>Flight:</b></td>
                                                         <td>{{mylist2.0}}</td>
                                                     </tr>
-                                                    {% if request.GET.cabin == 'maincabin' and mylist4.0 %}
+                                                    {% if request.GET.cabin  ==  'maincabin' and mylist4.0 %}
                                                     <tr>
                                                         <td><b>Fare Class:</b></td>
                                                         <td>{{mylist4.0}}</td>
                                                     </tr>
-                                                    {% elif request.GET.cabin == 'firstclass' and mylist5.0%}
+                                                    {% elif request.GET.cabin  ==  'firstclass' and mylist5.0%}
                                                     <tr>
                                                         <td><b>Fare Class:</b></td>
                                                         <td>{{mylist5.0}}</td>
@@ -1354,7 +1354,7 @@
                                                         <td><b>Operated By:</b></td>
                                                         <td>{{mylist3.0}}</td>
                                                     </tr>
-                                                    {% endif %} {% if row.stoppage == '1 STOP' or row.stoppage == '2 STOPS' or row.stoppage == '3 STOPS' or row.stoppage == '4 STOPS'%}
+                                                    {% endif %} {% if row.stoppage  ==  '1 STOP' or row.stoppage  ==  '2 STOPS' or row.stoppage  ==  '3 STOPS' or row.stoppage  ==  '4 STOPS'%}
                                                     <tr>
                                                         <td></td>
                                                         <td>
@@ -1380,12 +1380,12 @@
                                                         <td><b>Flight:</b></td>
                                                         <td>{{mylist2.1}}</td>
                                                     </tr>
-                                                    {% if request.GET.cabin == 'maincabin' and mylist4.1 %}
+                                                    {% if request.GET.cabin  ==  'maincabin' and mylist4.1 %}
                                                     <tr>
                                                         <td><b>Fare Class:</b></td>
                                                         <td>{{mylist4.1}}</td>
                                                     </tr>
-                                                    {% elif request.GET.cabin == 'firstclass' and mylist5.1%}
+                                                    {% elif request.GET.cabin  ==  'firstclass' and mylist5.1%}
                                                     <tr>
                                                         <td><b>Fare Class:</b></td>
                                                         <td>{{mylist5.1}}</td>
@@ -1400,7 +1400,7 @@
                                                         <td><b>Operated By:</b></td>
                                                         <td>{{mylist3.1}}</td>
                                                     </tr>
-                                                    {% endif %} {% endif %} {% if row.stoppage == '2 STOPS' or row.stoppage == '3 STOPS' or row.stoppage == '4 STOPS' %}
+                                                    {% endif %} {% endif %} {% if row.stoppage  ==  '2 STOPS' or row.stoppage  ==  '3 STOPS' or row.stoppage  ==  '4 STOPS' %}
                                                     <tr>
                                                         <td></td>
                                                         <td>
@@ -1426,12 +1426,12 @@
                                                         <td><b>Flight:</b></td>
                                                         <td>{{mylist2.2}}</td>
                                                     </tr>
-                                                    {% if request.GET.cabin == 'maincabin' and mylist4.2 %}
+                                                    {% if request.GET.cabin  ==  'maincabin' and mylist4.2 %}
                                                     <tr>
                                                         <td><b>Fare Class:</b></td>
                                                         <td>{{mylist4.2}}</td>
                                                     </tr>
-                                                    {% elif request.GET.cabin == 'firstclass' and mylist5.2%}
+                                                    {% elif request.GET.cabin  ==  'firstclass' and mylist5.2%}
                                                     <tr>
                                                         <td><b>Fare Class:</b></td>
                                                         <td>{{mylist5.2}}</td>
@@ -1446,7 +1446,7 @@
                                                         <td><b>Operated By:</b></td>
                                                         <td>{{mylist3.2}}</td>
                                                     </tr>
-                                                    {% endif %} {% endif %} {% if row.stoppage == '3 STOPS' or row.stoppage == '4 STOPS' and mylist.3 %}
+                                                    {% endif %} {% endif %} {% if row.stoppage  ==  '3 STOPS' or row.stoppage  ==  '4 STOPS' and mylist.3 %}
                                                     <tr>
                                                         <td></td>
                                                         <td>
@@ -1472,12 +1472,12 @@
                                                         <td><b>Flight:</b></td>
                                                         <td>{{mylist2.3}}</td>
                                                     </tr>
-                                                    {% if request.GET.cabin == 'maincabin' and mylist4.3 %}
+                                                    {% if request.GET.cabin  ==  'maincabin' and mylist4.3 %}
                                                     <tr>
                                                         <td><b>Fare Class:</b></td>
                                                         <td>{{mylist4.3}}</td>
                                                     </tr>
-                                                    {% elif request.GET.cabin == 'firstclass' and mylist5.3%}
+                                                    {% elif request.GET.cabin  ==  'firstclass' and mylist5.3%}
                                                     <tr>
                                                         <td><b>Fare Class:</b></td>
                                                         <td>{{mylist5.3}}</td>
@@ -1492,7 +1492,7 @@
                                                         <td><b>Operated By:</b></td>
                                                         <td>{{mylist3.3}}</td>
                                                     </tr>
-                                                    {% endif %} {% endif %} {% if row.stoppage == '4 STOPS' and mylist.4 %}
+                                                    {% endif %} {% endif %} {% if row.stoppage  ==  '4 STOPS' and mylist.4 %}
                                                     <tr>
                                                         <td></td>
                                                         <td>
@@ -1518,12 +1518,12 @@
                                                         <td><b>Flight:</b></td>
                                                         <td>{{mylist2.4}}</td>
                                                     </tr>
-                                                    {% if request.GET.cabin == 'maincabin' and mylist4.4 %}
+                                                    {% if request.GET.cabin  ==  'maincabin' and mylist4.4 %}
                                                     <tr>
                                                         <td><b>Fare Class:</b></td>
                                                         <td>{{mylist4.4}}</td>
                                                     </tr>
-                                                    {% elif request.GET.cabin == 'firstclass' and mylist5.4%}
+                                                    {% elif request.GET.cabin  ==  'firstclass' and mylist5.4%}
                                                     <tr>
                                                         <td><b>Fare Class:</b></td>
                                                         <td>{{mylist5.4}}</td>
@@ -1546,7 +1546,7 @@
                                             <div class="well" itemscope itemtype="http://schema.org/Flight">
                                                 <h2>RETURN</h2>
                                                 <p itemprop="flightNumber">
-                                                    {{row.datasource|title}} | {{row.flighno1}} ({% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%} {{row.cabintype11}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{row.cabintype21}} {% else%}{{row.cabintype31}} {% endif %})
+                                                    {{row.datasource|title}} | {{row.flighno1}} ({% if request.GET.cabin  ==  'maincabin' or cabin  ==  'maincabin'%} {{row.cabintype11}} {% elif request.GET.cabin  ==  'firstclass' or cabin  ==  'firstclass' %} {{row.cabintype21}} {% else%}{{row.cabintype31}} {% endif %})
                                                 </p>
                                                 <div class="table-responsive table-date-search">
                                                     <table class="table">
@@ -1571,12 +1571,12 @@
                                                             <td itemprop="flightNumber"><b>Flight:</b></td>
                                                             <td>{{mylist2.0}}</td>
                                                         </tr>
-                                                        {% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' and mylist4.0 %}
+                                                        {% if request.GET.cabin  ==  'maincabin' or cabin  ==  'maincabin' and mylist4.0 %}
                                                         <tr>
                                                             <td><b>Fare Class:</b></td>
                                                             <td>{{mylist4.0}}</td>
                                                         </tr>
-                                                        {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' and mylist5.0%}
+                                                        {% elif request.GET.cabin  ==  'firstclass' or cabin  ==  'firstclass' and mylist5.0%}
                                                         <tr>
                                                             <td><b>Fare Class:</b></td>
                                                             <td>{{mylist5.0}}</td>
@@ -1591,7 +1591,7 @@
                                                             <td><b>Operated By:</b></td>
                                                             <td>{{mylist3.0}}</td>
                                                         </tr>
-                                                        {%endif%} {% if row.stoppage1 == '1 STOP' or row.stoppage1 == '2 STOPS' or row.stoppage1 == '3 STOPS' or row.stoppage1 == '4 STOPS'%}
+                                                        {%endif%} {% if row.stoppage1  ==  '1 STOP' or row.stoppage1  ==  '2 STOPS' or row.stoppage1  ==  '3 STOPS' or row.stoppage1  ==  '4 STOPS'%}
                                                         <tr>
                                                             <td></td>
                                                             <td>
@@ -1617,12 +1617,12 @@
                                                             <td><b>Flight:</b></td>
                                                             <td>{{mylist2.1}}</td>
                                                         </tr>
-                                                        {% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' and mylist4.1 %}
+                                                        {% if request.GET.cabin  ==  'maincabin' or cabin  ==  'maincabin' and mylist4.1 %}
                                                         <tr>
                                                             <td><b>Fare Class:</b></td>
                                                             <td>{{mylist4.1}}</td>
                                                         </tr>
-                                                        {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' and mylist5.1%}
+                                                        {% elif request.GET.cabin  ==  'firstclass' or cabin  ==  'firstclass' and mylist5.1%}
                                                         <tr>
                                                             <td><b>Fare Class:</b></td>
                                                             <td>{{mylist5.1}}</td>
@@ -1637,7 +1637,7 @@
                                                             <td><b>Operated By:</b></td>
                                                             <td>{{mylist3.1}}</td>
                                                         </tr>
-                                                        {% endif%} {% endif %} {% if row.stoppage1 == '2 STOPS' or row.stoppage1 == '3 STOPS' or row.stoppage1 == '4 STOPS'%}
+                                                        {% endif%} {% endif %} {% if row.stoppage1  ==  '2 STOPS' or row.stoppage1  ==  '3 STOPS' or row.stoppage1  ==  '4 STOPS'%}
                                                         <tr>
                                                             <td></td>
                                                             <td>
@@ -1663,12 +1663,12 @@
                                                             <td><b>Flight:</b></td>
                                                             <td>{{mylist2.2}}</td>
                                                         </tr>
-                                                        {% if request.GET.cabin == 'maincabin' and mylist4.2 %}
+                                                        {% if request.GET.cabin  ==  'maincabin' and mylist4.2 %}
                                                         <tr>
                                                             <td><b>Fare Class:</b></td>
                                                             <td>{{mylist4.3}}</td>
                                                         </tr>
-                                                        {% elif request.GET.cabin == 'firstclass' and mylist5.2%}
+                                                        {% elif request.GET.cabin  ==  'firstclass' and mylist5.2%}
                                                         <tr>
                                                             <td><b>Fare Class:</b></td>
                                                             <td>{{mylist5.2}}</td>
@@ -1683,7 +1683,7 @@
                                                             <td><b>Operated By:</b></td>
                                                             <td>{{mylist3.2}}</td>
                                                         </tr>
-                                                        {% endif %} {% endif %} {% if row.stoppage1 == '3 STOPS' or row.stoppage1 == '4 STOPS' and mylist.3 %}
+                                                        {% endif %} {% endif %} {% if row.stoppage1  ==  '3 STOPS' or row.stoppage1  ==  '4 STOPS' and mylist.3 %}
                                                         <tr>
                                                             <td></td>
                                                             <td>
@@ -1709,12 +1709,12 @@
                                                             <td><b>Flight:</b></td>
                                                             <td>{{mylist2.3}}</td>
                                                         </tr>
-                                                        {% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' and mylist4.3 %}
+                                                        {% if request.GET.cabin  ==  'maincabin' or cabin  ==  'maincabin' and mylist4.3 %}
                                                         <tr>
                                                             <td><b>Fare Class:</b></td>
                                                             <td>{{mylist4.3}}</td>
                                                         </tr>
-                                                        {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' and mylist5.3%}
+                                                        {% elif request.GET.cabin  ==  'firstclass' or cabin  ==  'firstclass' and mylist5.3%}
                                                         <tr>
                                                             <td><b>Fare Class:</b></td>
                                                             <td>{{mylist5.3}}</td>
@@ -1729,7 +1729,7 @@
                                                             <td><b>Operated By:</b></td>
                                                             <td>{{mylist3.3}}</td>
                                                         </tr>
-                                                        {% endif %} {% endif %} {% if row.stoppage1 == '4 STOPS' and mylist.4 %}
+                                                        {% endif %} {% endif %} {% if row.stoppage1  ==  '4 STOPS' and mylist.4 %}
                                                         <tr>
                                                             <td></td>
                                                             <td>
@@ -1755,12 +1755,12 @@
                                                             <td><b>Flight:</b></td>
                                                             <td>{{mylist2.4}}</td>
                                                         </tr>
-                                                        {% if request.GET.cabin == 'maincabin' and mylist4.4 %}
+                                                        {% if request.GET.cabin  ==  'maincabin' and mylist4.4 %}
                                                         <tr>
                                                             <td><b>Fare Class:</b></td>
                                                             <td>{{mylist4.4}}</td>
                                                         </tr>
-                                                        {% elif request.GET.cabin == 'firstclass' and mylist5.4%}
+                                                        {% elif request.GET.cabin  ==  'firstclass' and mylist5.4%}
                                                         <tr>
                                                             <td><b>Fare Class:</b></td>
                                                             <td>{{mylist5.4}}</td>
@@ -1781,12 +1781,12 @@
                                             </div>
                                             {% endif %}
                                             <!-- RETTUN  BLOCK END  -->
-                                            {% if action == 'depart' %}
+                                            {% if action  ==  'depart' %}
                                             <div>
                                                 <form action="getsearchresult?keyid={{row.searchkeyid}}&cabin={{request.GET.cabin}}&passenger={{request.GET.passenger}}{% if returndata %}&returnkey={{returndata}}{%endif%}" method="post">
                                                     {% csrf_token %}
                                                     <input type="hidden" name="rowid" value="{{row.rowid}}">
-                                                    <input type="hidden" name="price" {% if request.GET.cabin=='maincabin' or cabin=='maincabin' %} value="{{row.maincabin}}" {% elif request.GET.cabin=='firstclass' or cabin=='firstclass' %} value="{{row.firstclass}}" {% else %}{% if request.GET.cabin=='business' or cabin=='business' %} value="{{row.business}}" {%endif%}{% endif %}>
+                                                    <input type="hidden" name="price" {% if request.GET.cabin == 'maincabin' or cabin == 'maincabin' %} value="{{row.maincabin}}" {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} value="{{row.firstclass}}" {% else %}{% if request.GET.cabin == 'business' or cabin == 'business' %} value="{{row.business}}" {%endif%}{% endif %}>
                                                     <input type="hidden" name="tax">
                                                     <input type="hidden" name="action" value="return">
                                                     <input type="hidden" name="datasource" value="{{row.datasource}}">
@@ -2002,7 +2002,7 @@ $('#passenger').change(function() {
 
 $(document).ready(function() {
 
-    if ("{{request.GET.returnkey}}" == '') {
+    if ("{{request.GET.returnkey}}"  ==  '') {
         //$('.travelers-down-menu').addClass('full-width-res');
         $('.travelers-down-menu').css("left", "-=122");
     }
@@ -2088,7 +2088,7 @@ $(document).ready(function() {
     });
 
 });
-// ===================== time slider===================================================
+//  ==  ==  ==  ==  ==  ==  ==  ==  ==  == = time slider ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  == =
 
 var deptmintime;
 var arivemintime;
@@ -2255,13 +2255,13 @@ function getTime(hours, minutes) {
     } else {
         time = "PM";
     }
-    if (hours == 0) {
+    if (hours  ==  0) {
         hours = 12;
     }
     if (hours > 12) {
         hours = hours - 12;
     }
-    if (minutes.length == 1) {
+    if (minutes.length  ==  1) {
         minutes = "0" + minutes;
     }
     return hours + ":" + minutes + " " + time;
@@ -2270,7 +2270,7 @@ function getTime(hours, minutes) {
 slideTime();
 slideTime1();
 
-//======================================== end time slider======================================
+// ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  end time slider ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  == 
 
 $(function() {
 
@@ -2378,7 +2378,7 @@ function travelinfo() {
     total = tatalpassenger();
     $('#passenger').val(total);
     var text;
-    if (total == 1) {
+    if (total  ==  1) {
         text = "traveler";
     } else {
         text = "travelers";
@@ -2386,7 +2386,7 @@ function travelinfo() {
     var selectedcabin = $("#cabintype option:selected").text();
     var html = "<span id='travelar'>" + total + " " + text + ", " + selectedcabin + "</span>";
     $('#travelar').replaceWith(html);
-    if (total == 0) {
+    if (total  ==  0) {
         var msg = '';
         $('#submitid').prop('disabled', true);
         $(".alert-warning").empty();
@@ -2425,7 +2425,7 @@ $(window).scroll(function() {
     var winh = ($(window).height() + 200);
     if ($(window).scrollTop() >= doch - winh) {
         if (is_data > 0) {
-            if (call_sent == "completed") {
+            if (call_sent  ==  "completed") {
                 loadArticle(pagecount);
                 pagecount++;
             }
@@ -2515,7 +2515,7 @@ $(document).ready(function() {
 
 });
 
-// ==========show/hide details=======================================
+//  ==  ==  ==  ==  == show/hide details ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  == =
 $(document.body).on('click', '.show-details', function() {
     //$('.show-details').on('click',function () {
     var collapse_content_selector = $(this).attr('href');
@@ -2633,7 +2633,7 @@ if (!data_status) // there is no data
     //isprocess();
 }
 
-// ===================== price slider ===================================================
+//  ==  ==  ==  ==  ==  ==  ==  ==  ==  == = price slider  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  ==  == =
 function priceMileslider(event, ui) {
     var min_miles = $("#miles_slider").slider("values", 0);
     var max_miles = $("#miles_slider").slider("values", 1);
@@ -2729,7 +2729,7 @@ function create_fare_code_filter(fareCodeList) {
         codeStatus = '';
         if (codelen > 0)
             for (c = 0; c < codelen; c++)
-                if ($.trim(code1[c]) == $.trim(fareCodeList[item]))
+                if ($.trim(code1[c])  ==  $.trim(fareCodeList[item]))
                     codeStatus = "checked='checked'";
         fareCodeDisplay = fareCodeDisplay + "<div class='checkbox'><label><input type='checkbox' class='farecode' name='fareCodes' value='" + fareCodeList[item] + "'" + codeStatus + "><span></span>" + fareCodeList[item] + "</label></div>";
     }
@@ -2765,7 +2765,7 @@ function redirecttosearchpage(scraperStatus) {
             pagecount = 2;
             $('#content').empty();
 
-            if (scraperStatus == 'complete') {
+            if (scraperStatus  ==  'complete') {
                 $('#progressbar').css("width", "100%");
                 $('#progress_hidden_val').val('195');
                 //clearInterval(refreshIntervalId);
@@ -2813,19 +2813,19 @@ function isprocess() {
             if (timecompleted && data[1] != 'completed')
                 isprocess();
 
-            if (data[1] == 'key_expired') {
+            if (data[1]  ==  'key_expired') {
                 clearInterval(refreshIntervalId);
                 $('changebtnid').click();
 
                 setSearchData();
             }
 
-            if (data[1] == 'completed' || dataCheckCount > 60) {
+            if (data[1]  ==  'completed' || dataCheckCount > 60) {
                 clearInterval(refreshIntervalId);
                 redirecttosearchpage('complete');
                 getPriceMatrix();
                 getflexData();
-            } else if (data[0] != 'onprocess' && dataCheckCount % 3 == 0) {
+            } else if (data[0] != 'onprocess' && dataCheckCount % 3  ==  0) {
                 redirecttosearchpage('onprocess');
             }
 
@@ -2915,12 +2915,12 @@ function searchData() {
         },
         error: function(ret) {
             msg = 'You reached the daily flight search limit!';
-            if (ret.responseText == "2") {
+            if (ret.responseText  ==  "2") {
                 msg += '\nPlease sign up and get more access!';
                 var r = confirm(msg);
-                if (r == true)
+                if (r  ==  true)
                     $('#login-modal').modal();
-            } else if (ret.responseText == "1") {
+            } else if (ret.responseText  ==  "1") {
                 alert(msg);
             } else {
                 alert('You reached the flight search limit!\nPlease purchase more!');
