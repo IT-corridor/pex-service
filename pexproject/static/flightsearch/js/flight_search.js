@@ -166,6 +166,9 @@ $('#cabintype').on('change', function() {
 $(document).ready(function() {
     $('#passenger').val('1');
     $(".alert-warning").hide();
+
+    if ($(window).width() > 768)
+        $('#exactDate1').attr("checked", "checked");
 });
 //@@@Cabin select@@@@
 function travelinfo() {

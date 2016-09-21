@@ -228,8 +228,8 @@
                                             <div class="form-group text-center">
                                                 <h5>Or Login with</h5>
 
-                                                <a href="" class="pexdeal"><span class="social-login facebook">Facebook</span></a> 
-                                                <a href="" class="pexdeal"><span class="social-login google">Google+</span></a>
+                                                <a href="{% url 'socialauth_begin' 'facebook' %}" class="pexdeal"><span class="social-login facebook">Facebook</span></a> 
+                                                <a href="{% url 'socialauth_begin' 'google-oauth2' %}?next={{ request.path }}" class="pexdeal"><span class="social-login google">Google+</span></a>
                                             </div>                                  
                                         </form>
                                     </div>
@@ -258,8 +258,8 @@
                                         </form>
                                         <div class="form-group text-center">
                                             <h5>Or Login with</h5>
-                                            <a href="">  <span class="social-login facebook">Facebook</span> </a>
-                                            <a href=""><span class="social-login google">Google+</span></a>
+                                            <a href="{% url 'socialauth_begin' 'facebook' %}"><span class="social-login facebook">Facebook</span> </a>
+                                            <a href="{% url 'socialauth_begin' 'google-oauth2' %}"><span class="social-login google">Google+</span></a>
                                         </div>                                                                          
                                     </div>
                                 </div>
