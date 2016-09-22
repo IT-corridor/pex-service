@@ -412,7 +412,6 @@ $(document).ready(function() {
     if ($(window).width() < 768) {
         $(".filters-holder").addClass('filters-holder-ht');
         $("#id_filter_collapse").click(function() {
-            // console.log('@@@@@@@@@');
             $(this).parent().parent().toggleClass('filters-holder-ht');
         });
 
@@ -420,8 +419,6 @@ $(document).ready(function() {
             $('.hotel-search-panel').toggleClass('in');
         });
     }   
-
-    // $('#map').hide();
 });
 </script>           
 {% endblock %}      

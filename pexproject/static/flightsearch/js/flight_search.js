@@ -211,7 +211,7 @@ $('.dropdown-menu .down-menu-block').click(function(e) {
 });
 
 
-var CSRF_TOKEN = "{{ csrf_token }}";
+var CSRF_TOKEN = csrf_token;
 var triptype = '';
 var destinationid = '';
 var sourceid = '';
