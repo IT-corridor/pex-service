@@ -2389,6 +2389,7 @@ def api_search_flight(request):
                 _item['return_planedetails'] = item.return_planedetails
                 _item['return_operatedby'] = item.return_operatedby
 
+                _item['datasource'] = item.datasource
                 _item['total_miles'] = item.total_miles
                 _item['total_taxes'] = item.total_taxes
 
