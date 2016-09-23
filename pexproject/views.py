@@ -2284,7 +2284,7 @@ def api_search_flight(request):
             'virgin_atlantic': 'virgin.png'        
         }
 
-        delay_threshold = 30
+        delay_threshold = 21
         result = {}
 
         _token = check_validity_token(request.META.get('HTTP_AUTHORIZATION'), 'flight', request)
