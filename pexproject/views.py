@@ -2208,8 +2208,8 @@ def check_validity_flight_params(request):
     # check the body
     params = json.loads(request.body)
 
-    origin = params.get('origin')
-    destination = params.get('destination')
+    origin_ = params.get('origin')
+    destination_ = params.get('destination')
     depart_date = params.get('depart_date')
     return_date = params.get('return_date')
     search_type = params.get('search_type', 'exactdate')
@@ -2228,11 +2228,21 @@ def check_validity_flight_params(request):
     if http_accept != 'application/json' or content_type != 'application/json':
         return ['Content type  is incorrect']
 
-    if not (origin and destination):
+    if not (origin_ and destination_):
         return ['Flight origin and destination should be provided']
 
-    origin = Airports.objects.filter(Q(code__istartswith=origin)|Q(cityName__istartswith=origin)|Q(name__istartswith=origin))
-    destination = Airports.objects.filter(Q(code__istartswith=destination)|Q(cityName__istartswith=destination)|Q(name__istartswith=destination))
+    origin = Airports.objects.filter(code__istartswith=origin_)
+    if not origin:
+        origin = Airports.objects.filter(cityName__istartswith=origin_)
+    if not origin:
+        origin = Airports.objects.filter(name__istartswith=origin_)
+
+    destination = Airports.objects.filter(code__istartswith=destination_)
+    if not destination:
+        destination = Airports.objects.filter(cityName__istartswith=destination_)
+    if not destination:
+        destination = Airports.objects.filter(name__istartswith=destination_)
+
     if not (origin and destination):
         return ['Please check flight origin and destination again. There is no such place']
 
