@@ -2056,8 +2056,16 @@ background: #39A8E0;
 
 
 
+@media (max-width: 992px){
 
 
+
+
+.filters-holder-ht {
+!max-height: 40px;
+!overflow: hidden;
+}
+}
 
 
 
@@ -2876,5 +2884,14 @@ display: table-cell;
 
 
 
+@media (max-width: 992px)
+{
+.filters-holder-ht {
+    max-height: 40px;
+    overflow: hidden;
+}
+
+
+}
 
 /*_-------------------------- tabs --------------*/
