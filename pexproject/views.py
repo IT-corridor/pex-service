@@ -38,7 +38,6 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext, loader
 from social_auth.models import UserSocialAuth
-#from djnago.conf import settings
 from django.shortcuts import get_object_or_404,redirect
 from django.core.mail import send_mail,EmailMultiAlternatives
 from django.template import RequestContext
@@ -70,6 +69,7 @@ from pexproject.templatetags.customfilter import floatadd, assign
 
 logger = logging.getLogger(__name__)
 
+SEARCH_LIMIT_WARNING_THRESHOLD = 0.75
 
 def get_cityname(request):
     if request.is_ajax():
@@ -660,6 +660,10 @@ def check_limit(request, service):
         if user.search_run >= user.search_limit:
             return 3
         user.search_run = user.search_run + 1
+
+        if user.search_run > user.search_limit * SEARCH_LIMIT_WARNING_THRESHOLD:
+            send_limit_warning_email(user, service)
+
         user.save()
     else:
         arl = AccessRateLimit.objects.filter(cookie_id=cookie_id)
@@ -2188,6 +2192,9 @@ def check_validity_token(token, service, request):
 
     request.session['userid'] = token.owner.user_id
 
+    if number_request > limit_request * SEARCH_LIMIT_WARNING_THRESHOLD:
+        send_limit_warning_email(token.owner, service)
+
     if number_request > limit_request:
         return ['Your license is reached to its limit. Please extend it!']
     # check domain
@@ -3190,3 +3197,11 @@ def get_client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
     return ip
+
+
+def send_limit_warning_email(user, service, usage=75):
+    emailbody = 'You are reaching {}% usage of <b>{}</b> search.\n Please contact the administrator and extend it.'.format(usage, service)
+    try:
+        resp = customfunction.sendMail('PEX+', user.email, 'Limit Notification', emailbody,'')
+    except:
+        print "something wrong"
