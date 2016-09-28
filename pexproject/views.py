@@ -3138,7 +3138,7 @@ def get_qpx_prices(return_date, origin, destination, depart_date):
             "date": date,
         })
 
-    service = build('qpxExpress', 'v1', developerKey='AIzaSyDVk2iIE4B590k77n8WaZMYgxT_dw--xcc')
+    service = build('qpxExpress', 'v1', developerKey='AIzaSyDr0tcnhdrBa4hNZdX0jo6QG61Ip1AwNgs')
 
     body = {
       "request": {
@@ -3200,7 +3200,7 @@ def get_client_ip(request):
 
 
 def send_limit_warning_email(user, service, usage=75):
-    emailbody = 'You are reaching {}% usage of <b>{}</b> search.<br> Please contact the administrator and extend it.'.format(usage, service)
+    emailbody = 'You are reaching {}% usage of <b>{}</b> search.<br><br> Please contact the administrator and extend it.'.format(usage, service)
     try:
         resp = customfunction.sendMail('PEX+', user.email, 'Limit Notification', emailbody,'')
     except:
