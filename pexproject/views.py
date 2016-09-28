@@ -37,13 +37,14 @@ from django.shortcuts import render_to_response
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext, loader
-from social_auth.models import UserSocialAuth
+#from social_auth.models import UserSocialAuth
 from django.shortcuts import get_object_or_404,redirect
 from django.core.mail import send_mail,EmailMultiAlternatives
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import ensure_csrf_cookie
-from django.core.context_processors import csrf
+#from django.core.context_processors import csrf
+
 from django.views.decorators.csrf import requires_csrf_token
 from django.contrib.auth import login as social_login,authenticate,get_user
 from django.contrib.auth import logout as auth_logout
@@ -201,7 +202,48 @@ def blog(request, title=None):
 
 
 def index(request):
+    if request.user.is_authenticated():
+      print request.user
+      #user = User.objects.get(email=request.user)
+      user = User.objects.filter(username=request.user)
+      if len(user) > 0:
+            user = User.objects.get(username=request.user)
+  	    request.session['username'] = request.user.username
+	#      request.session['password'] = password1
+	    if user.first_name != '':
+      	    	request.session['first_name'] = user.first_name
+	    if user.home_airport != '':
+	    	request.session['homeairpot'] = user.home_airport
+	    request.session['userid'] = user.user_id
+	    request.session['level'] = user.level
+      else:
+	    email=request.user
+            password = ''
+            password1 = hashlib.md5(password).hexdigest()
+            airport = ''
+            first_name = ''
+            last_name = ''
+            pexdeals = 0
+            object = User(username=email,email=email, password=password1,first_name=first_name,last_name=last_name, home_airport=airport,pexdeals=pexdeals, last_login=dttime.now())
+            object.save()
+            user = User.objects.get(username=request.user)
+            if len(user) > 0:
+              request.session['username'] = request.user.username
+        #      request.session['password'] = password1
+              if user.first_name != '':
+                request.session['first_name'] = user.first_name
+              if user.home_airport != '':
+                request.session['homeairpot'] = user.home_airport
+              request.session['userid'] = user.user_id
+              request.session['level'] = user.level
+
+
+
     return render(request, 'flightsearch/home.html')    
+
+
+def pricing(request):
+    return render(request, 'flightsearch/pricing.html')   
 
 
 def signup(request):
@@ -403,7 +445,6 @@ def login(request):
     user = User()
     user = authenticate()
     currentpath = ''
-    # print "user", user
     if user is not None:
         if user.is_active:
             social_login(request,user)	
@@ -418,7 +459,7 @@ def login(request):
             if user > 0:
                 user.last_login=datetime.datetime.now()
                 user.save()
-
+#		login(request=request, user=user)
                 request.session['username'] = username
                 request.session['password'] = password1
                 if user.first_name != '':
@@ -3200,7 +3241,11 @@ def get_client_ip(request):
 
 
 def send_limit_warning_email(user, service, usage=75):
+<<<<<<< HEAD
     emailbody = 'You are reaching {}% usage of <b>{}</b> search.<br><br> Please contact the administrator and extend it.'.format(usage, service)
+=======
+    emailbody = 'You\'ve used {}% of your PEX Points for <b>{}</b> searches.<br> To avoid any disruptions to your flight search experience, please contact the administrator to purchase more PEX Points.<br><br><br>The PEX+ Team'.format(usage, service)
+>>>>>>> b01d1f1496de31b617276d768232f507a4cb567e
     try:
         resp = customfunction.sendMail('PEX+', user.email, 'Limit Notification', emailbody,'')
     except:

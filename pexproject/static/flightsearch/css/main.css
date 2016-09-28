@@ -2890,7 +2890,12 @@ display: table-cell;
     max-height: 40px;
     overflow: hidden;
 }
+.form-side  #time, #miles_value, #arivaltime
+{
+margin-top:10px;
+display:block;margin-bottom:10px;
 
+}
 
 }
 
