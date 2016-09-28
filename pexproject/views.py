@@ -3200,7 +3200,7 @@ def get_client_ip(request):
 
 
 def send_limit_warning_email(user, service, usage=75):
-    emailbody = 'You are reaching {}% usage of <b>{}</b> search.<br> Please contact the administrator and extend it.'.format(usage, service)
+    emailbody = 'You\'ve used {}% of <b>{}</b> your PEX Points for flight searches.<br> To avoid any disruptions to your flight search experience, please contact the administrator to purchase more PEX Points.<br><br><br>The PEX+ Team'.format(usage, service)
     try:
         resp = customfunction.sendMail('PEX+', user.email, 'Limit Notification', emailbody,'')
     except:
