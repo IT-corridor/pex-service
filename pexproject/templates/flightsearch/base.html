@@ -86,7 +86,7 @@
                     -->
                 </ul> 
                 <ul class="nav navbar-nav navbar-right right-nav-link responsive-edit mvt10px">                
-                    {% if request.session.username and request.session.password  %}
+                    {% if user.is_authenticated or request.session.username and request.session.password  %}
                         <li class="">                    
                             <div class="dropdown drop-down-cstm">
                                 <a id="dLabel" data-target="#" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -228,8 +228,8 @@
                                             <div class="form-group text-center">
                                                 <h5>Or Login with</h5>
 
-                                                <a href="{% url 'socialauth_begin' 'facebook' %}" class="pexdeal"><span class="social-login facebook">Facebook</span></a> 
-                                                <a href="{% url 'socialauth_begin' 'google-oauth2' %}?next={{ request.path }}" class="pexdeal"><span class="social-login google">Google+</span></a>
+                                                <a href="{% url 'social:begin' 'facebook' %}" class="pexdeal"><span class="social-login facebook">Facebook</span></a> 
+                                                <a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}" class="pexdeal"><span class="social-login google">Google+</span></a>
                                             </div>                                  
                                         </form>
                                     </div>
@@ -258,8 +258,8 @@
                                         </form>
                                         <div class="form-group text-center">
                                             <h5>Or Login with</h5>
-                                            <a href="{% url 'socialauth_begin' 'facebook' %}"><span class="social-login facebook">Facebook</span> </a>
-                                            <a href="{% url 'socialauth_begin' 'google-oauth2' %}"><span class="social-login google">Google+</span></a>
+                                            <a href="{% url 'social:begin' 'facebook' %}"><span class="social-login facebook">Facebook</span> </a>
+                                            <a href="{% url 'social:begin' 'google-oauth2' %}"><span class="social-login google">Google+</span></a>
                                         </div>                                                                          
                                     </div>
                                 </div>

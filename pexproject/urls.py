@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import *
 from pexproject.views import *
 from django.conf import settings
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
@@ -14,7 +14,8 @@ urlpatterns = [
     url(r'^index$', index, name='index'),
     url(r'^flights', index, name='flights'),
     url(r'^destination_tiles$', destination_tiles, name='destination_tiles'),
-    url(r'', include('social_auth.urls')),
+#    url(r'', include('social_auth.urls')),
+    url('', include('social.apps.django_app.urls', namespace='social')),
 
     url(r'^customer/$', customer, name='customer'),
     url(r'^customer/login/$', customer_login, name='customer_login'),
