@@ -37,6 +37,7 @@ urlpatterns = [
     url(r'^signup', signup, name='signup'),
     url(r'^staticPage', staticPage, name='staticPage'),
     url(r'^contactUs', contactUs, name='contactUs'),
+    url(r'^pricing', pricing, name='pricing'),
     url(r'^logout', logout, name='logout'),
 
     url(r'^Admin/$', Admin, name='Admin'),
