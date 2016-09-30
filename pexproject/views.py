@@ -702,7 +702,7 @@ def check_limit(request, service):
             return 3
         user.search_run = user.search_run + 1
 
-        if user.search_run > user.search_limit * SEARCH_LIMIT_WARNING_THRESHOLD:
+        if user.search_run >= user.search_limit * SEARCH_LIMIT_WARNING_THRESHOLD and (user.search_run - 1) < user.search_limit * SEARCH_LIMIT_WARNING_THRESHOLD:
             send_limit_warning_email(user, service)
 
         user.save()
@@ -2234,7 +2234,8 @@ def check_validity_token(token, service, request):
 
     request.session['userid'] = token.owner.user_id
 
-    if number_request > limit_request * SEARCH_LIMIT_WARNING_THRESHOLD:
+    # send email notification once
+    if number_request >= limit_request * SEARCH_LIMIT_WARNING_THRESHOLD and (number_request - 1) < limit_request * SEARCH_LIMIT_WARNING_THRESHOLD:
         send_limit_warning_email(token.owner, service)
 
     if number_request > limit_request:
