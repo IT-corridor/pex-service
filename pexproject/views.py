@@ -2206,9 +2206,9 @@ FLIGHT_CLASS = {
 
 def check_validity_token(token, service, request):
     '''
-    check and validate the token from the request for the service
+    check and validate the token from the request for the service (for limit_search and limit_qpx)
     return 
-        success: ['']
+        success: ['', True/False] (check qpx availability)
         fail: [error_message]
     '''
     if not token:
@@ -2226,6 +2226,7 @@ def check_validity_token(token, service, request):
 
     # check limit
     limit_request = getattr(token, 'limit_%s_search' % service)
+    limit_qpx = getattr(token, 'limit_qpx')
     number_request = getattr(token, 'run_%s_search' % service)
     number_request = number_request + 1
     setattr(token, 'run_%s_search' % service, number_request)
@@ -2239,7 +2240,7 @@ def check_validity_token(token, service, request):
     if number_request > limit_request:
         return ['Your license is reached to its limit. Please extend it!']
     # check domain
-    return ['']
+    return ['', limit_qpx > number_request]
 
 
 def check_validity_flight_params(request):
@@ -2369,8 +2370,11 @@ def api_search_flight(request):
         # get qpx price
         origin_ = Airports.objects.get(airport_id=origin).code
         destination_ = Airports.objects.get(airport_id=destination).code
-        qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date)
+
+        if _token[1]:   # check qpx limit
+            qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date)
         print qpx_prices, '@@@@@@@@2'
+        
         while(1):
             delay_threshold = delay_threshold - 1
             time.sleep(1)
@@ -2735,6 +2739,7 @@ def token_update(request, id=None):
             token.token = form.cleaned_data['token']
             token.owner = form.cleaned_data['owner']
             token.limit_flight_search = form.cleaned_data['limit_flight_search']
+            token.limit_qpx = form.cleaned_data['limit_qpx']
             token.limit_hotel_search = form.cleaned_data['limit_hotel_search']
             token.run_hotel_search = form.cleaned_data['run_hotel_search']
             token.run_flight_search = form.cleaned_data['run_flight_search']

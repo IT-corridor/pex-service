@@ -487,6 +487,7 @@ class Token(models.Model):
     limit_flight_search = models.IntegerField(default=0)
     run_hotel_search = models.IntegerField(default=0)
     run_flight_search = models.IntegerField(default=0)
+    limit_qpx = models.IntegerField(default=0)
     allowed_domain = models.CharField(max_length=150,null=True, blank=True)
     number_update = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now=True)
