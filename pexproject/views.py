@@ -2370,7 +2370,7 @@ def api_search_flight(request):
         origin_ = Airports.objects.get(airport_id=origin).code
         destination_ = Airports.objects.get(airport_id=destination).code
         qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date)
-
+        print qpx_prices, '@@@@@@@@2'
         while(1):
             delay_threshold = delay_threshold - 1
             time.sleep(1)
