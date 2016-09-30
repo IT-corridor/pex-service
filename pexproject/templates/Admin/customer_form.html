@@ -81,8 +81,8 @@
                     <div class="col-sm-2">
                         <div class="fg-line">
                             <select class="selectpicker" name="gender" value="{{form.gender.value}}">
-                                <option value="Male">Male</option>
-                                <option value="Femail">Female</option>
+                                <option value="Male" {% if form.gender.value == 'Male' %} selected="true" {% endif %}>Male</option>
+                                <option value="Femail" {% if form.gender.value == 'Female' %} selected="true" {% endif %}>Female</option>
                             </select>                            
                         </div>
                     </div>                  
