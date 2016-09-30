@@ -490,7 +490,7 @@ class Token(models.Model):
     limit_qpx = models.IntegerField(default=0)
     allowed_domain = models.CharField(max_length=150,null=True, blank=True)
     number_update = models.IntegerField(default=0)
-    created_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateField(auto_now_add=True)
     notes = models.TextField(null=True, blank=True)
     closed_at = models.DateTimeField(null=True)    
 

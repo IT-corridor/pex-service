@@ -2746,10 +2746,7 @@ def token_update(request, id=None):
             token.allowed_domain = form.cleaned_data['allowed_domain']
             token.notes = form.cleaned_data['notes']
             token.number_update = token.number_update + 1 
-            print token.id, '@@@@@@@@'
-            if not token.id:
-                token.created_at = dttime.now()
-                print token.created_at, '##########'
+            token.created_at = dttime.now().date()
             token.save()
             return HttpResponseRedirect('/Admin/token/')
 
