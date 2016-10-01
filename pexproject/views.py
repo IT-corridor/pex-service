@@ -693,6 +693,7 @@ def check_limit(request, service):
     return  0 if ok
             1 if limited and signed up
             2 if limited and not signed up
+            3 if limited and paid customer
     """
     cookie_id, user_id = get_ids(request)
     
@@ -2374,7 +2375,6 @@ def api_search_flight(request):
 
         if _token[1]:   # check qpx limit
             qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date)
-        print qpx_prices, '@@@@@@@@2'
 
         while(1):
             delay_threshold = delay_threshold - 1

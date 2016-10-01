@@ -959,7 +959,7 @@ function searchData() {
                     $('#login-modal').modal();
             } else if (ret.responseText  ==  "1") {
                 alert(msg);
-            } else {
+            } else if (ret.responseText  ==  "3") {
                 alert('You reached the flight search limit!\nPlease purchase more!');
             }
 
