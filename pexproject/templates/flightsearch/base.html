@@ -18,7 +18,7 @@
             
             {% if request.GET.share_recordid %}
                 <meta property="og:url" content="https://www.facebook.com/sharer/sharer.php?u=http://pexportal.com/getsearchresult?keyid={{request.GET.keyid}}%26cabin={{request.GET.cabin}}%26passenger={{request.GET.passenger}}{% if request.GET.returnkey %}%26returnkey={{request.GET.returnkey}}{%endif%}%26share_recordid={{request.GET.share_recordid}}" />
-                <meta property="og:title" content="Miles {{selectedrow.maincabin|intcomma}}  from {{search.0.source}} to {{search.0.destination}}."/>
+                <meta property="og:title" content="..Miles {{selectedrow.maincabin|intcomma}}  from {{search.0.source}} to {{search.0.destination}}."/>
             {%endif%}
 
             <meta id="mcontent" property="og:description" content="Hey, I found a great flight on Pex from {{search.0.source}} to {{search.0.destination}}. Join me." />
