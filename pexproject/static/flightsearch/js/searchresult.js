@@ -572,7 +572,7 @@ $(document.body).on('click', '.share', function() {
     $('#recorid').val(record);
     tweetcontent = $(this).siblings("input[type='hidden']").val();
     var flight_price = $(this).siblings("input[type='hidden']").attr('class');
-    var fbtext = "Miles " + flight_price + dis_string1;
+    var fbtext = ".. Miles " + flight_price + dis_string1;
     $('#fbtitle').empty();
     $('#fbtitle').append(fbtext);
     $('#social_share').attr('href', function() {
