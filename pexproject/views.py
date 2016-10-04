@@ -2395,13 +2395,13 @@ def api_search_flight(request):
 
             __debug('## filters for flight api: %s\n' % str(kwargs)) 
             flights = Flightdata.objects.filter(**kwargs)
-            flights = [model_to_dict(item, exclude=['rowid', 'scrapetime', 'searchkeyid']) for item in flights]
+            flights = [model_to_dict(item, exclude=['rowid', 'scrapetime', 'searchkeyid', 'stoppage_station']) for item in flights]
 
             # convert each property to string for json dump
             for flight in flights:
                 flight['image'] = 'pexportal.com/static/flightsearch/img/'+logos[flight['datasource']]
                 price_key = get_qpx_price_key(flight['planedetails'])                
-                flight['price'] = qpx_prices.get(price_key.encode('ascii', 'ignore'))
+                flight['price'] = qpx_prices.get(price_key.encode('ascii', 'ignore'), 'N/A')
                 for k,v in flight.items():
                     flight[k] = str(v)
         else:
@@ -2446,7 +2446,7 @@ def api_search_flight(request):
                 _item['total_taxes'] = item.total_taxes
 
                 price_key = get_qpx_price_key(item.planedetails) + get_qpx_price_key(item.return_planedetails)
-                _item['price'] = qpx_prices.get(price_key.encode('ascii', 'ignore'))
+                _item['price'] = qpx_prices.get(price_key.encode('ascii', 'ignore'), 'N/A')
 
                 flights.append(_item)
 
