@@ -2402,7 +2402,6 @@ def api_search_flight(request):
                 flight['image'] = 'pexportal.com/static/flightsearch/img/'+logos[flight['datasource']]
                 price_key = get_qpx_price_key(flight['planedetails'])                
                 flight['price'] = qpx_prices.get(price_key.encode('ascii', 'ignore'))
-                print price_key, flight['price'], '############'
                 for k,v in flight.items():
                     flight[k] = str(v)
         else:
