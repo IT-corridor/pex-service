@@ -2367,7 +2367,7 @@ def api_search_flight(request):
 
         keys = _search(return_date, origin, destination, depart_date, search_type, flight_class, request)        
 
-        delay_threshold = 25 if keys['returnkey'] else 30
+        delay_threshold = 30 if keys['returnkey'] else 35
 
         qpx_prices = {}
         # get qpx price

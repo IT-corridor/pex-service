@@ -296,8 +296,8 @@ def united(origin, destination, searchdate, searchkey):
                     lastdestdatetime = lastdestdatetime.strftime('%Y/%m/%d %H:%M')                    
                     destdetail = lastdestdatetime+" | at "+DestinationDescription
                 else:
-                    DestinationDateTime = datetime.datetime.strptime(DestinationDateTime, '%m/%d/%Y %H:%M')
-                    DestinationDateTime = DestinationDateTime.strftime('%Y/%m/%d %H:%M')                    
+                    # DestinationDateTime = datetime.datetime.strptime(DestinationDateTime, '%m/%d/%Y %H:%M')
+                    # DestinationDateTime = DestinationDateTime.strftime('%Y/%m/%d %H:%M')                    
                     destdetail = DestinationDateTime+" | at "+DestinationDescription
                 arivaildetails.append(destdetail)
                 
