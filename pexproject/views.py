@@ -919,7 +919,7 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
             Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='virgin_atlantic').delete()
             if returnkey:
                 Flightdata.objects.filter(searchkeyid=returnkey,datasource='virgin_atlantic').delete()            
-            subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/virgin.py",orgncode,destcode, str(depart), returndate, str(searchkeyid),str(returnkey)])
+            subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/virgin.py",orgncode,destcode, str(depart), str(returndate), str(searchkeyid),str(returnkey)])
 
         if returnkey:
             if is_scrape_aeroflot == 1:
