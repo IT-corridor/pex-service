@@ -2345,8 +2345,6 @@ def api_search_flight(request):
             'virgin_atlantic': 'virgin.png'        
         }
 
-        delay_threshold = 25 if keys['returnkey'] else 30
-
         result = {}
 
         _token = check_validity_token(request.META.get('HTTP_AUTHORIZATION'), 'flight', request)
@@ -2368,6 +2366,8 @@ def api_search_flight(request):
         return_date, origin, destination, depart_date, search_type, flight_class, mile_low, mile_high, airlines, depart_from, depart_to, arrival_from, arrival_to = _params[1], _params[2], _params[3], _params[4], _params[5], _params[6], _params[7], _params[8], _params[9], _params[10], _params[11], _params[12], _params[13]
 
         keys = _search(return_date, origin, destination, depart_date, search_type, flight_class, request)        
+
+        delay_threshold = 25 if keys['returnkey'] else 30
 
         qpx_prices = {}
         # get qpx price
