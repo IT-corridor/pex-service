@@ -3173,6 +3173,7 @@ def get_qpx_prices(return_date, origin, destination, depart_date):
                 "origin": origin,
                 "destination": destination,
                 "date": date,
+                "permittedCarrier": ["UA", "DL", "SU", "CA", "EY", "B6", "S7", "VX", "DJ", "VS"]
             }]
 
     if return_date:
@@ -3182,6 +3183,7 @@ def get_qpx_prices(return_date, origin, destination, depart_date):
             "origin": destination,
             "destination": origin,
             "date": date,
+            "permittedCarrier": ["UA", "DL", "SU", "CA", "EY", "B6", "S7", "VX", "DJ", "VS"]
         })
 
     service = build('qpxExpress', 'v1', developerKey='AIzaSyDVk2iIE4B590k77n8WaZMYgxT_dw--xcc')
