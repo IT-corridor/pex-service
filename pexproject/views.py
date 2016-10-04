@@ -2376,6 +2376,7 @@ def api_search_flight(request):
 
         if _token[1]:   # check qpx limit
             qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date)
+        print qpx_prices, '@@@@@@@'
 
         while(1):
             delay_threshold = delay_threshold - 1
@@ -2401,7 +2402,8 @@ def api_search_flight(request):
             # convert each property to string for json dump
             for flight in flights:
                 flight['image'] = 'pexportal.com/static/flightsearch/img/'+logos[flight['datasource']]
-                price_key = get_qpx_price_key(flight['planedetails'])                
+                price_key = get_qpx_price_key(flight['planedetails'])        
+                print price_key, '@@@@@@@@'        
                 flight['price'] = qpx_prices.get(price_key.encode('ascii', 'ignore'), 'N/A')
                 for k,v in flight.items():
                     flight[k] = str(v)
@@ -2447,6 +2449,7 @@ def api_search_flight(request):
                 _item['total_taxes'] = item.total_taxes
 
                 price_key = get_qpx_price_key(item.planedetails) + get_qpx_price_key(item.return_planedetails)
+                print price_key, '@@@@@@@@'        
                 _item['price'] = qpx_prices.get(price_key.encode('ascii', 'ignore'), 'N/A')
 
                 flights.append(_item)
