@@ -2376,7 +2376,6 @@ def api_search_flight(request):
 
         if _token[1]:   # check qpx limit
             qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date)
-        print qpx_prices, '@@@@@@@'
 
         while(1):
             delay_threshold = delay_threshold - 1
@@ -2396,17 +2395,20 @@ def api_search_flight(request):
             }
 
             __debug('## filters for flight api: %s\n' % str(kwargs)) 
-            flights = Flightdata.objects.filter(**kwargs)
-            flights = [model_to_dict(item, exclude=['rowid', 'scrapetime', 'searchkeyid', 'stoppage_station']) for item in flights]
-
+            flights_ = Flightdata.objects.filter(**kwargs)
+            flights = []
             # convert each property to string for json dump
-            for flight in flights:
-                flight['image'] = 'pexportal.com/static/flightsearch/img/'+logos[flight['datasource']]
-                price_key = get_qpx_price_key(flight['planedetails'])        
-                print price_key, '@@@@@@@@'        
-                flight['price'] = qpx_prices.get(price_key.encode('ascii', 'ignore'), 'N/A')
-                for k,v in flight.items():
-                    flight[k] = str(v)
+            for flight in flights_:
+                flight_ = model_to_dict(flight, exclude=['rowid', 'scrapetime', 'searchkeyid', 'stoppage_station', 'arivedetails', 'operatedby', 'departdetails', 'planedetails', 'economy_code', 'first_fare_code', 'first_code', 'eco_fare_code', 'arival'])
+                flight_['arrival'] = flight.arival
+                flight_['image'] = 'pexportal.com/static/flightsearch/img/'+logos[flight.datasource]
+                price_key = get_qpx_price_key(flight.planedetails)        
+                flight_['price'] = qpx_prices.get(price_key.encode('ascii', 'ignore'), 'N/A')
+                for k,v in flight_.items():
+                    flight_[k] = str(v)
+                flight_['route'] = parse_detail(flight.departdetails, flight.arivedetails, flight.planedetails, flight.operatedby)
+                flights.append(flight_)
+
         else:
             totalfare = "p1." + FLIGHT_CLASS[fare_class][0] + "+p2." + FLIGHT_CLASS[fare_class][0]
             totaltax = "p1." + FLIGHT_CLASS[fare_class][1] + "+p2." + FLIGHT_CLASS[fare_class][1]
@@ -3176,7 +3178,7 @@ def get_qpx_prices(return_date, origin, destination, depart_date):
                 "origin": origin,
                 "destination": destination,
                 "date": date,
-                "permittedCarrier": ["UA", "DL", "SU", "CA", "EY", "B6", "S7", "VX", "DJ", "VS"]
+                # "permittedCarrier": ["UA", "DL", "SU", "CA", "EY", "B6", "S7", "VX", "DJ", "VS"]
             }]
 
     if return_date:
@@ -3186,7 +3188,7 @@ def get_qpx_prices(return_date, origin, destination, depart_date):
             "origin": destination,
             "destination": origin,
             "date": date,
-            "permittedCarrier": ["UA", "DL", "SU", "CA", "EY", "B6", "S7", "VX", "DJ", "VS"]
+            # "permittedCarrier": ["UA", "DL", "SU", "CA", "EY", "B6", "S7", "VX", "DJ", "VS"]
         })
 
     service = build('qpxExpress', 'v1', developerKey='AIzaSyDVk2iIE4B590k77n8WaZMYgxT_dw--xcc')
@@ -3256,3 +3258,37 @@ def send_limit_warning_email(user, service, usage=75):
         resp = customfunction.sendMail('PEX+', user.email, 'Limit Notification', emailbody,'')
     except:
         print "something wrong"
+
+
+def parse_detail(depart_details, arrival_details, plane_details, operated_by):
+    depart_details = depart_details.split('@')
+    arrival_details = arrival_details.split('@')
+    plane_details = plane_details.split('@')
+    operated_by = operated_by.split('@')
+
+    flights = []
+    for i in range(len(depart_details)):
+        dd = depart_details[i].split(' | from ')
+        ad = arrival_details[i].split(' | at ')
+        pd = plane_details[i].split(' (')
+        dd0 = dd[0].split(' ')
+        dd1 = dd[1].split(' (')
+        ad0 = ad[0].split(' ')
+        ad1 = ad[1].split(' (')
+
+        flight_ = {
+            'departDate': dd0[0],
+            'departTime': dd0[1],
+            'departAirport': dd1[1][:-1],
+            'departCity': dd1[0],
+            'arriveDate': ad0[0],
+            'arriveTime': ad0[1],
+            'arriveAirport': ad1[1][:-1],
+            'arriveCity': ad1[0],
+            'flight': pd[0],
+            'duration': pd[1][:-1] 
+        }
+
+        flights.append(flight_)
+
+    return flights
