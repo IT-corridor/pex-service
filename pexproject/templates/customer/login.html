@@ -154,6 +154,13 @@
         <![endif]-->
         
         <!-- Javascript Libraries -->
+        <script type="text/javascript">
+            var resetpassword = "{{request.GET.fpmsg}}"; 
+            var welcome_msg = "{{request.GET.welcome_msg}}";
+            var lmsg = "{{request.GET.msg}}";
+            var smsg = "{{request.GET.signup_msg}}";
+            var csrf = "{{csrf_token}}";
+        </script>
         <script src="/static/Admin/vendors/bower_components/jquery/dist/jquery.min.js"></script>
         <script src="/static/Admin/vendors/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
         
