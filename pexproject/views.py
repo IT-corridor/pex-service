@@ -3279,11 +3279,11 @@ def parse_detail(depart_details, arrival_details, plane_details, operated_by):
         flight_ = {
             'departDate': dd0[0],
             'departTime': dd0[1],
-            'departAirport': dd1[1][:-1],
+            'departAirport': dd1[1][:-1] if len(dd1) > 1 else dd1[0],
             'departCity': dd1[0],
             'arriveDate': ad0[0],
             'arriveTime': ad0[1],
-            'arriveAirport': ad1[1][:-1],
+            'arriveAirport': ad1[1][:-1] if len(ad1) > 1 else ad1[0],
             'arriveCity': ad1[0],
             'flight': pd[0],
             'duration': pd[1][:-1] 
