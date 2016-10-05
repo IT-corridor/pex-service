@@ -142,7 +142,6 @@ def destination_tiles(request):
         if len(searches) == 8:
             break
             
-    print searches, '@@@@@@@'
     return render(request, 'flightsearch/destination_tiles.html', { 'searchObj': searches })
 
 
@@ -2428,11 +2427,8 @@ def api_search_flight(request):
                 _item['departure'] = str(item.departure)
                 _item['arival'] = str(item.arival)
                 _item['duration'] = item.duration
-                _item['departdetails'] = item.departdetails
-                _item['arivedetails'] = item.arivedetails
-                _item['planedetails'] = item.planedetails
-                _item['operatedby'] = item.operatedby
                 _item['image'] = 'pexportal.com/static/flightsearch/img/'+logos[item.datasource]
+                _item['depart_routes'] = parse_detail(item.departdetails, item.arivedetails, item.planedetails, item.operatedby)
 
                 _item['return_origin'] = item.return_origin
                 _item['return_stoppage'] = item.return_stoppage
@@ -2441,17 +2437,13 @@ def api_search_flight(request):
                 _item['return_departure'] = str(item.return_departure)
                 _item['return_arrival'] = str(item.return_arrival)
                 _item['return_duration'] = item.return_duration
-                _item['return_departdetails'] = item.return_departdetails
-                _item['return_arrivaldetails'] = item.return_arrivaldetails
-                _item['return_planedetails'] = item.return_planedetails
-                _item['return_operatedby'] = item.return_operatedby
+                _item['return_routes'] = parse_detail(item.return_departdetails, item.return_arrivaldetails, item.return_planedetails, item.return_operatedby)
 
                 _item['datasource'] = item.datasource
                 _item['total_miles'] = item.total_miles
                 _item['total_taxes'] = item.total_taxes
 
                 price_key = get_qpx_price_key(item.planedetails) + get_qpx_price_key(item.return_planedetails)
-                print price_key, '@@@@@@@@'        
                 _item['price'] = qpx_prices.get(price_key.encode('ascii', 'ignore'), 'N/A')
 
                 flights.append(_item)
