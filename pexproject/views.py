@@ -2376,6 +2376,8 @@ def api_search_flight(request):
         if _token[1]:   # check qpx limit
             qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date)
 
+        qpx_match_count = 0
+
         while(1):
             delay_threshold = delay_threshold - 1
             time.sleep(1)
@@ -2403,6 +2405,11 @@ def api_search_flight(request):
                 flight_['image'] = 'pexportal.com/static/flightsearch/img/'+logos[flight.datasource]
                 price_key = get_qpx_price_key(flight.planedetails)        
                 flight_['price'] = qpx_prices.get(price_key.encode('ascii', 'ignore'), 'N/A')
+
+                # compute percentage of match
+                if flight_['price'] != 'N/A':
+                    qpx_match_count = qpx_match_count + 1
+
                 for k,v in flight_.items():
                     flight_[k] = str(v)
                 flight_['route'] = parse_detail(flight.departdetails, flight.arivedetails, flight.planedetails, flight.operatedby)
@@ -2446,7 +2453,19 @@ def api_search_flight(request):
                 price_key = get_qpx_price_key(item.planedetails) + get_qpx_price_key(item.return_planedetails)
                 _item['price'] = qpx_prices.get(price_key.encode('ascii', 'ignore'), 'N/A')
 
+                # compute percentage of match
+                if _item['price'] != 'N/A':
+                    qpx_match_count = qpx_match_count + 1
+
                 flights.append(_item)
+
+        qpx_match_percent = qpx_match_count * 1.0 / len(flights)
+
+        # save unmatch percent
+        if qpx_match_percent > 0:
+            searchkey = Searchkey.objects.get(searchid=keys['departkey'])
+            searchkey.qpx_unmatch_percent = 1 - qpx_match_percent
+            searchkey.save()
 
         result['status'] = 'Success'
         result['flights'] = flights

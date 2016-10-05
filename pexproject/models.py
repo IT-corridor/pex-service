@@ -270,6 +270,7 @@ class Searchkey(models.Model):
     origin_airport_id = models.IntegerField ()
     destination_airport_id = models.IntegerField ()
     user_ids = models.CharField(max_length=500, blank=True, null=True)
+    qpx_unmatch_percent = models.FloatField(default=0)
 
 
 class Contactus(models.Model):
