@@ -95,16 +95,24 @@
             
             <div class="input-group m-b-20">
                 <span class="input-group-addon"><i class="zmdi zmdi-email"></i></span>
-                <form action="/forgotPassword" method="post" class="form-group" id="forgot_password_form">
-                {% csrf_token %}
                 <div class="fg-line">
                     <input type="text" class="form-control" placeholder="Email Address">
                 </div>
-                <input type="hidden" name="pagetype" value="forgot"/>
             </div>
             
             <button type="submit" class="btn btn-login btn-danger btn-float"><i class="zmdi zmdi-arrow-forward"></i></button>
+
+            <form action="/forgotPassword" method="post" class="form-group" id="forgot_password_form">
+                {% csrf_token %}
+                <div class="col-xs-12">
+                    <input type="email" name="email" class="form-group" required/>
+                </div>
+                <input type="hidden" name="pagetype" value="forgot"/>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Send Password</button>
+                </div>
             </form>
+
             <ul class="login-navigation">
                 <li data-block="#l-login" class="bgm-green">Login</li>
                 <li data-block="#l-register" class="bgm-red">Register</li>
