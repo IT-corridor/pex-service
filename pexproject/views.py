@@ -671,7 +671,6 @@ def contactUs(request):
 @csrf_exempt
 def search(request):
     if request.is_ajax():
-        print request.session.get('userid'), '@@@@@@'
         # try:
         returndate = request.POST['returndate']
         origin = request.POST['fromMain'].strip()
@@ -695,7 +694,6 @@ def search(request):
         cabin = request.POST['cabin']
 
         # check limit
-        print request.session.get('userid'), '######'
         _ret = check_limit(request, 'flight')
         if _ret: # not success
             return HttpResponse(_ret, status=405)
@@ -718,7 +716,7 @@ def check_limit(request, service):
             3 if limited and paid customer
     """
     cookie_id, user_id = get_ids(request)
-    
+    print user_id, '@@@@@id'
     if user_id > -1 and int(request.session['level']) > 0:     # paying user
         user = User.objects.get(user_id=user_id)
         if user.search_run >= user.search_limit:
