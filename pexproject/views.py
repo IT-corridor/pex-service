@@ -671,6 +671,7 @@ def contactUs(request):
 @csrf_exempt
 def search(request):
     if request.is_ajax():
+        print request.session.get('userid'), '@@@@@@'
         # try:
         returndate = request.POST['returndate']
         origin = request.POST['fromMain'].strip()
