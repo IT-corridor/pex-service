@@ -695,6 +695,7 @@ def search(request):
         cabin = request.POST['cabin']
 
         # check limit
+        print request.session.get('userid'), '######'
         _ret = check_limit(request, 'flight')
         if _ret: # not success
             return HttpResponse(_ret, status=405)
