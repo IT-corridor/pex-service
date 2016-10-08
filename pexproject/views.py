@@ -495,16 +495,20 @@ def logout(request):
 
 def forgotPassword(request):
     context = {}
-    msg =''   
+    msg =''  
     if request.POST:
         user_email =  request.POST['email']
         randomcode = randint(100000000000,999999999999)
         usercode =  base64.b64encode(str(randomcode))
         if 'userid' in request.session:
             user = User.objects.get(pk = request.session['userid'])
+	    print'user id' 
         else:
             try:
+		print 'before objec'
                 user = User.objects.get(email=user_email)
+                print 'after object'
+		print user
             except:
                 return HttpResponseRedirect('/index?msg=Invalid username')
                 #return render_to_response('flightsearch/index.html', {'msg':"Invalid username"}, context_instance=RequestContext(request))
@@ -517,7 +521,7 @@ def forgotPassword(request):
             emailbody = obj.body
             emailbody = emailbody.replace('[USER_NAME]',user_email)
             emailbody = emailbody.replace('[RESET-LINK]','<a href="http://pexportal.com/createPassword?usercode='+usercode+'">Click here</a>')
-            resp = customfunction.sendMail('PEX+',user_email,email_sub,emailbody,text)
+            resp = customfunction.sendMail('PEX+',user_email,email_sub,text,emailbody)
             if resp == "sent":
                 user.usercode = usercode
                 currentdatetime = datetime.datetime.now()
@@ -547,8 +551,10 @@ def createPassword(request):
     currentdatetime = datetime.datetime.now()
     time = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     time1 = datetime.datetime.now() - timedelta(hours=2)
-    time1 = time1.strftime('%Y-%m-%d %H:%M:%S') 
+    time1 = time1.strftime('%Y-%m-%d %H:%M:%S')
+    print time1 
     code = request.GET.get('usercode','')
+    print code
     try:
        user = User.objects.get(usercode=code,user_code_time__gte=time1)
     except:

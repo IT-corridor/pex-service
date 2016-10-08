@@ -13,6 +13,8 @@ from django.db import connection, transaction
 from django.core.mail import send_mail,EmailMultiAlternatives
 import rewardScraper
 import sendgrid
+from sendgrid.helpers.mail import *
+from django.conf import settings
 
 sendgrid_api_key = "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"
 mailchimp_api_key = "def631e53845c0b9f251db8fdd8d2ae6-us12"
@@ -44,20 +46,41 @@ def dbconnection():
 
 def sendMail(from_email, to_email, subject, bodytext, html_content=None):
     try:
-        client = sendgrid.SendGridClient(sendgrid_api_key)
-        message = sendgrid.Mail()
+        sg = sendgrid.SendGridAPIClient(apikey=sendgrid_api_key)
+#        message = sendgrid.Mail()
     
-        message.add_to(to_email)
-        message.set_from(from_email)
-        message.set_subject(subject)
-        if bodytext:
-            message.set_html(bodytext)
-        else:
-            if html_content:
-                message.set_html(html_content)
-        resp = client.send(message)
+#        message.add_to(to_email)
+#        message.set_from(from_email)
+#        message.set_subject(subject)
+#        if bodytext:
+#            message.set_html(bodytext)
+#        else:
+#            if html_content:
+#                message.set_html(html_content)
+#        resp = client.send(message)
+	from_email = getattr(settings, "FROM_MAIL", 'support@pexportal.com')
+	print "stage 1"
+	print from_email
+	print to_email
+	fromemail = Email("pardeepkk@gmail.com")
+	toemail = Email(to_email)
+	print "stage 2"
+	if bodytext:
+		content = Content("text/plain",bodytext )
+	else:
+		if html_content:
+			content = Content("text/html",html_content)
+	print "stage 3"
+	mail = Mail(fromemail, subject, toemail, content)
+	print "stage 4"
+	response = sg.client.mail.send.post(request_body=mail.get())
+	print "stage 5"
+	print(response.status_code)
+	print(response.body)
+	print(response.headers)
         return "sent"
-    except:
+    except Exception as e:
+	print e.message
         return "fail"
     
 
