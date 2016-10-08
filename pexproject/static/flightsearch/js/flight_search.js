@@ -316,6 +316,7 @@ function searchData() {
                 alert('You reached the flight search limit!\nPlease purchase more!');
             } else if (ret.responseText  ==  "11") {
                 alert('There is no such airport for origin or destination!\n Please check again!');
+                $('#submitid').prop('disabled', false);
             }
 
             return false;
