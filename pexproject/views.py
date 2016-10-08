@@ -683,10 +683,9 @@ def search(request):
             if auto:
                 destination = auto.group(1)
 
-            print origin, destination, '@@@@@@'
             try:
-                orgnid = Airports.objects.get(code__iexact=origin)
-                destid = Airports.objects.get(code__iexact=destination)
+                orgnid = Airports.objects.filter(code__iexact=origin)[0].airport_id
+                destid = Airports.objects.filter(code__iexact=destination)[0].airport_id
             except Exception, e:
                 return HttpResponse(11, status=405)
 
