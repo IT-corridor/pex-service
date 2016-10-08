@@ -677,8 +677,22 @@ def search(request):
     if request.is_ajax():
         try:
             returndate = request.POST['returndate']
-            orgnid = request.POST['fromMain']
-            destid = request.POST['toMain']
+            origin = request.POST['fromMain'].strip()
+            destination = request.POST['toMain'].strip()
+
+            auto = re.search(r'^.* \(([A-Z]{3}?)\)$', origin)
+            if auto:
+                origin = auto.group(1)
+            auto = re.search(r'^.* \(([A-Z]{3}?)\)$', destination)
+            if auto:
+                destination = auto.group(1)
+
+            try:
+                orgnid = Airports.objects.get(code__iexact=origin)
+                destid = Airports.objects.get(code__iexact=destination)
+            except Exception, e:
+                return HttpResponse(11, status=405)
+
             depart = request.POST['deptdate']
             searchtype = request.POST.get('searchtype', '')
             cabin = request.POST['cabin']
@@ -957,8 +971,7 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
     return key_json
 
 
-def get_airport(request):
-    
+def get_airport(request):    
     if request.is_ajax():
         q = request.GET.get('term', '')
         airport = Airports.objects.filter(Q(code__istartswith=q)).order_by('code','cityName')[:20]    

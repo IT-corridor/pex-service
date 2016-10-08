@@ -233,7 +233,7 @@ $("#submitid").click(function(event) {
         triptypeval = triptype.val();
     }
     var appendErrorLabel = '<label id="from-error" class="error" for="from">Please enter a valid airport</label>';
-    if ($('#fromid').val().length < 1 || $('#from').val() == '') {
+    if ($('#from').val().trim() == '') {
         $('#from').css('border-color', 'red');
         $('label[class=error]').remove();
         $('#from').after(appendErrorLabel);
@@ -241,14 +241,14 @@ $("#submitid").click(function(event) {
         return false;
     }
 
-    if ($('#toid').val().length < 1 || $('#to').val() == '') {
+    if ($('#to').val().trim() == '') {
         $('label[class=error]').remove();
         $('#to').after(appendErrorLabel);
         $('#to').css('border-color', 'red');
         event.preventDefault();
         return false;
     }
-    if ($('#toid').val() == $('#fromid').val()) {
+    if ($('#to').val().trim() == $('#from').val().trim()) {
         $('label[class=error]').remove();
         $('#to').after('<label id="from-error" class="error" for="from">From and To city cannot be same</label>');
         $('#to').css('border-color', 'red');
@@ -272,8 +272,8 @@ $("#submitid").click(function(event) {
     } else {
         $('#returnMain').val('');
     }
-    sourceid = $('#fromid').val();
-    destinationid = $('#toid').val();
+    sourceid = $('#from').val();
+    destinationid = $('#to').val();
     returndateval = $('#returnMain').val();
     departdateval = $('#departMain').val();
     cabintypeval = $('#cabintype option:selected').val();
@@ -314,6 +314,8 @@ function searchData() {
                 alert(msg);
             } else if (ret.responseText  ==  "3") {
                 alert('You reached the flight search limit!\nPlease purchase more!');
+            } else if (ret.responseText  ==  "11") {
+                alert('There is no such airport for origin or destination!\n Please check again!');
             }
 
             return false;
