@@ -698,7 +698,7 @@ def search(request):
         if _ret: # not success
             return HttpResponse(_ret, status=405)
 
-        key_json = _search(returndate, orgnid, destid, depart, searchtype, cabin, request)
+        key_json = _search(returndate, str(orgnid), str(destid), depart, searchtype, cabin, request)
 
         mimetype = 'application/json'
         data = json.dumps(key_json)
@@ -716,7 +716,7 @@ def check_limit(request, service):
             3 if limited and paid customer
     """
     cookie_id, user_id = get_ids(request)
-    print user_id, '@@@@@id'
+    
     if user_id > -1 and int(request.session['level']) > 0:     # paying user
         user = User.objects.get(user_id=user_id)
         if user.search_run >= user.search_limit:
