@@ -670,10 +670,6 @@ def contactUs(request):
 
 @csrf_exempt
 def search(request):
-    _ret = check_limit(request, 'flight')
-    if _ret: # not success
-        return HttpResponse(_ret, status=405)
-
     if request.is_ajax():
         try:
             returndate = request.POST['returndate']
@@ -687,6 +683,7 @@ def search(request):
             if auto:
                 destination = auto.group(1)
 
+            print origin, destination, '@@@@@@'
             try:
                 orgnid = Airports.objects.get(code__iexact=origin)
                 destid = Airports.objects.get(code__iexact=destination)
@@ -697,8 +694,13 @@ def search(request):
             searchtype = request.POST.get('searchtype', '')
             cabin = request.POST['cabin']
 
+            # check limit
+            _ret = check_limit(request, 'flight')
+            if _ret: # not success
+                return HttpResponse(_ret, status=405)
+
             key_json = _search(returndate, orgnid, destid, depart, searchtype, cabin, request)
-            
+
             mimetype = 'application/json'
             data = json.dumps(key_json)
             return HttpResponse(data, mimetype)
