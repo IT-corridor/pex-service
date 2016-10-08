@@ -521,7 +521,7 @@ def forgotPassword(request):
             emailbody = obj.body
             emailbody = emailbody.replace('[USER_NAME]',user_email)
             emailbody = emailbody.replace('[RESET-LINK]','<a href="http://pexportal.com/createPassword?usercode='+usercode+'">Click here</a>')
-            resp = customfunction.sendMail('PEX+',user_email,email_sub,text,emailbody)
+            resp = customfunction.sendMail('PEX+',user_email,email_sub,emailbody,text)
             if resp == "sent":
                 user.usercode = usercode
                 currentdatetime = datetime.datetime.now()
