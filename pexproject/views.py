@@ -671,40 +671,40 @@ def contactUs(request):
 @csrf_exempt
 def search(request):
     if request.is_ajax():
+        # try:
+        returndate = request.POST['returndate']
+        origin = request.POST['fromMain'].strip()
+        destination = request.POST['toMain'].strip()
+
+        auto = re.search(r'^.* \(([A-Z]{3}?)\)$', origin)
+        if auto:
+            origin = auto.group(1)
+        auto = re.search(r'^.* \(([A-Z]{3}?)\)$', destination)
+        if auto:
+            destination = auto.group(1)
+
         try:
-            returndate = request.POST['returndate']
-            origin = request.POST['fromMain'].strip()
-            destination = request.POST['toMain'].strip()
-
-            auto = re.search(r'^.* \(([A-Z]{3}?)\)$', origin)
-            if auto:
-                origin = auto.group(1)
-            auto = re.search(r'^.* \(([A-Z]{3}?)\)$', destination)
-            if auto:
-                destination = auto.group(1)
-
-            try:
-                orgnid = Airports.objects.filter(code__iexact=origin)[0].airport_id
-                destid = Airports.objects.filter(code__iexact=destination)[0].airport_id
-            except Exception, e:
-                return HttpResponse(11, status=405)
-
-            depart = request.POST['deptdate']
-            searchtype = request.POST.get('searchtype', '')
-            cabin = request.POST['cabin']
-
-            # check limit
-            _ret = check_limit(request, 'flight')
-            if _ret: # not success
-                return HttpResponse(_ret, status=405)
-
-            key_json = _search(returndate, orgnid, destid, depart, searchtype, cabin, request)
-
-            mimetype = 'application/json'
-            data = json.dumps(key_json)
-            return HttpResponse(data, mimetype)
+            orgnid = Airports.objects.filter(code__iexact=origin)[0].airport_id
+            destid = Airports.objects.filter(code__iexact=destination)[0].airport_id
         except Exception, e:
-            print str(e), '###########3'
+            return HttpResponse(11, status=405)
+
+        depart = request.POST['deptdate']
+        searchtype = request.POST.get('searchtype', '')
+        cabin = request.POST['cabin']
+
+        # check limit
+        _ret = check_limit(request, 'flight')
+        if _ret: # not success
+            return HttpResponse(_ret, status=405)
+
+        key_json = _search(returndate, orgnid, destid, depart, searchtype, cabin, request)
+
+        mimetype = 'application/json'
+        data = json.dumps(key_json)
+        return HttpResponse(data, mimetype)
+        # except Exception, e:
+        #     print str(e), '###########3'
         
 
 def check_limit(request, service):
