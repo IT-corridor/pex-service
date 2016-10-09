@@ -3303,20 +3303,25 @@ def parse_detail(depart_details, arrival_details, plane_details, operated_by):
         ad = arrival_details[i].split(' | at ')
         pd = plane_details[i].split(' (')
         dd0 = dd[0].split(' ')
-        dd1 = dd[1].split(' (')
+        dd1 = dd[1].split(' / ')
+        dd11 = dd1.split(' (')
+
         ad0 = ad[0].split(' ')
-        ad1 = ad[1].split(' (')
+        ad1 = ad[1].split(' / ')
+        ad11 = ad1.split(' (')
 
         flight_ = {
             'departDate': dd0[0],
             'departTime': dd0[1],
-            'departAirportCode': dd1[1][:-1] if len(dd1) > 1 else dd1[0],
-            'departCity': dd1[0],
+            'departAirport': dd1[0],
+            'departCity': dd11[0]
+            'departAirportCode': dd11[1][:-1],
 
             'arriveDate': ad0[0],
             'arriveTime': ad0[1],
-            'arriveAirportCode': ad1[1][:-1] if len(ad1) > 1 else ad1[0],
-            'arriveCity': ad1[0],
+            'arriveAirport': ad1[0],
+            'arriveCity': ad11[0]
+            'arriveAirportCode': ad11[1][:-1],
 
             'flight': pd[0],
             'duration': pd[1][:-1] 
