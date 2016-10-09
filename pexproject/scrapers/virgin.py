@@ -46,7 +46,7 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
     if not DEV_LOCAL:
         db = customfunction.dbconnection()
         cursor = db.cursor()
-    dt = datetime.datetime.strptime(searchdate, '%m/%d/%Y')
+    dt = datetime.datetime.strptime(searchdate.strip(), '%m/%d/%Y')
     date = dt.strftime('%d/%m/%Y')
     if returndate != 'None':
         dt1 = datetime.datetime.strptime(returndate, '%m/%d/%Y')
