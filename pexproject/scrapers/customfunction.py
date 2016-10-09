@@ -71,3 +71,15 @@ def syncPoints(airline,userid,username,skymiles_number,password):
         if airline == 'virgin':
             resp = rewardScraper.virginPoints(username,password,userid)
     return resp
+
+
+def get_airport_detail(airport_code):
+    db = dbconnection()
+    cursor = db.cursor()
+    sql = 'select name, cityName, code from pexproject_airports where code="{}"'.format(airport_code.strip())
+    cursor.execute()
+    r = cursor.fetchone()
+    if r:
+        return '{}/{} ({})'.format(r[0], r[1], r[2])
+
+
