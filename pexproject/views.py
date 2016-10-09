@@ -811,7 +811,7 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
         destination1 = destobj.cityName + " (" + destobj.code + ")"
         # print '####', dest, destination1, '####'
         
-        dt = datetime.datetime.strptime(depart, '%m/%d/%Y')
+        dt = datetime.datetime.strptime(depart.strip(), '%m/%d/%Y')
         date = dt.strftime('%m/%d/%Y')
         searchdate = dt.strftime('%Y-%m-%d')        
         # print '$$$$', searchdate, '$$$$'
