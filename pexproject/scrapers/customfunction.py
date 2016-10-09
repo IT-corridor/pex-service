@@ -77,7 +77,7 @@ def get_airport_detail(airport_code):
     db = dbconnection()
     cursor = db.cursor()
     sql = 'select name, cityName, code from pexproject_airports where code="{}"'.format(airport_code.strip())
-    cursor.execute()
+    cursor.execute(sql)
     r = cursor.fetchone()
     if r:
         return '{}/{} ({})'.format(r[0], r[1], r[2])
