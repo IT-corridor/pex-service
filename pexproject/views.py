@@ -3314,13 +3314,13 @@ def parse_detail(depart_details, arrival_details, plane_details, operated_by):
             'departDate': dd0[0],
             'departTime': dd0[1],
             'departAirport': dd1[0],
-            'departCity': dd11[0]
+            'departCity': dd11[0],
             'departAirportCode': dd11[1][:-1],
 
             'arriveDate': ad0[0],
             'arriveTime': ad0[1],
             'arriveAirport': ad1[0],
-            'arriveCity': ad11[0]
+            'arriveCity': ad11[0],
             'arriveAirportCode': ad11[1][:-1],
 
             'flight': pd[0],
