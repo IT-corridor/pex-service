@@ -218,7 +218,8 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid):
                         arivalTime = ariveTime[0]
                         ariveTimeFormat = (datetime.datetime.strptime(ariveTime[0], '%H:%M:%S'))
                         arivalTime = ariveTimeFormat.strftime('%H:%M')
-                        ariveDisplay = arrival[0]+" | "+arivalTime+" at "+dest
+                        airport_ = customfunction.get_airport_detail(dest) or dest
+                        ariveDisplay = arrival[0]+" | "+arivalTime+" at "+airport_
                         ariveArray.append(ariveDisplay)
                         
                         elapsedTime = flightDetails["elapsedTime"]
@@ -272,7 +273,8 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid):
                                 waitingTime = datetime.datetime.strptime(departTimeFormat,'%H:%M') - datetime.datetime.strptime(oldAriveTime,'%H:%M')
                                 timedelta = (waitingTime.total_seconds())/60  
                             
-                            ariveDisplay = str(arrival[0])+" | "+str(ariveTimeFormat)+" at "+ariveAt
+                            airport_ = customfunction.get_airport_detail(ariveAt) or ariveAt
+                            ariveDisplay = str(arrival[0])+" | "+str(ariveTimeFormat)+" at "+airport_
                             ariveArray.append(ariveDisplay)
     
                             "########### Flight Details #############################"

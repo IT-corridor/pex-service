@@ -261,7 +261,8 @@ def delta(orgn, dest, searchdate, searchkey):
                         departinfo_time = datetime.datetime.strptime(departinfo_time, '%a %b %d %Y %I:%M%p')
                         departinfo_time = departinfo_time.strftime('%Y/%m/%d %H:%M')
 
-                        toDetails = departinfo_time+" | at "+destAirport
+                        airport_ = customfunction.get_airport_detail(destAirport) or destAirport
+                        toDetails = departinfo_time+" | at "+airport_
                         ariveDetail.append(toDetails)
                         aircraft = legdetail['aircraft']['shortName']
                         airlineCode = legdetail['marketAirline']['airline']['airlineCode']

@@ -177,7 +177,8 @@ def aeroflot(ocity_code, dcity_code, searchdate, searchkey):
                 
                 segDest = segments[counter]["arrivalCode"]
                 segArive = segments[counter]["arrivalDate"]
-                destdetailFormat = segArive[:-3]+" at "+segDest
+                airport_ = customfunction.get_airport_detail(segDest) or segDest
+                destdetailFormat = segArive[:-3]+" at "+airport_
                 destDetails.append(destdetailFormat)
                 if len(operatorArray) > count:
                     operatorCarrier.append(operatorArray[count])

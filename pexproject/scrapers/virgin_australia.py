@@ -147,7 +147,8 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
                 
                 segDest = segments[counter]["arrivalCode"]
                 segArive = segments[counter]["arrivalDate"]
-                destdetailFormat = segArive[:-3]+" | at "+segDest
+                airport_ = customfunction.get_airport_detail(segDest) or segDest
+                destdetailFormat = segArive[:-3]+" | at "+airport_
                 destDetails.append(destdetailFormat)
                 if len(operatorArray) >= operatorcounter:
                     operatingCarrier.append(operatorArray[operatorcounter]) 
