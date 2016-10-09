@@ -80,6 +80,6 @@ def get_airport_detail(airport_code):
     cursor.execute(sql)
     r = cursor.fetchone()
     if r:
-        return '{}/{} ({})'.format(r[0], r[1], r[2])
+        return '{} / {} ({})'.format(r[0], r[1], r[2])
 
 

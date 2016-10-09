@@ -254,7 +254,8 @@ def delta(orgn, dest, searchdate, searchkey):
                         departinfo_time = datetime.datetime.strptime(departinfo_time, '%a %b %d %Y %I:%M%p')
                         departinfo_time = departinfo_time.strftime('%Y/%m/%d %H:%M')
 
-                        fromDetail = departinfo_time+" | from  "+fromAirport
+                        airport_ = customfunction.get_airport_detail(fromAirport) or fromAirport
+                        fromDetail = departinfo_time+" | from  "+airport_
                         departDetail.append(fromDetail)
                         departinfo_time = schedArrivalDate+" "+schedArrivalTime
                         departinfo_time = datetime.datetime.strptime(departinfo_time, '%a %b %d %Y %I:%M%p')

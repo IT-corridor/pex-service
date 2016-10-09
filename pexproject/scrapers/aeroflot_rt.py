@@ -123,7 +123,8 @@ def aeroflot(ocity_code, dcity_code, searchdate, searchkey, returndate, returnke
                 bookingClassCabin = segments[counter]['allClassOfService']
                 segOrigin = segments[counter]["departureCode"]
                 segDepartDate = segments[counter]["departureDate"]
-                segDetailFormat = segDepartDate[:-3]+" | from "+segOrigin
+                airport_ = customfunction.get_airport_detail(segOrigin) or segOrigin
+                segDetailFormat = segDepartDate[:-3]+" | from "+airport_
                 originDetails.append(segDetailFormat)
                 
                 segDest = segments[counter]["arrivalCode"]

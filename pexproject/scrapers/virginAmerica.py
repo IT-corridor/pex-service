@@ -205,7 +205,8 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid):
                         departTime = dept[1].split("-")
                         departTimeFormat = (datetime.datetime.strptime(departTime[0], '%H:%M:%S'))
                         departureTime = departTimeFormat.strftime('%H:%M')
-                        departDisplay = dept[0]+" | "+departureTime+" from "+source
+                        airport_ = customfunction.get_airport_detail(source) or source
+                        departDisplay = dept[0]+" | "+departureTime+" from "+airport_
                         departArray.append(departDisplay)
                 
                         "############ Destination ######################"
@@ -251,7 +252,8 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid):
                             departTimeFormat = (datetime.datetime.strptime(departTime[0], '%H:%M:%S'))
                             departTimeFormat = departTimeFormat.strftime('%H:%M')
                             
-                            departDisplay = dept[0]+" | "+departTimeFormat+" from "+departure
+                            airport_ = customfunction.get_airport_detail(departure) or departure
+                            departDisplay = dept[0]+" | "+departTimeFormat+" from "+airport_
                             departArray.append(departDisplay)
                             
                             "############ Destination ######################"
