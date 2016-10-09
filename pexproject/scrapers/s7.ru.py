@@ -12,9 +12,10 @@ from selenium.webdriver.support import expected_conditions as EC
 from pyvirtualdisplay import Display
 import json
 import codecs
+import pdb 
 
 DEBUG = False
-DEBUG = True
+# DEBUG = True
 DEV_LOCAL = False
 # DEV_LOCAL = True
 
@@ -22,7 +23,7 @@ if not DEV_LOCAL:
     import customfunction
 
 def get_city_s7_code(citycode=None):
-    file_path = 'location.json' if DEV_LOCAL else '/var/www/html/python/pex/pexproject/pexproject/data/location.json'
+    file_path = '../data/location.json' if DEV_LOCAL else '/var/www/html/python/pex/pexproject/pexproject/data/location.json'
     json_text = open(file_path, 'r')
     jsonData = json.loads(json_text.read())
     for item in jsonData:
@@ -126,14 +127,19 @@ def parse_flight(flight, ibe_conversation, driver, log_file, db, searchkey, sear
         e_plane2 = e_info.find_all("li")[3].text
         e_duration = e_info.find_all("li")[4].text.strip()
 
+        e_origin_ = e_info.find_all("span", {"data-qa": "airportDeparture_flightItem"})[0].text
+        e_destination_ = e_info.find_all("span", {"data-qa": "airportArrived_flightItem"})[0].text
+
         e_origin = re.sub(r"\s+", " ", e_origin, flags=re.UNICODE)
         e_destination = re.sub(r"\s+", " ", e_destination, flags=re.UNICODE)
         e_plane1 = re.sub(r"\s+", " ", e_plane1, flags=re.UNICODE)
         e_plane2 = re.sub(r"\s+", " ", e_plane2, flags=re.UNICODE)
 
-        depart = '%s %s | from %s' % (departdatestr, e_departure, e_origin)
-        arrive = '%s %s at %s' % (arrivaldatestr, e_arrival, e_destination)
-        flight_ = '%s | %s (%s)' % (e_flightno, e_plane2, e_duration)
+        airport_ = customfunction.get_airport_detail(get_airport_code(e_origin_)) or e_origin_
+        depart = '{} {} | from {}'.format(departdatestr, e_departure, airport_)
+        airport_ = customfunction.get_airport_detail(get_airport_code(e_destination_)) or e_destination_
+        arrive = '{} {} | at {}'.format(arrivaldatestr, e_arrival, airport_)
+        flight_ = '{} | {} ({})'.format(e_flightno, e_plane2, e_duration)
 
         flightnos.append(e_flightno)
         departs.append(depart)
@@ -182,6 +188,7 @@ def get_miles_tax(node, ibe_conversation, driver):
     return '0', '0'
 
 if __name__=='__main__':
+    # pdb.set_trace()
     s7ru(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
-    # s7ru('MOW', 'BJS', '2016-06-27', '265801')
+    # s7ru('pek', 'mow', '2016-10-24', '265801')
     # s7ru('JFK', 'MOW', '2016-07-18', '265801')
