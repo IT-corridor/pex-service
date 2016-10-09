@@ -932,7 +932,7 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
                 if not searchdate1:
                     customfunction.flag = customfunction.flag+1 
                     # print '@@@@@ AirChina One Way', originobj.code, destobj.code, str(searchdate), str(searchkeyid)
-                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/aeroflot_rt.py", originobj.code, destobj.code, str(searchdate).strip(), str(searchkeyid)])
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/airchina.py", originobj.code, destobj.code, str(searchdate).strip(), str(searchkeyid)])
                 
         if is_scrape_virgin_atlantic == 1:
             customfunction.flag = customfunction.flag+1
@@ -959,7 +959,7 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
                     Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='airchina').delete()
                     Flightdata.objects.filter(searchkeyid=returnkey,datasource='airchina').delete()            
                     # print '@@@@@ AirChina Round Trip', orgncode, destcode, str(searchdate), str(searchkeyid), str(searchdate1), str(returnkey)
-                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/aeroflot_rt.py", orgncode, destcode, str(searchdate).strip(),str(searchkeyid), str(searchdate1).strip(), str(returnkey)])
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/airchina_rt.py", orgncode, destcode, str(searchdate).strip(),str(searchkeyid), str(searchdate1).strip(), str(returnkey)])
 
         if len(departlist) > 0 :
             multiplekey = multiplekey+seperator+str(searchkeyid)
