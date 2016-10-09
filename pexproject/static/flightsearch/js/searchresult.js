@@ -915,8 +915,32 @@ $("#changebtnid").click(function(event) {
 
 function setSearchData() {
     event.preventDefault();
-    sourceid = $('#fromid').val();
-    destinationid = $('#toid').val();
+    var appendErrorLabel = '<label id="from-error" class="error" for="from">Please enter a valid airport</label>';
+    if ($('#from').val().trim() == '') {
+        $('#from').css('border-color', 'red');
+        $('label[class=error]').remove();
+        $('#from').after(appendErrorLabel);
+        event.preventDefault();
+        return false;
+    }
+
+    if ($('#to').val().trim() == '') {
+        $('label[class=error]').remove();
+        $('#to').after(appendErrorLabel);
+        $('#to').css('border-color', 'red');
+        event.preventDefault();
+        return false;
+    }
+    if ($('#to').val().trim() == $('#from').val().trim()) {
+        $('label[class=error]').remove();
+        $('#to').after('<label id="from-error" class="error" for="from">From and To city cannot be same</label>');
+        $('#to').css('border-color', 'red');
+        event.preventDefault();
+        return false;
+    }
+
+    sourceid = $('#from').val();
+    destinationid = $('#to').val();
     var isReturndate = '';
     isReturndate = returndate_;
     if (isReturndate != '') {
@@ -961,6 +985,9 @@ function searchData() {
                 alert(msg);
             } else if (ret.responseText  ==  "3") {
                 alert('You reached the flight search limit!\nPlease purchase more!');
+            } else if (ret.responseText  ==  "11") {
+                alert('There is no such airport for origin or destination!\n Please check again!');
+                $('#changebtnid').prop('disabled', false);
             }
 
             return false;
