@@ -3304,11 +3304,11 @@ def parse_detail(depart_details, arrival_details, plane_details, operated_by):
         pd = plane_details[i].split(' (')
         dd0 = dd[0].split(' ')
         dd1 = dd[1].split(' / ')
-        dd11 = dd1.split(' (')
+        dd11 = dd1[1].split(' (')
 
         ad0 = ad[0].split(' ')
         ad1 = ad[1].split(' / ')
-        ad11 = ad1.split(' (')
+        ad11 = ad1[1].split(' (')
 
         flight_ = {
             'departDate': dd0[0],
