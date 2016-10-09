@@ -29,6 +29,11 @@ AJAX_DATA = '{"flightIndex":"%d","cabin":"%s","flightIndex1":"%d","cabin1":"%s"}
 AIR_LINES = ['CA', 'SC', 'TV', 'ZH', 'NX']
 
 
+def get_airport_code(airport):
+    airport = airport.split(' (')
+    return airport[1][:3]
+
+
 def get_cookie(driver, name, path):
     cookies = driver.get_cookies()
     for cookie in cookies:
@@ -183,13 +188,15 @@ def get_flight_info(driver, maindata, flightdate, searchkey, stime):
         departinfo_time = get_neat_string(trs[0].select('td')[0].div.select('span')[1].text)
         departinfo_time = datetime.datetime.strptime(departinfo_time, ' %a, %d %b %Y %H:%M ')
         departinfo_time = departinfo_time.strftime('%Y/%m/%d %H:%M')
-        departinfo = departinfo_time + ' | from ' + departinfo_airport
+        airport_ = customfunction.get_airport_detail(get_airport_code(departinfo_airport)) or departinfo_airport
+        departinfo = departinfo_time + ' | from ' + airport_
 
         arrivalinfo_airport = get_neat_string(trs[0].select('td')[1].div.select('span')[0].string)
         arrivalinfo_time = get_neat_string(trs[0].select('td')[1].div.select('span')[1].text)        
         arrivalinfo_time = datetime.datetime.strptime(arrivalinfo_time, ' %a, %d %b %Y %H:%M ')
         arrivalinfo_time = arrivalinfo_time.strftime('%Y/%m/%d %H:%M')
-        arrivalinfo = arrivalinfo_time + ' at ' + arrivalinfo_airport
+        airport_ = customfunction.get_airport_detail(get_airport_code(arrivalinfo_airport)) or arrivalinfo_airport
+        arrivalinfo = arrivalinfo_time + ' at ' + airport_
 
         planeinfo = get_clean_string(trs[1].td.div.string)
         planeinfo = '%s | %s (%s)' % (flightno, planeinfo, duration)

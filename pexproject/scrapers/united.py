@@ -15,6 +15,12 @@ from selenium.webdriver.support import expected_conditions as EC
 from pyvirtualdisplay import Display
 import json
 
+
+def get_airport_code(airport):
+    airport = airport.split(' (')
+    return airport[1][:3]
+
+
 def united(origin, destination, searchdate, searchkey):
     dt = datetime.datetime.strptime(searchdate, '%m/%d/%Y')
     date = dt.strftime('%Y-%m-%d')
@@ -247,7 +253,8 @@ def united(origin, destination, searchdate, searchkey):
             departinfo_time = datetime.datetime.strptime(FlightDate, '%m/%d/%Y %H:%M')
             FlightDate = departinfo_time.strftime('%Y/%m/%d %H:%M')
 
-            deptdetail = FlightDate+" | from "+OriginDescription
+            airport_ = customfunction.get_airport_detail(get_airport_code(OriginDescription)) or OriginDescription
+            deptdetail = FlightDate+" | from "+airport_
             departdetails.append(deptdetail)
             stopstation = segmentJsonObj[k]["Stops"]
             if stopstation != None:
@@ -261,20 +268,22 @@ def united(origin, destination, searchdate, searchkey):
                         stopFlightDate = datetime.datetime.strptime(stopFlightDate, '%m/%d/%Y %H:%M')
                         stopFlightDate = stopFlightDate.strftime('%Y/%m/%d %H:%M')
 
-                        stopOriginDetails = stopFlightDate+" | from "+stopOrigin
+                        airport_ = customfunction.get_airport_detail(get_airport_code(stopOrigin)) or stopOrigin
+                        stopOriginDetails = stopFlightDate+" | from "+airport_
                         departdetails.append(stopOriginDetails)
                         arivaildetails.append(stopOrigin)
                         stopDestination = stopnJsonobj[l]["DestinationDescription"]
                         if stopnJsonobj[l]["Destination"].strip() == lastdestination.strip():
                             lastdestdatetime = datetime.datetime.strptime(lastdestdatetime, '%m/%d/%Y %H:%M')
-                            lastdestdatetime = lastdestdatetime.strftime('%Y/%m/%d %H:%M')                            
-                            destdetail = lastdestdatetime+" | at "+stopDestination
+                            lastdestdatetime = lastdestdatetime.strftime('%Y/%m/%d %H:%M')     
+                            airport_ = customfunction.get_airport_detail(get_airport_code(stopDestination)) or stopDestination                       
+                            destdetail = lastdestdatetime+" | at "+airport_
                             arivaildetails.append(destdetail)
                         else:
                             DestinationDateTime = datetime.datetime.strptime(DestinationDateTime, '%m/%d/%Y %H:%M')
                             DestinationDateTime = DestinationDateTime.strftime('%Y/%m/%d %H:%M')                            
-
-                            fullAriveinfo = DestinationDateTime+" | at "+stopDestination
+                            airport_ = customfunction.get_airport_detail(get_airport_code(stopDestination)) or stopDestination
+                            fullAriveinfo = DestinationDateTime+" | at "+airport_
                             arivaildetails.append(fullAriveinfo)
                         stopOperator = stopnJsonobj[l]["OperatingCarrierDescription"]
                         if stopOperator != None:
@@ -293,12 +302,14 @@ def united(origin, destination, searchdate, searchkey):
                 DestinationDescription = segmentJsonObj[k]["DestinationDescription"]
                 if segmentJsonObj[k]["Destination"].strip() == lastdestination.strip():
                     lastdestdatetime = datetime.datetime.strptime(lastdestdatetime, '%m/%d/%Y %H:%M')
-                    lastdestdatetime = lastdestdatetime.strftime('%Y/%m/%d %H:%M')                    
-                    destdetail = lastdestdatetime+" | at "+DestinationDescription
+                    lastdestdatetime = lastdestdatetime.strftime('%Y/%m/%d %H:%M')         
+                    airport_ = customfunction.get_airport_detail(get_airport_code(DestinationDescription)) or DestinationDescription           
+                    destdetail = lastdestdatetime+" | at "+airport_
                 else:
                     # DestinationDateTime = datetime.datetime.strptime(DestinationDateTime, '%m/%d/%Y %H:%M')
                     # DestinationDateTime = DestinationDateTime.strftime('%Y/%m/%d %H:%M')                    
-                    destdetail = DestinationDateTime+" | at "+DestinationDescription
+                    airport_ = customfunction.get_airport_detail(get_airport_code(DestinationDescription)) or DestinationDescription
+                    destdetail = DestinationDateTime+" | at "+airport_
                 arivaildetails.append(destdetail)
                 
             operatedby = segmentJsonObj[k]["OperatingCarrierDescription"]

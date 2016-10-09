@@ -23,6 +23,12 @@ if DEV_LOCAL:
 if not DEV_LOCAL:
     import customfunction
 
+
+def get_airport_code(airport):
+    airport = airport.split(' (')
+    return airport[1][:3]
+
+
 def storeFlag(searchkey,stime):
     db = customfunction.dbconnection()
     cursor = db.cursor()
@@ -306,14 +312,16 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
                 departinfo_time = datetime.datetime.strptime(departinfo_time, '%A %d %B %Y %H:%M')
                 departinfo_time = departinfo_time.strftime('%Y/%m/%d %H:%M')
 
-                deptdetail = departinfo_time+" | from "+departing_from
+                airport_ = customfunction.get_airport_detail(get_airport_code(departing_from)) or departing_from
+                deptdetail = departinfo_time+" | from "+airport_
                 departdlist.append(deptdetail)
 
                 departinfo_time = departing_date+" "+detailarivetime
                 departinfo_time = datetime.datetime.strptime(departinfo_time, '%A %d %B %Y %H:%M')
                 departinfo_time = departinfo_time.strftime('%Y/%m/%d %H:%M')
 
-                arivedetail = departinfo_time+" | at "+ariving_at                
+                airport_ = customfunction.get_airport_detail(get_airport_code(ariving_at)) or ariving_at
+                arivedetail = departinfo_time+" | at "+airport_                
                 arivelist.append(arivedetail)
                 planetext = fl_flightno+" | "+planeno+"("+fl_duration+")" 
                 planelist.append(planetext)
