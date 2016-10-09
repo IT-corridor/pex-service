@@ -48,7 +48,7 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
         cursor = db.cursor()
     dt = datetime.datetime.strptime(searchdate.strip(), '%m/%d/%Y')
     date = dt.strftime('%d/%m/%Y')
-    if returndate != 'None':
+    if returndate != 'None' and returndate:
         dt1 = datetime.datetime.strptime(returndate, '%m/%d/%Y')
         retdate = dt1.strftime('%d/%m/%Y') 
     if returndate != 'None':
