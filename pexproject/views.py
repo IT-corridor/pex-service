@@ -2238,30 +2238,38 @@ def check_validity_token(token, service, request):
         return ['Authorization format is wrong. It should be in the format("Token <token>").']
     token = token.split('Token ')[1]
 
-    token = Token.objects.filter(token=token)
-    if not token:
-        return ['The token you provided is not correct!']
+    token_ = Token.objects.filter(token=token)
 
-    token = token[0]
+    if token_:
+        token = token_[0]
 
-    # check limit
-    limit_request = getattr(token, 'limit_%s_search' % service)
-    limit_qpx = getattr(token, 'limit_qpx')
-    number_request = getattr(token, 'run_%s_search' % service)
-    number_request = number_request + 1
-    setattr(token, 'run_%s_search' % service, number_request)
-    token.save()
+        # check limit
+        limit_request = getattr(token, 'limit_%s_search' % service)
+        limit_qpx = getattr(token, 'limit_qpx')
+        number_request = getattr(token, 'run_%s_search' % service)
+        number_request = number_request + 1
+        setattr(token, 'run_%s_search' % service, number_request)
+        token.save()
 
-    request.session['userid'] = token.owner.user_id
+        request.session['userid'] = token.owner.user_id
 
-    # send email notification once
-    if number_request >= limit_request * SEARCH_LIMIT_WARNING_THRESHOLD and (number_request - 1) < limit_request * SEARCH_LIMIT_WARNING_THRESHOLD:
-        send_limit_warning_email(token.owner, service)
+        # send email notification once
+        if number_request >= limit_request * SEARCH_LIMIT_WARNING_THRESHOLD and (number_request - 1) < limit_request * SEARCH_LIMIT_WARNING_THRESHOLD:
+            send_limit_warning_email(token.owner, service)
 
-    if number_request > limit_request:
-        return ['Your license is reached to its limit. Please extend it!']
-    # check domain
-    return ['', limit_qpx > number_request]
+        if number_request > limit_request:
+            return ['Your license is reached to its limit. Please extend it!']
+        # check domain
+        return ['', limit_qpx > number_request, None]
+
+    token_ = Token.objects.filter(test_token=token)
+
+    if token_:
+        token = token_[0]
+        request.session['userid'] = token.owner.user_id
+        return ['', True, token.test_qpx_token]
+
+    return ['The token you provided is not correct!']
 
 
 def check_validity_flight_params(request):
@@ -2394,7 +2402,7 @@ def api_search_flight(request):
         destination_ = Airports.objects.get(airport_id=destination).code
 
         if _token[1]:   # check qpx limit
-            qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date)
+            qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date, _token[1])
 
         qpx_match_count = 0
 
@@ -3203,7 +3211,9 @@ def user_search(request):
     return HttpResponse(json.dumps(result))
 
 
-def get_qpx_prices(return_date, origin, destination, depart_date):    
+def get_qpx_prices(return_date, origin, destination, depart_date, developerKey):    
+    developerKey = developerKey or 'AIzaSyDVk2iIE4B590k77n8WaZMYgxT_dw--xcc'
+
     date = datetime.datetime.strptime(depart_date, '%m/%d/%Y')
     date = date.strftime('%Y-%m-%d')
 
@@ -3224,7 +3234,7 @@ def get_qpx_prices(return_date, origin, destination, depart_date):
             # "permittedCarrier": ["UA", "DL", "SU", "CA", "EY", "B6", "S7", "VX", "DJ", "VS"]
         })
 
-    service = build('qpxExpress', 'v1', developerKey='AIzaSyDVk2iIE4B590k77n8WaZMYgxT_dw--xcc')
+    service = build('qpxExpress', 'v1', developerKey=developerKey)
 
     body = {
       "request": {
