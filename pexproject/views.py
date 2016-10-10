@@ -2774,6 +2774,8 @@ def token_update(request, id=None):
         form = TokenForm(request.POST, instance=token)
         if form.is_valid():
             token.token = form.cleaned_data['token']
+            token.test_token = form.cleaned_data['test_token']
+            token.test_qpx_token = form.cleaned_data['test_qpx_token']
             token.owner = form.cleaned_data['owner']
             token.limit_flight_search = form.cleaned_data['limit_flight_search']
             token.limit_qpx = form.cleaned_data['limit_qpx']

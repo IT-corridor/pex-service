@@ -483,6 +483,8 @@ class User(AbstractUser):
 
 class Token(models.Model):
     token = models.CharField(max_length=100, unique=True)
+    test_token = models.CharField(max_length=100, blank=True, null=True)
+    test_qpx_token = models.CharField(max_length=100, blank=True, null=True)
     owner = models.ForeignKey(User)
     limit_hotel_search = models.IntegerField(default=0)
     limit_flight_search = models.IntegerField(default=0)

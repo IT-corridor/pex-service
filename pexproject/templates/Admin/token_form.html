@@ -30,6 +30,25 @@
                     </div>
                 </div>                 
                 <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Test Token</label>
+                    <div class="col-sm-5">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" id="id_test_token" required name="test_token" value="{% if form.test_token.value %}{{form.test_token.value}}{% endif %}">
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <a class="btn btn-success waves-effect" href="#" onclick="generate_test_token();">Generate a test Token</a>
+                    </div>
+                </div>                 
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Test QPX token</label>
+                    <div class="col-sm-5">
+                        <div class="fg-line">
+                            <input type="text" class="form-control input-sm" name="test_qpx_token" value="{% if form.test_qpx_token.value %}{{form.test_qpx_token.value}}{% endif %}">
+                        </div>
+                    </div>
+                </div>               
+                <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">Owner</label>
                     <div class="col-sm-5">
                         <div class="fg-line">
@@ -128,6 +147,11 @@
         generate_token = function() {
             var seed = new Date().getTime();
             $('#id_token').val(MD5(String(seed)));
+        }
+
+        generate_test_token = function() {
+            var seed = new Date().getTime();
+            $('#id_test_token').val(MD5(String(seed)));
         }
     </script>
 {% endblock %}        
