@@ -2402,6 +2402,7 @@ def api_search_flight(request):
         destination_ = Airports.objects.get(airport_id=destination).code
 
         if _token[1]:   # check qpx limit
+            print return_date, origin_, destination_, depart_date, _token[1], '##########'
             qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date, _token[1])
             print qpx_prices, '@@@@@@2'
 
