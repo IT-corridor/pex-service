@@ -2403,6 +2403,7 @@ def api_search_flight(request):
 
         if _token[1]:   # check qpx limit
             qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date, _token[1])
+            print qpx_prices, '@@@@@@2'
 
         qpx_match_count = 0
 
