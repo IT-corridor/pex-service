@@ -2407,7 +2407,7 @@ def api_search_flight(request):
             qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date, _token[2], carriers, max_stop)
             print qpx_prices, '@@@@@@@@@@'
 
-        qpx_match_count = 0
+        qpx_unmatch_count = 0
 
         while(1):
             delay_threshold = delay_threshold - 1
@@ -2439,8 +2439,8 @@ def api_search_flight(request):
                 flight_['price'] = qpx_prices.get(price_key.encode('ascii', 'ignore'), 'N/A')
 
                 # compute percentage of match
-                if flight_['price'] != 'N/A':
-                    qpx_match_count = qpx_match_count + 1
+                if flight_['price'] == 'N/A':
+                    qpx_unmatch_count += 1
 
                 for k,v in flight_.items():
                     flight_[k] = str(v)
@@ -2493,18 +2493,15 @@ def api_search_flight(request):
                 _item['price'] = qpx_prices.get(price_key.encode('ascii', 'ignore'), 'N/A')
 
                 # compute percentage of match
-                if _item['price'] != 'N/A':
-                    qpx_match_count = qpx_match_count + 1
+                if _item['price'] == 'N/A':
+                    qpx_unmatch_count += 1
 
                 flights.append(_item)
 
-        qpx_match_percent = qpx_match_count * 1.0 / len(flights)
-
         # save unmatch percent
-        if qpx_match_percent > 0:
-            searchkey = Searchkey.objects.get(searchid=keys['departkey'])
-            searchkey.qpx_unmatch_percent = 1 - qpx_match_percent
-            searchkey.save()
+        searchkey = Searchkey.objects.get(searchid=keys['departkey'])
+        searchkey.qpx_unmatch_percent = qpx_unmatch_count * 1.0 / len(flights)
+        searchkey.save()
 
         result['status'] = 'Success'
         result['flights'] = flights
