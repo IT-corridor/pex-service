@@ -2402,7 +2402,9 @@ def api_search_flight(request):
         destination_ = Airports.objects.get(airport_id=destination).code
 
         if _token[1]:   # check qpx limit
-            qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date, _token[2])
+            carriers = get_qpx_filter_carriers(origin, destination)
+            qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date, _token[2], carriers)
+            print qpx_prices, '@@@@@@@@@@'
 
         qpx_match_count = 0
 
@@ -2432,6 +2434,7 @@ def api_search_flight(request):
                 flight_['arrival'] = flight.arival
                 flight_['image'] = 'pexportal.com/static/flightsearch/img/'+logos[flight.datasource]
                 price_key = get_qpx_price_key(flight.planedetails)        
+                print price_key
                 flight_['price'] = qpx_prices.get(price_key.encode('ascii', 'ignore'), 'N/A')
 
                 # compute percentage of match
@@ -3211,7 +3214,7 @@ def user_search(request):
     return HttpResponse(json.dumps(result))
 
 
-def get_qpx_prices(return_date, origin, destination, depart_date, developerKey):    
+def get_qpx_prices(return_date, origin, destination, depart_date, developerKey, carriers):    
     developerKey = developerKey or 'AIzaSyDVk2iIE4B590k77n8WaZMYgxT_dw--xcc'
 
     date = datetime.datetime.strptime(depart_date, '%m/%d/%Y')
@@ -3221,7 +3224,7 @@ def get_qpx_prices(return_date, origin, destination, depart_date, developerKey):
                 "origin": origin,
                 "destination": destination,
                 "date": date,
-                # "permittedCarrier": ["UA", "DL", "SU", "CA", "EY", "B6", "S7", "VX", "DJ", "VS"]
+                "permittedCarrier": list(carriers)
             }]
 
     if return_date:
