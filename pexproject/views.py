@@ -2402,8 +2402,8 @@ def api_search_flight(request):
         destination_ = Airports.objects.get(airport_id=destination).code
 
         if _token[1]:   # check qpx limit
-            carriers = get_qpx_filter_carriers(origin, destination)
-            print carriers, '##########3'
+            carriers, max_stop = get_qpx_filter_carriers(origin, destination)
+            print carriers, max_stop, '##########3'
             qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date, _token[2], carriers)
             print qpx_prices, '@@@@@@@@@@'
 
@@ -3351,10 +3351,13 @@ def parse_detail(depart_details, arrival_details, plane_details, operated_by):
 def get_qpx_filter_carriers(orgnid, destid):
     searches = Searchkey.objects.filter(origin_airport_id=orgnid, destination_airport_id=destid).order_by('-scrapetime')
     carriers = [] 
+    max_stop = 0
     for search in searches:
         flights = Flightdata.objects.filter(Q(searchkeyid=search.searchid), ~Q(origin='flag'))
         if flights:
             for flight in flights:
+                if max_stop < len(flight.planedetails.split('@')):
+                    max_stop = len(flight.planedetails.split('@'))
                 carriers += [item[:2] for item in flight.planedetails.split('@')]
-            return set(carriers)
+            return set(carriers), max_stop
 
