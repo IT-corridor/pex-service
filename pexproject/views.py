@@ -2404,7 +2404,7 @@ def api_search_flight(request):
         if _token[1]:   # check qpx limit
             carriers, max_stop = get_qpx_filter_carriers(origin, destination)
             print carriers, max_stop, '##########3'
-            qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date, _token[2], carriers)
+            qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date, _token[2], carriers, max_stop)
             print qpx_prices, '@@@@@@@@@@'
 
         qpx_match_count = 0
@@ -3215,7 +3215,7 @@ def user_search(request):
     return HttpResponse(json.dumps(result))
 
 
-def get_qpx_prices(return_date, origin, destination, depart_date, developerKey, carriers):    
+def get_qpx_prices(return_date, origin, destination, depart_date, developerKey, carriers, max_stop):    
     developerKey = developerKey or 'AIzaSyDVk2iIE4B590k77n8WaZMYgxT_dw--xcc'
 
     date = datetime.datetime.strptime(depart_date, '%m/%d/%Y')
@@ -3225,7 +3225,8 @@ def get_qpx_prices(return_date, origin, destination, depart_date, developerKey, 
                 "origin": origin,
                 "destination": destination,
                 "date": date,
-                "permittedCarrier": list(carriers)
+                "permittedCarrier": list(carriers),
+                "maxStops": max_stop
             }]
 
     if return_date:
@@ -3359,5 +3360,5 @@ def get_qpx_filter_carriers(orgnid, destid):
                 if max_stop < len(flight.planedetails.split('@')):
                     max_stop = len(flight.planedetails.split('@'))
                 carriers += [item[:2] for item in flight.planedetails.split('@')]
-            return set(carriers), max_stop
+            return set(carriers), max_stop-1
 
