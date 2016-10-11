@@ -3228,24 +3228,30 @@ def get_qpx_prices(return_date, origin, destination, depart_date, developerKey, 
     date = datetime.datetime.strptime(depart_date, '%m/%d/%Y')
     date = date.strftime('%Y-%m-%d')
 
-    slice_ = [{
-                "origin": origin,
-                "destination": destination,
-                "date": date,
-                "permittedCarrier": list(carriers),
-                "maxStops": max_stop
-            }]
+    slice_item = {
+                    "origin": origin,
+                    "destination": destination,
+                    "date": date,
+                }
+    if carriers:
+        slice_item["permittedCarrier"] = list(carriers)
+        slice_item["maxStops"] = max_stop
+
+    slice_ = [slice_item]
 
     if return_date:
         date = datetime.datetime.strptime(return_date, '%m/%d/%Y')
         date = date.strftime('%Y-%m-%d')
-        slice_.append({
-            "origin": destination,
-            "destination": origin,
-            "date": date,
-            "permittedCarrier": list(carriers),
-            "maxStops": max_stop
-        })
+        slice_item_r = {
+                        "origin": destination,
+                        "destination": origin,
+                        "date": date,
+                    }
+        if carriers:
+            slice_item_r["permittedCarrier"] = list(carriers)
+            slice_item_r["maxStops"] = max_stop
+
+        slice_.append(slice_item_r)
 
     service = build('qpxExpress', 'v1', developerKey=developerKey)
 
