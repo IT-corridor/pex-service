@@ -271,7 +271,9 @@ def united(origin, destination, searchdate, searchkey):
                         airport_ = customfunction.get_airport_detail(get_airport_code(stopOrigin)) or stopOrigin
                         stopOriginDetails = stopFlightDate+" | from "+airport_
                         departdetails.append(stopOriginDetails)
-                        arivaildetails.append(stopOrigin)
+                        # what is it, Pradeep?
+                        stopOriginDetails = stopFlightDate+" | at "+airport_
+                        arivaildetails.append(stopOriginDetails)
                         stopDestination = stopnJsonobj[l]["DestinationDescription"]
                         if stopnJsonobj[l]["Destination"].strip() == lastdestination.strip():
                             lastdestdatetime = datetime.datetime.strptime(lastdestdatetime, '%m/%d/%Y %H:%M')
