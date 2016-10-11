@@ -3346,7 +3346,7 @@ def parse_detail(depart_details, arrival_details, plane_details, operated_by):
 
 def get_qpx_filter_carriers(orgnid, destid):
     searches = Searchkey.objects.filter(origin_airport_id=orgnid, destination_airport_id=destid).order_by('-scrapetime')
-    carriers = []
+    carriers = [] 
     for search in searches:
         flights = Flightdata.objects.filter(Q(searchkeyid=search.searchid), ~Q(origin='flag'))
         if flights:
