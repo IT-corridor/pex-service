@@ -3236,7 +3236,8 @@ def get_qpx_prices(return_date, origin, destination, depart_date, developerKey, 
             "origin": destination,
             "destination": origin,
             "date": date,
-            # "permittedCarrier": ["UA", "DL", "SU", "CA", "EY", "B6", "S7", "VX", "DJ", "VS"]
+            "permittedCarrier": list(carriers),
+            "maxStops": max_stop
         })
 
     service = build('qpxExpress', 'v1', developerKey=developerKey)
