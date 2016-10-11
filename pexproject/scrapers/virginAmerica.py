@@ -206,7 +206,7 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid):
                         departTimeFormat = (datetime.datetime.strptime(departTime[0], '%H:%M:%S'))
                         departureTime = departTimeFormat.strftime('%H:%M')
                         airport_ = customfunction.get_airport_detail(source) or source
-                        departDisplay = dept[0]+" | "+departureTime+" from "+airport_
+                        departDisplay = dept[0]+" "+departureTime+" | from "+airport_
                         departArray.append(departDisplay)
                 
                         "############ Destination ######################"
@@ -219,7 +219,7 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid):
                         ariveTimeFormat = (datetime.datetime.strptime(ariveTime[0], '%H:%M:%S'))
                         arivalTime = ariveTimeFormat.strftime('%H:%M')
                         airport_ = customfunction.get_airport_detail(dest) or dest
-                        ariveDisplay = arrival[0]+" | "+arivalTime+" at "+airport_
+                        ariveDisplay = arrival[0]+" "+arivalTime+" | at "+airport_
                         ariveArray.append(ariveDisplay)
                         
                         elapsedTime = flightDetails["elapsedTime"]
@@ -254,7 +254,7 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid):
                             departTimeFormat = departTimeFormat.strftime('%H:%M')
                             
                             airport_ = customfunction.get_airport_detail(departure) or departure
-                            departDisplay = dept[0]+" | "+departTimeFormat+" from "+airport_
+                            departDisplay = dept[0]+" "+departTimeFormat+" | from "+airport_
                             departArray.append(departDisplay)
                             
                             "############ Destination ######################"
@@ -274,7 +274,7 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid):
                                 timedelta = (waitingTime.total_seconds())/60  
                             
                             airport_ = customfunction.get_airport_detail(ariveAt) or ariveAt
-                            ariveDisplay = str(arrival[0])+" | "+str(ariveTimeFormat)+" at "+airport_
+                            ariveDisplay = str(arrival[0])+" "+str(ariveTimeFormat)+" | at "+airport_
                             ariveArray.append(ariveDisplay)
     
                             "########### Flight Details #############################"
