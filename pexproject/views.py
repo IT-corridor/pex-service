@@ -2445,6 +2445,9 @@ def api_search_flight(request):
                 for k,v in flight_.items():
                     flight_[k] = str(v)
                 flight_['route'] = parse_detail(flight.departdetails, flight.arivedetails, flight.planedetails, flight.operatedby)
+                if not flight_['route']:
+                    continue
+
                 flights.append(flight_)
 
         else:
@@ -2468,6 +2471,8 @@ def api_search_flight(request):
                 _item['duration'] = item.duration
                 _item['image'] = 'pexportal.com/static/flightsearch/img/'+logos[item.datasource]
                 _item['depart_routes'] = parse_detail(item.departdetails, item.arivedetails, item.planedetails, item.operatedby)
+                if not _item['depart_routes']:
+                    continue
 
                 _item['return_origin'] = item.return_origin
                 _item['return_stoppage'] = item.return_stoppage
@@ -2477,6 +2482,8 @@ def api_search_flight(request):
                 _item['return_arrival'] = str(item.return_arrival)
                 _item['return_duration'] = item.return_duration
                 _item['return_routes'] = parse_detail(item.return_departdetails, item.return_arrivaldetails, item.return_planedetails, item.return_operatedby)
+                if not _item['return_routes']:
+                    continue
 
                 _item['datasource'] = item.datasource
                 _item['total_miles'] = item.total_miles
@@ -3316,38 +3323,41 @@ def parse_detail(depart_details, arrival_details, plane_details, operated_by):
     operated_by = operated_by.split('@')
 
     flights = []
-    for i in range(len(depart_details)):
-        dd = depart_details[i].split(' | from ')
-        ad = arrival_details[i].split(' | at ')
-        pd = plane_details[i].split(' (')
-        dd0 = dd[0].split(' ')
-        dd1 = dd[1].split(' / ')
-        dd11 = dd1[1].split(' (')
+    try:
+        for i in range(len(depart_details)):
+            dd = depart_details[i].split(' | from ')
+            ad = arrival_details[i].split(' | at ')
+            pd = plane_details[i].split(' (')
+            dd0 = dd[0].split(' ')
+            dd1 = dd[1].split(' / ')
+            dd11 = dd1[1].split(' (')
 
-        ad0 = ad[0].split(' ')
-        ad1 = ad[1].split(' / ')
-        ad11 = ad1[1].split(' (')
+            ad0 = ad[0].split(' ')
+            ad1 = ad[1].split(' / ')
+            ad11 = ad1[1].split(' (')
 
-        flight_ = {
-            'departDate': dd0[0],
-            'departTime': dd0[1],
-            'departAirport': dd1[0],
-            'departCity': dd11[0],
-            'departAirportCode': dd11[1][:-1],
+            flight_ = {
+                'departDate': dd0[0],
+                'departTime': dd0[1],
+                'departAirport': dd1[0],
+                'departCity': dd11[0],
+                'departAirportCode': dd11[1][:-1],
 
-            'arriveDate': ad0[0],
-            'arriveTime': ad0[1],
-            'arriveAirport': ad1[0],
-            'arriveCity': ad11[0],
-            'arriveAirportCode': ad11[1][:-1],
+                'arriveDate': ad0[0],
+                'arriveTime': ad0[1],
+                'arriveAirport': ad1[0],
+                'arriveCity': ad11[0],
+                'arriveAirportCode': ad11[1][:-1],
 
-            'flight': pd[0],
-            'duration': pd[1][:-1] 
-        }
+                'flight': pd[0],
+                'duration': pd[1][:-1] 
+            }
 
-        flights.append(flight_)
-
-    return flights
+            flights.append(flight_)
+        return flights
+    except Exception, e:
+        print 'Parsing Error'
+        print depart_details, arrival_details, plane_details, operated_by
 
 
 def get_qpx_filter_carriers(orgnid, destid):
