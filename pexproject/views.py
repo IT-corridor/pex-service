@@ -2403,6 +2403,7 @@ def api_search_flight(request):
 
         if _token[1]:   # check qpx limit
             carriers = get_qpx_filter_carriers(origin, destination)
+            print carriers, '##########3'
             qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date, _token[2], carriers)
             print qpx_prices, '@@@@@@@@@@'
 
