@@ -229,7 +229,6 @@ $("#submitid").click(function(event) {
     triptype = $("input[type='radio'][name='trip']:checked");
     searchtype = $("input[type='radio'][name='searchtype']:checked").val();
     var current_date = $.datepicker.formatDate('mm/dd/yy', new Date());
-
     if (triptype.length > 0) {
         triptypeval = triptype.val();
     }
@@ -279,6 +278,7 @@ $("#submitid").click(function(event) {
     departdateval = $('#departMain').val();
     cabintypeval = $('#cabintype option:selected').val();
     searchData();
+    return false ;
 });
 
 function searchData() {

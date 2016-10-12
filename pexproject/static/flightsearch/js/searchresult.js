@@ -910,7 +910,7 @@ var searchidval = '';
 var returnidval = '';
 $("#changebtnid").click(function(event) {
     //event.preventDefault();
-    setSearchData();
+    return setSearchData();
 });
 
 function setSearchData() {
@@ -949,6 +949,7 @@ function setSearchData() {
     departdateval = $('#departuredate').val();
     cabintypeval = $('#cabintype option:selected').val();
     searchData();
+    return false ;
 }
 
 function searchData() {
