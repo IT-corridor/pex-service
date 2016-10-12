@@ -43,7 +43,7 @@ function search_hotel()
 	$('.pl5').html(place);
 	refresh_hotel_chain = setInterval(loading, 3000);	
 	$("#loading-model").modal('show');
-	// $('#search-form').submit();
+	$('#search-form').submit();
 }
 
 function toggle_title(obj, title1, title2) {
