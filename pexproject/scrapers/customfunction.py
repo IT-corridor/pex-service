@@ -35,11 +35,10 @@ flag = 0
 
 
 def dbconnection():
-    db = MySQLdb.connect(host="localhost",  
-                        user="root",           
-                        passwd="1jyT382PWzYP",        
-                        db="pex")  
-    return db
+    return MySQLdb.connect(host="localhost",  
+                           user="root",           
+                           passwd="1jyT382PWzYP",        
+                           db="pex")  
 
 
 def sendMail(from_email, to_email, subject, bodytext, html_content=None):
