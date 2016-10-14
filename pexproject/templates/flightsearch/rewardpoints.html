@@ -12,7 +12,7 @@
         <div class="alert alert-warning">{{message}}</div>
         {% endif %}
 
-        {% if not accounts %}
+        {% if not wallet_id %}
         <div class="col-xs-12 text-center">
             <a href="https://awardwallet.com/m/#/connections/approve/fjbykhglkc/2" class="btn btn-pexSearch">
                 Connect to AwardWallet
@@ -32,6 +32,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% if accounts %}
                         {% for row in accounts %}
                         <tr id="{{row.3}}_div">
                             <td class="text-center">{{row.airline}}</td>
@@ -41,6 +42,9 @@
                             <td class="text-center">{{row.expireDate}}</td>
                         </tr>
                         {% endfor %}
+                        {% else %}
+                        <tr><td colspan="5">There is no available rewards information.</td></tr>
+                        {% endif %}
                     </tbody>
                 </table>
             </div>

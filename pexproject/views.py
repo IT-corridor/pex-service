@@ -3354,4 +3354,4 @@ def rewardpoints(request):
             else:
                 cursor.execute ("INSERT INTO reward_points (user_id, reward_points, airlines) VALUES (%s,%s,%s);", (str(user.user_id),str(account['balance']), display_name))
 
-    return render(request, 'flightsearch/rewardpoints.html', {'accounts': accounts })
+    return render(request, 'flightsearch/rewardpoints.html', { 'accounts': accounts, 'wallet_id': wallet_id })
