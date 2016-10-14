@@ -3376,7 +3376,7 @@ def get_qpx_filter_carriers(orgnid, destid):
 
 
 def rewardpoints(request):
-    if not request.user.is_authenticated():
+    if not 'userid' in request.session:
         return HttpResponseRedirect('/index')
 
     wallet_token = "b2fadf4b5e0fa5569634406fd384632662fc31b9"
