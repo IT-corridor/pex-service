@@ -236,8 +236,6 @@ def index(request):
               request.session['userid'] = user.user_id
               request.session['level'] = user.level
 
-
-
     return render(request, 'flightsearch/home.html')    
 
 
@@ -3376,3 +3374,43 @@ def get_qpx_filter_carriers(orgnid, destid):
                 carriers += [item[:2] for item in flight.planedetails.split('@')]
             return set(carriers), min(2, max_stop-1)
 
+
+def rewardpoints(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/index')
+
+    wallet_token = "b2fadf4b5e0fa5569634406fd384632662fc31b9"
+    user = User.objects.get(pk=request.session['userid'])
+    wallet_id = request.GET.get('userId')
+
+    if wallet_id:
+        user.wallet_id = wallet_id
+        user.save()
+    wallet_id = user.wallet_id
+
+    accounts = []
+
+    if wallet_id:
+        url = 'https://business.awardwallet.com/api/export/v1/connectedUser/{}'.format(wallet_id)
+        header = { "X-Authentication": wallet_token }
+        res = requests.get(url=url, headers=header)
+        res_json = res.json()
+
+        for account_ in res_json['accounts']:
+            account = {}
+            account['airline'] = account_['displayName']
+            account['balance'] = account_['balance']
+            account['accountId'] = account_['accountId']
+
+            if not 'properties' in account_:
+                # abnormal
+                continue
+                
+            for property_ in account_['properties']:
+                if 'Next Elite Level' == property_['name']:
+                    account['status'] = property_['value']
+                elif 'expireDate' in property_:
+                    account['expireDate'] = property_['value']
+            accounts.append(account)
+
+    return render(request, 'flightsearch/rewardpoints.html', {'accounts': accounts })

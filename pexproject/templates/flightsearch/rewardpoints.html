@@ -1,0 +1,51 @@
+{% extends "flightsearch/base.html" %}
+{% load staticfiles %}
+{% load humanize %}
+{% block content %}
+
+<title>Reward Points | PEX+</title>
+<div class="col-xs-12 nopadding form-cstm-mng" style="">
+    <h3 class="text-center">My Reward Points</h3> {% if updatemsg %}
+    <h4 class="text-center"> {{updatemsg}}</h4> {%endif%}
+    <div class="col-xs-12 col-sm-10 col-sm-push-1 mng-act fr-pd" style="padding: 30px 10px !important;">
+        {% if message %}
+        <div class="alert alert-warning">{{message}}</div>
+        {% endif %}
+
+        {% if not accounts %}
+        <div class="col-xs-12 text-center">
+            <a href="https://awardwallet.com/m/#/connections/approve/fjbykhglkc/2" class="btn btn-pexSearch">
+                Connect to AwardWallet
+            </a>
+        </div>
+        {% else %}
+        <div class="col-xs-12  nopadding">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Airlines</th>
+                            <th class="text-center">Account No</th>
+                            <th class="text-center">Balance</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-center">Time to expire</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in accounts %}
+                        <tr id="{{row.3}}_div">
+                            <td class="text-center">{{row.airline}}</td>
+                            <td class="text-center">{{row.accountId}}</td>
+                            <td class="text-center">{{row.balance}} Miles</td>
+                            <td class="text-center">{{row.status}}</td>
+                            <td class="text-center">{{row.expireDate}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
