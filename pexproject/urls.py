@@ -34,7 +34,6 @@ urlpatterns = [
     url(r'^checkData', checkData, name='checkData'),
     url(r'^myRewardPoint', myRewardPoint, name='myRewardPoint'),
     url(r'^rewardpoints', rewardpoints, name='rewardpoints'),
-    url(r'^manageAccount', manageAccount, name='manageAccount'),
     url(r'^forgotPassword', forgotPassword, name='forgotPassword'),
     url(r'^signup', signup, name='signup'),
     url(r'^staticPage', staticPage, name='staticPage'),
