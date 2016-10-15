@@ -3333,7 +3333,7 @@ def rewardpoints(request):
         for account_ in res_json['accounts']:
             account = {}
             account['airline'] = account_['displayName']
-            account['balance'] = account_['balance']
+            account['balance'] = account_['balanceRaw']
             account['accountId'] = account_['accountId']
 
             if not 'properties' in account_:
