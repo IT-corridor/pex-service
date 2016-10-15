@@ -358,6 +358,50 @@
     <p id="back-top">
         <a href="#top"><span class="glyphicon glyphicon-chevron-up"></span> TOP</a>
     </p>
+    <a href="/staticPage/feedback" class="feedback-btn feedback">
+        <button type="button" class="btn btn-warning text-uppercase">
+            Feedback
+        </button>
+    </a>
+    {% if pointlist %}
+        <button type="button" class="btn btn-info text-uppercase btn-balances" data-toggle="modal" data-target="#rewardpoints_dialog">Balances</button>
+    {% endif %}
+
+<!-- Reward points Modal -->
+{% if pointlist %}
+<div class="modal fade" id="rewardpoints_dialog" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Hotel Reward Points</h4>
+        </div>
+        <div class="modal-body">
+            <div class="col-xs-12 nopadding form-side">
+                <dl>
+                    {% for point in pointlist %}
+                    <div class="cutom-ui-mil">
+                        <dt class="dl-horizontal" style="text-transform: uppercase; margin-bottom: 5px;margin-top: 5px;">
+                            {{point.0}}
+                        </dt>
+                        <span>{{point.2}}</span>
+                        <span style="float: right;">{{point.1}} MILES</span>
+                    </div>
+                    {%endfor%}
+                </dl>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+</div>
+{% endif %}
 
 <script> 
 
@@ -388,12 +432,15 @@ $(document).ready(function() {
 
     $('span.stars').stars();
     $("#back-top").hide();
-
+    $('.btn-balances').hide();
+    
     $(window).scroll(function() {
         if ($(this).scrollTop() > 100) {
             $('#back-top').fadeIn();
+            $('.btn-balances').fadeIn();
         } else {
             $('#back-top').fadeOut();
+            $('.btn-balances').fadeOut();
         }
     });
 

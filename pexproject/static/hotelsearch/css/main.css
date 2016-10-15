@@ -1953,6 +1953,18 @@ nav.cstm-hw-it {
 .static-page-jumbo .jumbotron {
 	padding: 0 30px;
 }
+.btn-balances {
+    position: fixed;
+    bottom: 212px;
+    right: -32px;
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+    z-index: 1000;    
+    background: rgba(49,176,213,0.7);
+}
 .feedback-btn {
 	position: fixed;
 	bottom: 110px;
