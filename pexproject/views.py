@@ -3350,8 +3350,8 @@ def rewardpoints(request):
             cursor.execute("select * from reward_points where user_id={} and airlines='{}'".format(user.user_id, display_name))
 
             if cursor.fetchone():
-                cursor.execute("update reward_points set reward_points={} where airlines='{}' and user_id={}".format(account['balance'], display_name, user.user_id))
+                cursor.execute("update reward_points set reward_points={} where airlines='{}' and user_id={}".format(account_['balanceRaw'], display_name, user.user_id))
             else:
-                cursor.execute ("INSERT INTO reward_points (user_id, reward_points, airlines) VALUES (%s,%s,%s);", (str(user.user_id),str(account['balance']), display_name))
+                cursor.execute ("INSERT INTO reward_points (user_id, reward_points, airlines) VALUES (%s,%s,%s);", (str(user.user_id),str(account_['balanceRaw']), display_name))
 
     return render(request, 'flightsearch/rewardpoints.html', { 'accounts': accounts, 'wallet_id': wallet_id })
