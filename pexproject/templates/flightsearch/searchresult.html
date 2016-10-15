@@ -1827,7 +1827,7 @@
         </button>
     </a>
     {% if pointlist %}
-        <button type="button" class="btn btn-info btn-md" data-toggle="modal" data-target="#rewardpoints_dialog">Balances</button>
+        <button type="button" class="btn btn-info text-uppercase btn-balances" data-toggle="modal" data-target="#rewardpoints_dialog">Balances</button>
     {% endif %}
 
 </div>
@@ -1971,7 +1971,7 @@
           <h4 class="modal-title">Reward Points</h4>
         </div>
         <div class="modal-body">
-            <div class="col-xs-12 nopadding form-side collapse" id="account-balance">
+            <div class="col-xs-12 nopadding form-side">
                 <dl>
                     {% for point in pointlist %}
                     <div class="cutom-ui-mil">
