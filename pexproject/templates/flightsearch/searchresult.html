@@ -40,10 +40,13 @@
                                     {% for point in pointlist %}
                                     <div class="cutom-ui-mil">
                                         <dt class="dl-horizontal" style="text-transform: uppercase;">
-                                            {{point.3}}:
+                                            {{point.airlines}}
                                         </dt>
+                                        <dd>
+                                            {{point.status}}
+                                        </dd>
                                         <dd class="text-right">
-                                            {{point.2}} MILES
+                                            {{point.rewardpoints}} MILES
                                         </dd>
                                     </div>
                                     {%endfor%}

@@ -1610,7 +1610,7 @@ def getsearchresult(request):
         if 'userid' in request.session and  'actionfor' not in request.POST:
             userid = request.session['userid']
             cursor = connection.cursor()
-            cursor.execute("select * from reward_points where user_id="+str(userid))
+            cursor.execute("select airlines, rewardpoints, status from reward_points where kind='Airlines' and user_id="+str(userid))
             pointlist = cursor.fetchall()
         
         return render_to_response('flightsearch/searchresult.html', {'title':title,'action':action,'pointlist':pointlist,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value,'multisearch':multisearch,'data':mainlist,'multirecod':mainlist,'multicity':multicity,'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request)) 
@@ -3338,7 +3338,8 @@ def rewardpoints(request):
             account['airline'] = account_['displayName']
             account['balance'] = account_['balanceRaw']
             account['accountId'] = account_['accountId']
-            account['expireDate'] = account_.get('expirationDate', '')
+            account['expireDate'] = account_.get('expirationDate', '')[:10]
+            account['status'] = '' 
 
             if 'properties' in account_:
                 for property_ in account_['properties']:
@@ -3349,6 +3350,6 @@ def rewardpoints(request):
 
             # update database
             display_name = account['airline'].split('(')[0]
-            cursor.execute ("INSERT INTO reward_points (user_id, reward_points, airlines, kind) VALUES (%s,%s,%s,%s);", (str(user.user_id),str(account_['balanceRaw']), display_name, account_['kind']))
+            cursor.execute ("INSERT INTO reward_points (user_id, reward_points, airlines, kind, status) VALUES (%s,%s,%s,%s,%s);", (str(user.user_id),str(account_['balanceRaw']), display_name, account_['kind']), account['status'])
 
     return render(request, 'flightsearch/rewardpoints.html', { 'accounts': accounts, 'wallet_id': wallet_id })
