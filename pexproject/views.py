@@ -3349,6 +3349,6 @@ def rewardpoints(request):
 
             # update database
             display_name = account['airline'].split('(')[0]
-            cursor.execute ("INSERT INTO reward_points (user_id, reward_points, airlines, kind) VALUES (%s,%s,%s);", (str(user.user_id),str(account_['balanceRaw']), display_name, account_['kind']))
+            cursor.execute ("INSERT INTO reward_points (user_id, reward_points, airlines, kind) VALUES (%s,%s,%s,%s);", (str(user.user_id),str(account_['balanceRaw']), display_name, account_['kind']))
 
     return render(request, 'flightsearch/rewardpoints.html', { 'accounts': accounts, 'wallet_id': wallet_id })
