@@ -3326,6 +3326,9 @@ def rewardpoints(request):
         header = { "X-Authentication": wallet_token }
         res = requests.get(url=url, headers=header)
         res_json = res.json()
+        cursor = connection.cursor()
+        # delete previous reward records
+        cursor.execute("delete from reward_points where user_id={}".format(user.user_id))
 
         for account_ in res_json['accounts']:
             account = {}
@@ -3345,7 +3348,6 @@ def rewardpoints(request):
             accounts.append(account)
 
             # update database
-            cursor = connection.cursor()
             display_name = account['airline'].split('(')[0]
             cursor.execute("select * from reward_points where user_id={} and airlines='{}'".format(user.user_id, display_name))
 
