@@ -3340,9 +3340,11 @@ def rewardpoints(request):
             account['accountId'] = account_['accountId']
             account['expireDate'] = account_.get('expirationDate', '')
 
-            for property_ in account_['properties']:
-                if 'Next Elite Level' == property_['name']:
-                    account['status'] = property_['value']
+            if 'properties' in account_:
+                for property_ in account_['properties']:
+                    if 'Next Elite Level' == property_['name']:
+                        account['status'] = property_['value']
+
             accounts.append(account)
 
             # update database
