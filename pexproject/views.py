@@ -3331,29 +3331,22 @@ def rewardpoints(request):
         cursor.execute("delete from reward_points where user_id={}".format(user.user_id))
 
         for account_ in res_json['accounts']:
+            if account_['kind'] not in ['Airlines', 'Hotels']:
+                continue
+
             account = {}
             account['airline'] = account_['displayName']
             account['balance'] = account_['balanceRaw']
             account['accountId'] = account_['accountId']
+            account['expireDate'] = account_.get('expirationDate', '')
 
-            if not 'properties' in account_:
-                # the account is abnormal
-                continue
-                
             for property_ in account_['properties']:
                 if 'Next Elite Level' == property_['name']:
                     account['status'] = property_['value']
-                elif 'expireDate' in property_:
-                    account['expireDate'] = property_['value']
             accounts.append(account)
 
             # update database
             display_name = account['airline'].split('(')[0]
-            cursor.execute("select * from reward_points where user_id={} and airlines='{}'".format(user.user_id, display_name))
-
-            if cursor.fetchone():
-                cursor.execute("update reward_points set reward_points={} where airlines='{}' and user_id={}".format(account_['balanceRaw'], display_name, user.user_id))
-            else:
-                cursor.execute ("INSERT INTO reward_points (user_id, reward_points, airlines) VALUES (%s,%s,%s);", (str(user.user_id),str(account_['balanceRaw']), display_name))
+            cursor.execute ("INSERT INTO reward_points (user_id, reward_points, airlines, kind) VALUES (%s,%s,%s);", (str(user.user_id),str(account_['balanceRaw']), display_name, account_['kind']))
 
     return render(request, 'flightsearch/rewardpoints.html', { 'accounts': accounts, 'wallet_id': wallet_id })
