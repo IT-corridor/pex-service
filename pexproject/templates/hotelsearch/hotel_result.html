@@ -8,6 +8,34 @@
 <div class="container-result">
     <div class="row">
     <div class="col-md-2">
+        {% if pointlist %}
+        <div class="col-xs-12 col-md-12 nopadding">
+            <a class="account_balance" role="button" data-toggle="collapse" href="#account-balance" aria-expanded="false" aria-controls="pricecalender">
+                <div class="col-xs-12 nopaddig form-side-2">
+                    <p class="pull-left">
+                        VIEW ACCOUNT BALANCES
+                    </p>
+                    <p class="pull-right show-filter visible-xs">
+                        <span class="glyphicon glyphicon-edit visible-xs"></span>
+                    </p>
+                </div>
+            </a>
+            <div class="col-xs-12 nopadding form-side collapse" id="account-balance">
+                <dl>
+                    {% for point in pointlist %}
+                    <div class="cutom-ui-mil">
+                        <dt class="dl-horizontal" style="text-transform: uppercase; margin-bottom: 5px;margin-top: 5px;">
+                            {{point.0}}
+                        </dt>
+                        <span>{{point.2}}</span>
+                        <span style="float: right;">{{point.1}} MILES</span>
+                    </div>
+                    {%endfor%}
+                </dl>
+            </div>
+        </div>
+        {%endif%}
+    
         <div class="mvb10px nopadding filters-holder">
             <div class="col-xs-12 nopadding visible-xs form-side">
                 <p class="pull-left">

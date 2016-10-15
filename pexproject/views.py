@@ -2099,8 +2099,6 @@ def search_hotel(request):
         form = HotelSearchForm(initial={'place':place, 'checkin': checkin, 'checkout': checkout})
         filters = {'price_low':'', 'price_high':'', 'award_low':'', 'award_high':'', 'radius': 1000, 'chain': HOTEL_CHAINS.keys(), 'amenity': []}
 
-    # return render(request, 'hotelsearch/hotel_result.html', {'hotels': [], 'form': form, 'price_matrix': [], 'filters': {'price_low':12, 'price_high':12313, 'award_low':123, 'award_high':312321, 'radius':[], 'chain':[], 'price_lowest':231, 'price_highest':312312, 'award_lowest':123, 'award_highest':12312312, 'dis_place':12, 'star_rating': 5}})    
-
     result = _search_hotel(place, checkin, checkout, filters)
 
     error_message = result[0]
@@ -2114,13 +2112,18 @@ def search_hotel(request):
             'amenities': HOTEL_AMENITIES,
             'filters': {}})
     else:
+        cursor = connection.cursor()
+        cursor.execute("select airlines, reward_points, status from reward_points where kind='Hotels' and user_id="+str(request.session['userid']))
+        pointlist = cursor.fetchall()
         db_hotels, price_matrix, filters = result[1], result[2], result[3]
+
         return render(request, 'hotelsearch/hotel_result.html', {
             'hotels': db_hotels, 
             'form': form, 
             'price_matrix': price_matrix, 
             'chains': HOTEL_CHAINS,
             'amenities': HOTEL_AMENITIES,
+            'pointlist': pointlist,
             'filters': filters})    
 
 
