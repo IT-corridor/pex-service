@@ -39,15 +39,11 @@
                                 <dl>
                                     {% for point in pointlist %}
                                     <div class="cutom-ui-mil">
-                                        <dt class="dl-horizontal" style="text-transform: uppercase;">
+                                        <dt class="dl-horizontal" style="text-transform: uppercase; margin-bottom: 5px;">
                                             {{point.0}}
                                         </dt>
-                                        <dd>
-                                            {{point.2}}
-                                        </dd>
-                                        <dd class="text-right">
-                                            {{point.1}} MILES
-                                        </dd>
+                                        <span>{{point.2}}</span>
+                                        <span style="float: right;">{{point.1}} MILES</span>
                                     </div>
                                     {%endfor%}
                                 </dl>
