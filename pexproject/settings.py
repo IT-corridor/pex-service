@@ -46,7 +46,8 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'pexproject',
     'oauth2',
-    'social_auth',
+#    'social_auth',
+    'social.apps.django_app.default'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -136,28 +137,24 @@ LOGGING = {
     }
 }
 '''
-TEMPLATE_CONTEXT_PROCESSORS = (                                         
-    'django.core.context_processors.request',
-    'social.apps.django_app.context_processors.backends',
-    'django.contrib.auth.context_processors.auth',
-    'social.apps.django_app.context_processors.login_redirect',
-    'django.contrib.auth.backends.ModelBackend',
-    'social_auth.context_processors.social_auth_by_name_backends',
-    'social_auth.context_processors.social_auth_backends',
-    'social_auth.context_processors.social_auth_by_type_backends',
-    'social_auth.context_processors.social_auth_login_redirect',
-    )
+TEMPLATE_CONTEXT_PROCESSORS = (
+   'django.contrib.auth.context_processors.auth',
+   'django.core.context_processors.debug',
+   'django.core.context_processors.i18n',
+   'django.core.context_processors.media',
+   'django.core.context_processors.static',
+   'django.core.context_processors.tz',
+   'django.contrib.messages.context_processors.messages',
+   'social.apps.django_app.context_processors.backends',
+   'social.apps.django_app.context_processors.login_redirect',
+)
+
 
 AUTHENTICATION_BACKENDS = (
-    'social_auth.backends.twitter.TwitterBackend',
-    'social_auth.backends.facebook.FacebookBackend',
-    'social_auth.backends.google.GoogleOAuthBackend',
-    'social_auth.backends.google.GoogleOAuth2Backend',
-    'social_auth.backends.google.GoogleBackend',
-    'social_auth.backends.OpenIDBackend',
-    #'social_auth..backends.email.EmailAuth',
-    'django.contrib.auth.backends.ModelBackend',
-    'pexproject.models.UserBackend',
+   'social.backends.facebook.FacebookOAuth2',
+   'social.backends.google.GoogleOAuth2',
+   'social.backends.twitter.TwitterOAuth',
+   'django.contrib.auth.backends.ModelBackend',
 )
 '''
 SOCIAL_AUTH_PIPELINE = (
@@ -177,6 +174,8 @@ SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
 }
 SOCIAL_AUTH_FIELDS_STORED_IN_SESSION = ['username']
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+SOCIAL_AUTH_FACEBOOK_KEY='423944854478305'
+SOCIAL_AUTH_FACEBOOK_SECRET='cb583c182bbf2fe402ff5ea7fabfd8ec'
 FACEBOOK_APP_ID='423944854478305'
 FACEBOOK_API_SECRET='cb583c182bbf2fe402ff5ea7fabfd8ec'
 SESSION_SERIALIZER='django.contrib.sessions.serializers.PickleSerializer'
@@ -196,6 +195,9 @@ GOOGLE_OAUTH2_SCOPE = ['https://www.googleapis.com/auth/userinfo.email',]
 LANGUAGE_CODE = 'en-us'
 EMAIL_HOST = 'localhost'
 TIME_ZONE = 'UTC'
+
+FROM_MAIL = 'support@pexportal.com'
+
 
 USE_I18N = True
 
