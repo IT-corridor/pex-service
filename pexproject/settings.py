@@ -189,11 +189,11 @@ SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/login/'
 SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
 #SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email']
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY='975229172193-7rl5ikgl1cu79htkdf1pu9keqjp92iej.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH_SECRET='bj53Bjtmt4NI6WfTd7ehapm8'
-SOCIAL_AUTH_GOOGLE_OAUTH_SCOPE=['https://www.googleapis.com/auth/userinfo.email',]
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET ='bj53Bjtmt4NI6WfTd7ehapm8'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE =['https://www.googleapis.com/auth/userinfo.email',]
 
-GOOGLE_OAUTH2_CLIENT_ID='975229172193-7rl5ikgl1cu79htkdf1pu9keqjp92iej.apps.googleusercontent.com'
-GOOGLE_OAUTH2_CLIENT_SECRET='bj53Bjtmt4NI6WfTd7ehapm8'
+GOOGLE_OAUTH2_CLIENT_ID='564931538055-5thcbkb5geak9i9mslnvs1g9url0p1ml.apps.googleusercontent.com'
+GOOGLE_OAUTH2_CLIENT_SECRET='wvnwAIY3b3OS63WDwSBaVsRa'
 GOOGLE_OAUTH2_SCOPE = ['https://www.googleapis.com/auth/userinfo.email',]
 #GOOGLE_WHITE_LISTED_DOMAINS = ['pexportal.com']
 LANGUAGE_CODE = 'en-us'
