@@ -89,8 +89,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'pex',
-        'USER': 'pex',
-        'PASSWORD': 'pex@1234',
+        'USER': 'root',
+        'PASSWORD': '1jyT382PWzYP',        
         'default-character-set' : 'utf8',
         'host': 'localhost',
     }
