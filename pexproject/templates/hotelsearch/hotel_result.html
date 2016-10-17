@@ -21,17 +21,16 @@
                 </div>
             </a>
             <div class="col-xs-12 nopadding form-side collapse" id="account-balance">
-                <dl>
-                    {% for point in pointlist %}
-                    <div class="cutom-ui-mil">
-                        <dt class="dl-horizontal" style="text-transform: uppercase; margin-bottom: 5px;margin-top: 5px;">
-                            {{point.0}}
-                        </dt>
-                        <span>{{point.2}}</span>
-                        <span style="float: right;">{{point.1}} MILES</span>
-                    </div>
-                    {%endfor%}
-                </dl>
+                {% for point in pointlist %}
+                <div class="cutom-ui-mil">
+                    <dt class="dl-horizontal" style="text-transform: uppercase; margin-bottom: 5px;margin-top: 5px;">
+                        {{point.0}}
+                    </dt>
+                    <span>{{point.2}}</span>
+                    <span style="float: right;">{{point.1}} MILES</span>
+                    <hr>
+                </div>
+                {%endfor%}
             </div>
         </div>
         {%endif%}
