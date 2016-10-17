@@ -136,7 +136,14 @@ select.c_caret {
     text-align: center;
 }
 
+.left-pane {
+    padding-right: 0;
+}
+
 @media only screen and (max-width: 767px) {
+    .left-pane {
+        padding-right: 15px;
+    }
     .wide {
         display: none;
     }
