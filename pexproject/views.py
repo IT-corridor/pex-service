@@ -1609,7 +1609,7 @@ def getsearchresult(request):
 
         if 'userid' in request.session and  'actionfor' not in request.POST:
             _, flight = get_reward_config(request)
-            pointlist = get_pointlist(request, '%', str(tuple(flight)))
+            pointlist = get_pointlist(request, '%', str(tuple(flight+[''])))
         
         return render_to_response('flightsearch/searchresult.html', {'title':title,'action':action,'pointlist':pointlist,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value,'multisearch':multisearch,'data':mainlist,'multirecod':mainlist,'multicity':multicity,'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request)) 
         
@@ -2111,7 +2111,7 @@ def search_hotel(request):
             'filters': {}})
     else:
         hotel, _ = get_reward_config(request)
-        pointlist = get_pointlist(request, '%', str(tuple(hotel)))
+        pointlist = get_pointlist(request, '%', str(tuple(hotel+[''])))
         db_hotels, price_matrix, filters = result[1], result[2], result[3]
 
         return render(request, 'hotelsearch/hotel_result.html', {
