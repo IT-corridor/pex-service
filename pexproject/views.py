@@ -1608,10 +1608,7 @@ def getsearchresult(request):
             return render_to_response('flightsearch/search.html', {'action':action,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value, 'multisearch':multisearch, 'data':mainlist,'multirecod':mainlist, 'multicity':multicity, 'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request))
 
         if 'userid' in request.session and  'actionfor' not in request.POST:
-            userid = request.session['userid']
-            cursor = connection.cursor()
-            cursor.execute("select airlines, reward_points, status from reward_points where kind='Airlines' and user_id="+str(userid))
-            pointlist = cursor.fetchall()
+            pointlist = get_pointlist()
         
         return render_to_response('flightsearch/searchresult.html', {'title':title,'action':action,'pointlist':pointlist,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value,'multisearch':multisearch,'data':mainlist,'multirecod':mainlist,'multicity':multicity,'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request)) 
         
@@ -2112,9 +2109,7 @@ def search_hotel(request):
             'amenities': HOTEL_AMENITIES,
             'filters': {}})
     else:
-        cursor = connection.cursor()
-        cursor.execute("select airlines, reward_points, status from reward_points where kind='Hotels' and user_id="+str(request.session['userid']))
-        pointlist = cursor.fetchall()
+        pointlist = get_pointlist()
         db_hotels, price_matrix, filters = result[1], result[2], result[3]
 
         return render(request, 'hotelsearch/hotel_result.html', {
@@ -2125,6 +2120,18 @@ def search_hotel(request):
             'amenities': HOTEL_AMENITIES,
             'pointlist': pointlist,
             'filters': filters})    
+
+
+def get_pointlist():
+    """
+    return pointlist for a logged in user
+    """
+    if 'userid' in request.session:
+        userid = request.session['userid']
+        cursor = connection.cursor()
+        cursor.execute("select airlines, reward_points, status from reward_points where user_id="+str(userid))
+        pointlist = cursor.fetchall()
+        return pointlist
 
 
 def get_value(str_value):
@@ -3334,9 +3341,6 @@ def rewardpoints(request):
         cursor.execute("delete from reward_points where user_id={}".format(user.user_id))
 
         for account_ in res_json['accounts']:
-            if account_['kind'] not in ['Airlines', 'Hotels']:
-                continue
-
             account = {}
             account['airline'] = account_['displayName']
             account['balance'] = account_['balanceRaw']
