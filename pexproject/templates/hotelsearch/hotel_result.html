@@ -10,7 +10,7 @@
     <div class="col-md-2 left-pane">
         {% if pointlist %}
         <div class="col-xs-12 col-md-12 nopadding" style="background: white;">
-            <a class="account_balance" role="button" data-toggle="collapse" href="#account-balance" aria-expanded="false" aria-controls="pricecalender">
+            <a class="account_balance" role="button" data-toggle="collapse" data-target="#account-balance" aria-expanded="false" aria-controls="pricecalender">
                 <div class="col-xs-12 nopaddig form-side-2">
                     <p class="pull-left">
                         VIEW ACCOUNT BALANCES
@@ -489,6 +489,7 @@ $(document).ready(function() {
     if ($(window).width() < 768) {
         $(".filters-holder").addClass('filters-holder-ht');
         $("#id_filter_collapse").click(function() {
+            console.log('clicked');
             $(this).parent().parent().toggleClass('filters-holder-ht');
         });
 
