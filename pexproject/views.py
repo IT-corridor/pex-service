@@ -3379,7 +3379,7 @@ def get_reward_config(request):
     user = User.objects.get(pk=request.session['userid'])
     config = UserConfig.objects.filter(owner=user)
     if config:
-        reward_config = config[0].reward_config.split('@')
+        reward_config = config[0].reward_config.encode('ascii', 'ignore').split('@')
         hotel = reward_config[0].split(';')
         flight = reward_config[1].split(';')
     else:
