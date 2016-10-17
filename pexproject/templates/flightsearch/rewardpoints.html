@@ -64,16 +64,6 @@
                 </table>
             </div>
         </div>
-        <div class="col-xs-12  nopadding">
-            <span>On Hotel Page</span>
-            <input type="checkbox" name="hotel">Airlines
-            <input type="checkbox" name="hotel">Hotels
-            <input type="checkbox" name="hotel">Credit Cards
-            <span>On Flight Page</span>
-            <input type="checkbox" name="flight">Airlines
-            <input type="checkbox" name="flight">Hotels
-            <input type="checkbox" name="flight">Credit Cards
-        </div>
         {% endif %}
     </div>
     <div class="col-xs-12 col-sm-10 col-sm-push-1 mng-act fr-pd" style="padding: 10px 10px !important; margin: 10px 0; ">
@@ -82,15 +72,33 @@
         <form id="config-reward-page-form">
         <div class="col-md-2 form-side">
             <b>Hotel Page</b>
-            <div class="checkbox"><label><input value="Airlines" type="checkbox" name="hotel"><span></span>Airlines</label></div>
-            <div class="checkbox"><label><input value="Hotels" type="checkbox" name="hotel"><span></span>Hotels</label></div>
-            <div class="checkbox"><label><input value="Credit Cards" type="checkbox" name="hotel"><span></span>Credit Cards</label></div>
+            <div class="checkbox"><label>
+                <input value="Airlines" type="checkbox" name="hotel" {% if 'Airlines' in hotel %} selected {% endif %}>
+                <span></span>Airlines</label>
+            </div>
+            <div class="checkbox"><label>
+                <input value="Hotels" type="checkbox" name="hotel" {% if 'Hotels' in hotel %} selected {% endif %}>
+                <span></span>Hotels</label>
+            </div>
+            <div class="checkbox"><label>
+                <input value="Credit Cards" type="checkbox" name="hotel" {% if 'Credit Cards' in hotel %} selected {% endif %}>
+                <span></span>Credit Cards</label>
+            </div>
         </div>
         <div class="col-md-2 form-side">
             <b>Flight Page</b>
-            <div class="checkbox"><label><input value="Airlines" type="checkbox" name="flight"><span></span>Airlines</label></div>
-            <div class="checkbox"><label><input value="Hotels" type="checkbox" name="flight"><span></span>Hotels</label></div>
-            <div class="checkbox"><label><input value="Credit Cards" type="checkbox" name="flight"><span></span>Credit Cards</label></div>
+            <div class="checkbox"><label>
+                <input value="Airlines" type="checkbox" name="flight" {% if 'Airlines' in flight %} selected {% endif %}>
+                <span></span>Airlines</label>
+            </div>
+            <div class="checkbox"><label>
+                <input value="Hotels" type="checkbox" name="flight" {% if 'Hotels' in flight %} selected {% endif %}>
+                <span></span>Hotels</label>
+            </div>
+            <div class="checkbox"><label>
+                <input value="Credit Cards" type="checkbox" name="flight" {% if 'Credit Cards' in flight %} selected {% endif %}>
+                <span></span>Credit Cards</label>
+            </div>
         </div>
         </form>
         <div class="col-md-2">

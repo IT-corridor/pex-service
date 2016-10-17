@@ -534,3 +534,8 @@ class SearchLimit(models.Model):
 
     def __unicode__(self):
         return self.user_class
+
+
+class UserConfig(models.Model):
+    owner = models.ForeignKey(User)
+    reward_config = models.CharField(max_length='150', default='')

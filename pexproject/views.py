@@ -3360,7 +3360,22 @@ def rewardpoints(request):
             display_name = account['airline'].split('(')[0]
             cursor.execute ("INSERT INTO reward_points (user_id, reward_points, airlines, kind, status, account_no, expiration_date) VALUES (%s,%s,%s,%s,%s,%s,%s);", (str(user.user_id),str(account_['balanceRaw']), display_name, account_['kind'], account['status'], account['accountId'], account['expireDate']))
 
-    return render(request, 'flightsearch/rewardpoints.html', { 'accounts': accounts, 'wallet_id': wallet_id })
+    config = UserConfig.objects.filter(owner=user)
+    if config:
+        reward_config = config[0].reward_config.split('@')
+        hotel = reward_config[0].split(';')
+        flight = reward_config[1].split(';')
+    else:
+        hotel = ['Airlines', 'Hotels', 'Credit Cards']
+        flight = ['Airlines', 'Hotels', 'Credit Cards']
+
+    print hotel, flight
+    return render(request, 'flightsearch/rewardpoints.html', { 
+        'accounts': accounts, 
+        'wallet_id': wallet_id,
+        'hotel': hotel,
+        'flight': flight 
+    })
 
 
 def choose_kind(request):
@@ -3368,7 +3383,19 @@ def choose_kind(request):
     pointlist = get_pointlist(request, kind)
     return render(request, 'flightsearch/rewardpoints_table.html', { 'accounts': pointlist, 'kind':kind })
 
+
 def modify_config(request):
-    print request.GET.getlist('hotel')
-    print request.GET.getlist('flight')
+    userid = request.session['userid']
+    hotel_config = request.GET.getlist('hotel')
+    flight_config =  request.GET.getlist('flight')
+    reward_config = ';'.join(hotel_config)+'@'+';'.join(flight_config)
+
+    config = UserConfig.objects.filter(owner__id=userid)
+    if config:
+        config = config[0]
+        config.reward_config = reward_config
+        config.save()
+    else:
+        config = UserConfig.objects.create(owner_id=userid, reward_config=reward_config)
+
     return HttpResponse('ok')
