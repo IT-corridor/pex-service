@@ -3364,6 +3364,6 @@ def rewardpoints(request):
 
 
 def choose_kind(request):
-    kind = request.GET.get['kind']
+    kind = request.GET.get('kind')
     pointlist = get_pointlist(request, kind)
     return render(request, 'flightsearch/rewardpoints_table.html', { 'accounts': pointlist })
