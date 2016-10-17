@@ -42,7 +42,7 @@
                 <p class="pull-left">
                     Filters
                 </p>
-                <p class="pull-right show-filter" id="id_filter_collapse" onclick="toggle_filters(this)">
+                <p class="pull-right show-filter" id="id_filter_collapse">
                     <span class="glyphicon glyphicon-th-large"></span>
                 </p>
             </div>  
@@ -489,20 +489,15 @@ $(document).ready(function() {
 
     if ($(window).width() < 768) {
         $(".filters-holder").addClass('filters-holder-ht');
-        // $("#id_filter_collapse").click(function() {
-        //     console.log('clicked');
-        //     $(this).parent().parent().toggleClass('filters-holder-ht');
-        // });
+        $("#id_filter_collapse").click(function() {
+            console.log('clicked');
+            $(this).parent().parent().toggleClass('filters-holder-ht');
+        });
 
         $('.hotel-search-show').click(function(){
             $('.hotel-search-panel').toggleClass('in');
         });
     }   
-
-    function toggle_filters(this_) {
-        console.log('clicked');
-        $(this_).parent().parent().toggleClass('filters-holder-ht');        
-    }
 });
 </script>           
 {% endblock %}      
