@@ -2110,8 +2110,11 @@ def search_hotel(request):
             'amenities': HOTEL_AMENITIES,
             'filters': {}})
     else:
-        hotel, _ = get_reward_config(request)
-        pointlist = get_pointlist(request, '%', str(tuple(hotel+[''])))
+        pointlist = None
+        if 'userid' in request.session:
+            hotel, _ = get_reward_config(request)
+            pointlist = get_pointlist(request, '%', str(tuple(hotel+[''])))
+            
         db_hotels, price_matrix, filters = result[1], result[2], result[3]
 
         return render(request, 'hotelsearch/hotel_result.html', {
@@ -3386,6 +3389,7 @@ def get_reward_config(request):
         hotel = ['Airlines', 'Hotels', 'Credit Cards']
         flight = ['Airlines', 'Hotels', 'Credit Cards']
     return hotel, flight
+
 
 def choose_kind(request):
     kind = request.GET.get('kind')
