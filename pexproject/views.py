@@ -3390,7 +3390,7 @@ def modify_config(request):
     flight_config =  request.GET.getlist('flight')
     reward_config = ';'.join(hotel_config)+'@'+';'.join(flight_config)
 
-    config = UserConfig.objects.filter(owner__id=userid)
+    config = UserConfig.objects.filter(owner_id=userid)
     if config:
         config = config[0]
         config.reward_config = reward_config
