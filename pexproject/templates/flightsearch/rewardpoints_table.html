@@ -6,10 +6,10 @@
             <th class="text-center">
                 Kind
                 <select class="custom-field-control curson select-wallet" name="kind" onchange="choose_kind(this);">
-                    <option class="cabin curson" value="%">All</option>
-                    <option class="cabin curson" value="Airlines">Airlines</option>
-                    <option class="cabin curson" value="Hotels">Hotels</option>
-                    <option class="cabin curson" value="Credit Cards">Credit Cards</option>
+                    <option class="cabin curson" {% if kind=='%' %}selected{% endif %}value="%">All</option>
+                    <option class="cabin curson" {% if kind=='Airlines' %}selected{% endif %}value="Airlines">Airlines</option>
+                    <option class="cabin curson" {% if kind=='Hotels' %}selected{% endif %}value="Hotels">Hotels</option>
+                    <option class="cabin curson" {% if kind=='Credit Cards' %}selected{% endif %}value="Credit Cards">Credit Cards</option>
                 </select>
             </th>
             <th class="text-center">Account No</th>
@@ -23,11 +23,11 @@
         {% for row in accounts %}
         <tr>
             <td class="text-center">{{row.0}}</td>
-            <td class="text-center">{{row.2}}</td>
-            <td class="text-center">{{row.2}}</td>
+            <td class="text-center">{{row.3}}</td>
+            <td class="text-center">{{row.4}}</td>
             <td class="text-center">{{row.1 | intcomma}} Miles</td>
             <td class="text-center">{{row.2}}</td>
-            <td class="text-center">{{row.2}}</td>
+            <td class="text-center">{{row.5}}</td>
         </tr>
         {% endfor %}
         {% else %}
