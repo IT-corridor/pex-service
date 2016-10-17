@@ -2000,9 +2000,14 @@ background: #39A8E0;
   margin-bottom: 10px;
 }
 
+.dl-horizontal {
+	width: 100%;
+	overflow: hidden;
+}
+
 .cutom-ui-mil
 {
-  border-bottom: 1px solid #D8E1E8;
+  /*border-bottom: 1px solid #D8E1E8;*/
   padding: 5px 0px;
 }
 .blog-content>h5{
