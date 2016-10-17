@@ -2122,14 +2122,14 @@ def search_hotel(request):
             'filters': filters})    
 
 
-def get_pointlist(request):
+def get_pointlist(request, kind='%'):
     """
     return pointlist for a logged in user
     """
     if 'userid' in request.session:
         userid = request.session['userid']
         cursor = connection.cursor()
-        cursor.execute("select airlines, reward_points, status from reward_points where user_id="+str(userid))
+        cursor.execute("select airlines, reward_points, status from reward_points where user_id={} and kind like '{}'".format(userid, kind))
         pointlist = cursor.fetchall()
         return pointlist
 
@@ -3361,3 +3361,9 @@ def rewardpoints(request):
             cursor.execute ("INSERT INTO reward_points (user_id, reward_points, airlines, kind, status) VALUES (%s,%s,%s,%s,%s);", (str(user.user_id),str(account_['balanceRaw']), display_name, account_['kind'], account['status']))
 
     return render(request, 'flightsearch/rewardpoints.html', { 'accounts': accounts, 'wallet_id': wallet_id })
+
+
+def choose_kind(request):
+    kind = request.GET.get['kind']
+    pointlist = get_pointlist(request, kind)
+    return render(request, 'flightsearch/rewardpoints_table.html', { 'accounts': pointlist })

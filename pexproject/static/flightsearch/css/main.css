@@ -33,6 +33,12 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
      display: inline-block;
 }
 
+.select-wallet {
+    margin-left: 10px; 
+    height: 28px; 
+    padding: 3px 0;    
+}
+
 #select_day .btn-group {
     width: 100% !important;
 }

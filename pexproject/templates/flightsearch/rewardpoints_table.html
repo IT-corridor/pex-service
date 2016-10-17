@@ -1,0 +1,36 @@
+<table class="table">
+    <thead>
+        <tr>
+            <th class="text-center">Program</th>
+            <th class="text-center">
+                Kind
+                <select class="custom-field-control curson select-wallet" name="kind" onchange="choose_kind(this);">
+                    <option class="cabin curson" value="%">All</option>
+                    <option class="cabin curson" value="Airlines">Airlines</option>
+                    <option class="cabin curson" value="Hotels">Hotels</option>
+                    <option class="cabin curson" value="Credit Cards">Credit Cards</option>
+                </select>
+            </th>
+            <th class="text-center">Account No</th>
+            <th class="text-center">Balance</th>
+            <th class="text-center">Status</th>
+            <th class="text-center">Time to expire</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if accounts %}
+        {% for row in accounts %}
+        <tr>
+            <td class="text-center">{{row.0}}</td>
+            <td class="text-center">{{row.2}}</td>
+            <td class="text-center">{{row.2}}</td>
+            <td class="text-center">{{row.1 | intcomma}} Miles</td>
+            <td class="text-center">{{row.2}}</td>
+            <td class="text-center">{{row.2}}</td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr><td colspan="5">There is no available rewards information.</td></tr>
+        {% endif %}
+    </tbody>
+</table>

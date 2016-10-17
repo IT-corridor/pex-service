@@ -25,18 +25,18 @@
             </a>
         </div>        
         <div class="col-xs-12  nopadding">
-            <div class="table-responsive">
+            <div class="table-responsive" id="wallet_table">
                 <table class="table">
                     <thead>
                         <tr>
                             <th class="text-center">Program</th>
                             <th class="text-center">
                                 Kind
-                                <select class="custom-field-control curson" name="kind" style="margin-left: 10px; height: 30px; padding: 3px 0;">
-                                        <option class="cabin curson" value="%">All</option>
-                                        <option class="cabin curson" value="Airlines">Airlines</option>
-                                        <option class="cabin curson" value="Hotels">Hotels</option>
-                                        <option class="cabin curson" value="Credit Cards">Credit Cards</option>
+                                <select class="custom-field-control curson select-wallet" name="kind" onchange="choose_kind(this);">
+                                    <option class="cabin curson" value="%">All</option>
+                                    <option class="cabin curson" value="Airlines">Airlines</option>
+                                    <option class="cabin curson" value="Hotels">Hotels</option>
+                                    <option class="cabin curson" value="Credit Cards">Credit Cards</option>
                                 </select>
                             </th>
                             <th class="text-center">Account No</th>
@@ -48,7 +48,7 @@
                     <tbody>
                         {% if accounts %}
                         {% for row in accounts %}
-                        <tr id="{{row.3}}_div">
+                        <tr>
                             <td class="text-center">{{row.airline}}</td>
                             <td class="text-center">{{row.kind}}</td>
                             <td class="text-center">{{row.accountId}}</td>
@@ -67,4 +67,5 @@
         {% endif %}
     </div>
 </div>
+<script src="{% static 'flightsearch/js/rewardpoints.js' %}"></script>
 {% endblock %}
