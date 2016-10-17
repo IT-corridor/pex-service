@@ -29,7 +29,8 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th class="text-center">Airlines</th>
+                            <th class="text-center">Program</th>
+                            <th class="text-center">Kind</th>
                             <th class="text-center">Account No</th>
                             <th class="text-center">Balance</th>
                             <th class="text-center">Status</th>
@@ -41,6 +42,7 @@
                         {% for row in accounts %}
                         <tr id="{{row.3}}_div">
                             <td class="text-center">{{row.airline}}</td>
+                            <td class="text-center">{{row.kind}}</td>
                             <td class="text-center">{{row.accountId}}</td>
                             <td class="text-center">{{row.balance | intcomma}} Miles</td>
                             <td class="text-center">{{row.status}}</td>

@@ -3345,6 +3345,7 @@ def rewardpoints(request):
             account['airline'] = account_['displayName']
             account['balance'] = account_['balanceRaw']
             account['accountId'] = account_['accountId']
+            account['kind'] = account_['kind']
             account['expireDate'] = account_.get('expirationDate', '')[:10]
             account['status'] = '' 
 
