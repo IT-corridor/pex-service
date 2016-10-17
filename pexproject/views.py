@@ -1608,7 +1608,8 @@ def getsearchresult(request):
             return render_to_response('flightsearch/search.html', {'action':action,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value, 'multisearch':multisearch, 'data':mainlist,'multirecod':mainlist, 'multicity':multicity, 'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request))
 
         if 'userid' in request.session and  'actionfor' not in request.POST:
-            pointlist = get_pointlist(request)
+            _, flight = get_reward_config(request)
+            pointlist = get_pointlist(request, '%', str(tuple(flight)))
         
         return render_to_response('flightsearch/searchresult.html', {'title':title,'action':action,'pointlist':pointlist,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value,'multisearch':multisearch,'data':mainlist,'multirecod':mainlist,'multicity':multicity,'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request)) 
         
@@ -2109,7 +2110,8 @@ def search_hotel(request):
             'amenities': HOTEL_AMENITIES,
             'filters': {}})
     else:
-        pointlist = get_pointlist(request)
+        hotel, _ = get_reward_config(request)
+        pointlist = get_pointlist(request, '%', str(tuple(hotel)))
         db_hotels, price_matrix, filters = result[1], result[2], result[3]
 
         return render(request, 'hotelsearch/hotel_result.html', {
@@ -2122,14 +2124,17 @@ def search_hotel(request):
             'filters': filters})    
 
 
-def get_pointlist(request, kind='%'):
+def get_pointlist(request, kind='%', filter_=None):
     """
     return pointlist for a logged in user
     """
     if 'userid' in request.session:
         userid = request.session['userid']
         cursor = connection.cursor()
-        cursor.execute("select airlines, reward_points, status, kind, account_no, expiration_date from reward_points where user_id={} and kind like '{}'".format(userid, kind))
+        sql = "select airlines, reward_points, status, kind, account_no, expiration_date from reward_points where user_id={} and kind like '{}'".format(userid, kind)
+        if filter_:
+            sql += " and kind in {}".format(filter_)
+        cursor.execute(sql)
         pointlist = cursor.fetchall()
         return pointlist
 
@@ -3360,6 +3365,18 @@ def rewardpoints(request):
             display_name = account['airline'].split('(')[0]
             cursor.execute ("INSERT INTO reward_points (user_id, reward_points, airlines, kind, status, account_no, expiration_date) VALUES (%s,%s,%s,%s,%s,%s,%s);", (str(user.user_id),str(account_['balanceRaw']), display_name, account_['kind'], account['status'], account['accountId'], account['expireDate']))
 
+    hotel, flight = get_reward_config(request)
+
+    return render(request, 'flightsearch/rewardpoints.html', { 
+        'accounts': accounts, 
+        'wallet_id': wallet_id,
+        'hotel': hotel,
+        'flight': flight 
+    })
+
+
+def get_reward_config(request):
+    user = User.objects.get(pk=request.session['userid'])
     config = UserConfig.objects.filter(owner=user)
     if config:
         reward_config = config[0].reward_config.split('@')
@@ -3368,15 +3385,7 @@ def rewardpoints(request):
     else:
         hotel = ['Airlines', 'Hotels', 'Credit Cards']
         flight = ['Airlines', 'Hotels', 'Credit Cards']
-
-    print hotel, flight
-    return render(request, 'flightsearch/rewardpoints.html', { 
-        'accounts': accounts, 
-        'wallet_id': wallet_id,
-        'hotel': hotel,
-        'flight': flight 
-    })
-
+    return hotel, flight
 
 def choose_kind(request):
     kind = request.GET.get('kind')
