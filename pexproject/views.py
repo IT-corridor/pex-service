@@ -3367,3 +3367,8 @@ def choose_kind(request):
     kind = request.GET.get('kind')
     pointlist = get_pointlist(request, kind)
     return render(request, 'flightsearch/rewardpoints_table.html', { 'accounts': pointlist, 'kind':kind })
+
+def modify_config(request):
+    print request.GET.getlist('hotel')
+    print request.GET.getlist('flight')
+    return HttpResponse('ok')

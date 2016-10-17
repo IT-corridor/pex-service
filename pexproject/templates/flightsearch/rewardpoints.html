@@ -64,8 +64,42 @@
                 </table>
             </div>
         </div>
+        <div class="col-xs-12  nopadding">
+            <span>On Hotel Page</span>
+            <input type="checkbox" name="hotel">Airlines
+            <input type="checkbox" name="hotel">Hotels
+            <input type="checkbox" name="hotel">Credit Cards
+            <span>On Flight Page</span>
+            <input type="checkbox" name="flight">Airlines
+            <input type="checkbox" name="flight">Hotels
+            <input type="checkbox" name="flight">Credit Cards
+        </div>
         {% endif %}
     </div>
+    <div class="col-xs-12 col-sm-10 col-sm-push-1 mng-act fr-pd" style="padding: 10px 10px !important; margin: 10px 0; ">
+        <h4 class="title" style="margin-left: 10px;">Reward Page Configuration <a href="#" class="pull-right editinfo" id="accountinfo" data-toggle="collapse" data-target="#config-reward-page-pannel">Edit</a></h4>
+        <div id="config-reward-page-pannel" class="collapse">
+        <form id="config-reward-page-form">
+        <div class="col-md-2 form-side">
+            <b>Hotel Page</b>
+            <div class="checkbox"><label><input value="Airlines" type="checkbox" name="hotel"><span></span>Airlines</label></div>
+            <div class="checkbox"><label><input value="Hotels" type="checkbox" name="hotel"><span></span>Hotels</label></div>
+            <div class="checkbox"><label><input value="Credit Cards" type="checkbox" name="hotel"><span></span>Credit Cards</label></div>
+        </div>
+        <div class="col-md-2 form-side">
+            <b>Flight Page</b>
+            <div class="checkbox"><label><input value="Airlines" type="checkbox" name="flight"><span></span>Airlines</label></div>
+            <div class="checkbox"><label><input value="Hotels" type="checkbox" name="flight"><span></span>Hotels</label></div>
+            <div class="checkbox"><label><input value="Credit Cards" type="checkbox" name="flight"><span></span>Credit Cards</label></div>
+        </div>
+        </form>
+        <div class="col-md-2">
+            <button class="btn btn-pexSearch" style="margin-bottom: 10px;" onclick="modify_reward_page_config();">Save</button>
+            <span class="btn btn-pexSearch" style="margin-bottom: 10px;" onclick="$('#config-reward-page-pannel').removeClass('in');">Cancel</span>
+        </div>
+
+        </div>
+    </div>    
 </div>
 <script src="{% static 'flightsearch/js/rewardpoints.js' %}"></script>
 {% endblock %}

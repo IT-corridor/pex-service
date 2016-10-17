@@ -27,7 +27,7 @@
             <td class="text-center">{{row.4}}</td>
             <td class="text-center">{{row.1 | intcomma}} Miles</td>
             <td class="text-center">{{row.2}}</td>
-            <td class="text-center">{{row.5}}</td>
+            <td class="text-center">{% if row.5 %}{{row.5}}{% endif %}</td>
         </tr>
         {% endfor %}
         {% else %}
