@@ -7,7 +7,36 @@
 
 <div class="container-result">
     <div class="row">
-    <div class="col-md-2">
+    <div class="col-md-2 left-pane">
+        {% if pointlist %}
+        <div class="col-xs-12 col-md-12 nopadding" style="background: white;">
+            <a class="account_balance" role="button" data-toggle="collapse" data-target="#account-balance" aria-expanded="false" aria-controls="pricecalender">
+                <div class="col-xs-12 nopaddig form-side-2">
+                    <p class="pull-left">
+                        VIEW ACCOUNT BALANCES
+                    </p>
+                    <p class="pull-right show-filter visible-xs">
+                        <span class="glyphicon glyphicon-edit visible-xs"></span>
+                    </p>
+                </div>
+            </a>
+            <div class="col-xs-12 nopadding form-side collapse" id="account-balance">
+                {% for point in pointlist %}
+                <div class="cutom-ui-mil">
+                    <div class="dl-horizontal" style="text-transform: uppercase; margin-bottom: 5px;margin-top: 5px;">
+                        <b>{{point.0}}</b>
+                    </div>
+                    <div>
+                        <span>{{point.2}}</span>
+                        <span style="float: right;">{{point.1}} MILES</span>
+                    </div>
+                </div>
+                {%endfor%}
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        {%endif%}
+    
         <div class="mvb10px nopadding filters-holder">
             <div class="col-xs-12 nopadding visible-xs form-side">
                 <p class="pull-left">
@@ -330,6 +359,50 @@
     <p id="back-top">
         <a href="#top"><span class="glyphicon glyphicon-chevron-up"></span> TOP</a>
     </p>
+    <a href="/staticPage/feedback" class="feedback-btn feedback">
+        <button type="button" class="btn btn-warning text-uppercase">
+            Feedback
+        </button>
+    </a>
+    {% if pointlist %}
+        <button type="button" class="btn btn-info text-uppercase btn-balances" data-toggle="modal" data-target="#rewardpoints_dialog">Balances</button>
+    {% endif %}
+
+<!-- Reward points Modal -->
+{% if pointlist %}
+<div class="modal fade" id="rewardpoints_dialog" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Hotel Reward Points</h4>
+        </div>
+        <div class="modal-body">
+            <div class="col-xs-12 nopadding form-side">
+                <dl>
+                    {% for point in pointlist %}
+                    <div class="cutom-ui-mil">
+                        <dt class="dl-horizontal" style="text-transform: uppercase; margin-bottom: 5px;margin-top: 5px;">
+                            {{point.0}}
+                        </dt>
+                        <span>{{point.2}}</span>
+                        <span style="float: right;">{{point.1}} MILES</span>
+                    </div>
+                    {%endfor%}
+                </dl>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+</div>
+{% endif %}
 
 <script> 
 
@@ -360,12 +433,15 @@ $(document).ready(function() {
 
     $('span.stars').stars();
     $("#back-top").hide();
-
+    $('.btn-balances').hide();
+    
     $(window).scroll(function() {
         if ($(this).scrollTop() > 100) {
             $('#back-top').fadeIn();
+            $('.btn-balances').fadeIn();
         } else {
             $('#back-top').fadeOut();
+            $('.btn-balances').fadeOut();
         }
     });
 

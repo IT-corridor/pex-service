@@ -63,7 +63,6 @@ from django.forms.models import model_to_dict
 
 from .scrapers.customfunction import is_scrape_vAUS,is_scrape_aeroflot,is_scrape_virginAmerica,is_scrape_etihad,is_scrape_delta,is_scrape_united,is_scrape_virgin_atlantic,is_scrape_jetblue,is_scrape_aa, is_scrape_s7, is_scrape_airchina
 from .scrapers import customfunction
-from .scrapers import rewardScraper
 from .form import *
 from pexproject.models import *
 from pexproject.templatetags.customfilter import floatadd, assign
@@ -236,8 +235,6 @@ def index(request):
               request.session['userid'] = user.user_id
               request.session['level'] = user.level
 
-
-
     return render(request, 'flightsearch/home.html')    
 
 
@@ -300,74 +297,6 @@ def signup(request):
         return HttpResponseRedirect(reverse('index'))
     else:
         return HttpResponseRedirect(reverse('index'))
-
-
-def myRewardPoint(request):
-    cursor = connection.cursor()
-    context = {}
-    points = ''
-    temp_message = ''
-    updatemsg = ''
-    resp = ''
-    datasource = []
-    userid = request.session['userid']
-    if 'account' in request.GET:
-        cursor.execute("select * from reward_point_credential where user_id="+str(userid))
-        user_account = cursor.fetchall()
-        threads = []
-        for obj in user_account:
-            p = Thread(target=customfunction.syncPoints, args=(obj[4],userid,obj[2],obj[5],obj[3]))
-            p.start()
-            threads.append(p)
-        for t in threads:
-            t.join()
-        updatemsg = "Your account has been updated successfully"     
-        
-    if 'userid' in request.GET and 'airline' in request.GET:
-        pointsource = request.REQUEST['airline']
-        cursor.execute("select * from reward_point_credential where user_id="+str(userid)+" and airline = '"+pointsource+"'")
-        user = cursor.fetchone()
-        resp = customfunction.syncPoints(pointsource,userid,user[2],user[5],user[3])
-        if resp == "fail":
-            updatemsg = "There is some technical problem, please try after some time"
-        else:
-            updatemsg = "Your account has been updated successfully"
-    if request.is_ajax():
-        airline_name = request.REQUEST['acct']
-        cursor.execute("delete from reward_point_credential where user_id="+str(userid)+" and airline = '"+airline_name+"'")
-        cursor.execute("delete from reward_points where user_id="+str(userid)+" and airlines = '"+airline_name+"'")
-        mimetype = 'application/json'
-        data = "success"
-        json.dumps(data)
-    	return HttpResponse(data, mimetype)
-    if request.POST:
-        username = request.REQUEST['username']
-        password = request.REQUEST['password']
-        skymiles_number = request.REQUEST['skymiles_number']
-        airline = request.REQUEST['airline']
-        action = request.REQUEST['action']
-        if action == 'update' :
-                 
-            resp = customfunction.syncPoints(airline,userid,username,skymiles_number,password)
-            if resp == "fail":
-                updatemsg = "Invalid account credentials"
-            else:
-                cursor.execute("update reward_point_credential set username='"+username+"', password='"+password+"', skymiles_number="+skymiles_number+" where airline='"+airline+"' and user_id="+str(userid))
-                transaction.commit()
-                updatemsg = "Your account has been updated successfully"
-        else:
-            resp = customfunction.syncPoints(airline,userid,username,skymiles_number,password)
-            if resp == "fail":
-                temp_message = "Invalid Username or Password"  
-            if resp == 'success':
-                cursor.execute ("INSERT INTO reward_point_credential (user_id,username,password,airline,skymiles_number) VALUES (%s,%s,%s,%s,%s);", (str(userid),username,password,airline,skymiles_number))
-                transaction.commit()
-        
-    cursor.execute("select * from reward_points where user_id="+str(userid))
-    points = cursor.fetchall()
-    for row in points: 
-        datasource.append(row[3])
-    return render_to_response('flightsearch/myrewardpoint.html',{'updatemsg':updatemsg,'datasource':datasource,'points':points,'temp_message':temp_message}, context_instance=RequestContext(request))
 
 
 def manageAccount(request):
@@ -1679,10 +1608,8 @@ def getsearchresult(request):
             return render_to_response('flightsearch/search.html', {'action':action,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value, 'multisearch':multisearch, 'data':mainlist,'multirecod':mainlist, 'multicity':multicity, 'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request))
 
         if 'userid' in request.session and  'actionfor' not in request.POST:
-            userid = request.session['userid']
-            cursor = connection.cursor()
-            cursor.execute("select * from reward_points where user_id="+str(userid))
-            pointlist = cursor.fetchall()
+            _, flight = get_reward_config(request)
+            pointlist = get_pointlist(request, '%', str(tuple(flight+[''])))
         
         return render_to_response('flightsearch/searchresult.html', {'title':title,'action':action,'pointlist':pointlist,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value,'multisearch':multisearch,'data':mainlist,'multirecod':mainlist,'multicity':multicity,'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request)) 
         
@@ -2170,8 +2097,6 @@ def search_hotel(request):
         form = HotelSearchForm(initial={'place':place, 'checkin': checkin, 'checkout': checkout})
         filters = {'price_low':'', 'price_high':'', 'award_low':'', 'award_high':'', 'radius': 1000, 'chain': HOTEL_CHAINS.keys(), 'amenity': []}
 
-    # return render(request, 'hotelsearch/hotel_result.html', {'hotels': [], 'form': form, 'price_matrix': [], 'filters': {'price_low':12, 'price_high':12313, 'award_low':123, 'award_high':312321, 'radius':[], 'chain':[], 'price_lowest':231, 'price_highest':312312, 'award_lowest':123, 'award_highest':12312312, 'dis_place':12, 'star_rating': 5}})    
-
     result = _search_hotel(place, checkin, checkout, filters)
 
     error_message = result[0]
@@ -2185,14 +2110,36 @@ def search_hotel(request):
             'amenities': HOTEL_AMENITIES,
             'filters': {}})
     else:
+        pointlist = None
+        if 'userid' in request.session:
+            hotel, _ = get_reward_config(request)
+            pointlist = get_pointlist(request, '%', str(tuple(hotel+[''])))
+
         db_hotels, price_matrix, filters = result[1], result[2], result[3]
+
         return render(request, 'hotelsearch/hotel_result.html', {
             'hotels': db_hotels, 
             'form': form, 
             'price_matrix': price_matrix, 
             'chains': HOTEL_CHAINS,
             'amenities': HOTEL_AMENITIES,
+            'pointlist': pointlist,
             'filters': filters})    
+
+
+def get_pointlist(request, kind='%', filter_=None):
+    """
+    return pointlist for a logged in user
+    """
+    if 'userid' in request.session:
+        userid = request.session['userid']
+        cursor = connection.cursor()
+        sql = "select airlines, reward_points, status, kind, account_no, expiration_date from reward_points where user_id={} and kind like '{}'".format(userid, kind)
+        if filter_:
+            sql += " and kind in {}".format(filter_)
+        cursor.execute(sql)
+        pointlist = cursor.fetchall()
+        return pointlist
 
 
 def get_value(str_value):
@@ -2500,7 +2447,10 @@ def api_search_flight(request):
 
         # save unmatch percent
         searchkey = Searchkey.objects.get(searchid=keys['departkey'])
-        searchkey.qpx_unmatch_percent = qpx_unmatch_count * 1.0 / len(flights)
+        if len(flights):
+            searchkey.qpx_unmatch_percent = qpx_unmatch_count * 1.0 / len(flights)
+        else:
+            searchkey.qpx_unmatch_percent = 0
         searchkey.save()
 
         result['status'] = 'Success'
@@ -3376,3 +3326,92 @@ def get_qpx_filter_carriers(orgnid, destid):
                 carriers += [item[:2] for item in flight.planedetails.split('@')]
             return set(carriers), min(2, max_stop-1)
 
+
+def rewardpoints(request):
+    if not 'userid' in request.session:
+        return HttpResponseRedirect('/index')
+
+    wallet_token = "b2fadf4b5e0fa5569634406fd384632662fc31b9"
+    user = User.objects.get(pk=request.session['userid'])
+    wallet_id = request.GET.get('userId')
+
+    if wallet_id:
+        user.wallet_id = wallet_id
+        user.save()
+    wallet_id = user.wallet_id
+
+    accounts = []
+
+    if wallet_id:
+        url = 'https://business.awardwallet.com/api/export/v1/connectedUser/{}'.format(wallet_id)
+        header = { "X-Authentication": wallet_token }
+        res = requests.get(url=url, headers=header)
+        res_json = res.json()
+        cursor = connection.cursor()
+        # delete previous reward records
+        cursor.execute("delete from reward_points where user_id={}".format(user.user_id))
+
+        for account_ in res_json['accounts']:
+            account = {}
+            account['airline'] = account_['displayName']
+            account['balance'] = account_['balanceRaw']
+            account['accountId'] = account_['accountId']
+            account['kind'] = account_['kind']
+            account['expireDate'] = account_.get('expirationDate', '')[:10]
+            account['status'] = '' 
+
+            if 'properties' in account_:
+                for property_ in account_['properties']:
+                    if 'Next Elite Level' == property_['name']:
+                        account['status'] = property_['value']
+
+            accounts.append(account)
+
+            # update database
+            display_name = account['airline'].split('(')[0]
+            cursor.execute ("INSERT INTO reward_points (user_id, reward_points, airlines, kind, status, account_no, expiration_date) VALUES (%s,%s,%s,%s,%s,%s,%s);", (str(user.user_id),str(account_['balanceRaw']), display_name, account_['kind'], account['status'], account['accountId'], account['expireDate']))
+
+    hotel, flight = get_reward_config(request)
+
+    return render(request, 'flightsearch/rewardpoints.html', { 
+        'accounts': accounts, 
+        'wallet_id': wallet_id,
+        'hotel': hotel,
+        'flight': flight 
+    })
+
+
+def get_reward_config(request):
+    user = User.objects.get(pk=request.session['userid'])
+    config = UserConfig.objects.filter(owner=user)
+    if config:
+        reward_config = config[0].reward_config.encode('ascii', 'ignore').split('@')
+        hotel = reward_config[0].split(';')
+        flight = reward_config[1].split(';')
+    else:
+        hotel = ['Airlines', 'Hotels', 'Credit Cards']
+        flight = ['Airlines', 'Hotels', 'Credit Cards']
+    return hotel, flight
+
+
+def choose_kind(request):
+    kind = request.GET.get('kind')
+    pointlist = get_pointlist(request, kind)
+    return render(request, 'flightsearch/rewardpoints_table.html', { 'accounts': pointlist, 'kind':kind })
+
+
+def modify_config(request):
+    userid = request.session['userid']
+    hotel_config = request.GET.getlist('hotel')
+    flight_config =  request.GET.getlist('flight')
+    reward_config = ';'.join(hotel_config)+'@'+';'.join(flight_config)
+
+    config = UserConfig.objects.filter(owner_id=userid)
+    if config:
+        config = config[0]
+        config.reward_config = reward_config
+        config.save()
+    else:
+        config = UserConfig.objects.create(owner_id=userid, reward_config=reward_config)
+
+    return HttpResponse('ok')

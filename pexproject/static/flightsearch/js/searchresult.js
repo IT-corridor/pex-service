@@ -530,14 +530,16 @@ $(document).ready(function() {
 
     // hide #back-top first
     $("#back-top").hide();
-
+    $('.btn-balances').hide();
     // fade in #back-top
     $(function() {
         $(window).scroll(function() {
             if ($(this).scrollTop() > 100) {
                 $('#back-top').fadeIn();
+                $('.btn-balances').fadeIn();
             } else {
                 $('#back-top').fadeOut();
+                $('.btn-balances').fadeOut();
             }
         });
 

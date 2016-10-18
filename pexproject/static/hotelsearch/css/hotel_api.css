@@ -29,14 +29,14 @@ span.stars {
 }
 
 .filter-lane {
-    background-color: #E0E9ED;
+    background-color: #E9F2FA;
     padding: 6px 8px;
     margin-top: 15px;
     border: 0;
 }
 
 .filter-submit {
-    background-color: #E0E9ED;
+    background-color: #E9F2FA;
     border: 0;  
     padding: 7px 25px;
     margin: 10px 0;
@@ -136,7 +136,14 @@ select.c_caret {
     text-align: center;
 }
 
+.left-pane {
+    padding-right: 0;
+}
+
 @media only screen and (max-width: 767px) {
+    .left-pane {
+        padding-right: 15px;
+    }
     .wide {
         display: none;
     }

@@ -478,6 +478,7 @@ class User(AbstractUser):
     level = models.IntegerField(default=0,null=True, blank=True)
     search_limit = models.IntegerField(default=10)
     search_run = models.IntegerField(default=0)
+    wallet_id = models.CharField(max_length=50,null=True, blank=True)
     objects =  UserManager()
 
 
@@ -533,3 +534,8 @@ class SearchLimit(models.Model):
 
     def __unicode__(self):
         return self.user_class
+
+
+class UserConfig(models.Model):
+    owner = models.ForeignKey(User)
+    reward_config = models.CharField(max_length='150', default='')

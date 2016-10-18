@@ -11,7 +11,6 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from django.db import connection, transaction
 from django.core.mail import send_mail,EmailMultiAlternatives
-import rewardScraper
 import sendgrid
 
 sendgrid_api_key = "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"
@@ -58,18 +57,6 @@ def sendMail(from_email, to_email, subject, bodytext, html_content=None):
         return "sent"
     except Exception as e:
         return "fail"
-    
-
-def syncPoints(airline,userid,username,skymiles_number,password):
-    resp = ''
-    if airline == 'delta':
-        resp = rewardScraper.deltaPoints(skymiles_number,password,userid)   
-    elif airline == 'united':
-        resp = rewardScraper.unitedPoints(skymiles_number,password,userid)           
-    else:
-        if airline == 'virgin':
-            resp = rewardScraper.virginPoints(username,password,userid)
-    return resp
 
 
 def get_airport_detail(airport_code):

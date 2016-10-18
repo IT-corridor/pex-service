@@ -23,7 +23,7 @@
                                 </div>
                             </div>
                         </div>
-                        {%if pointlist%}
+                        {% if pointlist %}
                         <div class="col-xs-12 col-md-12 nopadding">
                             <a class="account_balance" role="button" data-toggle="collapse" href="#account-balance" aria-expanded="false" aria-controls="pricecalender">
                                 <div class="col-xs-12 nopaddig form-side-2">
@@ -37,14 +37,13 @@
                             </a>
                             <div class="col-xs-12 nopadding form-side collapse" id="account-balance">
                                 <dl>
-                                    {% for point in pointlist%}
+                                    {% for point in pointlist %}
                                     <div class="cutom-ui-mil">
-                                        <dt class="dl-horizontal" style="text-transform: uppercase;">
-                                            {% if point.3  ==  'virgin'%} {{point.3}} Atlantic Airline: {%else%} {{point.3}} Airline: {%endif%}
+                                        <dt class="dl-horizontal" style="text-transform: uppercase; margin-bottom: 5px;margin-top: 5px;">
+                                            {{point.0}}
                                         </dt>
-                                        <dd class="text-right">
-                                            {{point.2}} MILES
-                                        </dd>
+                                        <span>{{point.2}}</span>
+                                        <span style="float: right;">{{point.1}} MILES</span>
                                     </div>
                                     {%endfor%}
                                 </dl>
@@ -1822,11 +1821,15 @@
     <p id="back-top">
         <a href="#top"><span class="glyphicon glyphicon-chevron-up"></span> TOP</a>
     </p>
-    <a href="staticPage/feedback" class="feedback-btn feedback">
+    <a href="/staticPage/feedback" class="feedback-btn feedback">
         <button type="button" class="btn btn-warning text-uppercase">
             Feedback
         </button>
     </a>
+    {% if pointlist %}
+        <button type="button" class="btn btn-info text-uppercase btn-balances" data-toggle="modal" data-target="#rewardpoints_dialog">Balances</button>
+    {% endif %}
+
 </div>
 <div class="modal fade" id="loading-model" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static">
     <div class="modal-dialog" role="document">
@@ -1956,6 +1959,41 @@
         </div>
     </div>
 </div>
+<!-- Reward points Modal -->
+{% if pointlist %}
+<div class="modal fade" id="rewardpoints_dialog" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Airline Reward Points</h4>
+        </div>
+        <div class="modal-body">
+            <div class="col-xs-12 nopadding form-side">
+                <dl>
+                    {% for point in pointlist %}
+                    <div class="cutom-ui-mil">
+                        <dt class="dl-horizontal" style="text-transform: uppercase; margin-bottom: 5px;margin-top: 5px;">
+                            {{point.0}}
+                        </dt>
+                        <span>{{point.2}}</span>
+                        <span style="float: right;">{{point.1}} MILES</span>
+                    </div>
+                    {%endfor%}
+                </dl>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+</div>
+{% endif %}
 <script type="text/javascript">
     var data0 = "{{data.0}}";
     var request_returnkey = "{{request.GET.returnkey}}";
