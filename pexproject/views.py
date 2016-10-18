@@ -2114,7 +2114,7 @@ def search_hotel(request):
         if 'userid' in request.session:
             hotel, _ = get_reward_config(request)
             pointlist = get_pointlist(request, '%', str(tuple(hotel+[''])))
-            
+
         db_hotels, price_matrix, filters = result[1], result[2], result[3]
 
         return render(request, 'hotelsearch/hotel_result.html', {
@@ -2447,7 +2447,10 @@ def api_search_flight(request):
 
         # save unmatch percent
         searchkey = Searchkey.objects.get(searchid=keys['departkey'])
-        searchkey.qpx_unmatch_percent = qpx_unmatch_count * 1.0 / len(flights)
+        if len(flights):
+            searchkey.qpx_unmatch_percent = qpx_unmatch_count * 1.0 / len(flights)
+        else:
+            searchkey.qpx_unmatch_percent = 0
         searchkey.save()
 
         result['status'] = 'Success'
