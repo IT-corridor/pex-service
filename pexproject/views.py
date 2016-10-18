@@ -2446,12 +2446,10 @@ def api_search_flight(request):
                 flights.append(_item)
 
         # save unmatch percent
-        searchkey = Searchkey.objects.get(searchid=keys['departkey'])
-        if len(flights):
+        if flights:
+            searchkey = Searchkey.objects.get(searchid=keys['departkey'])
             searchkey.qpx_unmatch_percent = qpx_unmatch_count * 1.0 / len(flights)
-        else:
-            searchkey.qpx_unmatch_percent = 0
-        searchkey.save()
+            searchkey.save()
 
         result['status'] = 'Success'
         result['flights'] = flights
