@@ -2381,7 +2381,7 @@ def api_search_flight(request):
                 flight_['arrival'] = flight.arival
                 flight_['image'] = 'pexportal.com/static/flightsearch/img/'+logos[flight.datasource]
                 price_key = get_qpx_price_key(flight.planedetails)        
-                flight_['price_key'] = price_key
+                # flight_['price_key'] = price_key
                 flight_['price'] = qpx_prices.get(price_key.encode('ascii', 'ignore'), 'N/A')
 
                 # compute percentage of match
@@ -2413,7 +2413,7 @@ def api_search_flight(request):
                 _item['flight_no'] = item.flighno
                 _item['destination'] = item.destination
                 _item['departure'] = str(item.departure)
-                _item['arival'] = str(item.arival)
+                _item['arrival'] = str(item.arival)
                 _item['duration'] = item.duration
                 _item['image'] = 'pexportal.com/static/flightsearch/img/'+logos[item.datasource]
                 _item['depart_routes'] = parse_detail(item.departdetails, item.arivedetails, item.planedetails, item.operatedby)
