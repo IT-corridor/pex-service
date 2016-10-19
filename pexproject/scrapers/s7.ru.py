@@ -135,9 +135,9 @@ def parse_flight(flight, ibe_conversation, driver, log_file, db, searchkey, sear
         e_plane1 = re.sub(r"\s+", " ", e_plane1, flags=re.UNICODE)
         e_plane2 = re.sub(r"\s+", " ", e_plane2, flags=re.UNICODE)
 
-        airport_ = customfunction.get_airport_detail(get_airport_code(e_origin_)) or e_origin_
+        airport_ = customfunction.get_airport_detail(e_origin_) or e_origin_
         depart = '{} {} | from {}'.format(departdatestr, e_departure, airport_)
-        airport_ = customfunction.get_airport_detail(get_airport_code(e_destination_)) or e_destination_
+        airport_ = customfunction.get_airport_detail(e_destination_) or e_destination_
         arrive = '{} {} | at {}'.format(arrivaldatestr, e_arrival, airport_)
         flight_ = '{} | {} ({})'.format(e_flightno, e_plane2, e_duration)
 

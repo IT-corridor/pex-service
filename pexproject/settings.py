@@ -53,7 +53,6 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'pexproject',
     'oauth2',
-#    'social_auth',
     'social.apps.django_app.default'
 )
 
