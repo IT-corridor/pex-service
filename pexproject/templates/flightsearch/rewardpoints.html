@@ -52,7 +52,7 @@
                         {% for row in accounts %}
                         <tr>
                             <td class="">
-                                <span class="glyphicon glyphicon-list-alt" aria-hidden="true" data-toggle="modal" data-target="#history_dialog{{ forloop.counter }}"></span>
+                                <span class="glyphicon glyphicon-list-alt" aria-hidden="true" data-toggle="modal" data-target="#history_dialog{{ forloop.counter }}" style="margin: 0 10px;" {% if not row.history %}disabled{% endif %}></span>
                                 {{row.airline}}
                             </td>
                             <td class="">{{row.kind}}</td>
