@@ -1,16 +1,5 @@
 #!/usr/bin/env python
-import os, sys
-import datetime
-from datetime import timedelta
-import time
 import MySQLdb
-import re
-from email.mime.text import MIMEText
-import socket
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from django.db import connection, transaction
-from django.core.mail import send_mail,EmailMultiAlternatives
 import sendgrid
 from config import config as sys_config
 
@@ -30,11 +19,10 @@ is_scrape_airchina = 1
 flag = 0
 
 def dbconnection():
-    db = MySQLdb.connect(host="localhost",  
-                         user=sys_config['DB_USER'],           
-                         passwd=sys_config['DB_PASSWORD'],        
-                         db=sys_config['DB_NAME'])  
-    return db
+    return MySQLdb.connect(host="localhost",  
+                           user=sys_config['DB_USER'],           
+                           passwd=sys_config['DB_PASSWORD'],        
+                           db=sys_config['DB_NAME'])  
 
 
 def sendMail(from_email, to_email, subject, bodytext, html_content=None):
