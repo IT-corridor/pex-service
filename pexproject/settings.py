@@ -24,7 +24,7 @@ TEMPLATE_DIRS = (
     PROJECT_ROOT +"/templates/",
 )
 
-f = os.path.join(BASE_DIR, "scrapers/config.py")
+f = os.path.join(PROJECT_ROOT, "scrapers/config.py")
 if os.path.exists(f):
     exec(open(f, "rb").read())
 

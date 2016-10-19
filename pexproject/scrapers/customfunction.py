@@ -33,7 +33,7 @@ def dbconnection():
     db = MySQLdb.connect(host="localhost",  
                          user=sys_config['DB_USER'],           
                          passwd=sys_config['DB_PASSWORD'],        
-                         db=sys_config['pex'])  
+                         db=sys_config['DB_NAME'])  
     return db
 
 
