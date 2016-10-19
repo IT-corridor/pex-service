@@ -3356,7 +3356,7 @@ def rewardpoints(request):
             account['kind'] = account_['kind']
             account['expireDate'] = account_.get('expirationDate', '')[:10]
             account['status'] = '' 
-            account['history'] = json.dumps(account_.get('history', '') )
+            account['history'] = json.dumps(account_.get('history'))
 
             if 'properties' in account_:
                 for property_ in account_['properties']:
@@ -3367,7 +3367,7 @@ def rewardpoints(request):
 
             # update database
             display_name = account['airline'].split('(')[0]
-            cursor.execute ("INSERT INTO reward_points (user_id, reward_points, airlines, kind, status, account_no, expiration_date,history) VALUES (%s,%s,%s,%s,%s,%s,%s,%s);", (str(user.user_id),str(account_['balanceRaw']), display_name, account_['kind'], account['status'], account['accountId'], account['expireDate'], account['history']))
+            cursor.execute ("INSERT INTO reward_points (user_id, reward_points, airlines, kind, status, account_no, expiration_date,history) VALUES (%s,%s,%s,%s,%s,%s,%s,%s);", (str(user.user_id),str(account_['balanceRaw']), display_name, account_['kind'], account['status'], account['accountId'], account['expireDate'], account_.get('history')))
 
     hotel, flight = get_reward_config(request)
 
