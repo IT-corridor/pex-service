@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import json
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -23,11 +24,17 @@ TEMPLATE_DIRS = (
     PROJECT_ROOT +"/templates/",
 )
 
+f = os.path.join(BASE_DIR, "scrapers/config.py")
+if os.path.exists(f):
+    exec(open(f, "rb").read())
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '92esi-0)q&l-mn)-env37sufs@r0%0h2^^)kaqp4i42r9%lr&m'
+SECRET_KEY = config['SECRET_KEY']
+QPX_KEY = config['QPX_KEY']
+WALLET_TOKEN = config['WALLET_TOKEN']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -58,8 +65,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-       
+    'django.middleware.security.SecurityMiddleware',       
 )
 
 ROOT_URLCONF ='pexproject.urls'
@@ -88,9 +94,9 @@ WSGI_APPLICATION = 'pexproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'pex',
-        'USER': 'root',
-        'PASSWORD': '1jyT382PWzYP',        
+        'NAME': config['DB_NAME'],
+        'USER': config['DB_USER'],
+        'PASSWORD': config['DB_PASSWORD'],        
         'default-character-set' : 'utf8',
         'host': 'localhost',
     }
@@ -137,6 +143,7 @@ LOGGING = {
     }
 }
 '''
+
 TEMPLATE_CONTEXT_PROCESSORS = (
    'django.contrib.auth.context_processors.auth',
    'django.core.context_processors.debug',
@@ -148,7 +155,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
    'social.apps.django_app.context_processors.backends',
    'social.apps.django_app.context_processors.login_redirect',
 )
-
 
 AUTHENTICATION_BACKENDS = (
    'social.backends.facebook.FacebookOAuth2',
@@ -172,28 +178,31 @@ FACEBOOK_PROFILE_EXTRA_PARAMS = {'fields': 'id,name,email,first_name,last_name',
 SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
     'fields': 'id,name,email',
 }
+
 SOCIAL_AUTH_FIELDS_STORED_IN_SESSION = ['username']
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
-SOCIAL_AUTH_FACEBOOK_KEY='423944854478305'
-SOCIAL_AUTH_FACEBOOK_SECRET='cb583c182bbf2fe402ff5ea7fabfd8ec'
-FACEBOOK_APP_ID='423944854478305'
-FACEBOOK_API_SECRET='cb583c182bbf2fe402ff5ea7fabfd8ec'
-SESSION_SERIALIZER='django.contrib.sessions.serializers.PickleSerializer'
+SOCIAL_AUTH_FACEBOOK_KEY = config['SOCIAL_AUTH_FACEBOOK_KEY']
+SOCIAL_AUTH_FACEBOOK_SECRET = config['SOCIAL_AUTH_FACEBOOK_SECRET']
+FACEBOOK_APP_ID = config['FACEBOOK_APP_ID']
+FACEBOOK_API_SECRET = config['FACEBOOK_API_SECRET']
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
 
 SOCIAL_AUTH_ENABLED_BACKENDS = 'google'
 SOCIAL_AUTH_USER_MODEL = 'pexproject.User'
 AUTH_USER_MODEL = 'pexproject.User'
+
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
 SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/login/'
 SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
 #SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email']
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY='975229172193-7rl5ikgl1cu79htkdf1pu9keqjp92iej.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET ='bj53Bjtmt4NI6WfTd7ehapm8'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE =['https://www.googleapis.com/auth/userinfo.email',]
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = config['SOCIAL_AUTH_GOOGLE_OAUTH2_KEY']
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = config['SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET']
 
-GOOGLE_OAUTH2_CLIENT_ID='564931538055-5thcbkb5geak9i9mslnvs1g9url0p1ml.apps.googleusercontent.com'
-GOOGLE_OAUTH2_CLIENT_SECRET='wvnwAIY3b3OS63WDwSBaVsRa'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['https://www.googleapis.com/auth/userinfo.email',]
+
+GOOGLE_OAUTH2_CLIENT_ID = config['GOOGLE_OAUTH2_CLIENT_ID']
+GOOGLE_OAUTH2_CLIENT_SECRET = config['GOOGLE_OAUTH2_CLIENT_SECRET']
 GOOGLE_OAUTH2_SCOPE = ['https://www.googleapis.com/auth/userinfo.email',]
 #GOOGLE_WHITE_LISTED_DOMAINS = ['pexportal.com']
 LANGUAGE_CODE = 'en-us'
@@ -208,10 +217,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
-#mail_to = "info@pexportal.com"
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static/')
 STATIC_URL = '/static/'

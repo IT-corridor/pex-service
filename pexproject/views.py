@@ -63,6 +63,7 @@ from django.forms.models import model_to_dict
 
 from .scrapers.customfunction import is_scrape_vAUS,is_scrape_aeroflot,is_scrape_virginAmerica,is_scrape_etihad,is_scrape_delta,is_scrape_united,is_scrape_virgin_atlantic,is_scrape_jetblue,is_scrape_aa, is_scrape_s7, is_scrape_airchina
 from .scrapers import customfunction
+from .scrapers.config import config as sys_config
 from .form import *
 from pexproject.models import *
 from pexproject.templatetags.customfilter import floatadd, assign
@@ -268,8 +269,8 @@ def signup(request):
             object = User(username=email,email=email, password=password1,first_name=first_name,last_name=last_name, home_airport=airport,pexdeals=pexdeals, last_login=dttime.now())
             object.save()
             if pexdeals == '1':
-                subscriber = Mailchimp(customfunction.mailchimp_api_key)
-                subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':email}, merge_vars={'FNAME':first_name,'LNAME':last_name})
+                subscriber = Mailchimp(sys_config['MAILCHIMP_API_KEY'])
+                subscriber.lists.subscribe(sys_config['MAILCHIML_LIST_ID'], {'email':email}, merge_vars={'FNAME':first_name,'LNAME':last_name})
             request.session['username'] = email
             request.session['homeairpot'] = airport
             request.session['password'] = password1
@@ -307,11 +308,11 @@ def manageAccount(request):
     userid = ''
     issocial =''
     newpassword1 = ''
-    #member = mailchimp_user.lists.member_info(customfunction.mailchiml_List_ID,{'email_address':'B.jessica822@gmail.com'})
+    #member = mailchimp_user.lists.member_info(sys_config['MAILCHIML_LIST_ID'],{'email_address':'B.jessica822@gmail.com'})
     subscription = ''
     email1 = request.session['username']
-    mailchimp_user = Mailchimp(customfunction.mailchimp_api_key)
-    m = mailchimp_user.lists.member_info(customfunction.mailchiml_List_ID,[{'email':email1}])['data']
+    mailchimp_user = Mailchimp(sys_config['MAILCHIMP_API_KEY'])
+    m = mailchimp_user.lists.member_info(sys_config['MAILCHIML_LIST_ID'],[{'email':email1}])['data']
     if len(m) > 0 and 'subscribed' in m[0]['status']:
         subscription = 'subscribed'
     
@@ -357,8 +358,8 @@ def mailchimp(request):
                 lname = request.REQUEST['lname']
         data = ''
         try:
-            subscriber = Mailchimp(customfunction.mailchimp_api_key)
-            subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':useremail}, merge_vars={'FNAME':fname,'LNAME':lname})
+            subscriber = Mailchimp(sys_config['MAILCHIMP_API_KEY'])
+            subscriber.lists.subscribe(sys_config['MAILCHIML_LIST_ID'], {'email':useremail}, merge_vars={'FNAME':fname,'LNAME':lname})
             data = "Please check you email to PEX+ update"
         except:
             data = useremail + " is an invalid email address"   
@@ -1737,8 +1738,8 @@ def useralert(request):
 def subscribe(request):
     if request.is_ajax:
         email = request.POST['emailid']
-        subscriber = Mailchimp(customfunction.mailchimp_api_key)
-        subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':email})
+        subscriber = Mailchimp(sys_config['MAILCHIMP_API_KEY'])
+        subscriber.lists.subscribe(sys_config['MAILCHIML_LIST_ID'], {'email':email})
     exit()
 
 
@@ -2350,9 +2351,7 @@ def api_search_flight(request):
 
         if _token[1]:   # check qpx limit
             carriers, max_stop = get_qpx_filter_carriers(origin, destination)
-            print carriers, max_stop, '##########3'
             qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date, _token[2], carriers, max_stop)
-            print qpx_prices, '@@@@@@@@@@'
 
         qpx_unmatch_count = 0
 
@@ -3038,7 +3037,7 @@ def price_history_num(request):
 def _price_history_num(user, _from, _to, airline, r_from, r_to, aggregation):    
     result = {'economy': [], 'business': [], 'firstclass':[]}
     result_tax = {'economy': [], 'business': [], 'firstclass':[]}
-    ticks =[]
+    ticks = []
 
     try:
         searchkeys = Searchkey.objects.filter(traveldate=_from, source=r_from, destination=r_to).order_by('scrapetime')
@@ -3168,7 +3167,7 @@ def user_search(request):
 
 
 def get_qpx_prices(return_date, origin, destination, depart_date, developerKey, carriers, max_stop):    
-    developerKey = developerKey or 'AIzaSyDVk2iIE4B590k77n8WaZMYgxT_dw--xcc'
+    developerKey = developerKey or settings.QPX_KEY
 
     date = datetime.datetime.strptime(depart_date, '%m/%d/%Y')
     date = date.strftime('%Y-%m-%d')
@@ -3329,7 +3328,7 @@ def rewardpoints(request):
     if not 'userid' in request.session:
         return HttpResponseRedirect('/index')
 
-    wallet_token = "b2fadf4b5e0fa5569634406fd384632662fc31b9"
+    wallet_token = settings.WALLET_TOKEN
     user = User.objects.get(pk=request.session['userid'])
     wallet_id = request.GET.get('userId')
 
