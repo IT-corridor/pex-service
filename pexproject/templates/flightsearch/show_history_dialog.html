@@ -1,6 +1,7 @@
 {% if history == 'null' %}
     <h5>There is no transaction history.</h5>
 {% else %}
+<div class="table-responsive">
 <table class="table" style="background: #E9F2FA;">
     <thead>
         <tr>
@@ -19,4 +20,5 @@
         {% endfor %}
     </tbody>
 </table>
+</div>
 {% endif %}
