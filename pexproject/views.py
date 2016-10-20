@@ -3325,6 +3325,9 @@ def get_qpx_filter_carriers(orgnid, destid):
 
 
 def rewardpoints(request):
+    """
+    render awardwallet page
+    """
     if not 'userid' in request.session:
         return HttpResponseRedirect('/index')
 
@@ -3379,6 +3382,9 @@ def rewardpoints(request):
 
 
 def get_reward_config(request):
+    """
+    get award page configuration
+    """
     user = User.objects.get(pk=request.session['userid'])
     config = UserConfig.objects.filter(owner=user)
     if config:
@@ -3392,12 +3398,18 @@ def get_reward_config(request):
 
 
 def choose_kind(request):
+    """
+    filter the programs by kind
+    """
     kind = request.GET.get('kind')
     pointlist = get_pointlist(request, kind)
     return render(request, 'flightsearch/rewardpoints_table.html', { 'accounts': pointlist, 'kind':kind })
 
 
 def modify_config(request):
+    """
+    modify the configuration for award points display for each page for the user
+    """
     userid = request.session['userid']
     hotel_config = request.GET.getlist('hotel')
     flight_config =  request.GET.getlist('flight')
@@ -3413,7 +3425,11 @@ def modify_config(request):
 
     return HttpResponse('ok')
 
+
 def get_history(request):
+    """
+    get transaction history from awardwallet or db cache with accountID, date range filter
+    """
     userid = request.session['userid']
     accountId = request.GET.get('accountId')
     date_from = request.GET.get('from', '01/01/1900')
