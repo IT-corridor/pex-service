@@ -60,17 +60,19 @@ function filter_history() {
     });     
 }
 
-function show_history(accountId) {
+function show_history(accountId, title) {
     $('#departMain').val('');
     $('#returnMain').val('');
+    $('#history_dialog_title').html(title);
+    
     selected_account_id = accountId;
 
     $.ajax({
         url: '/get_history?accountId='+accountId,
         type: 'GET',
         success: function(html) {
-            $('#history_content').html(html);
             $('#history_dialog').modal();
+            $('#history_content').html(html);
         }
     });     
 }
