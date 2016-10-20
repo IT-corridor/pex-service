@@ -7,7 +7,7 @@
             <a href="{%if searchObj.0 %}getsearchresult?keyid={{searchObj.0.searchkeyid}}&cabin=maincabin&passenger=1{%else%}#{%endif%}">
                 <span style="background:url('{%if searchObj.0 and searchObj.0.image_path %}{{searchObj.0.image_path}}{%else%}{% static 'flightsearch/img/ad.jpg' %}{%endif%}') no-repeat;background-size:cover;background-position:center;"></span>
                 <div class="add-info">
-                    <span class="place" itemprop="arrivalAirport"span class="glyphicon glyphicon-map-marker"
+                    <span class="place" itemprop="arrivalAirport"><span class="glyphicon glyphicon-map-marker"
                         aria-hidden="true">
                         {%if searchObj.0 %}
                         </span>{{searchObj.0.final_dest}}</span> <span class="rate" itemprop="Distance" >{{searchObj.0.maincabin|divisition}}K Miles + ${{searchObj.0.maintax}}</span> {%endif%}

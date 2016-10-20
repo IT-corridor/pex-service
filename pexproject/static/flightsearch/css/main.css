@@ -2876,11 +2876,14 @@ display: table-cell;
 
 @media (min-width: 768px)
 {
-.no-margin-md-form
-{
-    margin-right: 0px !important;
-}
+    .no-margin-md-form
+    {
+        margin-right: 0px !important;
+    }
 
+    .vaa_btn {
+        float: right;
+    }
 }
 @media (max-height: 1024px) {
 

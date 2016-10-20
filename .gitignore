@@ -11,3 +11,4 @@ pexproject/settings.py
 Hotel
 ref
 pex_env
+config.py

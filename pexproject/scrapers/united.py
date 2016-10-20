@@ -6,9 +6,7 @@ import datetime
 from datetime import timedelta
 import time
 import customfunction  
-import MySQLdb
 import re
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -308,8 +306,8 @@ def united(origin, destination, searchdate, searchkey):
                     airport_ = customfunction.get_airport_detail(get_airport_code(DestinationDescription)) or DestinationDescription           
                     destdetail = lastdestdatetime+" | at "+airport_
                 else:
-                    # DestinationDateTime = datetime.datetime.strptime(DestinationDateTime, '%m/%d/%Y %H:%M')
-                    # DestinationDateTime = DestinationDateTime.strftime('%Y/%m/%d %H:%M')                    
+                    DestinationDateTime = datetime.datetime.strptime(DestinationDateTime, '%m/%d/%Y %H:%M')
+                    DestinationDateTime = DestinationDateTime.strftime('%Y/%m/%d %H:%M')                    
                     airport_ = customfunction.get_airport_detail(get_airport_code(DestinationDescription)) or DestinationDescription
                     destdetail = DestinationDateTime+" | at "+airport_
                 arivaildetails.append(destdetail)

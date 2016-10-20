@@ -63,6 +63,7 @@ from django.forms.models import model_to_dict
 
 from .scrapers.customfunction import is_scrape_vAUS,is_scrape_aeroflot,is_scrape_virginAmerica,is_scrape_etihad,is_scrape_delta,is_scrape_united,is_scrape_virgin_atlantic,is_scrape_jetblue,is_scrape_aa, is_scrape_s7, is_scrape_airchina
 from .scrapers import customfunction
+from .scrapers.config import config as sys_config
 from .form import *
 from pexproject.models import *
 from pexproject.templatetags.customfilter import floatadd, assign
@@ -268,8 +269,8 @@ def signup(request):
             object = User(username=email,email=email, password=password1,first_name=first_name,last_name=last_name, home_airport=airport,pexdeals=pexdeals, last_login=dttime.now())
             object.save()
             if pexdeals == '1':
-                subscriber = Mailchimp(customfunction.mailchimp_api_key)
-                subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':email}, merge_vars={'FNAME':first_name,'LNAME':last_name})
+                subscriber = Mailchimp(sys_config['MAILCHIMP_API_KEY'])
+                subscriber.lists.subscribe(sys_config['MAILCHIML_LIST_ID'], {'email':email}, merge_vars={'FNAME':first_name,'LNAME':last_name})
             request.session['username'] = email
             request.session['homeairpot'] = airport
             request.session['password'] = password1
@@ -307,11 +308,11 @@ def manageAccount(request):
     userid = ''
     issocial =''
     newpassword1 = ''
-    #member = mailchimp_user.lists.member_info(customfunction.mailchiml_List_ID,{'email_address':'B.jessica822@gmail.com'})
+    #member = mailchimp_user.lists.member_info(sys_config['MAILCHIML_LIST_ID'],{'email_address':'B.jessica822@gmail.com'})
     subscription = ''
     email1 = request.session['username']
-    mailchimp_user = Mailchimp(customfunction.mailchimp_api_key)
-    m = mailchimp_user.lists.member_info(customfunction.mailchiml_List_ID,[{'email':email1}])['data']
+    mailchimp_user = Mailchimp(sys_config['MAILCHIMP_API_KEY'])
+    m = mailchimp_user.lists.member_info(sys_config['MAILCHIML_LIST_ID'],[{'email':email1}])['data']
     if len(m) > 0 and 'subscribed' in m[0]['status']:
         subscription = 'subscribed'
     
@@ -357,8 +358,8 @@ def mailchimp(request):
                 lname = request.REQUEST['lname']
         data = ''
         try:
-            subscriber = Mailchimp(customfunction.mailchimp_api_key)
-            subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':useremail}, merge_vars={'FNAME':fname,'LNAME':lname})
+            subscriber = Mailchimp(sys_config['MAILCHIMP_API_KEY'])
+            subscriber.lists.subscribe(sys_config['MAILCHIML_LIST_ID'], {'email':useremail}, merge_vars={'FNAME':fname,'LNAME':lname})
             data = "Please check you email to PEX+ update"
         except:
             data = useremail + " is an invalid email address"   
@@ -1737,8 +1738,8 @@ def useralert(request):
 def subscribe(request):
     if request.is_ajax:
         email = request.POST['emailid']
-        subscriber = Mailchimp(customfunction.mailchimp_api_key)
-        subscriber.lists.subscribe(customfunction.mailchiml_List_ID, {'email':email})
+        subscriber = Mailchimp(sys_config['MAILCHIMP_API_KEY'])
+        subscriber.lists.subscribe(sys_config['MAILCHIML_LIST_ID'], {'email':email})
     exit()
 
 
@@ -2350,9 +2351,7 @@ def api_search_flight(request):
 
         if _token[1]:   # check qpx limit
             carriers, max_stop = get_qpx_filter_carriers(origin, destination)
-            print carriers, max_stop, '##########3'
             qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date, _token[2], carriers, max_stop)
-            print qpx_prices, '@@@@@@@@@@'
 
         qpx_unmatch_count = 0
 
@@ -2382,7 +2381,7 @@ def api_search_flight(request):
                 flight_['arrival'] = flight.arival
                 flight_['image'] = 'pexportal.com/static/flightsearch/img/'+logos[flight.datasource]
                 price_key = get_qpx_price_key(flight.planedetails)        
-                flight_['price_key'] = price_key
+                # flight_['price_key'] = price_key
                 flight_['price'] = qpx_prices.get(price_key.encode('ascii', 'ignore'), 'N/A')
 
                 # compute percentage of match
@@ -2414,7 +2413,7 @@ def api_search_flight(request):
                 _item['flight_no'] = item.flighno
                 _item['destination'] = item.destination
                 _item['departure'] = str(item.departure)
-                _item['arival'] = str(item.arival)
+                _item['arrival'] = str(item.arival)
                 _item['duration'] = item.duration
                 _item['image'] = 'pexportal.com/static/flightsearch/img/'+logos[item.datasource]
                 _item['depart_routes'] = parse_detail(item.departdetails, item.arivedetails, item.planedetails, item.operatedby)
@@ -2446,12 +2445,10 @@ def api_search_flight(request):
                 flights.append(_item)
 
         # save unmatch percent
-        searchkey = Searchkey.objects.get(searchid=keys['departkey'])
-        if len(flights):
+        if flights:
+            searchkey = Searchkey.objects.get(searchid=keys['departkey'])
             searchkey.qpx_unmatch_percent = qpx_unmatch_count * 1.0 / len(flights)
-        else:
-            searchkey.qpx_unmatch_percent = 0
-        searchkey.save()
+            searchkey.save()
 
         result['status'] = 'Success'
         result['flights'] = flights
@@ -3040,7 +3037,7 @@ def price_history_num(request):
 def _price_history_num(user, _from, _to, airline, r_from, r_to, aggregation):    
     result = {'economy': [], 'business': [], 'firstclass':[]}
     result_tax = {'economy': [], 'business': [], 'firstclass':[]}
-    ticks =[]
+    ticks = []
 
     try:
         searchkeys = Searchkey.objects.filter(traveldate=_from, source=r_from, destination=r_to).order_by('scrapetime')
@@ -3170,7 +3167,7 @@ def user_search(request):
 
 
 def get_qpx_prices(return_date, origin, destination, depart_date, developerKey, carriers, max_stop):    
-    developerKey = developerKey or 'AIzaSyDVk2iIE4B590k77n8WaZMYgxT_dw--xcc'
+    developerKey = developerKey or settings.QPX_KEY
 
     date = datetime.datetime.strptime(depart_date, '%m/%d/%Y')
     date = date.strftime('%Y-%m-%d')
@@ -3328,10 +3325,13 @@ def get_qpx_filter_carriers(orgnid, destid):
 
 
 def rewardpoints(request):
+    """
+    render awardwallet page
+    """
     if not 'userid' in request.session:
         return HttpResponseRedirect('/index')
 
-    wallet_token = "b2fadf4b5e0fa5569634406fd384632662fc31b9"
+    wallet_token = settings.WALLET_TOKEN
     user = User.objects.get(pk=request.session['userid'])
     wallet_id = request.GET.get('userId')
 
@@ -3369,7 +3369,7 @@ def rewardpoints(request):
 
             # update database
             display_name = account['airline'].split('(')[0]
-            cursor.execute ("INSERT INTO reward_points (user_id, reward_points, airlines, kind, status, account_no, expiration_date) VALUES (%s,%s,%s,%s,%s,%s,%s);", (str(user.user_id),str(account_['balanceRaw']), display_name, account_['kind'], account['status'], account['accountId'], account['expireDate']))
+            cursor.execute ("INSERT INTO reward_points (user_id, reward_points, airlines, kind, status, account_no, expiration_date) VALUES (%s,%s,%s,%s,%s,%s,%s);", (str(user.user_id),str(account_['balanceRaw']), display_name, account_['kind'], account['status'], account['accountId'], account['expireDate'] ))
 
     hotel, flight = get_reward_config(request)
 
@@ -3382,6 +3382,9 @@ def rewardpoints(request):
 
 
 def get_reward_config(request):
+    """
+    get award page configuration
+    """
     user = User.objects.get(pk=request.session['userid'])
     config = UserConfig.objects.filter(owner=user)
     if config:
@@ -3395,12 +3398,18 @@ def get_reward_config(request):
 
 
 def choose_kind(request):
+    """
+    filter the programs by kind
+    """
     kind = request.GET.get('kind')
     pointlist = get_pointlist(request, kind)
     return render(request, 'flightsearch/rewardpoints_table.html', { 'accounts': pointlist, 'kind':kind })
 
 
 def modify_config(request):
+    """
+    modify the configuration for award points display for each page for the user
+    """
     userid = request.session['userid']
     hotel_config = request.GET.getlist('hotel')
     flight_config =  request.GET.getlist('flight')
@@ -3415,3 +3424,51 @@ def modify_config(request):
         config = UserConfig.objects.create(owner_id=userid, reward_config=reward_config)
 
     return HttpResponse('ok')
+
+
+def get_history(request):
+    """
+    get transaction history from awardwallet or db cache with accountID, date range filter
+    """
+    userid = request.session['userid']
+    accountId = request.GET.get('accountId')
+    date_from = request.GET.get('from', '01/01/1900')
+    date_to = request.GET.get('to', '01/01/2900')
+
+    try:
+        date_from = datetime.datetime.strptime(date_from.strip(), '%m/%d/%Y').date()
+        date_to = datetime.datetime.strptime(date_to.strip(), '%m/%d/%Y').date()
+    except Exception, e:
+        date_from = datetime.date(1900, 1,1)
+        date_to = datetime.date(2900, 1,1)
+
+    cursor = connection.cursor()
+    sql = "select history from reward_points where user_id={} and account_no='{}'".format(userid, accountId)
+    cursor.execute(sql)
+    history = cursor.fetchone()
+
+    if history[0]:
+        history = json.loads(history[0])
+    else:
+        url = 'https://business.awardwallet.com/api/export/v1/account/{}'.format(accountId)
+        header = { "X-Authentication": settings.WALLET_TOKEN }
+        res = requests.get(url=url, headers=header)        
+        history = res.json()['account']
+        if 'history' in history:
+            history = history['history']
+        else:
+            history = []
+        cursor.execute ("UPDATE reward_points set history='{}' where user_id={} and account_no='{}';".format(json.dumps(history), userid, accountId))
+
+    r_history = []
+    for history_ in history:
+        for item in history_['fields']:
+            if 'code' in item and item['code'] == 'PostingDate':
+                post_date = item['value']
+                post_date = datetime.datetime.strptime(post_date.strip(), '%m/%d/%y').date()
+                if date_from <= post_date <= date_to:
+                    r_history.append(history_)
+                break
+
+    # filter by date
+    return render(request, 'flightsearch/show_history_dialog.html', { 'history': r_history })    

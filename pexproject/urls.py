@@ -35,6 +35,8 @@ urlpatterns = [
     url(r'^manageAccount', manageAccount, name='manageAccount'),
     url(r'^rewardpoints', rewardpoints, name='rewardpoints'),
     url(r'^modify_config', modify_config, name='modify_config'),
+    url(r'^get_history', get_history, name='get_history'),
+    
     url(r'^choose_kind', choose_kind, name='choose_kind'),
     url(r'^forgotPassword', forgotPassword, name='forgotPassword'),
     url(r'^signup', signup, name='signup'),

@@ -1994,10 +1994,10 @@ nav.cstm-hw-it {
   font-weight: bold;
 }
 
-	.form-side-2 {
-background: #39A8E0;
+.form-side-2 {
+  background: #39A8E0;
   padding: 10px 7px 0px;
-  margin-bottom: 10px;
+  /*margin-bottom: 10px;*/
 }
 
 .dl-horizontal {
