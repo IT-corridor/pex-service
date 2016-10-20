@@ -3441,7 +3441,7 @@ def get_history(request):
         if 'history' in history:
             history = history['history']
         else:
-            history = None
+            history = []
         cursor.execute ("UPDATE reward_points set history='{}' where user_id={} and account_no='{}';".format(json.dumps(history), userid, accountId))
 
     r_history = []
