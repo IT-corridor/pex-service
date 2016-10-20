@@ -3436,8 +3436,12 @@ def get_history(request):
     else:
         url = 'https://business.awardwallet.com/api/export/v1/account/{}'.format(accountId)
         header = { "X-Authentication": settings.WALLET_TOKEN }
-        res = requests.get(url=url, headers=header)
-        history = res.json()['account']['history']
+        res = requests.get(url=url, headers=header)        
+        history = res.json()['account']
+        if 'history' in history:
+            history = history['history']
+        else:
+            history = None
         cursor.execute ("UPDATE reward_points set history='{}' where user_id={} and account_no='{}';".format(json.dumps(history), userid, accountId))
 
     r_history = []
