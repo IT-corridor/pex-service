@@ -2135,7 +2135,7 @@ def get_pointlist(request, kind='%', filter_=None):
     if 'userid' in request.session:
         userid = request.session['userid']
         cursor = connection.cursor()
-        sql = "select airlines, reward_points, status, kind, account_no, expiration_date, history from reward_points where user_id={} and kind like '{}'".format(userid, kind)
+        sql = "select airlines, reward_points, status, kind, account_no, expiration_date from reward_points where user_id={} and kind like '{}'".format(userid, kind)
         if filter_:
             sql += " and kind in {}".format(filter_)
         cursor.execute(sql)
@@ -3356,7 +3356,6 @@ def rewardpoints(request):
             account['kind'] = account_['kind']
             account['expireDate'] = account_.get('expirationDate', '')[:10]
             account['status'] = '' 
-            account['history'] = account_.get('history')
 
             if 'properties' in account_:
                 for property_ in account_['properties']:
@@ -3367,7 +3366,7 @@ def rewardpoints(request):
 
             # update database
             display_name = account['airline'].split('(')[0]
-            cursor.execute ("INSERT INTO reward_points (user_id, reward_points, airlines, kind, status, account_no, expiration_date,history) VALUES (%s,%s,%s,%s,%s,%s,%s,%s);", (str(user.user_id),str(account_['balanceRaw']), display_name, account_['kind'], account['status'], account['accountId'], account['expireDate'], json.dumps(account_.get('history'))))
+            cursor.execute ("INSERT INTO reward_points (user_id, reward_points, airlines, kind, status, account_no, expiration_date) VALUES (%s,%s,%s,%s,%s,%s,%s);", (str(user.user_id),str(account_['balanceRaw']), display_name, account_['kind'], account['status'], account['accountId'], account['expireDate'] ))
 
     hotel, flight = get_reward_config(request)
 
@@ -3413,3 +3412,24 @@ def modify_config(request):
         config = UserConfig.objects.create(owner_id=userid, reward_config=reward_config)
 
     return HttpResponse('ok')
+
+def get_history(request):
+    userid = request.session['userid']
+    accountId = request.GET.get('accountId')
+
+    cursor = connection.cursor()
+    sql = "select history from reward_points where user_id={} and accountId='{}'".format(userid, accountId)
+    cursor.execute(sql)
+    history = cursor.fetchone()
+    print history, '@@@@@@@2'
+    if history:
+        history = json.loads(history[0])
+    else:
+        url = 'https://business.awardwallet.com/api/export/v1/account/{}'.format(accountId)
+        header = { "X-Authentication": settings.WALLET_TOKEN }
+        res = requests.get(url=url, headers=header)
+        history = res.json()['account']['history']
+        cursor.execute ("UPDATE reward_points set history={} where user_id={} and accountId='{}';", (json.dumps(history), user_id, accountId))
+
+    # filter by date
+    return render(request, 'flightsearch/show_history_dialog.html', { 'history': history })    

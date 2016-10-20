@@ -1,29 +1,32 @@
 {% load humanize %}
 <table class="table">
-    <thead>
-        <tr>
-            <th class="text-center">Program</th>
-            <th class="text-center">Kind</th>
-            <th class="text-center">Account No</th>
-            <th class="text-center">Balance</th>
-            <th class="text-center">Status</th>
-            <th class="text-center">Time to expire</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% if accounts %}
-        {% for row in accounts %}
-        <tr>
-            <td class="text-center">{{row.0}}</td>
-            <td class="text-center">{{row.3}}</td>
-            <td class="text-center">{{row.4}}</td>
-            <td class="text-center">{{row.1 | intcomma}} Miles</td>
-            <td class="text-center">{{row.2}}</td>
-            <td class="text-center">{% if row.5 %}{{row.5}}{% endif %}</td>
-        </tr>
-        {% endfor %}
-        {% else %}
-        <tr><td colspan="5">There is no available rewards information.</td></tr>
-        {% endif %}
-    </tbody>
+<thead>
+    <tr>
+        <th class="text-center">Program</th>
+        <th class="text-center">Kind</th>
+        <th class="text-center">Account No</th>
+        <th class="text-center">Balance</th>
+        <th class="text-center">Status</th>
+        <th class="text-center">Time to expire</th>
+    </tr>
+</thead>
+<tbody>
+    {% if accounts %}
+    {% for row in accounts %}
+    <tr>
+        <td class="">
+            <span class="glyphicon glyphicon-list-alt" aria-hidden="true" onclick="show_history('{{row.accountId}}')" style="margin: 0 10px;"></span>
+            {{row.airline}}
+        </td>
+        <td class="">{{row.kind}}</td>
+        <td class="text-center">{{row.accountId}}</td>
+        <td class="text-center">{{row.balance | intcomma}} Miles</td>
+        <td class="text-center">{{row.status}}</td>
+        <td class="text-center">{{row.expireDate}}</td>
+    </tr>
+    {% endfor %}
+    {% else %}
+    <tr><td colspan="5">There is no available rewards information.</td></tr>
+    {% endif %}
+</tbody>
 </table>

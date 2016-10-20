@@ -1,0 +1,22 @@
+{% if history == 'null' %}
+    <h5>There is no transaction history.</h5>
+{% else %}
+<table class="table">
+    <thead>
+        <tr>
+            {% for th_history in history.0.fields %}
+                <th class="text-center">{{ th_history.name }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for history_item in history %}
+        <tr>
+            {% for history_subitem in history_item.fields %}
+            <td class="text-center">{{ history_subitem.value }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}

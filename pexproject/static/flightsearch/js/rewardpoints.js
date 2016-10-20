@@ -1,3 +1,32 @@
+$(function() {
+    $('#departMain').datepicker({
+        minDate: 0,
+        onSelect: function() {
+            setTimeout(function function_name(argument) {
+                $('#returnMain').focus();
+                $('#departMain').css('border-color', '');
+            }, 200);
+
+        },
+        onClose: function(selectedDate) {
+            // Set the minDate of 'to' as the selectedDate of 'from'
+            if (selectedDate != '') {
+                $("#returnMain").datepicker("option", "minDate", selectedDate);
+            } else {
+                $("#returnMain").datepicker("option", "minDate", 0);
+            }
+
+        }
+    });
+    $('#returnMain').datepicker({
+        minDate: 0,
+        onSelect: function() {
+            $('#returnMain').css('border-color', '');           
+        },
+
+    });
+})
+
 function choose_kind(this_) {
 	var kind = $(this_).val();
 
@@ -20,4 +49,18 @@ function modify_reward_page_config() {
             alert('Successfully modified!');
         }
     }); 
+}
+
+function show_history(accountId) {
+    $('#departMain').val('');
+    $('#returnMain').val('');
+
+    $.ajax({
+        url: '/get_history?accountId='+accountId,
+        type: 'GET',
+        success: function(html) {
+            $('#history_content').html(html);
+            $('#history_dialog').show();
+        }
+    });     
 }

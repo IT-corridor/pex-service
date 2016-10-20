@@ -52,7 +52,7 @@
                         {% for row in accounts %}
                         <tr>
                             <td class="">
-                                <span class="glyphicon glyphicon-list-alt" aria-hidden="true" data-toggle="modal" data-target="#history_dialog{{ forloop.counter }}" style="margin: 0 10px;"></span>
+                                <span class="glyphicon glyphicon-list-alt" aria-hidden="true" onclick="show_history('{{row.accountId}}')" style="margin: 0 10px;"></span>
                                 {{row.airline}}
                             </td>
                             <td class="">{{row.kind}}</td>
@@ -67,49 +67,6 @@
                         {% endif %}
                     </tbody>
                 </table>
-                {% for row in accounts %}
-                    <div class="modal fade" id="history_dialog{{ forloop.counter }}" role="dialog">
-                        <div class="modal-dialog modal-lg">                        
-                          <!-- Modal content-->
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <button type="button" class="close" data-dismiss="modal">&times;</button>
-                              <h4 class="modal-title">History</h4>
-                            </div>
-                            <div class="modal-body" style="max-height: 300px; overflow: scroll;">
-                                <div class="col-xs-12 nopadding form-side">
-                                    {% if row.history == 'null' %}
-                                        <h5>There is no transaction history.</h5>
-                                    {% else %}
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                {% for th_history in row.history.0.fields %}
-                                                    <th class="text-center">{{ th_history.name }}</th>
-                                                {% endfor %}
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for history_item in row.history %}
-                                            <tr>
-                                                {% for history_subitem in history_item.fields %}
-                                                <td class="text-center">{{ history_subitem.value }}</td>
-                                                {% endfor %}
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            </div>
-                          </div>
-                          
-                        </div>
-                    </div>                                        
-                {% endfor %}
             </div>
         </div>
         {% endif %}
@@ -157,5 +114,47 @@
         </div>
     </div>    
 </div>
+<div class="modal fade" id="history_dialog" role="dialog">
+    <div class="modal-dialog modal-lg">                        
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">History</h4>
+        </div>
+        <div class="modal-body" style="max-height: 300px; overflow: scroll;">
+            <div class="input-daterange">
+                <div class="col-sm-12 col-xs-6 nopl xs-pr5 mobile-wt">
+                    <div class="form-group nomr noml nomb no-margin-md-form " id="rmv_nomr">
+                        <label class="sr-only" for="departMain">Departure Date:</label>
+                        <div class="inner-addon left-addon date" id="dp1">
+                            <i class="glyphicon glyphicon-calendar"></i>
+                            <input type="text" tabindex="3" class="form_val form-control curson" id="departMain" placeholder="Depart" name="deptdate" autocomplete="off">
+                        </div>
+                        <div class="form-group" id="deptmsg"></div>
+                    </div>
+                </div>
+                <div class="col-sm-2 col-xs-6 xs-nopadding xs-pl5 pd-le-md" id="return">
+                    <div class="form-group nomr noml">
+                        <label class="sr-only" for="returnMain">Return Date:</label>
+                        <div class="inner-addon left-addon date" id="dp2">
+                            <i class="glyphicon glyphicon-calendar"></i>
+                            <input type="text" tabindex="4" class="form_val form-control curson" id="returnMain" placeholder="Return" name="returndate" autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-12 nopadding form-side" id="history_content">
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+</div>                                        
+
 <script src="{% static 'flightsearch/js/rewardpoints.js' %}"></script>
 {% endblock %}
