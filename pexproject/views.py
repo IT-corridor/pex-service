@@ -3429,7 +3429,7 @@ def get_history(request):
         header = { "X-Authentication": settings.WALLET_TOKEN }
         res = requests.get(url=url, headers=header)
         history = res.json()['account']['history']
-        cursor.execute ("UPDATE reward_points set history={} where user_id={} and account_no='{}';", (json.dumps(history), userid, accountId))
+        cursor.execute ("UPDATE reward_points set history='{}' where user_id={} and account_no='{}';", (json.dumps(history), userid, accountId))
 
     # filter by date
     return render(request, 'flightsearch/show_history_dialog.html', { 'history': history })    
