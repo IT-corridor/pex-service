@@ -3422,7 +3422,7 @@ def get_history(request):
     cursor.execute(sql)
     history = cursor.fetchone()
     print history, '@@@@@@@2'
-    if history:
+    if history[0]:
         history = json.loads(history[0])
     else:
         url = 'https://business.awardwallet.com/api/export/v1/account/{}'.format(accountId)
