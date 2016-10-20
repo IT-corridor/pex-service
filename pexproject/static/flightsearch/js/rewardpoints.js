@@ -2,7 +2,6 @@ var selected_account_id;
 
 $(function() {
     $('#departMain').datepicker({
-        minDate: 0,
         onSelect: function() {
             setTimeout(function function_name(argument) {
                 $('#returnMain').focus();
@@ -13,18 +12,17 @@ $(function() {
             // Set the minDate of 'to' as the selectedDate of 'from'
             if (selectedDate != '') {
                 $("#returnMain").datepicker("option", "minDate", selectedDate);
-            } else {
-                $("#returnMain").datepicker("option", "minDate", 0);
             }
-
+            filter_history();
         }
     });
     $('#returnMain').datepicker({
-        minDate: 0,
         onSelect: function() {
             $('#returnMain').css('border-color', '');           
         },
-
+        onClose: function(selectedDate) {
+            filter_history();   
+        }
     });
 })
 
