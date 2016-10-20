@@ -60,7 +60,7 @@ function show_history(accountId) {
         type: 'GET',
         success: function(html) {
             $('#history_content').html(html);
-            $('#history_dialog').show();
+            $('#history_dialog').modal();
         }
     });     
 }
