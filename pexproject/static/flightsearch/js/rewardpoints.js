@@ -1,3 +1,5 @@
+var selected_account_id;
+
 $(function() {
     $('#departMain').datepicker({
         minDate: 0,
@@ -6,7 +8,6 @@ $(function() {
                 $('#returnMain').focus();
                 $('#departMain').css('border-color', '');
             }, 200);
-
         },
         onClose: function(selectedDate) {
             // Set the minDate of 'to' as the selectedDate of 'from'
@@ -51,9 +52,20 @@ function modify_reward_page_config() {
     }); 
 }
 
+function filter_history() {
+    $.ajax({
+        url: '/get_history?accountId='+selected_account_id+'&from='+$('#departMain').val()+'&to='+$('#returnMain').val(),
+        type: 'GET',
+        success: function(html) {
+            $('#history_content').html(html);
+        }
+    });     
+}
+
 function show_history(accountId) {
     $('#departMain').val('');
     $('#returnMain').val('');
+    selected_account_id = accountId;
 
     $.ajax({
         url: '/get_history?accountId='+accountId,

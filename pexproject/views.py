@@ -3416,12 +3416,23 @@ def modify_config(request):
 def get_history(request):
     userid = request.session['userid']
     accountId = request.GET.get('accountId')
+    date_from = request.GET.get('from')
+    date_to = request.GET.get('to')
+
+    try:
+        if date_from:
+            date_from = datetime.datetime.strptime(date_from.strip(), '%m/%d/%Y')
+        if date_to:
+            date_to = datetime.datetime.strptime(date_to.strip(), '%m/%d/%Y')
+    except Exception, e:
+        date_from = datetime.date(1900, 1,1)
+        date_to = datetime.datetime.now().date()
 
     cursor = connection.cursor()
     sql = "select history from reward_points where user_id={} and account_no='{}'".format(userid, accountId)
     cursor.execute(sql)
     history = cursor.fetchone()
-    print history, '@@@@@@@2'
+
     if history[0]:
         history = json.loads(history[0])
     else:
@@ -3431,5 +3442,15 @@ def get_history(request):
         history = res.json()['account']['history']
         cursor.execute ("UPDATE reward_points set history='{}' where user_id={} and account_no='{}';".format(json.dumps(history), userid, accountId))
 
+    r_history = []
+    for history_ in history:
+        for item in history_['fields']:
+            if 'code' in item and item['code'] == 'PostingDate':
+                post_date = item['value']
+                post_date = datetime.datetime.strptime(post_date.strip(), '%m/%d/%y')
+                if date_from <= post_date <= date_to:
+                    r_history.append(history_)
+                break
+
     # filter by date
-    return render(request, 'flightsearch/show_history_dialog.html', { 'history': history })    
+    return render(request, 'flightsearch/show_history_dialog.html', { 'history': r_history })    
