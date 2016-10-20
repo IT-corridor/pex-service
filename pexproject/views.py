@@ -3418,7 +3418,7 @@ def get_history(request):
     accountId = request.GET.get('accountId')
 
     cursor = connection.cursor()
-    sql = "select history from reward_points where user_id={} and accountId='{}'".format(userid, accountId)
+    sql = "select history from reward_points where user_id={} and account_no='{}'".format(userid, accountId)
     cursor.execute(sql)
     history = cursor.fetchone()
     print history, '@@@@@@@2'
@@ -3429,7 +3429,7 @@ def get_history(request):
         header = { "X-Authentication": settings.WALLET_TOKEN }
         res = requests.get(url=url, headers=header)
         history = res.json()['account']['history']
-        cursor.execute ("UPDATE reward_points set history={} where user_id={} and accountId='{}';", (json.dumps(history), user_id, accountId))
+        cursor.execute ("UPDATE reward_points set history={} where user_id={} and account_no='{}';", (json.dumps(history), user_id, accountId))
 
     # filter by date
     return render(request, 'flightsearch/show_history_dialog.html', { 'history': history })    
