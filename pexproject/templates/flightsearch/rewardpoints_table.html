@@ -16,13 +16,13 @@
     <tr>
         <td class="">
             <span class="glyphicon glyphicon-list-alt" aria-hidden="true" onclick="show_history('{{row.accountId}}')" style="margin: 0 10px;"></span>
-            {{row.airline}}
+            {{row.0}}
         </td>
-        <td class="">{{row.kind}}</td>
-        <td class="text-center">{{row.accountId}}</td>
-        <td class="text-center">{{row.balance | intcomma}} Miles</td>
-        <td class="text-center">{{row.status}}</td>
-        <td class="text-center">{{row.expireDate}}</td>
+        <td class="">{{row.3}}</td>
+        <td class="text-center">{{row.4}}</td>
+        <td class="text-center">{{row.1 | intcomma}} Miles</td>
+        <td class="text-center">{{row.2}}</td>
+        <td class="text-center">{{row.5}}</td>
     </tr>
     {% endfor %}
     {% else %}
