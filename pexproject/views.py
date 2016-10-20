@@ -3420,8 +3420,8 @@ def get_history(request):
     date_to = request.GET.get('to', '01/01/2900')
 
     try:
-        date_from = datetime.datetime.strptime(date_from.strip(), '%m/%d/%Y')
-        date_to = datetime.datetime.strptime(date_to.strip(), '%m/%d/%Y')
+        date_from = datetime.datetime.strptime(date_from.strip(), '%m/%d/%Y').date()
+        date_to = datetime.datetime.strptime(date_to.strip(), '%m/%d/%Y').date()
     except Exception, e:
         date_from = datetime.date(1900, 1,1)
         date_to = datetime.date(2900, 1,1)
@@ -3445,7 +3445,7 @@ def get_history(request):
         for item in history_['fields']:
             if 'code' in item and item['code'] == 'PostingDate':
                 post_date = item['value']
-                post_date = datetime.datetime.strptime(post_date.strip(), '%m/%d/%y')
+                post_date = datetime.datetime.strptime(post_date.strip(), '%m/%d/%y').date()
                 if date_from <= post_date <= date_to:
                     r_history.append(history_)
                 break
