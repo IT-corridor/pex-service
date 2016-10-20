@@ -61,54 +61,57 @@
                             <td class="text-center">{{row.status}}</td>
                             <td class="text-center">{{row.expireDate}}</td>
                         </tr>
-                        <div class="modal fade" id="history_dialog{{ forloop.counter }}" role="dialog">
-                            <div class="modal-dialog">
-                            
-                              <!-- Modal content-->
-                              <div class="modal-content">
-                                <div class="modal-header">
-                                  <h4 class="modal-title">History</h4>
-                                </div>
-                                <div class="modal-body" style="max-height: 300px; overflow: scroll;">
-                                    <div class="col-xs-12 nopadding form-side">
-                                        {% if row.history == 'null' %}
-                                            <h5>There is no transaction history.</h5>
-                                        {% else %}
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    {% for th_history in row.history.1.fields %}
-                                                        <th class="text-center">{{ th_history.name }}</th>
-                                                    {% endfor %}
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {% for history_item in row.history %}
-                                                <tr>
-                                                    {% for history_subitem in history_item.fields %}
-                                                    <td class="text-center">{{ history_subitem.value }}</td>
-                                                    {% endfor %}
-                                                </tr>
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                        {% endif %}
-                                    </div>
-
-                                </div>
-                                <div class="modal-footer">
-                                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                </div>
-                              </div>
-                              
-                            </div>
-                        </div>                        
                         {% endfor %}
                         {% else %}
                         <tr><td colspan="5">There is no available rewards information.</td></tr>
                         {% endif %}
                     </tbody>
                 </table>
+                {% for row in accounts %}
+                    <div class="modal fade" id="history_dialog{{ forloop.counter }}" role="dialog">
+                        <div class="modal-dialog">
+                        
+                          <!-- Modal content-->
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h4 class="modal-title">History</h4>
+                            </div>
+                            <div class="modal-body" style="max-height: 300px; overflow: scroll;">
+                                <div class="col-xs-12 nopadding form-side">
+                                    {% if row.history == 'null' %}
+                                        <h5>There is no transaction history.</h5>
+                                    {% else %}
+                                    <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                {% for th_history in row.history.0.fields %}
+                                                    <th class="text-center">{{ th_history.name }}</th>
+                                                {% endfor %}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for history_item in row.history %}
+                                            <tr>
+                                                {% for history_subitem in history_item.fields %}
+                                                <td class="text-center">{{ history_subitem.value }}</td>
+                                                {% endfor %}
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                          </div>
+                          
+                        </div>
+                    </div>                                        
+                {% endfor %}
             </div>
         </div>
         {% endif %}
