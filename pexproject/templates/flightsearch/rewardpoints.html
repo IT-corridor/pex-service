@@ -79,7 +79,7 @@
                                                 <tr>
                                                     {% for th_history in row.history.1.fields %}
                                                         <th class="text-center">{{ th_history.name }}</th>
-                                                    {% endif %}
+                                                    {% endfor %}
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -89,7 +89,7 @@
                                                     <td class="text-center">{{ history_subitem.value }}</td>
                                                     {% endfor %}
                                                 </tr>
-                                                {% endif %}
+                                                {% endfor %}
                                             </tbody>
                                         </table>
                                         {% endif %}
