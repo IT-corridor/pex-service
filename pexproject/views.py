@@ -2135,7 +2135,7 @@ def get_pointlist(request, kind='%', filter_=None):
     if 'userid' in request.session:
         userid = request.session['userid']
         cursor = connection.cursor()
-        sql = "select airlines, reward_points, status, kind, account_no, expiration_date from reward_points where user_id={} and kind like '{}'".format(userid, kind)
+        sql = "select airlines, reward_points, status, kind, account_no, expiration_date, household from reward_points where user_id={} and kind like '{}'".format(userid, kind)
         if filter_:
             sql += " and kind in {}".format(filter_)
         cursor.execute(sql)
@@ -3359,20 +3359,20 @@ def rewardpoints(request):
             account['kind'] = account_['kind']
             account['expireDate'] = account_.get('expirationDate', '')[:10]
             account['status'] = '' 
+            account['household'] = 0
 
             if 'properties' in account_:
                 for property_ in account_['properties']:
                     if property_['name'] in ['Level', 'Status']:
                         account['status'] = property_['value']
                     elif property_['name'] == 'Household miles':
-                        account['balance'] = int(property_['value'].replace(',', ''))
-                        account['airline'] += ' - Household'
+                        account['household'] = int(property_['value'].replace(',', ''))
 
             accounts.append(account)
 
             # update database
             display_name = account['airline'].split('(')[0]
-            cursor.execute ("INSERT INTO reward_points (user_id, reward_points, airlines, kind, status, account_no, expiration_date) VALUES (%s,%s,%s,%s,%s,%s,%s);", (str(user.user_id),str(account['balance']), display_name, account['kind'], account['status'], account['accountId'], account['expireDate'] ))
+            cursor.execute ("INSERT INTO reward_points (user_id, reward_points, airlines, kind, status, account_no, expiration_date, household) VALUES (%s,%s,%s,%s,%s,%s,%s,%s);", (str(user.user_id),str(account['balance']), display_name, account['kind'], account['status'], account['accountId'], account['expireDate'], str(account['household']) ))
 
     hotel, flight = get_reward_config(request)
 
