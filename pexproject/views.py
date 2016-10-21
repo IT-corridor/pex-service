@@ -3362,8 +3362,11 @@ def rewardpoints(request):
 
             if 'properties' in account_:
                 for property_ in account_['properties']:
-                    if 'Next Elite Level' == property_['name']:
+                    if property_['name'] in ['Level', 'Status']:
                         account['status'] = property_['value']
+                    elif property_['name'] == 'Household miles':
+                        account['balance'] = int(property_['value'].replace(',', ''))
+                        account['airline'] += ' - Household'
 
             accounts.append(account)
 
