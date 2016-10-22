@@ -4,10 +4,10 @@
 {% block content %}
 
 <title>Reward Points | PEX+</title>
-<div class="col-xs-12 nopadding form-cstm-mng" style="">
+<div class="col-md-10 nopadding form-cstm-mng" style="">
     <h3 class="text-center">My Reward Points</h3> {% if updatemsg %}
     <h4 class="text-center"> {{updatemsg}}</h4> {%endif%}
-    <div class="col-xs-12 col-sm-10 col-sm-push-1 mng-act fr-pd" style="padding: 30px 10px !important;">
+    <div class="col-xs-12 col-sm-11 col-sm-push-1 mng-act fr-pd" style="padding: 30px 10px !important;">
         {% if message %}
         <div class="alert alert-warning">{{message}}</div>
         {% endif %}
@@ -34,44 +34,39 @@
                 </a>
             </span>
         </div>        
-        <div class="col-xs-12  nopadding">
-            <div class="table-responsive" id="wallet_table">
-                <table class="table" style="background: #E9F2FA;">
-                    <thead>
-                        <tr>
-                            <th class="text-center">Program</th>
-                            <th class="text-center">Kind</th>
-                            <th class="text-center">Account No</th>
-                            <th class="text-center">Balance</th>
-                            <th class="text-center">Status</th>
-                            <th class="text-center">Time to expire</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% if accounts %}
-                        {% for row in accounts %}
-                        <tr>
-                            <td class="">
-                                <span class="glyphicon glyphicon-list-alt" aria-hidden="true" onclick="show_history('{{row.accountId}}', '{{row.airline}}')" style="margin: 0 10px;"></span>
-                                {{row.airline}}
-                            </td>
-                            <td class="">{{row.kind}}</td>
-                            <td class="text-center">{{row.accountId}}</td>
-                            <td class="text-center">{{row.balance | intcomma}} Miles</td>
-                            <td class="text-center">{{row.status}}</td>
-                            <td class="text-center">{{row.expireDate}}</td>
-                        </tr>
-                        {% endfor %}
-                        {% else %}
-                        <tr><td colspan="5">There is no available rewards information.</td></tr>
-                        {% endif %}
-                    </tbody>
-                </table>
+        <div class="col-xs-12 col-sm-12">
+            <div id="wallet_table" style="line-height: 20px;">
+                {% if accounts %}
+                    {% for row in accounts %}
+                    <div class="row">
+                        <div class="col-sm-12">                            
+                            <h3>{{row.airline}}</h3>                        
+                        </div>
+                        <div class="col-sm-3 col-sm-offset-1">                            
+                            <div class=""><b>{{row.kind}}</b></div>
+                            <div style=""><b>Status:</b> {{row.status}}</div>
+                            <div><b>Next Level:</b> {{row.next_level}}</div>
+                        </div>
+                        <div class="col-sm-3">                    
+                            <div style=""><b>Individual:</b> {{row.balance | intcomma}}</div>
+                            <div><b>Household:</b> {{row.household | intcomma}}</div>
+                            <div><b>Expiration Date:</b> {{row.expireDate}}</div>
+                        </div>
+                        <div class="clearfix" style="margin-bottom: 8px;"></div>
+                        <div class="col-sm-11 col-sm-offset-1"><a onclick="show_history('{{row.accountId}}', '{{row.airline}}')">
+                            <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
+                            Transaction History</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div>There is no available rewards information.<div>
+                {% endif %}
             </div>
         </div>
         {% endif %}
     </div>
-    <div class="col-xs-12 col-sm-10 col-sm-push-1 mng-act fr-pd" style="padding: 10px 10px !important; margin: 10px 0; ">
+    <div class="col-xs-12 col-sm-11 col-sm-push-1 mng-act fr-pd" style="padding: 10px 10px !important; margin: 10px 0; ">
         <h4 class="title" style="margin-left: 10px;">Reward Page Configuration <a href="#" class="pull-right editinfo" id="accountinfo" data-toggle="collapse" data-target="#config-reward-page-pannel">Edit</a></h4>
         <div id="config-reward-page-pannel" class="collapse">
         <form id="config-reward-page-form">
@@ -106,13 +101,18 @@
             </div>
         </div>
         </form>
-        <div class="col-md-2">
+        <div class="col-md-3">
             <button class="btn btn-pexSearch" style="margin-bottom: 10px;" onclick="modify_reward_page_config();">Save</button>
             <span class="btn btn-pexSearch" style="margin-bottom: 10px;" onclick="$('#config-reward-page-pannel').removeClass('in');">Cancel</span>
         </div>
 
         </div>
     </div>    
+</div>
+<div class="col-md-2">
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script> <!-- Pexportal Ads --> 
+    <ins class="adsbygoogle"  style="display:block" data-ad-client="ca-pub-7742023368051032" data-ad-slot="2027680907" data-ad-format="auto"></ins> 
+    <script> (adsbygoogle = window.adsbygoogle || []).push({}); </script>   
 </div>
 <div class="modal fade" id="history_dialog" role="dialog">
     <div class="modal-dialog modal-lg">                        

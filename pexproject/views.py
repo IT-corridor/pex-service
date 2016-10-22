@@ -3380,7 +3380,6 @@ def rewardpoints(request):
 
     hotel, flight = get_reward_config(request)
 
-    print accounts, '#########'
     return render(request, 'flightsearch/rewardpoints.html', { 
         'accounts': accounts, 
         'wallet_id': wallet_id,

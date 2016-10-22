@@ -1,4 +1,31 @@
 {% load humanize %}
+{% if accounts %}
+    {% for row in accounts %}
+    <div class="row">
+        <div class="col-sm-12">                            
+            <h3>{{row.0}}</h3>                        
+        </div>
+        <div class="col-sm-3 col-sm-offset-1">                            
+            <div class=""><b>{{row.3}}</b></div>
+            <div style=""><b>Status:</b> {{row.2}}</div>
+            <div><b>Next Level:</b> {{row.7}}</div>
+        </div>
+        <div class="col-sm-3">                    
+            <div style=""><b>Individual:</b> {{row.1 | intcomma}}</div>
+            <div><b>Household:</b> {{row.6 | intcomma}}</div>
+            <div><b>Expiration Date:</b> {{row.5}}</div>
+        </div>
+        <div class="clearfix" style="margin-bottom: 8px;"></div>
+        <div class="col-sm-11 col-sm-offset-1"><a onclick="show_history('{{row.4}}', '{{row.0}}')">
+            <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
+            Transaction History</a>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <div>There is no available rewards information.<div>
+{% endif %}
+
 <table class="table" style="background: #E9F2FA;">
 <thead>
     <tr>
