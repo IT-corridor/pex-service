@@ -3322,6 +3322,7 @@ def get_qpx_filter_carriers(orgnid, destid):
                     max_stop = len(flight.planedetails.split('@'))
                 carriers += [item[:2] for item in flight.planedetails.split('@')]
             return set(carriers), min(2, max_stop-1)
+    return None, None
 
 
 def rewardpoints(request):
