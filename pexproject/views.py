@@ -3327,7 +3327,8 @@ def get_qpx_filter_carriers(orgnid, destid):
 
 def rewardpoints(request):
     """
-    render awardwallet page
+    get information from awardwallet
+    and render awardwallet page
     """
     if not 'userid' in request.session:
         return HttpResponseRedirect('/index')
@@ -3357,7 +3358,7 @@ def rewardpoints(request):
             account['airline'] = account_['displayName']
             account['balance'] = account_['balanceRaw']
             account['accountId'] = account_['accountId']
-            account['kind'] = account_['kind']
+            account['kind'] = account_['kind'][:-1]
             account['expireDate'] = account_.get('expirationDate', '')[:10]
             account['status'] = '' 
             account['next_level'] = '' 

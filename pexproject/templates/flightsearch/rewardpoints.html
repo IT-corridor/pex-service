@@ -3,6 +3,8 @@
 {% load humanize %}
 {% block content %}
 
+<div class="container">
+<div class="row">
 <title>Reward Points | PEX+</title>
 <div class="col-md-10 nopadding form-cstm-mng" style="">
     <h3 class="text-center">My Reward Points</h3> {% if updatemsg %}
@@ -53,14 +55,15 @@
                             <div><b>Expiration Date:</b> {{row.expireDate}}</div>
                         </div>
                         <div class="clearfix" style="margin-bottom: 8px;"></div>
-                        <div class="col-sm-11 col-sm-offset-1"><a onclick="show_history('{{row.accountId}}', '{{row.airline}}')">
+                        <div class="col-sm-11 col-sm-offset-1">
+                            <a onclick="show_history('{{row.accountId}}', '{{row.airline}}')">
                             <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
                             Transaction History</a>
                         </div>
                     </div>
                     {% endfor %}
                 {% else %}
-                    <div>There is no available rewards information.<div>
+                    <div>There is no available rewards information.</div>
                 {% endif %}
             </div>
         </div>
@@ -114,6 +117,8 @@
     <ins class="adsbygoogle"  style="display:block" data-ad-client="ca-pub-7742023368051032" data-ad-slot="2027680907" data-ad-format="auto"></ins> 
     <script> (adsbygoogle = window.adsbygoogle || []).push({}); </script>   
 </div>
+</div>
+</div>
 <div class="modal fade" id="history_dialog" role="dialog">
     <div class="modal-dialog modal-lg">                        
       <!-- Modal content-->
@@ -158,6 +163,7 @@
       
     </div>
 </div>                                        
+
 
 <script src="{% static 'flightsearch/js/rewardpoints.js' %}"></script>
 {% endblock %}
