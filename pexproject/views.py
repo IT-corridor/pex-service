@@ -3468,6 +3468,7 @@ def get_history(request):
         cursor.execute ("UPDATE reward_points set history='{}' where user_id={} and account_no='{}';".format(json.dumps(history), userid, accountId))
 
     r_history = []
+    # filter by date
     for history_ in history:
         for item in history_['fields']:
             if 'code' in item and item['code'] == 'PostingDate':
@@ -3477,5 +3478,4 @@ def get_history(request):
                     r_history.append(history_)
                 break
 
-    # filter by date
     return render(request, 'flightsearch/show_history_dialog.html', { 'history': r_history })    

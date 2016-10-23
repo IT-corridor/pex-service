@@ -10,11 +10,11 @@
             {% endfor %}
         </tr>
     </thead>
-    <tbody>
+    <tbody style="background: #E9F2FA;">
         {% for history_item in history %}
         <tr>
             {% for history_subitem in history_item.fields %}
-            <td class="text-center">{{ history_subitem.value }}</td>
+            <td class="text-center" style="background: #E9F2FA;">{{ history_subitem.value }}</td>
             {% endfor %}
         </tr>
         {% endfor %}
