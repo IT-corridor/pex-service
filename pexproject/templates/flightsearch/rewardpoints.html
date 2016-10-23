@@ -5,6 +5,163 @@
             <h2 class="text-center" style="margin: 20px 0;">My Reward Points</h2>
         </div>
     </div>
+    <div class="row" style="margin-bottom: 20px;">
+        <div class="col-md-10" style="padding: 20px 15px; background-color: #F0F7FD !important;">
+            {% if not wallet_id %}
+            <div class="col-xs-12 text-center">
+                <a href="https://awardwallet.com/m/#/connections/approve/fjbykhglkc/2" class="btn btn-pexSearch">
+                    Connect to AwardWallet
+                </a>
+            </div>
+            {% else %}
+            <div class="col-md-12">
+                <div class="col-sm-7 nopadding" style="margin: 10px 0;">Filter by <b>Kind</b>:
+                    <select class="custom-field-control curson select-wallet" name="kind" onchange="choose_kind(this);">
+                        <option class="cabin curson" value="%">All</option>
+                        <option class="cabin curson" value="Airline">Airlines</option>
+                        <option class="cabin curson" value="Hotel">Hotels</option>
+                        <option class="cabin curson" value="Credit Card">Credit Cards</option>
+                    </select>
+                </div>
+                <div class="col-sm-5 nopadding" style="margin: 10px 0;">
+                    <span class="vaa_btn">
+                    <a href="https://awardwallet.com/account/select-provider" target="_blank">
+                        <button class="btn btn-pexSearch" id="sync_all_points">Visit AwardWallet Account </button>
+                    </a>
+                </span>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div id="wallet_table" style="line-height: 20px;">
+                    {% if accounts %} {% for row in accounts %}
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <h3>{{row.airline}}</h3>
+                        </div>
+                        <div class="col-sm-3 col-sm-offset-1">
+                            <div class=""><b>{{row.kind}}</b></div>
+                            <div style=""><b>Status:</b> {{row.status}}</div>
+                            <div><b>Next Level:</b> {{row.next_level}}</div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div style=""><b>Individual:</b> {{row.balance | intcomma}}</div>
+                            <div><b>Household:</b> {{row.household | intcomma}}</div>
+                            <div><b>Expiration Date:</b> {{row.expireDate}}</div>
+                        </div>
+                        <div class="clearfix" style="margin-bottom: 8px;"></div>
+                        <div class="col-sm-11 col-sm-offset-1">
+                            <a onclick="show_history('{{row.accountId}}', '{{row.airline}}')">
+                                <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Transaction History</a>
+                        </div>
+                    </div>
+                    {% endfor %} {% else %}
+                    <div>There is no available rewards information.</div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            <div class="col-sm-12" style="padding: 10px 10px !important; margin: 10px 0; ">
+                <h4 class="title" style="margin-left: 10px;">Reward Page Configuration <a href="javascript:void(0);" class="pull-right editinfo" id="accountinfo" data-toggle="collapse" data-target="#config-reward-page-pannel">Edit</a></h4>
+                <div id="config-reward-page-pannel" class="collapse">
+                    <form id="config-reward-page-form">
+                        <div class="col-md-2 form-side">
+                            <b>Hotel Page</b>
+                            <div class="checkbox">
+                                <label>
+                                    <input value="Airlines" type="checkbox" name="hotel" {% if 'Airlines' in hotel %} checked {% endif %}>
+                                    <span></span>Airlines</label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input value="Hotels" type="checkbox" name="hotel" {% if 'Hotels' in hotel %} checked {% endif %}>
+                                    <span></span>Hotels</label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input value="Credit Cards" type="checkbox" name="hotel" {% if 'Credit Cards' in hotel %} checked {% endif %}>
+                                    <span></span>Credit Cards</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2 form-side">
+                            <b>Flight Page</b>
+                            <div class="checkbox">
+                                <label>
+                                    <input value="Airlines" type="checkbox" name="flight" {% if 'Airlines' in flight %} checked {% endif %}>
+                                    <span></span>Airlines</label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input value="Hotels" type="checkbox" name="flight" {% if 'Hotels' in flight %} checked {% endif %}>
+                                    <span></span>Hotels</label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input value="Credit Cards" type="checkbox" name="flight" {% if 'Credit Cards' in flight %} checked {% endif %}>
+                                    <span></span>Credit Cards</label>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="col-md-3">
+                        <button class="btn btn-pexSearch" style="margin-bottom: 10px;" onclick="modify_reward_page_config();">Save</button>
+                        <span class="btn btn-pexSearch" style="margin-bottom: 10px;" onclick="$('#config-reward-page-pannel').removeClass('in');">Cancel</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <!-- Pexportal Ads -->
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7742023368051032" data-ad-slot="2027680907" data-ad-format="auto"></ins>
+            <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </div>
 </div>
+<div class="modal fade" id="history_dialog" role="dialog">
+    <div class="modal-dialog modal-lg">                        
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">History - <span id="history_dialog_title"></span></h4>
+        </div>
+        <div class="modal-body" style="max-height: 300px; overflow-y: scroll;">
+            <div class="input-daterange">
+                <div class="col-sm-2 col-xs-12 xs-pr5 mobile-wt" style="padding: 10px;">
+                    <label for="departMain">Date Range:</label>
+                </div>
+                <div class="col-sm-3 col-xs-6 nopl xs-pr5 mobile-wt">
+                    <div class="form-group nomr noml nomb no-margin-md-form " id="rmv_nomr">
+                        <div class="inner-addon left-addon date" id="dp1">
+                            <i class="glyphicon glyphicon-calendar"></i>
+                            <input type="text" tabindex="3" class="form_val form-control curson" id="departMain" placeholder="From" name="deptdate" autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3 col-xs-6 xs-nopadding xs-pl5 pd-le-md" id="return">
+                    <div class="form-group nomr noml">
+                        <div class="inner-addon left-addon date" id="dp2">
+                            <i class="glyphicon glyphicon-calendar"></i>
+                            <input type="text" tabindex="4" class="form_val form-control curson" id="returnMain" placeholder="To" name="returndate" autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="history_loading text-center col-xs-12" style="display: none;">
+                <img id="loading-image" src="{% static 'flightsearch/js/images/loading.gif' %}" alt="Loading..." />
+                <p class="mvt10px text-center mvt15px">Please wait while we fetch history...</p>
+            </div>
+            <div class="col-xs-12 nopadding" id="history_content">
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+</div>                                        
+
 <!-- <script src="{% static 'flightsearch/js/rewardpoints.js' %}"></script> -->
 {% endblock %}
