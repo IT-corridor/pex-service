@@ -13,9 +13,9 @@
     <tbody>
         {% for history_item in history %}
         {% if forloop.counter|divisibleby:2 %}
-            <tr style="background: #E9F8E7;">
-        {% else %}
             <tr style="background: #E7F0F8;">
+        {% else %}
+            <tr style="background: #E9F8E7;">
         {% endif %}
             {% for history_subitem in history_item.fields %}
             <td class="text-center">{{ history_subitem.value }}</td>
