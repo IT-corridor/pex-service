@@ -12,7 +12,7 @@
     </thead>
     <tbody>
         {% for history_item in history %}
-        {% if forloop.counter % 2 %}
+        {% if forloop.counter|divisibleby:2 %}
             <tr style="background: #E9F2FA;">
         {% else %}
             <tr style="background: #E7F0F8;">
