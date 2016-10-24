@@ -2553,6 +2553,7 @@ div.ui-datepicker{
         left: 94%;
     }
     .navbar-nav.social-icon {
+	padding-left: 0px !important;
         margin-top: 0;
         margin-bottom: 0;
     }
@@ -2687,7 +2688,7 @@ div.ui-datepicker{
         min-height:50px;
     }
     .navbar-default .navbar-nav > li > a {
-        padding: 12px 15px;
+        padding: 12px 15px  !important;
     }
     .navbar-right.right-nav-link li a {
         padding: 0 8px;
