@@ -4,7 +4,7 @@
 <div class="table-responsive">
 <table class="table" style="background: #E9F2FA;">
     <thead>
-        <tr>
+        <tr style="background: #E9F2FA;">
             {% for th_history in history.0.fields %}
                 <th class="text-center">{{ th_history.name }}</th>
             {% endfor %}
@@ -12,7 +12,11 @@
     </thead>
     <tbody style="background: #E9F2FA;">
         {% for history_item in history %}
-        <tr>
+        {% if forloop.counter|divisibleby:2 %}
+            <tr style="background: #E7F0F8;">
+        {% else %}
+            <tr style="background: lightyellow;">
+        {% endif %}
             {% for history_subitem in history_item.fields %}
             <td class="text-center" style="background: #E9F2FA;">{{ history_subitem.value }}</td>
             {% endfor %}
