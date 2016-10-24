@@ -3400,8 +3400,8 @@ def get_reward_config(request):
         hotel = reward_config[0].split(';')
         flight = reward_config[1].split(';')
     else:
-        hotel = ['Airlines', 'Hotels', 'Credit Cards']
-        flight = ['Airlines', 'Hotels', 'Credit Cards']
+        hotel = ['Airline', 'Hotel', 'Credit Card']
+        flight = ['Airline', 'Hotel', 'Credit Card']
     return hotel, flight
 
 
