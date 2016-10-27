@@ -388,24 +388,23 @@
         </div>
         <div class="modal-body">
             <div class="col-xs-12 nopadding form-side">
-                <dl>
-                    {% for point in pointlist %}
-                    <div class="cutom-ui-mil">
-                        <dt class="dl-horizontal" style="text-transform: uppercase; margin-bottom: 5px;margin-top: 5px;">
-                            {{point.0}}
-                        </dt>
+                {% for point in pointlist %}
+                <div class="cutom-ui-mil">
+                    <div class="dl-horizontal" style="text-transform: uppercase; margin-bottom: 5px;margin-top: 5px;">
+                        <b>{{point.0}}</b>
+                    </div>
+                    <div>
                         <span>{{point.2}}</span>
                         <span style="float: right;">{{point.1|intcomma}} MILES</span>
-                        {% if point.6 %}
-                        <div>
-                            <span>Household</span>
-                            <span style="float: right;">{{point.6|intcomma}} MILES</span>
-                        </div>
-                        {% endif %}
-                        
                     </div>
-                    {%endfor%}
-                </dl>
+                    {% if point.6 %}
+                    <div>
+                        <span>Household</span>
+                        <span style="float: right;">{{point.6|intcomma}} MILES</span>
+                    </div>
+                    {% endif %}                    
+                </div>
+                {%endfor%}
             </div>
 
         </div>
