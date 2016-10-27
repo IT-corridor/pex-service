@@ -2885,6 +2885,7 @@ display: table-cell;
     .vaa_btn {
         float: right;
     }
+
 }
 @media (max-height: 1024px) {
 
@@ -2900,9 +2901,13 @@ display: table-cell;
 {
     min-height:auto;
 }
-
 }
 
+@media (max-width: 760px) {
+    .vbb_btn {
+        margin: 5px 0;
+    }
+}
 /*_-------------------------- tabs --------------*/
 
 
