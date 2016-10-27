@@ -1873,7 +1873,7 @@ def api_search_hotel(request):
             result['status'] = 'Success'
             result['price_matrix'] = price_matrix
             # result['filters'] = filters
-            result['hotels'] = [model_to_dict(item) for item in db_hotels]
+            result['hotels'] = db_hotels
 
         return HttpResponse(json.dumps(result), 'application/json')
         
