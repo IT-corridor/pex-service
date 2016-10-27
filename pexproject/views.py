@@ -1838,7 +1838,7 @@ def check_validity_hotel_params(request):
     if not (is_number(price_low) and is_number(price_high) and is_number(award_low) and is_number(award_high) and is_number(radius)):
         return  ['Filter parameters should be number']
 
-    filters = {'price_low':price_low, 'price_high':price_high, 'award_low':award_low, 'award_high':award_high, 'radius': float(radius), 'chain': chain }
+    filters = {'price_low':price_low, 'price_high':price_high, 'award_low':award_low, 'award_high':award_high, 'radius': float(radius), 'chain': chain, 'amenity': [] }
     return ['', place, checkin, checkout, filters]
 
 
