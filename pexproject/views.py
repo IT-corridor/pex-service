@@ -2384,6 +2384,7 @@ def api_search_flight(request):
                 # flight_['price_key'] = price_key
                 flight_['price'] = qpx_prices.get(price_key.encode('ascii', 'ignore'), 'N/A')
 
+                print fare_class, FLIGHT_CLASS[fare_class][0], FLIGHT_CLASS[fare_class][1], '@@@@@@'
                 flight_['total_miles'] = getattr(flight, FLIGHT_CLASS[fare_class][0])
                 flight_['total_taxes'] = getattr(flight, FLIGHT_CLASS[fare_class][1])
 
