@@ -2377,12 +2377,15 @@ def api_search_flight(request):
             flights = []
             # convert each property to string for json dump
             for flight in flights_:
-                flight_ = model_to_dict(flight, exclude=['rowid', 'scrapetime', 'searchkeyid', 'stoppage_station', 'arivedetails', 'operatedby', 'departdetails', 'planedetails', 'economy_code', 'first_fare_code', 'first_code', 'eco_fare_code', 'arival'])
+                flight_ = model_to_dict(flight, exclude=['rowid', 'scrapetime', 'searchkeyid', 'stoppage_station', 'arivedetails', 'operatedby', 'departdetails', 'planedetails', 'economy_code', 'first_fare_code', 'first_code', 'eco_fare_code', 'arival', 'business_code', 'firsttax', 'maintax', 'businesstax', 'cabintype3', 'cabintype2', 'business', 'maincabin', 'cabintype1', 'firstclass', 'business_fare_code'])
                 flight_['arrival'] = flight.arival
                 flight_['image'] = 'pexportal.com/static/flightsearch/img/'+logos[flight.datasource]
                 price_key = get_qpx_price_key(flight.planedetails)        
                 # flight_['price_key'] = price_key
                 flight_['price'] = qpx_prices.get(price_key.encode('ascii', 'ignore'), 'N/A')
+
+                flight_['total_miles'] = getattr(flight, FLIGHT_CLASS[fare_class][0])
+                flight_['total_taxes'] = getattr(flight, FLIGHT_CLASS[fare_class][1])
 
                 # compute percentage of match
                 if flight_['price'] == 'N/A':
