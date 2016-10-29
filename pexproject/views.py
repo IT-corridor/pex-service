@@ -26,6 +26,7 @@ from django.shortcuts import render_to_response
 from django.shortcuts import get_object_or_404,redirect
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
+from django.http import JsonResponse
 from django.template import RequestContext
 from django.contrib.auth import login as social_login, authenticate
 from django.contrib.auth import logout as auth_logout
@@ -63,11 +64,9 @@ def get_cityname(request):
                 airport_json['label'] = airportdata.cityName + ", " + airportdata.name + ", " + airportdata.countryCode + "  (" + airportdata.code + " )"
                 airport_json['value'] = airportdata.cityName
                 results.append(airport_json)
-        data = json.dumps(results)
     else:
-        data = 'fail'
-    mimetype = 'application/json'
-    return HttpResponse(data, mimetype)
+        results = 'fail'
+    return JsonResponse(results, safe=False)
 
 
 def get_countryname(request):
@@ -83,12 +82,10 @@ def get_countryname(request):
                 country['label'] = item['name']
                 country['value'] = item['name']
                 result.append(country)
-        data = json.dumps(result)
         json_text.close()
     else:
-        data = 'fail'
-    mimetype = 'application/json'
-    return HttpResponse(data, mimetype)
+        result = 'fail'
+    return JsonResponse(result, safe=False)
 
 
 @csrf_exempt
@@ -182,16 +179,16 @@ def index(request):
       user = User.objects.filter(username=request.user)
       if len(user) > 0:
             user = User.objects.get(username=request.user)
-  	    request.session['username'] = request.user.username
-	#      request.session['password'] = password1
-	    if user.first_name != '':
-      	    	request.session['first_name'] = user.first_name
-	    if user.home_airport != '':
-	    	request.session['homeairpot'] = user.home_airport
-	    request.session['userid'] = user.user_id
-	    request.session['level'] = user.level
+        request.session['username'] = request.user.username
+    #      request.session['password'] = password1
+        if user.first_name != '':
+                request.session['first_name'] = user.first_name
+        if user.home_airport != '':
+            request.session['homeairpot'] = user.home_airport
+        request.session['userid'] = user.user_id
+        request.session['level'] = user.level
       else:
-	    email=request.user
+        email=request.user
             password = ''
             password1 = hashlib.md5(password).hexdigest()
             airport = ''
@@ -294,7 +291,7 @@ def manageAccount(request):
     user1 = User.objects.get(pk =request.session['userid']) 
     cursor.execute("select provider from social_auth_usersocialauth where user_id ="+str(request.session['userid']))
     social_id = cursor.fetchone()
-    if social_id:	
+    if social_id:   
         issocial = 'yes'
     if request.POST:
         if 'home_ariport' in request.POST:
@@ -324,24 +321,21 @@ def manageAccount(request):
 def mailchimp(request):
     context = {}
     if request.is_ajax():
-    	lname=''
-    	fname=''
+        lname=''
+        fname=''
         useremail = request.REQUEST['email']
-    	if 'fname' in request.POST:
-                fname = request.REQUEST['fname']
-    	if 'lname' in request.POST:
-                lname = request.REQUEST['lname']
-        data = ''
+        if 'fname' in request.POST:
+            fname = request.REQUEST['fname']
+        if 'lname' in request.POST:
+            lname = request.REQUEST['lname']
+        
         try:
             subscriber = Mailchimp(sys_config['MAILCHIMP_API_KEY'])
             subscriber.lists.subscribe(sys_config['MAILCHIML_LIST_ID'], {'email':useremail}, merge_vars={'FNAME':fname,'LNAME':lname})
             data = "Please check you email to PEX+ update"
         except:
             data = useremail + " is an invalid email address"   
-        mimetype = 'application/json'
-        
-        json.dumps(data)
-        return HttpResponse(data, mimetype)
+        return JsonResponse(data, safe=False)
 
 
 def login(request):
@@ -351,19 +345,19 @@ def login(request):
     currentpath = ''
     if user is not None:
         if user.is_active:
-            social_login(request,user)	
+            social_login(request,user)  
     if request.method == "POST": 
         username = request.REQUEST['username']
         password = request.REQUEST['password']
         if "curl" in request.POST:
             currentpath = request.REQUEST['curl']
         password1 = hashlib.md5(password).hexdigest()
-    	try:
+        try:
             user = User.objects.get(email=username, password=password1)
             if user > 0:
                 user.last_login=datetime.datetime.now()
                 user.save()
-#		login(request=request, user=user)
+#       login(request=request, user=user)
                 request.session['username'] = username
                 request.session['password'] = password1
                 if user.first_name != '':
@@ -380,8 +374,8 @@ def login(request):
                 msg = "Invalid username or password"
                 return HttpResponseRedirect('/index?msg='+msg)
                 #return render_to_response('flightsearch/index.html', {'msg':msg}, context_instance=RequestContext(request))
-    	except:
-    	    msg = "Invalid username or password"
+        except:
+            msg = "Invalid username or password"
             return HttpResponseRedirect('/index?msg='+msg)
             #return render_to_response('flightsearch/index.html', {'msg':msg}, context_instance=RequestContext(request))
     else:
@@ -392,9 +386,9 @@ def logout(request):
     context = {} 
     auth_logout(request)
     if 'username' in request.session:
-    	del request.session['username']
+        del request.session['username']
         del request.session['homeairpot']
-    	del request.session['password']  
+        del request.session['password']  
     return HttpResponseRedirect(reverse('index'))
 
 
@@ -407,13 +401,10 @@ def forgotPassword(request):
         usercode =  base64.b64encode(str(randomcode))
         if 'userid' in request.session:
             user = User.objects.get(pk = request.session['userid'])
-	    print'user id' 
         else:
             try:
-		print 'before objec'
                 user = User.objects.get(email=user_email)
                 print 'after object'
-		print user
             except:
                 return HttpResponseRedirect('/index?msg=Invalid username')
                 #return render_to_response('flightsearch/index.html', {'msg':"Invalid username"}, context_instance=RequestContext(request))
@@ -440,14 +431,10 @@ def forgotPassword(request):
     if 'pagetype' in request.POST:
         return HttpResponseRedirect('/index?welcome_msg='+text)
     if request.is_ajax():
-        mimetype = 'application/json'
-        data = text
-        json.dumps(data)
-        return HttpResponse(data, mimetype)
-        
+        return JsonResponse(text, safe=False)       
     else:
         msg = "forgot password"
-    return HttpResponseRedirect('/index?fpmsg='+msg) 
+        return HttpResponseRedirect('/index?fpmsg='+msg) 
 
 
 def createPassword(request):
@@ -465,8 +452,8 @@ def createPassword(request):
     except:
         msg = "Invalid or expired your password management code."     
     if request.POST:
-    	code = request.REQUEST['ucode']
-    	user1 = User.objects.get(usercode=code)
+        code = request.REQUEST['ucode']
+        user1 = User.objects.get(usercode=code)
         if 'new_password' in request.POST:
             newpassword = request.REQUEST['new_password']
             newpassword1 = hashlib.md5(newpassword).hexdigest()
@@ -604,10 +591,8 @@ def search(request):
             return HttpResponse(_ret, status=405)
 
         key_json = _search(returndate, str(orgnid), str(destid), depart, searchtype, cabin, request)
+        return JsonResponse(key_json)
 
-        mimetype = 'application/json'
-        data = json.dumps(key_json)
-        return HttpResponse(data, mimetype)
         # except Exception, e:
         #     print str(e), '###########3'
         
@@ -887,17 +872,15 @@ def get_airport(request):
         airportcode = []
         for airportdata in airport:
             if airportdata.code not in airportcode:
-	            airportcode.append(airportdata.code)
-        	    airport_json = {}
-	            airport_json['id'] = airportdata.airport_id
-        	    airport_json['label'] = airportdata.cityName + ", " + airportdata.name + ", " + airportdata.countryCode + "  (" + airportdata.code + " )"
-	            airport_json['value'] = airportdata.cityName + " (" + airportdata.code + ")"
-        	    results.append(airport_json)
-        data = json.dumps(results)
+                airportcode.append(airportdata.code)
+                airport_json = {}
+                airport_json['id'] = airportdata.airport_id
+                airport_json['label'] = airportdata.cityName + ", " + airportdata.name + ", " + airportdata.countryCode + "  (" + airportdata.code + " )"
+                airport_json['value'] = airportdata.cityName + " (" + airportdata.code + ")"
+                results.append(airport_json)
     else:
-        data = 'fail'
-    mimetype = 'application/json'
-    return HttpResponse(data, mimetype)
+        results = 'fail'
+    return JsonResponse(results, safe=False)
 
 
 def checkData(request):
@@ -908,10 +891,7 @@ def checkData(request):
         returnkey = request.POST.get('returnkey')
         
         results = _check_data(recordkey, returnkey, cabin, allkey)
-        mimetype = 'application/json'
-        data = json.dumps(results)
-
-        return HttpResponse(data, mimetype)    
+        return JsonResponse(results, safe=False)
     
 
 def _check_data(recordkey, returnkey, cabin, allkey):
@@ -1171,13 +1151,9 @@ def getsearchresult(request):
                 if t.minpricemile != None and (minPriceMile > t.minpricemile or minPriceMile == 500):
                    minPriceMile = t.minpricemile   
             maxPriceMile = temp
-            mimetype = 'application/json'
-            results = []
-            results.append(minPriceMile)
-            results.append(maxPriceMile)
-            results.append(fare_code_Array)
-            data = json.dumps(results)
-            return HttpResponse(data, mimetype)
+
+            return JsonResponse([minPriceMile, maxPriceMile, fare_code_Array], safe=False)
+
 
         price_matrix = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']
         price_matrix = {item: [None, None, None] for item in price_matrix}
@@ -1638,9 +1614,8 @@ def flightAlert(request):
         record_json['traveller'] = str(record.traveller)
         record_json['cabin'] = str(record.cabin)
         record_json['annual_repeat'] = str(record.annual_repeat)
-        data = json.dumps(record_json)
-        mimetype = 'application/json'
-        return HttpResponse(data, mimetype)
+        return JsonResponse(record_json)
+
     userid = request.session['userid']
     #print "userid",userid
     alertResult1 = UserAlert.objects.filter(userid=userid)
@@ -1656,8 +1631,8 @@ def useralert(request):
         UserAlert.objects.get(pk=alertid).delete()
         
     if request.POST and  'userid' in request.session:
-    	currentDate = datetime.datetime.now().date()
-    	preDate = currentDate - timedelta(days=1)
+        currentDate = datetime.datetime.now().date()
+        preDate = currentDate - timedelta(days=1)
         message = ''
         alertuser = UserAlert()
         alertuser.cabin = request.POST['cabintype']
@@ -1827,14 +1802,16 @@ def api_search_hotel(request):
         if error_message:
             result['status'] = 'Failed'
             result['message'] = error_message
-            return HttpResponse(json.dumps(result), 'application/json')
+            return JsonResponse(result)
+
 
         _params = check_validity_hotel_params(request)
         error_message = _params[0]
         if error_message:
             result['status'] = 'Failed'
             result['message'] = error_message
-            return HttpResponse(json.dumps(result), 'application/json')
+            return JsonResponse(result)
+
 
         # _result = _search_hotel(place, checkin, checkout, filters)
         _result = _search_hotel(_params[1], _params[2], _params[3], _params[4])
@@ -1850,7 +1827,8 @@ def api_search_hotel(request):
             # result['filters'] = filters
             result['hotels'] = db_hotels
 
-        return HttpResponse(json.dumps(result), 'application/json')
+        return JsonResponse(result, safe=False)
+
         
 
 def _search_hotel(place, checkin, checkout, filters):
@@ -2302,7 +2280,8 @@ def api_search_flight(request):
         if error_message:
             result['status'] = 'Failed'
             result['message'] = error_message
-            return HttpResponse(json.dumps(result), 'application/json')
+            return JsonResponse(result)
+
 
         fare_class = json.loads(request.body).get('class')
         _params = check_validity_flight_params(request)
@@ -2310,7 +2289,8 @@ def api_search_flight(request):
         if error_message:
             result['status'] = 'Failed'
             result['message'] = error_message
-            return HttpResponse(json.dumps(result), 'application/json')
+            return JsonResponse(result)
+
 
         # get valid parameters
         return_date, origin, destination, depart_date, search_type, flight_class, mile_low, mile_high, airlines, depart_from, depart_to, arrival_from, arrival_to = _params[1], _params[2], _params[3], _params[4], _params[5], _params[6], _params[7], _params[8], _params[9], _params[10], _params[11], _params[12], _params[13]
@@ -2431,8 +2411,7 @@ def api_search_flight(request):
 
         result['status'] = 'Success'
         result['flights'] = flights
-
-        return HttpResponse(json.dumps(result), 'application/json')
+        return JsonResponse(result, safe=False)
 
 # admin views
 
