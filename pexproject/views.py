@@ -179,7 +179,6 @@ def index(request):
         if len(user) > 0:
             user = User.objects.get(username=request.user)
         request.session['username'] = request.user.username
-            # request.session['password'] = password1
         if user.first_name != '':
             request.session['first_name'] = user.first_name
         if user.home_airport != '':
@@ -197,15 +196,14 @@ def index(request):
         object = User(username=email,email=email, password=password1,first_name=first_name,last_name=last_name, home_airport=airport,pexdeals=pexdeals, last_login=dttime.now())
         object.save()
         user = User.objects.get(username=request.user)
-        if len(user) > 0:
-            request.session['username'] = request.user.username
-        #       request.session['password'] = password1
-            if user.first_name != '':
-                request.session['first_name'] = user.first_name
-            if user.home_airport != '':
-                request.session['homeairpot'] = user.home_airport
-            request.session['userid'] = user.user_id
-            request.session['level'] = user.level
+
+        request.session['username'] = request.user.username
+        if user.first_name != '':
+            request.session['first_name'] = user.first_name
+        if user.home_airport != '':
+            request.session['homeairpot'] = user.home_airport
+        request.session['userid'] = user.user_id
+        request.session['level'] = user.level
 
     return render(request, 'flightsearch/home.html')    
 
