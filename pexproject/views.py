@@ -185,25 +185,25 @@ def index(request):
                 request.session['homeairpot'] = user.home_airport
             request.session['userid'] = user.user_id
             request.session['level'] = user.level
-    else:
-        email=request.user
-        password = ''
-        password1 = hashlib.md5(password).hexdigest()
-        airport = ''
-        first_name = ''
-        last_name = ''
-        pexdeals = 0
-        object = User(username=email,email=email, password=password1,first_name=first_name,last_name=last_name, home_airport=airport,pexdeals=pexdeals, last_login=dttime.now())
-        object.save()
-        user = User.objects.get(username=request.user)
-        if len(user) > 0:
-            request.session['username'] = request.user.username
-            if user.first_name != '':
-                request.session['first_name'] = user.first_name
-            if user.home_airport != '':
-                request.session['homeairpot'] = user.home_airport
-            request.session['userid'] = user.user_id
-            request.session['level'] = user.level
+        else:
+            email=request.user
+            password = ''
+            password1 = hashlib.md5(password).hexdigest()
+            airport = ''
+            first_name = ''
+            last_name = ''
+            pexdeals = 0
+            object = User(username=email,email=email, password=password1,first_name=first_name,last_name=last_name, home_airport=airport,pexdeals=pexdeals, last_login=dttime.now())
+            object.save()
+            user = User.objects.get(username=request.user)
+            if len(user) > 0:
+                request.session['username'] = request.user.username
+                if user.first_name != '':
+                    request.session['first_name'] = user.first_name
+                if user.home_airport != '':
+                    request.session['homeairpot'] = user.home_airport
+                request.session['userid'] = user.user_id
+                request.session['level'] = user.level
 
     return render(request, 'flightsearch/home.html')    
 
