@@ -14,6 +14,7 @@ urlpatterns = [
     url(r'^index$', index, name='index'),
     url(r'^flights', index, name='flights'),
     url(r'^destination_tiles$', destination_tiles, name='destination_tiles'),
+    url(r'^get_flight_pricematrix$', get_flight_pricematrix, name='get_flight_pricematrix'),
 #    url(r'', include('social_auth.urls')),
     url('', include('social.apps.django_app.urls', namespace='social')),
 

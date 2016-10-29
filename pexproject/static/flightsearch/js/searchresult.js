@@ -713,9 +713,15 @@ function initialisePriceRange() {
 
 function getPriceMatrix() {
     $.ajax({
-        url: dataurls,
+        url: '/get_flight_pricematrix',
         type: 'POST',
-        data: "actionfor=prc_matrix&csrfmiddlewaretoken="+csrf_token,
+        data: {
+            "csrfmiddlewaretoken": csrf_token,
+            "cabin": cabin_,
+            "keyid": keyid_,
+            "returnkey": request_returnkey,
+            "multicity": multicity_
+        },
         success: function(html) {
             $('#price_matrix').empty();
             $('#price_matrix').append(html);
@@ -723,9 +729,16 @@ function getPriceMatrix() {
     });
 
     $.ajax({
-        url: dataurls,
+        url: '/get_flight_pricematrix',
         type: 'POST',
-        data: "actionfor=prc_matrix&valuefor=pricerange&csrfmiddlewaretoken="+csrf_token,
+        data: {
+            "csrfmiddlewaretoken": csrf_token,
+            "cabin": cabin_,
+            "keyid": keyid_,
+            "returnkey": request_returnkey,
+            "multicity": multicity_,
+            "valuefor": "pricerange"
+        },
         success: function(data) {
             $('#minPriceMile').val(data[0]);
             $('#maxPriceMile').val(data[1]);
