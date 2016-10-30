@@ -3498,5 +3498,5 @@ def get_category_aircrafts(aircrafts):
         if key in cate_aircrafts:
             cate_aircrafts[key].add(val)
         else:
-            cate_aircrafts[key] = set(list(val))
+            cate_aircrafts[key] = set([val])
     return cate_aircrafts
