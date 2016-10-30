@@ -28,16 +28,6 @@ PRICE_URL = 'http://ebooking.airchina.com.cn/AMRWeb/ajaxPriceRT_selection.action
 AJAX_DATA = '{"flightIndex":"%d","cabin":"%s","flightIndex1":"%d","cabin1":"%s"}'
 AIR_LINES = ['CA', 'SC', 'TV', 'ZH', 'NX']
 
-AIRCRAFTS = {
-    '321': 'Airbus A321',
-    '32A': 'Airbus A32A',
-    '330': 'Airbus A330',
-    '333': 'Airbus A330-300',
-    '33A': 'Airbus A33A',
-    '747': 'Boeing 747',
-    '772': 'Boeing 777-200ER',
-    '773': 'Boeing 777-300'
-}
 
 def get_airport_code(airport):
     airport = airport.split(' (')
@@ -209,7 +199,7 @@ def get_flight_info(driver, maindata, flightdate, searchkey, stime):
         arrivalinfo = arrivalinfo_time + ' at ' + airport_
 
         planeinfo = get_clean_string(trs[1].td.div.string)
-        planeinfo = '%s | %s (%s)' % (flightno, AIRCRAFTS[planeinfo], duration)
+        planeinfo = '%s | %s (%s)' % (flightno, customfunction.AIRCRAFTS[planeinfo], duration)
 
         firstmile = tds[5].input
         firstmile = 1 if firstmile else 0

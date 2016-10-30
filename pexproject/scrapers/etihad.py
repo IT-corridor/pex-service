@@ -22,6 +22,7 @@ import customfunction
 #from pyvirtualdisplay import Display
 import urllib
 
+
 def etihad(source, destcode, searchdate, searchkey,scabin):
     #return searchkey
     dt = datetime.datetime.strptime(searchdate, '%m/%d/%Y')
@@ -235,7 +236,7 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
             fltMinuteTimeHour = fltMinuteTime/60
             fltMinuteTime = fltMinuteTime % 60
             fltTimeFormat = str(fltMinuteTimeHour)+"h "+str(fltMinuteTime)+"m"
-            fltFormat = flightNo+" | "+aircraftType[f]+" ("+fltTimeFormat+")"
+            fltFormat = flightNo+" | "+customfunction.AIRCRAFTS[aircraftType[f]]+" ("+fltTimeFormat+")"
             flightsDetails.append(fltFormat)
         originDetailString = '@'.join(originDetails)
         arivedetailtext = '@'.join(destDetails)

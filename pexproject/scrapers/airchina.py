@@ -28,18 +28,6 @@ AJAX_DATA = '{"flightIndex":"%d","cabin":"%s"}'
 AIR_LINES = ['CA', 'SC', 'TV', 'ZH', 'NX']
 
 
-AIRCRAFTS = {
-    '321': 'Airbus A321',
-    '32A': 'Airbus A32A',
-    '330': 'Airbus A330',
-    '333': 'Airbus A330-300',
-    '33A': 'Airbus A33A',
-    '747': 'Boeing 747',
-    '772': 'Boeing 777-200ER',
-    '773': 'Boeing 777-300'
-}
-
-
 def get_cookie(driver, name, path):
     cookies = driver.get_cookies()
     for cookie in cookies:
@@ -146,7 +134,7 @@ def airchina(ocity_code, dcity_code, searchdate, searchkey):
             arrivalinfo = arrivalinfo_time + ' at ' + airport_
 
             planeinfo = get_clean_string(trs[1].td.div.string)
-            planeinfo = '%s | %s (%s)' % (flightno, AIRCRAFTS[planeinfo], duration)
+            planeinfo = '%s | %s (%s)' % (flightno, customfunction.AIRCRAFTS[planeinfo], duration)
 
             firstmile = tds[5].font
             firstmile = firstmile.label.string if firstmile else 0
