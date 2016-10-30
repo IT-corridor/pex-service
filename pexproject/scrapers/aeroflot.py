@@ -217,7 +217,7 @@ def aeroflot(ocity_code, dcity_code, searchdate, searchkey):
                 fltMinuteTimeHour = fltMinuteTime/60
                 fltMinuteTime = fltMinuteTime % 60
                 fltTimeFormat = str(fltMinuteTimeHour)+"h "+str(fltMinuteTime)+"m"
-                fltFormat = flightNo+" | "+aircraftType[f]+" ("+fltTimeFormat+")"
+                fltFormat = flightNo+" | "+customfunction.AIRCRAFTS[aircraftType[f]]+" ("+fltTimeFormat+")"
                 flightsDetails.append(fltFormat)
 
             originDetailString = '@'.join(originDetails)
