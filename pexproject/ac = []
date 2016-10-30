@@ -1,0 +1,11 @@
+ac = []
+for fd_item in fd[:100]:
+    for fdd in fd_item.planedetails.split('@'):
+        fda = re.search(r'^.*\| (.*?) \(.*$', fdd)
+        if fda:
+            ac.append(fda.group(1))
+
+ac = set(ac)
+for item in ac:
+    print item
+
