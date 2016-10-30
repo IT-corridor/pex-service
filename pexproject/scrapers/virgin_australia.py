@@ -20,6 +20,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 import json
 import customfunction
 from pyvirtualdisplay import Display
+
 def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag):
     db = customfunction.dbconnection()
     cursor = db.cursor()
@@ -186,7 +187,7 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
                 fltMinuteTimeHour = fltMinuteTime/60
                 fltMinuteTime = fltMinuteTime % 60
                 fltTimeFormat = str(fltMinuteTimeHour)+"h "+str(fltMinuteTime)+"m"
-                fltFormat = flightNo+" | "+aircraftType[f]+" ("+fltTimeFormat+")"
+                fltFormat = flightNo+" | "+customfunction.AIRCRAFTS[aircraftType[f]]+" ("+fltTimeFormat+")"
                 flightsDetails.append(fltFormat)
             originDetailString = '@'.join(originDetails)
             arivedetailtext = '@'.join(destDetails)
