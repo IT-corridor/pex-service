@@ -667,7 +667,7 @@ if (!data_status) // there is no data
 } else {
     $('.progress').hide();
     $('.filters-holder').removeClass('xs-filters-holder-ht');
-    getPriceMatrix();
+    get_post_search_data();
     getflexData();
     //isprocess();
 }
@@ -711,7 +711,8 @@ function initialisePriceRange() {
     priceMileslider();
 }
 
-function getPriceMatrix() {
+function get_post_search_data() {
+    // price matrix
     $.ajax({
         url: '/get_flight_pricematrix',
         type: 'POST',
@@ -728,6 +729,7 @@ function getPriceMatrix() {
         }
     });
 
+    // mile range and farecodes
     $.ajax({
         url: '/get_flight_pricematrix',
         type: 'POST',
@@ -748,6 +750,23 @@ function getPriceMatrix() {
             initialisePriceRange();
         }
     });
+
+    // aircrafts filter
+    $.ajax({
+        url: '/get_aircraft_category',
+        type: 'POST',
+        data: {
+            "csrfmiddlewaretoken": csrf_token,
+            "cabin": cabin_,
+            "keyid": keyid_,
+            "returnkey": request_returnkey,
+            "multicity": multicity_,
+            "valuefor": "pricerange"
+        },
+        success: function(data) {
+        }
+    });
+
 }
 // ----------- Flex data call ----------------------------------//
 
@@ -875,7 +894,7 @@ function isprocess() {
             if (data[1]  ==  'completed' || dataCheckCount > 60) {
                 clearInterval(refreshIntervalId);
                 redirecttosearchpage('complete');
-                getPriceMatrix();
+                get_post_search_data();
                 getflexData();
             } else if (data[0] != 'onprocess' && dataCheckCount % 3  ==  0) {
                 redirecttosearchpage('onprocess');

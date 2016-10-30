@@ -3442,3 +3442,56 @@ def get_history(request):
 
     # filter by date
     return render(request, 'flightsearch/show_history_dialog.html', { 'history': r_history })    
+
+
+def get_aircraft_category(request):
+    """
+    Get a category of aircrafts after flight search is done.
+    It is callef from ajax.
+    """
+    cabinclass = request.POST.get('cabin', '')
+    getPriceRange = 'valuefor' in request.POST
+    multicitykey = request.POST.get('multicity', '')
+    key = request.POST.get('keyid', '')
+    returnkeyid = request.POST.get('returnkey', '')
+
+    if multicitykey:
+        pass
+    else:
+        if returnkeyid:
+            pass
+        else:
+            fd = Flightdata.objects.filter(~Q(origin='flag'), Q(searchkeyid=int(key)))
+            aircrafts = get_aircraft_info(fd)
+            print aircrafts, '@@@@@@@@@'
+    return JsonResponse(aircrafts, safe=False)
+
+
+def get_aircraft_info(flights):
+    """
+    Get a set of aircraft information (aircraft, plane type)
+    It returns a set of aircraft info.
+    """
+    ac = []
+    for fd_item in flights:
+        for fdd in fd_item.planedetails.split('@'):
+            fda = re.search(r'^.*\| (.*?) \(.*$', fdd)
+            if fda:
+                ac.append(fda.group(1))
+    return set(ac)
+
+def get_category_aircrafts(aircrafts):
+    """
+    Get the category of aircrafts from aircrafts info
+    It returns a dictionary of aircraft: plane types
+    """
+    cate_aircrafts = {}
+    for aircraft in aircrafts:
+        ai = aircraft.split(' ')
+        if len(ai) < 2: # for MD-90
+            ai = aircraft.split('-')
+        if ai[0] in cate_aircrafts:
+            cate_aircrafts[ai[0]].add(ai[1])
+        else:
+            cate_aircrafts[ai[0]] = set(list(ai[1]))
+    return cate_aircrafts
