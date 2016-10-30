@@ -3487,11 +3487,16 @@ def get_category_aircrafts(aircrafts):
     """
     cate_aircrafts = {}
     for aircraft in aircrafts:
-        ai = aircraft.split(' ')
-        if len(ai) < 2: # for MD-90
-            ai = aircraft.split('-')
-        if ai[0] in cate_aircrafts:
-            cate_aircrafts[ai[0]].add(ai[1])
+        ai = aircraft.find(' ')
+        if ai < 0: # for MD-90
+            ai = aircraft.find('-')
+        if ai < 0: # just in case
+            continue
+        key = aircraft[:ai]
+        val = aircraft[ai+1:]
+
+        if key in cate_aircrafts:
+            cate_aircrafts[key].add(val)
         else:
-            cate_aircrafts[ai[0]] = set(list(ai[1]))
+            cate_aircrafts[key] = set(list(val))
     return cate_aircrafts
