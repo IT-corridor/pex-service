@@ -1063,7 +1063,7 @@ function filter_aircraft_check(this_) {
     console.log($(this_).parent().parent().parent().children('.filter-aircraft-body'));    
     
     $(this_).parent().parent().parent().children('.filter-aircraft-body').each(function() {
-        console.log($(this));    
+        // console.log($(this));    
         $(this).children('input').prop('checked', checked);
     });
 }
