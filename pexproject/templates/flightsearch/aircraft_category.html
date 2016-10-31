@@ -9,7 +9,7 @@
     {% for value2 in value1 %}
     <div class="checkbox filter-aircraft-body" style="display: none;">
         <label>
-            <input type="checkbox" name="aircraft" class="chk-aircraft" value="{{ value2 }}" {% if value2 in filters.aircraft %} checked="true" {% endif %}>
+            <input type="checkbox" name="aircraft" class="chk-aircraft" value="{{ value2 }}" {% if value2 in aircraft %} checked="true" {% endif %}>
             <span></span>{{ value2 }}</label>
     </div>
     {% endfor %}

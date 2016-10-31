@@ -3468,9 +3468,7 @@ def get_aircraft_category(request):
     key = request.POST.get('keyid', '')
     returnkeyid = request.POST.get('returnkey', '')
     aircraft = request.POST.get('aircraft', '[]')[1:-1]
-    aircraft = aircraft.replace('&quot;', '')
-    print aircraft.split(', '), '@@@@@@@'
-
+    aircraft = aircraft.replace('&quot;', '').split(', ')
 
     if multicitykey:
         pass
@@ -3481,7 +3479,7 @@ def get_aircraft_category(request):
             fd = Flightdata.objects.filter(~Q(origin='flag'), Q(searchkeyid=int(key)))
             aircrafts = get_aircraft_info(fd)
             cate_aircrafts = get_category_aircrafts(aircrafts)
-            return render(request, 'flightsearch/aircraft_category.html', {'aircraft_category': cate_aircrafts})
+            return render(request, 'flightsearch/aircraft_category.html', {'aircraft_category': cate_aircrafts, 'aircraft': aircraft})
 
     return HttpResponse('')
 
