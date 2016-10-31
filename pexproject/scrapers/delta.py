@@ -270,6 +270,7 @@ def delta(orgn, dest, searchdate, searchkey):
                         if FlightFlag == 0:
                             flightNo = airlineCode+" "+str(flightNumber)
 
+                        # --- NORM ---
                         if aircraft[:3] == 'MD-':
                             aircraft = 'McDonnell Douglas MD ' + aircraft[3:]
                         elif aircraft[:3] == 'CRJ':
