@@ -10,6 +10,7 @@ import re
 import base64
 import subprocess
 import json
+import collections
 
 from apiclient.discovery import build
 from random import randint
@@ -3479,7 +3480,7 @@ def get_aircraft_info(flights):
         for fdd in fd_item.planedetails.split('@'):
             fda = re.search(r'^.*\| (.*?) \(.*$', fdd)
             if fda:
-                ac.append(fda.group(1))
+                ac.append(fda.group(1).strip())
     return set(ac)
 
 def get_category_aircrafts(aircrafts):
@@ -3501,4 +3502,8 @@ def get_category_aircrafts(aircrafts):
             cate_aircrafts[key].add(val)
         else:
             cate_aircrafts[key] = set([val])
-    return cate_aircrafts
+
+    for key, val in cate_aircrafts.items():
+        cate_aircrafts[key] = sorted(val)
+
+    return collections.OrderedDict(sorted(cate_aircrafts.items()))
