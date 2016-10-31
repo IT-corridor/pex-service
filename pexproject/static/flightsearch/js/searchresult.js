@@ -865,14 +865,14 @@ function isprocess() {
     callrunning = true;
     timecompleted = false;
     var temp = '';
-
+    var multicity = '';
+    
     if (returnid != '')
         var temp = "&returnkey=" + encodeURI(returnid);
 
     if (multicity1 != '')
         multicity = "&multicity=" + encodeURI(multicity1);
 
-    console.log(cabin_+'####');
     $.ajax({
         type: "POST",
         url: "/checkData/",
