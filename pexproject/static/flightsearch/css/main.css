@@ -209,6 +209,11 @@ margin-top: -8px;
     border:0 !important;
 }
 
+.filter-aircraft-body {
+    margin-left: 15px;
+}
+
+
 /*BUTTONS*/
 
 .btn-pexSearch {
@@ -2296,10 +2301,6 @@ div.ui-datepicker{
   border-radius: 0px;
   -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
   box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
-}
-
-.filter-aircraft-body {
-    margin-left: 15px;
 }
 
     .table-responsive
