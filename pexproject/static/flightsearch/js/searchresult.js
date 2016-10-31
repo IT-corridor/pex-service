@@ -768,7 +768,7 @@ function get_post_search_data() {
             "keyid": keyid_,
             "returnkey": request_returnkey,
             "multicity": multicity_,
-            "aircraft": aircraft
+            "aircraft": aircraft_
         },
         success: function(data) {
             $('#filter_aircraft').html(data);
