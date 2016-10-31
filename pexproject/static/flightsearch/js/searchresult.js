@@ -907,11 +907,11 @@ function isprocess() {
 
             if (data[1] == 'completed' || dataCheckCount > 60) {
                 clearInterval(refreshIntervalId);
-                get_post_search_data();
                 console.log(aircraft);
                 console.log("Post checkdata");
                 console.log(aircraft_);
                 redirecttosearchpage('complete');
+                get_post_search_data();
                 getflexData();
             } else if (data[0] != 'onprocess' && dataCheckCount % 3 == 0) {
                 redirecttosearchpage('onprocess');
