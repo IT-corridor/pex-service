@@ -1524,7 +1524,9 @@ def getsearchresult(request):
             # filter aircraft
             mainlist_ = []            
             aircrafts_filter = request.POST.getlist('aircraft')
+            print aircrafts_filter, '@@@@@@@@@'
             if aircrafts_filter and aircrafts_filter != [u'']:
+                aircrafts_filter = set(aircrafts_filter)
                 for flight_ in mainlist:
                     aircrafts = get_aircraft_info_(flight_)
                     aircrafts = get_category_aircrafts(aircrafts)
