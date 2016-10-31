@@ -876,7 +876,7 @@ function isprocess() {
     $.ajax({
         type: "POST",
         url: "/checkData/",
-        data: "keyid=" + encodeURI(searchid) + "&csrfmiddlewaretoken=" + csrf_token + "&cabin=" + encodeURI(cabin_) + temp + multicity,
+        data: "keyid=" + encodeURI(searchid) + "&csrfmiddlewaretoken=" + csrf_token + "&cabin=" + cabin_ + temp + multicity,
         success: function(data) {
             callrunning = false;
 
