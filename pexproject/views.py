@@ -3467,8 +3467,10 @@ def get_aircraft_category(request):
     multicitykey = request.POST.get('multicity', '')
     key = request.POST.get('keyid', '')
     returnkeyid = request.POST.get('returnkey', '')
-    aircraft = request.POST.get('aircraft', '')
-    print aircraft, request.POST.getlist('aircraft'), '@@@@@@2'
+    aircraft = request.POST.get('aircraft', '[]')[1:-1]
+    aircraft = aircraft.replace('&quot;', '')
+    print aircraft.split(', '), '@@@@@@@'
+
 
     if multicitykey:
         pass
