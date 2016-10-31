@@ -1535,6 +1535,7 @@ def getsearchresult(request):
                             print aircrafts, '#######'
                             break
                 mainlist = mainlist_
+                print len(mainlist), '@@@@@@@#@#@#@#@#'
 
         progress_value = '' 
         if 'progress_value' in request.POST:
