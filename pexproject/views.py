@@ -1532,6 +1532,7 @@ def getsearchresult(request):
                     for key, val in aircrafts.items():
                         if set(aircrafts_filter) & set(val):
                             mainlist_.append(flight_)
+                            print aircrafts, '#######'
                             break
                 mainlist = mainlist_
 
