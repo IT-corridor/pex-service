@@ -296,6 +296,12 @@ def united(origin, destination, searchdate, searchkey):
                         stopOperatingCarrierCode = stopnJsonobj[l]["OperatingCarrierCode"]
                         stopflightDetail = stopOperatingCarrierCode+" "+stopFlightNumber
                         stopEquipmentDescription = stopnJsonobj[l]["EquipmentDescription"]
+                        # --- NORM ---
+                        if stopEquipmentDescription.startswith('Canadair Regional Jet'):
+                            stopEquipmentDescription = stopEquipmentDescription.replace('Canadair Regional Jet', 'Bombardier CRJ')
+                        elif stopEquipmentDescription[:3] in ['CS1', '32B', '359']:
+                            stopEquipmentDescription = customfunction.AIRCRAFTS[stopEquipmentDescription[:3]] + stopEquipmentDescription[3:]
+
                         stopflightDetail = stopflightDetail+" | "+stopEquipmentDescription
                         flightdeatails.append(stopflightDetail)
             else:
@@ -321,7 +327,14 @@ def united(origin, destination, searchdate, searchkey):
                     operator.append(operatedby)
             
             EquipmentDescription = segmentJsonObj[k]["EquipmentDescription"]
-            if source.strip() == segmentJsonObj[k]["Origin"].strip():
+
+            # --- NORM ---
+            if EquipmentDescription.startswith('Canadair Regional Jet'):
+                EquipmentDescription = EquipmentDescription.replace('Canadair Regional Jet', 'Bombardier CRJ')
+            elif EquipmentDescription in ['CS1', '32B', '359']:
+                EquipmentDescription = customfunction.AIRCRAFTS[EquipmentDescription]
+
+            if source.strip() == segmentJsonObj[k]["Origin"].strip():                
                 filghtFormat = OperatingCarrierCode+" "+FlightNumber+" | "+EquipmentDescription+" ("+firstFlightDuration+")"
             else:
                 filghtFormat = OperatingCarrierCode+" "+FlightNumber+" | "+EquipmentDescription+" ("+lastFlightTravelDuration+")"

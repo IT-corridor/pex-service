@@ -139,6 +139,11 @@ def parse_flight(flight, ibe_conversation, driver, log_file, db, searchkey, sear
         depart = '{} {} | from {}'.format(departdatestr, e_departure, airport_)
         airport_ = customfunction.get_airport_detail(e_destination_) or e_destination_
         arrive = '{} {} | at {}'.format(arrivaldatestr, e_arrival, airport_)
+
+        # --- NORM ---
+        if e_plane2.startswith('Canadair Regional Jet'):
+            e_plane2 = e_plane2.replace('Canadair Regional Jet', 'Bombardier CRJ')
+
         flight_ = '{} | {} ({})'.format(e_flightno, e_plane2, e_duration)
 
         flightnos.append(e_flightno)

@@ -101,6 +101,7 @@ AIRCRAFTS = {
     '76W': 'Boeing 767-300ER',
     '359': 'Airbus A350-900',
     '32B': 'Airbus A321',
-    'SU9': 'Sukhoi Superjet-100-95B'
+    'SU9': 'Sukhoi Superjet-100-95B',
+    'CS1': 'Bombardier CS100'
 }
 
