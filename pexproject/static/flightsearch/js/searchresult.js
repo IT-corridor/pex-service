@@ -872,7 +872,7 @@ function isprocess() {
     if (multicity1 != '')
         multicity = "&multicity=" + encodeURI(multicity1);
 
-    console.log(temp);
+    console.log(cabin_+'####');
     $.ajax({
         type: "POST",
         url: "/checkData/",
