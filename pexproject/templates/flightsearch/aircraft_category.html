@@ -7,7 +7,7 @@
         <img src="/static/hotelsearch/css/images/caret.png" style="float: right;" onclick="filter_aircraft_dropdown(this);">
     </div>
     {% for value2 in value1 %}
-    <div class="checkbox filter-aircraft-body" style="display: hidden;">
+    <div class="checkbox filter-aircraft-body" style="display: none;">
         <label>
             <input type="checkbox" name="aircraft" value="{{ value2 }}" {% if value2 in filters.aircraft %} checked="true" {% endif %}>
             <span></span>{{ value2 }}</label>
