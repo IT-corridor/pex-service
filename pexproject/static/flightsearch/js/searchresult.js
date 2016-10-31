@@ -1060,7 +1060,7 @@ function filter_aircraft_dropdown(this_) {
 
 function filter_aircraft_check(this_) {
     var checked = $(this_).prop('checked');
-    console.log($(this_).parent().parent());    
+    console.log($(this_).parent().parent().parent());    
     
     $(this_).parent().parent().children('.filter-aircraft-body').each(function() {
         console.log($(this));    
