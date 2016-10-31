@@ -902,8 +902,8 @@ function isprocess() {
 
             if (data[1] == 'completed' || dataCheckCount > 60) {
                 clearInterval(refreshIntervalId);
-                redirecttosearchpage('complete');
                 get_post_search_data();
+                redirecttosearchpage('complete');
                 getflexData();
             } else if (data[0] != 'onprocess' && dataCheckCount % 3 == 0) {
                 redirecttosearchpage('onprocess');
