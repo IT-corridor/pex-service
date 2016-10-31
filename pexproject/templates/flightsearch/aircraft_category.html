@@ -4,7 +4,7 @@
         <label>
             <input value="Hotel" type="checkbox" name="flight" {% if 'Hotel' in flight %} checked {% endif %}>
             <span></span>{{ key1 }}</label>
-        <img src="/static/hotelsearch/css/images/caret.png" style="float: right;">
+        <img src="/static/hotelsearch/css/images/caret.png" style="float: right;" onclick="filter_aircraft_dropdown(this);">
     </div>
     {% for value2 in value1 %}
     <div class="checkbox filter-aircraft-body">

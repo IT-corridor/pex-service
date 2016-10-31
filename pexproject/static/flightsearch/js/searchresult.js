@@ -1047,13 +1047,13 @@ function getsearchresult(searchidval, returnidval, searchtype) {
     }
 }
 
-$('.filter-aircraft-heading img').click(function() {
-    var stat = $(this).prop('src');
+function filter_aircraft_dropdown(this_) {
+    var stat = $(this_).prop('src');
     if (stat.includes('caret.png')) {
-        $(this).prop('src', '/static/hotelsearch/css/images/caret_up.png');
-        $(this).parent().parent().children('.filter-aircraft-body').show();
+        $(this_).prop('src', '/static/hotelsearch/css/images/caret_up.png');
+        $(this_).parent().parent().children('.filter-aircraft-body').show();
     } else {
-        $(this).prop('src', '/static/hotelsearch/css/images/caret.png');
-        $(this).parent().parent().children('.filter-aircraft-body').hide();
+        $(this_).prop('src', '/static/hotelsearch/css/images/caret.png');
+        $(this_).parent().parent().children('.filter-aircraft-body').hide();
     }
-});
+}
