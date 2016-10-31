@@ -66,7 +66,7 @@ AIRCRAFTS = {
     '77W': 'Boeing 777-300ER',  
     '319': 'Airbus A319',    
     'TRN': 'Boeing 767-33A',    
-    'BUS': 'Aircraft Bus',    
+    'BUS': 'Boeing 777-200LR',    
     '346': 'Airbus A340-600',    
     '332': 'Airbus A330-200',    
     '345': 'Airbus A340-500',    
