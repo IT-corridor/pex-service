@@ -872,10 +872,11 @@ function isprocess() {
     if (multicity1 != '')
         multicity = "&multicity=" + encodeURI(multicity1);
 
+    console.log(temp);
     $.ajax({
         type: "POST",
         url: "/checkData/",
-        data: "keyid=" + encodeURI(searchid) + "&csrfmiddlewaretoken=" + csrf_token + "&cabin=" + encodeURI(cabin) + temp + multicity,
+        data: "keyid=" + encodeURI(searchid) + "&csrfmiddlewaretoken=" + csrf_token + "&cabin=" + encodeURI(cabin_) + temp + multicity,
         success: function(data) {
             callrunning = false;
 
