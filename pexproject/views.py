@@ -1524,7 +1524,11 @@ def getsearchresult(request):
             # filter aircraft
             mainlist_ = []            
             aircrafts_filter = request.POST.getlist('aircraft')
+            if request.is_ajax():
+                aircrafts_filter = aircrafts_filter[0].split(',')
+            
             if aircrafts_filter and aircrafts_filter != [u'']:
+                print len(mainlist), ':Before filter #@#@#@#@#'
                 print aircrafts_filter, '@@@@@@@@@'
                 for flight_ in mainlist:
                     aircrafts = get_aircraft_info_(flight_)
@@ -1535,7 +1539,7 @@ def getsearchresult(request):
                             print aircrafts, '#######'
                             break
                 mainlist = mainlist_
-                print len(mainlist), '@@@@@@@#@#@#@#@#'
+                print len(mainlist), ':AFter filter #@#@#@#@#'
 
         progress_value = '' 
         if 'progress_value' in request.POST:
