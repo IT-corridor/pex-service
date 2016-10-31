@@ -619,7 +619,7 @@ var searchid = keyid_;
 var returnid = request_returnkey;
 var cabin = cabin_;
 var airline = new Array();
-var aircraft = new Array();
+// var aircraft = new Array();
 var stoppage = new Array();
 var row_val = "";
 var refreshIntervalId = '';
@@ -633,9 +633,13 @@ $(".chk-airlines:checked").each(function() {
     airline.push($(this).val());
 });
 
-$(".chk-aircraft:checked").each(function() {
-    aircraft.push($(this).val());
-});
+// $(".chk-aircraft:checked").each(function() {
+//     aircraft.push($(this).val());
+// });
+var aircraft = aircraft_.replace(/&quot;/g, '');
+aircraft = aircraft.replace('[', '');
+aircraft = aircraft.replace(']', '');
+aircraft = aircraft.split(',');
 
 $(".chk-stoppage:checked").each(function() {
     stoppage.push($(this).val());
