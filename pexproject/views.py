@@ -3514,15 +3514,20 @@ def get_category_aircrafts(aircrafts):
     Get the category of aircrafts from aircrafts info
     It returns a dictionary of aircraft: plane types
     """
+    specialties = ['McDonnell Douglas ']
+
     cate_aircrafts = {}
     for aircraft in aircrafts:
         ai = aircraft.find(' ')
         if ai < 0: # just in case
             continue
         key = aircraft[:ai]
-        if key == 'MD':
-            key = 'McDonnell Douglas'
         val = aircraft[ai+1:]
+
+        for item in specialties:
+            if aircraft.startswith(item):
+                key = item
+                val = aircraft[len(item):]
 
         if key in cate_aircrafts:
             cate_aircrafts[key].add(val)
