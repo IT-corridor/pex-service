@@ -269,6 +269,9 @@ def delta(orgn, dest, searchdate, searchkey):
                         flightNumber = legdetail['flightNumber']
                         if FlightFlag == 0:
                             flightNo = airlineCode+" "+str(flightNumber)
+
+                        if aircraft[:3] == 'MD-':
+                            aircraft = 'MD MD ' + aircraft[3:]
                         flightFormat = airlineCode+" "+str(flightNumber)+" | "+aircraft+" ("+duration+")"
                         flightDetail.append(flightFormat)
                         operatedby = legdetail['operatingAirline']['airline']['airlineName']

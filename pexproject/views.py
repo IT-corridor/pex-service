@@ -3517,8 +3517,6 @@ def get_category_aircrafts(aircrafts):
     cate_aircrafts = {}
     for aircraft in aircrafts:
         ai = aircraft.find(' ')
-        if ai < 0: # for MD-90
-            ai = aircraft.find('-')
         if ai < 0: # just in case
             continue
         key = aircraft[:ai]
