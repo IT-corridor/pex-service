@@ -1060,8 +1060,10 @@ function filter_aircraft_dropdown(this_) {
 
 function filter_aircraft_check(this_) {
     var checked = $(this_).prop('checked');
+    // console.log($(this_).parent().parent().parent().children('.filter-aircraft-body'));    
 
-    $(this_).parent().parent().parent().children('.filter-aircraft-body input').each(function() {
-        $(this).prop('checked', checked);
+    $(this_).parent().parent().parent().children('.filter-aircraft-body').each(function() {
+        // console.log($(this));    
+        $(this).children('label').children('input').prop('checked', checked);
     });
 }
