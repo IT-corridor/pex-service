@@ -2,6 +2,11 @@ $('#nodata-msg').empty();
 var data_status = false;
 var datalist = data0;
 
+var aircraft = aircraft_.replace(/&quot;/g, '');
+aircraft = aircraft.replace('[', '');
+aircraft = aircraft.replace(']', '');
+aircraft = aircraft.split(', ');
+
 if (datalist.length > 0) {
     data_status = true;
 }
@@ -476,7 +481,7 @@ function loadArticle(pageNumber) {
     call_sent = "in_progress";
     $('#loading_img').show();
     var airline = new Array();
-    var aircraft = new Array();
+    var aircraft__ = new Array();
     var stoppage = new Array();
     var fareCodes = new Array();
     var min_prc_param = "";
@@ -496,7 +501,7 @@ function loadArticle(pageNumber) {
     });
 
     $(".chk-aircraft:checked").each(function() {
-        aircraft.push($(this).val());
+        aircraft__.push($(this).val());
     });
 
     $(".farecode:checked").each(function() {
@@ -516,7 +521,7 @@ function loadArticle(pageNumber) {
     $.ajax({
         url: urls,
         type: 'POST',
-        data: "action=" + encodeURI('infinite_scroll') + min_prc_param + max_prc_param + "&page_no=" + encodeURI(pageNumber) + "&loop_file=loop&csrfmiddlewaretoken=" + csrf_token + "&depaturemin=" + depaturemin + "&depaturemax=" + depaturemax + "&arivalmin=" + arivalmin + "&arivalmax=" + arivalmax + "&airlines=" + airline + "&aircraft=" + aircraft + "&fareCodes=" + fareCodes + "&stoppage=" + stoppage + row_val + multicity,
+        data: "action=" + encodeURI('infinite_scroll') + min_prc_param + max_prc_param + "&page_no=" + encodeURI(pageNumber) + "&loop_file=loop&csrfmiddlewaretoken=" + csrf_token + "&depaturemin=" + depaturemin + "&depaturemax=" + depaturemax + "&arivalmin=" + arivalmin + "&arivalmax=" + arivalmax + "&airlines=" + airline + "&aircraft=" + aircraft__ + "&fareCodes=" + fareCodes + "&stoppage=" + stoppage + row_val + multicity,
         success: function(html) {
             $("#content").append(html);
             call_sent = "completed";
@@ -636,10 +641,6 @@ $(".chk-airlines:checked").each(function() {
 // $(".chk-aircraft:checked").each(function() {
 //     aircraft.push($(this).val());
 // });
-var aircraft = aircraft_.replace(/&quot;/g, '');
-aircraft = aircraft.replace('[', '');
-aircraft = aircraft.replace(']', '');
-aircraft = aircraft.split(',');
 
 $(".chk-stoppage:checked").each(function() {
     stoppage.push($(this).val());
