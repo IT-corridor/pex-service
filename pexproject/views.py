@@ -1521,12 +1521,19 @@ def getsearchresult(request):
                 record = Flightdata.objects.raw("select p1.*,p1.maintax as maintax1, p1.firsttax as firsttax1, p1.businesstax as businesstax1,p1.rowid as newid ,case when datasource = 'delta' then " + deltaorderprice + "  else " + unitedorderprice + " end as finalprice, "+taxes+" as totaltaxes from pexproject_flightdata as p1 where " + querylist + " order by finalprice ," + taxes + ",departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset))
                 # print '$$$ (synthesis): ', "select p1.*,p1.maintax as maintax1, p1.firsttax as firsttax1, p1.businesstax as businesstax1,p1.rowid as newid ,case when datasource = 'delta' then " + deltaorderprice + "  else " + unitedorderprice + " end as finalprice, "+taxes+" as totaltaxes from pexproject_flightdata as p1 where " + querylist + " order by finalprice ," + taxes + ",departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset)
             mainlist = list(record)
-            print mainlist[:3], '##########'
             # filter aircraft
-            aircrafts = request.POST.getlist('aircraft')
-            print aircrafts, '@@@@@@@@@@'
+            mainlist_ = []            
+            aircrafts_filter = request.POST.getlist('aircraft')
+            if aircrafts_filter and aircrafts_filter != [u'']:
+                for flight_ in mainlist:
+                    aircrafts = get_aircraft_info_(flight_)
+                    aircrafts = get_category_aircrafts(aircrafts)
+                    for key, val in aircrafts.items():
+                        if aircrafts_filter & set(val):
+                            mainlist_.append(flight_)
+                            break
+                mainlist = mainlist_
 
-            
         progress_value = '' 
         if 'progress_value' in request.POST:
             progress_value = request.REQUEST['progress_value']
@@ -3480,13 +3487,24 @@ def get_aircraft_info(flights):
     Get a set of aircraft information (aircraft, plane type)
     It returns a set of aircraft info.
     """
-    ac = []
+    ac = set([])
     for fd_item in flights:
-        for fdd in fd_item.planedetails.split('@'):
-            fda = re.search(r'^.*\| (.*?) \(.*$', fdd)
-            if fda:
-                ac.append(fda.group(1).strip())
+        ac = ac | get_aircraft_info_(fd_item)
+    return ac
+
+
+def get_aircraft_info_(flight):
+    """
+    Get a set of aircraft information (aircraft, plane type) for a flight
+    It returns a set of aircraft info.
+    """
+    ac = []
+    for fdd in flight.planedetails.split('@'):
+        fda = re.search(r'^.*\| (.*?) \(.*$', fdd)
+        if fda:
+            ac.append(fda.group(1).strip())
     return set(ac)
+
 
 def get_category_aircrafts(aircrafts):
     """
