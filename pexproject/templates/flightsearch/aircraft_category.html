@@ -1,0 +1,14 @@
+ {% for key1, value1 in aircraft_category.items %}
+<div class="filter-amenity">
+    <div class="filter-amenity-heading">
+        <input type="checkbox"> {{ key1 }} </input>
+        <img src="/static/hotelsearch/css/images/caret.png" style="float: right;">
+    </div>
+    {% for value2 in value1 %}
+    <div class="filter-amenity-body">
+        <input type="checkbox" name="amenity" value="{{ value2 }}" {% if value2 in filters.amenity %} checked="true" {% endif %}> {{ value2 }}
+        </input>
+    </div>
+    {% endfor %}
+</div>
+{% endfor %}

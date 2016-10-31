@@ -764,6 +764,7 @@ function get_post_search_data() {
             "valuefor": "pricerange"
         },
         success: function(data) {
+            $('#filter_aircraft').html(data);
         }
     });
 

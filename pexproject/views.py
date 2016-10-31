@@ -3463,8 +3463,10 @@ def get_aircraft_category(request):
         else:
             fd = Flightdata.objects.filter(~Q(origin='flag'), Q(searchkeyid=int(key)))
             aircrafts = get_aircraft_info(fd)
-            print aircrafts, '@@@@@@@@@'
-    return JsonResponse(aircrafts, safe=False)
+            cate_aircrafts = get_category_aircrafts(aircrafts)
+            return render(request, 'flightsearch/aircraft_category.html', {'aircraft_category': cate_aircrafts})
+
+    return HttpResponse('')
 
 
 def get_aircraft_info(flights):
