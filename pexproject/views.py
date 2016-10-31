@@ -3473,7 +3473,7 @@ def get_aircraft_category(request):
     aircraft = aircraft.replace('&quot;', '').split(', ')
 
     if multicitykey:
-        pass
+        print multicitykey, '%%%%%%%%%%%%%'
     else:
         # if returnkeyid:
         #     pass

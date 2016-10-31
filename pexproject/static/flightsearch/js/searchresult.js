@@ -619,6 +619,7 @@ var searchid = keyid_;
 var returnid = request_returnkey;
 var cabin = cabin_;
 var airline = new Array();
+var aircraft = new Array();
 var stoppage = new Array();
 var row_val = "";
 var refreshIntervalId = '';
@@ -630,6 +631,10 @@ if ($('#rowid').length)
 
 $(".chk-airlines:checked").each(function() {
     airline.push($(this).val());
+});
+
+$(".chk-aircraft:checked").each(function() {
+    aircraft.push($(this).val());
 });
 
 $(".chk-stoppage:checked").each(function() {
@@ -820,7 +825,7 @@ function redirecttosearchpage(scraperStatus) {
     $.ajax({
         url: dataurls,
         type: 'POST',
-        data: "csrfmiddlewaretoken=" + csrf_token + "&depaturemin=" + depaturemin + "&depaturemax=" + depaturemax + "&airlines=" + airline + "&stoppage=" + stoppage + row_val + "&scraperStatus=" + scraperStatus,
+        data: "csrfmiddlewaretoken=" + csrf_token + "&depaturemin=" + depaturemin + "&depaturemax=" + depaturemax + "&airlines=" + airline + "&aircraft=" + aircraft + "&stoppage=" + stoppage + row_val + "&scraperStatus=" + scraperStatus,
         success: function(html) {
             $('.filters-holder').addClass('xs-filters-holder-ht');
             $("#content1").empty();
@@ -866,7 +871,7 @@ function isprocess() {
     timecompleted = false;
     var temp = '';
     var multicity = '';
-    
+
     if (returnid != '')
         var temp = "&returnkey=" + encodeURI(returnid);
 
