@@ -1524,14 +1524,13 @@ def getsearchresult(request):
             # filter aircraft
             mainlist_ = []            
             aircrafts_filter = request.POST.getlist('aircraft')
-            print aircrafts_filter, '@@@@@@@@@'
             if aircrafts_filter and aircrafts_filter != [u'']:
-                aircrafts_filter = set(aircrafts_filter)
+                print aircrafts_filter, '@@@@@@@@@'
                 for flight_ in mainlist:
                     aircrafts = get_aircraft_info_(flight_)
                     aircrafts = get_category_aircrafts(aircrafts)
                     for key, val in aircrafts.items():
-                        if aircrafts_filter & set(val):
+                        if set(aircrafts_filter) & set(val):
                             mainlist_.append(flight_)
                             break
                 mainlist = mainlist_
@@ -1542,7 +1541,7 @@ def getsearchresult(request):
             
         recordlen = len(multicitykey1)
         timerecord = Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` ")
-        filterkey = {'stoppage':list2,'fareCodes':json.dumps(codesList),'fareCodelength':len(codesList), 'datasource':list1, 'cabin':cabin,'minpricemile':minpricemile,'maxpricemile':maxpricemile}
+        filterkey = {'stoppage':list2,'fareCodes':json.dumps(codesList),'fareCodelength':len(codesList), 'datasource':list1, 'cabin':cabin,'minpricemile':minpricemile,'maxpricemile':maxpricemile, 'aircraft': json.dumps(aircrafts_filter)}
         if depttime:
             timeinfo = {'maxdept':deptmaxtime, 'mindept':depttime, 'minarival':arivtime, 'maxarival':arivtmaxtime}
         else:
@@ -3465,10 +3464,11 @@ def get_aircraft_category(request):
     It is callef from ajax.
     """
     cabinclass = request.POST.get('cabin', '')
-    getPriceRange = 'valuefor' in request.POST
     multicitykey = request.POST.get('multicity', '')
     key = request.POST.get('keyid', '')
     returnkeyid = request.POST.get('returnkey', '')
+    aircraft = request.POST.get('aircraft', '')
+    print aircraft, request.POST.getlist('aircraft'), '@@@@@@2'
 
     if multicitykey:
         pass
