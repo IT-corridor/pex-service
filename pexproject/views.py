@@ -3473,13 +3473,13 @@ def get_aircraft_category(request):
     if multicitykey:
         pass
     else:
-        if returnkeyid:
-            pass
-        else:
-            fd = Flightdata.objects.filter(~Q(origin='flag'), Q(searchkeyid=int(key)))
-            aircrafts = get_aircraft_info(fd)
-            cate_aircrafts = get_category_aircrafts(aircrafts)
-            return render(request, 'flightsearch/aircraft_category.html', {'aircraft_category': cate_aircrafts, 'aircraft': aircraft})
+        # if returnkeyid:
+        #     pass
+        # else:
+        fd = Flightdata.objects.filter(~Q(origin='flag'), Q(searchkeyid=int(key)))
+        aircrafts = get_aircraft_info(fd)
+        cate_aircrafts = get_category_aircrafts(aircrafts)
+        return render(request, 'flightsearch/aircraft_category.html', {'aircraft_category': cate_aircrafts, 'aircraft': aircraft})
 
     return HttpResponse('')
 
@@ -3521,6 +3521,8 @@ def get_category_aircrafts(aircrafts):
         if ai < 0: # just in case
             continue
         key = aircraft[:ai]
+        if key == 'MD':
+            key = 'McDonnell Douglas'
         val = aircraft[ai+1:]
 
         if key in cate_aircrafts:
