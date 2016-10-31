@@ -2,14 +2,14 @@
 <div class="filter-aircraft">
     <div class="checkbox filter-aircraft-heading">
         <label>
-            <input value="Hotel" type="checkbox" name="flight" {% if 'Hotel' in flight %} checked {% endif %} onclick="filter_aircraft_check(this);">
+            <input type="checkbox" onclick="filter_aircraft_check(this);">
             <span></span>{{ key1 }}</label>
         <img src="/static/hotelsearch/css/images/caret.png" style="float: right;" onclick="filter_aircraft_dropdown(this);">
     </div>
     {% for value2 in value1 %}
     <div class="checkbox filter-aircraft-body" style="display: none;">
         <label>
-            <input type="checkbox" name="aircraft" value="{{ value2 }}" {% if value2 in filters.aircraft %} checked="true" {% endif %}>
+            <input type="checkbox" name="aircraft" class="chk-aircraft" value="{{ value2 }}" {% if value2 in filters.aircraft %} checked="true" {% endif %}>
             <span></span>{{ value2 }}</label>
     </div>
     {% endfor %}
