@@ -134,7 +134,7 @@ def airchina(ocity_code, dcity_code, searchdate, searchkey):
             arrivalinfo = arrivalinfo_time + ' at ' + airport_
 
             planeinfo = get_clean_string(trs[1].td.div.string)
-            planeinfo = '%s | %s (%s)' % (flightno, planeinfo, duration)
+            planeinfo = '%s | %s (%s)' % (flightno, customfunction.AIRCRAFTS[planeinfo], duration)
 
             firstmile = tds[5].font
             firstmile = firstmile.label.string if firstmile else 0

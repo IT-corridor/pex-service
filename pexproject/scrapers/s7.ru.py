@@ -22,6 +22,11 @@ DEV_LOCAL = False
 if not DEV_LOCAL:
     import customfunction
 
+specialties = {
+    'De Havilland-Bombardier': 'Bombardier',
+    'Canadair Regional Jet': 'Bombardier CRJ'
+}
+
 def get_city_s7_code(citycode=None):
     file_path = '../data/location.json' if DEV_LOCAL else '/var/www/html/python/pex/pexproject/pexproject/data/location.json'
     json_text = open(file_path, 'r')
@@ -139,6 +144,11 @@ def parse_flight(flight, ibe_conversation, driver, log_file, db, searchkey, sear
         depart = '{} {} | from {}'.format(departdatestr, e_departure, airport_)
         airport_ = customfunction.get_airport_detail(e_destination_) or e_destination_
         arrive = '{} {} | at {}'.format(arrivaldatestr, e_arrival, airport_)
+
+        # --- NORM ---
+        for key_, val_ in specialties.items():
+            e_plane2 = e_plane2.replace(key_, val_)
+
         flight_ = '{} | {} ({})'.format(e_flightno, e_plane2, e_duration)
 
         flightnos.append(e_flightno)

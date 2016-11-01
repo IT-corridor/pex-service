@@ -323,7 +323,7 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
                 airport_ = customfunction.get_airport_detail(get_airport_code(ariving_at)) or ariving_at
                 arivedetail = departinfo_time+" | at "+airport_                
                 arivelist.append(arivedetail)
-                planetext = fl_flightno+" | "+planeno+"("+fl_duration+")" 
+                planetext = fl_flightno+" | "+planeno+" ("+fl_duration+")" 
                 planelist.append(planetext)
                 counter = counter+1
             departdetails = '@'.join(departdlist)

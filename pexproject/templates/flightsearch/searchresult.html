@@ -86,7 +86,7 @@
                                 </div>
                                 <div class="col-md-12 col-xs-12 nopadding form-side">
                                     <div class="priceRangeInfo">
-                                        <p>Miles</p>
+                                        <p>MILES</p>
                                         <div class="slider slider-blue mvt15px" data-postfix=" $" data-min="0" data-max="2000" data-min-val="400" data-max-val="1400" data-fill="#sample-field-2" id="miles_slider"></div>
                                         <span id="miles_value"></span>
                                         <input type="hidden" name="minPriceMile" id="minPriceMile" {% if filterkey.minpricemile and filterkey.minpricemile > 0 %} value="{{filterkey.minpricemile}}" {%endif%}/>
@@ -114,6 +114,11 @@
                                     <div class="col-md-10 col-xs-10 nopadding" id="add_fare_code">
                                     </div>
                                 </div>
+                                <div class="col-md-12 col-xs-12 nopadding form-side">
+                                    <p> AIRCRAFT</p>
+                                    <div class="col-md-12 col-xs-12 nopadding" id="filter_aircraft">
+                                    </div>
+                                </div>                                
                                 <div class="col-md-12 col-xs-12 nopadding form-side">
                                     <p>
                                         NUMBER OF STOPS
@@ -1822,7 +1827,7 @@
         </div>
     </div>
     <div class="text-center" id="loading_img">
-        <img id="loading-image" src="{% static 'flightsearch/js/images/loading.gif' %}" alt="Loading..." />
+        <img id="loading-image" src="{% static 'flightsearch/img/loading.gif' %}" alt="Loading..." />
     </div>
     <p id="back-top">
         <a href="#top"><span class="glyphicon glyphicon-chevron-up"></span> TOP</a>
@@ -1884,7 +1889,7 @@
                             <h4 class="mvt10px hidden-xs">
                                 Hang on a minute while we fetch your search results...
                             </h4>
-                            <img id="loading-image" src="{% static 'flightsearch/js/images/loading.gif' %}" alt="Loading..." />
+                            <img id="loading-image" src="{% static 'flightsearch/img/loading.gif' %}" alt="Loading..." />
                         </div>
                     </div>
                 </div>
@@ -1977,7 +1982,7 @@
           <h4 class="modal-title">My Point Balances</h4>
         </div>
         <div class="modal-body">
-            <div class="col-xs-12 nopadding form-side">
+            <div class="row form-side" style="margin: 10px 0; padding: 10px;">
                 <dl>
                     {% for point in pointlist %}
                     <div class="cutom-ui-mil">
@@ -2030,6 +2035,7 @@
     var fareCodelength_ = "{{filterkey.fareCodelength}}";
     var fareCodes_ = "{{filterkey.fareCodes}}";
     var returndate_ = "{{returndate}}";
+    var aircraft_ = "{{ filterkey.aircraft }}";
 </script>
 <script src="{% static 'flightsearch/js/jquery.ui.touch-punch.min.js' %}"></script>
 <script src="{% static 'flightsearch/js/searchresult.js' %}"></script>

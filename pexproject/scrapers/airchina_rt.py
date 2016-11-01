@@ -199,7 +199,7 @@ def get_flight_info(driver, maindata, flightdate, searchkey, stime):
         arrivalinfo = arrivalinfo_time + ' at ' + airport_
 
         planeinfo = get_clean_string(trs[1].td.div.string)
-        planeinfo = '%s | %s (%s)' % (flightno, planeinfo, duration)
+        planeinfo = '%s | %s (%s)' % (flightno, customfunction.AIRCRAFTS[planeinfo], duration)
 
         firstmile = tds[5].input
         firstmile = 1 if firstmile else 0

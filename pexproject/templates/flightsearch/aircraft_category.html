@@ -1,0 +1,17 @@
+ {% for key1, value1 in aircraft_category.items %}
+<div class="filter-aircraft">
+    <div class="checkbox filter-aircraft-heading">
+        <label>
+            <input type="checkbox" onclick="filter_aircraft_check(this);">
+            <span></span>{{ key1 }}</label>
+        <img src="/static/hotelsearch/css/images/caret.png" style="float: right;" onclick="filter_aircraft_dropdown(this);">
+    </div>
+    {% for value2 in value1 %}
+    <div class="checkbox filter-aircraft-body" style="display: none;">
+        <label>
+            <input type="checkbox" name="aircraft" class="chk-aircraft" value="{{ value2 }}" {% if value2 in aircraft %} checked="true" {% endif %}>
+            <span></span>{{ value2 }}</label>
+    </div>
+    {% endfor %}
+</div>
+{% endfor %}

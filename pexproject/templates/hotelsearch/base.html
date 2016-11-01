@@ -21,14 +21,14 @@
         <link rel="apple-touch-icon" href="/static/flightsearch/apple-touch-icon.png">
         <link rel="shortcut icon" type="image/ico" href="/static/flightsearch/favicon.ico">
 
-        <link rel="stylesheet" href="/static/hotelsearch/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="/static/flightsearch/css/bootstrap-theme.min.css">
         <link rel="stylesheet" href="/static/hotelsearch/css/jquery-ui.css">
-        <link rel="stylesheet" href="/static/hotelsearch/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/static/flightsearch/css/bootstrap.min.css">
         <link rel="stylesheet" href="/static/hotelsearch/css/main.css">
         <link rel="stylesheet" href="/static/hotelsearch/css/hotel_api.css">
 
         <script src="/static/hotelsearch/js/jquery-2.1.4.min.js"></script>
-        <script src="/static/hotelsearch/js/jquery-ui.js"></script>
+        <script src="{% static 'flightsearch/admin/autocomplete/jquery-ui.min.js' %}"></script>
         <script src="/static/hotelsearch/js/bootstrap.js"></script>        
         <script src="/static/hotelsearch/js/hotel_api.js"></script>        
     </head>
@@ -155,7 +155,7 @@
                       Hang on a minute while we fetch your search results...
                     </h4>
                     
-                    <img id="loading-image" src="{% static 'flightsearch/js/images/loading.gif' %}" alt="Loading..." />
+                    <img id="loading-image" src="{% static 'flightsearch/img/loading.gif' %}" alt="Loading..." />
 
                   </div>
                 </div>

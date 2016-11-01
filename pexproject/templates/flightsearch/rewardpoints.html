@@ -15,7 +15,7 @@
             </div>
             {% else %}
             <div class="col-md-12">
-                <div class="col-sm-7 nopadding" style="margin: 10px 0;">Filter by <b>Kind</b>:
+                <div class="col-lg-6 col-md-5 col-sm-4 nopadding">Filter by <b>Kind</b>:
                     <select class="custom-field-control curson select-wallet" name="kind" onchange="choose_kind(this);">
                         <option class="cabin curson" value="%">All</option>
                         <option class="cabin curson" value="Airline">Airlines</option>
@@ -23,10 +23,14 @@
                         <option class="cabin curson" value="Credit Card">Credit Cards</option>
                     </select>
                 </div>
-                <div class="col-sm-5 nopadding" style="margin: 10px 0;">
+                <div class="col-lg-3 col-md-3 col-sm-4 nopadding vbb_btn">
+                    <span class="vaa_btn"><a href="javascript:void(0);" class="btn btn-pexSearch" id="accountinfo" data-toggle="modal" data-target="#conf_dialog">Reward Page Configuration</a></span>
+                </div>
+
+                <div class="col-lg-3 col-md-4 col-sm-4 nopadding">
                     <span class="vaa_btn">
                     <a href="https://awardwallet.com/account/select-provider" target="_blank">
-                        <button class="btn btn-pexSearch" id="sync_all_points">Visit AwardWallet Account </button>
+                        <button class="btn btn-pexSearch">Visit AwardWallet Account </button>
                     </a>
                 </span>
                 </div>
@@ -60,53 +64,6 @@
                 </div>
             </div>
             {% endif %}
-            <div class="col-sm-12" style="padding: 10px 0 !important; margin: 10px 0; ">
-                <h4 class="title" style="margin-left: 10px;">Reward Page Configuration <a href="javascript:void(0);" class="pull-right editinfo" id="accountinfo" data-toggle="collapse" data-target="#config-reward-page-pannel">Edit</a></h4>
-                <div id="config-reward-page-pannel" class="collapse">
-                    <form id="config-reward-page-form">
-                        <div class="col-md-2 form-side">
-                            <b>Hotel Page</b>
-                            <div class="checkbox">
-                                <label>
-                                    <input value="Airline" type="checkbox" name="hotel" {% if 'Airline' in hotel %} checked {% endif %}>
-                                    <span></span>Airlines</label>
-                            </div>
-                            <div class="checkbox">
-                                <label>
-                                    <input value="Hotel" type="checkbox" name="hotel" {% if 'Hotel' in hotel %} checked {% endif %}>
-                                    <span></span>Hotels</label>
-                            </div>
-                            <div class="checkbox">
-                                <label>
-                                    <input value="Credit Card" type="checkbox" name="hotel" {% if 'Credit Card' in hotel %} checked {% endif %}>
-                                    <span></span>Credit Cards</label>
-                            </div>
-                        </div>
-                        <div class="col-md-2 form-side">
-                            <b>Flight Page</b>
-                            <div class="checkbox">
-                                <label>
-                                    <input value="Airline" type="checkbox" name="flight" {% if 'Airline' in flight %} checked {% endif %}>
-                                    <span></span>Airlines</label>
-                            </div>
-                            <div class="checkbox">
-                                <label>
-                                    <input value="Hotel" type="checkbox" name="flight" {% if 'Hotel' in flight %} checked {% endif %}>
-                                    <span></span>Hotels</label>
-                            </div>
-                            <div class="checkbox">
-                                <label>
-                                    <input value="Credit Card" type="checkbox" name="flight" {% if 'Credit Card' in flight %} checked {% endif %}>
-                                    <span></span>Credit Cards</label>
-                            </div>
-                        </div>
-                    </form>
-                    <div class="col-md-3">
-                        <button class="btn btn-pexSearch" style="margin-bottom: 10px;" onclick="modify_reward_page_config();">Save</button>
-                        <span class="btn btn-pexSearch" style="margin-bottom: 10px;" onclick="$('#config-reward-page-pannel').removeClass('in');">Cancel</span>
-                    </div>
-                </div>
-            </div>
         </div>
         <div class="col-md-2">
             <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -151,7 +108,7 @@
                 </div>
             </div>
             <div class="history_loading text-center col-xs-12" style="display: none;">
-                <img id="loading-image" src="{% static 'flightsearch/js/images/loading.gif' %}" alt="Loading..." />
+                <img id="loading-image" src="{% static 'flightsearch/img/loading.gif' %}" alt="Loading..." />
                 <p class="mvt10px text-center mvt15px">Please wait while we fetch history...</p>
             </div>
             <div class="col-xs-12 nopadding" id="history_content">
@@ -159,6 +116,62 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+</div>                                        
+<div class="modal fade" id="conf_dialog" role="dialog">
+    <div class="modal-dialog">                        
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Reward Page Configuration</h4>
+        </div>
+        <div class="modal-body" style="max-height: 300px; overflow-y: scroll;">
+            <form id="config-reward-page-form">
+                <div class="col-sm-6 form-side">
+                    <b>Hotel Page</b>
+                    <div class="checkbox">
+                        <label>
+                            <input value="Airline" type="checkbox" name="hotel" {% if 'Airline' in hotel %} checked {% endif %}>
+                            <span></span>Airlines</label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input value="Hotel" type="checkbox" name="hotel" {% if 'Hotel' in hotel %} checked {% endif %}>
+                            <span></span>Hotels</label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input value="Credit Card" type="checkbox" name="hotel" {% if 'Credit Card' in hotel %} checked {% endif %}>
+                            <span></span>Credit Cards</label>
+                    </div>
+                </div>
+                <div class="col-sm-6 form-side">
+                    <b>Flight Page</b>
+                    <div class="checkbox">
+                        <label>
+                            <input value="Airline" type="checkbox" name="flight" {% if 'Airline' in flight %} checked {% endif %}>
+                            <span></span>Airlines</label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input value="Hotel" type="checkbox" name="flight" {% if 'Hotel' in flight %} checked {% endif %}>
+                            <span></span>Hotels</label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input value="Credit Card" type="checkbox" name="flight" {% if 'Credit Card' in flight %} checked {% endif %}>
+                            <span></span>Credit Cards</label>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" style="background-color: #64B7E7;border-color: #64B7E7;" onclick="modify_reward_page_config();" data-dismiss="modal">Save</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
         </div>
       </div>
       

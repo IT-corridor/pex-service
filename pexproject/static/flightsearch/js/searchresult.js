@@ -2,6 +2,11 @@ $('#nodata-msg').empty();
 var data_status = false;
 var datalist = data0;
 
+var aircraft = aircraft_.replace(/&quot;/g, '');
+aircraft = aircraft.replace('[', '');
+aircraft = aircraft.replace(']', '');
+aircraft = aircraft.split(', ');
+
 if (datalist.length > 0) {
     data_status = true;
 }
@@ -42,7 +47,7 @@ $('#passenger').change(function() {
 
 $(document).ready(function() {
 
-    if (request_returnkey  ==  '') {
+    if (request_returnkey == '') {
         //$('.travelers-down-menu').addClass('full-width-res');
         $('.travelers-down-menu').css("left", "-=122");
     }
@@ -292,13 +297,13 @@ function getTime(hours, minutes) {
     } else {
         time = "PM";
     }
-    if (hours  ==  0) {
+    if (hours == 0) {
         hours = 12;
     }
     if (hours > 12) {
         hours = hours - 12;
     }
-    if (minutes.length  ==  1) {
+    if (minutes.length == 1) {
         minutes = "0" + minutes;
     }
     return hours + ":" + minutes + " " + time;
@@ -415,7 +420,7 @@ function travelinfo() {
     total = tatalpassenger();
     $('#passenger').val(total);
     var text;
-    if (total  ==  1) {
+    if (total == 1) {
         text = "traveler";
     } else {
         text = "travelers";
@@ -423,7 +428,7 @@ function travelinfo() {
     var selectedcabin = $("#cabintype option:selected").text();
     var html = "<span id='travelar'>" + total + " " + text + ", " + selectedcabin + "</span>";
     $('#travelar').replaceWith(html);
-    if (total  ==  0) {
+    if (total == 0) {
         var msg = '';
         $('#submitid').prop('disabled', true);
         $(".alert-warning").empty();
@@ -462,7 +467,7 @@ $(window).scroll(function() {
     var winh = ($(window).height() + 200);
     if ($(window).scrollTop() >= doch - winh) {
         if (is_data > 0) {
-            if (call_sent  ==  "completed") {
+            if (call_sent == "completed") {
                 loadArticle(pagecount);
                 pagecount++;
             }
@@ -476,6 +481,7 @@ function loadArticle(pageNumber) {
     call_sent = "in_progress";
     $('#loading_img').show();
     var airline = new Array();
+    var aircraft__ = new Array();
     var stoppage = new Array();
     var fareCodes = new Array();
     var min_prc_param = "";
@@ -494,6 +500,10 @@ function loadArticle(pageNumber) {
         airline.push($(this).val());
     });
 
+    $(".chk-aircraft:checked").each(function() {
+        aircraft__.push($(this).val());
+    });
+
     $(".farecode:checked").each(function() {
         fareCodes.push($(this).val());
     });
@@ -508,13 +518,10 @@ function loadArticle(pageNumber) {
     if (multicity1 != '')
         multicity = "&multicity=" + multicity1;
 
-    var stoplenght = stoppage.length;
-    var airlinelenght = airline.length;
-
     $.ajax({
         url: urls,
         type: 'POST',
-        data: "action=" + encodeURI('infinite_scroll') + min_prc_param + max_prc_param + "&page_no=" + encodeURI(pageNumber) + "&loop_file=loop&csrfmiddlewaretoken="+csrf_token+"&depaturemin=" + depaturemin + "&depaturemax=" + depaturemax + "&arivalmin=" + arivalmin + "&arivalmax=" + arivalmax + "&airlines=" + airline + "&fareCodes=" + fareCodes + "&stoppage=" + stoppage + row_val + multicity,
+        data: "action=" + encodeURI('infinite_scroll') + min_prc_param + max_prc_param + "&page_no=" + encodeURI(pageNumber) + "&loop_file=loop&csrfmiddlewaretoken=" + csrf_token + "&depaturemin=" + depaturemin + "&depaturemax=" + depaturemax + "&arivalmin=" + arivalmin + "&arivalmax=" + arivalmax + "&airlines=" + airline + "&aircraft=" + aircraft__ + "&fareCodes=" + fareCodes + "&stoppage=" + stoppage + row_val + multicity,
         success: function(html) {
             $("#content").append(html);
             call_sent = "completed";
@@ -617,6 +624,7 @@ var searchid = keyid_;
 var returnid = request_returnkey;
 var cabin = cabin_;
 var airline = new Array();
+// var aircraft = new Array();
 var stoppage = new Array();
 var row_val = "";
 var refreshIntervalId = '';
@@ -629,6 +637,10 @@ if ($('#rowid').length)
 $(".chk-airlines:checked").each(function() {
     airline.push($(this).val());
 });
+
+// $(".chk-aircraft:checked").each(function() {
+//     aircraft.push($(this).val());
+// });
 
 $(".chk-stoppage:checked").each(function() {
     stoppage.push($(this).val());
@@ -667,7 +679,7 @@ if (!data_status) // there is no data
 } else {
     $('.progress').hide();
     $('.filters-holder').removeClass('xs-filters-holder-ht');
-    getPriceMatrix();
+    get_post_search_data();
     getflexData();
     //isprocess();
 }
@@ -711,21 +723,36 @@ function initialisePriceRange() {
     priceMileslider();
 }
 
-function getPriceMatrix() {
+function get_post_search_data() {
+    // price matrix
     $.ajax({
-        url: dataurls,
+        url: '/get_flight_pricematrix',
         type: 'POST',
-        data: "actionfor=prc_matrix&csrfmiddlewaretoken="+csrf_token,
+        data: {
+            "csrfmiddlewaretoken": csrf_token,
+            "cabin": cabin_,
+            "keyid": keyid_,
+            "returnkey": request_returnkey,
+            "multicity": multicity_
+        },
         success: function(html) {
             $('#price_matrix').empty();
             $('#price_matrix').append(html);
         }
     });
 
+    // mile range and farecodes
     $.ajax({
-        url: dataurls,
+        url: '/get_flight_pricematrix',
         type: 'POST',
-        data: "actionfor=prc_matrix&valuefor=pricerange&csrfmiddlewaretoken="+csrf_token,
+        data: {
+            "csrfmiddlewaretoken": csrf_token,
+            "cabin": cabin_,
+            "keyid": keyid_,
+            "returnkey": request_returnkey,
+            "multicity": multicity_,
+            "valuefor": "pricerange"
+        },
         success: function(data) {
             $('#minPriceMile').val(data[0]);
             $('#maxPriceMile').val(data[1]);
@@ -735,6 +762,24 @@ function getPriceMatrix() {
             initialisePriceRange();
         }
     });
+
+    // aircrafts filter
+    $.ajax({
+        url: '/get_aircraft_category',
+        type: 'POST',
+        data: {
+            "csrfmiddlewaretoken": csrf_token,
+            "cabin": cabin_,
+            "keyid": keyid_,
+            "returnkey": request_returnkey,
+            "multicity": multicity_,
+            "aircraft": aircraft_
+        },
+        success: function(data) {
+            $('#filter_aircraft').html(data);
+        }
+    });
+
 }
 // ----------- Flex data call ----------------------------------//
 
@@ -768,7 +813,7 @@ function create_fare_code_filter(fareCodeList) {
         codeStatus = '';
         if (codelen > 0)
             for (c = 0; c < codelen; c++)
-                if ($.trim(code1[c])  ==  $.trim(fareCodeList[item]))
+                if ($.trim(code1[c]) == $.trim(fareCodeList[item]))
                     codeStatus = "checked='checked'";
         fareCodeDisplay = fareCodeDisplay + "<div class='checkbox'><label><input type='checkbox' class='farecode' name='fareCodes' value='" + fareCodeList[item] + "'" + codeStatus + "><span></span>" + fareCodeList[item] + "</label></div>";
     }
@@ -785,7 +830,7 @@ function redirecttosearchpage(scraperStatus) {
     $.ajax({
         url: dataurls,
         type: 'POST',
-        data: "csrfmiddlewaretoken="+csrf_token+"&depaturemin=" + depaturemin + "&depaturemax=" + depaturemax + "&airlines=" + airline + "&stoppage=" + stoppage + row_val + "&scraperStatus=" + scraperStatus,
+        data: "csrfmiddlewaretoken=" + csrf_token + "&depaturemin=" + depaturemin + "&depaturemax=" + depaturemax + "&airlines=" + airline + "&aircraft=" + aircraft + "&stoppage=" + stoppage + row_val + "&scraperStatus=" + scraperStatus,
         success: function(html) {
             $('.filters-holder').addClass('xs-filters-holder-ht');
             $("#content1").empty();
@@ -804,7 +849,7 @@ function redirecttosearchpage(scraperStatus) {
             pagecount = 2;
             $('#content').empty();
 
-            if (scraperStatus  ==  'complete') {
+            if (scraperStatus == 'complete') {
                 $('#progressbar').css("width", "100%");
                 $('#progress_hidden_val').val('195');
                 //clearInterval(refreshIntervalId);
@@ -830,6 +875,7 @@ function isprocess() {
     callrunning = true;
     timecompleted = false;
     var temp = '';
+    var multicity = '';
 
     if (returnid != '')
         var temp = "&returnkey=" + encodeURI(returnid);
@@ -840,7 +886,7 @@ function isprocess() {
     $.ajax({
         type: "POST",
         url: "/checkData/",
-        data: "keyid=" + encodeURI(searchid) + "&csrfmiddlewaretoken="+csrf_token + "&cabin=" + encodeURI(cabin) + temp + multicity,
+        data: "keyid=" + encodeURI(searchid) + "&csrfmiddlewaretoken=" + csrf_token + "&cabin=" + cabin_ + temp + multicity,
         success: function(data) {
             callrunning = false;
 
@@ -852,19 +898,22 @@ function isprocess() {
             if (timecompleted && data[1] != 'completed')
                 isprocess();
 
-            if (data[1]  ==  'key_expired') {
+            if (data[1] == 'key_expired') {
                 clearInterval(refreshIntervalId);
                 $('changebtnid').click();
 
                 setSearchData();
             }
 
-            if (data[1]  ==  'completed' || dataCheckCount > 60) {
+            if (data[1] == 'completed' || dataCheckCount > 60) {
                 clearInterval(refreshIntervalId);
+                console.log(aircraft);
+                console.log("Post checkdata");
+                console.log(aircraft_);
                 redirecttosearchpage('complete');
-                getPriceMatrix();
+                get_post_search_data();
                 getflexData();
-            } else if (data[0] != 'onprocess' && dataCheckCount % 3  ==  0) {
+            } else if (data[0] != 'onprocess' && dataCheckCount % 3 == 0) {
                 redirecttosearchpage('onprocess');
             }
 
@@ -882,7 +931,7 @@ $('#subscribe').click(function() {
                 type: "POST",
                 dataType: "text",
                 url: "/mailchimp/",
-                data: "email=" + encodeURI(subscription_email) + "&csrfmiddlewaretoken="+csrf_token,
+                data: "email=" + encodeURI(subscription_email) + "&csrfmiddlewaretoken=" + csrf_token,
                 success: function(resp) {
                     $('#subs_msg').empty();
                     $('#subs_msg').append(resp);
@@ -951,7 +1000,7 @@ function setSearchData() {
     departdateval = $('#departuredate').val();
     cabintypeval = $('#cabintype option:selected').val();
     searchData();
-    return false ;
+    return false;
 }
 
 function searchData() {
@@ -979,16 +1028,16 @@ function searchData() {
         },
         error: function(ret) {
             msg = 'You reached the daily flight search limit!';
-            if (ret.responseText  ==  "2") {
+            if (ret.responseText == "2") {
                 msg += '\nPlease sign up and get more access!';
                 var r = confirm(msg);
-                if (r  ==  true)
+                if (r == true)
                     $('#login-modal').modal();
-            } else if (ret.responseText  ==  "1") {
+            } else if (ret.responseText == "1") {
                 alert(msg);
-            } else if (ret.responseText  ==  "3") {
+            } else if (ret.responseText == "3") {
                 alert('You reached the flight search limit!\nPlease purchase more!');
-            } else if (ret.responseText  ==  "11") {
+            } else if (ret.responseText == "11") {
                 alert('There is no such airport for origin or destination!\n Please check again!');
                 $('#changebtnid').prop('disabled', false);
             }
@@ -1012,4 +1061,25 @@ function getsearchresult(searchidval, returnidval, searchtype) {
         location = location + "&searchtype=" + encodeURI(searchtype);
         window.location.href = location;
     }
+}
+
+function filter_aircraft_dropdown(this_) {
+    var stat = $(this_).prop('src');
+    if (stat.includes('caret.png')) {
+        $(this_).prop('src', '/static/hotelsearch/css/images/caret_up.png');
+        $(this_).parent().parent().children('.filter-aircraft-body').show();
+    } else {
+        $(this_).prop('src', '/static/hotelsearch/css/images/caret.png');
+        $(this_).parent().parent().children('.filter-aircraft-body').hide();
+    }
+}
+
+function filter_aircraft_check(this_) {
+    var checked = $(this_).prop('checked');
+    // console.log($(this_).parent().parent().parent().children('.filter-aircraft-body'));    
+
+    $(this_).parent().parent().parent().children('.filter-aircraft-body').each(function() {
+        // console.log($(this));    
+        $(this).children('label').children('input').prop('checked', checked);
+    });
 }

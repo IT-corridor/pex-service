@@ -238,7 +238,7 @@
         {% for hotel in hotels %}
         <div class="row" style="margin-top: 15px;">
             <div class="col-sm-3 col-xs-7">
-                <a href="{{ hotel.url }}" style="text-decoration: none;">
+                <a href="{{ hotel.url }}" style="text-decoration: none;" target="_blank">
                 <div class="price-range">
                     <p class="title">Book With Points</p>
                     {% if hotel.points_rate %}
@@ -248,7 +248,7 @@
                     {% endif %}
                 </div></a>
                 <div style="margin-left: 62px;"><b> OR </b></div>
-                <a href="{{ hotel.url }}" style="text-decoration: none;">
+                <a href="{{ hotel.url }}" style="text-decoration: none;" target="_blank">
                 <div class="price-range">
                     <p class="title">Book With Dollars</p>
                     {% if hotel.cash_rate != 1000000 %}
@@ -387,25 +387,24 @@
           <h4 class="modal-title">My Point Balances</h4>
         </div>
         <div class="modal-body">
-            <div class="col-xs-12 nopadding form-side">
-                <dl>
-                    {% for point in pointlist %}
-                    <div class="cutom-ui-mil">
-                        <dt class="dl-horizontal" style="text-transform: uppercase; margin-bottom: 5px;margin-top: 5px;">
-                            {{point.0}}
-                        </dt>
+            <div class="row form-side" style="margin: 10px 0; padding: 10px;">
+                {% for point in pointlist %}
+                <div class="cutom-ui-mil">
+                    <div class="dl-horizontal" style="text-transform: uppercase; margin-bottom: 5px;margin-top: 5px;">
+                        <b>{{point.0}}</b>
+                    </div>
+                    <div>
                         <span>{{point.2}}</span>
                         <span style="float: right;">{{point.1|intcomma}} MILES</span>
-                        {% if point.6 %}
-                        <div>
-                            <span>Household</span>
-                            <span style="float: right;">{{point.6|intcomma}} MILES</span>
-                        </div>
-                        {% endif %}
-                        
                     </div>
-                    {%endfor%}
-                </dl>
+                    {% if point.6 %}
+                    <div>
+                        <span>Household</span>
+                        <span style="float: right;">{{point.6|intcomma}} MILES</span>
+                    </div>
+                    {% endif %}                    
+                </div>
+                {%endfor%}
             </div>
 
         </div>

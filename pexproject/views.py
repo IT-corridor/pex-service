@@ -1,64 +1,45 @@
 #!usr/bin/env python
-import os
 import sys
 import hashlib
 import codecs
 import datetime
 import settings
 import time
-import MySQLdb
-import threading
 import requests
-import operator
-import smtplib
-import socket
 import re
 import base64
 import subprocess
 import json
-import signal
-import logging
-from apiclient.discovery import build
+import collections
 
+from apiclient.discovery import build
 from random import randint
 from bs4 import BeautifulSoup
 from mailchimp import Mailchimp
 from types import *
 from datetime import datetime as dttime
 from datetime import timedelta
-from multiprocessing import Process
-from threading import Thread
 from datetime import date
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+from multiprocessing import Process
 
 from django.shortcuts import render
 from django.shortcuts import render_to_response
+from django.shortcuts import get_object_or_404,redirect
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
-from django.template import RequestContext, loader
-#from social_auth.models import UserSocialAuth
-from django.shortcuts import get_object_or_404,redirect
-from django.core.mail import send_mail,EmailMultiAlternatives
+from django.http import JsonResponse
 from django.template import RequestContext
-from django.views.decorators.csrf import csrf_protect
-from django.views.decorators.csrf import ensure_csrf_cookie
-#from django.core.context_processors import csrf
-
-from django.views.decorators.csrf import requires_csrf_token
-from django.contrib.auth import login as social_login,authenticate,get_user
+from django.contrib.auth import login as social_login, authenticate
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.html import strip_tags
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db import connection, transaction
+from django.utils import timezone
+from django.db import connection
 from django.db import models as aggregator
 from django.db.models import Q, Count
 from django.db.models import Max, Min
-
-from django.utils import timezone
 from django.forms.models import model_to_dict
 
 from .scrapers.customfunction import is_scrape_vAUS,is_scrape_aeroflot,is_scrape_virginAmerica,is_scrape_etihad,is_scrape_delta,is_scrape_united,is_scrape_virgin_atlantic,is_scrape_jetblue,is_scrape_aa, is_scrape_s7, is_scrape_airchina
@@ -66,11 +47,7 @@ from .scrapers import customfunction
 from .scrapers.config import config as sys_config
 from .form import *
 from pexproject.models import *
-from pexproject.templatetags.customfilter import floatadd, assign
 
-logger = logging.getLogger(__name__)
-
-SEARCH_LIMIT_WARNING_THRESHOLD = 0.75
 
 def get_cityname(request):
     if request.is_ajax():
@@ -88,11 +65,9 @@ def get_cityname(request):
                 airport_json['label'] = airportdata.cityName + ", " + airportdata.name + ", " + airportdata.countryCode + "  (" + airportdata.code + " )"
                 airport_json['value'] = airportdata.cityName
                 results.append(airport_json)
-        data = json.dumps(results)
     else:
-        data = 'fail'
-    mimetype = 'application/json'
-    return HttpResponse(data, mimetype)
+        results = 'fail'
+    return JsonResponse(results, safe=False)
 
 
 def get_countryname(request):
@@ -108,12 +83,10 @@ def get_countryname(request):
                 country['label'] = item['name']
                 country['value'] = item['name']
                 result.append(country)
-        data = json.dumps(result)
         json_text.close()
     else:
-        data = 'fail'
-    mimetype = 'application/json'
-    return HttpResponse(data, mimetype)
+        result = 'fail'
+    return JsonResponse(result, safe=False)
 
 
 @csrf_exempt
@@ -202,21 +175,19 @@ def blog(request, title=None):
 
 def index(request):
     if request.user.is_authenticated():
-      print request.user
-      #user = User.objects.get(email=request.user)
-      user = User.objects.filter(username=request.user)
-      if len(user) > 0:
+        #user = User.objects.get(email=request.user)
+        user = User.objects.filter(username=request.user)
+        if len(user) > 0:
             user = User.objects.get(username=request.user)
-  	    request.session['username'] = request.user.username
-	#      request.session['password'] = password1
-	    if user.first_name != '':
-      	    	request.session['first_name'] = user.first_name
-	    if user.home_airport != '':
-	    	request.session['homeairpot'] = user.home_airport
-	    request.session['userid'] = user.user_id
-	    request.session['level'] = user.level
-      else:
-	    email=request.user
+            request.session['username'] = request.user.username
+            if user.first_name != '':
+                request.session['first_name'] = user.first_name
+            if user.home_airport != '':
+                request.session['homeairpot'] = user.home_airport
+            request.session['userid'] = user.user_id
+            request.session['level'] = user.level
+        else:
+            email=request.user
             password = ''
             password1 = hashlib.md5(password).hexdigest()
             airport = ''
@@ -227,14 +198,13 @@ def index(request):
             object.save()
             user = User.objects.get(username=request.user)
             if len(user) > 0:
-              request.session['username'] = request.user.username
-        #      request.session['password'] = password1
-              if user.first_name != '':
-                request.session['first_name'] = user.first_name
-              if user.home_airport != '':
-                request.session['homeairpot'] = user.home_airport
-              request.session['userid'] = user.user_id
-              request.session['level'] = user.level
+                request.session['username'] = request.user.username
+                if user.first_name != '':
+                    request.session['first_name'] = user.first_name
+                if user.home_airport != '':
+                    request.session['homeairpot'] = user.home_airport
+                request.session['userid'] = user.user_id
+                request.session['level'] = user.level
 
     return render(request, 'flightsearch/home.html')    
 
@@ -319,7 +289,7 @@ def manageAccount(request):
     user1 = User.objects.get(pk =request.session['userid']) 
     cursor.execute("select provider from social_auth_usersocialauth where user_id ="+str(request.session['userid']))
     social_id = cursor.fetchone()
-    if social_id:	
+    if social_id:   
         issocial = 'yes'
     if request.POST:
         if 'home_ariport' in request.POST:
@@ -349,24 +319,21 @@ def manageAccount(request):
 def mailchimp(request):
     context = {}
     if request.is_ajax():
-    	lname=''
-    	fname=''
+        lname=''
+        fname=''
         useremail = request.REQUEST['email']
-    	if 'fname' in request.POST:
-                fname = request.REQUEST['fname']
-    	if 'lname' in request.POST:
-                lname = request.REQUEST['lname']
-        data = ''
+        if 'fname' in request.POST:
+            fname = request.REQUEST['fname']
+        if 'lname' in request.POST:
+            lname = request.REQUEST['lname']
+        
         try:
             subscriber = Mailchimp(sys_config['MAILCHIMP_API_KEY'])
             subscriber.lists.subscribe(sys_config['MAILCHIML_LIST_ID'], {'email':useremail}, merge_vars={'FNAME':fname,'LNAME':lname})
             data = "Please check you email to PEX+ update"
         except:
             data = useremail + " is an invalid email address"   
-        mimetype = 'application/json'
-        
-        json.dumps(data)
-        return HttpResponse(data, mimetype)
+        return JsonResponse(data, safe=False)
 
 
 def login(request):
@@ -376,19 +343,19 @@ def login(request):
     currentpath = ''
     if user is not None:
         if user.is_active:
-            social_login(request,user)	
+            social_login(request,user)  
     if request.method == "POST": 
         username = request.REQUEST['username']
         password = request.REQUEST['password']
         if "curl" in request.POST:
             currentpath = request.REQUEST['curl']
         password1 = hashlib.md5(password).hexdigest()
-    	try:
+        try:
             user = User.objects.get(email=username, password=password1)
             if user > 0:
                 user.last_login=datetime.datetime.now()
                 user.save()
-#		login(request=request, user=user)
+#       login(request=request, user=user)
                 request.session['username'] = username
                 request.session['password'] = password1
                 if user.first_name != '':
@@ -405,8 +372,8 @@ def login(request):
                 msg = "Invalid username or password"
                 return HttpResponseRedirect('/index?msg='+msg)
                 #return render_to_response('flightsearch/index.html', {'msg':msg}, context_instance=RequestContext(request))
-    	except:
-    	    msg = "Invalid username or password"
+        except:
+            msg = "Invalid username or password"
             return HttpResponseRedirect('/index?msg='+msg)
             #return render_to_response('flightsearch/index.html', {'msg':msg}, context_instance=RequestContext(request))
     else:
@@ -417,9 +384,9 @@ def logout(request):
     context = {} 
     auth_logout(request)
     if 'username' in request.session:
-    	del request.session['username']
+        del request.session['username']
         del request.session['homeairpot']
-    	del request.session['password']  
+        del request.session['password']  
     return HttpResponseRedirect(reverse('index'))
 
 
@@ -432,13 +399,10 @@ def forgotPassword(request):
         usercode =  base64.b64encode(str(randomcode))
         if 'userid' in request.session:
             user = User.objects.get(pk = request.session['userid'])
-	    print'user id' 
         else:
             try:
-		print 'before objec'
                 user = User.objects.get(email=user_email)
                 print 'after object'
-		print user
             except:
                 return HttpResponseRedirect('/index?msg=Invalid username')
                 #return render_to_response('flightsearch/index.html', {'msg':"Invalid username"}, context_instance=RequestContext(request))
@@ -465,14 +429,10 @@ def forgotPassword(request):
     if 'pagetype' in request.POST:
         return HttpResponseRedirect('/index?welcome_msg='+text)
     if request.is_ajax():
-        mimetype = 'application/json'
-        data = text
-        json.dumps(data)
-        return HttpResponse(data, mimetype)
-        
+        return JsonResponse(text, safe=False)       
     else:
         msg = "forgot password"
-    return HttpResponseRedirect('/index?fpmsg='+msg) 
+        return HttpResponseRedirect('/index?fpmsg='+msg) 
 
 
 def createPassword(request):
@@ -490,8 +450,8 @@ def createPassword(request):
     except:
         msg = "Invalid or expired your password management code."     
     if request.POST:
-    	code = request.REQUEST['ucode']
-    	user1 = User.objects.get(usercode=code)
+        code = request.REQUEST['ucode']
+        user1 = User.objects.get(usercode=code)
         if 'new_password' in request.POST:
             newpassword = request.REQUEST['new_password']
             newpassword1 = hashlib.md5(newpassword).hexdigest()
@@ -629,10 +589,8 @@ def search(request):
             return HttpResponse(_ret, status=405)
 
         key_json = _search(returndate, str(orgnid), str(destid), depart, searchtype, cabin, request)
+        return JsonResponse(key_json)
 
-        mimetype = 'application/json'
-        data = json.dumps(key_json)
-        return HttpResponse(data, mimetype)
         # except Exception, e:
         #     print str(e), '###########3'
         
@@ -653,7 +611,7 @@ def check_limit(request, service):
             return 3
         user.search_run = user.search_run + 1
 
-        if user.search_run >= user.search_limit * SEARCH_LIMIT_WARNING_THRESHOLD and (user.search_run - 1) < user.search_limit * SEARCH_LIMIT_WARNING_THRESHOLD:
+        if user.search_run >= user.search_limit * settings.SEARCH_LIMIT_WARNING_THRESHOLD and (user.search_run - 1) < user.search_limit * settings.SEARCH_LIMIT_WARNING_THRESHOLD:
             send_limit_warning_email(user, service)
 
         user.save()
@@ -912,17 +870,15 @@ def get_airport(request):
         airportcode = []
         for airportdata in airport:
             if airportdata.code not in airportcode:
-	            airportcode.append(airportdata.code)
-        	    airport_json = {}
-	            airport_json['id'] = airportdata.airport_id
-        	    airport_json['label'] = airportdata.cityName + ", " + airportdata.name + ", " + airportdata.countryCode + "  (" + airportdata.code + " )"
-	            airport_json['value'] = airportdata.cityName + " (" + airportdata.code + ")"
-        	    results.append(airport_json)
-        data = json.dumps(results)
+                airportcode.append(airportdata.code)
+                airport_json = {}
+                airport_json['id'] = airportdata.airport_id
+                airport_json['label'] = airportdata.cityName + ", " + airportdata.name + ", " + airportdata.countryCode + "  (" + airportdata.code + " )"
+                airport_json['value'] = airportdata.cityName + " (" + airportdata.code + ")"
+                results.append(airport_json)
     else:
-        data = 'fail'
-    mimetype = 'application/json'
-    return HttpResponse(data, mimetype)
+        results = 'fail'
+    return JsonResponse(results, safe=False)
 
 
 def checkData(request):
@@ -933,10 +889,7 @@ def checkData(request):
         returnkey = request.POST.get('returnkey')
         
         results = _check_data(recordkey, returnkey, cabin, allkey)
-        mimetype = 'application/json'
-        data = json.dumps(results)
-
-        return HttpResponse(data, mimetype)    
+        return JsonResponse(results, safe=False)
     
 
 def _check_data(recordkey, returnkey, cabin, allkey):
@@ -1069,6 +1022,106 @@ def getFlexResult(request):
         return render_to_response('flightsearch/calendarmatrix.html',{"month":month,"economy":economy,"business":business,"retmonth":retMonth,"returnEco":ret_economy,"returnBusiness":ret_business},context_instance=RequestContext(request))
         
 
+def get_flight_pricematrix(request):
+    """
+    Get a price matrix after flight search is done.
+    According to the parameter, it returns mile range and farecode filters.
+    """
+    cabinclass = request.POST.get('cabin', '')
+    getPriceRange = 'valuefor' in request.POST
+    multicitykey = request.POST.get('multicity', '')
+    key = request.POST.get('keyid', '')
+    returnkeyid = request.POST.get('returnkey', '')
+
+    if 'maincabin' in cabinclass:
+        fare_class_code = 'eco_fare_code'
+    elif 'firstclass' in cabinclass:
+        fare_class_code = 'business_fare_code'
+    else:
+        fare_class_code = 'first_fare_code'
+
+    if multicitykey:
+        n = 1
+        multicitykey1 = multicitykey.split(',')
+        recordkey = multicitykey1[0]
+        ecocabin = 'min(if(p1.maincabin > 0,p1.maincabin,NULL))'
+        busscabin = 'min(if(p1.firstclass > 0,p1.firstclass,NULL))'
+        firstcabin = 'min(if(p1.business > 0,p1.business,NULL))'
+        adding = '+'
+        inner_join_on = ''
+        for keys in multicitykey1:
+            if n > 1:
+                ecocabin = ecocabin+adding+"min(if(p"+str(n)+".maincabin > 0,p"+str(n)+".maincabin,NULL))"
+                busscabin = busscabin+adding+"min(if(p"+str(n)+".firstclass > 0,p"+str(n)+".firstclass,NULL))"
+                firstcabin = firstcabin+adding+"min(if(p"+str(n)+".business > 0,p"+str(n)+".business,NULL))"
+                inner_join_on = inner_join_on+" inner join pexproject_flightdata p"+str(n)+" on  p"+str(n)+".searchkeyid ='" +keys+"' and p1.datasource = p"+str(n)+".datasource"
+            n = n+1
+        pricematrix =  Flightdata.objects.raw("select p1.rowid, p1.datasource,"+ecocabin+" as maincabin,"+busscabin+"  as firstclass ,"+firstcabin+" as business  from pexproject_flightdata p1 "+inner_join_on+" where p1.searchkeyid="+str(recordkey)+" group by p1.datasource")      
+        '''fetching min max price miles for multicity '''
+        min_max_cabin = ''
+        if getPriceRange:
+            if cabinclass == 'maincabin':
+                min_max_cabin = ecocabin
+            elif cabinclass == 'firstclass':
+                min_max_cabin = busscabin
+            else:
+                min_max_cabin = firstcabin
+            maxpricemile_query = min_max_cabin
+            if 'min' in maxpricemile_query:
+                maxpricemile_query = maxpricemile_query.replace('min','max')    
+            priceRange =  Flightdata.objects.raw("select p1.rowid, p1.datasource,p1."+fare_class_code+" as fare_code, "+min_max_cabin+" as minpricemile,"+maxpricemile_query+"  as maxpricemile  from pexproject_flightdata p1 "+inner_join_on+" where p1.searchkeyid="+str(recordkey)+" group by fare_code")
+            FareCodeFromDatabase =  Flightdata.objects.raw("select p1.rowid,p1."+fare_class_code+" as fare_code from pexproject_flightdata p1 "+inner_join_on+" where p1.searchkeyid="+str(recordkey)+" group by p1.datasource order by minpricemile,maxpricemile")      
+   
+    elif key:
+        if returnkeyid:
+            pricematrix = Flightdata.objects.raw("select p1.rowid,p2.rowid, p2.datasource, (min(if(p1.maincabin > 0,p1.maincabin,NULL))+min(if(p2.maincabin > 0,p2.maincabin,NULL))) as maincabin, (min(if(p1.firstclass>0,p1.firstclass,NULL))+min(if(p2.firstclass>0,p2.firstclass,NULL))) as firstclass ,(min(if(p1.business>0,p1.business,NULL))+min(if(p2.business>0,p2.business,NULL))) as business  from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+returnkeyid+" where p1.searchkeyid="+str(key)+" group by p1.datasource")
+            ''' fetch minimum maximum price'''
+            priceRange = Flightdata.objects.raw("select p1.rowid,p2.rowid, p2.datasource,p1."+fare_class_code+" as fare_code, (min(if(p1."+cabinclass+" > 0,p1."+cabinclass+",NULL))+min(if(p2."+cabinclass+" > 0,p2."+cabinclass+",NULL))) as minpricemile, (max(if(p1."+cabinclass+" > 0,p1."+cabinclass+",NULL))+max(if(p2."+cabinclass+" > 0,p2."+cabinclass+",NULL))) as maxpricemile  from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+returnkeyid+" where p1.searchkeyid="+str(key)+" group by p1.datasource order by minpricemile,maxpricemile")
+            FareCodeFromDatabase = Flightdata.objects.raw("select p1.rowid,p2.rowid,p1."+fare_class_code+" as fare_code from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+returnkeyid+" where p1.searchkeyid="+str(key)+" group by fare_code")
+
+        else:
+            pricematrix = Flightdata.objects.raw("select rowid, datasource, min(if(maincabin > 0,maincabin,NULL)) as maincabin, min(if(firstclass>0,firstclass,NULL)) as firstclass ,min(if(business>0,business,NULL)) as business  from pexproject_flightdata where searchkeyid="+str(key)+" group by datasource")
+            priceRange = Flightdata.objects.raw("select rowid, datasource, min(if("+cabinclass+" > 0,"+cabinclass+",NULL)) as minpricemile, max(if("+cabinclass+" > 0,"+cabinclass+",NULL)) as maxpricemile  from pexproject_flightdata where searchkeyid="+str(key)+" group by datasource order by minpricemile,maxpricemile")
+            FareCodeFromDatabase = Flightdata.objects.raw("select rowid, "+fare_class_code+" as fare_code from pexproject_flightdata where searchkeyid="+str(key)+" group by fare_code")
+
+    ''' get min and max price miles '''
+    minPriceMile = 500
+    maxPriceMile = 0
+    fare_code_Array = []
+
+    if getPriceRange:
+        for cd in list(FareCodeFromDatabase):
+            fare_code_string = cd.fare_code
+            if fare_code_string != None and fare_code_string != '' and  ',' in fare_code_string:
+                fare_code_string = fare_code_string.split(',')
+                for n in range(0,len(fare_code_string)):
+                    if fare_code_string[n] not in fare_code_Array and fare_code_string != '' and fare_code_string[n] != None:
+                        fare_code_Array.append(fare_code_string[n])
+            else:
+                if fare_code_string != None and fare_code_string != '' and fare_code_string not in fare_code_Array:
+                    fare_code_Array.append(fare_code_string)
+        priceRange1 = list(priceRange) 
+        temp = 0
+        for t in priceRange1:
+            if temp < t.maxpricemile:
+                temp = t.maxpricemile
+            if t.minpricemile != None and (minPriceMile > t.minpricemile or minPriceMile == 500):
+               minPriceMile = t.minpricemile   
+        maxPriceMile = temp
+
+        return JsonResponse([minPriceMile, maxPriceMile, fare_code_Array], safe=False)
+
+
+    price_matrix = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']
+    price_matrix = {item: [None, None, None] for item in price_matrix}
+
+    if pricematrix:
+        for item in pricematrix:
+            price_matrix[item.datasource] = [item.maincabin, item.firstclass, item.business]
+
+    return render_to_response('flightsearch/pricematrix.html',{'price_matrix': price_matrix}, context_instance=RequestContext(request))
+
+
 def getsearchresult(request):
     context = {}
     cabin = []
@@ -1117,102 +1170,6 @@ def getsearchresult(request):
     else:
         fare_class_code = 'first_fare_code'
     
-    #@@@@ Get Pricematrix list @@@@@@@@@@@@@@@@@@@@
-    if request.POST.get('actionfor') == 'prc_matrix':
-        getPriceRange = False
-        if request.POST.get('valuefor') == 'pricerange':
-            getPriceRange = True
-
-        priceRange = ''
-        FareCodeFromDatabase = ''
-        if 'multicity' in request.GET or 'multicity' in request.POST:
-            n = 1
-            multicitykey = request.GET.get('multicity', '')
-            multicitykey1 = multicitykey.split(',')
-            recordkey = multicitykey1[0]
-            ecocabin = 'min(if(p1.maincabin > 0,p1.maincabin,NULL))'
-            busscabin = 'min(if(p1.firstclass > 0,p1.firstclass,NULL))'
-            firstcabin = 'min(if(p1.business > 0,p1.business,NULL))'
-            adding = '+'
-            inner_join_on=''
-            for keys in multicitykey1:
-                if n > 1:
-                    ecocabin = ecocabin+adding+"min(if(p"+str(n)+".maincabin > 0,p"+str(n)+".maincabin,NULL))"
-                    busscabin = busscabin+adding+"min(if(p"+str(n)+".firstclass > 0,p"+str(n)+".firstclass,NULL))"
-                    firstcabin = firstcabin+adding+"min(if(p"+str(n)+".business > 0,p"+str(n)+".business,NULL))"
-                    inner_join_on = inner_join_on+" inner join pexproject_flightdata p"+str(n)+" on  p"+str(n)+".searchkeyid ='" +keys+"' and p1.datasource = p"+str(n)+".datasource"
-                n = n+1
-            pricematrix =  Flightdata.objects.raw("select p1.rowid, p1.datasource,"+ecocabin+" as maincabin,"+busscabin+"  as firstclass ,"+firstcabin+" as business  from pexproject_flightdata p1 "+inner_join_on+" where p1.searchkeyid="+str(recordkey)+" group by p1.datasource")      
-            '''fetching min max price miles for multicity '''
-            min_max_cabin = ''
-            if getPriceRange:
-                if cabinclass == 'maincabin':
-                    min_max_cabin = ecocabin
-                elif cabinclass == 'firstclass':
-                    min_max_cabin = busscabin
-                else:
-                    min_max_cabin = firstcabin
-                maxpricemile_query = min_max_cabin
-                if 'min' in maxpricemile_query:
-                    maxpricemile_query = maxpricemile_query.replace('min','max')    
-                priceRange =  Flightdata.objects.raw("select p1.rowid, p1.datasource,p1."+fare_class_code+" as fare_code, "+min_max_cabin+" as minpricemile,"+maxpricemile_query+"  as maxpricemile  from pexproject_flightdata p1 "+inner_join_on+" where p1.searchkeyid="+str(recordkey)+" group by fare_code")
-                FareCodeFromDatabase =  Flightdata.objects.raw("select p1.rowid,p1."+fare_class_code+" as fare_code from pexproject_flightdata p1 "+inner_join_on+" where p1.searchkeyid="+str(recordkey)+" group by p1.datasource order by minpricemile,maxpricemile")      
-       
-        elif 'keyid' in  request.GET:
-            key = request.GET.get('keyid', '')
-            if 'returnkey' in request.GET:
-                returnkeyid = request.GET.get('returnkey', '')
-                pricematrix = Flightdata.objects.raw("select p1.rowid,p2.rowid, p2.datasource, (min(if(p1.maincabin > 0,p1.maincabin,NULL))+min(if(p2.maincabin > 0,p2.maincabin,NULL))) as maincabin, (min(if(p1.firstclass>0,p1.firstclass,NULL))+min(if(p2.firstclass>0,p2.firstclass,NULL))) as firstclass ,(min(if(p1.business>0,p1.business,NULL))+min(if(p2.business>0,p2.business,NULL))) as business  from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+returnkeyid+" where p1.searchkeyid="+str(key)+" group by p1.datasource")
-                ''' fetch minimum maximum price'''
-                priceRange = Flightdata.objects.raw("select p1.rowid,p2.rowid, p2.datasource,p1."+fare_class_code+" as fare_code, (min(if(p1."+cabinclass+" > 0,p1."+cabinclass+",NULL))+min(if(p2."+cabinclass+" > 0,p2."+cabinclass+",NULL))) as minpricemile, (max(if(p1."+cabinclass+" > 0,p1."+cabinclass+",NULL))+max(if(p2."+cabinclass+" > 0,p2."+cabinclass+",NULL))) as maxpricemile  from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+returnkeyid+" where p1.searchkeyid="+str(key)+" group by p1.datasource order by minpricemile,maxpricemile")
-                FareCodeFromDatabase = Flightdata.objects.raw("select p1.rowid,p2.rowid,p1."+fare_class_code+" as fare_code from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+returnkeyid+" where p1.searchkeyid="+str(key)+" group by fare_code")
-
-            else:
-                pricematrix = Flightdata.objects.raw("select rowid, datasource, min(if(maincabin > 0,maincabin,NULL)) as maincabin, min(if(firstclass>0,firstclass,NULL)) as firstclass ,min(if(business>0,business,NULL)) as business  from pexproject_flightdata where searchkeyid="+str(key)+" group by datasource")
-                priceRange = Flightdata.objects.raw("select rowid, datasource, min(if("+cabinclass+" > 0,"+cabinclass+",NULL)) as minpricemile, max(if("+cabinclass+" > 0,"+cabinclass+",NULL)) as maxpricemile  from pexproject_flightdata where searchkeyid="+str(key)+" group by datasource order by minpricemile,maxpricemile")
-                FareCodeFromDatabase = Flightdata.objects.raw("select rowid, "+fare_class_code+" as fare_code from pexproject_flightdata where searchkeyid="+str(key)+" group by fare_code")
-        ''' get min and max price miles '''
-        minPriceMile = 500
-        maxPriceMile = 0
-        fare_code_Array = []
-
-        if getPriceRange:
-            FareCodeFromDatabase1 = list(FareCodeFromDatabase)
-            for cd in FareCodeFromDatabase1:
-                fare_code_string = cd.fare_code
-                if fare_code_string != None and fare_code_string != '' and  ',' in fare_code_string:
-                    fare_code_string = fare_code_string.split(',')
-                    for n in range(0,len(fare_code_string)):
-                        if fare_code_string[n] not in fare_code_Array and fare_code_string != '' and fare_code_string[n] != None:
-                            fare_code_Array.append(fare_code_string[n])
-                else:
-                    if fare_code_string != None and fare_code_string != '' and fare_code_string not in fare_code_Array:
-                        fare_code_Array.append(fare_code_string)
-            priceRange1 = list(priceRange) 
-            temp = 0
-            for t in priceRange1:
-                if temp < t.maxpricemile:
-                    temp = t.maxpricemile
-                if t.minpricemile != None and (minPriceMile > t.minpricemile or minPriceMile == 500):
-                   minPriceMile = t.minpricemile   
-            maxPriceMile = temp
-            mimetype = 'application/json'
-            results = []
-            results.append(minPriceMile)
-            results.append(maxPriceMile)
-            results.append(fare_code_Array)
-            data = json.dumps(results)
-            return HttpResponse(data, mimetype)
-
-        price_matrix = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']
-        price_matrix = {item: [None, None, None] for item in price_matrix}
-
-        if pricematrix:
-            for item in pricematrix:
-                price_matrix[item.datasource] = [item.maincabin, item.firstclass, item.business]
-
-        return render_to_response('flightsearch/pricematrix.html',{'price_matrix': price_matrix}, context_instance=RequestContext(request))
-
     adimages = GoogleAd.objects.filter(ad_code="result page")
     if request.is_ajax():
         if 'page_no' in request.POST:
@@ -1547,7 +1504,7 @@ def getsearchresult(request):
                 returnfare = "p2." + cabinclass
                 departfare = "p1." + cabinclass
                 totaltax = "p1."+taxes+"+p2."+taxes
-                record = Flightdata.objects.raw("select p1.*,CONCAT(p1.rowid,'_',p2.rowid) as newid,p2.origin as origin1,p2.rowid as rowid1, p2.stoppage as stoppage1,p2.flighno as flighno1, p2.cabintype1 as cabintype11,p2.cabintype2 as cabintype21,p2.cabintype3 as cabintype31, p2.destination as destination1, p2.departure as departure1, p2.arival as arival1, p2.duration as duration1, p2.maincabin as maincabin1, p2.maintax as maintax1, p2.firsttax as firsttax1, p2.businesstax as businesstax1,p2.departdetails as departdetails1,p2.arivedetails as arivedetails1, p2.planedetails as planedetails1,p2.operatedby as operatedby1," + totalfare + " as finalprice,  "+totaltax+" as totaltaxes from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ='" + returnkeyid1 + "' and " + returnfare + " > '0'  where  p1.searchkeyid = '" + searchkey + "' and " + departfare + " > 0 and " + querylist + " order by finalprice ,totaltaxes, departure, p2.departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset))
+                record = Flightdata.objects.raw("select p1.*,CONCAT(p1.rowid,'_',p2.rowid) as newid,p2.origin as origin1,p2.rowid as rowid1, p2.stoppage as stoppage1,p2.flighno as flighno1, p2.cabintype1 as cabintype11,p2.cabintype2 as cabintype21,p2.cabintype3 as cabintype31, p2.destination as destination1, p2.departure as departure1, p2.arival as arival1, p2.duration as duration1, p2.maincabin as maincabin1, p2.maintax as maintax1, p2.firsttax as firsttax1, p2.businesstax as businesstax1,p2.departdetails as departdetails1,p2.arivedetails as arivedetails1, p2.planedetails as planedetails1,p2.operatedby as operatedby1," + totalfare + " as finalprice,  "+totaltax+" as totaltaxes from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ='" + returnkeyid1 + "' and " + returnfare + " > '0'  where  p1.searchkeyid = '" + searchkey + "' and " + departfare + " > 0 and " + querylist + " order by finalprice ,totaltaxes, departure, p2.departure ASC")
                 
             else:
                 if 'minPriceMile' in request.POST:
@@ -1561,17 +1518,37 @@ def getsearchresult(request):
                 cabintype = " and " + cabinclass + " > 0"
                 querylist = querylist+cabintype
                 # print '$$$(class filtered): ', querylist
-                record = Flightdata.objects.raw("select p1.*,p1.maintax as maintax1, p1.firsttax as firsttax1, p1.businesstax as businesstax1,p1.rowid as newid ,case when datasource = 'delta' then " + deltaorderprice + "  else " + unitedorderprice + " end as finalprice, "+taxes+" as totaltaxes from pexproject_flightdata as p1 where " + querylist + " order by finalprice ," + taxes + ",departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset))
+                record = Flightdata.objects.raw("select p1.*,p1.maintax as maintax1, p1.firsttax as firsttax1, p1.businesstax as businesstax1,p1.rowid as newid ,case when datasource = 'delta' then " + deltaorderprice + "  else " + unitedorderprice + " end as finalprice, "+taxes+" as totaltaxes from pexproject_flightdata as p1 where " + querylist + " order by finalprice ," + taxes + ",departure ASC")
                 # print '$$$ (synthesis): ', "select p1.*,p1.maintax as maintax1, p1.firsttax as firsttax1, p1.businesstax as businesstax1,p1.rowid as newid ,case when datasource = 'delta' then " + deltaorderprice + "  else " + unitedorderprice + " end as finalprice, "+taxes+" as totaltaxes from pexproject_flightdata as p1 where " + querylist + " order by finalprice ," + taxes + ",departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset)
             mainlist = list(record)
-            
+            # filter aircraft
+            mainlist_ = []            
+            aircrafts_filter = request.POST.getlist('aircraft')
+            if request.is_ajax():
+                aircrafts_filter = aircrafts_filter[0].split(',')
+
+            if aircrafts_filter and aircrafts_filter != [u'']:
+                print len(mainlist), ':Before filter #@#@#@#@#'
+                print aircrafts_filter, '@@@@@@@@@'
+                for flight_ in mainlist:
+                    aircrafts = get_aircraft_info_(flight_)
+                    aircrafts = get_category_aircrafts(aircrafts)
+                    for key, val in aircrafts.items():
+                        if set(aircrafts_filter) & set(val):
+                            mainlist_.append(flight_)
+                            print aircrafts, '#######'
+                            break
+                mainlist = mainlist_
+                print len(mainlist), ':AFter filter #@#@#@#@#'
+            mainlist = mainlist[offset:offset+limit]
+
         progress_value = '' 
         if 'progress_value' in request.POST:
             progress_value = request.REQUEST['progress_value']
             
         recordlen = len(multicitykey1)
         timerecord = Flightdata.objects.raw("SELECT rowid,MAX(departure ) as maxdept,min(departure) as mindept,MAX(arival) as maxarival,min(arival) as minarival FROM  `pexproject_flightdata` ")
-        filterkey = {'stoppage':list2,'fareCodes':json.dumps(codesList),'fareCodelength':len(codesList), 'datasource':list1, 'cabin':cabin,'minpricemile':minpricemile,'maxpricemile':maxpricemile}
+        filterkey = {'stoppage':list2,'fareCodes':json.dumps(codesList),'fareCodelength':len(codesList), 'datasource':list1, 'cabin':cabin,'minpricemile':minpricemile,'maxpricemile':maxpricemile, 'aircraft': json.dumps(aircrafts_filter)}
         if depttime:
             timeinfo = {'maxdept':deptmaxtime, 'mindept':depttime, 'minarival':arivtime, 'maxarival':arivtmaxtime}
         else:
@@ -1605,14 +1582,13 @@ def getsearchresult(request):
             title = multiSearchTitle
             
         if request.is_ajax():
-            # print '$$$ (ajax parameter-data, multirecod)', [(item.rowid, item.searchkeyid, item.datasource, item.flighno) for item in mainlist] 
-            return render_to_response('flightsearch/search.html', {'action':action,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value, 'multisearch':multisearch, 'data':mainlist,'multirecod':mainlist, 'multicity':multicity, 'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request))
+            return render_to_response('flightsearch/search.html', {'action':action,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value, 'multisearch':multisearch, 'data':mainlist, 'multicity':multicity, 'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request))
 
         if 'userid' in request.session and  'actionfor' not in request.POST:
             _, flight = get_reward_config(request)
             pointlist = get_pointlist(request, '%', str(tuple(flight+[''])))
         
-        return render_to_response('flightsearch/searchresult.html', {'title':title,'action':action,'pointlist':pointlist,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value,'multisearch':multisearch,'data':mainlist,'multirecod':mainlist,'multicity':multicity,'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request)) 
+        return render_to_response('flightsearch/searchresult.html', {'title':title,'action':action,'pointlist':pointlist,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value,'multisearch':multisearch,'data':mainlist,'multicity':multicity,'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request)) 
         
 
 def share(request):
@@ -1663,9 +1639,8 @@ def flightAlert(request):
         record_json['traveller'] = str(record.traveller)
         record_json['cabin'] = str(record.cabin)
         record_json['annual_repeat'] = str(record.annual_repeat)
-        data = json.dumps(record_json)
-        mimetype = 'application/json'
-        return HttpResponse(data, mimetype)
+        return JsonResponse(record_json)
+
     userid = request.session['userid']
     #print "userid",userid
     alertResult1 = UserAlert.objects.filter(userid=userid)
@@ -1681,8 +1656,8 @@ def useralert(request):
         UserAlert.objects.get(pk=alertid).delete()
         
     if request.POST and  'userid' in request.session:
-    	currentDate = datetime.datetime.now().date()
-    	preDate = currentDate - timedelta(days=1)
+        currentDate = datetime.datetime.now().date()
+        preDate = currentDate - timedelta(days=1)
         message = ''
         alertuser = UserAlert()
         alertuser.cabin = request.POST['cabintype']
@@ -1838,7 +1813,7 @@ def check_validity_hotel_params(request):
     if not (is_number(price_low) and is_number(price_high) and is_number(award_low) and is_number(award_high) and is_number(radius)):
         return  ['Filter parameters should be number']
 
-    filters = {'price_low':price_low, 'price_high':price_high, 'award_low':award_low, 'award_high':award_high, 'radius': float(radius), 'chain': chain }
+    filters = {'price_low':price_low, 'price_high':price_high, 'award_low':award_low, 'award_high':award_high, 'radius': float(radius), 'chain': chain, 'amenity': [] }
     return ['', place, checkin, checkout, filters]
 
 
@@ -1852,14 +1827,16 @@ def api_search_hotel(request):
         if error_message:
             result['status'] = 'Failed'
             result['message'] = error_message
-            return HttpResponse(json.dumps(result), 'application/json')
+            return JsonResponse(result)
+
 
         _params = check_validity_hotel_params(request)
         error_message = _params[0]
         if error_message:
             result['status'] = 'Failed'
             result['message'] = error_message
-            return HttpResponse(json.dumps(result), 'application/json')
+            return JsonResponse(result)
+
 
         # _result = _search_hotel(place, checkin, checkout, filters)
         _result = _search_hotel(_params[1], _params[2], _params[3], _params[4])
@@ -1873,9 +1850,10 @@ def api_search_hotel(request):
             result['status'] = 'Success'
             result['price_matrix'] = price_matrix
             # result['filters'] = filters
-            result['hotels'] = [model_to_dict(item) for item in db_hotels]
+            result['hotels'] = db_hotels
 
-        return HttpResponse(json.dumps(result), 'application/json')
+        return JsonResponse(result, safe=False)
+
         
 
 def _search_hotel(place, checkin, checkout, filters):
@@ -2202,7 +2180,7 @@ def check_validity_token(token, service, request):
         request.session['userid'] = token.owner.user_id
 
         # send email notification once
-        if number_request >= limit_request * SEARCH_LIMIT_WARNING_THRESHOLD and (number_request - 1) < limit_request * SEARCH_LIMIT_WARNING_THRESHOLD:
+        if number_request >= limit_request * settings.SEARCH_LIMIT_WARNING_THRESHOLD and (number_request - 1) < limit_request * settings.SEARCH_LIMIT_WARNING_THRESHOLD:
             send_limit_warning_email(token.owner, service)
 
         if number_request > limit_request:
@@ -2240,7 +2218,7 @@ def check_validity_flight_params(request):
     return_date = params.get('return_date')
     search_type = params.get('search_type', 'exactdate')
     flight_class = params.get('class')
-    mile_low = params.get('mile_low') or '0'
+    mile_low = params.get('mile_low') or '1'
     mile_high = params.get('mile_high') or '10000000'
     airlines = params.get('airlines') or ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']
     airlines.append('valid_line')
@@ -2327,7 +2305,8 @@ def api_search_flight(request):
         if error_message:
             result['status'] = 'Failed'
             result['message'] = error_message
-            return HttpResponse(json.dumps(result), 'application/json')
+            return JsonResponse(result)
+
 
         fare_class = json.loads(request.body).get('class')
         _params = check_validity_flight_params(request)
@@ -2335,7 +2314,8 @@ def api_search_flight(request):
         if error_message:
             result['status'] = 'Failed'
             result['message'] = error_message
-            return HttpResponse(json.dumps(result), 'application/json')
+            return JsonResponse(result)
+
 
         # get valid parameters
         return_date, origin, destination, depart_date, search_type, flight_class, mile_low, mile_high, airlines, depart_from, depart_to, arrival_from, arrival_to = _params[1], _params[2], _params[3], _params[4], _params[5], _params[6], _params[7], _params[8], _params[9], _params[10], _params[11], _params[12], _params[13]
@@ -2377,12 +2357,15 @@ def api_search_flight(request):
             flights = []
             # convert each property to string for json dump
             for flight in flights_:
-                flight_ = model_to_dict(flight, exclude=['rowid', 'scrapetime', 'searchkeyid', 'stoppage_station', 'arivedetails', 'operatedby', 'departdetails', 'planedetails', 'economy_code', 'first_fare_code', 'first_code', 'eco_fare_code', 'arival'])
+                flight_ = model_to_dict(flight, exclude=['rowid', 'scrapetime', 'searchkeyid', 'stoppage_station', 'arivedetails', 'operatedby', 'departdetails', 'planedetails', 'economy_code', 'first_fare_code', 'first_code', 'eco_fare_code', 'arival', 'business_code', 'firsttax', 'maintax', 'businesstax', 'cabintype3', 'cabintype2', 'business', 'maincabin', 'cabintype1', 'firstclass', 'business_fare_code'])
                 flight_['arrival'] = flight.arival
                 flight_['image'] = 'pexportal.com/static/flightsearch/img/'+logos[flight.datasource]
                 price_key = get_qpx_price_key(flight.planedetails)        
                 # flight_['price_key'] = price_key
                 flight_['price'] = qpx_prices.get(price_key.encode('ascii', 'ignore'), 'N/A')
+
+                flight_['total_miles'] = getattr(flight, FLIGHT_CLASS[fare_class][0])
+                flight_['total_taxes'] = getattr(flight, FLIGHT_CLASS[fare_class][1])
 
                 # compute percentage of match
                 if flight_['price'] == 'N/A':
@@ -2452,8 +2435,7 @@ def api_search_flight(request):
 
         result['status'] = 'Success'
         result['flights'] = flights
-
-        return HttpResponse(json.dumps(result), 'application/json')
+        return JsonResponse(result, safe=False)
 
 # admin views
 
@@ -3480,3 +3462,84 @@ def get_history(request):
                 break
 
     return render(request, 'flightsearch/show_history_dialog.html', { 'history': r_history })    
+
+
+def get_aircraft_category(request):
+    """
+    Get a category of aircrafts after flight search is done.
+    It is callef from ajax.
+    """
+    cabinclass = request.POST.get('cabin', '')
+    multicitykey = request.POST.get('multicity', '')
+    key = request.POST.get('keyid', '')
+    returnkeyid = request.POST.get('returnkey', '')
+    aircraft = request.POST.get('aircraft', '[]')[1:-1]
+    aircraft = aircraft.replace('&quot;', '').split(', ')
+
+    if multicitykey:
+        print multicitykey, '%%%%%%%%%%%%%'
+    else:
+        # if returnkeyid:
+        #     pass
+        # else:
+        fd = Flightdata.objects.filter(~Q(origin='flag'), Q(searchkeyid=int(key)))
+        aircrafts = get_aircraft_info(fd)
+        cate_aircrafts = get_category_aircrafts(aircrafts)
+        return render(request, 'flightsearch/aircraft_category.html', {'aircraft_category': cate_aircrafts, 'aircraft': aircraft})
+
+    return HttpResponse('')
+
+
+def get_aircraft_info(flights):
+    """
+    Get a set of aircraft information (aircraft, plane type)
+    It returns a set of aircraft info.
+    """
+    ac = set([])
+    for fd_item in flights:
+        ac = ac | get_aircraft_info_(fd_item)
+    return ac
+
+
+def get_aircraft_info_(flight):
+    """
+    Get a set of aircraft information (aircraft, plane type) for a flight
+    It returns a set of aircraft info.
+    """
+    ac = []
+    for fdd in flight.planedetails.split('@'):
+        fda = re.search(r'^.*\| (.*?) \(.*$', fdd)
+        if fda:
+            ac.append(fda.group(1).strip())
+    return set(ac)
+
+
+def get_category_aircrafts(aircrafts):
+    """
+    Get the category of aircrafts from aircrafts info
+    It returns a dictionary of aircraft: plane types
+    """
+    specialties = ['McDonnell Douglas ']
+
+    cate_aircrafts = {}
+    for aircraft in aircrafts:
+        ai = aircraft.find(' ')
+        if ai < 0: # just in case
+            continue
+        key = aircraft[:ai]
+        val = aircraft[ai+1:]
+
+        for item in specialties:
+            if aircraft.startswith(item):
+                key = item
+                val = aircraft[len(item):]
+
+        if key in cate_aircrafts:
+            cate_aircrafts[key].add(val)
+        else:
+            cate_aircrafts[key] = set([val])
+
+    for key, val in cate_aircrafts.items():
+        cate_aircrafts[key] = sorted(val)
+
+    return collections.OrderedDict(sorted(cate_aircrafts.items()))
