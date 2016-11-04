@@ -2335,7 +2335,7 @@ def api_search_flight(request):
             carriers, max_stop = get_qpx_filter_carriers(origin, destination)
             qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date, _token[2], carriers, max_stop)
             delta_departure_price, delta_return_price = get_delta_price(origin_, destination_, depart_date, return_date)
-            delay_threshold -= (datetime.datetime.now - price_start_time).seconds
+            delay_threshold -= (datetime.datetime.now() - price_start_time).seconds
 
         qpx_unmatch_count = 0
 
