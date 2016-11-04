@@ -19,7 +19,7 @@ FARE_CLASSES = {
 }
 
 
-def delta(orgn, dest, searchdate, passenger=1):
+def delta(orgn, dest, searchdate, returndate=None, passenger=1):
     url = "http://www.delta.com/"   
     display = Display(visible=0, size=(800, 600))
     display.start()
@@ -165,10 +165,10 @@ def delta(orgn, dest, searchdate, passenger=1):
     
 
     for item in flightData:
-        flight_code = []
+        flight_code = ''
         for flight in item['slices'][0]['flights']:
-            flight_code.append(flight['legs'][0]['marketAirline']['airline']['airlineCode'] + flight['legs'][0]['marketAirline']['flightNbr']) 
-        flight_code = '@'.join(flight_code)
+            flight_code += flight['legs'][0]['marketAirline']['airline']['airlineCode'] + flight['legs'][0]['marketAirline']['flightNbr'] + '@'
+        flight_code += '--'
     
         delta_ = {}
         for class_ in item['totalFare']:

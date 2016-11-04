@@ -6,35 +6,34 @@ import selenium
 import datetime
 from datetime import timedelta
 import time
+import _strptime
+import MySQLdb
 import re
 from datetime import date
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
 from pyvirtualdisplay import Display
+import customfunction
+import socket
 import json
 import urllib
 
-DEV_LOCAL = False
-# DEV_LOCAL = True
-
-if not DEV_LOCAL:
-    import customfunction
-else:
-    import pdb
-
 def delta(orgn, dest, searchdate, searchkey):
-    if not DEV_LOCAL:
-        db = customfunction.dbconnection()
-        cursor = db.cursor()
-        db.set_character_set('utf8')
+    db = customfunction.dbconnection()
+    cursor = db.cursor()
+    db.set_character_set('utf8')
     url = "http://www.delta.com/"   
     searchid = str(searchkey)
     currentdatetime = datetime.datetime.now()
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     display = Display(visible=0, size=(800, 600))
     display.start()
+    '''
+    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
+    driver.set_window_size(1120, 1080) '''
     driver = webdriver.Chrome()
     def storeFlag(searchkey,stime):
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag","flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "delta", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
@@ -69,15 +68,13 @@ def delta(orgn, dest, searchdate, searchkey):
         
     except:
         print "before data page"
-        if not DEV_LOCAL:
-            storeFlag(searchkey,stime)
+        storeFlag(searchkey,stime)
         return searchkey
     time.sleep(1)
     try:
         WebDriverWait(driver,5).until(EC.presence_of_element_located((By.ID, "submitAdvanced")))
         print "no data"
-        if not DEV_LOCAL:
-            storeFlag(searchkey,stime)
+        storeFlag(searchkey,stime)
         return searchkey
     except:
         print "Data found"
@@ -141,52 +138,51 @@ def delta(orgn, dest, searchdate, searchkey):
         """)
     except:
         print "single page"
-        # try:
-        driver.execute_script("""
-        var sortBy = "deltaScheduleAward" ;
-        SearchFlightResultsDWR.searchResults(currentSessionCheckSum, sortBy[0], delta.airShopping.numberOfColumnsToRequest, delta.airShopping.cacheKey, {
-            async: true,
-            timeout: 65000,
-            callback: function(searchResults) {
-                    var jsonData = {};
+        try:
+            driver.execute_script("""
+            var sortBy = "deltaScheduleAward" ;
+            SearchFlightResultsDWR.searchResults(currentSessionCheckSum, sortBy[0], delta.airShopping.numberOfColumnsToRequest, delta.airShopping.cacheKey, {
+                async: true,
+                timeout: 65000,
+                callback: function(searchResults) {
+                        var jsonData = {};
+                        
+                        jsonData['jsonobj'] = JSON.stringify(searchResults);
+                        var cabininfo = document.getElementsByClassName('tblHeadUp')[0].innerHTML;
+                        jsonData['cabinTypes'] = cabininfo;
+                        localStorage.setItem('deltaData', JSON.stringify(jsonData));
+                        var element = document.createElement('div');
+                        element.id = "submitAdvanced";
+                        element.appendChild(document.createTextNode("text"));
+                        document.body.appendChild(element);
+                        throw new Error("Results found");
+                        
+                    if (searchResults.errorFwdURL == null || searchResults.errorFwdURL == "") {
+                        flightResultsObj.isDOMReady(searchResults, action, false);
+                        FilterFunctions.hideFilterMsg();
+                    } else {
                     
-                    jsonData['jsonobj'] = JSON.stringify(searchResults);
-                    var cabininfo = document.getElementsByClassName('tblHeadUp')[0].innerHTML;
-                    jsonData['cabinTypes'] = cabininfo;
-                    localStorage.setItem('deltaData', JSON.stringify(jsonData));
-                    var element = document.createElement('div');
-                    element.id = "submitAdvanced";
-                    element.appendChild(document.createTextNode("text"));
-                    document.body.appendChild(element);
-                    throw new Error("Results found");
-                    
-                if (searchResults.errorFwdURL == null || searchResults.errorFwdURL == "") {
-                    flightResultsObj.isDOMReady(searchResults, action, false);
-                    FilterFunctions.hideFilterMsg();
-                } else {
-                
-                    flightResultsObj.isDOMReady(searchResults, false, true);
+                        flightResultsObj.isDOMReady(searchResults, false, true);
+                    }
+                    if (!action) {
+                        Wait.hide();
+                        $(".tableHeaderHolderFareBottom").show();
+                        $("#nextGenAirShopping .tableHeaderHolder").show();
+                    }
+                },
+                errorHandler: function(msg, exc) {
+                    shoppingUtil.errorHandler(msg, exc);
+                },
+                exceptionHandler: function(msg, exc) {
+                    (action) ? FilterFunctions.hideFilterMsg(): "";
+                    shoppingUtil.exceptionHandler(msg, exc);
                 }
-                if (!action) {
-                    Wait.hide();
-                    $(".tableHeaderHolderFareBottom").show();
-                    $("#nextGenAirShopping .tableHeaderHolder").show();
-                }
-            },
-            errorHandler: function(msg, exc) {
-                shoppingUtil.errorHandler(msg, exc);
-            },
-            exceptionHandler: function(msg, exc) {
-                (action) ? FilterFunctions.hideFilterMsg(): "";
-                shoppingUtil.exceptionHandler(msg, exc);
-            }
-        });
-        
-        """)
-        # except:
-        #     if not DEV_LOCAL:
-        #         storeFlag(searchkey,stime)
-        #     return searchkey
+            });
+            
+            """)
+        except:
+            storeFlag(searchkey,stime)
+            return searchkey
     try:
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "submitAdvanced")))
         result = driver.execute_script(""" return localStorage.getItem('deltaData'); """)
@@ -201,8 +197,7 @@ def delta(orgn, dest, searchdate, searchkey):
             pricecol = soup.findAll("label",{"class":"tblHeadBigtext"})
         flightData = searchResult["itineraries"]
     except:
-        if not DEV_LOCAL:
-            storeFlag(searchkey,stime)
+        storeFlag(searchkey,stime)
         return searchkey
     
     values_string = []
@@ -259,22 +254,14 @@ def delta(orgn, dest, searchdate, searchkey):
                         departinfo_time = datetime.datetime.strptime(departinfo_time, '%a %b %d %Y %I:%M%p')
                         departinfo_time = departinfo_time.strftime('%Y/%m/%d %H:%M')
 
-                        if not DEV_LOCAL:
-                            airport_ = customfunction.get_airport_detail(fromAirport) or fromAirport
-                        else:
-                            airport_ = fromAirport
-
+                        airport_ = customfunction.get_airport_detail(fromAirport) or fromAirport
                         fromDetail = departinfo_time+" | from  "+airport_
                         departDetail.append(fromDetail)
                         departinfo_time = schedArrivalDate+" "+schedArrivalTime
                         departinfo_time = datetime.datetime.strptime(departinfo_time, '%a %b %d %Y %I:%M%p')
                         departinfo_time = departinfo_time.strftime('%Y/%m/%d %H:%M')
 
-                        if not DEV_LOCAL:
-                            airport_ = customfunction.get_airport_detail(destAirport) or destAirport
-                        else:
-                            airport_ = destAirport
-                            
+                        airport_ = customfunction.get_airport_detail(destAirport) or destAirport
                         toDetails = departinfo_time+" | at "+airport_
                         ariveDetail.append(toDetails)
                         aircraft = legdetail['aircraft']['shortName']
@@ -329,11 +316,13 @@ def delta(orgn, dest, searchdate, searchkey):
                 if ',' in miles:
                     miles = miles.replace(',','')
                 taxInt = totalFareDetails[j]['totalPriceLeft']
-                if ',' in taxInt:
-                    taxInt = taxInt.replace(',','')
+        if ',' in taxInt:
+            taxInt = taxInt.replace(',','')
                 taxFloat = totalFareDetails[j]['totalPriceRight']
                 if taxFloat == '' or taxFloat == None:
                     taxFloat = 0
+        #print "taxint",taxInt
+        #print "taxfloat",taxFloat
                 tax = float(taxInt)+float(taxFloat)
                 currencyCode = totalFareDetails[j]['currencyCode']
                 if currencyCode and currencyCode != 'USD': 
@@ -395,26 +384,21 @@ def delta(orgn, dest, searchdate, searchkey):
         departTime = departTime1.strftime('%H:%M')
         values_string.append((flightNo, str(searchkey), stime, stoppage, "test", SourceCOde, destinationCode, departTime, arivalTime, tripDuration, str(ecofare), str(echoTax), str(bussfare), str(busstax), str(firstFare), str(firsttax), cabintype1, cabintype2, cabintype3, "delta", departdetailtext, ariveDetailtext, flightDetailtext, operatorDetailtext,ecofareClass,bussFareClass,firstFareClass,eco_fare_code,bus_fare_code,first_fare_code))
         if len(values_string) > 50:
-            if not DEV_LOCAL:
-                cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code,eco_fare_code,business_fare_code,first_fare_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", values_string)
-                db.commit()
-            print values_string
+            cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code,eco_fare_code,business_fare_code,first_fare_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", values_string)
+            db.commit()
             values_string =[]
             
     if len(values_string) > 0:
-        if not DEV_LOCAL:
-            cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code,eco_fare_code,business_fare_code,first_fare_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", values_string)
-            db.commit()
-        print values_string               
+        cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code,eco_fare_code,business_fare_code,first_fare_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", values_string)
+        db.commit()
+               
     driver.quit()
     display.stop()
-    if not DEV_LOCAL:
-        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "delta", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
-        db.commit()
+    cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "delta", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
+    db.commit()
     return searchkey
             
             
 if __name__=='__main__':
     delta(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[5])
-    # delta('ewr', 'msp', '12/15/2016', 12345)
         
