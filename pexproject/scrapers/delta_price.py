@@ -24,7 +24,6 @@ def delta(orgn, dest, searchdate, returndate=None, passenger=1):
     display = Display(visible=0, size=(800, 600))
     display.start()
     driver = webdriver.Chrome()
-    delta_price = {}
 
     try:
         driver.get(url)
@@ -41,7 +40,31 @@ def delta(orgn, dest, searchdate, returndate=None, passenger=1):
         driver.find_element_by_id("findFlightsSubmit").send_keys(Keys.ENTER)
     except:
         print "before data page"
-        return delta_price
+        display.stop()
+        driver.quit()
+        return {}, {}
+
+    departure_price = get_price(driver)
+    return_price = {}
+
+    if returndate:
+        origin = driver.find_element_by_id("departureCity0")
+        origin.clear()
+        origin.send_keys(dest.strip())
+        destination = driver.find_element_by_id("destinationCity0")
+        destination.send_keys(orgn.strip())
+        ddate = driver.find_element_by_id("departureDate")  
+        driver.execute_script("document.getElementById('departureDate').setAttribute('value', '"+str(returndate)+"')")
+        driver.find_element_by_id("findFlightsSubmit").send_keys(Keys.ENTER)
+        return_price = get_price(driver)
+
+    display.stop()
+    driver.quit()
+    return departure_price, return_price            
+
+
+def get_price(driver):
+    delta_price = {}
 
     try:
         WebDriverWait(driver,5).until(EC.presence_of_element_located((By.ID, "submitAdvanced")))
@@ -177,11 +200,11 @@ def delta(orgn, dest, searchdate, returndate=None, passenger=1):
                 delta_[FARE_CLASSES[class_['cabinName'][:5]]] = price
         delta_price[flight_code] = delta_
 
-    return delta_price
-            
-            
+    return delta_price            
+
+
 if __name__=='__main__':
     # pdb.set_trace()
     start_time = datetime.datetime.now()
-    print delta('pek', 'svo', '12/14/2016')
+    print delta('pek', 'svo', '12/14/2016', '12/24/2016')
     print (datetime.datetime.now() - start_time).seconds, '###'
