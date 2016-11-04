@@ -44,6 +44,7 @@ from django.forms.models import model_to_dict
 
 from .scrapers.customfunction import is_scrape_vAUS,is_scrape_aeroflot,is_scrape_virginAmerica,is_scrape_etihad,is_scrape_delta,is_scrape_united,is_scrape_virgin_atlantic,is_scrape_jetblue,is_scrape_aa, is_scrape_s7, is_scrape_airchina
 from .scrapers import customfunction
+from .scrapers.delta_price import get_delta_price
 from .scrapers.config import config as sys_config
 from .form import *
 from pexproject.models import *
@@ -2322,7 +2323,7 @@ def api_search_flight(request):
 
         keys = _search(return_date, origin, destination, depart_date, search_type, flight_class, request)        
 
-        delay_threshold = 30 if keys['returnkey'] else 35
+        delay_threshold = 38 if keys['returnkey'] else 42
 
         qpx_prices = {}
         # get qpx price
@@ -2330,13 +2331,16 @@ def api_search_flight(request):
         destination_ = Airports.objects.get(airport_id=destination).code
 
         if _token[1]:   # check qpx limit
+            price_start_time = datetime.datetime.now()
             carriers, max_stop = get_qpx_filter_carriers(origin, destination)
             qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date, _token[2], carriers, max_stop)
+            delta_departure_price, delta_return_price = get_delta_price(origin_, destination_, depart_date, return_date)
+            delay_threshold -= (datetime.datetime.now - price_start_time).seconds
 
         qpx_unmatch_count = 0
 
         while(1):
-            delay_threshold = delay_threshold - 1
+            delay_threshold -= 1
             time.sleep(1)
             # check the status of the scraping
             scrape_status = _check_data(keys['departkey'], keys['returnkey'], flight_class, '')
@@ -2360,9 +2364,13 @@ def api_search_flight(request):
                 flight_ = model_to_dict(flight, exclude=['rowid', 'scrapetime', 'searchkeyid', 'stoppage_station', 'arivedetails', 'operatedby', 'departdetails', 'planedetails', 'economy_code', 'first_fare_code', 'first_code', 'eco_fare_code', 'arival', 'business_code', 'firsttax', 'maintax', 'businesstax', 'cabintype3', 'cabintype2', 'business', 'maincabin', 'cabintype1', 'firstclass', 'business_fare_code'])
                 flight_['arrival'] = flight.arival
                 flight_['image'] = 'pexportal.com/static/flightsearch/img/'+logos[flight.datasource]
-                price_key = get_qpx_price_key(flight.planedetails)        
-                # flight_['price_key'] = price_key
-                flight_['price'] = qpx_prices.get(price_key.encode('ascii', 'ignore'), 'N/A')
+                price_key = get_qpx_price_key(flight.planedetails).encode('ascii', 'ignore')        
+                # flight_['price'] = qpx_prices.get(price_key.encode('ascii', 'ignore'), 'N/A')
+                flight_['price'] = qpx_prices.get(price_key, 'N/A')
+                if flight_['price'] == 'N/A':
+                    delta_price = delta_departure_price.get(price_key)
+                    if delta_price:
+                        flight_['price'] = delta_price.get(fare_class, 'N/A')
 
                 flight_['total_miles'] = getattr(flight, FLIGHT_CLASS[fare_class][0])
                 flight_['total_taxes'] = getattr(flight, FLIGHT_CLASS[fare_class][1])
@@ -2418,8 +2426,21 @@ def api_search_flight(request):
                 _item['total_miles'] = item.total_miles
                 _item['total_taxes'] = item.total_taxes
 
-                price_key = get_qpx_price_key(item.planedetails) + get_qpx_price_key(item.return_planedetails)
-                _item['price'] = qpx_prices.get(price_key.encode('ascii', 'ignore'), 'N/A')
+                price_key_d = get_qpx_price_key(item.planedetails).encode('ascii', 'ignore')
+                price_key_r = get_qpx_price_key(item.return_planedetails).encode('ascii', 'ignore')
+                _item['price'] = qpx_prices.get(price_key_d+price_key_r, 'N/A')
+
+                # get delta price
+                if _item['price'] == 'N/A':
+                    delta_price = delta_departure_price.get(price_key_d)
+                    if delta_price:
+                        price_d = delta_price.get(fare_class)
+                        if price_d:
+                            delta_price = delta_return_price.get(price_key_r)
+                            if delta_price:
+                                price_r = delta_price.get(fare_class)
+                                if price_r:
+                                    _item['price'] = price_d[:3] + str(float(price_d[3:])+float(price_r[3:]))
 
                 # compute percentage of match
                 if _item['price'] == 'N/A':

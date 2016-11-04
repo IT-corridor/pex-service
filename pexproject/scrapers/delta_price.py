@@ -4,6 +4,7 @@ import datetime
 import json
 import urllib
 import pdb
+import codecs
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -19,11 +20,21 @@ FARE_CLASSES = {
 }
 
 
-def delta(orgn, dest, searchdate, returndate=None, passenger=1):
+def get_delta_price(orgn, dest, searchdate, returndate=None, passenger=1):
+    """
+    Scrape Delta.com and return price dictionary.
+    For roundtrip, it scrapes twice as 2 oneways.
+    Return 2 dictionary; one for departure and the other for return.
+    key format is same as QPX.
+    Additionally it returns the price according to the cabin.
+    e.g) u'DL2830@DL1878@--': {'firstclass': u'USD511.10', 'business': u'USD290.95', 'economy': u'USD251.60'}
+    It takes about 23 seconds for oneway, 37 for roundtrip
+    """
     url = "http://www.delta.com/"   
     display = Display(visible=0, size=(800, 600))
     display.start()
     driver = webdriver.Chrome()
+    sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
 
     try:
         driver.get(url)
@@ -48,15 +59,23 @@ def delta(orgn, dest, searchdate, returndate=None, passenger=1):
     return_price = {}
 
     if returndate:
-        origin = driver.find_element_by_id("departureCity0")
-        origin.clear()
-        origin.send_keys(dest.strip())
-        destination = driver.find_element_by_id("destinationCity0")
-        destination.send_keys(orgn.strip())
-        ddate = driver.find_element_by_id("departureDate")  
-        driver.execute_script("document.getElementById('departureDate').setAttribute('value', '"+str(returndate)+"')")
-        driver.find_element_by_id("findFlightsSubmit").send_keys(Keys.ENTER)
-        return_price = get_price(driver)
+        try:
+            driver.get(url)
+            WebDriverWait(driver, 6).until(EC.presence_of_element_located((By.ID, "oneWayBtn")))
+            oneway = driver.find_element_by_id('oneWayBtn')
+            driver.execute_script("arguments[0].click();", oneway)
+            origin = driver.find_element_by_id("originCity")
+            origin.clear()
+            origin.send_keys(dest.strip())
+            destination = driver.find_element_by_id("destinationCity")
+            destination.clear()
+            destination.send_keys(orgn.strip())
+            ddate = driver.find_element_by_id("departureDate")  
+            driver.execute_script("document.getElementById('departureDate').setAttribute('value', '"+str(returndate)+"')")
+            driver.find_element_by_id("findFlightsSubmit").send_keys(Keys.ENTER)
+            return_price = get_price(driver)
+        except Exception, e:
+            pass
 
     display.stop()
     driver.quit()
@@ -206,5 +225,5 @@ def get_price(driver):
 if __name__=='__main__':
     # pdb.set_trace()
     start_time = datetime.datetime.now()
-    print delta('pek', 'svo', '12/14/2016', '12/24/2016')
+    print get_delta_price('ewr', 'msp', '12/14/2016', '12/24/2016')
     print (datetime.datetime.now() - start_time).seconds, '###'
