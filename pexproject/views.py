@@ -2440,7 +2440,7 @@ def api_search_flight(request):
                             delta_price = delta_return_price.get(price_key_r)                            
                             if delta_price:
                                 price_r = delta_price.get(fare_class)
-                                print price_key_d, price_key_r, fare_class, '#####'
+                                print price_d, price_r, fare_class, '#####'
                                 if price_r:
                                     _item['price'] = price_d[:3] + str(float(price_d[3:])+float(price_r[3:]))
 
