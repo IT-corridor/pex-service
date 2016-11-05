@@ -2429,13 +2429,14 @@ def api_search_flight(request):
 
                 price_key_d = get_qpx_price_key(item.planedetails).encode('ascii', 'ignore')
                 price_key_r = get_qpx_price_key(item.return_planedetails).encode('ascii', 'ignore')
-                print price_key_d, price_key_r, fare_class, '#####'
                 _item['price'] = qpx_prices.get(price_key_d+price_key_r, 'N/A')
 
                 # get delta price
                 if _item['price'] == 'N/A':
                     delta_price = delta_departure_price.get(price_key_d)
                     if delta_price:
+                        print price_key_d, price_key_r, fare_class, '#####'
+
                         price_d = delta_price.get(fare_class)
                         if price_d:
                             delta_price = delta_return_price.get(price_key_r)
