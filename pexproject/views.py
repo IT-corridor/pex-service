@@ -2435,11 +2435,11 @@ def api_search_flight(request):
                 if _item['price'] == 'N/A':
                     delta_price = delta_departure_price.get(price_key_d)
                     if delta_price:
-                        print price_key_d, price_key_r, fare_class, '#####'
-
                         price_d = delta_price.get(fare_class)
                         if price_d:
                             delta_price = delta_return_price.get(price_key_r)
+                            print price_key_d, price_key_r, fare_class, '#####'
+
                             if delta_price:
                                 price_r = delta_price.get(fare_class)
                                 if price_r:
