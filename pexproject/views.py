@@ -2431,7 +2431,7 @@ def api_search_flight(request):
                 price_key_d = get_qpx_price_key(item.planedetails).encode('ascii', 'ignore')
                 price_key_r = get_qpx_price_key(item.return_planedetails).encode('ascii', 'ignore')
                 _item['price'] = qpx_prices.get(price_key_d+price_key_r, 'N/A')
-
+                print price_key_d, price_key_r, '####'
                 # get delta price
                 if _item['price'] == 'N/A':
                     delta_price = delta_departure_price.get(price_key_d)
