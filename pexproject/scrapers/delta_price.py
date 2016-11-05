@@ -71,7 +71,9 @@ def get_delta_price(orgn, dest, searchdate, returndate=None, passenger=1):
             destination.clear()
             destination.send_keys(orgn.strip())
             ddate = driver.find_element_by_id("departureDate")  
-            driver.execute_script("document.getElementById('departureDate').setAttribute('value', '"+str(returndate)+"')")
+            ddate.clear()
+            ddate.send_keys(returndate.strip())
+            # driver.execute_script("$('#departureDate').val('"+returndate+"');")
             driver.find_element_by_id("findFlightsSubmit").send_keys(Keys.ENTER)
             return_price = get_price(driver)
         except Exception, e:
@@ -79,6 +81,8 @@ def get_delta_price(orgn, dest, searchdate, returndate=None, passenger=1):
 
     display.stop()
     driver.quit()
+    # print departure_price
+    # print return_price
     return departure_price, return_price            
 
 
@@ -225,5 +229,5 @@ def get_price(driver):
 if __name__=='__main__':
     # pdb.set_trace()
     start_time = datetime.datetime.now()
-    print get_delta_price('ewr', 'msp', '12/14/2016', '12/24/2016')
+    get_delta_price('msp', 'ewr', '11/26/2016', '12/15/2016')
     print (datetime.datetime.now() - start_time).seconds, '###'
