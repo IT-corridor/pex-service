@@ -2335,7 +2335,8 @@ def api_search_flight(request):
             carriers, max_stop = get_qpx_filter_carriers(origin, destination)
             qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date, _token[2], carriers, max_stop)
             delta_departure_price, delta_return_price = get_delta_price(origin_, destination_, depart_date, return_date)
-            print delta_departure_price, delta_return_price, '#######'
+            print delta_departure_price, '#######'
+            print delta_return_price, '######'
             delay_threshold -= (datetime.datetime.now() - price_start_time).seconds
 
         qpx_unmatch_count = 0
@@ -2440,9 +2441,10 @@ def api_search_flight(request):
                             delta_price = delta_return_price.get(price_key_r)                            
                             if delta_price:
                                 price_r = delta_price.get(fare_class)
-                                print price_d, price_r, fare_class, '#####'
                                 if price_r:
+                                    print price_d, price_r, fare_class, '#####'
                                     _item['price'] = price_d[:3] + str(float(price_d[3:])+float(price_r[3:]))
+                                    print _item['price']
 
                 # compute percentage of match
                 if _item['price'] == 'N/A':
