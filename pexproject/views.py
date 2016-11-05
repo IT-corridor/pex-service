@@ -2442,9 +2442,9 @@ def api_search_flight(request):
                             if delta_price:
                                 price_r = delta_price.get(fare_class)
                                 if price_r:
-                                    print price_d, price_r, fare_class, '#####'
+                                    # print price_d, price_r, fare_class, '#####'
                                     _item['price'] = price_d[:3] + str(float(price_d[3:])+float(price_r[3:]))
-                                    print _item['price']
+                                    # print _item['price']
 
                 # compute percentage of match
                 if _item['price'] == 'N/A':
