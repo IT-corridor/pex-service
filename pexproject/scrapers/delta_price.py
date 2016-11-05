@@ -220,7 +220,9 @@ def get_price(driver):
         for class_ in item['totalFare']:
             if class_['currencyCode']:
                 price = class_['currencyCode']+class_['totalForAllPaxLeft'].replace(',','')+class_['totalForAllPaxRight']
-                delta_[FARE_CLASSES[class_['cabinName'][:5]]] = price
+                cabin = class_['cabinName'][:5]
+                if cabin in FARE_CLASSES.keys():
+                    delta_[FARE_CLASSES[cabin]] = price
         delta_price[flight_code] = delta_
 
     return delta_price            
