@@ -81,8 +81,8 @@ def get_delta_price(orgn, dest, searchdate, returndate=None, passenger=1):
 
     display.stop()
     driver.quit()
-    # print departure_price
-    # print return_price
+    print departure_price
+    print return_price
     return departure_price, return_price            
 
 
@@ -223,6 +223,8 @@ def get_price(driver):
                 cabin = class_['cabinName'][:5]
                 if cabin in FARE_CLASSES.keys():
                     delta_[FARE_CLASSES[cabin]] = price
+                else:
+                    class_['cabinName']
         delta_price[flight_code] = delta_
 
     return delta_price            
@@ -231,5 +233,5 @@ def get_price(driver):
 if __name__=='__main__':
     # pdb.set_trace()
     start_time = datetime.datetime.now()
-    get_delta_price('msp', 'ewr', '11/26/2016', '12/15/2016')
+    get_delta_price('msp', 'tlv', '11/26/2016', '12/29/2016')
     print (datetime.datetime.now() - start_time).seconds, '###'
