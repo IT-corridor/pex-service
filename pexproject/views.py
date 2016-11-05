@@ -2335,6 +2335,7 @@ def api_search_flight(request):
             carriers, max_stop = get_qpx_filter_carriers(origin, destination)
             qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date, _token[2], carriers, max_stop)
             delta_departure_price, delta_return_price = get_delta_price(origin_, destination_, depart_date, return_date)
+            print delta_departure_price, delta_return_price, '#######'
             delay_threshold -= (datetime.datetime.now() - price_start_time).seconds
 
         qpx_unmatch_count = 0
@@ -2365,8 +2366,8 @@ def api_search_flight(request):
                 flight_['arrival'] = flight.arival
                 flight_['image'] = 'pexportal.com/static/flightsearch/img/'+logos[flight.datasource]
                 price_key = get_qpx_price_key(flight.planedetails).encode('ascii', 'ignore')        
-                # flight_['price'] = qpx_prices.get(price_key.encode('ascii', 'ignore'), 'N/A')
                 flight_['price'] = qpx_prices.get(price_key, 'N/A')
+                # get delta price
                 if flight_['price'] == 'N/A':
                     delta_price = delta_departure_price.get(price_key)
                     if delta_price:
@@ -2428,6 +2429,7 @@ def api_search_flight(request):
 
                 price_key_d = get_qpx_price_key(item.planedetails).encode('ascii', 'ignore')
                 price_key_r = get_qpx_price_key(item.return_planedetails).encode('ascii', 'ignore')
+                print price_key_d, price_key_r, fare_class, '#####'
                 _item['price'] = qpx_prices.get(price_key_d+price_key_r, 'N/A')
 
                 # get delta price
