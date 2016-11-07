@@ -2328,14 +2328,14 @@ def api_search_flight(request):
 
         qpx_prices = {}
         # get qpx price
-        origin_ = get_code_for_qpx(Airports.objects.get(airport_id=origin).code)
-        destination_ = get_code_for_qpx(Airports.objects.get(airport_id=destination).code)
+        origin_ = Airports.objects.get(airport_id=origin).code
+        destination_ = Airports.objects.get(airport_id=destination).code
 
         if _token[1]:   # check qpx limit
             price_start_time = datetime.datetime.now()
             carriers, max_stop = get_qpx_filter_carriers(origin, destination)
             
-            qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date, _token[2], carriers, max_stop)
+            qpx_prices = get_qpx_prices(return_date, get_code_for_qpx(origin_), get_code_for_qpx(destination_), depart_date, _token[2], carriers, max_stop)
             delta_departure_price, delta_return_price = get_delta_price(origin_, destination_, depart_date, return_date)
             # print delta_departure_price, '#######'
             # print delta_return_price, '######'
