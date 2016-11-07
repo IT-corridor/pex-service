@@ -3334,8 +3334,8 @@ def get_qpx_filter_carriers(orgnid, destid):
                 avg_stop += len(flight.planedetails.split('@'))                    
                 carriers += [item[:2] for item in flight.planedetails.split('@')]
             avg_stop *= 1.0 / len(flights)
-            avg_stop = math.floor(avg_stop - 0.5) # -1(# of stops) + 0.5(for floor)
             print avg_stop, '### avg_stop'
+            avg_stop = math.floor(avg_stop - 0.5) # -1(# of stops) + 0.5(for floor)
             return set(carriers), min(2, int(avg_stop))
     return None, None
 
