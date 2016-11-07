@@ -2328,13 +2328,13 @@ def api_search_flight(request):
 
         qpx_prices = {}
         # get qpx price
-        origin_ = Airports.objects.get(airport_id=origin).code
-        destination_ = Airports.objects.get(airport_id=destination).code
+        origin_ = get_code_for_qpx(Airports.objects.get(airport_id=origin).code)
+        destination_ = get_code_for_qpx(Airports.objects.get(airport_id=destination).code)
 
         if _token[1]:   # check qpx limit
             price_start_time = datetime.datetime.now()
             carriers, max_stop = get_qpx_filter_carriers(origin, destination)
-            print carriers, max_stop
+            
             qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date, _token[2], carriers, max_stop)
             delta_departure_price, delta_return_price = get_delta_price(origin_, destination_, depart_date, return_date)
             # print delta_departure_price, '#######'
@@ -3338,6 +3338,19 @@ def get_qpx_filter_carriers(orgnid, destid):
             avg_stop = math.floor(avg_stop - 0.5) # -1(# of stops) + 0.5(for floor)
             return set(carriers), min(2, int(avg_stop))
     return None, None
+
+
+def get_code_for_qpx(code):
+    """
+    Get code equivalent for improve QPX search results
+    """
+    trans_dict = {
+        'NYC': ['JFK',]
+    }
+
+    for key, val in trans_dict.items():
+        if code.upper() in val:
+            return key
 
 
 def rewardpoints(request):

@@ -81,8 +81,8 @@ def get_delta_price(orgn, dest, searchdate, returndate=None, passenger=1):
 
     display.stop()
     driver.quit()
-    print departure_price
-    print return_price
+    # print departure_price
+    # print return_price
     return departure_price, return_price            
 
 
