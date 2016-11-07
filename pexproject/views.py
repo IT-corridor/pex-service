@@ -10,6 +10,7 @@ import re
 import base64
 import subprocess
 import json
+import math
 import collections
 
 from apiclient.discovery import build
@@ -3320,20 +3321,22 @@ def parse_detail(depart_details, arrival_details, plane_details, operated_by):
 
 def get_qpx_filter_carriers(orgnid, destid):
     """
-    Get airline codes and max number of stops from past 3 searches
+    Get airline codes and max number of stops from the newest valid search
     They are used for QPX filtering
     """
-    searches = Searchkey.objects.filter(origin_airport_id=orgnid, destination_airport_id=destid).order_by('-scrapetime')[:3]
+    searches = Searchkey.objects.filter(origin_airport_id=orgnid, destination_airport_id=destid).order_by('-scrapetime')[:5]
     carriers = [] 
-    max_stop = 0
+    avg_stop = 0
     for search in searches:
         flights = Flightdata.objects.filter(Q(searchkeyid=search.searchid), ~Q(origin='flag'))
         if flights:
             for flight in flights:
-                if max_stop < len(flight.planedetails.split('@')):
-                    max_stop = len(flight.planedetails.split('@'))
+                avg_stop += len(flight.planedetails.split('@')):                    
                 carriers += [item[:2] for item in flight.planedetails.split('@')]
-            return set(carriers), min(1, max_stop-1)
+            avg_stop *= 1.0 / len(flights)
+            avg_stop = math.floor(avg_stop - 0.5) # -1(# of stops) + 0.5(for floor)
+            print avg_stop, '### avg_stop'
+            return set(carriers), min(2, avg_stop)
     return None, None
 
 
