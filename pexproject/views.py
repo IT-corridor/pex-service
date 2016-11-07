@@ -3319,7 +3319,11 @@ def parse_detail(depart_details, arrival_details, plane_details, operated_by):
 
 
 def get_qpx_filter_carriers(orgnid, destid):
-    searches = Searchkey.objects.filter(origin_airport_id=orgnid, destination_airport_id=destid).order_by('-scrapetime')
+    """
+    Get airline codes and max number of stops from past 5 searches
+    They are used for QPX filtering
+    """
+    searches = Searchkey.objects.filter(origin_airport_id=orgnid, destination_airport_id=destid).order_by('-scrapetime')[:5]
     carriers = [] 
     max_stop = 0
     for search in searches:
