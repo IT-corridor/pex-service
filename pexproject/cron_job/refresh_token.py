@@ -14,13 +14,12 @@ today = datetime.datetime.now().date()
 days = calendar.monthrange(today.year, today.month)[1]
 
 for token in Token.objects.all():   
-    print token.owner_id, today-token.created_at, '@@@@@@'
     if token.created_at == today - timedelta(days=27):
         # send notification
         subject = 'Token Billing cycle'
-        emailbody = "{}'s token is reaching the end of the billing cycle soon".format(token.owner.email)
-        print emailbody, '###3'
-        resp = customfunction.sendMail('PEX+', 'jason.5001001@gmail.com', subject, emailbody, '')
+        emailbody = "{}'s token is about to reach to the end of the billing cycle soon".format(token.owner.email)
+
+        resp = customfunction.sendMail('PEX+', 'jason.5001001@gmail.com', subject, emailbody)
         if resp != "sent":
             print 'Something is wrong!'
     elif token.created_at == today - timedelta(days=days):
