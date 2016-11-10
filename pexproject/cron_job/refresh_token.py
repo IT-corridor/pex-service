@@ -19,7 +19,10 @@ for token in Token.objects.all():
         # send notification
         subject = 'Token Billing cycle'
         emailbody = "{}'s token is reaching the end of the billing cycle soon".format(token.owner.email)
-        customfunction.sendMail('PEX+', 'jason.5001001@gmail.com', subject, emailbody, '')
+        print emailbody, '###3'
+        resp = customfunction.sendMail('PEX+', 'jason.5001001@gmail.com', subject, emailbody, '')
+        if resp != "sent":
+            print 'Something is wrong!'
     elif token.created_at == today - timedelta(days=days):
         # save history
         log_item = "{} ~ {}#{}#{}@".format(str(token.created_at), str(today), token.limit_flight_search, token.run_flight_search)
