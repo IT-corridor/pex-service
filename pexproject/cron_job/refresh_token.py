@@ -11,7 +11,7 @@ from datetime import timedelta
 from pexproject.scrapers import customfunction
 
 today = datetime.datetime.now().date()
-days = calendar.monthrange(today.year, today.month)
+days = calendar.monthrange(today.year, today.month)[1]
 
 for token in Token.objects.all():   
     print token.owner_id, today-token.created_at, '@@@@@@'
