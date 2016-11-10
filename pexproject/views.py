@@ -2750,14 +2750,16 @@ def token_update(request, id=None):
             token.test_qpx_token = form.cleaned_data['test_qpx_token']
             token.owner = form.cleaned_data['owner']
             token.limit_flight_search = form.cleaned_data['limit_flight_search']
+            token.limit_standard = form.cleaned_data['limit_standard']
             token.limit_qpx = form.cleaned_data['limit_qpx']
             token.limit_hotel_search = form.cleaned_data['limit_hotel_search']
             token.run_hotel_search = form.cleaned_data['run_hotel_search']
             token.run_flight_search = form.cleaned_data['run_flight_search']
-            token.allowed_domain = form.cleaned_data['allowed_domain']
+            # token.allowed_domain = form.cleaned_data['allowed_domain']
+            token.carry_over = form.cleaned_data['carry_over']
             token.notes = form.cleaned_data['notes']
-            token.number_update = token.number_update + 1 
-            token.created_at = dttime.now().date()
+            # token.number_update = token.number_update + 1 
+            # token.created_at = dttime.now().date()
             token.save()
             return HttpResponseRedirect('/Admin/token/')
 
@@ -3110,12 +3112,34 @@ def customer(request):
     stat_price_history = _price_history(request.user, '2016-04-05', '2026-04-05', 'aeroflot', 'New York (JFK)', 'Moscow (MOW)', 'Avg') 
     user_search_history = get_customer_search_history(user_id=request.user.user_id)
 
+    token = Token.objects.filter(owner=request.user).first()
+    limit_flight_search = 0
+    run_flight_search = 0
+    if token:
+        limit_flight_search = token.limit_flight_search
+        run_flight_search = token.run_flight_search
+
     return render(request, 'customer/dashboard.html', {
         'stat_num_search': stat_num_search,
         'air_lines': air_lines,
         'stat_price_history': stat_price_history,
         'user_search_history':user_search_history,
+        'limit_flight_search': limit_flight_search,
+        'run_flight_search': run_flight_search,
     })
+
+
+@login_required(login_url='/customer/login/')
+def billing_history(request):
+    token = Token.objects.filter(owner=request.user).first()
+    history = None
+    history_ = []
+    if token:
+        history = token.refresh_log.split('@')
+        for item in history:
+            if item:
+                history_.insert(0, item.split('#'))
+    return render(request, 'customer/billing_history.html', {'history': history_})
 
 
 @login_required(login_url='/customer/login/')

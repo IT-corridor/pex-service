@@ -44,6 +44,36 @@
         </ul>
     </div>
     
+    {% if limit_flight_search %}
+    <div class="mini-charts">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="mini-charts-item bgm-cyan">
+                    <div class="clearfix">
+                        <div class="chart stats-bar"></div>
+                        <div class="count">
+                            <small>Allowance</small>
+                            <h2>{{ limit_flight_search }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="mini-charts-item bgm-lightgreen">
+                    <div class="clearfix">
+                        <div class="chart stats-bar-2"></div>
+                        <div class="count">
+                            <small>Searches</small>
+                            <h2>{{ run_flight_search }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+    {% endif %}
+
     <div class="row">
         <div class="col-md-12">
             <div class="card">
