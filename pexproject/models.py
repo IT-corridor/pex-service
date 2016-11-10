@@ -487,6 +487,7 @@ class Token(models.Model):
     test_token = models.CharField(max_length=100, blank=True, null=True)
     test_qpx_token = models.CharField(max_length=100, blank=True, null=True)
     owner = models.ForeignKey(User)
+    limit_standard = models.IntegerField(default=0)
     limit_hotel_search = models.IntegerField(default=0)
     limit_flight_search = models.IntegerField(default=0)
     run_hotel_search = models.IntegerField(default=0)
@@ -494,9 +495,11 @@ class Token(models.Model):
     limit_qpx = models.IntegerField(default=0)
     allowed_domain = models.CharField(max_length=150,null=True, blank=True)
     number_update = models.IntegerField(default=0)
-    created_at = models.DateField(auto_now_add=True)
+    created_at = models.DateField(auto_now_add=True)    # refresh date
     notes = models.TextField(null=True, blank=True)
-    closed_at = models.DateTimeField(null=True)    
+    carry_over = models.BooleanField(default=False)
+    closed_at = models.DateTimeField(null=True)   
+    refresh_log = models.TextField(null=True, blank=True) 
 
     def __unicode__(self):
         # return self.owner.name

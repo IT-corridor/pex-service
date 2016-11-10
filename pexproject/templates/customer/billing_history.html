@@ -1,0 +1,56 @@
+{% extends "customer/base.html" %}
+{% load staticfiles %} 
+
+{% block extra_css %}
+    <link href="/static/Admin/vendors/bootgrid/jquery.bootgrid.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>Billing History </h2>
+        </div>
+        
+        <table id="data-table-command" class="table table-striped table-vmiddle">
+            <thead>
+                <tr>
+                    <th data-column-id="token">Period</th>
+                    <th data-column-id="limit_flight">Allowance</th>
+                    <th data-column-id="run_flight">Number of Searches</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for item in history %}
+                <tr>
+                    <td>{{item.0}}</td>
+                    <td>{{item.1}}</td>
+                    <td>{{item.2}}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>				
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="/static/Admin/vendors/bootgrid/jquery.bootgrid.updated.min.js"></script>
+    
+    <!-- Data Table -->
+    <script type="text/javascript">
+        $(document).ready(function(){
+            //Command Buttons
+            var grid = $("#data-table-command").bootgrid({
+                caseSensitive: false,
+                css: {
+                    icon: 'zmdi icon',
+                    iconColumns: 'zmdi-view-module',
+                    iconDown: 'zmdi-expand-more',
+                    iconRefresh: 'zmdi-refresh',
+                    iconUp: 'zmdi-expand-less'
+                }
+            });
+        });
+    </script>
+{% endblock %}
