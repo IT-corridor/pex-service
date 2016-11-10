@@ -14,6 +14,7 @@ today = datetime.datetime.now().date()
 days = calendar.monthrange(today.year, today.month)
 
 for token in Token.objects.all():   
+    print token.owner_id, today-token.created_at, '@@@@@@'
     if token.created_at == today - timedelta(days=27):
         # send notification
         subject = 'Token Billing cycle'
