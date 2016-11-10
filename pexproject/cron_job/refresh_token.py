@@ -15,10 +15,10 @@ today = datetime.datetime.now().date()
 days = calendar.monthrange(today.year, today.month)[1]
 
 for token in Token.objects.all():   
-    if token.created_at == today - timedelta(days=27):
+    if token.created_at == today - timedelta(days=days-5):
         # send notification
         subject = 'Token Billing cycle'
-        emailbody = "{}'s token is about to reach to the end of the billing cycle soon".format(token.owner.email)
+        emailbody = "{}'s token is about to reach to the end of the billing cycle. His search count will reset in 5 days. Please update the customer and make sure the customer has paid for the upcoming billing cycle.".format(token.owner.email)
 
         resp = customfunction.sendMail('PEX+', 'info@pexportal.com', subject, emailbody)
         if resp != "sent":
