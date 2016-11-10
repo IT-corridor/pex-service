@@ -10,15 +10,19 @@ import calendar
 from datetime import timedelta 
 from pexproject.scrapers import customfunction
 
+
 today = datetime.datetime.now().date()
-days = calendar.monthrange(today.year, today.month)
+days = calendar.monthrange(today.year, today.month)[1]
 
 for token in Token.objects.all():   
     if token.created_at == today - timedelta(days=27):
         # send notification
         subject = 'Token Billing cycle'
-        emailbody = "{}'s token is reaching the end of the billing cycle soon".format(token.owner.email)
-        customfunction.sendMail('PEX+', 'jason.5001001@gmail.com', subject, emailbody, '')
+        emailbody = "{}'s token is about to reach to the end of the billing cycle soon".format(token.owner.email)
+
+        resp = customfunction.sendMail('PEX+', 'info@pexportal.com', subject, emailbody)
+        if resp != "sent":
+            print 'Something is wrong!'
     elif token.created_at == today - timedelta(days=days):
         # save history
         log_item = "{} ~ {}#{}#{}@".format(str(token.created_at), str(today), token.limit_flight_search, token.run_flight_search)

@@ -10,6 +10,7 @@ import re
 import base64
 import subprocess
 import json
+import math
 import collections
 
 from apiclient.discovery import build
@@ -2333,10 +2334,11 @@ def api_search_flight(request):
         if _token[1]:   # check qpx limit
             price_start_time = datetime.datetime.now()
             carriers, max_stop = get_qpx_filter_carriers(origin, destination)
-            qpx_prices = get_qpx_prices(return_date, origin_, destination_, depart_date, _token[2], carriers, max_stop)
+            # print get_code_for_qpx(origin_), get_code_for_qpx(destination_), '########'
+            qpx_prices = get_qpx_prices(return_date, get_code_for_qpx(origin_), get_code_for_qpx(destination_), depart_date, _token[2], carriers, max_stop)
             delta_departure_price, delta_return_price = get_delta_price(origin_, destination_, depart_date, return_date)
-            print delta_departure_price, '#######'
-            print delta_return_price, '######'
+            # print delta_departure_price, '#######'
+            # print delta_return_price, '######'
             delay_threshold -= (datetime.datetime.now() - price_start_time).seconds
 
         qpx_unmatch_count = 0
@@ -3342,18 +3344,38 @@ def parse_detail(depart_details, arrival_details, plane_details, operated_by):
 
 
 def get_qpx_filter_carriers(orgnid, destid):
-    searches = Searchkey.objects.filter(origin_airport_id=orgnid, destination_airport_id=destid).order_by('-scrapetime')
+    """
+    Get airline codes and max number of stops from the newest valid search
+    They are used for QPX filtering
+    """
+    searches = Searchkey.objects.filter(origin_airport_id=orgnid, destination_airport_id=destid).order_by('-scrapetime')[:5]
     carriers = [] 
-    max_stop = 0
+    avg_stop = 0
     for search in searches:
         flights = Flightdata.objects.filter(Q(searchkeyid=search.searchid), ~Q(origin='flag'))
         if flights:
             for flight in flights:
-                if max_stop < len(flight.planedetails.split('@')):
-                    max_stop = len(flight.planedetails.split('@'))
+                avg_stop += len(flight.planedetails.split('@'))                    
                 carriers += [item[:2] for item in flight.planedetails.split('@')]
-            return set(carriers), min(2, max_stop-1)
+            avg_stop *= 1.0 / len(flights)
+            print avg_stop, '### avg_stop'
+            avg_stop = math.floor(avg_stop - 0.5) # -1(# of stops) + 0.5(for floor)
+            return set(carriers), min(2, int(avg_stop))
     return None, None
+
+
+def get_code_for_qpx(code):
+    """
+    Get code equivalent for improve QPX search results
+    """
+    trans_dict = {
+        'NYC': ['JFK',]
+    }
+
+    for key, val in trans_dict.items():
+        if code.upper() in val:
+            return key
+    return code
 
 
 def rewardpoints(request):

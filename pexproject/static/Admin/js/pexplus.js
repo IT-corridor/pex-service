@@ -166,7 +166,7 @@ user_signup_activity = function() {
 }
 
 _update_line_info = function(data) {
-    var airlines = [['SU', 'Aeroflot'], ['CA', 'Air China'], ['AA', 'American'], ['DL', 'Delta'], ['EY', 'Etihad'], ['B6', 'JetBlue'], ['S7', 'S7'], ['UA', 'United'], ['VX', 'Virgin America'], ['DJ', 'virgin australia'],['VS', 'Virgin Atlantic']];
+    var airlines = [['SU', 'Aeroflot'], ['CA', 'Air China'], ['AA', 'American'], ['DL', 'Delta'], ['EY', 'Etihad'], ['B6', 'JetBlue'], ['S7', 'S7'], ['UA', 'United'], ['VX', 'Virgin America'], ['VA', 'virgin australia'],['VS', 'Virgin Atlantic']];
 
     var idx = 1;
     if ($(window).width() < 768) 
