@@ -10,6 +10,7 @@ import calendar
 from datetime import timedelta 
 from pexproject.scrapers import customfunction
 
+
 today = datetime.datetime.now().date()
 days = calendar.monthrange(today.year, today.month)[1]
 
@@ -19,7 +20,7 @@ for token in Token.objects.all():
         subject = 'Token Billing cycle'
         emailbody = "{}'s token is about to reach to the end of the billing cycle soon".format(token.owner.email)
 
-        resp = customfunction.sendMail('PEX+', 'jason.5001001@gmail.com', subject, emailbody)
+        resp = customfunction.sendMail('PEX+', 'info@pexportal.com', subject, emailbody)
         if resp != "sent":
             print 'Something is wrong!'
     elif token.created_at == today - timedelta(days=days):
