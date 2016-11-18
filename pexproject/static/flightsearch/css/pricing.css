@@ -36,11 +36,6 @@
     font-weight: bold;
 }
 
-.price::after {
-    content: " / month per user";
-    font-weight: normal;
-}
-
 hr.pricing {
     background-color: #dedede;
     border: none;
