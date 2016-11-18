@@ -6,7 +6,7 @@ $(document).ready(function() {
             $('#id_quantity').val(num_queries);
         } else {
             e.preventDefault();
-            alert('Please specify valid number of searches over 10!');
+            alert('Please specify valid number of searches over 50!');
             $('#id_queries').focus();
         }
     });
