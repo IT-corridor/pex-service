@@ -46,6 +46,7 @@ urlpatterns = [
     url(r'^staticPage', staticPage, name='staticPage'),
     url(r'^contactUs/(?P<option>\d*)$', contactUs, name='contactUs'),
     url(r'^pricing/$', pricing, name='pricing'),
+    url(r'^redirect_/$', redirect_, name='redirect_'),
     url(r'^paypal/', include('paypal.standard.ipn.urls')),
 
     url(r'^logout', logout, name='logout'),

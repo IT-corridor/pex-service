@@ -88,8 +88,8 @@ def pricing(request):
         "item_name": "Award flight and hotels search",
         "invoice": "invoice-{}".format(random.randint(10000,99999)),
         "notify_url": "http://pexportal.com:8000"+reverse('paypal-ipn'),
-        "return_url": "http://pexportal.com:8000/",
-        "cancel_return": "http://pexportal.com:8000/",
+        "return_url": "http://pexportal.com:8000/redirect_/",
+        "cancel_return": "http://pexportal.com:8000/redirect_/",
         "hosted_button_id": "GR32YXZNULSUL",
         "image": "https://www.paypalobjects.com/en_US/i/btn/btn_paynow_LG.gif",
         "custom": user_id
@@ -225,6 +225,10 @@ def blog(request, title=None):
 
 
 @csrf_exempt
+def redirect_(request):
+    return HttpResponseRedirect('/')
+
+
 def index(request):
     if request.user.is_authenticated() and request.method != 'POST':
         #user = User.objects.get(email=request.user)
