@@ -1,4 +1,12 @@
 $(document).ready(function() {
+    $('[type=image]').attr('src', '/static/flightsearch/img/paypal.png');
+    $('[type=image]').attr('disabled', true);
+
+    $('#id_term').change(function() {
+        console.log($('#id_term').prop('checked'));
+        $('[type=image]').attr('disabled', !$('#id_term').prop('checked'));        
+    });
+
     $('[name=submit]').click(function(e) {
         var num_queries = $('#id_queries').val();
 
