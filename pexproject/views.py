@@ -85,7 +85,7 @@ def pricing(request):
         "business": "waff@merchant.com",
         "amount": "0.1",
         "quantity": "3",
-        "item_name": "Award flight and hotels search",
+        "item_name": "PEX Points for searches",
         "invoice": "invoice-{}".format(random.randint(10000,99999)),
         "notify_url": "http://pexportal.com:8000"+reverse('paypal-ipn'),
         "return_url": "http://pexportal.com:8000/redirect_/",
