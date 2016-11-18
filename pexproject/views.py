@@ -59,7 +59,8 @@ from pexproject.models import *
 
 def show_me_the_money(sender, **kwargs):
     ipn_obj = sender
-    print sender, '#########3'
+    print sender.user_id, '#########3'
+    print kwargs, '@@@@@@2'
     if ipn_obj.payment_status == ST_PP_COMPLETED:
         # WARNING !
         # Check that the receiver email is the same we previously
@@ -85,7 +86,10 @@ def show_me_the_money(sender, **kwargs):
 valid_ipn_received.connect(show_me_the_money)
 
 def pricing(request):    
-    # What you want the button to do.
+    user_id = -1
+    if 'userid' in request.session::
+        user_id = request.session['userid']
+
     paypal_dict = {
         "business": "waff@merchant.com",
         "amount": "0.1",
@@ -98,12 +102,12 @@ def pricing(request):
         "hosted_button_id": "GR32YXZNULSUL",
         "image": "https://www.paypalobjects.com/en_US/i/btn/btn_paynow_LG.gif",
         "custom": "Upgrade all users!",  # Custom command to correlate to some function later (optional)
+        "user_id": user_id
     }
 
     # Create the instance.
     form = PayPalPaymentsForm(initial=paypal_dict)
     context = {"form": form}
-    print form, '@@@@@@2'
     return render(request, "flightsearch/pricing.html", context)
 
 def get_cityname(request):
