@@ -44,7 +44,7 @@ urlpatterns = [
     url(r'^forgotPassword', forgotPassword, name='forgotPassword'),
     url(r'^signup', signup, name='signup'),
     url(r'^staticPage', staticPage, name='staticPage'),
-    url(r'^contactUs', contactUs, name='contactUs'),
+    url(r'^contactUs/(?P<option>\d*)$', contactUs, name='contactUs'),
     url(r'^pricing/$', pricing, name='pricing'),
     url(r'^paypal/', include('paypal.standard.ipn.urls')),
 

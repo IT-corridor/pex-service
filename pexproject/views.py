@@ -554,7 +554,7 @@ def sendFeedBack(request):
     return render_to_response('flightsearch/feedback.html',{'alert_msg':alert_msg}, context_instance=RequestContext(request))
 
 
-def contactUs(request):
+def contactUs(request, option):
     contact_msg = ''
 
     if request.POST:
@@ -598,7 +598,10 @@ def contactUs(request):
             contact_msg = "Your information has been sent successfully"
         else:
             contact_msg = "There is some technical problem. Please try again"    
-    return render_to_response('flightsearch/contact_us.html',{'contact_msg':contact_msg}, context_instance=RequestContext(request))  
+    return render(request, 'flightsearch/contact_us.html',{
+        'contact_msg':contact_msg, 
+        'option': option
+    })  
         
 
 @csrf_exempt
