@@ -226,7 +226,7 @@ def blog(request, title=None):
 
 @csrf_exempt
 def index(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and request.method != 'POST':
         #user = User.objects.get(email=request.user)
         user = User.objects.filter(username=request.user)
         if len(user) > 0:
