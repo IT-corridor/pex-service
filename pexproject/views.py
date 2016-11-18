@@ -43,6 +43,11 @@ from django.db.models import Q, Count
 from django.db.models import Max, Min
 from django.forms.models import model_to_dict
 
+from paypal.standard.forms import PayPalPaymentsForm
+from paypal.standard.models import ST_PP_COMPLETED
+from paypal.standard.ipn.signals import valid_ipn_received
+import random
+
 from .scrapers.customfunction import is_scrape_vAUS,is_scrape_aeroflot,is_scrape_virginAmerica,is_scrape_etihad,is_scrape_delta,is_scrape_united,is_scrape_virgin_atlantic,is_scrape_jetblue,is_scrape_aa, is_scrape_s7, is_scrape_airchina
 from .scrapers import customfunction
 from .scrapers.delta_price import get_delta_price
@@ -50,6 +55,55 @@ from .scrapers.config import config as sys_config
 from .form import *
 from pexproject.models import *
 
+
+
+def show_me_the_money(sender, **kwargs):
+    ipn_obj = sender
+    print sender, '#########3'
+    if ipn_obj.payment_status == ST_PP_COMPLETED:
+        # WARNING !
+        # Check that the receiver email is the same we previously
+        # set on the business field request. (The user could tamper
+        # with those fields on payment form before send it to PayPal)
+        if ipn_obj.receiver_email != "waff@merchant.com":
+            # Not a valid payment
+            return
+
+        # ALSO: for the same reason, you need to check the amount
+        # received etc. are all what you expect.
+
+        # Undertake some action depending upon `ipn_obj`.
+        if ipn_obj.custom == "Upgrade all users!":
+            print '###########'
+            # Users.objects.update(paid=True)
+    else:
+        pass
+
+    print 'Successfully done @@@@@@@@'
+
+
+valid_ipn_received.connect(show_me_the_money)
+
+def pricing(request):    
+    # What you want the button to do.
+    paypal_dict = {
+        "business": "waff@merchant.com",
+        "amount": "0.1",
+        "quantity": "3",
+        "item_name": "Award flight and hotels search",
+        "invoice": "invoice-{}".format(random.randint(10000,99999)),
+        "notify_url": "http://pexportal.com:8000"+reverse('paypal-ipn'),
+        "return_url": "http://pexportal.com:8000/hotels/",
+        "cancel_return": "http://pexportal.com:8000/hotels/",
+        # "hosted_button_id": "GR32YXZNULSUL",
+        "image": "https://www.paypalobjects.com/en_US/i/btn/btn_paynow_LG.gif",
+        "custom": "Upgrade all users!",  # Custom command to correlate to some function later (optional)
+    }
+
+    # Create the instance.
+    form = PayPalPaymentsForm(initial=paypal_dict)
+    context = {"form": form}
+    return render(request, "flightsearch/pricing.html", context)
 
 def get_cityname(request):
     if request.is_ajax():
@@ -501,20 +555,7 @@ def sendFeedBack(request):
 
 
 def contactUs(request):
-    context = {}
-    first_name = ''
-    last_name = ''
-    title = ''
-    company = ''
-    phone = ''
-    email = ''
-    websitename = ''
-    labeltext = ''
-    message = ''
-    topic = ''
     contact_msg = ''
-    html_content = ''
-    contact_info = ''
 
     if request.POST:
         first_name = request.POST['first_name']
