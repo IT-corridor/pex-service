@@ -147,19 +147,17 @@
                 </div>
                 <div class="modal-body" style="padding: 50px 20px;">
                     {% if user.is_authenticated or request.session.username and request.session.password  %}
-                        Number of Searches: <input type="text" name="queries">
-                    {% else %}
-<!--                         <label class="control-label">Number of Searches:</label> 
+                        <label class="control-label">Number of Searches:</label> 
                         <input type="number" min="10" class="form-control" name="queries" id="id_queries">
- -->                    <b>You need to sign up first.</b>
+                    {% else %}
+                    <b>You need to sign up first.</b>
                     {% endif %}
                 </div>
                 <div class="modal-footer" style="text-align: center;">
                     {% if user.is_authenticated or request.session.username and request.session.password  %}
                         {{ form.render }}
                     {% else %}
-                        {{ form.render }}
-                        <!-- <button class="btn btn-pexSearch " data-toggle="modal" data-target="#login-modal"> Sign up </button> -->
+                        <button class="btn btn-pexSearch " data-toggle="modal" data-target="#login-modal"> Sign up </button>
                     {% endif %}
                 </div>
             </div>

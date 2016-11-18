@@ -93,8 +93,8 @@ def pricing(request):
         "item_name": "Award flight and hotels search",
         "invoice": "invoice-{}".format(random.randint(10000,99999)),
         "notify_url": "http://pexportal.com:8000"+reverse('paypal-ipn'),
-        "return_url": "http://pexportal.com:8000/hotels/",
-        "cancel_return": "http://pexportal.com:8000/hotels/",
+        "return_url": "http://pexportal.com:8000/",
+        "cancel_return": "http://pexportal.com:8000/",
         # "hosted_button_id": "GR32YXZNULSUL",
         "image": "https://www.paypalobjects.com/en_US/i/btn/btn_paynow_LG.gif",
         "custom": "Upgrade all users!",  # Custom command to correlate to some function later (optional)
@@ -229,6 +229,7 @@ def blog(request, title=None):
     return  render_to_response('flightsearch/Blog.html',{"blog":bloglist,"top_banner":top_banner}, context_instance=RequestContext(request))
 
 
+@csrf_exempt
 def index(request):
     if request.user.is_authenticated():
         #user = User.objects.get(email=request.user)
