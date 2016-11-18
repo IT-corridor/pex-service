@@ -59,24 +59,15 @@ from pexproject.models import *
 
 def show_me_the_money(sender, **kwargs):
     ipn_obj = sender
-    print dir(sender), '#########3'
-    print kwargs, '@@@@@@2'
     if ipn_obj.payment_status == ST_PP_COMPLETED:
-        # WARNING !
-        # Check that the receiver email is the same we previously
-        # set on the business field request. (The user could tamper
-        # with those fields on payment form before send it to PayPal)
         if ipn_obj.receiver_email != "waff@merchant.com":
-            # Not a valid payment
             return
 
-        # ALSO: for the same reason, you need to check the amount
-        # received etc. are all what you expect.
-
-        # Undertake some action depending upon `ipn_obj`.
-        if ipn_obj.custom == "Upgrade all users!":
-            print '###########'
-            # Users.objects.update(paid=True)
+        user_id = ipn_obj.custom
+        user = User.objects.get(pk=user_id)
+        user.search_limit = ipn_obj.quantity
+        user.search_run = 0
+        user.save()
     else:
         pass
 
@@ -101,8 +92,7 @@ def pricing(request):
         "cancel_return": "http://pexportal.com:8000/",
         "hosted_button_id": "GR32YXZNULSUL",
         "image": "https://www.paypalobjects.com/en_US/i/btn/btn_paynow_LG.gif",
-        "custom": "Upgrade all users!",  # Custom command to correlate to some function later (optional)
-        "user_id": user_id
+        "custom": user_id
     }
 
     # Create the instance.
