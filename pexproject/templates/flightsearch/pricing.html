@@ -154,8 +154,6 @@
                     {% endif %}
                 </div>
                 <div class="modal-footer" style="text-align: center;">
-                                        {{ form.render }}
-
                     {% if user.is_authenticated or request.session.username and request.session.password  %}
                         {{ form.render }}
                     {% else %}

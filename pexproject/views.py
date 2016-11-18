@@ -95,7 +95,7 @@ def pricing(request):
         "notify_url": "http://pexportal.com:8000"+reverse('paypal-ipn'),
         "return_url": "http://pexportal.com:8000/",
         "cancel_return": "http://pexportal.com:8000/",
-        # "hosted_button_id": "GR32YXZNULSUL",
+        "hosted_button_id": "GR32YXZNULSUL",
         "image": "https://www.paypalobjects.com/en_US/i/btn/btn_paynow_LG.gif",
         "custom": "Upgrade all users!",  # Custom command to correlate to some function later (optional)
     }
@@ -103,6 +103,7 @@ def pricing(request):
     # Create the instance.
     form = PayPalPaymentsForm(initial=paypal_dict)
     context = {"form": form}
+    print form, '@@@@@@2'
     return render(request, "flightsearch/pricing.html", context)
 
 def get_cityname(request):
