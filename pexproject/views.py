@@ -59,7 +59,7 @@ from pexproject.models import *
 
 def show_me_the_money(sender, **kwargs):
     ipn_obj = sender
-    print sender.user_id, sender.quantity '#########3'
+    print sender.user_id, sender.quantity, '#########3'
     print kwargs, '@@@@@@2'
     if ipn_obj.payment_status == ST_PP_COMPLETED:
         # WARNING !
