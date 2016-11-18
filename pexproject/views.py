@@ -267,10 +267,6 @@ def index(request):
     return render(request, 'flightsearch/home.html')    
 
 
-def pricing(request):
-    return render(request, 'flightsearch/pricing.html')   
-
-
 def signup(request):
     context = {}
     if 'username' not in request.session:
