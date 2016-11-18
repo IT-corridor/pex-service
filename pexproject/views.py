@@ -87,7 +87,7 @@ valid_ipn_received.connect(show_me_the_money)
 
 def pricing(request):    
     user_id = -1
-    if 'userid' in request.session::
+    if 'userid' in request.session:
         user_id = request.session['userid']
 
     paypal_dict = {
