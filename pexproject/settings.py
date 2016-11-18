@@ -53,7 +53,8 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'pexproject',
     'oauth2',
-    'social.apps.django_app.default'
+    'social.apps.django_app.default',
+    'paypal.standard.ipn',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -68,6 +69,8 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF ='pexproject.urls'
+PAYPAL_TEST = True
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
