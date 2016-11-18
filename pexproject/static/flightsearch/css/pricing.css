@@ -98,3 +98,7 @@ ul.pricing li::before {
 .package .btn-pexSearch {
     background: #39A8E0;
 }
+
+.form-side {
+    background: white;
+}

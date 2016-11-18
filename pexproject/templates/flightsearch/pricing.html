@@ -5,15 +5,15 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
 <link rel="stylesheet" href="/static/flightsearch/css/pricing.css">
 <div class='container wrapper'>
-    <div class="row" style="margin-bottom: 60px;">
+    <div class="row" style="margin-bottom: 20px;">
         <div class="col-md-offset-1 col-md-10">
             <div class="col-md-12 text-center">
-                <h1 style="margin-bottom: 80px;">Choose the plan that's right for you</h1>
+                <h1 style="margin-bottom: 70px;">Choose the plan that's right for you</h1>
             </div>
             <div class='col-md-4'>
                 <div class='package' style="margin-bottom: 40px;">
                     <div class='name'>Free Single User</div>
-                    <div class='price'>$0</div>
+                    <div class='price'>$0 / month per user</div>
                     <div class='trial'>10 / Day</div>
                     <hr class="pricing">
                     <ul class="pricing">
@@ -34,7 +34,7 @@
                 <div class='package brilliant'>
                     <div class="highlighted">MOST POPULAR</div>
                     <div class='name'>Paid Power User</div>
-                    <div class='price'>$5</div>
+                    <div class='price'>$5 / month per user</div>
                     <div class='trial'>Custom (Monthly)</div>
                     <hr class="pricing">
                     <ul class="pricing">
@@ -57,7 +57,7 @@
             <div class='col-md-4'>
                 <div class='package'>
                     <div class='name'>Paid Enterprise</div>
-                    <div class='price'>$10</div>
+                    <div class='price'>$10 / month per user</div>
                     <div class='trial'>Custom (Monthly)</div>
                     <hr class="pricing">
                     <ul class="pricing">
@@ -82,47 +82,59 @@
     <div class="row">
         <div class="col-md-offset-1 col-md-10">
             <div class="col-md-12 text-center">
-                <h1 style="margin-bottom: 80px;">Bring The Power of PEX+ to You</h1>
+                <h1 style="margin-bottom: 50px;">Bring The Power of PEX+ to You</h1>
             </div>
-            <div class='col-md-offset-2 col-md-8'>
+            <div class='col-md-12'>
                 <div class='package' style="margin-bottom: 40px;">
                     <div class='name'>PEX+ API</div>
                     <div class='price'>Developers and corporations can utilize the power of PEX+ search technology for their applications and business goals.</div>
-                    <div class='trial'>Annual License Subscription + Custom(Monthly)</div>
+                    <div class='trial'>Annual License Subscription + Custom (Monthly)</div>
                     <hr class="pricing">
-                    <div class="col-sm-6">
+                    <div class="col-sm-3">
                     <ul class="pricing">
                         <li>
                             Award and Revenue Flights*
                         </li>
                         <li>
-                            Filter Functionality
-                        </li>
-                        <li>
-                            Cost Per Point*
-                        </li>
-                        <li>
-                            RESTful
+                            Award and Revenue Hotels*
                         </li>
                     </ul>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-3">
                     <ul class="pricing">
                         <li>
-                            Award and Revenue Hotels*
+                            Filter Functionality
                         </li>
                         <li>
                             Complete Itineraries with codeshares
                         </li>
+                    </ul>
+                    </div>
+                    <div class="col-sm-3">
+                    <ul class="pricing">
+                        <li>
+                            Cost Per Point*
+                        </li>
                         <li>
                             Secure
+                        </li>
+                    </ul>
+                    </div>
+                    <div class="col-sm-3">
+                    <ul class="pricing">                        
+                        <li>
+                            RESTful
                         </li>
                         <li>
                             Documented
                         </li>
                     </ul>
                     </div>
-                    <a style="margin-top: 20px;" class="btn btn-pexSearch" href="/contactUs/7"> Contact us </a>
+                    <div class="clearfix"></div>
+                    <div class='col-sm-12 text-center'>
+                        <a class="btn btn-pexSearch" href="/contactUs/7"> Contact us </a>
+                    </div>       
+                    <div class="clearfix"></div>
                 </div>
             </div>           
         </div>
@@ -149,16 +161,17 @@
                                 <input type="number" min="10" value="50" class="form-control" name="queries" id="id_queries" style="float: left;">
                             </div>
                         </div>
-                        <div class="col-sm-12">
-                            <div class="checkbox">
-                                <label>
-                                    <input type='checkbox' id="id_term" />
-                                    <span></span> I've read and agree to the <a>terms and conditions</a> 
-                                </label>
-                            </div>
-                        </div>
-                        <div class="clearfix"></div>
                     </form>
+                    <div class="col-sm-12 form-side">
+                        <div class="checkbox">
+                            <label>
+                                <input type='checkbox' id="id_term" />
+                                <span></span> I've read and agree to the <a>terms and conditions</a> 
+                            </label>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+
                 {% else %}
                     <div style="padding: 30px 5px;">
                     <b >You need to sign up first.</b> 
