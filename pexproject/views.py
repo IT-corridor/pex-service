@@ -1767,7 +1767,7 @@ def multicity(request):
 # hotels views  
 
 def hotels(request):
-    searches = Search.objects.all().order_by('-frequency')[:8]
+    searches = Search.objects.all().order_by('-search_time')[:8]
     searches = [[item.keyword, item.image, float(item.lowest_price), int(float(item.lowest_points))/1000, item.keyword.split('-')[0]] for item in searches]
 
     # #for startup
