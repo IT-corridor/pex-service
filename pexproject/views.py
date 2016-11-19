@@ -1995,7 +1995,8 @@ def _search_hotel(place, checkin, checkout, filters):
     award_highest = db_hotels.aggregate(Max('points_rate'))['points_rate__max']
 
     search.frequency = search.frequency + 1
-    search.image = db_hotels.filter(~Q(img=''))[0].img
+    count_hotel_ = db_hotels.filter(~Q(img='')).count()
+    search.image = db_hotels.filter(~Q(img=''))[random.randint(0, count_hotel_)].img
     search.lowest_price = price_lowest
     search.lowest_points = award_lowest
     search.save()
