@@ -56,7 +56,6 @@ from .form import *
 from pexproject.models import *
 
 
-
 def show_me_the_money(sender, **kwargs):
     ipn_obj = sender
     if ipn_obj.payment_status == ST_PP_COMPLETED:
