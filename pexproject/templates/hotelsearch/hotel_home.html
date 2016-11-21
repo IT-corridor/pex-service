@@ -10,9 +10,9 @@
     </div>
     <div class="hotel-search-panel">
     <form class="form-horizontal" role="form" action="/search_hotel/" method="post" id="search-form">
-        <div class="col-md-10">
+        <div class="col-sm-12 col-md-11">
           {% csrf_token %}
-          <div class="col-sm-4 col-xs-12 xs-nopadding">     
+          <div class="col-sm-3 col-xs-12 xs-nopadding">     
             <div class="form-group nomr noml">
               {{ form.place }}
             </div>
@@ -51,10 +51,10 @@
                 </select>   
             </div>                          
           </div>
-        </div>
-          <div class="col-sm-1 col-xs-12" style="padding: 0 13px;" tabindex="5">
+          <div class="col-sm-1 col-xs-12" style="padding: 0 5px;" tabindex="5">
             <button type="button" onclick="search_hotel();" class="btn btn-pexSearch" id="submitid">Search</button>
           </div>          
+        </div>
     </form>     
     </div>
     </div>
