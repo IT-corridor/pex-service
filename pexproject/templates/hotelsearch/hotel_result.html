@@ -159,6 +159,7 @@
         </div>
         <div class="row hotel-search-panel mvb10px  xs-collapse">
         <form class="form-horizontal" role="form" action="/search_hotel/" method="post" id="search-form">
+            <div class="col-sm-12 col-md-11">
             {% csrf_token %}
               <div class="col-sm-3 col-xs-12 xs-nopadding">     
                 <div class="form-group nomr noml">
@@ -201,6 +202,7 @@
               <div class="col-sm-1 col-xs-12">
                 <button type="button" onclick="search_hotel();" class="form_val btn btn-pexSearch" id="submitid" tabindex="6">Search</button>
               </div>      
+            </div>
         </form>     
         </div>
         <div class="row">

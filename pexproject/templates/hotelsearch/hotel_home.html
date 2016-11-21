@@ -12,7 +12,7 @@
     <form class="form-horizontal" role="form" action="/search_hotel/" method="post" id="search-form">
         <div class="col-sm-12 col-md-11">
           {% csrf_token %}
-          <div class="col-sm-3 col-xs-12 xs-nopadding">     
+          <div class="col-sm-3 col-xs-12 xs-nopadding" style="padding-left: 3px;">     
             <div class="form-group nomr noml">
               {{ form.place }}
             </div>
