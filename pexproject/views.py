@@ -1996,7 +1996,7 @@ def _search_hotel(place, checkin, checkout, filters):
 
     search.frequency = search.frequency + 1
     count_hotel_ = db_hotels.filter(~Q(img='')).count()
-    search.image = db_hotels.filter(~Q(img=''))[random.randint(0, count_hotel_)].img
+    search.image = db_hotels.filter(~Q(img=''))[random.randint(0, count_hotel_-1)].img
     search.lowest_price = price_lowest
     search.lowest_points = award_lowest
     search.save()
