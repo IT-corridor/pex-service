@@ -207,7 +207,7 @@ if (timedata_) {
     arivemaxtime = 1439;
 
 }
-/*************************** SLIDER DECTION  ******************************/
+/*************************** SLIDER SECTION  ******************************/
 
 $("#depart").slider({
     range: true,
@@ -959,6 +959,7 @@ var trip = '';
 var cabintypeval = '';
 var searchidval = '';
 var returnidval = '';
+
 $("#changebtnid").click(function(event) {
     //event.preventDefault();
     return setSearchData();
