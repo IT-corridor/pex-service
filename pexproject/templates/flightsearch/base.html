@@ -86,7 +86,7 @@
                     -->
                 </ul> 
                 <ul class="nav navbar-nav navbar-right right-nav-link responsive-edit mvt10px">                
-                    {% if user.is_authenticated or request.session.username and request.session.password  %}
+                    {% if user.is_authenticated or request.session.username %}
                         <li class="">                    
                             <div class="dropdown drop-down-cstm">
                                 <a id="dLabel" data-target="#" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -217,7 +217,7 @@
                                                 <input type="password" class="form-control" placeholder="Password" name="password" required>
                                             </div>
                                             <div class="form-group">
-                                                <input type="search" class="form-control" placeholder="Home Airport" id="home_airpot" name="home_airport" autocomplete="off">
+                                                <input type="search" class="form-control" placeholder="Home Airport" id="home_airpot" name="home_airport" autocomplete="off" required="">
                                             </div>
                                             <div class="checkbox">
                                                 <label><input type="checkbox" name="pexdeals" value="1"> Email me PEX+ amazing deals</label>

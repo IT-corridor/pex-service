@@ -25,14 +25,13 @@ from multiprocessing import Process
 
 from django.shortcuts import render
 from django.shortcuts import render_to_response
-from django.shortcuts import get_object_or_404,redirect
+from django.shortcuts import get_object_or_404
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.http import JsonResponse
 from django.template import RequestContext
-from django.contrib.auth import login as social_login, authenticate
+from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth import logout as auth_logout
-from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.html import strip_tags
@@ -228,97 +227,81 @@ def redirect_(request):
     return HttpResponseRedirect('/')
 
 
-def index(request):
+def index(request):    
+    # for social login
     if request.user.is_authenticated() and request.method != 'POST':
-        #user = User.objects.get(email=request.user)
         user = User.objects.filter(username=request.user)
-        if len(user) > 0:
-            user = User.objects.get(username=request.user)
+
+        if user:
+            user = user[0]
             request.session['username'] = request.user.username
-            if user.first_name != '':
-                request.session['first_name'] = user.first_name
-            if user.home_airport != '':
-                request.session['homeairpot'] = user.home_airport
             request.session['userid'] = user.user_id
             request.session['level'] = user.level
         else:
             email=request.user
             password = ''
-            password1 = hashlib.md5(password).hexdigest()
-            airport = ''
-            first_name = ''
-            last_name = ''
-            pexdeals = 0
-            object = User(username=email,email=email, password=password1,first_name=first_name,last_name=last_name, home_airport=airport,pexdeals=pexdeals, last_login=dttime.now())
-            object.save()
-            user = User.objects.get(username=request.user)
-            if len(user) > 0:
-                request.session['username'] = request.user.username
-                if user.first_name != '':
-                    request.session['first_name'] = user.first_name
-                if user.home_airport != '':
-                    request.session['homeairpot'] = user.home_airport
-                request.session['userid'] = user.user_id
-                request.session['level'] = user.level
+            hash_pwd = hashlib.md5(password).hexdigest()
+
+            user = User.objects.create(username=email, email=email, 
+                                       password=hash_pwd, first_name='',
+                                       last_name='', home_airport='',
+                                       pexdeals=0)
+
+            request.session['username'] = user.username
+            request.session['userid'] = user.user_id
+            request.session['level'] = user.level
 
     return render(request, 'flightsearch/home.html')    
 
 
 def signup(request):
-    context = {}
-    if 'username' not in request.session:
-        if request.method == "POST":
-            email = request.REQUEST['username']
-            user = User.objects.filter(username=email)
-            if len(user) > 0:
-                msg = "Email is already registered"
-                return HttpResponseRedirect('/index?signup_msg='+msg)
-                #return render_to_response('flightsearch/index.html',{'signup_msg':msg},context_instance=RequestContext(request))
-            password = request.REQUEST['password']
-            password1 = hashlib.md5(password).hexdigest()
-            airport = request.REQUEST['home_airport']
-            first_name = ''
-            last_name = ''
-            pexdeals = 0
-            if 'first_name' in request.POST:
-                first_name = request.REQUEST['first_name']
-            if 'last_name' in request.POST:
-                last_name = request.REQUEST['last_name']
-            if 'pexdeals' in request.REQUEST:
-                pexdeals = request.REQUEST['pexdeals']
+    """
+    Used for email signup
+    """
+    if 'username' in request.session or request.method == "GET":
+        return HttpResponseRedirect(reverse('index'))
 
-            object = User(username=email,email=email, password=password1,first_name=first_name,last_name=last_name, home_airport=airport,pexdeals=pexdeals, last_login=dttime.now())
-            object.save()
-            if pexdeals == '1':
-                subscriber = Mailchimp(sys_config['MAILCHIMP_API_KEY'])
-                subscriber.lists.subscribe(sys_config['MAILCHIML_LIST_ID'], {'email':email}, merge_vars={'FNAME':first_name,'LNAME':last_name})
-            request.session['username'] = email
-            request.session['homeairpot'] = airport
-            request.session['password'] = password1
-            if first_name != '':
-                request.session['first_name'] = first_name
-            if object.user_id:
-                request.session['userid'] = object.user_id
-                request.session['level'] = object.level
-                msg = "Thank you, You have been successfully registered."
-                emailbody=''
-                obj = EmailTemplate.objects.get(email_code='signup')
-                email_sub = obj.subject
-                emailbody = obj.body
-                emailbody = emailbody.replace('[USER_NAME]',first_name)
-                emailbody = emailbody.replace('[SITE-LINK]','<a href="http://pexportal.com/">pexportal</a>')
-                
-                html_content=''
-                try:
-                    resp = customfunction.sendMail('PEX+',email,email_sub,emailbody,html_content)
-                except:
-                    print "something wrong"
-                return HttpResponseRedirect('/index?welcome_msg='+msg)
-                #return render_to_response('flightsearch/index.html',{'welcome_msg':msg}, context_instance=RequestContext(request))   
-        #return render_to_response('flightsearch/index.html', context_instance=RequestContext(request))
-        return HttpResponseRedirect(reverse('index'))
-    else:
-        return HttpResponseRedirect(reverse('index'))
+    email = request.POST.get('username')
+    password = request.POST.get('password')
+    airport = request.POST.get('home_airport')
+    first_name = request.POST.get('first_name', '')
+    last_name = request.POST.get('last_name', '')
+    pexdeals = request.POST.get('pexdeals', 0)
+    
+    user = User.objects.filter(username=email)
+
+    if len(user) > 0:
+        msg = "Email is already registered"
+        return HttpResponseRedirect('/index?signup_msg='+msg)
+
+    pwd_hash = hashlib.md5(password).hexdigest()
+
+    user = User.objects.create(username=email, email=email,  password=pwd_hash,
+                               first_name=first_name, last_name=last_name, 
+                               home_airport=airport, pexdeals=pexdeals)
+    if pexdeals == '1':
+        subscriber = Mailchimp(sys_config['MAILCHIMP_API_KEY'])
+        subscriber.lists.subscribe(sys_config['MAILCHIML_LIST_ID'], {'email':email}, merge_vars={'FNAME':first_name,'LNAME':last_name})
+
+    if user.user_id:
+        request.session['username'] = email
+        request.session['userid'] = user.user_id
+        request.session['level'] = user.level
+
+        msg = "Thank you, You have been successfully registered."
+
+        obj = EmailTemplate.objects.get(email_code='signup')
+        email_sub = obj.subject
+        emailbody = obj.body
+        emailbody = emailbody.replace('[USER_NAME]',first_name)
+        emailbody = emailbody.replace('[SITE-LINK]','<a href="http://pexportal.com/">pexportal</a>')
+        
+        try:
+            resp = customfunction.sendMail('PEX+', email, email_sub, emailbody)
+        except:
+            print "Something wrong: signup-sendmail @@@"
+
+        return HttpResponseRedirect('/index?welcome_msg='+msg)
 
 
 def manageAccount(request):
@@ -388,47 +371,30 @@ def mailchimp(request):
 
 
 def login(request):
-    context = {}
-    user = User()
-    user = authenticate()
-    currentpath = ''
-    if user is not None:
-        if user.is_active:
-            social_login(request,user)  
-    if request.method == "POST": 
-        username = request.REQUEST['username']
-        password = request.REQUEST['password']
-        if "curl" in request.POST:
-            currentpath = request.REQUEST['curl']
-        password1 = hashlib.md5(password).hexdigest()
-        try:
-            user = User.objects.get(email=username, password=password1)
-            if user > 0:
-                user.last_login=datetime.datetime.now()
-                user.save()
-#       login(request=request, user=user)
-                request.session['username'] = username
-                request.session['password'] = password1
-                if user.first_name != '':
-                    request.session['first_name'] = user.first_name
-                if user.home_airport != '':
-                    request.session['homeairpot'] = user.home_airport
-                request.session['userid'] = user.user_id
-                request.session['level'] = user.level
-
-                if currentpath:
-                    return HttpResponseRedirect(currentpath)
-                return HttpResponseRedirect(reverse('index'))
-            else:
-                msg = "Invalid username or password"
-                return HttpResponseRedirect('/index?msg='+msg)
-                #return render_to_response('flightsearch/index.html', {'msg':msg}, context_instance=RequestContext(request))
-        except:
-            msg = "Invalid username or password"
-            return HttpResponseRedirect('/index?msg='+msg)
-            #return render_to_response('flightsearch/index.html', {'msg':msg}, context_instance=RequestContext(request))
-    else:
+    """
+    from user login form and social login
+    """
+    if request.method != "POST": 
         return HttpResponseRedirect(reverse('index'))
+
+    username = request.POST.get('username')
+    password = request.POST.get('password')
+    currentpath = request.POST.get('curl') or reverse('index')
+
+    hash_pwd = hashlib.md5(password).hexdigest()
+    user = authenticate(username=username, password=password) or User.objects.get(email=username, password=hash_pwd)
+
+    if user:
+        auth_login(request, user)
+
+        request.session['username'] = username
+        request.session['userid'] = user.user_id
+        request.session['level'] = user.level
+
+        return HttpResponseRedirect(currentpath)
+    else:
+        msg = "Invalid username or password"
+        return HttpResponseRedirect('/index?msg='+msg)
 
 
 def logout(request):
@@ -436,8 +402,7 @@ def logout(request):
     auth_logout(request)
     if 'username' in request.session:
         del request.session['username']
-        del request.session['homeairpot']
-        del request.session['password']  
+        # del request.session['homeairpot']
     return HttpResponseRedirect(reverse('index'))
 
 
@@ -2845,7 +2810,7 @@ def admin_login(request):
         user = authenticate(username=username, password=password)
         if user is not None:
             if user.is_active and user.is_staff and user.level == 3:
-                social_login(request, user)
+                auth_login(request, user)
 
     return HttpResponseRedirect('/Admin/')
 
@@ -3198,7 +3163,7 @@ def customer_login(request):
         user = authenticate(username=username, password=password)
         if user:
             if user.is_active and user.level == 1:
-                social_login(request, user)
+                auth_login(request, user)
 
     return HttpResponseRedirect('/customer/')
 
