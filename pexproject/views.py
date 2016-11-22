@@ -2877,7 +2877,10 @@ def get_search_country():
 
     country_dict = {}
     for key, val in user_dict.items():
-        country = User.objects.get(user_id=key).country or 'Unknown'
+        try:
+            country = User.objects.get(user_id=key).country or 'Unknown'
+        except Exception, e:
+            country = 'Unknown'
 
         country = country.strip()
         country = 'USA' if country == 'United States' else country

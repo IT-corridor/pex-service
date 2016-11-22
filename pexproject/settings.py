@@ -164,15 +164,7 @@ AUTHENTICATION_BACKENDS = (
    'social.backends.twitter.TwitterOAuth',
    'django.contrib.auth.backends.ModelBackend',
 )
-'''
-SOCIAL_AUTH_PIPELINE = (
-    #'social_auth.backends.pipeline.user.create_user',
-    #'social_auth.backends.pipeline.social.social_auth_user',
-    #'social_auth.backends.pipeline.social.associate_user',
-    #'social_auth.backends.pipeline.social.load_extra_data',
-    #'social_auth.backends.pipeline.user.update_user_details'
-)
-'''
+
 FACEBOOK_EXTENDED_PERMISSIONS = ['email']
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 FACEBOOK_PROFILE_EXTRA_PARAMS = {'fields': 'id,name,email,first_name,last_name','locale': 'ru_RU'}
@@ -183,6 +175,7 @@ SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
 
 SOCIAL_AUTH_FIELDS_STORED_IN_SESSION = ['username']
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+
 SOCIAL_AUTH_FACEBOOK_KEY = config['SOCIAL_AUTH_FACEBOOK_KEY']
 SOCIAL_AUTH_FACEBOOK_SECRET = config['SOCIAL_AUTH_FACEBOOK_SECRET']
 FACEBOOK_APP_ID = config['FACEBOOK_APP_ID']
