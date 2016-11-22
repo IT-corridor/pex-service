@@ -1,13 +1,13 @@
 $(document).ready(function() {
-    $('[type=submit]').attr('disabled', true);
+    $('#id_upgrade_pp').attr('disabled', true);
     $('#id_term').prop('checked', false);
 
     $('#id_term').change(function() {
         // console.log($('#id_term').prop('checked'));
-        $('[type=submit]').attr('disabled', !$('#id_term').prop('checked'));        
+        $('#id_upgrade_pp').attr('disabled', !$('#id_term').prop('checked'));        
     });
 
-    $('[submit=submit]').click(function(e) {
+    $('#id_upgrade_pp').click(function(e) {
         var num_queries = $('#id_queries').val();
 
         if (num_queries < 50) {
