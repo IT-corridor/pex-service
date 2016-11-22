@@ -207,7 +207,7 @@ if (timedata_) {
     arivemaxtime = 1439;
 
 }
-/*************************** SLIDER DECTION  ******************************/
+/*************************** SLIDER SECTION  ******************************/
 
 $("#depart").slider({
     range: true,
@@ -959,19 +959,18 @@ var trip = '';
 var cabintypeval = '';
 var searchidval = '';
 var returnidval = '';
+
 $("#changebtnid").click(function(event) {
     //event.preventDefault();
     return setSearchData();
 });
 
 function setSearchData() {
-    event.preventDefault();
     var appendErrorLabel = '<label id="from-error" class="error" for="from">Please enter a valid airport</label>';
     if ($('#from').val().trim() == '') {
         $('#from').css('border-color', 'red');
         $('label[class=error]').remove();
         $('#from').after(appendErrorLabel);
-        event.preventDefault();
         return false;
     }
 
@@ -979,14 +978,12 @@ function setSearchData() {
         $('label[class=error]').remove();
         $('#to').after(appendErrorLabel);
         $('#to').css('border-color', 'red');
-        event.preventDefault();
         return false;
     }
     if ($('#to').val().trim() == $('#from').val().trim()) {
         $('label[class=error]').remove();
         $('#to').after('<label id="from-error" class="error" for="from">From and To city cannot be same</label>');
         $('#to').css('border-color', 'red');
-        event.preventDefault();
         return false;
     }
 

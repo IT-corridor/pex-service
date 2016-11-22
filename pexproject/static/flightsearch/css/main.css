@@ -2678,7 +2678,7 @@ div.ui-datepicker{
 
 }
 
-@media (max-width: 1024px) {
+/*@media (max-width: 1024px) {
     .navbar-default .navbar-brand {
         color: #39A8E0;
         padding-top: 2px;
@@ -2698,7 +2698,7 @@ div.ui-datepicker{
     .navbar-right.right-nav-link li a {
         padding: 0 8px;
     }
-}
+}*/
 @media (min-width: 768px) and (max-width: 1024px) {
     .mainNav {
         !

@@ -159,8 +159,9 @@
         </div>
         <div class="row hotel-search-panel mvb10px  xs-collapse">
         <form class="form-horizontal" role="form" action="/search_hotel/" method="post" id="search-form">
+            <div class="col-sm-12 col-md-11">
             {% csrf_token %}
-              <div class="col-sm-3 col-xs-12 xs-nopadding">     
+              <div class="col-sm-3 col-xs-12 xs-nopadding" style="padding-left: 3px;">     
                 <div class="form-group nomr noml">
                   {{ form.place }}
                 </div>
@@ -198,9 +199,10 @@
                 </div>                          
               </div>
 
-              <div class="col-sm-1 col-xs-12">
+              <div class="col-sm-1 col-xs-12" style="padding: 0 5px;">
                 <button type="button" onclick="search_hotel();" class="form_val btn btn-pexSearch" id="submitid" tabindex="6">Search</button>
               </div>      
+            </div>
         </form>     
         </div>
         <div class="row">
@@ -263,7 +265,7 @@
                 </div>
             </div>
             <div class="col-sm-3 col-xs-5">
-                <a href="{{ hotel.url }}">
+                <a href="{{ hotel.url }}" target="_blank">
                     <div style="font-size: 18px; width: 100%; overflow: hidden;"> {{ hotel.name }} </div>
                 </a>
                 <div style="margin-bottom: 8px;"><input type="hidden" value="{{hotel.star_rating}}"><span class="stars"></span></div>
