@@ -13,8 +13,8 @@
             <div class='col-md-4'>
                 <div class='package' style="margin-bottom: 40px;">
                     <div class='name'>Free Single User</div>
-                    <div class='price'>$0 / month per user</div>
-                    <div class='trial'>10 / Day</div>
+                    <div class='price'>Want the search power of PEX+, <br><br>but don't travel often.<br><br></div>
+                    <div class='trial'>10 Flight Searches / Day</div>
                     <hr class="pricing">
                     <ul class="pricing">
                         <li>
@@ -34,8 +34,8 @@
                 <div class='package brilliant'>
                     <div class="highlighted">MOST POPULAR</div>
                     <div class='name'>Paid Power User</div>
-                    <div class='price'>$5 / month per user</div>
-                    <div class='trial'>Custom (Monthly)</div>
+                    <div class='price'>Great for business travelers, travel<br><br> aficionados, and intense flight search.<br><br></div>
+                    <div class='trial'>Unlimited</div>
                     <hr class="pricing">
                     <ul class="pricing">
                         <li>
@@ -57,8 +57,8 @@
             <div class='col-md-4'>
                 <div class='package'>
                     <div class='name'>Paid Enterprise</div>
-                    <div class='price'>$10 / month per user</div>
-                    <div class='trial'>Custom (Monthly)</div>
+                    <div class='price'>Companies can save on corporate<br> travel expenses with the ultimate<br> points and miles search and<br> management system.</div>
+                    <div class='trial'>Custom</div>
                     <hr class="pricing">
                     <ul class="pricing">
                         <li>
@@ -148,43 +148,55 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title" style="color: #39A8E0;">Upgrade to Become A ProFlyer</h4>
             </div>
-            <div class="modal-body" style="padding: 30px 20px 15px 20px;">
-                {% if user.is_authenticated or request.session.username %} 
-                    <form class="form-horizontal">
+            {% if user.is_authenticated or request.session.username %} 
+                <form class="form-horizontal" method="post">
+                    {% csrf_token %}
+                    <div class="modal-body" style="padding: 30px 20px 15px 20px;">
                         <div class="col-sm-12 " style="margin-bottom: 20px; line-height: 25px;">
-                            To upgrade, please tell us how many PEX points you want to purchase towards searches. 
+                            To upgrade, please tell us how many PEX points you want to purchase towards searches (Minimum 50 PEX points). 
                         </div>
                         
                         <div class="form-group">
                             <label class="control-label col-sm-8">Number of PEX Points ( 1 PEX Point = 1 Search ):</label>
                             <div class="col-sm-3">
-                                <input type="number" min="10" value="50" class="form-control" name="queries" id="id_queries" style="float: left;">
+                                <input type="number" min="50" value="50" class="form-control" name="queries" id="id_queries" style="float: left;">
                             </div>
                         </div>
-                    </form>
-                    <div class="col-sm-12 form-side">
-                        <div class="checkbox">
-                            <label>
-                                <input type='checkbox' id="id_term" />
-                                <span></span> I've read and agree to the <a>terms and conditions</a> 
-                            </label>
+                        <div class="col-sm-12">
+                            <div class="col-sm-3 cycle_option">
+                                <input type="radio" name="cycle" value="O" required="">One Time
+                            </div>
+                            <div class="col-sm-3 cycle_option">
+                                <input type="radio" name="cycle" value="M" required="">Monthly
+                            </div>
+                            <div class="col-sm-5 cycle_option">
+                                <input type="radio" name="cycle" value="Y" required="">Annually ( 10% off * 12 )
+                            </div>
                         </div>
+                        <div class="col-sm-12 form-side">
+                            <div class="checkbox">
+                                <label>
+                                    <input type='checkbox' id="id_term" />
+                                    <span></span> I've read and agree to the <a>terms and conditions</a> 
+                                </label>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
                     </div>
-                    <div class="clearfix"></div>
-
-                {% else %}
+                    <div class="modal-footer" style="text-align: center;">
+                        <button class="btn btn-pexSearch " type="submit"> Purchase and Upgrade </button>
+                    </div>    
+                </form>
+            {% else %}
+                <div class="modal-body" style="padding: 30px 20px 15px 20px;">
                     <div style="padding: 30px 5px;">
                     <b >You need to sign up first.</b> 
                     </div>
-                {% endif %}
-            </div>
-            <div class="modal-footer" style="text-align: center;">
-                {% if user.is_authenticated or request.session.username %} 
-                    {{ form.render }} 
-                {% else %} 
-                    <button class="btn btn-pexSearch " data-toggle="modal" data-target="#login-modal"> Sign up </button>
-                {% endif %}
-            </div>
+                </div>
+                <div class="modal-footer" style="text-align: center;">
+                        <button class="btn btn-pexSearch " data-toggle="modal" data-target="#login-modal"> Sign up </button>
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>

@@ -18,12 +18,6 @@
     margin-bottom: 10px;
 }
 
-/*.package:hover {
-    margin-top: -30px;
-    -webkit-transition: margin-top 0.3s linear;
-    transition: margin-top 0.3s linear;
-}
-*/
 .name {
     color: #565656;
     font-weight: 600;
@@ -95,10 +89,18 @@ ul.pricing li::before {
     padding-top: 6px;
 }
 
-.package .btn-pexSearch {
+.btn-pexSearch {
     background: #39A8E0;
 }
 
 .form-side {
     background: white;
+}
+
+.cycle_option input {    
+    margin: 3px 5px 0 0 !important;
+}
+
+.cycle_option {
+    line-height: 32px !important;
 }

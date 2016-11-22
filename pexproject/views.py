@@ -60,42 +60,64 @@ def show_me_the_money(sender, **kwargs):
         if ipn_obj.receiver_email != "waff@merchant.com":
             return
 
-        user_id = ipn_obj.custom
-        user = User.objects.get(pk=user_id)
-        user.search_limit = ipn_obj.quantity
-        user.search_run = 0
-        user.save()
-    else:
-        pass
+        if ipn_obj.custom:
+            [user_id, cycle, queries] = ipn_obj.custom.split('-')
+            user = User.objects.get(pk=user_id)
+            if user.level == 0:                
+                user.search_limit = int(queries)
+            else:   # carryover for paying customers
+                user.search_limit = int(queries) + user.search_limit - user.search_run
+            user.search_run = 0
+            user.level = 1
+            user.save()
 
     print 'Successfully done @@@@@@@@'
 
-
 valid_ipn_received.connect(show_me_the_money)
+
 
 def pricing(request):    
     user_id = -1
     if 'userid' in request.session:
         user_id = request.session['userid']
 
-    paypal_dict = {
-        "business": "waff@merchant.com",
-        "amount": "0.1",
-        "quantity": "3",
-        "item_name": "PEX Points for searches",
-        "invoice": "invoice-{}".format(random.randint(10000,99999)),
-        "notify_url": "http://pexportal.com:8000"+reverse('paypal-ipn'),
-        "return_url": "http://pexportal.com:8000/redirect_/",
-        "cancel_return": "http://pexportal.com:8000/redirect_/",
-        "hosted_button_id": "GR32YXZNULSUL",
-        "image": "https://www.paypalobjects.com/en_US/i/btn/btn_paynow_LG.gif",
-        "custom": user_id
-    }
+    if request.method == 'POST':
+        baseurl = 'http://pexportal.com:8000'
+        queries = int(request.POST.get('queries'))
+        cycle = request.POST.get('cycle')
 
-    # Create the instance.
-    form = PayPalPaymentsForm(initial=paypal_dict)
-    context = {"form": form}
-    return render(request, "flightsearch/pricing.html", context)
+        paypal_dict = {
+            "cmd": "_xclick",            
+            "business": "waff@merchant.com",
+            "item_name": "PEX Points for searches",
+            "invoice": "invoice-{}".format(random.randint(10000,99999)),
+            "notify_url": baseurl+reverse('paypal-ipn'),
+            "return": baseurl+"/hotels/",
+            "cancel_return": baseurl+"/hotels/",
+        }
+
+        if cycle == 'O':
+            paypal_dict['cmd'] = "_xclick"
+            paypal_dict["amount"] = 0.1
+            paypal_dict["quantity"] = queries
+        else:
+            up = 0.1 if cycle == 'M' else 0.09
+            queries = queries if cycle == 'M' else queries * 12
+
+            paypal_dict['cmd'] = "_xclick-subscriptions"
+            paypal_dict['a3'] = up * queries
+            paypal_dict['p3'] = 1
+            paypal_dict['t3'] = cycle
+            paypal_dict['src'] = 1
+            paypal_dict['sra'] = 1
+        paypal_dict["custom"] = "{}-{}-{}".format(user_id, cycle, queries)
+
+        uri = urllib.urlencode(paypal_dict)
+        fullurl = "https://www.sandbox.paypal.com/cgi-bin/webscr?" + uri
+        return HttpResponseRedirect(fullurl)
+    else:
+        return render(request, "flightsearch/pricing.html")
+
 
 def get_cityname(request):
     if request.is_ajax():
@@ -616,6 +638,9 @@ def check_limit(request, service):
     if user_id > -1 and int(request.session['level']) > 0:     # paying user
         user = User.objects.get(user_id=user_id)
         if user.search_run >= user.search_limit:
+            # make him as a free user
+            user.level = 0
+            user.save()
             return 3
         user.search_run = user.search_run + 1
 
