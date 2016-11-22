@@ -93,8 +93,8 @@ def pricing(request):
             "item_name": "PEX Points for searches",
             "invoice": "invoice-{}".format(random.randint(10000,99999)),
             "notify_url": baseurl+reverse('paypal-ipn'),
-            "return": baseurl+"/hotels/",
-            "cancel_return": baseurl+"/hotels/",
+            "return": baseurl+"/redirect_/",
+            "cancel_return": baseurl+"/redirect_/",
         }
 
         if cycle == 'O':
