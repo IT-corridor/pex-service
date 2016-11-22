@@ -12,9 +12,9 @@ import subprocess
 import json
 import math
 import collections
+import random
 
 from apiclient.discovery import build
-from random import randint
 from bs4 import BeautifulSoup
 from mailchimp import Mailchimp
 from types import *
@@ -45,7 +45,6 @@ from django.forms.models import model_to_dict
 from paypal.standard.forms import PayPalPaymentsForm
 from paypal.standard.models import ST_PP_COMPLETED
 from paypal.standard.ipn.signals import valid_ipn_received
-import random
 
 from .scrapers.customfunction import is_scrape_vAUS,is_scrape_aeroflot,is_scrape_virginAmerica,is_scrape_etihad,is_scrape_delta,is_scrape_united,is_scrape_virgin_atlantic,is_scrape_jetblue,is_scrape_aa, is_scrape_s7, is_scrape_airchina
 from .scrapers import customfunction
@@ -382,7 +381,10 @@ def login(request):
     currentpath = request.POST.get('curl') or reverse('index')
 
     hash_pwd = hashlib.md5(password).hexdigest()
-    user = authenticate(username=username, password=password) or User.objects.get(email=username, password=hash_pwd)
+    try:
+        user = authenticate(username=username, password=password) or User.objects.get(email=username, password=hash_pwd)
+    except Exception, e:
+        user = None
 
     if user:
         auth_login(request, user)
