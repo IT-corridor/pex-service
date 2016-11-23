@@ -23,14 +23,13 @@ url = "http://www.delta.com/"
 
 start_time = datetime.datetime.now()
 
-display = Display(visible=0, size=(800, 600))
-display.start()
-driver = webdriver.Chrome()
+driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
+driver.set_window_size(1120, 1080)  
 driver.get(url)
 html_page = driver.page_source
 sys.stdout=codecs.getwriter('utf-8')(sys.stdout)
 
-print "XVFB: {} +++++++++++".format((datetime.datetime.now() - start_time).seconds)
+print "PhantomJS: {} +++++++++++".format((datetime.datetime.now() - start_time).seconds)
 print html_page
 
 display.stop()
