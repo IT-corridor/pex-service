@@ -11,7 +11,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from pyvirtualdisplay import Display
+# from pyvirtualdisplay import Display
 
 FARE_CLASSES = {
     'Main ': 'economy',
@@ -31,9 +31,8 @@ def get_delta_price(orgn, dest, searchdate, returndate=None, passenger=1):
     It takes about 23 seconds for oneway, 37 for roundtrip
     """
     url = "http://www.delta.com/"   
-    display = Display(visible=0, size=(800, 600))
-    display.start()
-    driver = webdriver.Chrome()
+    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
+    driver.set_window_size(1120, 1080)  
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
 
     try:
@@ -52,7 +51,7 @@ def get_delta_price(orgn, dest, searchdate, returndate=None, passenger=1):
         driver.find_element_by_id("findFlightsSubmit").send_keys(Keys.ENTER)
     except:
         print "before data page"
-        display.stop()
+        # display.stop()
         driver.quit()
         return {}, {}
 
@@ -80,7 +79,7 @@ def get_delta_price(orgn, dest, searchdate, returndate=None, passenger=1):
         except Exception, e:
             pass
 
-    display.stop()
+    # display.stop()
     driver.quit()
     # print departure_price
     # print return_price
