@@ -233,6 +233,6 @@ def get_price(driver):
 if __name__=='__main__':
     # pdb.set_trace()
     start_time = datetime.datetime.now()
-    # get_delta_price('msp', 'tlv', '12/26/2016', '12/29/2016')
-    get_delta_price('msp', 'tlv', '12/26/2016')
+    print get_delta_price('msp', 'tlv', '12/26/2016', '12/29/2016')
+    # get_delta_price('msp', 'tlv', '12/26/2016')
     print (datetime.datetime.now() - start_time).seconds, '###'
