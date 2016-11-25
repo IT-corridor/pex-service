@@ -91,14 +91,13 @@ def pricing(request):
         acct_alaska = request.POST.get('acct_alaska', '')
 
         paypal_dict = {
-            "cmd": "_xclick",            
             "business": "waff@merchant.com",
             "item_name": "PEX Points for searches",
             "invoice": "invoice-{}".format(random.randint(10000,99999)),
             "notify_url": baseurl+reverse('paypal-ipn'),
             "return": baseurl+"/redirect_/",
             "cancel_return": baseurl+"/redirect_/",
-            "custom": "{}-{}-{}-{}".format(123, cycle, queries, acct_alaska)
+            "custom": "{}-{}-{}-{}".format(user_id, cycle, queries, acct_alaska)
         }
 
         if cycle == 'O':
