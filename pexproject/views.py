@@ -73,14 +73,14 @@ def show_me_the_money(sender, **kwargs):
 
             topic = 'PEX Points Purchase'
             cycle_ = {"O": "one time", "M": "monthly", "Y": "annual"}
-            emailbody = 'A customer ({}) purchased <b>{}</b> PEX points on <b>{}</b> basis.<br><br>'.format(user.email, queries, cycle_[cycle])
+            emailbody = 'A customer ({}) purchased <b>{}</b> PEX points on <b>{}</b> basis.<br>'.format(user.email, queries, cycle_[cycle])
 
             if acct_alaska:
                 user.acct_alaska = acct_alaska
                 emailbody += 'His/her Alaska Airlines Account Number is <b>{}</b>.'.format(acct_alaska)
 
             try:
-                resp = customfunction.sendMail('PEX+', 'jason.5001001@gmail.com', topic, emailbody)
+                resp = customfunction.sendMail('PEX+', 'info@pexportal.com', topic, emailbody)
             except Exception, e:
                 pass
 

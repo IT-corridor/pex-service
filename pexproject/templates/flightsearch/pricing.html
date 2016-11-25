@@ -140,7 +140,7 @@
         </div>
     </div>
 </div>
-<div id="upgradeModal" class="modal fade" role="dialog">
+<div id="upgradeModal" class="modal fade" role="dialog" tabindex="-2">
     <div class="modal-dialog" style="color: black;">
         <!-- Modal content-->
         <div class="modal-content">
@@ -159,31 +159,31 @@
                         <div class="form-group">
                             <label class="control-label col-sm-9">Number of PEX Points ( 1 PEX Point = 1 Search ):</label>
                             <div class="col-sm-3">
-                                <input type="number" min="50" value="50" class="form-control" name="queries" id="id_queries" tabindex="1">
+                                <input type="number" min="50" value="50" class="form-control" name="queries" id="id_queries" tabindex="0">
                             </div>
                         </div>
                         <div class="col-sm-12">
                             <div class="col-sm-4 cycle_option">
-                                <input type="radio" name="cycle" value="O" tabindex="2" required="">One Time
+                                <input type="radio" name="cycle" value="O" tabindex="0" required="">One Time
                             </div>
                             <div class="col-sm-4 cycle_option">
-                                <input type="radio" name="cycle" value="M" tabindex="3" required="">Monthly
+                                <input type="radio" name="cycle" value="M" tabindex="0" required="">Monthly
                             </div>
                             <div class="col-sm-4 cycle_option">
-                                <input type="radio" name="cycle" value="Y" tabindex="4" required="">Annually 
+                                <input type="radio" name="cycle" value="Y" tabindex="0" required="">Annually 
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-9" style="padding: 0; margin-top: 15px;">What's your Alaska Airlines Mileage Plan Account Number?</label>
                             <div class="col-sm-3">
-                                <input type="text" class="form-control" tabindex="5" name="acct_alaska" id="id_acct_alaska" style="margin-top: 10px;" disabled="" value="{{acct_alaska}}">
+                                <input type="text" class="form-control" tabindex="0" name="acct_alaska" id="id_acct_alaska" style="margin-top: 10px;" disabled="" value="{{acct_alaska}}">
                             </div>
                         </div>
 
-                        <div class="col-sm-12 form-side text-center">
+                        <div class="col-sm-12 text-center">
                             <div class="checkbox">
                                 <label>
-                                    <input type='checkbox' id="id_term"  tabindex="6"/>
+                                    <input type='checkbox' id="id_term"  tabindex="0"/>
                                     <span></span> I've read and agree to the <a>terms and conditions</a> 
                                 </label>
                             </div>
@@ -191,7 +191,7 @@
                         <div class="clearfix"></div>
                     </div>
                     <div class="modal-footer" style="text-align: center;">
-                        <button class="btn btn-pexSearch " tabindex="8" type="submit" id="id_upgrade_pp"> Purchase and Upgrade </button>
+                        <button class="btn btn-pexSearch " tabindex="0" type="submit" id="id_upgrade_pp"> Purchase and Upgrade </button>
                     </div>    
                 </form>
             {% else %}
