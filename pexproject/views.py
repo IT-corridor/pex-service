@@ -62,7 +62,7 @@ def show_me_the_money(sender, **kwargs):
             return
 
         if ipn_obj.custom:
-            [user_id, cycle, queries] = ipn_obj.custom.split('-')
+            [user_id, cycle, queries, acct_alaska] = ipn_obj.custom.split('-')
             user = User.objects.get(pk=user_id)
             if user.level == 0:                
                 user.search_limit = int(queries)
@@ -70,6 +70,8 @@ def show_me_the_money(sender, **kwargs):
                 user.search_limit = int(queries) + user.search_limit - user.search_run
             user.search_run = 0
             user.level = 1
+            if acct_alaska:
+                user.acct_alaska = acct_alaska
             user.save()
 
     print 'Successfully done @@@@@@@@'
@@ -86,6 +88,7 @@ def pricing(request):
         baseurl = 'http://pexportal.com:8000'
         queries = int(request.POST.get('queries'))
         cycle = request.POST.get('cycle')
+        acct_alaska = request.POST.get('acct_alaska', '')
 
         paypal_dict = {
             "cmd": "_xclick",            
@@ -95,6 +98,7 @@ def pricing(request):
             "notify_url": baseurl+reverse('paypal-ipn'),
             "return": baseurl+"/redirect_/",
             "cancel_return": baseurl+"/redirect_/",
+            "custom": "{}-{}-{}-{}".format(123, cycle, queries, acct_alaska)
         }
 
         if cycle == 'O':
@@ -102,7 +106,9 @@ def pricing(request):
             paypal_dict["amount"] = 0.1
             paypal_dict["quantity"] = queries
         else:
-            up = 0.1 if cycle == 'M' else 0.09
+            up = 0.1 
+            # if cycle == 'Y':
+            #     up = 0.09
             queries = queries if cycle == 'M' else queries * 12
 
             paypal_dict['cmd'] = "_xclick-subscriptions"
@@ -111,7 +117,6 @@ def pricing(request):
             paypal_dict['t3'] = cycle
             paypal_dict['src'] = 1
             paypal_dict['sra'] = 1
-        paypal_dict["custom"] = "{}-{}-{}".format(user_id, cycle, queries)
 
         uri = urllib.urlencode(paypal_dict)
         fullurl = "https://www.sandbox.paypal.com/cgi-bin/webscr?" + uri
@@ -2701,6 +2706,8 @@ def customer_update(request, id=None):
             customer.level = form.cleaned_data['level']
             customer.search_limit = form.cleaned_data['search_limit']
             customer.search_run = form.cleaned_data['search_run']            
+            customer.acct_alaska = form.cleaned_data['acct_alaska']
+            
             if not customer.level:
                 customer.level = 0
             customer.save()

@@ -6,16 +6,16 @@
 <link rel="stylesheet" href="/static/flightsearch/css/pricing.css">
 <div class='container wrapper'>
     <div class="row" style="margin-bottom: 20px;">
-        <div class="col-md-12 text-center">
-            <h1 style="margin-bottom: 70px;">Choose the plan that's right for you</h1>
-        </div>
-        <div class="col-md-offset-1 col-md-10 col-sm-12 main">
-            <div class='col-sm-4'>
+        <div class="col-md-offset-1 col-md-10">
+            <div class="col-md-12 text-center">
+                <h1 style="margin-bottom: 70px;">Choose the plan that's right for you</h1>
+            </div>
+            <div class='col-md-4'>
                 <div class='package' style="margin-bottom: 40px;">
                     <div class='name'>Free Single User</div>
-                    <div class='price'>Want the search power of PEX+, but don't travel often.<br><br></div>
-                    <div class="line"><div class='trial'>10 Flight Searches / Day</div></div>
-                    <!-- <hr class="pricing"> -->
+                    <div class='price'>Want the search power of PEX+, <br><br>but don't travel often.<br><br></div>
+                    <div class='trial'>10 Flight Searches / Day</div>
+                    <hr class="pricing">
                     <ul class="pricing">
                         <li>
                             <strong>5</strong> daily price alerts
@@ -30,13 +30,13 @@
                     <button class="btn btn-pexSearch " data-toggle="modal" data-target="#login-modal"> Sign up </button>
                 </div>
             </div>
-            <div class='col-sm-4'>
+            <div class='col-md-4'>
                 <div class='package brilliant'>
                     <div class="highlighted">MOST POPULAR</div>
                     <div class='name'>Paid Power User</div>
-                    <div class='price'>Great for business travelers, travel aficionados, and intense flight search.<br><br></div>
-                    <div class="line"><div class='trial'>Unlimited</div></div>
-                    <!-- <hr class="pricing"> -->
+                    <div class='price'>Great for business travelers, travel<br><br> aficionados, and intense flight search.<br><br></div>
+                    <div class='trial'>Unlimited</div>
+                    <hr class="pricing">
                     <ul class="pricing">
                         <li>
                             <strong>Unlimited</strong> custom price alerts
@@ -54,12 +54,12 @@
                     <button class="btn btn-pexSearch" data-toggle="modal" data-target="#upgradeModal">Upgrade Now</button>
                 </div>
             </div>
-            <div class='col-sm-4'>
+            <div class='col-md-4'>
                 <div class='package'>
                     <div class='name'>Paid Enterprise</div>
-                    <div class='price'>Companies can save on corporate travel expenses with the ultimate points and miles search and management system.</div>
-                    <div class="line"><div class='trial'>Custom</div></div>
-                    <!-- <hr class="pricing"> -->
+                    <div class='price'>Companies can save on corporate<br> travel expenses with the ultimate<br> points and miles search and<br> management system.</div>
+                    <div class='trial'>Custom</div>
+                    <hr class="pricing">
                     <ul class="pricing">
                         <li>
                             <strong>Unlimited</strong> custom price alerts
@@ -84,12 +84,12 @@
             <div class="col-md-12 text-center">
                 <h1 style="margin-bottom: 50px;">Bring The Power of PEX+ to You</h1>
             </div>
-            <div class='col-md-12' style="padding: 0 7px;">
+            <div class='col-md-12'>
                 <div class='package' style="margin-bottom: 40px;">
                     <div class='name'>PEX+ API</div>
                     <div class='price'>Developers and corporations can utilize the power of PEX+ search technology for their applications and business goals.</div>
-                    <div class="line"><div class='trial'>Annual License Subscription + Custom (Monthly)</div></div>
-                    <!-- <hr class="pricing"> -->
+                    <div class='trial'>Annual License Subscription + Custom (Monthly)</div>
+                    <hr class="pricing">
                     <div class="col-sm-3">
                     <ul class="pricing">
                         <li>
@@ -151,36 +151,29 @@
             {% if user.is_authenticated or request.session.username %} 
                 <form class="form-horizontal" method="post">
                     {% csrf_token %}
-                    <div class="modal-body">
-                        <div class="description">
-                            To upgrade, please tell us how many PEX points you want to purchase towards searches (Minimum 50 PEX points). <small><em>Earn 3 miles per dollar spent with <b style="color:#39A8E0;">minimum spend*</b></em></small>
+                    <div class="modal-body" style="padding: 30px 20px 15px 20px;">
+                        <div class="col-sm-12 " style="margin-bottom: 20px; line-height: 25px;">
+                            To upgrade, please tell us how many PEX points you want to purchase towards searches (Minimum 50 PEX points). 
                         </div>
                         
                         <div class="form-group">
                             <label class="control-label col-sm-8">Number of PEX Points ( 1 PEX Point = 1 Search ):</label>
                             <div class="col-sm-3">
-                                <input type="number" min="50" value="50" class="form-control" name="queries" id="id_queries">
+                                <input type="number" min="50" value="50" class="form-control" name="queries" id="id_queries" style="float: left;">
                             </div>
                         </div>
                         <div class="col-sm-12">
-                            <div class="col-sm-4 cycle_option">
+                            <div class="col-sm-3 cycle_option">
                                 <input type="radio" name="cycle" value="O" required="">One Time
                             </div>
-                            <div class="col-sm-4 cycle_option">
+                            <div class="col-sm-3 cycle_option">
                                 <input type="radio" name="cycle" value="M" required="">Monthly
                             </div>
-                            <div class="col-sm-4 cycle_option">
-                                <input type="radio" name="cycle" value="Y" required="">Annually 
+                            <div class="col-sm-5 cycle_option">
+                                <input type="radio" name="cycle" value="Y" required="">Annually ( 10% off * 12 )
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="control-label col-sm-8" style="margin-top: 10px;">What's your Alaska Airlines Mileage Plan Account Number:</label>
-                            <div class="col-sm-3">
-                                <input type="text" class="form-control" name="acct_alaska" id="id_acct_alaska" style="margin-top: 20px;" disabled="">
-                            </div>
-                        </div>
-
-                        <div class="col-sm-12 form-side text-center">
+                        <div class="col-sm-12 form-side">
                             <div class="checkbox">
                                 <label>
                                     <input type='checkbox' id="id_term" />
@@ -195,13 +188,13 @@
                     </div>    
                 </form>
             {% else %}
-                <div class="modal-body">
+                <div class="modal-body" style="padding: 30px 20px 15px 20px;">
                     <div style="padding: 30px 5px;">
-                        <b >You need to sign up first.</b> 
+                    <b >You need to sign up first.</b> 
                     </div>
                 </div>
                 <div class="modal-footer" style="text-align: center;">
-                    <button class="btn btn-pexSearch " data-toggle="modal" data-target="#login-modal"> Sign up </button>
+                        <button class="btn btn-pexSearch " data-toggle="modal" data-target="#login-modal"> Sign up </button>
                 </div>
             {% endif %}
         </div>

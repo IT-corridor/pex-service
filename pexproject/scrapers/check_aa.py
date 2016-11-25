@@ -31,7 +31,7 @@ html_page = driver.page_source
 sys.stdout=codecs.getwriter('utf-8')(sys.stdout)
 
 print "XVFB: {} +++++++++++".format((datetime.datetime.now() - start_time).seconds)
-print html_page
+# print html_page
 
 display.stop()
 driver.quit()

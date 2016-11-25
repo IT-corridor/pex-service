@@ -479,6 +479,7 @@ class User(AbstractUser):
     search_limit = models.IntegerField(default=10)
     search_run = models.IntegerField(default=0)
     wallet_id = models.CharField(max_length=50,null=True, blank=True)
+    acct_alaska = models.CharField(max_length=20, blank=True, null=True)
     objects =  UserManager()
 
 
