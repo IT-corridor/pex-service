@@ -70,8 +70,20 @@ def show_me_the_money(sender, **kwargs):
                 user.search_limit = int(queries) + user.search_limit - user.search_run
             user.search_run = 0
             user.level = 1
+
+            topic = 'PEX Points Purchase'
+            cycle_ = {"O": "one time", "M": "monthly", "Y": "annual"}
+            emailbody = 'A customer ({}) purchased {} PEX points on {} basis.\n'.format(user.email, queries, cycle_[cycle])
+
             if acct_alaska:
                 user.acct_alaska = acct_alaska
+                emailbody += 'His/her Alaska Airlines Account Number is {}.'.format(acct_alaska)
+
+            try:
+                resp = customfunction.sendMail('PEX+', 'jason.5001001@gmail.com', topic, emailbody)
+            except Exception, e:
+                pass
+
             user.save()
 
     print 'Successfully done @@@@@@@@'
@@ -79,10 +91,26 @@ def show_me_the_money(sender, **kwargs):
 valid_ipn_received.connect(show_me_the_money)
 
 
+def get_alaska_account(user_id):
+    """
+    Get default alaska account number for the user.
+    """
+    if user_id < 0:
+        return ''
+
+    cursor = connection.cursor()
+    sql = "select account_no from reward_points where user_id={} and airlines like 'Alaska Airlines%'".format(user_id)
+    if cursor.execute(sql):
+        return cursor.fetchone()[0]
+    return ''
+
+
 def pricing(request):    
     user_id = -1
     if 'userid' in request.session:
         user_id = request.session['userid']
+
+    acct_alaska = get_alaska_account(user_id)
 
     if request.method == 'POST':
         baseurl = 'http://pexportal.com:8000'
@@ -92,7 +120,6 @@ def pricing(request):
 
         paypal_dict = {
             "business": "waff@merchant.com",
-            "item_name": "PEX Points for searches",
             "invoice": "invoice-{}".format(random.randint(10000,99999)),
             "notify_url": baseurl+reverse('paypal-ipn'),
             "return": baseurl+"/redirect_/",
@@ -104,11 +131,15 @@ def pricing(request):
             paypal_dict['cmd'] = "_xclick"
             paypal_dict["amount"] = 0.1
             paypal_dict["quantity"] = queries
+            paypal_dict["item_name"] = "{} PEX Points for searches on pexportal.com".format(queries)
         else:
             up = 0.1 
-            # if cycle == 'Y':
-            #     up = 0.09
-            queries = queries if cycle == 'M' else queries * 12
+            paypal_dict["item_name"] = "PEX Points for searches on pexportal.com ({} PEX Points monthly)".format(queries)
+
+            if cycle == 'Y':
+                # up = 0.09
+                paypal_dict['item_name'] = "PEX Points for searches on pexportal.com ({} PEX Points monthly for 12 months)".format(queries)
+                queries = queries * 12
 
             paypal_dict['cmd'] = "_xclick-subscriptions"
             paypal_dict['a3'] = up * queries
@@ -121,7 +152,7 @@ def pricing(request):
         fullurl = "https://www.sandbox.paypal.com/cgi-bin/webscr?" + uri
         return HttpResponseRedirect(fullurl)
     else:
-        return render(request, "flightsearch/pricing.html")
+        return render(request, "flightsearch/pricing.html", {"acct_alaska": acct_alaska})
 
 
 def get_cityname(request):
@@ -255,6 +286,7 @@ def redirect_(request):
 
 def index(request):    
     # for social login
+
     if request.user.is_authenticated() and request.method != 'POST':
         user = User.objects.filter(username=request.user)
 
@@ -263,6 +295,7 @@ def index(request):
             request.session['username'] = request.user.username
             request.session['userid'] = user.user_id
             request.session['level'] = user.level
+        """
         else:
             email=request.user
             password = ''
@@ -276,7 +309,7 @@ def index(request):
             request.session['username'] = user.username
             request.session['userid'] = user.user_id
             request.session['level'] = user.level
-
+        """
     return render(request, 'flightsearch/home.html')    
 
 

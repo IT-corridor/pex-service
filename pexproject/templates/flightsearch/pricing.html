@@ -35,7 +35,7 @@
                     <div class="highlighted">MOST POPULAR</div>
                     <div class='name'>Paid Power User</div>
                     <div class='price'>Great for business travelers, travel aficionados, and intense flight search.<br><br></div>
-                    <div class="line"><div class='trial'>Unlimited</div></div>
+                    <div class="line"><div class='trial'>Unlimited*</div></div>
                     <!-- <hr class="pricing"> -->
                     <ul class="pricing">
                         <li>
@@ -153,37 +153,37 @@
                     {% csrf_token %}
                     <div class="modal-body">
                         <div class="description">
-                            To upgrade, please tell us how many PEX points you want to purchase towards searches (Minimum 50 PEX points). <small><em>Earn 3 miles per dollar spent with <b style="color:#39A8E0;">minimum spend*</b></em></small>
+                            To upgrade, please tell us how many PEX points you want to purchase towards searches (Minimum 50 PEX points). <b>Earn 3 miles per dollar spent</b> with minimum spend.*
                         </div>
                         
                         <div class="form-group">
-                            <label class="control-label col-sm-8">Number of PEX Points ( 1 PEX Point = 1 Search ):</label>
+                            <label class="control-label col-sm-9">Number of PEX Points ( 1 PEX Point = 1 Search ):</label>
                             <div class="col-sm-3">
-                                <input type="number" min="50" value="50" class="form-control" name="queries" id="id_queries">
+                                <input type="number" min="50" value="50" class="form-control" name="queries" id="id_queries" tabindex="1">
                             </div>
                         </div>
                         <div class="col-sm-12">
                             <div class="col-sm-4 cycle_option">
-                                <input type="radio" name="cycle" value="O" required="">One Time
+                                <input type="radio" name="cycle" value="O" tabindex="2" required="">One Time
                             </div>
                             <div class="col-sm-4 cycle_option">
-                                <input type="radio" name="cycle" value="M" required="">Monthly
+                                <input type="radio" name="cycle" value="M" tabindex="3" required="">Monthly
                             </div>
                             <div class="col-sm-4 cycle_option">
-                                <input type="radio" name="cycle" value="Y" required="">Annually 
+                                <input type="radio" name="cycle" value="Y" tabindex="4" required="">Annually 
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-sm-8" style="margin-top: 10px;">What's your Alaska Airlines Mileage Plan Account Number:</label>
+                            <label class="control-label col-sm-9" style="padding: 0; margin-top: 15px;">What's your Alaska Airlines Mileage Plan Account Number?</label>
                             <div class="col-sm-3">
-                                <input type="text" class="form-control" name="acct_alaska" id="id_acct_alaska" style="margin-top: 20px;" disabled="">
+                                <input type="text" class="form-control" tabindex="5" name="acct_alaska" id="id_acct_alaska" style="margin-top: 10px;" disabled="" value="{{acct_alaska}}">
                             </div>
                         </div>
 
                         <div class="col-sm-12 form-side text-center">
                             <div class="checkbox">
                                 <label>
-                                    <input type='checkbox' id="id_term" />
+                                    <input type='checkbox' id="id_term"  tabindex="6"/>
                                     <span></span> I've read and agree to the <a>terms and conditions</a> 
                                 </label>
                             </div>
@@ -191,7 +191,7 @@
                         <div class="clearfix"></div>
                     </div>
                     <div class="modal-footer" style="text-align: center;">
-                        <button class="btn btn-pexSearch " type="submit" id="id_upgrade_pp"> Purchase and Upgrade </button>
+                        <button class="btn btn-pexSearch " tabindex="8" type="submit" id="id_upgrade_pp"> Purchase and Upgrade </button>
                     </div>    
                 </form>
             {% else %}
@@ -201,7 +201,7 @@
                     </div>
                 </div>
                 <div class="modal-footer" style="text-align: center;">
-                    <button class="btn btn-pexSearch " data-toggle="modal" data-target="#login-modal"> Sign up </button>
+                    <button class="btn btn-pexSearch " data-toggle="modal" data-target="#login-modal"  tabindex="1"> Sign up </button>
                 </div>
             {% endif %}
         </div>
