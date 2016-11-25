@@ -5,14 +5,12 @@ import datetime
 from datetime import timedelta
 import time
 import re
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-
-from pyvirtualdisplay import Display
 import json
 import codecs
 import pdb 
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 DEBUG = False
 # DEBUG = True
@@ -38,13 +36,8 @@ def get_city_s7_code(citycode=None):
     return 'None'
 
 def s7ru(ocity_code, dcity_code, searchdate, searchkey):
-    display = Display(visible=0, size=(800, 600))
-    display.start()
-    chromedriver = "/usr/bin/chromedriver"
-    os.environ["webdriver.chrome.driver"] = chromedriver
-    
-    driver = webdriver.Chrome(chromedriver)
-    driver.implicitly_wait(1) 
+    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
+    driver.set_window_size(1120, 1080)  
     url = 'http://travelwith.s7.ru/selectExactDateSearchFlights.action?TA=1&CUR=USD&FLC=1&RDMPTN=true&FSC1=1&DD1=%s&DA1=%s&DP1=%s&AA1=%s&AP1=%s&LAN=en' % (searchdate, ocity_code, get_city_s7_code(ocity_code), dcity_code, get_city_s7_code(dcity_code))
 
     sys.stdout=codecs.getwriter('utf-8')(sys.stdout)
@@ -78,7 +71,6 @@ def s7ru(ocity_code, dcity_code, searchdate, searchkey):
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", searchkey, stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "s7", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
         db.commit()        
 
-    display.stop()
     driver.quit()              
     log_file.close()
     return searchkey    

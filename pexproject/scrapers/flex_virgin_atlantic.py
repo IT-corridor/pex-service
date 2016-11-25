@@ -6,15 +6,14 @@ from datetime import timedelta
 import time
 import MySQLdb
 import customfunction
-from pyvirtualdisplay import Display
+
 
 def flex_virgin_atlantic(src,dest,searchdate,searchkey):
     db = customfunction.dbconnection()
     cursor = db.cursor()
     db.set_character_set('utf8')
-    display = Display(visible=0, size=(800, 600))
-    display.start()
-    driver = webdriver.Chrome()
+    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
+    driver.set_window_size(1120, 1080)  
     url ="http://www.virgin-atlantic.com/us/en/book-your-travel/book-your-flight/flight-search-calendar.html?departure="+src+"&arrival="+dest+"&departureDate="+str(searchdate)+"&adult=1&classType=10&classTypeReturn=10&findFlights=go&isreturn=no&jsEnabled=true&search_type=redeemMiles&bookingPanelLocation=Undefined"
     driver.get(url)
     
@@ -60,7 +59,6 @@ def flex_virgin_atlantic(src,dest,searchdate,searchkey):
     print "*********************************************************************************\n\n"
     cursor.executemany ("INSERT INTO pexproject_flexibledatesearch (scrapertime,searchkey,source,destination,journey,flexdate,economyflex,businessflex,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);", values_string)
     db.commit()
-    display.stop()
     driver.quit()
 
 if __name__=='__main__':

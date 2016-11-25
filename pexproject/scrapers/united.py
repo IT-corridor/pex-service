@@ -7,11 +7,10 @@ from datetime import timedelta
 import time
 import customfunction  
 import re
+import json
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from pyvirtualdisplay import Display
-import json
 
 
 def get_airport_code(airport):
@@ -32,14 +31,8 @@ def united(origin, destination, searchdate, searchkey):
     db = customfunction.dbconnection()
     cursor = db.cursor()
     url = "https://www.united.com/ual/en/us/flight-search/book-a-flight/results/awd?f=" + origin + "&t=" + destination + "&d=" + date + "&tt=1&at=1&sc=7&px=1&taxng=1&idx=1"
-    display = Display(visible=0, size=(800, 600))
-    display.start()
-    chromedriver = "/usr/bin/chromedriver"
-    os.environ["webdriver.chrome.driver"] = chromedriver
-    #driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true', '--ssl-protocol=any'])
-    #driver.set_window_size(1120, 550)
-    
-    driver = webdriver.Chrome(chromedriver)
+    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
+    driver.set_window_size(1120, 1080)  
 
     try:
         driver.get(url)
@@ -172,7 +165,6 @@ def united(origin, destination, searchdate, searchkey):
         flightDetails = jsonOb["data"]["Trips"][0]["Flights"]
     except:
         print "No data Found"
-        display.stop()
         driver.quit()
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "united", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
         db.commit()
@@ -446,7 +438,6 @@ def united(origin, destination, searchdate, searchkey):
         
     cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "united", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
     db.commit()
-    display.stop()
     driver.quit()              
     return searchkey              
         

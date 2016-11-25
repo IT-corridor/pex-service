@@ -5,7 +5,6 @@ import datetime
 from datetime import timedelta
 import time
 import re
-from pyvirtualdisplay import Display
 import codecs
 import requests
 from selenium.webdriver.common.by import By
@@ -61,10 +60,8 @@ def get_tax(log_file, cookies, index, cabin):
 
 
 def airchina(ocity_code, dcity_code, searchdate, searchkey):
-    display = Display(visible=0, size=(800, 600))
-    display.start()
-    chromedriver = "/usr/bin/chromedriver"
-    os.environ["webdriver.chrome.driver"] = chromedriver
+    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
+    driver.set_window_size(1120, 1080)  
 
     url = SEARCH_URL % (ocity_code, dcity_code, searchdate)
 
@@ -74,7 +71,6 @@ def airchina(ocity_code, dcity_code, searchdate, searchkey):
     log_file.write('\n\n'+'='*70+'\n\n')    
     log_file.write(url+'\n\n')
 
-    driver = webdriver.Chrome(chromedriver)
     db = customfunction.dbconnection() if not DEV_LOCAL else None
     flightinfo = []
     currentdatetime = datetime.datetime.now()
@@ -163,7 +159,6 @@ def airchina(ocity_code, dcity_code, searchdate, searchkey):
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", searchkey, stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "airchina", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
         db.commit()        
 
-    display.stop()
     driver.quit()              
     log_file.close()
     return searchkey    
