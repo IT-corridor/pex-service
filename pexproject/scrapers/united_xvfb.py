@@ -1,15 +1,17 @@
 #!/usr/bin/env python 
-import sys
+import os, sys
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import datetime
+from datetime import timedelta
 import time
 import customfunction  
 import re
-import json
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from pyvirtualdisplay import Display
+import json
 
 
 def get_airport_code(airport):
@@ -21,7 +23,8 @@ def united(origin, destination, searchdate, searchkey):
     dt = datetime.datetime.strptime(searchdate, '%m/%d/%Y')
     date = dt.strftime('%Y-%m-%d')
     date_format = dt.strftime('%a, %b %-d')
-    payload_date = dt.strftime('%d, %b %Y')    
+    payload_date = dt.strftime('%d, %b %Y')
+    
    
     currentdatetime = datetime.datetime.now()
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
@@ -29,8 +32,14 @@ def united(origin, destination, searchdate, searchkey):
     db = customfunction.dbconnection()
     cursor = db.cursor()
     url = "https://www.united.com/ual/en/us/flight-search/book-a-flight/results/awd?f=" + origin + "&t=" + destination + "&d=" + date + "&tt=1&at=1&sc=7&px=1&taxng=1&idx=1"
-    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
-    driver.set_window_size(1120, 1080)  
+    display = Display(visible=0, size=(800, 600))
+    display.start()
+    chromedriver = "/usr/bin/chromedriver"
+    os.environ["webdriver.chrome.driver"] = chromedriver
+    #driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true', '--ssl-protocol=any'])
+    #driver.set_window_size(1120, 550)
+    
+    driver = webdriver.Chrome(chromedriver)
 
     try:
         driver.get(url)
@@ -65,8 +74,11 @@ def united(origin, destination, searchdate, searchkey):
                             document.body.appendChild(element);
                             element.appendChild(document.createTextNode(self.responseText));
                             count = count+1;
-                        }                       
+                       }
+                       
                     }
+                    
+                 
                 }
     
                 if(oldOnReadyStateChange) {
@@ -86,10 +98,12 @@ def united(origin, destination, searchdate, searchkey):
     
             send.call(this, data);
         }
-        })(XMLHttpRequest);
-        UA.Booking.FlightSearch.init();    
+    })(XMLHttpRequest);
+    UA.Booking.FlightSearch.init();
+    
         """)
 
+    
         WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "interceptedResponse")))
         html_page = driver.page_source
         print html_page
@@ -159,6 +173,7 @@ def united(origin, destination, searchdate, searchkey):
         flightDetails = jsonOb["data"]["Trips"][0]["Flights"]
     except:
         print "No data Found"
+        display.stop()
         driver.quit()
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "united", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
         db.commit()
@@ -432,6 +447,7 @@ def united(origin, destination, searchdate, searchkey):
         
     cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "united", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
     db.commit()
+    display.stop()
     driver.quit()              
     return searchkey              
         
@@ -439,3 +455,5 @@ def united(origin, destination, searchdate, searchkey):
 if __name__=='__main__':
     print "in united"
     united(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
+
+

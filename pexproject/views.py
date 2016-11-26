@@ -799,7 +799,7 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/jetblue.py",destcode, orgncode, str(returndate).strip(), str(returnkey)])
                 if is_scrape_virginAmerica == 1:
                     customfunction.flag = customfunction.flag+1
-                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/virginAmerica.py",destcode, orgncode, str(returndate).strip(), str(returnkey)])
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/virgin_america.py",destcode, orgncode, str(returndate).strip(), str(returnkey)])
                 
                 if is_scrape_delta == 1:
                     customfunction.flag = customfunction.flag+1
@@ -825,7 +825,7 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
             
             ''' Flexible date search scraper for return Date'''
             if returnkey and  'flexibledate' in searchtype:
-                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/Flex_delta.py",destcode, orgncode, str(returndate).strip(), str(returnkey),cabin])
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/flex_delta.py",destcode, orgncode, str(returndate).strip(), str(returnkey),cabin])
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/flex_jetblue.py",destcode, orgncode, str(returndate).strip(), str(returnkey)])
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/flex_virgin_atlantic.py",destcode, orgncode, str(returndate).strip(), str(returnkey)])
                     
@@ -850,7 +850,7 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
             cursor = connection.cursor()
             ''' Flexible date search scraper for return Date'''
             if searchkeyid and  'flexibledate' in searchtype:
-                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/Flex_delta.py",orgncode,destcode, str(depart).strip(), str(searchkeyid),cabin])
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/flex_delta.py",orgncode,destcode, str(depart).strip(), str(searchkeyid),cabin])
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/flex_jetblue.py",orgncode,destcode, str(depart).strip(), str(searchkeyid)])
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/flex_virgin_atlantic.py",orgncode,destcode, str(depart).strip(), str(searchkeyid)])
                     
@@ -862,7 +862,7 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/jetblue.py",orgncode,destcode,str(depart).strip(),str(searchkeyid)])
             if is_scrape_virginAmerica == 1:
                 customfunction.flag = customfunction.flag+1
-                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/virginAmerica.py",orgncode,destcode,str(depart).strip(),str(searchkeyid)])                
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/virgin_america.py",orgncode,destcode,str(depart).strip(),str(searchkeyid)])                
             if is_scrape_delta == 1:
                 customfunction.flag = customfunction.flag+1
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/delta.py",orgncode,destcode,str(date),str(depart).strip(),str(searchkeyid),etihadorigin,etihaddest,cabin])
@@ -898,7 +898,7 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
             Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='virgin_atlantic').delete()
             if returnkey:
                 Flightdata.objects.filter(searchkeyid=returnkey,datasource='virgin_atlantic').delete()            
-            subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/virgin.py",orgncode,destcode, str(depart).strip(), str(returndate).strip(), str(searchkeyid),str(returnkey)])
+            subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/virgin_atlantic.py",orgncode,destcode, str(depart).strip(), str(returndate).strip(), str(searchkeyid),str(returnkey)])
 
         if returnkey:
             if is_scrape_aeroflot == 1:
