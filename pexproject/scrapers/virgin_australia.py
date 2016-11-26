@@ -68,7 +68,7 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
     try:
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "dtcontainer-0")))
         html_page = driver.page_source
-        soup = BeautifulSoup(html_page,"xml")
+        soup = BeautifulSoup(html_page,"lxml")
         templatedata = soup.find('script', text=re.compile('var templateData = '))
         time.sleep(1)
         json_text = re.search(r'^\s*var templateData = \s*({.*?})\s*;\s*$',templatedata.string, flags=re.DOTALL | re.MULTILINE).group(1)
