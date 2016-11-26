@@ -11,7 +11,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-DEV_LOCAL = True
+DEV_LOCAL = False
 
 if not DEV_LOCAL:
     import customfunction
@@ -455,5 +455,5 @@ def united(origin, destination, searchdate, searchkey):
 
 if __name__=='__main__':
     # print "in united"
-    # united(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
-    united('las','iad','12/21/2016',1111)
+    united(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
+    # united('las','iad','12/21/2016',1111)
