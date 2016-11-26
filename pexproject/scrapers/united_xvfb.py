@@ -5,14 +5,19 @@ from selenium import webdriver
 import datetime
 from datetime import timedelta
 import time
-import customfunction  
 import re
+import codecs
+import pdb
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from pyvirtualdisplay import Display
 import json
 
+DEV_LOCAL = True
+
+if not DEV_LOCAL:
+    import customfunction
 
 def get_airport_code(airport):
     airport = airport.split(' (')
@@ -21,6 +26,7 @@ def get_airport_code(airport):
 
 def united(origin, destination, searchdate, searchkey):
     dt = datetime.datetime.strptime(searchdate, '%m/%d/%Y')
+    sys.stdout=codecs.getwriter('utf-8')(sys.stdout)
     date = dt.strftime('%Y-%m-%d')
     date_format = dt.strftime('%a, %b %-d')
     payload_date = dt.strftime('%d, %b %Y')
@@ -29,8 +35,11 @@ def united(origin, destination, searchdate, searchkey):
     currentdatetime = datetime.datetime.now()
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     searchkey = searchkey
-    db = customfunction.dbconnection()
-    cursor = db.cursor()
+
+    if not DEV_LOCAL:
+        db = customfunction.dbconnection()
+        cursor = db.cursor()
+
     url = "https://www.united.com/ual/en/us/flight-search/book-a-flight/results/awd?f=" + origin + "&t=" + destination + "&d=" + date + "&tt=1&at=1&sc=7&px=1&taxng=1&idx=1"
     display = Display(visible=0, size=(800, 600))
     display.start()
@@ -106,9 +115,14 @@ def united(origin, destination, searchdate, searchkey):
     
         WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "interceptedResponse")))
         html_page = driver.page_source
-        print html_page
+
+        # print html_page
+        # return 
+        
         soup = BeautifulSoup(html_page,"xml")
         maindata = soup.findAll("div",{"id":"interceptedResponse"})
+        # print maindata
+        # return
         json_string = maindata[0].text
         jsonOb = json.loads(json_string)
         
@@ -159,10 +173,10 @@ def united(origin, destination, searchdate, searchkey):
                                 print "Display ", caldays[d]["Display"] 
                                 '''
                                 flex_value.append((str(stime),str(searchkey),origin,destination,str(travelDate),str(flexdate1),ecosaver,busssaver,"united"))
-                                
-            cursor.executemany ("INSERT INTO pexproject_flexibledatesearch (scrapertime,searchkey,source,destination,journey,flexdate,economyflex,businessflex,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);", flex_value)
-            #print cursor._last_executed
-            db.commit()
+            
+            if not DEV_LOCAL:                    
+                cursor.executemany ("INSERT INTO pexproject_flexibledatesearch (scrapertime,searchkey,source,destination,journey,flexdate,economyflex,businessflex,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);", flex_value)
+                db.commit()
         except:
             'no calender data'
             
@@ -175,8 +189,9 @@ def united(origin, destination, searchdate, searchkey):
         print "No data Found"
         display.stop()
         driver.quit()
-        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "united", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
-        db.commit()
+        if not DEV_LOCAL:
+            cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "united", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
+            db.commit()
         return searchkey
     
     comma = ''
@@ -440,20 +455,25 @@ def united(origin, destination, searchdate, searchkey):
         recordcount = recordcount+1        
         values_string.append((Flightno, str(searchkey), stime, stoppage, "test", source, lastdestination, test1, arivetime, totaltime, str(economy), str(ecoTax), str(business), str(businessTax), str(first), str(firstTax),"Economy", "Business", "First", "united", departdetailsText, arivedetailsText, planedetails, operatedbytext,ecoFareCode,businessFareCode,firstFareCode,eco_fare_code,bus_fare_code,first_fare_code))
         if recordcount > 50 or i == (totalrecords)-1 and len(values_string)>0:
-            cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code,eco_fare_code,business_fare_code,first_fare_code) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", values_string)
-            db.commit()
+            if not DEV_LOCAL:
+                cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code,eco_fare_code,business_fare_code,first_fare_code) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", values_string)
+                db.commit()
             values_string =[]
             recordcount = 1
-        
-    cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "united", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
-    db.commit()
+    
+    if not DEV_LOCAL:    
+        cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "united", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
+        db.commit()
     display.stop()
     driver.quit()              
     return searchkey              
         
 
 if __name__=='__main__':
-    print "in united"
-    united(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
+    # print "in united"
+    # united(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
+    # if DEV_LOCAL:
+    #     pdb.set_trace()    
+    united('las','iad','12/21/2016',1111)
 
 
