@@ -171,7 +171,6 @@ def united(origin, destination, searchdate, searchkey):
             
         flightDetails = jsonOb["data"]["Trips"][0]["Flights"]
     except:
-        raise
         print "No data Found"
         driver.quit()
         if not DEV_LOCAL:

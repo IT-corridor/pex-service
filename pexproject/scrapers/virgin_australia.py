@@ -18,7 +18,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-DEV_LOCAL = True
+DEV_LOCAL = False
 
 if not DEV_LOCAL:
     import customfunction
@@ -51,22 +51,19 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
                 cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "Virgin Australia", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
                 db.commit()
         driver.quit()
-    # try:
-    driver.get(url)
-    submitbtn = WebDriverWait(driver,5).until(
-                lambda driver :driver.find_element_by_xpath("//*[contains(text(), 'Find Flights')]"))
-    print submitbtn, '@@@@@'
-    driver.execute_script("arguments[0].click();", submitbtn)
+    try:
+        driver.get(url)
+        submitbtn = WebDriverWait(driver,5).until(
+                    lambda driver :driver.find_element_by_xpath("//*[contains(text(), 'Find Flights')]"))
+        driver.execute_script("arguments[0].click();", submitbtn)
         
-    # except:
-    #     storeFlag(searchid,stime,isflag)
-    #     print '######### EEEE?'
-    #     return
+    except:
+        storeFlag(searchid,stime,isflag)
+        return
     try:
         # check Invalid Input
         WebDriverWait(driver,2).until(EC.presence_of_element_located((By.ID, "page-dialog")))
         storeFlag(searchid,stime,isflag)
-        print '@@@@@@'
         return
     except:
         print "form submitted"
@@ -245,7 +242,7 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
             if not DEV_LOCAL:
                 cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code,eco_fare_code,business_fare_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
                 db.commit()
-            print value_string
+            # print value_string
         if isflag:   
             if not DEV_LOCAL:
                 cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "Virgin Australia", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
@@ -272,5 +269,5 @@ if __name__=='__main__':
     else:
         nextCabin = "maincabin"
     flag = False
-    # virginAustralia(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],nextCabin,flag)
+    virginAustralia(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],nextCabin,flag)
     
