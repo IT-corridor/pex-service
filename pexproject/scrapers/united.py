@@ -310,8 +310,11 @@ def united(origin, destination, searchdate, searchkey):
                     airport_ = customfunction.get_airport_detail(get_airport_code(DestinationDescription)) or DestinationDescription           
                     destdetail = lastdestdatetime+" | at "+airport_
                 else:
-                    DestinationDateTime = datetime.datetime.strptime(DestinationDateTime, '%m/%d/%Y %H:%M')
-                    DestinationDateTime = DestinationDateTime.strftime('%Y/%m/%d %H:%M')                    
+                    try:
+                        DestinationDateTime = datetime.datetime.strptime(DestinationDateTime, '%m/%d/%Y %H:%M')
+                        DestinationDateTime = DestinationDateTime.strftime('%Y/%m/%d %H:%M')
+                    except Exception, e:
+                        pass
                     airport_ = customfunction.get_airport_detail(get_airport_code(DestinationDescription)) or DestinationDescription
                     destdetail = DestinationDateTime+" | at "+airport_
                 arivaildetails.append(destdetail)
