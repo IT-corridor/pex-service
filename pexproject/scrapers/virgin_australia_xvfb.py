@@ -7,25 +7,26 @@ import datetime
 from datetime import timedelta
 import time
 import _strptime
+import MySQLdb
 import re
-import json
-# import pdb
-import codecs
 from selenium.webdriver.common.proxy import *
 from datetime import date
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
+import json
+import pdb
+from pyvirtualdisplay import Display
 
 DEV_LOCAL = True
 
 if not DEV_LOCAL:
     import customfunction
 
-
 def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag):
-    # sys.stdout=codecs.getwriter('utf-8')(sys.stdout)
     if not DEV_LOCAL:
         db = customfunction.dbconnection()
         cursor = db.cursor()
@@ -40,33 +41,32 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
     else:
         cabinType = "B"
     
-    url = "https://www.virginaustralia.com/au/en/bookings/flights/make-a-booking/?bookingType=flights&passthru=0&trip_type=0&origin="+from_airport+"&destination="+to_airport+"&travel_class="+cabinType+"&adults=1&children=0&infants=0&date_flexible=0&use_points=1&showPromoCode=1&date_start_day="+str(dateday)+"&date_start_month="+str(datemonth) #+"&date_end_day="+str(dateday)+"&date_end_month="+str(datemonth)
-    
-    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
-    driver.set_window_size(1120, 1080)  
+    url = "http://www.virginaustralia.com/au/en/bookings/flights/make-a-booking/?bookingType=flights&passthru=0&trip_type=0&origin="+from_airport+"&destination="+to_airport+"&travel_class="+cabinType+"&adults=1&children=0&infants=0&date_flexible=0&use_points=1&showPromoCode=1&date_start_day="+str(dateday)+"&date_start_month="+str(datemonth) #+"&date_end_day="+str(dateday)+"&date_end_month="+str(datemonth)
+    display = Display(visible=0, size=(800, 600))
+    display.start()
+    driver = webdriver.Chrome()
     
     def storeFlag(searchid,stime,isflag):
         if isflag:   
             if not DEV_LOCAL:
                 cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "Virgin Australia", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
                 db.commit()
+        display.stop()
         driver.quit()
-    # try:
-    driver.get(url)
-    submitbtn = WebDriverWait(driver,5).until(
-                lambda driver :driver.find_element_by_xpath("//*[contains(text(), 'Find Flights')]"))
-    print submitbtn, '@@@@@'
-    driver.execute_script("arguments[0].click();", submitbtn)
+    try:
+        driver.get(url)
+        print driver.page_source
+        submitbtn = WebDriverWait(driver,5).until(
+                    lambda driver :driver.find_element_by_xpath("//*[contains(text(), 'Find Flights')]"))
+        driver.execute_script("arguments[0].click();", submitbtn)
         
-    # except:
-    #     storeFlag(searchid,stime,isflag)
-    #     print '######### EEEE?'
-    #     return
+    except:
+        storeFlag(searchid,stime,isflag)
+        return
     try:
         # check Invalid Input
         WebDriverWait(driver,2).until(EC.presence_of_element_located((By.ID, "page-dialog")))
         storeFlag(searchid,stime,isflag)
-        print '@@@@@@'
         return
     except:
         print "form submitted"
@@ -81,7 +81,7 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
     try:
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "dtcontainer-0")))
         html_page = driver.page_source
-        soup = BeautifulSoup(html_page,"lxml")
+        soup = BeautifulSoup(html_page,"xml")
         templatedata = soup.find('script', text=re.compile('var templateData = '))
         time.sleep(1)
         json_text = re.search(r'^\s*var templateData = \s*({.*?})\s*;\s*$',templatedata.string, flags=re.DOTALL | re.MULTILINE).group(1)
@@ -89,6 +89,13 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
         tempdata = jsonData["rootElement"]["children"][1]["children"][0]["children"][7]["model"]
     except:
         storeFlag(searchid,stime,isflag)
+        '''
+        if isflag:   
+            cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "Virgin Australia", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
+            db.commit()
+        display.stop()
+        driver.quit()
+        '''
         return searchid
     i = 1 
     try:
@@ -245,17 +252,18 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
             if not DEV_LOCAL:
                 cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code,eco_fare_code,business_fare_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
                 db.commit()
-            print value_string
         if isflag:   
             if not DEV_LOCAL:
                 cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "Virgin Australia", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
                 db.commit()
+        display.stop()
         driver.quit()
     except:
         if isflag:   
             if not DEV_LOCAL:
                 cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "Virgin Australia", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
                 db.commit()
+        display.stop()
         driver.quit()
     return searchid
 
@@ -272,5 +280,5 @@ if __name__=='__main__':
     else:
         nextCabin = "maincabin"
     flag = False
-    # virginAustralia(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],nextCabin,flag)
+    virginAustralia(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],nextCabin,flag)
     

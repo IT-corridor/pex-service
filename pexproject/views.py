@@ -1009,8 +1009,8 @@ def _check_data(recordkey, returnkey, cabin, allkey):
         data1 = "stored"
     else:
         data1 = "onprocess"
-    # print "flagcheck",len(list(flagcheck))
-    # print "customfunction flag", customfunction.flag
+    print "flagcheck",len(list(flagcheck))
+    print "customfunction flag", customfunction.flag
     if len(list(flagcheck)) >= customfunction.flag:
         iscomplete = "completed"
 
