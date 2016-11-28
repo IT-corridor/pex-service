@@ -1,4 +1,6 @@
 $(document).ready(function() {
+    $('[data-toggle="tooltip"]').tooltip();   
+    
     $('#id_upgrade_pp').attr('disabled', true);
     $('#id_term').prop('checked', false);
 
