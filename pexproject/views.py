@@ -2408,8 +2408,8 @@ def api_search_flight(request):
                 get_code_for_qpx(origin_), get_code_for_qpx(destination_), 
                 depart_date, _token[2], carriers, max_stop))
 
-            delta_prices_d = pool.apply_async(get_delta_price, (origin_, destination_, depart_date))
-            delta_prices_r = pool.apply_async(get_delta_price, (destination_, origin_, return_date)) if keys['returnkey'] else None
+            async_delta_d = pool.apply_async(get_delta_price, (origin_, destination_, depart_date))
+            async_delta_r = pool.apply_async(get_delta_price, (destination_, origin_, return_date)) if return_date else None
 
         """ delay min(DELAY_THRESHOLD, run_scraper) """
         DELAY_THRESHOLD = 30
