@@ -120,7 +120,7 @@ def pricing(request):
         acct_alaska = request.POST.get('acct_alaska', '')
 
         paypal_dict = {
-            "business": "waff@merchant.com",
+            "business": "jason.5001001@gmail.com",
             "invoice": "invoice-{}".format(random.randint(10000,99999)),
             "notify_url": baseurl+reverse('paypal-ipn'),
             "return": baseurl+"/redirect_/",
