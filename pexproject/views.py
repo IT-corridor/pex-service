@@ -120,7 +120,7 @@ def pricing(request):
         acct_alaska = request.POST.get('acct_alaska', '')
 
         paypal_dict = {
-            "business": "jason.5001001@gmail.com",
+            "business": "waff@merchant.com",
             "invoice": "invoice-{}".format(random.randint(10000,99999)),
             "notify_url": baseurl+reverse('paypal-ipn'),
             "return": baseurl+"/redirect_/",
@@ -150,7 +150,7 @@ def pricing(request):
             paypal_dict['sra'] = 1
 
         uri = urllib.urlencode(paypal_dict)
-        fullurl = "https://www.paypal.com/cgi-bin/webscr?" + uri
+        fullurl = "https://www.sandbox.paypal.com/cgi-bin/webscr?" + uri
         return HttpResponseRedirect(fullurl)
     else:
         return render(request, "flightsearch/pricing.html", {"acct_alaska": acct_alaska})
