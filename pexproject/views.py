@@ -13,6 +13,7 @@ import json
 import math
 import collections
 import random
+import urllib
 
 from apiclient.discovery import build
 from bs4 import BeautifulSoup
@@ -45,6 +46,7 @@ from django.forms.models import model_to_dict
 from paypal.standard.forms import PayPalPaymentsForm
 from paypal.standard.models import ST_PP_COMPLETED
 from paypal.standard.ipn.signals import valid_ipn_received
+from multiprocessing.pool import ThreadPool
 
 from .scrapers.customfunction import is_scrape_vAUS,is_scrape_aeroflot,is_scrape_virginAmerica,is_scrape_etihad,is_scrape_delta,is_scrape_united,is_scrape_virgin_atlantic,is_scrape_jetblue,is_scrape_aa, is_scrape_s7, is_scrape_airchina
 from .scrapers import customfunction
@@ -60,42 +62,99 @@ def show_me_the_money(sender, **kwargs):
         if ipn_obj.receiver_email != "waff@merchant.com":
             return
 
-        user_id = ipn_obj.custom
-        user = User.objects.get(pk=user_id)
-        user.search_limit = ipn_obj.quantity
-        user.search_run = 0
-        user.save()
-    else:
-        pass
+        if ipn_obj.custom:
+            [user_id, cycle, queries, acct_alaska] = ipn_obj.custom.split('-')
+            user = User.objects.get(pk=user_id)
+            if user.level == 0:                
+                user.search_limit = int(queries)
+            else:   # carryover for paying customers
+                user.search_limit = int(queries) + user.search_limit - user.search_run
+            user.search_run = 0
+            user.level = 1
+
+            topic = 'PEX Points Purchase'
+            cycle_ = {"O": "one time", "M": "monthly", "Y": "annual"}
+            emailbody = 'A customer ({}) purchased <b>{}</b> PEX points on <b>{}</b> basis.<br>'.format(user.email, queries, cycle_[cycle])
+
+            if acct_alaska:
+                user.acct_alaska = acct_alaska
+                emailbody += 'His/her Alaska Airlines Account Number is <b>{}</b>.'.format(acct_alaska)
+
+            try:
+                resp = customfunction.sendMail('PEX+', 'info@pexportal.com', topic, emailbody)
+            except Exception, e:
+                pass
+
+            user.save()
 
     print 'Successfully done @@@@@@@@'
 
-
 valid_ipn_received.connect(show_me_the_money)
+
+
+def get_alaska_account(user_id):
+    """
+    Get default alaska account number for the user.
+    """
+    if user_id < 0:
+        return ''
+
+    cursor = connection.cursor()
+    sql = "select account_no from reward_points where user_id={} and airlines like 'Alaska Airlines%'".format(user_id)
+    if cursor.execute(sql):
+        return cursor.fetchone()[0]
+    return ''
+
 
 def pricing(request):    
     user_id = -1
     if 'userid' in request.session:
         user_id = request.session['userid']
 
-    paypal_dict = {
-        "business": "waff@merchant.com",
-        "amount": "0.1",
-        "quantity": "3",
-        "item_name": "PEX Points for searches",
-        "invoice": "invoice-{}".format(random.randint(10000,99999)),
-        "notify_url": "http://pexportal.com:8000"+reverse('paypal-ipn'),
-        "return_url": "http://pexportal.com:8000/redirect_/",
-        "cancel_return": "http://pexportal.com:8000/redirect_/",
-        "hosted_button_id": "GR32YXZNULSUL",
-        "image": "https://www.paypalobjects.com/en_US/i/btn/btn_paynow_LG.gif",
-        "custom": user_id
-    }
+    acct_alaska = get_alaska_account(user_id)
 
-    # Create the instance.
-    form = PayPalPaymentsForm(initial=paypal_dict)
-    context = {"form": form}
-    return render(request, "flightsearch/pricing.html", context)
+    if request.method == 'POST':
+        baseurl = 'http://pexportal.com:8000'
+        queries = int(request.POST.get('queries'))
+        cycle = request.POST.get('cycle')
+        acct_alaska = request.POST.get('acct_alaska', '')
+
+        paypal_dict = {
+            "business": "waff@merchant.com",
+            "invoice": "invoice-{}".format(random.randint(10000,99999)),
+            "notify_url": baseurl+reverse('paypal-ipn'),
+            "return": baseurl+"/redirect_/",
+            "cancel_return": baseurl+"/redirect_/",
+            "custom": "{}-{}-{}-{}".format(user_id, cycle, queries, acct_alaska)
+        }
+
+        if cycle == 'O':
+            paypal_dict['cmd'] = "_xclick"
+            paypal_dict["amount"] = 0.1
+            paypal_dict["quantity"] = queries
+            paypal_dict["item_name"] = "{} PEX Points for searches on pexportal.com".format(queries)
+        else:
+            up = 0.1 
+            paypal_dict["item_name"] = "PEX Points for searches on pexportal.com ({} PEX Points monthly)".format(queries)
+
+            if cycle == 'Y':
+                # up = 0.09
+                paypal_dict['item_name'] = "PEX Points for searches on pexportal.com ({} PEX Points monthly for 12 months)".format(queries)
+                queries = queries * 12
+
+            paypal_dict['cmd'] = "_xclick-subscriptions"
+            paypal_dict['a3'] = up * queries
+            paypal_dict['p3'] = 1
+            paypal_dict['t3'] = cycle
+            paypal_dict['src'] = 1
+            paypal_dict['sra'] = 1
+
+        uri = urllib.urlencode(paypal_dict)
+        fullurl = "https://www.sandbox.paypal.com/cgi-bin/webscr?" + uri
+        return HttpResponseRedirect(fullurl)
+    else:
+        return render(request, "flightsearch/pricing.html", {"acct_alaska": acct_alaska})
+
 
 def get_cityname(request):
     if request.is_ajax():
@@ -228,6 +287,7 @@ def redirect_(request):
 
 def index(request):    
     # for social login
+
     if request.user.is_authenticated() and request.method != 'POST':
         user = User.objects.filter(username=request.user)
 
@@ -236,6 +296,7 @@ def index(request):
             request.session['username'] = request.user.username
             request.session['userid'] = user.user_id
             request.session['level'] = user.level
+        """
         else:
             email=request.user
             password = ''
@@ -249,7 +310,7 @@ def index(request):
             request.session['username'] = user.username
             request.session['userid'] = user.user_id
             request.session['level'] = user.level
-
+        """
     return render(request, 'flightsearch/home.html')    
 
 
@@ -616,6 +677,9 @@ def check_limit(request, service):
     if user_id > -1 and int(request.session['level']) > 0:     # paying user
         user = User.objects.get(user_id=user_id)
         if user.search_run >= user.search_limit:
+            # make him as a free user
+            user.level = 0
+            user.save()
             return 3
         user.search_run = user.search_run + 1
 
@@ -736,7 +800,7 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/jetblue.py",destcode, orgncode, str(returndate).strip(), str(returnkey)])
                 if is_scrape_virginAmerica == 1:
                     customfunction.flag = customfunction.flag+1
-                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/virginAmerica.py",destcode, orgncode, str(returndate).strip(), str(returnkey)])
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/virgin_america.py",destcode, orgncode, str(returndate).strip(), str(returnkey)])
                 
                 if is_scrape_delta == 1:
                     customfunction.flag = customfunction.flag+1
@@ -762,7 +826,7 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
             
             ''' Flexible date search scraper for return Date'''
             if returnkey and  'flexibledate' in searchtype:
-                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/Flex_delta.py",destcode, orgncode, str(returndate).strip(), str(returnkey),cabin])
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/flex_delta.py",destcode, orgncode, str(returndate).strip(), str(returnkey),cabin])
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/flex_jetblue.py",destcode, orgncode, str(returndate).strip(), str(returnkey)])
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/flex_virgin_atlantic.py",destcode, orgncode, str(returndate).strip(), str(returnkey)])
                     
@@ -787,7 +851,7 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
             cursor = connection.cursor()
             ''' Flexible date search scraper for return Date'''
             if searchkeyid and  'flexibledate' in searchtype:
-                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/Flex_delta.py",orgncode,destcode, str(depart).strip(), str(searchkeyid),cabin])
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/flex_delta.py",orgncode,destcode, str(depart).strip(), str(searchkeyid),cabin])
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/flex_jetblue.py",orgncode,destcode, str(depart).strip(), str(searchkeyid)])
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/flex_virgin_atlantic.py",orgncode,destcode, str(depart).strip(), str(searchkeyid)])
                     
@@ -799,7 +863,7 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/jetblue.py",orgncode,destcode,str(depart).strip(),str(searchkeyid)])
             if is_scrape_virginAmerica == 1:
                 customfunction.flag = customfunction.flag+1
-                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/virginAmerica.py",orgncode,destcode,str(depart).strip(),str(searchkeyid)])                
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/virgin_america.py",orgncode,destcode,str(depart).strip(),str(searchkeyid)])                
             if is_scrape_delta == 1:
                 customfunction.flag = customfunction.flag+1
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/delta.py",orgncode,destcode,str(date),str(depart).strip(),str(searchkeyid),etihadorigin,etihaddest,cabin])
@@ -835,7 +899,7 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
             Flightdata.objects.filter(searchkeyid=searchkeyid,datasource='virgin_atlantic').delete()
             if returnkey:
                 Flightdata.objects.filter(searchkeyid=returnkey,datasource='virgin_atlantic').delete()            
-            subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/virgin.py",orgncode,destcode, str(depart).strip(), str(returndate).strip(), str(searchkeyid),str(returnkey)])
+            subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/virgin_atlantic.py",orgncode,destcode, str(depart).strip(), str(returndate).strip(), str(searchkeyid),str(returnkey)])
 
         if returnkey:
             if is_scrape_aeroflot == 1:
@@ -946,8 +1010,8 @@ def _check_data(recordkey, returnkey, cabin, allkey):
         data1 = "stored"
     else:
         data1 = "onprocess"
-    # print "flagcheck",len(list(flagcheck))
-    # print "customfunction flag", customfunction.flag
+    print "flagcheck",len(list(flagcheck))
+    print "customfunction flag", customfunction.flag
     if len(list(flagcheck)) >= customfunction.flag:
         iscomplete = "completed"
 
@@ -2309,13 +2373,15 @@ def api_search_flight(request):
 
         result = {}
 
-        _token = check_validity_token(request.META.get('HTTP_AUTHORIZATION'), 'flight', request)
+        _token = check_validity_token(request.META.get('HTTP_AUTHORIZATION'), 
+            'flight', request)
         error_message = _token[0]
+        is_price_package = _token[1]
+
         if error_message:
             result['status'] = 'Failed'
             result['message'] = error_message
             return JsonResponse(result)
-
 
         fare_class = json.loads(request.body).get('class')
         _params = check_validity_flight_params(request)
@@ -2325,39 +2391,37 @@ def api_search_flight(request):
             result['message'] = error_message
             return JsonResponse(result)
 
-
-        # get valid parameters
+        """ get valid parameters """
         return_date, origin, destination, depart_date, search_type, flight_class, mile_low, mile_high, airlines, depart_from, depart_to, arrival_from, arrival_to = _params[1], _params[2], _params[3], _params[4], _params[5], _params[6], _params[7], _params[8], _params[9], _params[10], _params[11], _params[12], _params[13]
 
+        """ trigger search """
         keys = _search(return_date, origin, destination, depart_date, search_type, flight_class, request)        
 
-        delay_threshold = 38 if keys['returnkey'] else 42
-
-        qpx_prices = {}
-        # get qpx price
-        origin_ = Airports.objects.get(airport_id=origin).code
-        destination_ = Airports.objects.get(airport_id=destination).code
-
-        if _token[1]:   # check qpx limit
-            price_start_time = datetime.datetime.now()
+        """ get dollar price """
+        if is_price_package:
+            origin_ = Airports.objects.get(airport_id=origin).code
+            destination_ = Airports.objects.get(airport_id=destination).code
             carriers, max_stop = get_qpx_filter_carriers(origin, destination)
-            # print get_code_for_qpx(origin_), get_code_for_qpx(destination_), '########'
-            qpx_prices = get_qpx_prices(return_date, get_code_for_qpx(origin_), get_code_for_qpx(destination_), depart_date, _token[2], carriers, max_stop)
-            delta_departure_price, delta_return_price = get_delta_price(origin_, destination_, depart_date, return_date)
-            # print delta_departure_price, '#######'
-            # print delta_return_price, '######'
-            delay_threshold -= (datetime.datetime.now() - price_start_time).seconds
 
-        qpx_unmatch_count = 0
+            pool = ThreadPool(processes=4)
+            async_qpx = pool.apply_async(get_qpx_prices, (return_date, 
+                get_code_for_qpx(origin_), get_code_for_qpx(destination_), 
+                depart_date, _token[2], carriers, max_stop))
 
+            async_delta_d = pool.apply_async(get_delta_price, (origin_, destination_, depart_date))
+            async_delta_r = pool.apply_async(get_delta_price, (destination_, origin_, return_date)) if return_date else None
+
+        """ delay min(DELAY_THRESHOLD, run_scraper) """
+        DELAY_THRESHOLD = 30
         while(1):
-            delay_threshold -= 1
+            DELAY_THRESHOLD -= 1
             time.sleep(1)
-            # check the status of the scraping
+            """ check the status of the scraping """
             scrape_status = _check_data(keys['departkey'], keys['returnkey'], flight_class, '')
-            if scrape_status[1] == 'completed' or delay_threshold < 0:
+            if scrape_status[1] == 'completed' or DELAY_THRESHOLD < 0:
                 break
 
+        flights = []
         if not keys['returnkey']:
             kwargs = {
                 'searchkeyid': keys['departkey'], 
@@ -2367,37 +2431,27 @@ def api_search_flight(request):
                 'arival__range': (arrival_from, arrival_to)
             }
 
-            __debug('## filters for flight api: %s\n' % str(kwargs)) 
             flights_ = Flightdata.objects.filter(**kwargs)
-            flights = []
-            # convert each property to string for json dump
             for flight in flights_:
-                flight_ = model_to_dict(flight, exclude=['rowid', 'scrapetime', 'searchkeyid', 'stoppage_station', 'arivedetails', 'operatedby', 'departdetails', 'planedetails', 'economy_code', 'first_fare_code', 'first_code', 'eco_fare_code', 'arival', 'business_code', 'firsttax', 'maintax', 'businesstax', 'cabintype3', 'cabintype2', 'business', 'maincabin', 'cabintype1', 'firstclass', 'business_fare_code'])
-                flight_['arrival'] = flight.arival
-                flight_['image'] = 'pexportal.com/static/flightsearch/img/'+logos[flight.datasource]
-                price_key = get_qpx_price_key(flight.planedetails).encode('ascii', 'ignore')        
-                flight_['price'] = qpx_prices.get(price_key, 'N/A')
-                # get delta price
-                if flight_['price'] == 'N/A':
-                    delta_price = delta_departure_price.get(price_key)
-                    if delta_price:
-                        flight_['price'] = delta_price.get(fare_class, 'N/A')
+                flight_ = model_to_dict(flight, exclude=['rowid', 'scrapetime', 'searchkeyid', 'stoppage_station', 'arivedetails', 'operatedby', 'departdetails', 'planedetails', 'economy_code', 'first_fare_code', 'first_code', 'eco_fare_code', 'arival', 'departure', 'business_code', 'firsttax', 'maintax', 'businesstax', 'cabintype3', 'cabintype2', 'business', 'maincabin', 'cabintype1', 'firstclass', 'business_fare_code'])
 
-                flight_['total_miles'] = getattr(flight, FLIGHT_CLASS[fare_class][0])
-                flight_['total_taxes'] = getattr(flight, FLIGHT_CLASS[fare_class][1])
-
-                # compute percentage of match
-                if flight_['price'] == 'N/A':
-                    qpx_unmatch_count += 1
-
-                for k,v in flight_.items():
-                    flight_[k] = str(v)
                 flight_['route'] = parse_detail(flight.departdetails, flight.arivedetails, flight.planedetails, flight.operatedby)
+
                 if not flight_['route']:
                     continue
 
-                flights.append(flight_)
+                flight_['arrival'] = str(flight.arival)
+                flight_['departure'] = str(flight.departure)
+                flight_['image'] = 'pexportal.com/static/flightsearch/img/'+logos[flight.datasource]
+                flight_['total_miles'] = getattr(flight, FLIGHT_CLASS[fare_class][0])
+                flight_['total_taxes'] = getattr(flight, FLIGHT_CLASS[fare_class][1])
 
+                if is_price_package:
+                    flight_['price'] = 'N/A'
+                    flight_['price_key_d'] = get_qpx_price_key(flight.planedetails).encode('ascii', 'ignore')
+                    flight_['price_key_r'] = ''
+
+                flights.append(flight_)
         else:
             totalfare = "p1." + FLIGHT_CLASS[fare_class][0] + "+p2." + FLIGHT_CLASS[fare_class][0]
             totaltax = "p1." + FLIGHT_CLASS[fare_class][1] + "+p2." + FLIGHT_CLASS[fare_class][1]
@@ -2407,7 +2461,6 @@ def api_search_flight(request):
 
             _flights = Flightdata.objects.raw("select p1.*,p2.origin as return_origin, p2.stoppage as return_stoppage,p2.flighno as return_fligh_no, p2.destination as return_destination, p2.departure as return_departure, p2.arival as return_arrival, p2.duration as return_duration,p2.departdetails as return_departdetails,p2.arivedetails as return_arrivaldetails, p2.planedetails as return_planedetails,p2.operatedby as return_operatedby," + totalfare + " as total_miles,  "+totaltax+" as total_taxes from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ='" + str(keys['returnkey']) + "' and " + returnfare + " > '0'  where  p1.searchkeyid = '" + keys['departkey'] + "' and " + departfare + " > 0 and " + querylist + " order by total_miles ,total_taxes, p1.departure, p2.departure ASC")
 
-            flights = []
             for item in _flights:
                 _item = {}
                 _item['origin'] = item.origin
@@ -2437,42 +2490,53 @@ def api_search_flight(request):
                 _item['total_miles'] = item.total_miles
                 _item['total_taxes'] = item.total_taxes
 
-                price_key_d = get_qpx_price_key(item.planedetails).encode('ascii', 'ignore')
-                price_key_r = get_qpx_price_key(item.return_planedetails).encode('ascii', 'ignore')
-                _item['price'] = qpx_prices.get(price_key_d+price_key_r, 'N/A')
-                print price_key_d, price_key_r, '####'
-                # get delta price
-                if _item['price'] == 'N/A':
-                    delta_price = delta_departure_price.get(price_key_d)
-                    if delta_price:
-                        price_d = delta_price.get(fare_class)
-                        if price_d:
-                            delta_price = delta_return_price.get(price_key_r)                            
-                            if delta_price:
-                                price_r = delta_price.get(fare_class)
-                                if price_r:
-                                    # print price_d, price_r, fare_class, '#####'
-                                    _item['price'] = price_d[:3] + str(float(price_d[3:])+float(price_r[3:]))
-                                    # print _item['price']
-
-                # compute percentage of match
-                if _item['price'] == 'N/A':
-                    qpx_unmatch_count += 1
-
+                if is_price_package:
+                    _item['price'] = 'N/A'
+                    _item['price_key_d'] = get_qpx_price_key(item.planedetails).encode('ascii', 'ignore')
+                    _item['price_key_r'] = get_qpx_price_key(item.return_planedetails).encode('ascii', 'ignore')
+                    
                 flights.append(_item)
 
-        # save unmatch percent
-        if flights:
-            searchkey = Searchkey.objects.get(searchid=keys['departkey'])
-            searchkey.qpx_unmatch_percent = qpx_unmatch_count * 1.0 / len(flights)
-            searchkey.save()
+        if is_price_package:
+            qpx_unmatch_count = 0
+            qpx_prices = async_qpx.get()
+            delta_prices_d = async_delta_d.get()
+            delta_prices_r = async_delta_r.get() if async_delta_r else {}
+
+            for flight in flights:
+                price_key_d = flight.pop('price_key_d')
+                price_key_r = flight.pop('price_key_r')
+
+                price = qpx_prices.get(price_key_d+price_key_r)
+                if not price:   # for delta
+                    price_ = delta_prices_d.get(price_key_d, {})
+                    price = price_.get(fare_class)
+
+                    """ for round trip """
+                    if delta_prices_r and price:
+                        price_ = delta_prices_r.get(price_key_r, {}) 
+                        price_ = price_.get(fare_class)                          
+                        if price_:
+                            price = price[:3] + str(float(price[3:])+float(price_[3:]))
+                        else:
+                            price = None
+                if price:
+                    flight['price'] = price
+                else:
+                    qpx_unmatch_count += 1
+
+            """ save unmatch percent """
+            if flights:
+                searchkey = Searchkey.objects.get(searchid=keys['departkey'])
+                searchkey.qpx_unmatch_percent = qpx_unmatch_count * 1.0 / len(flights)
+                searchkey.save()
 
         result['status'] = 'Success'
         result['flights'] = flights
         return JsonResponse(result, safe=False)
 
-# admin views
 
+""" admin views """
 @login_required(login_url='/Admin/login/')
 def city_image(request):
     city_images = CityImages.objects.all()
@@ -2675,6 +2739,8 @@ def customer_update(request, id=None):
             customer.level = form.cleaned_data['level']
             customer.search_limit = form.cleaned_data['search_limit']
             customer.search_run = form.cleaned_data['search_run']            
+            customer.acct_alaska = form.cleaned_data['acct_alaska']
+            
             if not customer.level:
                 customer.level = 0
             customer.save()

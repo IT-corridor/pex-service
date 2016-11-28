@@ -4,16 +4,14 @@ from selenium import webdriver
 import datetime
 from datetime import timedelta
 import time
-import MySQLdb
 import re
+import json
 import customfunction
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
-from pyvirtualdisplay import Display
-import json
  
 
 def flex_delta(src,dest,date,searchkey,cabin):
@@ -27,9 +25,8 @@ def flex_delta(src,dest,date,searchkey,cabin):
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     try:
         url = "http://www.delta.com/air-shopping/calendar.action"
-        display = Display(visible=0, size=(800, 600))
-        display.start()
-        driver = webdriver.Chrome()
+        driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
+        driver.set_window_size(1120, 1080)  
         driver.get(url)
         flexClass = ''
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "originCity")))
@@ -121,7 +118,6 @@ def flex_delta(src,dest,date,searchkey,cabin):
         db.commit()
     except:
         "something wrong"
-    display.stop()
     driver.quit()
                 
 if __name__=='__main__':

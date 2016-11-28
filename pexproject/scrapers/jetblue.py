@@ -6,16 +6,13 @@ import selenium
 import datetime
 from datetime import timedelta
 import time
-import MySQLdb
 import re
 from selenium.webdriver.common.proxy import *
 from datetime import date
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from django.db import connection, transaction
 import customfunction
 
 

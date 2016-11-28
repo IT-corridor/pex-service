@@ -102,11 +102,13 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     except:
         storeFlag(searchkey,stime)
         return searchkey
+
     def setDestination():
         to.clear()
         to.send_keys(destcode)
         time.sleep(1)
         to.send_keys(Keys.TAB)
+        
     destcodeVal = ''
     while flag < 1 and flag1 < 2:
         destcodeVal = to.get_attribute("value")

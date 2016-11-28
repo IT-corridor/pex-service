@@ -6,7 +6,6 @@ from datetime import timedelta
 import time
 import MySQLdb
 import customfunction
-from pyvirtualdisplay import Display
 import json
 
 #mainurl = "http://www.jetblue.com/bestfarefinder/#/"
@@ -23,9 +22,8 @@ def flex_blue(origin,dest,date,searchkey):
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     url = "http://www.jetblue.com/bestfarefinder/CalendarData.aspx?month="+month+"+"+str(year)+"&type=POINTS&direction=outbound&tripType=RT&origin="+origin+"&destination="+dest+"&adult=1&child=0&infant=0"
     ret_url = "http://www.jetblue.com/bestfarefinder/CalendarData.aspx?month="+month+"+"+str(year)+"&type=POINTS&direction=inbound&tripType=RT&origin="+origin+"&destination="+dest+"&adult=1&child=0&infant=0"
-    display = Display(visible=0, size=(800, 600))
-    display.start()
-    driver = webdriver.Chrome()
+    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
+    driver.set_window_size(1120, 1080)  
     driver.get(url)
 
     html_page = driver.page_source
@@ -61,7 +59,6 @@ def flex_blue(origin,dest,date,searchkey):
         values_string.append((str(stime),str(searchkey),origin,dest,str(storeDate),str(date),flex,flex,flex,"jetblue"))
     cursor.executemany ("INSERT INTO pexproject_flexibledatesearch (scrapertime,searchkey,source,destination,journey,flexdate,economyflex,businessflex,firstflex,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", values_string)
     db.commit()
-    display.stop()
     driver.quit()
 
 if __name__=='__main__':

@@ -1,15 +1,18 @@
 #!/usr/bin/env python 
-import sys
+import os, sys
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import datetime
+from datetime import timedelta
 import time
 import re
-import json
 import codecs
+import pdb
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from pyvirtualdisplay import Display
+import json
 
 DEV_LOCAL = False
 
@@ -26,7 +29,8 @@ def united(origin, destination, searchdate, searchkey):
     sys.stdout=codecs.getwriter('utf-8')(sys.stdout)
     date = dt.strftime('%Y-%m-%d')
     date_format = dt.strftime('%a, %b %-d')
-    payload_date = dt.strftime('%d, %b %Y')    
+    payload_date = dt.strftime('%d, %b %Y')
+    
    
     currentdatetime = datetime.datetime.now()
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
@@ -37,8 +41,14 @@ def united(origin, destination, searchdate, searchkey):
         cursor = db.cursor()
 
     url = "https://www.united.com/ual/en/us/flight-search/book-a-flight/results/awd?f=" + origin + "&t=" + destination + "&d=" + date + "&tt=1&at=1&sc=7&px=1&taxng=1&idx=1"
-    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
-    driver.set_window_size(1120, 1080)  
+    display = Display(visible=0, size=(800, 600))
+    display.start()
+    chromedriver = "/usr/bin/chromedriver"
+    os.environ["webdriver.chrome.driver"] = chromedriver
+    #driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true', '--ssl-protocol=any'])
+    #driver.set_window_size(1120, 550)
+    
+    driver = webdriver.Chrome(chromedriver)
 
     try:
         driver.get(url)
@@ -73,8 +83,11 @@ def united(origin, destination, searchdate, searchkey):
                             document.body.appendChild(element);
                             element.appendChild(document.createTextNode(self.responseText));
                             count = count+1;
-                        }                       
+                       }
+                       
                     }
+                    
+                 
                 }
     
                 if(oldOnReadyStateChange) {
@@ -94,14 +107,19 @@ def united(origin, destination, searchdate, searchkey):
     
             send.call(this, data);
         }
-        })(XMLHttpRequest);
-        UA.Booking.FlightSearch.init();    
+    })(XMLHttpRequest);
+    UA.Booking.FlightSearch.init();
+    
         """)
 
+    
         WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "interceptedResponse")))
         html_page = driver.page_source
+
+        # print html_page
+        # return 
         
-        soup = BeautifulSoup(html_page,"lxml")
+        soup = BeautifulSoup(html_page,"xml")
         maindata = soup.findAll("div",{"id":"interceptedResponse"})
         # print maindata
         # return
@@ -155,13 +173,10 @@ def united(origin, destination, searchdate, searchkey):
                                 print "Display ", caldays[d]["Display"] 
                                 '''
                                 flex_value.append((str(stime),str(searchkey),origin,destination,str(travelDate),str(flexdate1),ecosaver,busssaver,"united"))
-
-            if not DEV_LOCAL:                                
+            
+            if not DEV_LOCAL:                    
                 cursor.executemany ("INSERT INTO pexproject_flexibledatesearch (scrapertime,searchkey,source,destination,journey,flexdate,economyflex,businessflex,datasource) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);", flex_value)
-                #print cursor._last_executed
                 db.commit()
-            else:
-                print flex_value
         except:
             'no calender data'
             
@@ -172,6 +187,7 @@ def united(origin, destination, searchdate, searchkey):
         flightDetails = jsonOb["data"]["Trips"][0]["Flights"]
     except:
         print "No data Found"
+        display.stop()
         driver.quit()
         if not DEV_LOCAL:
             cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "united", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
@@ -182,12 +198,14 @@ def united(origin, destination, searchdate, searchkey):
     values_string = []
     totalrecords = len(flightDetails)
     recordcount = 1
-    for i in range(0,len(flightDetails)):        
+    for i in range(0,len(flightDetails)):
+        
         source = flightDetails[i]["Origin"]
         depttime = flightDetails[i]["DepartTimeFormat"]
         test = (datetime.datetime.strptime(depttime, '%I:%M %p'))
         test1 = test.strftime('%H:%M')
-                
+        
+        
         lastdestination =  flightDetails[i]["LastDestination"]['Code']
         lastdesttime = flightDetails[i]["LastDestination"]['TimeFormatted']
         if '.' in lastdesttime:
@@ -310,11 +328,8 @@ def united(origin, destination, searchdate, searchkey):
                     airport_ = customfunction.get_airport_detail(get_airport_code(DestinationDescription)) or DestinationDescription           
                     destdetail = lastdestdatetime+" | at "+airport_
                 else:
-                    try:
-                        DestinationDateTime = datetime.datetime.strptime(DestinationDateTime, '%m/%d/%Y %H:%M')
-                        DestinationDateTime = DestinationDateTime.strftime('%Y/%m/%d %H:%M')
-                    except Exception, e:
-                        pass
+                    DestinationDateTime = datetime.datetime.strptime(DestinationDateTime, '%m/%d/%Y %H:%M')
+                    DestinationDateTime = DestinationDateTime.strftime('%Y/%m/%d %H:%M')                    
                     airport_ = customfunction.get_airport_detail(get_airport_code(DestinationDescription)) or DestinationDescription
                     destdetail = DestinationDateTime+" | at "+airport_
                 arivaildetails.append(destdetail)
@@ -443,14 +458,13 @@ def united(origin, destination, searchdate, searchkey):
             if not DEV_LOCAL:
                 cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code,eco_fare_code,business_fare_code,first_fare_code) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", values_string)
                 db.commit()
-            else:
-                print values_string
             values_string =[]
             recordcount = 1
-        
-    if not DEV_LOCAL:
+    
+    if not DEV_LOCAL:    
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "united", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
         db.commit()
+    display.stop()
     driver.quit()              
     return searchkey              
         
@@ -458,4 +472,8 @@ def united(origin, destination, searchdate, searchkey):
 if __name__=='__main__':
     # print "in united"
     united(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
+    # if DEV_LOCAL:
+    #     pdb.set_trace()    
     # united('las','iad','12/21/2016',1111)
+
+

@@ -6,18 +6,14 @@ import selenium
 import datetime
 from datetime import timedelta
 import time
-import MySQLdb
 import re
+import customfunction
+import json
 from datetime import date
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-#from django.db import connection, transaction
-import customfunction
-from pyvirtualdisplay import Display
-import json
-#import socket
 
 def virginAmerica(from_airport,to_airport,searchdate,searchid):
   

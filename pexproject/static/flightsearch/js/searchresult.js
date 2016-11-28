@@ -841,7 +841,7 @@ function redirecttosearchpage(scraperStatus) {
             $('#progress_hidden_val').val(progess_width);
 
             if (progess_width < 195)
-                progess_width = parseInt(progess_width) + 12;
+                progess_width = parseInt(progess_width) + 24;
 
             $('#progressbar').width(progess_width);
             // needs to reload the data
@@ -905,7 +905,7 @@ function isprocess() {
                 setSearchData();
             }
 
-            if (data[1] == 'completed' || dataCheckCount > 60) {
+            if (data[1] == 'completed' || dataCheckCount > 30) {
                 clearInterval(refreshIntervalId);
                 console.log(aircraft);
                 console.log("Post checkdata");

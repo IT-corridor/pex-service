@@ -1,3 +1,11 @@
+.modal-body {
+    padding: 30px 20px 15px 20px;
+}
+
+.description {
+    margin-bottom: 20px; 
+    line-height: 25px;
+}
 
 .wrapper {
     font-family: 'Open Sans', sans-serif;
@@ -16,14 +24,9 @@
     transition: margin-top 0.5s linear;
     position: relative;
     margin-bottom: 10px;
+    overflow: hidden;
 }
 
-/*.package:hover {
-    margin-top: -30px;
-    -webkit-transition: margin-top 0.3s linear;
-    transition: margin-top 0.3s linear;
-}
-*/
 .name {
     color: #565656;
     font-weight: 600;
@@ -53,7 +56,37 @@ hr.pricing {
     border-radius: 15px;
     background-color: white;
     position: relative;
-    bottom: -20px;
+}
+
+.line {
+        bottom: -20px;
+    position: relative;
+    margin: 0 -15px;
+    padding: 0 15px;
+
+}
+
+.line:before/*, .line:after*/ {
+    content: "";
+    width: 100%;
+    position: absolute;
+    border-top: 1px solid #dedede;
+
+    top: 50%;
+    left: 0;
+}
+
+.line:after {
+    right: 0px;
+    left: inherit;
+}
+
+.package .col-sm-3 {
+    padding: 0 5px;
+}
+
+.main .col-sm-4 {
+    padding: 0 7px;
 }
 
 ul.pricing {
@@ -88,17 +121,25 @@ ul.pricing li::before {
 .highlighted {
     background: #39A8E0;
     color: white;
-    width: calc(100% + 30px);
-    margin: -24px -15px 24px -15px;
+    width: calc(100% + 32px);
+    margin: -26px -16px 24px -16px;
     height: 30px;
     font-size: 12px;
     padding-top: 6px;
 }
 
-.package .btn-pexSearch {
+.btn-pexSearch {
     background: #39A8E0;
 }
 
 .form-side {
     background: white;
+}
+
+.cycle_option input {
+    margin: 3px 5px 0 0 !important;
+}
+
+.cycle_option {
+    line-height: 32px !important;
 }
