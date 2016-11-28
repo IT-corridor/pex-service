@@ -59,7 +59,7 @@ from pexproject.models import *
 def show_me_the_money(sender, **kwargs):
     ipn_obj = sender
     if ipn_obj.payment_status == ST_PP_COMPLETED:
-        if ipn_obj.receiver_email != "waff@merchant.com":
+        if ipn_obj.receiver_email != "jberriman@pexportal.com":
             return
 
         if ipn_obj.custom:
@@ -120,7 +120,7 @@ def pricing(request):
         acct_alaska = request.POST.get('acct_alaska', '')
 
         paypal_dict = {
-            "business": "waff@merchant.com",
+            "business": "jberriman@pexportal.com",
             "invoice": "invoice-{}".format(random.randint(10000,99999)),
             "notify_url": baseurl+reverse('paypal-ipn'),
             "return": baseurl+"/redirect_/",
@@ -150,7 +150,7 @@ def pricing(request):
             paypal_dict['sra'] = 1
 
         uri = urllib.urlencode(paypal_dict)
-        fullurl = "https://www.sandbox.paypal.com/cgi-bin/webscr?" + uri
+        fullurl = "https://www.paypal.com/cgi-bin/webscr?" + uri
         return HttpResponseRedirect(fullurl)
     else:
         return render(request, "flightsearch/pricing.html", {"acct_alaska": acct_alaska})
