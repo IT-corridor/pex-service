@@ -2508,7 +2508,7 @@ def api_search_flight(request):
                 price_key_r = flight.pop('price_key_r')
 
                 price = qpx_prices.get(price_key_d+price_key_r)
-                if not price:   """ for delta """
+                if not price:   # for delta
                     price_ = delta_prices_d.get(price_key_d, {})
                     price = price_.get(fare_class)
 
