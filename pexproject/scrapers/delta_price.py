@@ -3,7 +3,7 @@ import sys
 import datetime
 import json
 import urllib
-import pdb
+# import pdb
 import codecs
 
 from selenium import webdriver
@@ -11,7 +11,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-# from pyvirtualdisplay import Display
 
 FARE_CLASSES = {
     'Main ': 'economy',
@@ -36,7 +35,7 @@ def get_delta_price(orgn, dest, searchdate, returndate=None, passenger=1):
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
 
     try:
-        print (datetime.datetime.now() - start_time).seconds, '@@@'
+        # print (datetime.datetime.now() - start_time).seconds, '@@@'
         driver.get(url)
         WebDriverWait(driver, 6).until(EC.presence_of_element_located((By.ID, "oneWayBtn")))
         oneway = driver.find_element_by_id('oneWayBtn')
@@ -56,6 +55,9 @@ def get_delta_price(orgn, dest, searchdate, returndate=None, passenger=1):
         return {}, {}
 
     departure_price = get_price(driver)
+    driver.quit()
+    return departure_price
+
     return_price = {}
 
     if returndate:
@@ -79,7 +81,6 @@ def get_delta_price(orgn, dest, searchdate, returndate=None, passenger=1):
         except Exception, e:
             pass
 
-    # display.stop()
     driver.quit()
     # print departure_price
     # print return_price
