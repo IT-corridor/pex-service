@@ -7,10 +7,10 @@ def kill_children(proc):
         sub_proc.kill()
     proc.kill()
 
+# names = ['Xvfb', 'chromedriver', 'phantomjs']
+names = ['node', 'phantomjs']
 
 for proc in psutil.process_iter():
-    # names = ['Xvfb', 'chromedriver', 'phantomjs']
-    names = ['node', 'phantomjs']
     """ current time in seconds """
     current_time = time.time()
 
@@ -21,7 +21,7 @@ for proc in psutil.process_iter():
         # if pinfo['username'] == 'www-data' and pinfo['name'] in names:
         if pinfo['name'] in names and pinfo['ppid'] == 1:
             kill_children(proc)
-        elif pinfo['name'] == 'python' and pinfo['username'] in ['www-data', 'root'] and pinfo['ppid'] != 1:
+        elif pinfo['name'] == 'python' and pinfo['username'] == 'www-data':
             """ for long-running processes """
             # elapsed time in seconds
             duration = int((current_time - pinfo['create_time']))
