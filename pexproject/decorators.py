@@ -5,7 +5,7 @@ def admin_only(function):
     def wrap(request, *args, **kwargs):
         user = request.user
         if user.is_authenticated():
-            if user.level == 3:
+            if user.is_active and user.is_staff and user.level == 3:
                 return function(request, *args, **kwargs)
         return HttpResponseRedirect('/Admin/login/')
 
@@ -18,7 +18,7 @@ def customer_only(function):
     def wrap(request, *args, **kwargs):
         user = request.user
         if user.is_authenticated():
-            if user.level == 1:
+            if user.is_active and user.level == 1:
                 return function(request, *args, **kwargs)
         return HttpResponseRedirect('/customer/login/')
 
