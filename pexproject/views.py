@@ -54,6 +54,7 @@ from .scrapers.delta_price import get_delta_price
 from .scrapers.config import config as sys_config
 from .form import *
 from pexproject.models import *
+from pexproject.decorators import *
 
 
 def show_me_the_money(sender, **kwargs):
@@ -2537,7 +2538,7 @@ def api_search_flight(request):
 
 
 """ admin views """
-@login_required(login_url='/Admin/login/')
+@admin_only
 def city_image(request):
     city_images = CityImages.objects.all()
     return render(request, 'Admin/city_image.html', {'city_images': city_images})
@@ -2549,7 +2550,7 @@ def city_image_delete(request, id):
         return HttpResponse('success')
     
 
-@login_required(login_url='/Admin/login/')
+@admin_only
 def city_image_update(request, id=None):
     city_image = CityImages()
     if id:
@@ -2571,7 +2572,7 @@ def city_image_update(request, id=None):
     return render(request, 'Admin/city_image_form.html', {'form':form})
 
 
-@login_required(login_url='/Admin/login/')
+@admin_only
 def hotel(request):
     hotels = Hotel.objects.all()
     return render(request, 'Admin/hotel.html', {'hotels': hotels})
@@ -2583,7 +2584,7 @@ def hotel_delete(request, id):
         return HttpResponse('success')
 
 
-@login_required(login_url='/Admin/login/')    
+@admin_only    
 def hotel_update(request, id=None):
     hotel = Hotel()
     if id:
@@ -2625,7 +2626,7 @@ def hotel_update(request, id=None):
     })
 
 
-@login_required(login_url='/Admin/login/')
+@admin_only
 def email_template(request):
     email_templates = EmailTemplate.objects.all()
     return render(request, 'Admin/email_template.html', {'email_templates': email_templates})
@@ -2637,7 +2638,7 @@ def email_template_delete(request, id):
         return HttpResponse('success')
 
 
-@login_required(login_url='/Admin/login/')    
+@admin_only    
 def email_template_update(request, id=None):
     email_template = EmailTemplate()
     if id:
@@ -2658,13 +2659,13 @@ def email_template_update(request, id=None):
     return render(request, 'Admin/email_template_form.html', {'form':form})
 
 
-@login_required(login_url='/Admin/login/')
+@admin_only
 def static_page(request):
     static_pages = Pages.objects.all()
     return render(request, 'Admin/static_page.html', {'static_pages': static_pages})
 
 
-@login_required(login_url='/Admin/login/')
+@admin_only
 def google_ad(request):
     google_ads = GoogleAd.objects.all()
     return render(request, 'Admin/google_ad.html', {'google_ads': google_ads})
@@ -2676,7 +2677,7 @@ def google_ad_delete(request, id):
         return HttpResponse('success')
 
 
-@login_required(login_url='/Admin/login/')    
+@admin_only    
 def google_ad_update(request, id=None):
     google_ad = GoogleAd()
     if id:
@@ -2697,13 +2698,13 @@ def google_ad_update(request, id=None):
     return render(request, 'Admin/google_ad_form.html', {'form':form})
 
 
-@login_required(login_url='/Admin/login/')
+@admin_only
 def customer_list(request):
     customers = User.objects.all()
     return render(request, 'Admin/customer.html', {'customers': customers})
 
 
-@login_required(login_url='/Admin/login/')    
+@admin_only    
 def customer_update(request, id=None):
     customer = User()
     if id:
@@ -2755,13 +2756,13 @@ def customer_delete(request, id):
         return HttpResponse('success')
 
 
-@login_required(login_url='/Admin/login/')
+@admin_only
 def blog_list(request):
     blog_list = Blogs.objects.all()
     return render(request, 'Admin/blog_list.html', {'blog_list': blog_list})
 
 
-@login_required(login_url='/Admin/login/')
+@admin_only
 def blog_list_update(request, id=None):
     blog_list = Blogs()
     if id:
@@ -2797,13 +2798,13 @@ def blog_list_delete(request, id):
         return HttpResponse('success')
 
 
-@login_required(login_url='/Admin/login/')
+@admin_only
 def token(request):
     tokens = Token.objects.all()
     return render(request, 'Admin/token.html', {'tokens': tokens})
 
 
-@login_required(login_url='/Admin/login/')
+@admin_only
 def token_update(request, id=None):
     if id:
         token = Token.objects.get(id=id)
@@ -2845,13 +2846,13 @@ def token_delete(request, id):
         return HttpResponse('success')
 
 
-@login_required(login_url='/Admin/login/')
+@admin_only
 def searchlimit(request):
     searchlimits = SearchLimit.objects.all()
     return render(request, 'Admin/searchlimit.html', {'searchlimits': searchlimits})
 
 
-@login_required(login_url='/Admin/login/')
+@admin_only
 def searchlimit_update(request, id=None):
     searchlimit = SearchLimit.objects.get(id=id)
 
@@ -2883,13 +2884,13 @@ def admin_login(request):
     return HttpResponseRedirect('/Admin/')
 
 
-@login_required(login_url='/Admin/login/')
+@admin_only
 def admin_logout(request):
     auth_logout(request)
     return HttpResponseRedirect('/Admin/')
 
 
-@login_required(login_url='/Admin/login/')
+@admin_only
 def Admin(request):
     air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']    
     stat_num_search = _airline_info(request.user, 3650, 'maincabin', 'all airports', 'all airports')
@@ -3181,7 +3182,7 @@ def signup_activity(request):
     return HttpResponse(json.dumps(result))
 
 
-@login_required(login_url='/customer/login/')
+@customer_only
 def customer(request):    
     air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']
     stat_num_search = _airline_info(request.user, 3650, 'maincabin', 'all airports', 'all airports')
@@ -3205,7 +3206,7 @@ def customer(request):
     })
 
 
-@login_required(login_url='/customer/login/')
+@customer_only
 def billing_history(request):
     token = Token.objects.filter(owner=request.user).first()
     history = None
@@ -3218,7 +3219,7 @@ def billing_history(request):
     return render(request, 'customer/billing_history.html', {'history': history_})
 
 
-@login_required(login_url='/customer/login/')
+@customer_only
 def customer_logout(request):
     auth_logout(request)
     return HttpResponseRedirect('/customer/')
