@@ -67,10 +67,10 @@ def show_me_the_money(sender, **kwargs):
             user = User.objects.get(pk=user_id)
             if user.level == 0:                
                 user.search_limit = int(queries)
+                user.level = 1
             else:   # carryover for paying customers
                 user.search_limit = int(queries) + user.search_limit - user.search_run
             user.search_run = 0
-            user.level = 1
 
             topic = 'PEX Points Purchase'
             cycle_ = {"O": "one time", "M": "monthly", "Y": "annual"}
@@ -676,7 +676,7 @@ def check_limit(request, service):
     
     if user_id > -1 and int(request.session['level']) > 0:     # paying user
         user = User.objects.get(user_id=user_id)
-        if user.search_run >= user.search_limit:
+        if user.search_run >= user.search_limit and user.level < 3:
             # make him as a free user
             user.level = 0
             user.save()
