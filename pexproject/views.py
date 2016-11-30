@@ -2434,13 +2434,21 @@ def api_search_flight(request):
 
             flights_ = Flightdata.objects.filter(**kwargs)
             for flight in flights_:
-                flight_ = model_to_dict(flight, exclude=['rowid', 'scrapetime', 'searchkeyid', 'stoppage_station', 'arivedetails', 'operatedby', 'departdetails', 'planedetails', 'economy_code', 'first_fare_code', 'first_code', 'eco_fare_code', 'arival', 'departure', 'business_code', 'firsttax', 'maintax', 'businesstax', 'cabintype3', 'cabintype2', 'business', 'maincabin', 'cabintype1', 'firstclass', 'business_fare_code'])
+                flight_ = model_to_dict(flight, exclude=['rowid', 'scrapetime', 
+                    'searchkeyid', 'stoppage_station', 'arivedetails', 
+                    'operatedby', 'departdetails', 'planedetails', 
+                    'economy_code', 'first_fare_code', 'first_code', 
+                    'eco_fare_code', 'arival', 'departure', 'business_code', 
+                    'firsttax', 'maintax', 'businesstax', 'cabintype3', 
+                    'cabintype2', 'business', 'maincabin', 'cabintype1', 
+                    'firstclass', 'business_fare_code', 'flighno'])
 
                 flight_['route'] = parse_detail(flight.departdetails, flight.arivedetails, flight.planedetails, flight.operatedby)
 
                 if not flight_['route']:
                     continue
-
+                    
+                flight_['flight_no'] = str(flight.flighno)
                 flight_['arrival'] = str(flight.arival)
                 flight_['departure'] = str(flight.departure)
                 flight_['image'] = 'pexportal.com/static/flightsearch/img/'+logos[flight.datasource]
