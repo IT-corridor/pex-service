@@ -12,7 +12,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 
 DEV_LOCAL = False
-# DEV_LOCAL = True
+DEV_LOCAL = True
 
 if not DEV_LOCAL:
     import customfunction
@@ -36,7 +36,7 @@ def get_miles_taxes(tds):
 
         try:
             tmp = td.select('.Price')[0].text.split('+')
-            # print tmp, '@@@@@@@@@2'
+            print tmp, '@@@@@@@@@2'
             tmp_mile, tmp_tax = tmp[0], tmp[1]
             tmp_mile = int(float(tmp_mile.replace('k', ''))*1000)
 
