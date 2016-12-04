@@ -12,7 +12,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 
 DEV_LOCAL = False
-DEV_LOCAL = True
+# DEV_LOCAL = True
 
 if not DEV_LOCAL:
     import customfunction
@@ -180,7 +180,7 @@ def alaska(ocity_code, dcity_code, searchdate, searchkey):
             if not DEV_LOCAL:
                 print (flightno[0], str(searchkey), stime, stoppage, "test", flight['orig'], flight['dest'], departure_t[0], arrival_t[-1], total_duration, main_mile, main_tax, business_mile, business_tax, first_mile, first_tax,"Economy", "Business", "First", "alaska", departinfo, arrivalinfo, planeinfo, operatedby,'X Economy','I Business','O First','X','I','O')
     except Exception, e:
-        raise
+        # raise
         print 'Something is wrong'
 
 
