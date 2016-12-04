@@ -48,7 +48,7 @@ from paypal.standard.models import ST_PP_COMPLETED
 from paypal.standard.ipn.signals import valid_ipn_received
 from multiprocessing.pool import ThreadPool
 
-from .scrapers.customfunction import is_scrape_vAUS,is_scrape_aeroflot,is_scrape_virginAmerica,is_scrape_etihad,is_scrape_delta,is_scrape_united,is_scrape_virgin_atlantic,is_scrape_jetblue,is_scrape_aa, is_scrape_s7, is_scrape_airchina
+from .scrapers.customfunction import *
 from .scrapers import customfunction
 from .scrapers.delta_price import get_delta_price
 from .scrapers.config import config as sys_config
@@ -741,6 +741,7 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
         dt1 = datetime.datetime.strptime(returndate, '%m/%d/%Y')
         date1 = dt1.strftime('%m/%d/%Y')
         searchdate1 = dt1.strftime('%Y-%m-%d')
+        returndate_alaska = dt1.strftime('%m/%d/%y')
     ongnidlist=''
     destlist = ''
     departlist =''
@@ -775,6 +776,7 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
         dt = datetime.datetime.strptime(depart.strip(), '%m/%d/%Y')
         date = dt.strftime('%m/%d/%Y')
         searchdate = dt.strftime('%Y-%m-%d')        
+        searchdate_alaska = dt.strftime('%m/%d/%y')
         # print '$$$$', searchdate, '$$$$'
         
         currentdatetime = datetime.datetime.now()
@@ -802,6 +804,9 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
                 if is_scrape_virginAmerica == 1:
                     customfunction.flag = customfunction.flag+1
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/virgin_america.py",destcode, orgncode, str(returndate).strip(), str(returnkey)])
+                if is_scrape_alaska == 1:
+                    customfunction.flag = customfunction.flag+1
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/alaska.py",destcode, orgncode, str(returndate_alaska).strip(), str(returnkey)])
                 
                 if is_scrape_delta == 1:
                     customfunction.flag = customfunction.flag+1
@@ -864,7 +869,11 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/jetblue.py",orgncode,destcode,str(depart).strip(),str(searchkeyid)])
             if is_scrape_virginAmerica == 1:
                 customfunction.flag = customfunction.flag+1
-                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/virgin_america.py",orgncode,destcode,str(depart).strip(),str(searchkeyid)])                
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/virgin_america.py",orgncode,destcode,str(depart).strip(),str(searchkeyid)])               
+            if is_scrape_alaska == 1:
+                customfunction.flag = customfunction.flag+1
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/alaska.py", orgncode, destcode, str(searchdate_alaska).strip(), str(searchkeyid)])
+
             if is_scrape_delta == 1:
                 customfunction.flag = customfunction.flag+1
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/delta.py",orgncode,destcode,str(date),str(depart).strip(),str(searchkeyid),etihadorigin,etihaddest,cabin])
@@ -1185,7 +1194,7 @@ def get_flight_pricematrix(request):
         return JsonResponse([minPriceMile, maxPriceMile, fare_code_Array], safe=False)
 
 
-    price_matrix = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']
+    price_matrix = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic', 'alaska']
     price_matrix = {item: [None, None, None] for item in price_matrix}
 
     if pricematrix:
@@ -2294,7 +2303,7 @@ def check_validity_flight_params(request):
     flight_class = params.get('class')
     mile_low = params.get('mile_low') or '1'
     mile_high = params.get('mile_high') or '10000000'
-    airlines = params.get('airlines') or ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']
+    airlines = params.get('airlines') or ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic', 'alaska']
     airlines.append('valid_line')
     airlines = [item.encode('ascii', 'ignore') for item in airlines]
 
@@ -2369,7 +2378,8 @@ def api_search_flight(request):
             'united': 'unitedLogo.png',
             'Virgin America': 'va.jpg',
             'Virgin Australia': 'VAUS.png',
-            'virgin_atlantic': 'virgin.png'        
+            'virgin_atlantic': 'virgin.png',
+            'alaska': 'alaska.jpg'        
         }
 
         result = {}
@@ -2900,7 +2910,7 @@ def admin_logout(request):
 
 @admin_only
 def Admin(request):
-    air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']    
+    air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic', 'alaska']    
     stat_num_search = _airline_info(request.user, 3650, 'maincabin', 'all airports', 'all airports')
 
     pop_searches = _popular_search(3650)
@@ -2982,7 +2992,7 @@ def _airline_info(user, period, fare_class, _from, _to):
     stat_num_search = []
 
     try:
-        air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']
+        air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic', 'alaska']
         start_time = datetime.datetime.now() - timedelta(days=period)
 
         searches = Searchkey.objects.filter(scrapetime__gte=start_time)
@@ -3192,7 +3202,7 @@ def signup_activity(request):
 
 @customer_only
 def customer(request):    
-    air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']
+    air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic', 'alaska']
     stat_num_search = _airline_info(request.user, 3650, 'maincabin', 'all airports', 'all airports')
     stat_price_history = _price_history(request.user, '2016-04-05', '2026-04-05', 'aeroflot', 'New York (JFK)', 'Moscow (MOW)', 'Avg') 
     user_search_history = get_customer_search_history(user_id=request.user.user_id)

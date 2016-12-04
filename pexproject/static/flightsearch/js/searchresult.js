@@ -648,7 +648,7 @@ $(".chk-stoppage:checked").each(function() {
 
 refresh_airline = setInterval(loading, 3000);
 
-var airlines = ["Delta", "United", "Etihad", "S7", "Virgin Atlantic", "Virgin America", "Virgin Australia", "Jetblue", "American", "Aeroflot", "AirChina"];
+var airlines = ["Delta", "United", "Etihad", "S7", "Virgin Atlantic", "Virgin America", "Virgin Australia", "Jetblue", "American", "Aeroflot", "AirChina", "Alaska"];
 
 i = 0;
 

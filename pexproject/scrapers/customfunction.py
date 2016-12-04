@@ -15,6 +15,7 @@ is_scrape_etihad = 1
 is_scrape_aeroflot = 1
 is_scrape_s7 = 1
 is_scrape_airchina = 1 
+is_scrape_alaska = 1 
 
 flag = 0
 
