@@ -45,6 +45,11 @@ def sendMail(from_email, to_email, subject, bodytext, html_content=None):
         return "fail"
 
 
+def get_airport_code(airport):
+    airport = airport.split(' (')
+    return airport[1][:3]
+
+
 def get_airport_detail(airport_code):
     db = dbconnection()
     cursor = db.cursor()
