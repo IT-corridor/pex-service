@@ -76,11 +76,9 @@ def alaska(ocity_code, dcity_code, searchdate, searchkey):
 
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "oneWay")))
         oneway = driver.find_element_by_id('oneWay')
-        oneway.click()
-        # driver.execute_script("arguments[0].click();", oneway)
+        driver.execute_script("document.getElementById('oneWay').setAttribute('checked', 'checked')")
         milebtn = driver.find_element_by_id("awardReservation")
-        milebtn.click()
-        # driver.execute_script("arguments[0].click();", milebtn)
+        driver.execute_script("document.getElementById('awardReservation').setAttribute('checked', 'checked')")
         origin = driver.find_element_by_id("fromCity1")
         origin.clear()
         origin.send_keys(ocity_code.strip())
@@ -109,7 +107,7 @@ def alaska(ocity_code, dcity_code, searchdate, searchkey):
 
         if DEV_LOCAL:
             log_file = open('/root/1.html', 'w')
-            log_file.write(html_page.encode('utf8'))
+            # log_file.write(html_page.encode('utf8'))
         # print html_page
         # return
         soup = BeautifulSoup(html_page,"lxml")
