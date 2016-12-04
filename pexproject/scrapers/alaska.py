@@ -101,7 +101,7 @@ def alaska(ocity_code, dcity_code, searchdate, searchkey):
         return searchkey
 
     try:
-        WebDriverWait(driver, 12).until(EC.presence_of_element_located((By.ID, "MatrixTable0")))
+        WebDriverWait(driver, 12).until(EC.presence_of_element_located((By.ID, "ContinueButton")))
 
         html_page = driver.page_source
 
