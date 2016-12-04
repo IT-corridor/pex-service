@@ -12,7 +12,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 
 DEV_LOCAL = False
-DEV_LOCAL = True
+# DEV_LOCAL = True
 
 if not DEV_LOCAL:
     import customfunction
