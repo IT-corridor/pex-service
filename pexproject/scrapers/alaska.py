@@ -155,12 +155,12 @@ def alaska(ocity_code, dcity_code, searchdate, searchkey):
 
                 flightno.append(flightno_)
                 if not DEV_LOCAL:
-                    origin_ = customfunction.get_airport_detail(customfunction.get_airport_code(departinfo_airport)) or origin_
+                    origin_ = customfunction.get_airport_detail(customfunction.get_airport_code(origin_)) or origin_
                 departure.append(departure_+' | from '+origin_)
                 departure_t.append(departure_t_)
                 
                 if not DEV_LOCAL:
-                    destination_ = customfunction.get_airport_detail(customfunction.get_airport_code(departinfo_airport)) or destination_
+                    destination_ = customfunction.get_airport_detail(customfunction.get_airport_code(destination_)) or destination_
                 arrival.append(arrival_+' | at '+destination_)
                 arrival_t.append(arrival_t_)
                 planeinfo.append("{} | {} ({})".format(flightno_, planeinfo_, duration_))
