@@ -63,7 +63,6 @@ def alaska(ocity_code, dcity_code, searchdate, searchkey):
     def storeFlag(searchkey,stime):
         cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchkey), stime, "flag", "test", "flag", "flag","flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "alaska", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
         db.commit()
-        driver.quit()
 
     sys.stdout=codecs.getwriter('utf-8')(sys.stdout)
 
@@ -77,9 +76,11 @@ def alaska(ocity_code, dcity_code, searchdate, searchkey):
 
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "oneWay")))
         oneway = driver.find_element_by_id('oneWay')
-        driver.execute_script("arguments[0].click();", oneway)
+        oneway.click()
+        # driver.execute_script("arguments[0].click();", oneway)
         milebtn = driver.find_element_by_id("awardReservation")
         milebtn.click()
+        # driver.execute_script("arguments[0].click();", milebtn)
         origin = driver.find_element_by_id("fromCity1")
         origin.clear()
         origin.send_keys(ocity_code.strip())
@@ -97,18 +98,23 @@ def alaska(ocity_code, dcity_code, searchdate, searchkey):
         print "before data page"
         if not DEV_LOCAL:
             storeFlag(searchkey,stime)
+
+        driver.quit()        
         return searchkey
 
     try:
         WebDriverWait(driver, 12).until(EC.presence_of_element_located((By.ID, "MatrixTable0")))
 
         html_page = driver.page_source
-        # log_file.write(html_page.encode('utf8'))
+
+        if DEV_LOCAL:
+            log_file = open('/root/1.html', 'w')
+            log_file.write(html_page.encode('utf8'))
         # print html_page
         # return
         soup = BeautifulSoup(html_page,"lxml")
         flights = soup.find(id='MatrixTable0').find_all(role='listitem')
-        # print len(flights), '########3'
+        print len(flights), '########3'
         for flight in flights:
             tds = flight.select('td.FlightCell')
 
@@ -194,7 +200,7 @@ def alaska(ocity_code, dcity_code, searchdate, searchkey):
 
         storeFlag(searchkey,stime)
 
-    # driver.quit()              
+    driver.quit()              
     return searchkey    
 
 def get_clean_string(string):
