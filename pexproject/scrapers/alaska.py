@@ -163,6 +163,10 @@ def alaska(ocity_code, dcity_code, searchdate, searchkey):
                     destination_ = customfunction.get_airport_detail(customfunction.get_airport_code(destination_)) or destination_
                 arrival.append(arrival_+' | at '+destination_)
                 arrival_t.append(arrival_t_)
+
+                if not DEV_LOCAL:
+                    planeinfo_ = customfunction.AIRCRAFTS.get(planeinfo_, planeinfo_)
+                    
                 planeinfo.append("{} | {} ({})".format(flightno_, planeinfo_, duration_))
                 duration.append(duration_)
                 operatedby.append(operatedby_)
@@ -188,7 +192,7 @@ def alaska(ocity_code, dcity_code, searchdate, searchkey):
 
             if DEV_LOCAL:
                 print (flightno[0], str(searchkey), stime, stoppage, "test", flight['orig'], flight['dest'], departure_t[0], arrival_t[-1], total_duration, main_mile, main_tax, business_mile, business_tax, first_mile, first_tax,"Economy", "Business", "First", "alaska", departinfo, arrivalinfo, planeinfo, operatedby,'','','','','','')
-                
+
     except Exception, e:
         # raise               
         print 'Something is wrong'
