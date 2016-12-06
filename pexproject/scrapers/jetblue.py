@@ -158,11 +158,9 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                         planeinfo = 'B6 '+fltno+" | "+planetype
                     if arivetd:
                         arivetime = arivetd.find("div",{"class":"time"}).text
-                        arival_time = arivetime 
                         if '+' in arivetime:
-                            arive_time = arivetime.split("+")
-                            arival_time = arive_time[0]
-                            
+                            arivetime = arivetime.split("+")[0]
+
                         arive_fullname = arivetd.find("b").text
                         dest_code = arivetd.find("span",{"class":"location-code"}).text
                         if '(' in dest_code:
@@ -170,7 +168,7 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                         if ')' in dest_code:
                             dest_code = dest_code.replace(')','')
 
-                        departinfo_time = str(date)+" "+arival_time
+                        departinfo_time = str(date)+" "+arivetime
                         print departinfo_time, '@@@@@@2'
                         departinfo_time = datetime.datetime.strptime(departinfo_time, '%d-%m-%Y %I:%M %p')
                         departinfo_time = departinfo_time.strftime('%Y/%m/%d %H:%M')
