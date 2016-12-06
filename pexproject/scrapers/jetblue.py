@@ -161,7 +161,7 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                         arival_time = arivetime 
                         if '+' in arivetime:
                             arive_time = arivetime.split("+")
-                            arivetime = arive_time[0]
+                            arival_time = arive_time[0]
                             
                         arive_fullname = arivetd.find("b").text
                         dest_code = arivetd.find("span",{"class":"location-code"}).text
