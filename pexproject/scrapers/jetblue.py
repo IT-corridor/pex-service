@@ -32,7 +32,7 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
         cursor = db.cursor()
     
     url = "https://book.jetblue.com/shop/search/#/book/from/"+from_airport+"/to/"+to_airport+"/depart/"+str(date)+"/return/false/pax/ADT-1/redemption/true/promo/false"
-    # url = 'http://www.jetblue.com/#/'
+    
     currentdatetime = datetime.datetime.now()
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     display = Display(visible=0, size=(800, 600))
@@ -62,7 +62,6 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
         driver.find_element_by_css_selector("input[type='submit'][value='Find it']").click()
         # driver.execute_script(" return arguments[0].click();", searchBtn)
     except:
-        raise
         print "page not loaded 1"
         storeFlag(searchid,stime)
         return
@@ -75,13 +74,14 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
         return searchid
 
     try:
-        driver.save_screenshot('/root/out_enter.png');
+        # driver.save_screenshot('/root/out_enter.png');
         html_page = driver.page_source
         soup = BeautifulSoup(html_page,"lxml")
         maintable = soup.find("table",{"id":"AIR_SEARCH_RESULT_CONTEXT_ID0"})
         databody =  maintable.findAll("tbody")
         value_string = []
         recordCount = 1
+        
         for trs in databody:
             
             maintr = trs.findAll("tr")
@@ -219,7 +219,7 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                                         if j == 1:
                                             first_miles = miles1
                                             firsttax = taxes1
-                                    j = j-1
+                                    j = j - 1
                     if n > 1:
                         flag = n
                         orgncode = origin_code
@@ -280,7 +280,7 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
             db.commit()
         # print value_string, "final row inserted"
     except:
-        raise
+        # raise
         print "please change your search filter"
     storeFlag(searchid,stime)
     return searchid
