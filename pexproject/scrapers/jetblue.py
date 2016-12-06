@@ -171,6 +171,7 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                             dest_code = dest_code.replace(')','')
 
                         departinfo_time = str(date)+" "+arival_time
+                        print departinfo_time, '@@@@@@2'
                         departinfo_time = datetime.datetime.strptime(departinfo_time, '%d-%m-%Y %I:%M %p')
                         departinfo_time = departinfo_time.strftime('%Y/%m/%d %H:%M')
 
