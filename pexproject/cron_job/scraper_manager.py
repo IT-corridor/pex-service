@@ -7,8 +7,7 @@ def kill_children(proc):
         sub_proc.kill()
     proc.kill()
 
-# names = ['Xvfb', 'chromedriver', 'phantomjs']
-names = ['node', 'phantomjs']
+names = ['node', 'phantomjs', 'Xvfb', 'chromedriver']
 
 for proc in psutil.process_iter():
     """ current time in seconds """

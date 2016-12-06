@@ -63,7 +63,6 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
         # searchBtn = 
         driver.find_element_by_css_selector("input[type='submit'][value='Find it']").click()
         # driver.execute_script(" return arguments[0].click();", searchBtn)
-        driver.save_screenshot('/root/out_enter.png');
     except:
         raise
         print "page not loaded 1"
@@ -78,6 +77,7 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
         return searchid
 
     try:
+        driver.save_screenshot('/root/out_enter.png');
         html_page = driver.page_source
         soup = BeautifulSoup(html_page,"lxml")
         maintable = soup.find("table",{"id":"AIR_SEARCH_RESULT_CONTEXT_ID0"})
@@ -277,6 +277,7 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
             db.commit()
         # print value_string, "final row inserted"
     except:
+        raise
         print "please change your search filter"
     storeFlag(searchid,stime)
     return searchid
