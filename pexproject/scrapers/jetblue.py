@@ -6,9 +6,7 @@ import re
 import codecs
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from datetime import timedelta
 from selenium.webdriver.common.proxy import *
-from datetime import date
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -144,7 +142,7 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                         if ')' in origin_code:
                             origin_code = origin_code.replace(')','')
 
-                        departinfo_time = str(date+dl)+" "+depttime
+                        departinfo_time = (dt+dl).strftime('%d-%m-%Y')+" "+depttime
                         departinfo_time = datetime.datetime.strptime(departinfo_time, '%d-%m-%Y %I:%M %p')
                         departinfo_time = departinfo_time.strftime('%Y/%m/%d %H:%M')
 
@@ -175,7 +173,7 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                         if ')' in dest_code:
                             dest_code = dest_code.replace(')','')
 
-                        departinfo_time = str(date+dl)+" "+arivetime
+                        departinfo_time = (dt+dl).strftime('%d-%m-%Y')+" "+arivetime
                         print departinfo_time, '@@@@@@2'
                         departinfo_time = datetime.datetime.strptime(departinfo_time, '%d-%m-%Y %I:%M %p')
                         departinfo_time = departinfo_time.strftime('%Y/%m/%d %H:%M')
