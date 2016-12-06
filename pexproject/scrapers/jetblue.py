@@ -193,7 +193,7 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                                 totaltime = totaltime1[1].strip()
                             else:
                                 planetime = totaltime
-                            planeinfo = planeinfo+"("+planetime+")"
+                            planeinfo = planeinfo+" ("+planetime+")"
                             plaindetails.append(planeinfo)
                     if content.findAll("td",{"class":"colCost"}):
                         priceblock = content.findAll("td",{"class":"colCost"})
