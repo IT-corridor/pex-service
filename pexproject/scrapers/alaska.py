@@ -112,7 +112,7 @@ def alaska(ocity_code, dcity_code, searchdate, searchkey):
         # return
         soup = BeautifulSoup(html_page,"lxml")
         flights = soup.find(id='MatrixTable0').find_all(role='listitem')
-        print len(flights), '########3'
+        # print len(flights), '########3'
         for flight in flights:
             tds = flight.select('td.FlightCell')
 
