@@ -132,6 +132,11 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                 if depttd:
                     if depttd:
                         depttime = depttd.find("div",{"class":"time"}).text
+                        dl = datetime.timedelta(days=0)
+                        if '+' in depttime:
+                            depttime = depttime.split("+")[0]
+                            dl = datetime.timedelta(days=1)
+
                         origin_fullname = depttd.find("b").text
                         origin_code = depttd.find("span",{"class":"location-code"}).text
                         if '(' in origin_code:
@@ -139,7 +144,7 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                         if ')' in origin_code:
                             origin_code = origin_code.replace(')','')
 
-                        departinfo_time = str(date)+" "+depttime
+                        departinfo_time = str(date+dl)+" "+depttime
                         departinfo_time = datetime.datetime.strptime(departinfo_time, '%d-%m-%Y %I:%M %p')
                         departinfo_time = departinfo_time.strftime('%Y/%m/%d %H:%M')
 
@@ -158,7 +163,9 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                         planeinfo = 'B6 '+fltno+" | "+planetype
                     if arivetd:
                         arivetime = arivetd.find("div",{"class":"time"}).text
+                        dl = datetime.timedelta(days=0)
                         if '+' in arivetime:
+                            dl = datetime.timedelta(days=1)
                             arivetime = arivetime.split("+")[0]
 
                         arive_fullname = arivetd.find("b").text
@@ -168,7 +175,7 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
                         if ')' in dest_code:
                             dest_code = dest_code.replace(')','')
 
-                        departinfo_time = str(date)+" "+arivetime
+                        departinfo_time = str(date+dl)+" "+arivetime
                         print departinfo_time, '@@@@@@2'
                         departinfo_time = datetime.datetime.strptime(departinfo_time, '%d-%m-%Y %I:%M %p')
                         departinfo_time = departinfo_time.strftime('%Y/%m/%d %H:%M')
