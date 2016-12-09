@@ -6,15 +6,16 @@ from config import config as sys_config
 
 is_scrape_delta =1
 is_scrape_united = 1
-is_scrape_virgin_atlantic = 1
+is_scrape_virgin_atlantic = 0
 is_scrape_virginAmerica = 1
-is_scrape_jetblue = 0
+is_scrape_jetblue = 1
 is_scrape_vAUS = 1
 is_scrape_aa = 0
 is_scrape_etihad = 1
 is_scrape_aeroflot = 1
 is_scrape_s7 = 1
 is_scrape_airchina = 1 
+is_scrape_alaska = 1 
 
 flag = 0
 
@@ -42,6 +43,11 @@ def sendMail(from_email, to_email, subject, bodytext, html_content=None):
         return "sent"
     except Exception as e:
         return "fail"
+
+
+def get_airport_code(airport):
+    airport = airport.split(' (')
+    return airport[1][:3]
 
 
 def get_airport_detail(airport_code):
@@ -77,13 +83,14 @@ AIRCRAFTS = {
     '744': 'Boeing 747-400',
     '763': 'Boeing 767-300',
     '767': 'Boeing 767',
-    'E90': 'Embraer ERJ-190',
     'CRJ': 'Bombardier CRJ',
+    'ERJ': 'Embraer ERJ-145',
     'E70': 'Embraer EMB 170',
     'E75': 'Embraer ERJ-175',
+    'E7W': 'Embraer EMB 175',
+    'E90': 'Embraer ERJ-190',
     '75W': 'Boeing 757-200',
     'M88': 'McDonnell Douglas MD 88',
-    'ERJ': 'Embraer ERJ-145',
     '739': 'Boeing 737-900',
     '738': 'Boeing 737-800',
     '753': 'Boeing 757-300',

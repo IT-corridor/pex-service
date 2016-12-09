@@ -48,12 +48,13 @@ from paypal.standard.models import ST_PP_COMPLETED
 from paypal.standard.ipn.signals import valid_ipn_received
 from multiprocessing.pool import ThreadPool
 
-from .scrapers.customfunction import is_scrape_vAUS,is_scrape_aeroflot,is_scrape_virginAmerica,is_scrape_etihad,is_scrape_delta,is_scrape_united,is_scrape_virgin_atlantic,is_scrape_jetblue,is_scrape_aa, is_scrape_s7, is_scrape_airchina
+from .scrapers.customfunction import *
 from .scrapers import customfunction
 from .scrapers.delta_price import get_delta_price
 from .scrapers.config import config as sys_config
 from .form import *
 from pexproject.models import *
+from pexproject.decorators import *
 
 
 def show_me_the_money(sender, **kwargs):
@@ -67,10 +68,10 @@ def show_me_the_money(sender, **kwargs):
             user = User.objects.get(pk=user_id)
             if user.level == 0:                
                 user.search_limit = int(queries)
+                user.level = 1
             else:   # carryover for paying customers
                 user.search_limit = int(queries) + user.search_limit - user.search_run
             user.search_run = 0
-            user.level = 1
 
             topic = 'PEX Points Purchase'
             cycle_ = {"O": "one time", "M": "monthly", "Y": "annual"}
@@ -676,7 +677,7 @@ def check_limit(request, service):
     
     if user_id > -1 and int(request.session['level']) > 0:     # paying user
         user = User.objects.get(user_id=user_id)
-        if user.search_run >= user.search_limit:
+        if user.search_run >= user.search_limit and user.level < 3:
             # make him as a free user
             user.level = 0
             user.save()
@@ -740,6 +741,7 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
         dt1 = datetime.datetime.strptime(returndate, '%m/%d/%Y')
         date1 = dt1.strftime('%m/%d/%Y')
         searchdate1 = dt1.strftime('%Y-%m-%d')
+        returndate_alaska = dt1.strftime('%m/%d/%y')
     ongnidlist=''
     destlist = ''
     departlist =''
@@ -774,6 +776,7 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
         dt = datetime.datetime.strptime(depart.strip(), '%m/%d/%Y')
         date = dt.strftime('%m/%d/%Y')
         searchdate = dt.strftime('%Y-%m-%d')        
+        searchdate_alaska = dt.strftime('%m/%d/%y')
         # print '$$$$', searchdate, '$$$$'
         
         currentdatetime = datetime.datetime.now()
@@ -801,6 +804,9 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
                 if is_scrape_virginAmerica == 1:
                     customfunction.flag = customfunction.flag+1
                     subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/virgin_america.py",destcode, orgncode, str(returndate).strip(), str(returnkey)])
+                if is_scrape_alaska == 1:
+                    customfunction.flag = customfunction.flag+1
+                    subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/alaska.py",destcode, orgncode, str(returndate_alaska).strip(), str(returnkey)])
                 
                 if is_scrape_delta == 1:
                     customfunction.flag = customfunction.flag+1
@@ -863,7 +869,11 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/jetblue.py",orgncode,destcode,str(depart).strip(),str(searchkeyid)])
             if is_scrape_virginAmerica == 1:
                 customfunction.flag = customfunction.flag+1
-                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/virgin_america.py",orgncode,destcode,str(depart).strip(),str(searchkeyid)])                
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/virgin_america.py",orgncode,destcode,str(depart).strip(),str(searchkeyid)])               
+            if is_scrape_alaska == 1:
+                customfunction.flag = customfunction.flag+1
+                subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/alaska.py", orgncode, destcode, str(searchdate_alaska).strip(), str(searchkeyid)])
+
             if is_scrape_delta == 1:
                 customfunction.flag = customfunction.flag+1
                 subprocess.Popen(["python", settings.BASE_DIR+"/pexproject/scrapers/delta.py",orgncode,destcode,str(date),str(depart).strip(),str(searchkeyid),etihadorigin,etihaddest,cabin])
@@ -1184,7 +1194,7 @@ def get_flight_pricematrix(request):
         return JsonResponse([minPriceMile, maxPriceMile, fare_code_Array], safe=False)
 
 
-    price_matrix = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']
+    price_matrix = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic', 'alaska']
     price_matrix = {item: [None, None, None] for item in price_matrix}
 
     if pricematrix:
@@ -2293,7 +2303,7 @@ def check_validity_flight_params(request):
     flight_class = params.get('class')
     mile_low = params.get('mile_low') or '1'
     mile_high = params.get('mile_high') or '10000000'
-    airlines = params.get('airlines') or ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']
+    airlines = params.get('airlines') or ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic', 'alaska']
     airlines.append('valid_line')
     airlines = [item.encode('ascii', 'ignore') for item in airlines]
 
@@ -2368,7 +2378,8 @@ def api_search_flight(request):
             'united': 'unitedLogo.png',
             'Virgin America': 'va.jpg',
             'Virgin Australia': 'VAUS.png',
-            'virgin_atlantic': 'virgin.png'        
+            'virgin_atlantic': 'virgin.png',
+            'alaska': 'alaska.jpg'        
         }
 
         result = {}
@@ -2433,13 +2444,21 @@ def api_search_flight(request):
 
             flights_ = Flightdata.objects.filter(**kwargs)
             for flight in flights_:
-                flight_ = model_to_dict(flight, exclude=['rowid', 'scrapetime', 'searchkeyid', 'stoppage_station', 'arivedetails', 'operatedby', 'departdetails', 'planedetails', 'economy_code', 'first_fare_code', 'first_code', 'eco_fare_code', 'arival', 'departure', 'business_code', 'firsttax', 'maintax', 'businesstax', 'cabintype3', 'cabintype2', 'business', 'maincabin', 'cabintype1', 'firstclass', 'business_fare_code'])
+                flight_ = model_to_dict(flight, exclude=['rowid', 'scrapetime', 
+                    'searchkeyid', 'stoppage_station', 'arivedetails', 
+                    'operatedby', 'departdetails', 'planedetails', 
+                    'economy_code', 'first_fare_code', 'first_code', 
+                    'eco_fare_code', 'arival', 'departure', 'business_code', 
+                    'firsttax', 'maintax', 'businesstax', 'cabintype3', 
+                    'cabintype2', 'business', 'maincabin', 'cabintype1', 
+                    'firstclass', 'business_fare_code', 'flighno'])
 
                 flight_['route'] = parse_detail(flight.departdetails, flight.arivedetails, flight.planedetails, flight.operatedby)
 
                 if not flight_['route']:
                     continue
-
+                    
+                flight_['flight_no'] = str(flight.flighno)
                 flight_['arrival'] = str(flight.arival)
                 flight_['departure'] = str(flight.departure)
                 flight_['image'] = 'pexportal.com/static/flightsearch/img/'+logos[flight.datasource]
@@ -2537,7 +2556,7 @@ def api_search_flight(request):
 
 
 """ admin views """
-@login_required(login_url='/Admin/login/')
+@admin_only
 def city_image(request):
     city_images = CityImages.objects.all()
     return render(request, 'Admin/city_image.html', {'city_images': city_images})
@@ -2549,7 +2568,7 @@ def city_image_delete(request, id):
         return HttpResponse('success')
     
 
-@login_required(login_url='/Admin/login/')
+@admin_only
 def city_image_update(request, id=None):
     city_image = CityImages()
     if id:
@@ -2571,7 +2590,7 @@ def city_image_update(request, id=None):
     return render(request, 'Admin/city_image_form.html', {'form':form})
 
 
-@login_required(login_url='/Admin/login/')
+@admin_only
 def hotel(request):
     hotels = Hotel.objects.all()
     return render(request, 'Admin/hotel.html', {'hotels': hotels})
@@ -2583,7 +2602,7 @@ def hotel_delete(request, id):
         return HttpResponse('success')
 
 
-@login_required(login_url='/Admin/login/')    
+@admin_only    
 def hotel_update(request, id=None):
     hotel = Hotel()
     if id:
@@ -2625,7 +2644,7 @@ def hotel_update(request, id=None):
     })
 
 
-@login_required(login_url='/Admin/login/')
+@admin_only
 def email_template(request):
     email_templates = EmailTemplate.objects.all()
     return render(request, 'Admin/email_template.html', {'email_templates': email_templates})
@@ -2637,7 +2656,7 @@ def email_template_delete(request, id):
         return HttpResponse('success')
 
 
-@login_required(login_url='/Admin/login/')    
+@admin_only    
 def email_template_update(request, id=None):
     email_template = EmailTemplate()
     if id:
@@ -2658,13 +2677,13 @@ def email_template_update(request, id=None):
     return render(request, 'Admin/email_template_form.html', {'form':form})
 
 
-@login_required(login_url='/Admin/login/')
+@admin_only
 def static_page(request):
     static_pages = Pages.objects.all()
     return render(request, 'Admin/static_page.html', {'static_pages': static_pages})
 
 
-@login_required(login_url='/Admin/login/')
+@admin_only
 def google_ad(request):
     google_ads = GoogleAd.objects.all()
     return render(request, 'Admin/google_ad.html', {'google_ads': google_ads})
@@ -2676,7 +2695,7 @@ def google_ad_delete(request, id):
         return HttpResponse('success')
 
 
-@login_required(login_url='/Admin/login/')    
+@admin_only    
 def google_ad_update(request, id=None):
     google_ad = GoogleAd()
     if id:
@@ -2697,13 +2716,13 @@ def google_ad_update(request, id=None):
     return render(request, 'Admin/google_ad_form.html', {'form':form})
 
 
-@login_required(login_url='/Admin/login/')
+@admin_only
 def customer_list(request):
     customers = User.objects.all()
     return render(request, 'Admin/customer.html', {'customers': customers})
 
 
-@login_required(login_url='/Admin/login/')    
+@admin_only    
 def customer_update(request, id=None):
     customer = User()
     if id:
@@ -2755,13 +2774,13 @@ def customer_delete(request, id):
         return HttpResponse('success')
 
 
-@login_required(login_url='/Admin/login/')
+@admin_only
 def blog_list(request):
     blog_list = Blogs.objects.all()
     return render(request, 'Admin/blog_list.html', {'blog_list': blog_list})
 
 
-@login_required(login_url='/Admin/login/')
+@admin_only
 def blog_list_update(request, id=None):
     blog_list = Blogs()
     if id:
@@ -2797,13 +2816,13 @@ def blog_list_delete(request, id):
         return HttpResponse('success')
 
 
-@login_required(login_url='/Admin/login/')
+@admin_only
 def token(request):
     tokens = Token.objects.all()
     return render(request, 'Admin/token.html', {'tokens': tokens})
 
 
-@login_required(login_url='/Admin/login/')
+@admin_only
 def token_update(request, id=None):
     if id:
         token = Token.objects.get(id=id)
@@ -2845,13 +2864,13 @@ def token_delete(request, id):
         return HttpResponse('success')
 
 
-@login_required(login_url='/Admin/login/')
+@admin_only
 def searchlimit(request):
     searchlimits = SearchLimit.objects.all()
     return render(request, 'Admin/searchlimit.html', {'searchlimits': searchlimits})
 
 
-@login_required(login_url='/Admin/login/')
+@admin_only
 def searchlimit_update(request, id=None):
     searchlimit = SearchLimit.objects.get(id=id)
 
@@ -2883,15 +2902,15 @@ def admin_login(request):
     return HttpResponseRedirect('/Admin/')
 
 
-@login_required(login_url='/Admin/login/')
+@admin_only
 def admin_logout(request):
     auth_logout(request)
     return HttpResponseRedirect('/Admin/')
 
 
-@login_required(login_url='/Admin/login/')
+@admin_only
 def Admin(request):
-    air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']    
+    air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic', 'alaska']    
     stat_num_search = _airline_info(request.user, 3650, 'maincabin', 'all airports', 'all airports')
 
     pop_searches = _popular_search(3650)
@@ -2973,7 +2992,7 @@ def _airline_info(user, period, fare_class, _from, _to):
     stat_num_search = []
 
     try:
-        air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']
+        air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic', 'alaska']
         start_time = datetime.datetime.now() - timedelta(days=period)
 
         searches = Searchkey.objects.filter(scrapetime__gte=start_time)
@@ -3181,9 +3200,9 @@ def signup_activity(request):
     return HttpResponse(json.dumps(result))
 
 
-@login_required(login_url='/customer/login/')
+@customer_only
 def customer(request):    
-    air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic']
+    air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic', 'alaska']
     stat_num_search = _airline_info(request.user, 3650, 'maincabin', 'all airports', 'all airports')
     stat_price_history = _price_history(request.user, '2016-04-05', '2026-04-05', 'aeroflot', 'New York (JFK)', 'Moscow (MOW)', 'Avg') 
     user_search_history = get_customer_search_history(user_id=request.user.user_id)
@@ -3205,7 +3224,7 @@ def customer(request):
     })
 
 
-@login_required(login_url='/customer/login/')
+@customer_only
 def billing_history(request):
     token = Token.objects.filter(owner=request.user).first()
     history = None
@@ -3218,7 +3237,7 @@ def billing_history(request):
     return render(request, 'customer/billing_history.html', {'history': history_})
 
 
-@login_required(login_url='/customer/login/')
+@customer_only
 def customer_logout(request):
     auth_logout(request)
     return HttpResponseRedirect('/customer/')

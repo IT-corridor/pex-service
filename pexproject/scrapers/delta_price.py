@@ -157,50 +157,50 @@ def get_price(driver):
         """)
     except:
         print "single page"
-        # try:
-        driver.execute_script("""
-        var sortBy = "deltaScheduleAward" ;
-        SearchFlightResultsDWR.searchResults(currentSessionCheckSum, sortBy[0], delta.airShopping.numberOfColumnsToRequest, delta.airShopping.cacheKey, {
-            async: true,
-            timeout: 65000,
-            callback: function(searchResults) {
-                    var jsonData = {};
+        try:
+            driver.execute_script("""
+            var sortBy = "deltaScheduleAward" ;
+            SearchFlightResultsDWR.searchResults(currentSessionCheckSum, sortBy[0], delta.airShopping.numberOfColumnsToRequest, delta.airShopping.cacheKey, {
+                async: true,
+                timeout: 65000,
+                callback: function(searchResults) {
+                        var jsonData = {};
+                        
+                        jsonData['jsonobj'] = JSON.stringify(searchResults);
+                        var cabininfo = document.getElementsByClassName('tblHeadUp')[0].innerHTML;
+                        jsonData['cabinTypes'] = cabininfo;
+                        localStorage.setItem('deltaData', JSON.stringify(jsonData));
+                        var element = document.createElement('div');
+                        element.id = "submitAdvanced";
+                        element.appendChild(document.createTextNode("text"));
+                        document.body.appendChild(element);
+                        throw new Error("Results found");
+                        
+                    if (searchResults.errorFwdURL == null || searchResults.errorFwdURL == "") {
+                        flightResultsObj.isDOMReady(searchResults, action, false);
+                        FilterFunctions.hideFilterMsg();
+                    } else {
                     
-                    jsonData['jsonobj'] = JSON.stringify(searchResults);
-                    var cabininfo = document.getElementsByClassName('tblHeadUp')[0].innerHTML;
-                    jsonData['cabinTypes'] = cabininfo;
-                    localStorage.setItem('deltaData', JSON.stringify(jsonData));
-                    var element = document.createElement('div');
-                    element.id = "submitAdvanced";
-                    element.appendChild(document.createTextNode("text"));
-                    document.body.appendChild(element);
-                    throw new Error("Results found");
-                    
-                if (searchResults.errorFwdURL == null || searchResults.errorFwdURL == "") {
-                    flightResultsObj.isDOMReady(searchResults, action, false);
-                    FilterFunctions.hideFilterMsg();
-                } else {
-                
-                    flightResultsObj.isDOMReady(searchResults, false, true);
+                        flightResultsObj.isDOMReady(searchResults, false, true);
+                    }
+                    if (!action) {
+                        Wait.hide();
+                        $(".tableHeaderHolderFareBottom").show();
+                        $("#nextGenAirShopping .tableHeaderHolder").show();
+                    }
+                },
+                errorHandler: function(msg, exc) {
+                    shoppingUtil.errorHandler(msg, exc);
+                },
+                exceptionHandler: function(msg, exc) {
+                    (action) ? FilterFunctions.hideFilterMsg(): "";
+                    shoppingUtil.exceptionHandler(msg, exc);
                 }
-                if (!action) {
-                    Wait.hide();
-                    $(".tableHeaderHolderFareBottom").show();
-                    $("#nextGenAirShopping .tableHeaderHolder").show();
-                }
-            },
-            errorHandler: function(msg, exc) {
-                shoppingUtil.errorHandler(msg, exc);
-            },
-            exceptionHandler: function(msg, exc) {
-                (action) ? FilterFunctions.hideFilterMsg(): "";
-                shoppingUtil.exceptionHandler(msg, exc);
-            }
-        });
-        
-        """)
-        # except:
-        #     return delta_price
+            });
+            
+            """)
+        except:
+            return delta_price
     try:
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "submitAdvanced")))
         result = driver.execute_script(""" return localStorage.getItem('deltaData'); """)
@@ -234,6 +234,6 @@ def get_price(driver):
 if __name__=='__main__':
     # pdb.set_trace()
     start_time = datetime.datetime.now()
-    print get_delta_price('msp', 'tlv', '12/26/2016', '12/29/2016')
+    print get_delta_price('bos', 'sfo', '12/23/2016', '12/29/2016')
     # get_delta_price('msp', 'tlv', '12/26/2016')
     print (datetime.datetime.now() - start_time).seconds, '###'
