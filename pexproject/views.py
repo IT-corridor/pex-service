@@ -115,7 +115,7 @@ def pricing(request):
     acct_alaska = get_alaska_account(user_id)
 
     if request.method == 'POST':
-        baseurl = 'http://pexportal.com:8000'
+        baseurl = 'http://pexportal.com'
         queries = int(request.POST.get('queries'))
         cycle = request.POST.get('cycle')
         acct_alaska = request.POST.get('acct_alaska', '')
