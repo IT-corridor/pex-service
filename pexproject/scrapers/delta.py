@@ -61,8 +61,9 @@ def delta(orgn, dest, searchdate, searchkey):
         # origin = driver.find_element_by_id("originCity")
         # origin.clear()
         # origin.send_keys(orgn.strip())
-        destination = driver.find_element_by_id("destinationCity")
-        destination.send_keys(dest.strip())
+        driver.execute_script("document.getElementById('destinationCity').setAttribute('value', '"+dest.strip()+"')")
+        # destination = driver.find_element_by_id("destinationCity")
+        # destination.send_keys(dest.strip())
         ddate = driver.find_element_by_id("departureDate")  
         driver.execute_script("document.getElementById('departureDate').setAttribute('value', '"+str(searchdate)+"')")
         milebtn = driver.find_element_by_id("milesBtn")
@@ -82,7 +83,7 @@ def delta(orgn, dest, searchdate, searchkey):
     except:
         print "Data found"
     try:
-        driver.save_screenshot('/root/out_enter.png');
+        # driver.save_screenshot('/root/out_enter.png');
         WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.ID, "showAll-footer")))
         print "More than one page"
         driver.execute_script("""
@@ -259,14 +260,16 @@ def delta(orgn, dest, searchdate, searchkey):
                         departinfo_time = datetime.datetime.strptime(departinfo_time, '%a %b %d %Y %I:%M%p')
                         departinfo_time = departinfo_time.strftime('%Y/%m/%d %H:%M')
 
-                        fromAirport = customfunction.get_airport_detail(fromAirport) or fromAirport
+                        if not DEV_LOCAL:
+                            fromAirport = customfunction.get_airport_detail(fromAirport) or fromAirport
                         fromDetail = departinfo_time+" | from  "+fromAirport
                         departDetail.append(fromDetail)
                         departinfo_time = schedArrivalDate+" "+schedArrivalTime
                         departinfo_time = datetime.datetime.strptime(departinfo_time, '%a %b %d %Y %I:%M%p')
                         departinfo_time = departinfo_time.strftime('%Y/%m/%d %H:%M')
 
-                        destAirport = customfunction.get_airport_detail(destAirport) or destAirport
+                        if not DEV_LOCAL:
+                            destAirport = customfunction.get_airport_detail(destAirport) or destAirport
                         toDetails = departinfo_time+" | at "+destAirport
                         ariveDetail.append(toDetails)
                         aircraft = legdetail['aircraft']['shortName']
