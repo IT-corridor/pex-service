@@ -870,6 +870,7 @@ var timeCount = 0;
 var isDataComplete = '';
 var multicity = '';
 var multicity1 = multicity_;
+var ready_hide_dialog = false;
 
 function isprocess() {
     callrunning = true;
@@ -890,10 +891,15 @@ function isprocess() {
         success: function(data) {
             callrunning = false;
 
-            if (data[0] != 'onprocess') // after load any result
-                $("#loading-model").modal('hide');
-            else
+            if (data[0] != 'onprocess') {// after load any result
+                if (ready_hide_dialog) {
+                    $("#loading-model").modal('hide');
+                } else {
+                    ready_hide_dialog = true;
+                }
+            } else {
                 timeCount = parseInt(timeCount) + 1;
+            }
 
             if (timecompleted && data[1] != 'completed')
                 isprocess();
