@@ -837,6 +837,8 @@ function redirecttosearchpage(scraperStatus) {
             $(".contentdiv").remove();
             $("#content1").append(html);
 
+            $('.progress').hide();
+            
             progess_width = $('#progressbar').width();
             $('#progress_hidden_val').val(progess_width);
 
@@ -892,11 +894,11 @@ function isprocess() {
             callrunning = false;
 
             if (data[0] != 'onprocess') {// after load any result
-                if (ready_hide_dialog) {
-                    $("#loading-model").modal('hide');
-                } else {
-                    ready_hide_dialog = true;
-                }
+                // if (ready_hide_dialog) {
+                //     $("#loading-model").modal('hide');
+                // } else {
+                //     ready_hide_dialog = true;
+                // }
             } else {
                 timeCount = parseInt(timeCount) + 1;
             }
