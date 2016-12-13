@@ -890,7 +890,7 @@ function isprocess() {
         success: function(data) {
             callrunning = false;
 
-            if (timeCount >= 9 && data[0] != 'onprocess') // after 2 * 9 seconds hide the dialog
+            if (data[0] != 'onprocess') // after load any result
                 $("#loading-model").modal('hide');
             else
                 timeCount = parseInt(timeCount) + 1;
@@ -907,9 +907,9 @@ function isprocess() {
 
             if (data[1] == 'completed' || dataCheckCount > 30) {
                 clearInterval(refreshIntervalId);
-                console.log(aircraft);
-                console.log("Post checkdata");
-                console.log(aircraft_);
+                // console.log(aircraft);
+                // console.log("Post checkdata");
+                // console.log(aircraft_);
                 redirecttosearchpage('complete');
                 get_post_search_data();
                 getflexData();

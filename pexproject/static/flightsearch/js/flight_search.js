@@ -226,6 +226,8 @@ var returnid = '';
 var searchtype = '';
 
 $("#submitid").click(function(event) {
+    console.log("start 1");
+    console.log(new Date());
     triptype = $("input[type='radio'][name='trip']:checked");
     searchtype = $("input[type='radio'][name='searchtype']:checked").val();
     var current_date = $.datepicker.formatDate('mm/dd/yy', new Date());
@@ -277,6 +279,10 @@ $("#submitid").click(function(event) {
     returndateval = $('#returnMain').val();
     departdateval = $('#departMain').val();
     cabintypeval = $('#cabintype option:selected').val();
+
+    console.log("after validation");
+    console.log(new Date());
+
     searchData();
     return false ;
 });
@@ -286,6 +292,9 @@ function searchData() {
     
     if ($("#content1").length > 0)
         $("#content1").empty();
+
+    console.log("before ajax call");
+    console.log(new Date());
 
     $.ajax({
         type: "POST",
@@ -301,6 +310,10 @@ function searchData() {
             if (data['returnkey']) {
                 returnid = data['returnkey'];
             }
+
+            console.log("after ajax call");
+            console.log(new Date());
+
             redirecttosearchpage(searchid, returnid, searchtype);
             //refreshIntervalId = setInterval(datacheck, 5000,searchid,returnid);
         },
@@ -331,6 +344,9 @@ function redirecttosearchpage(searchid, returnkey, searchtype) {
         multicity = "&multicity=" + encodeURI(multikey);
     }
     if (searchid != '') {
+        console.log("before redirect");
+        console.log(new Date());
+
         $('#searchid').val(searchid);
         var location = "/getsearchresult?keyid=" + encodeURI(searchid) + "&cabin=" + encodeURI(cabintypeval) + "&passenger=" + encodeURI($('#passenger').val()) + multicity;
         if (returnkey != '') {
