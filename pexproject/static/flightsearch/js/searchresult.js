@@ -838,7 +838,7 @@ function redirecttosearchpage(scraperStatus) {
             $("#content1").append(html);
 
             $("#loading-model").modal('hide');
-            
+
             progess_width = $('#progressbar').width();
             $('#progress_hidden_val').val(progess_width);
 
@@ -893,15 +893,8 @@ function isprocess() {
         success: function(data) {
             callrunning = false;
 
-            if (data[0] != 'onprocess') {// after load any result
-                // if (ready_hide_dialog) {
-                //     $("#loading-model").modal('hide');
-                // } else {
-                //     ready_hide_dialog = true;
-                // }
-            } else {
+            if (data[0] == 'onprocess')
                 timeCount = parseInt(timeCount) + 1;
-            }
 
             if (timecompleted && data[1] != 'completed')
                 isprocess();

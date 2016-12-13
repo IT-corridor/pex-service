@@ -632,6 +632,7 @@ def contactUs(request, option):
 def search(request):
     if request.is_ajax():
         # try:
+        print "Start 1: {}".format(datetime.datetime.now())
         returndate = request.POST['returndate']
         origin = request.POST['fromMain'].strip()
         destination = request.POST['toMain'].strip()
@@ -658,7 +659,9 @@ def search(request):
         if _ret: # not success
             return HttpResponse(_ret, status=405)
 
+        print "Before _search: {}".format(datetime.datetime.now())
         key_json = _search(returndate, str(orgnid), str(destid), depart, searchtype, cabin, request)
+        print "After _search: {}".format(datetime.datetime.now())
         return JsonResponse(key_json)
 
         # except Exception, e:
