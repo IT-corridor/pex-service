@@ -837,7 +837,7 @@ function redirecttosearchpage(scraperStatus) {
             $(".contentdiv").remove();
             $("#content1").append(html);
 
-            $('.progress').hide();
+            $("#loading-model").modal('hide');
             
             progess_width = $('#progressbar').width();
             $('#progress_hidden_val').val(progess_width);
