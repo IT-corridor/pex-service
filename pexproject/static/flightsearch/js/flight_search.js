@@ -288,8 +288,8 @@ $("#submitid").click(function(event) {
 });
 
 function searchData() {
+    $('#submitid').html('<img src="/static/flightsearch/img/preload.gif">');
     $('#submitid').prop('disabled', true);
-    
     if ($("#content1").length > 0)
         $("#content1").empty();
 
