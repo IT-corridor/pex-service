@@ -962,7 +962,10 @@ var searchidval = '';
 var returnidval = '';
 
 $("#changebtnid").click(function(event) {
-    //event.preventDefault();
+    if ( $('#pre_search').css('display') != 'none' ) {
+        return false;
+    }
+
     return setSearchData();
 });
 
@@ -1002,7 +1005,8 @@ function setSearchData() {
 }
 
 function searchData() {
-    $('#changebtnid').prop('disabled', true);
+    $('#pre_search').show();
+    // $('#changebtnid').prop('disabled', true);
     $("#content1").empty();
     var searchtype = searchtype_;
 
@@ -1038,6 +1042,7 @@ function searchData() {
             } else if (ret.responseText == "11") {
                 alert('There is no such airport for origin or destination!\n Please check again!');
                 $('#changebtnid').prop('disabled', false);
+                $('#pre_search').hide();
             }
 
             return false;
