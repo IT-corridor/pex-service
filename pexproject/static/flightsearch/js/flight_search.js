@@ -292,9 +292,6 @@ function searchData() {
     if ($("#content1").length > 0)
         $("#content1").empty();
 
-    console.log("before ajax call");
-    console.log(new Date());
-
     $.ajax({
         type: "POST",
         url: "/search/",
@@ -341,8 +338,6 @@ function redirecttosearchpage(searchid, returnkey, searchtype) {
         multicity = "&multicity=" + encodeURI(multikey);
     }
     if (searchid != '') {
-        console.log("before redirect");
-        console.log(new Date());
 
         $('#searchid').val(searchid);
         var location = "/getsearchresult?keyid=" + encodeURI(searchid) + "&cabin=" + encodeURI(cabintypeval) + "&passenger=" + encodeURI($('#passenger').val()) + multicity;
