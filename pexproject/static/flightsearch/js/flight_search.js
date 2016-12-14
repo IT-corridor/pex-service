@@ -322,9 +322,9 @@ function searchData() {
             } else if (ret.responseText  ==  "3") {
                 alert('You reached the flight search limit!\nPlease purchase more!');
             } else if (ret.responseText  ==  "11") {
+                $('#pre_search').hide();
                 alert('There is no such airport for origin or destination!\n Please check again!');
                 $('#submitid').prop('disabled', false);
-                $('#pre_search').hide();
             }
 
             return false;
