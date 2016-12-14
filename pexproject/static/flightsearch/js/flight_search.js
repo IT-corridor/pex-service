@@ -226,6 +226,10 @@ var returnid = '';
 var searchtype = '';
 
 $("#submitid").click(function(event) {
+    if ( $('#pre_search').css('display') != 'none' ) {
+        return false;
+    }
+
     triptype = $("input[type='radio'][name='trip']:checked");
     searchtype = $("input[type='radio'][name='searchtype']:checked").val();
     var current_date = $.datepicker.formatDate('mm/dd/yy', new Date());
@@ -283,7 +287,7 @@ $("#submitid").click(function(event) {
 });
 
 function searchData() {
-    $('#submitid').html('<img src="/static/flightsearch/img/preload.gif">');
+    $('#pre_search').show();
     // $('#submitid').prop('disabled', true);
     if ($("#content1").length > 0)
         $("#content1").empty();
@@ -320,6 +324,7 @@ function searchData() {
             } else if (ret.responseText  ==  "11") {
                 alert('There is no such airport for origin or destination!\n Please check again!');
                 $('#submitid').prop('disabled', false);
+                $('#pre_search').hide();
             }
 
             return false;
