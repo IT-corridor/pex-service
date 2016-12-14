@@ -837,6 +837,8 @@ function redirecttosearchpage(scraperStatus) {
             $(".contentdiv").remove();
             $("#content1").append(html);
 
+            $("#loading-model").modal('hide');
+
             progess_width = $('#progressbar').width();
             $('#progress_hidden_val').val(progess_width);
 
@@ -870,6 +872,7 @@ var timeCount = 0;
 var isDataComplete = '';
 var multicity = '';
 var multicity1 = multicity_;
+var ready_hide_dialog = false;
 
 function isprocess() {
     callrunning = true;
@@ -890,9 +893,7 @@ function isprocess() {
         success: function(data) {
             callrunning = false;
 
-            if (data[0] != 'onprocess') // after load any result
-                $("#loading-model").modal('hide');
-            else
+            if (data[0] == 'onprocess')
                 timeCount = parseInt(timeCount) + 1;
 
             if (timecompleted && data[1] != 'completed')
@@ -961,7 +962,10 @@ var searchidval = '';
 var returnidval = '';
 
 $("#changebtnid").click(function(event) {
-    //event.preventDefault();
+    if ( $('#pre_search').css('display') != 'none' ) {
+        return false;
+    }
+
     return setSearchData();
 });
 
@@ -1001,7 +1005,8 @@ function setSearchData() {
 }
 
 function searchData() {
-    $('#changebtnid').prop('disabled', true);
+    $('#pre_search').show();
+    // $('#changebtnid').prop('disabled', true);
     $("#content1").empty();
     var searchtype = searchtype_;
 
@@ -1035,6 +1040,7 @@ function searchData() {
             } else if (ret.responseText == "3") {
                 alert('You reached the flight search limit!\nPlease purchase more!');
             } else if (ret.responseText == "11") {
+                $('#pre_search').hide();
                 alert('There is no such airport for origin or destination!\n Please check again!');
                 $('#changebtnid').prop('disabled', false);
             }

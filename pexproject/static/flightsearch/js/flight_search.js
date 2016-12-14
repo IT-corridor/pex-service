@@ -226,8 +226,10 @@ var returnid = '';
 var searchtype = '';
 
 $("#submitid").click(function(event) {
-    console.log("start 1");
-    console.log(new Date());
+    if ( $('#pre_search').css('display') != 'none' ) {
+        return false;
+    }
+
     triptype = $("input[type='radio'][name='trip']:checked");
     searchtype = $("input[type='radio'][name='searchtype']:checked").val();
     var current_date = $.datepicker.formatDate('mm/dd/yy', new Date());
@@ -280,16 +282,13 @@ $("#submitid").click(function(event) {
     departdateval = $('#departMain').val();
     cabintypeval = $('#cabintype option:selected').val();
 
-    console.log("after validation");
-    console.log(new Date());
-
     searchData();
     return false ;
 });
 
 function searchData() {
-    $('#submitid').prop('disabled', true);
-    
+    $('#pre_search').show();
+    // $('#submitid').prop('disabled', true);
     if ($("#content1").length > 0)
         $("#content1").empty();
 
@@ -311,9 +310,6 @@ function searchData() {
                 returnid = data['returnkey'];
             }
 
-            console.log("after ajax call");
-            console.log(new Date());
-
             redirecttosearchpage(searchid, returnid, searchtype);
             //refreshIntervalId = setInterval(datacheck, 5000,searchid,returnid);
         },
@@ -329,6 +325,7 @@ function searchData() {
             } else if (ret.responseText  ==  "3") {
                 alert('You reached the flight search limit!\nPlease purchase more!');
             } else if (ret.responseText  ==  "11") {
+                $('#pre_search').hide();
                 alert('There is no such airport for origin or destination!\n Please check again!');
                 $('#submitid').prop('disabled', false);
             }
