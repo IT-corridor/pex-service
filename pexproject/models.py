@@ -307,7 +307,7 @@ class DestinationTile(models.Model):
     image_path = models.CharField(max_length=200)
     maintax = models.FloatField()
     maincabin = models.IntegerField()
-    modified_at = models.DateField(auto_now=True)
+    modified_at = models.DateTimeField(auto_now=True)
 
 
 class Searchkey(models.Model):
