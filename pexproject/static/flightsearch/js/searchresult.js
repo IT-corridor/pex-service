@@ -472,6 +472,7 @@ $(window).scroll(function() {
                 if ( detail_clicked && search_finished) {
                     search_finished = false;
                     $("#content1").empty();
+                    $("#content").empty();
                     $(".contentdiv").remove();
                     pagecount = 1;                    
                 }
