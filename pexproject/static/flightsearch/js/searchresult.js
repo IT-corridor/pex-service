@@ -469,6 +469,7 @@ $(window).scroll(function() {
     if ($(window).scrollTop() >= doch - winh) {
         if (is_data > 0) {
             if (call_sent == "completed") {
+                detail_clicked = false;
                 loadArticle(pagecount);
                 pagecount++;
             }
@@ -833,6 +834,9 @@ function updateTime() {
 }
 
 function redirecttosearchpage(scraperStatus) {
+    if (detail_clicked)
+        return false;
+
     $.ajax({
         url: dataurls,
         type: 'POST',
