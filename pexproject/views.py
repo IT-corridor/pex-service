@@ -201,7 +201,7 @@ def get_countryname(request):
 def destination_tiles(request):
     searches = []
 
-    for item in DestinationTile.objects.all().order_by('modified_at')[:8]
+    for item in DestinationTile.objects.all().order_by('modified_at')[:8]:
         searches.append(model_to_dict(item))
 
     return render(request, 'flightsearch/destination_tiles.html', { 'searchObj': searches })
