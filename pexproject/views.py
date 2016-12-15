@@ -1139,21 +1139,22 @@ def get_flight_pricematrix(request):
             FareCodeFromDatabase =  Flightdata.objects.raw("select p1.rowid,p1."+fare_class_code+" as fare_code from pexproject_flightdata p1 "+inner_join_on+" where p1.searchkeyid="+str(recordkey)+" group by p1.datasource order by minpricemile,maxpricemile")      
    
     elif key:
-        # process detination tiles
-        d_tile = {}
-        sk = Searchkey.objects.get(searchid=key)
-        _tmp = Flightdata.objects.filter(~Q(origin='flag'), ~Q(maincabin=0), Q(searchkeyid=key))
-        d_tile['final_dest'] = sk.destination_city
-        d_tile['searchkeyid'] = int(key)
-        d_tile['image_path'] = CityImages.objects.get(city_name=destination_city).image_path.url
-        d_tile['maintax'] = _tmp.aggregate(Min('maintax'))['maintax__min']
-        d_tile['maincabin'] = _tmp.aggregate(Min('maincabin'))['maincabin__min']
+        if getPriceRange:
+            # process detination tiles
+            d_tile = {}
+            sk = Searchkey.objects.get(searchid=key)
+            _tmp = Flightdata.objects.filter(~Q(origin='flag'), ~Q(maincabin=0), Q(searchkeyid=key))
+            d_tile['final_dest'] = sk.destination_city
+            d_tile['searchkeyid'] = int(key)
+            d_tile['image_path'] = CityImages.objects.get(city_name=sk.destination_city).image_path.url
+            d_tile['maintax'] = _tmp.aggregate(Min('maintax'))['maintax__min']
+            d_tile['maincabin'] = _tmp.aggregate(Min('maincabin'))['maincabin__min']
 
-        if d_tile['maintax'] and d_tile['maincabin']:
-            DestinationTile.objects.update_or_create(
-                final_dest=sk.destination_city,
-                defaults=d_tile,
-            )
+            if d_tile['maintax'] and d_tile['maincabin']:
+                DestinationTile.objects.update_or_create(
+                    final_dest=sk.destination_city,
+                    defaults=d_tile,
+                )
 
         if returnkeyid:
             pricematrix = Flightdata.objects.raw("select p1.rowid,p2.rowid, p2.datasource, (min(if(p1.maincabin > 0,p1.maincabin,NULL))+min(if(p2.maincabin > 0,p2.maincabin,NULL))) as maincabin, (min(if(p1.firstclass>0,p1.firstclass,NULL))+min(if(p2.firstclass>0,p2.firstclass,NULL))) as firstclass ,(min(if(p1.business>0,p1.business,NULL))+min(if(p2.business>0,p2.business,NULL))) as business  from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+returnkeyid+" where p1.searchkeyid="+str(key)+" group by p1.datasource")
