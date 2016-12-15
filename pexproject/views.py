@@ -3636,7 +3636,7 @@ def get_history(request):
 def get_aircraft_category(request):
     """
     Get a category of aircrafts after flight search is done.
-    It is callef from ajax.
+    It is called from ajax.
     """
     cabinclass = request.POST.get('cabin', '')
     multicitykey = request.POST.get('multicity', '')
