@@ -834,18 +834,17 @@ function updateTime() {
 }
 
 function redirecttosearchpage(scraperStatus) {
-    if (detail_clicked)
-        return false;
-
     $.ajax({
         url: dataurls,
         type: 'POST',
         data: "csrfmiddlewaretoken=" + csrf_token + "&depaturemin=" + depaturemin + "&depaturemax=" + depaturemax + "&airlines=" + airline + "&aircraft=" + aircraft + "&stoppage=" + stoppage + row_val + "&scraperStatus=" + scraperStatus,
         success: function(html) {
             $('.filters-holder').addClass('xs-filters-holder-ht');
-            $("#content1").empty();
-            $(".contentdiv").remove();
-            $("#content1").append(html);
+            if (!detail_clicked) {
+                $("#content1").empty();
+                $(".contentdiv").remove();
+                $("#content1").append(html);                
+            }
 
             $("#loading-model").modal('hide');
 
