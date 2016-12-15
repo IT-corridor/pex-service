@@ -469,6 +469,13 @@ $(window).scroll(function() {
     if ($(window).scrollTop() >= doch - winh) {
         if (is_data > 0) {
             if (call_sent == "completed") {
+                if ( detail_clicked && search_finished) {
+                    search_finished = false;
+                    $("#content1").empty();
+                    $(".contentdiv").remove();
+                    pagecount = 1;                    
+                }
+
                 detail_clicked = false;
                 loadArticle(pagecount);
                 pagecount++;
@@ -882,6 +889,7 @@ var isDataComplete = '';
 var multicity = '';
 var multicity1 = multicity_;
 var ready_hide_dialog = false;
+var search_finished = false;
 
 function isprocess() {
     callrunning = true;
@@ -920,6 +928,7 @@ function isprocess() {
                 // console.log(aircraft);
                 // console.log("Post checkdata");
                 // console.log(aircraft_);
+                search_finished = true;
                 redirecttosearchpage('complete');
                 get_post_search_data();
                 getflexData();
