@@ -1146,7 +1146,7 @@ def get_flight_pricematrix(request):
             _tmp = Flightdata.objects.filter(~Q(origin='flag'), ~Q(maincabin=0), Q(searchkeyid=key))
             d_tile['final_dest'] = sk.destination_city
             d_tile['searchkeyid'] = int(key)
-            d_tile['image_path'] = CityImages.objects.get(city_name=sk.destination_city).image_path.url
+            d_tile['image_path'] = CityImages.objects.filter(city_name=sk.destination_city)[0].image_path.url
             d_tile['maintax'] = _tmp.aggregate(Min('maintax'))['maintax__min']
             d_tile['maincabin'] = _tmp.aggregate(Min('maincabin'))['maincabin__min']
 
