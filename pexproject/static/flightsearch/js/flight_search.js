@@ -148,16 +148,16 @@ $(function() {
     });
 
     // load destination tiles
-    if ($('#add-section').length > 0 ) {
-        $.ajax({
-            type: "POST",
-            url: "/destination_tiles",
-            data: "",
-            success: function(data) {
-                $('#add-section').html(data);
-            },
-        });
-    }
+    // if ($('#add-section').length > 0 ) {
+    //     $.ajax({
+    //         type: "POST",
+    //         url: "/destination_tiles",
+    //         data: "",
+    //         success: function(data) {
+    //             $('#add-section').html(data);
+    //         },
+    //     });
+    // }
 });
 
 $('#cabintype').on('change', function() {

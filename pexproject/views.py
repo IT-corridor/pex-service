@@ -278,22 +278,15 @@ def index(request):
             request.session['username'] = request.user.username
             request.session['userid'] = user.user_id
             request.session['level'] = user.level
-        """
-        else:
-            email=request.user
-            password = ''
-            hash_pwd = hashlib.md5(password).hexdigest()
 
-            user = User.objects.create(username=email, email=email, 
-                                       password=hash_pwd, first_name='',
-                                       last_name='', home_airport='',
-                                       pexdeals=0)
+    searches = []
 
-            request.session['username'] = user.username
-            request.session['userid'] = user.user_id
-            request.session['level'] = user.level
-        """
-    return render(request, 'flightsearch/home.html')    
+    for item in DestinationTile.objects.all().order_by('-modified_at')[:8]:
+        searches.append(model_to_dict(item))
+
+    # return render(request, 'flightsearch/destination_tiles.html', { 'searchObj': searches })
+
+    return render(request, 'flightsearch/home.html', { 'searchObj': searches })    
 
 
 def signup(request):
