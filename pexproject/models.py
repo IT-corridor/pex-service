@@ -243,6 +243,7 @@ class Flightdata(models.Model):
         return self.planedetails.split('@')
     '''
 
+
 class Flightdata_b(models.Model):
     rowid = models.AutoField(primary_key=True)
     scrapetime = models.DateTimeField()
@@ -299,7 +300,16 @@ class Airports(models.Model):
     numAirports = models.IntegerField()
     city = models.BooleanField(default=True)
 
-       
+
+class DestinationTile(models.Model):
+    final_dest = models.CharField(max_length=512, primary_key=True)
+    searchkeyid = models.IntegerField()
+    image_path = models.CharField(max_length=200)
+    maintax = models.FloatField()
+    maincabin = models.IntegerField()
+    modified_at = models.DateField(auto_now=True)
+
+
 class Searchkey(models.Model):
     searchid = models.AutoField(primary_key=True)
     source = models.CharField(max_length=50)
