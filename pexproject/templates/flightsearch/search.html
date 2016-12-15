@@ -321,7 +321,7 @@
             </div>
         </div>
         {% endif%}
-        <a class="show-details" role="button" data-toggle="collapse" href="#{{row.newid}}" aria-expanded="false" aria-controls="collapseExample" onclick="detail_clicked=true;">SHOW DETAILS</a>
+        <a class="show-details" role="button" data-toggle="collapse" href="#{{row.newid}}" aria-expanded="false" aria-controls="collapseExample">SHOW DETAILS</a>
         <h4 class="econo hidden-xs"> 			
 					{% if request.GET.cabin == 'maincabin' or cabin == 'maincabin'%}
 					{{row.cabintype1}} {% elif request.GET.cabin == 'firstclass' or cabin == 'firstclass' %} {{row.cabintype2}} {% else%}{{row.cabintype3}} {% endif %}
