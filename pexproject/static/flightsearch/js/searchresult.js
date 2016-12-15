@@ -1048,6 +1048,7 @@ function searchData() {
             //refreshIntervalId = setInterval(datacheck, 5000,searchid,returnid);
         },
         error: function(ret) {
+            $('#pre_search').hide();
             msg = 'You reached the daily flight search limit!';
             if (ret.responseText == "2") {
                 msg += '\nPlease sign up and get more access!';
@@ -1059,7 +1060,6 @@ function searchData() {
             } else if (ret.responseText == "3") {
                 alert('You reached the flight search limit!\nPlease purchase more!');
             } else if (ret.responseText == "11") {
-                $('#pre_search').hide();
                 alert('There is no such airport for origin or destination!\n Please check again!');
                 $('#changebtnid').prop('disabled', false);
             }
