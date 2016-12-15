@@ -302,7 +302,7 @@ class Airports(models.Model):
 
 
 class DestinationTile(models.Model):
-    final_dest = models.CharField(max_length=512, primary_key=True)
+    final_dest = models.CharField(max_length=250, primary_key=True)
     searchkeyid = models.IntegerField()
     image_path = models.CharField(max_length=200)
     maintax = models.FloatField()
