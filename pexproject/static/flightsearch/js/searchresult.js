@@ -568,10 +568,11 @@ $(document.body).on('click', '.show-details', function() {
     var collapse_content_selector = $(this).attr('href');
     var toggle_switch = $(this);
 
-    detail_clicked = $(this).is(':visible');
-    console.log(detail_clicked);
         
     $(collapse_content_selector).slideToggle(function() {
+        detail_clicked = $(this).is(':visible');
+        console.log(detail_clicked);
+
         $(this).is(':visible') ? toggle_switch.text('HIDE DETAILS') : toggle_switch.text('SHOW DETAILS');
     });
 });
