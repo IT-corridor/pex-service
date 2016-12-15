@@ -461,6 +461,7 @@ $('#loading_img').hide();
 var call_sent = "completed";
 var pagecount = 2;
 var is_data = 1;
+var detail_clicked = false;
 
 $(window).scroll(function() {
     var doch = ($(document).height() - 200);
