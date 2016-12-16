@@ -244,6 +244,48 @@ class Flightdata(models.Model):
     '''
 
 
+class Flightdata_b(models.Model):
+    rowid = models.AutoField(primary_key=True)
+    scrapetime = models.DateTimeField()
+    searchkeyid = models.IntegerField ()
+    flighno = models.CharField(max_length=100)
+    stoppage = models.CharField(max_length=100)
+    stoppage_station = models.CharField(max_length=100)
+    origin = models.CharField(max_length=100)
+    destination = models.CharField(max_length=100)
+    departure = models.TimeField('Alarm')
+    arival = models.TimeField('Alarm')
+    duration = models.CharField(max_length=100)
+    maincabin = models.IntegerField()
+    maintax = models.FloatField()
+    firstclass = models.IntegerField()
+    firsttax = models.FloatField()
+    business = models.IntegerField()
+    businesstax = models.FloatField()
+    cabintype1 =  models.CharField(max_length=100)
+    cabintype2 =  models.CharField(max_length=100)
+    cabintype3 =  models.CharField(max_length=100)
+    datasource =  models.CharField(max_length=20)
+    arivedetails = models.TextField()
+    departdetails = models.TextField()
+    planedetails = models.TextField()
+    operatedby = models.TextField()
+    economy_code = models.TextField(blank=True, null=True)
+    business_code = models.TextField(blank=True, null=True)
+    first_code = models.TextField(blank=True, null=True)
+    eco_fare_code = models.CharField(max_length=50, null=True, blank=True)
+    business_fare_code = models.CharField(max_length=50, null=True, blank=True)
+    first_fare_code = models.CharField(max_length=50, null=True, blank=True)
+    '''
+    def arive_list(self):
+        return self.arivedetails.split('@')
+    def depart_list(self):
+        return self.departdetails.split('@')
+    def plane_list(self):
+        return self.planedetails.split('@')
+    '''
+
+
 class Airports(models.Model):
     airport_id = models.IntegerField (primary_key=True)
     code = models.CharField(max_length=4)
@@ -258,7 +300,16 @@ class Airports(models.Model):
     numAirports = models.IntegerField()
     city = models.BooleanField(default=True)
 
-       
+
+class DestinationTile(models.Model):
+    final_dest = models.CharField(max_length=250, primary_key=True)
+    searchkeyid = models.IntegerField()
+    image_path = models.CharField(max_length=200)
+    maintax = models.FloatField()
+    maincabin = models.IntegerField()
+    modified_at = models.DateTimeField(auto_now=True)
+
+
 class Searchkey(models.Model):
     searchid = models.AutoField(primary_key=True)
     source = models.CharField(max_length=50)

@@ -7,7 +7,113 @@
 {% include "flightsearch/top_searchbar.html" %}
 <div class="main-holder container-fluid">
     <div class="col-xs-12 nopadding">
-        <div class="container mvb60px" id="add-section"></div>
+        <div class="container mvb60px" id="add-section">
+<div itemscope itemtype="http://schema.org/Flight">
+<h1 style="margin-left: 5px;"> <b>Search numerous travel sites for your rewards flight.  Fly to:</b></h1>
+<div class="row">
+    <div class="col-md-6 col-xs-12 padding-add">
+        <div class="col-xs-12 add-pic sngl">
+            <a href="{%if searchObj.0 %}getsearchresult?keyid={{searchObj.0.searchkeyid}}&cabin=maincabin&passenger=1{%else%}#{%endif%}">
+                <span style="background:url('{%if searchObj.0 and searchObj.0.image_path %}{{searchObj.0.image_path}}{%else%}{% static 'flightsearch/img/ad.jpg' %}{%endif%}') no-repeat;background-size:cover;background-position:center;"></span>
+                <div class="add-info">
+                    <span class="place" itemprop="arrivalAirport"><span class="glyphicon glyphicon-map-marker"
+                        aria-hidden="true">
+                        {%if searchObj.0 %}
+                        </span>{{searchObj.0.final_dest}}</span> <span class="rate" itemprop="Distance" >{{searchObj.0.maincabin|divisition}}K Miles + ${{searchObj.0.maintax}}</span> {%endif%}
+                </div>
+            </a>
+        </div>
+    </div>
+    <div class="col-md-6 col-xs-12 padding-add doble-img">
+        <div class="row">
+            <div class="col-md-6 col-xs-12 add-pic">
+                <a href="{%if searchObj.1 %}getsearchresult?keyid={{searchObj.1.searchkeyid}}&cabin=maincabin&passenger=1{%else%}#{%endif%}">
+                    <span style="background:url('{%if searchObj.1 and searchObj.1.image_path %}{{searchObj.1.image_path}}{%else%}{% static 'flightsearch/img/ad1.jpg' %}{%endif%}') no-repeat;background-size:cover;background-position:center;"></span>
+                    <div class="add-info">
+                        <span class="place" itemprop="arrivalAirport"><span
+                            class="glyphicon glyphicon-map-marker" aria-hidden="true">
+                        {%if searchObj.1 %}
+                        </span>{{searchObj.1.final_dest}} </span> <span class="rate" itemprop="Distance">{{searchObj.1.maincabin|divisition}}K Miles + ${{searchObj.1.maintax}}</span> {%endif%}
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-6 col-xs-12 add-pic">
+                <a href="{%if searchObj.4 %}getsearchresult?keyid={{searchObj.4.searchkeyid}}&cabin=maincabin&passenger=1{%else%}#{%endif%}">
+                    <span style="background:url('{%if searchObj.4 and searchObj.4.image_path %}{{searchObj.4.image_path}}{%else%}{% static 'flightsearch/img/ad2.jpg' %}{%endif%}') no-repeat;background-size:cover;background-position:center;"></span>
+                    <div class="add-info">
+                        <span class="place" itemprop="arrivalAirport"><span
+                            class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> {%if searchObj.4 %}
+                        </span>{{searchObj.4.final_dest}}</span> <span class="rate" itemprop="Distance">{{searchObj.4.maincabin|divisition}}K Miles + ${{searchObj.4.maintax}}</span> {%endif%}
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-6 col-xs-12 add-pic">
+                <a href="{%if searchObj.5 %}getsearchresult?keyid={{searchObj.5.searchkeyid}}&cabin=maincabin&passenger=1{%else%}#{%endif%}">
+                    <span style="background:url('{%if searchObj.5 and searchObj.5.image_path %}{{searchObj.5.image_path}}{%else%}{% static 'flightsearch/img/ad3.jpg' %}{%endif%}') no-repeat;background-size:cover;background-position:center;"></span>
+                    <div class="add-info">
+                        <span class="place" itemprop="arrivalAirport"><span
+                            class="glyphicon glyphicon-map-marker" aria-hidden="true">
+                            {%if searchObj.5 %}
+                        </span>{{searchObj.5.final_dest}}</span> <span class="rate" itemprop="Distance">{{searchObj.5.maincabin|divisition}}K Miles + ${{searchObj.5.maintax}}</span> {%endif%}
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-6 col-xs-12 add-pic">
+                <a href="{%if searchObj.2 %}getsearchresult?keyid={{searchObj.2.searchkeyid}}&cabin=maincabin&passenger=1{%else%}#{%endif%}">
+                    <span style="background:url('{%if searchObj.2 and searchObj.2.image_path %}{{searchObj.2.image_path}}{%else%}{% static 'flightsearch/img/ad4.png' %}{%endif%}') no-repeat;background-size:cover;background-position:center;"></span>
+                    <div class="add-info">
+                        <span class="place" itemprop="arrivalAirport"><span
+                            class="glyphicon glyphicon-map-marker" aria-hidden="true">
+                            {%if searchObj.2 %}
+                        </span>{{searchObj.2.final_dest}}</span> <span class="rate" itemprop="Distance">{{searchObj.2.maincabin|divisition}}K Miles + ${{searchObj.2.maintax}}</span> {%endif%}
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 col-xs-12 padding-add doble-img">
+        <div class="row">
+            <div class="col-md-6 col-xs-12 add-pic">
+                <a href="{%if searchObj.3 %}getsearchresult?keyid={{searchObj.3.searchkeyid}}&cabin=maincabin&passenger=1{%else%}#{%endif%}">
+                    <span style="background:url('{%if searchObj.3 and searchObj.3.image_path %}{{searchObj.3.image_path}}{%else%}{% static 'flightsearch/img/ad5.jpg' %}{%endif%}') no-repeat;background-size:cover;background-position:center;"></span>
+                    <div class="add-info">
+                        <span class="place" itemprop="arrivalAirport"><span
+                            class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> {%if searchObj.3 %}
+                        </span>{{searchObj.3.final_dest}}</span> <span class="rate" itemprop="Distance">{{searchObj.3.maincabin|divisition}}K Miles + ${{searchObj.3.maintax}} </span> {%endif%}
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-6 col-xs-12 add-pic">
+                <a href="{%if searchObj.7 %}getsearchresult?keyid={{searchObj.7.searchkeyid}}&cabin=maincabin&passenger=1{%else%}#{%endif%}">
+                    <span style="background:url('{%if searchObj.7 and searchObj.7.image_path %}{{searchObj.7.image_path}}{%else%}{% static 'flightsearch/img/ad.jpg' %}{%endif%}') no-repeat;background-size:cover;background-position:center;"></span>
+                    <div class="add-info">
+                        <span class="place" itemprop="arrivalAirport"><span
+                            class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> {%if searchObj.7 %}
+                        </span>{{searchObj.7.final_dest}}</span> <span class="rate" itemprop="Distance">{{searchObj.7.maincabin|divisition}}K Miles + ${{searchObj.7.maintax}} </span> {%endif%}
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xs-12 padding-add single-g">
+        <div class="col-xs-12 add-pic sngl rsonsv-img">
+            <a href="{%if searchObj.6 %}getsearchresult?keyid={{searchObj.6.searchkeyid}}&cabin=maincabin&passenger=1{%else%}#{%endif%}">
+                <span style="background:url('{%if searchObj.6 and searchObj.6.image_path %}{{searchObj.6.image_path}}{%else%}{% static 'flightsearch/img/ad7.jpg' %}{%endif%}') no-repeat;background-size:cover;background-position:center;"></span>
+                <div class="add-info">
+                    <span class="place" itemprop="arrivalAirport">
+                        <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> {%if searchObj.6 %}
+                    </span>{{searchObj.6.final_dest}}</span>
+                    <span class="rate" itemprop="Distance">{{searchObj.6.maincabin|divisition}}K Miles + ${{searchObj.6.maintax}}</span> {%endif%}
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+</div>
+            
+        </div>
     </div>
 </div>
 <div class="main-holder container-fluid" style="background-color: #39A8E0">

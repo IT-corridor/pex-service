@@ -58,6 +58,8 @@ def alaska(ocity_code, dcity_code, searchdate, searchkey):
     driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
     driver.set_window_size(1120, 1080)  
 
+    # driver = webdriver.Firefox()
+
     url = "https://www.alaskaair.com"   
 
     def storeFlag(searchkey,stime):
@@ -76,7 +78,11 @@ def alaska(ocity_code, dcity_code, searchdate, searchkey):
 
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "oneWay")))
         oneway = driver.find_element_by_id('oneWay')
-        driver.execute_script("document.getElementById('oneWay').setAttribute('checked', 'checked')")
+        oneway.click()
+        if oneway.get_attribute('value') == 'false':
+            driver.execute_script("arguments[0].click();", oneway)
+        # print '########', oneway.get_attribute('value')
+        # driver.execute_script("document.getElementById('oneWay').setAttribute('checked', 'checked')")
         milebtn = driver.find_element_by_id("awardReservation")
         driver.execute_script("document.getElementById('awardReservation').setAttribute('checked', 'checked')")
         origin = driver.find_element_by_id("fromCity1")
@@ -88,6 +94,9 @@ def alaska(ocity_code, dcity_code, searchdate, searchkey):
         flight_date = driver.find_element_by_id("departureDate1")
         flight_date.clear()
         flight_date.send_keys(str(searchdate))
+
+        if oneway.get_attribute('value') == 'false':
+            driver.execute_script("arguments[0].click();", oneway)
 
         # driver.execute_script("document.getElementById('departureDate1').setAttribute('value', '"+str(searchdate)+"')")
         driver.find_element_by_id("findFlights").send_keys(Keys.ENTER)
@@ -101,7 +110,8 @@ def alaska(ocity_code, dcity_code, searchdate, searchkey):
         return searchkey
 
     try:
-        WebDriverWait(driver, 12).until(EC.presence_of_element_located((By.ID, "ContinueButton")))
+        # driver.save_screenshot('/root/out_enter.png');
+        WebDriverWait(driver, 25).until(EC.presence_of_element_located((By.ID, "ContinueButton")))
 
         html_page = driver.page_source
 
@@ -194,7 +204,7 @@ def alaska(ocity_code, dcity_code, searchdate, searchkey):
                 print (flightno[0], str(searchkey), stime, stoppage, "test", flight['orig'], flight['dest'], departure_t[0], arrival_t[-1], total_duration, main_mile, main_tax, business_mile, business_tax, first_mile, first_tax,"Economy", "Business", "First", "alaska", departinfo, arrivalinfo, planeinfo, operatedby,'','','','','','')
 
     except Exception, e:
-        # raise               
+        raise               
         print 'Something is wrong'
 
 
@@ -218,3 +228,4 @@ if __name__=='__main__':
     alaska(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
     # pdb.set_trace()        
     # alaska('sfo', 'lax', '12/27/16', '265801')
+    # alaska('lax', 'kef', '7/24/17', '265801')

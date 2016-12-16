@@ -461,6 +461,7 @@ $('#loading_img').hide();
 var call_sent = "completed";
 var pagecount = 2;
 var is_data = 1;
+var detail_clicked = false;
 
 $(window).scroll(function() {
     var doch = ($(document).height() - 200);
@@ -468,6 +469,15 @@ $(window).scroll(function() {
     if ($(window).scrollTop() >= doch - winh) {
         if (is_data > 0) {
             if (call_sent == "completed") {
+                if ( detail_clicked && search_finished) {
+                    search_finished = false;
+                    $("#content1").empty();
+                    $("#content").empty();
+                    $(".contentdiv").remove();
+                    pagecount = 1;                    
+                }
+
+                detail_clicked = false;
                 loadArticle(pagecount);
                 pagecount++;
             }
@@ -566,7 +576,12 @@ $(document.body).on('click', '.show-details', function() {
     //$('.show-details').on('click',function () {
     var collapse_content_selector = $(this).attr('href');
     var toggle_switch = $(this);
+
+        
     $(collapse_content_selector).slideToggle(function() {
+        detail_clicked = $(this).is(':visible');
+        console.log(detail_clicked);
+
         $(this).is(':visible') ? toggle_switch.text('HIDE DETAILS') : toggle_switch.text('SHOW DETAILS');
     });
 });
@@ -833,9 +848,11 @@ function redirecttosearchpage(scraperStatus) {
         data: "csrfmiddlewaretoken=" + csrf_token + "&depaturemin=" + depaturemin + "&depaturemax=" + depaturemax + "&airlines=" + airline + "&aircraft=" + aircraft + "&stoppage=" + stoppage + row_val + "&scraperStatus=" + scraperStatus,
         success: function(html) {
             $('.filters-holder').addClass('xs-filters-holder-ht');
-            $("#content1").empty();
-            $(".contentdiv").remove();
-            $("#content1").append(html);
+            if (!detail_clicked) {
+                $("#content1").empty();
+                $(".contentdiv").remove();
+                $("#content1").append(html);                
+            }
 
             $("#loading-model").modal('hide');
 
@@ -873,6 +890,7 @@ var isDataComplete = '';
 var multicity = '';
 var multicity1 = multicity_;
 var ready_hide_dialog = false;
+var search_finished = false;
 
 function isprocess() {
     callrunning = true;
@@ -911,6 +929,7 @@ function isprocess() {
                 // console.log(aircraft);
                 // console.log("Post checkdata");
                 // console.log(aircraft_);
+                search_finished = true;
                 redirecttosearchpage('complete');
                 get_post_search_data();
                 getflexData();
@@ -1029,6 +1048,7 @@ function searchData() {
             //refreshIntervalId = setInterval(datacheck, 5000,searchid,returnid);
         },
         error: function(ret) {
+            $('#pre_search').hide();
             msg = 'You reached the daily flight search limit!';
             if (ret.responseText == "2") {
                 msg += '\nPlease sign up and get more access!';
@@ -1040,7 +1060,6 @@ function searchData() {
             } else if (ret.responseText == "3") {
                 alert('You reached the flight search limit!\nPlease purchase more!');
             } else if (ret.responseText == "11") {
-                $('#pre_search').hide();
                 alert('There is no such airport for origin or destination!\n Please check again!');
                 $('#changebtnid').prop('disabled', false);
             }
