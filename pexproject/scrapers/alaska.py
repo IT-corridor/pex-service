@@ -95,6 +95,9 @@ def alaska(ocity_code, dcity_code, searchdate, searchkey):
         flight_date.clear()
         flight_date.send_keys(str(searchdate))
 
+        if oneway.get_attribute('value') == 'false':
+            driver.execute_script("arguments[0].click();", oneway)
+
         # driver.execute_script("document.getElementById('departureDate1').setAttribute('value', '"+str(searchdate)+"')")
         driver.find_element_by_id("findFlights").send_keys(Keys.ENTER)
 
