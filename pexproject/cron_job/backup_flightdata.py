@@ -16,12 +16,14 @@ d_tiles = [item.searchkeyid for item in d_tiles]
 time_30 = datetime.datetime.now() - timedelta(minutes=30)
 del_fdata = Flightdata.objects.filter(~Q(searchkeyid__in=d_tiles), scrapetime__lte=time_30)
 
-del_fdata_id = tuple([item.rowid for item in del_fdata] + [''])
+if del_fdata:
+	del_fdata_id = tuple([item.rowid for item in del_fdata] + [''])
+else:
+	del_fdata_id = ('')
 
 db = customfunction.dbconnection()
 cursor = db.cursor()
 db.set_character_set('utf8')
-print "insert into pexproject_flightdata_b select * from pexproject_flightdata where rowid in {}".format(str(del_fdata_id))
 cursor.execute("insert into pexproject_flightdata_b select * from pexproject_flightdata where rowid in {}".format(str(del_fdata_id)))
 
 cursor.execute("DELETE from pexproject_flightdata where rowid in {}".format(str(del_fdata_id)))
