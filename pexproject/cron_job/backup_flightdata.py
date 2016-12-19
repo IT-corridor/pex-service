@@ -17,7 +17,7 @@ time_30 = datetime.datetime.now() - timedelta(minutes=30)
 del_fdata = Flightdata.objects.filter(~Q(searchkeyid__in=d_tiles), scrapetime__lte=time_30)
 
 if del_fdata:
-	del_fdata_id = tuple([item.rowid for item in del_fdata] + [''])
+	del_fdata_id = tuple([int(item.rowid) for item in del_fdata] + [''])
 else:
 	del_fdata_id = "('')"
 
