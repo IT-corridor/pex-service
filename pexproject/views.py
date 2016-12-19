@@ -2932,7 +2932,6 @@ def Admin(request):
     stat_num_search = _airline_info(request.user, 3650, 'maincabin', 'all airports', 'all airports')
 
     pop_searches = _popular_search(3650)
-    stat_price_history = _price_history(request.user, '2016-04-05', '2026-04-05', 'aeroflot', 'New York (JFK)', 'Moscow (MOW)', 'Avg') 
     user_search_history = get_search_history()
     search_on_country = get_search_country()
 
@@ -2944,8 +2943,6 @@ def Admin(request):
         'total_searches': len(list(Searchkey.objects.all())) * 3,
         'user_search_history':user_search_history,
         'search_on_country':search_on_country,
-        'stat_price_history': stat_price_history,
-        'stat_price_history_period': [[], []],
     })
 
 

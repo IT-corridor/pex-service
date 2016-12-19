@@ -117,8 +117,6 @@ $(function() {
 
 $(document).ready(function(){    
     _update_line_info(stat_num_search);
-    _price_history(stat_price_history);
-    _price_history_period(stat_price_history_period);
     _price_history_num([[],[]]);
     var start_date = new Date();
     start_date.setMonth(start_date.getMonth()-1);
