@@ -3086,9 +3086,9 @@ def price_history(request):
 def _price_history(user, _from, _to, airline, r_from, r_to, aggregation):    
     searchkeys = Searchkey.objects.filter(traveldate__range=(_from, _to), 
                                           source=r_from, 
-                                          destination=r_to)
-                                  .values('traveldate')
-                                  .annotate(Min('searchid'), Min('scrapetime'))
+                                          destination=r_to) \
+                                  .values('traveldate') \
+                                  .annotate(Min('searchid'), Min('scrapetime')) \
                                   .order_by('traveldate')
 
     if user.level != 3:
