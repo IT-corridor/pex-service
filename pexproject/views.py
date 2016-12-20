@@ -3099,7 +3099,7 @@ def search_history(request):
         }
     ]
 
-    for key, val in date_dict:
+    for key, val in date_dict.items():
         stat_search_history[0]['data'].append([key, val['t_n']])
         stat_search_history[1]['data'].append([key, val['n_m_n']])
         stat_search_history[2]['data'].append([key, val['m_n']])
