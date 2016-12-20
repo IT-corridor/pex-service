@@ -3082,6 +3082,9 @@ def search_history(request):
 
     for search in searches:
         key_ = int(time.mktime(search.scrapetime.date().timetuple()) * 1000)
+        if not search.user_ids:
+            continue
+
         user_ids = search.user_ids.split(',')
         m_ids = [item for item in user_ids if item]
 
@@ -3137,6 +3140,9 @@ def search_avg(request):
 
     for search in searches:
         key_ = int(time.mktime(search.scrapetime.date().timetuple()) * 1000)
+        if not search.user_ids:
+            continue
+        
         user_ids = search.user_ids.split(',')
         m_ids = [item for item in user_ids if item]
 
