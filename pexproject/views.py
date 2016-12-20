@@ -2952,7 +2952,7 @@ def get_search_history(request):
     def compare_most_recent(item1, item2):
         date1 = datetime.datetime.strptime(item1[1][0][1], "%Y-%m-%d %H:%M:%S")
         date2 = datetime.datetime.strptime(item2[1][0][1], "%Y-%m-%d %H:%M:%S")
-        return (date1 - date2).total_seconds()
+        return int((date1 - date2).total_seconds())
 
     def compare_most_searches(item1, item2):
         return len(item1[1]) - len(item2[1])
