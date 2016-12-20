@@ -3144,6 +3144,7 @@ def search_avg(request):
             date_dict[key_]['n_m_n'] += n_m_n
         else:
             date_dict[key_] = {}
+            date_dict[key_]['day'] = search.scrapetime.date()
             date_dict[key_]['t_n'] = t_n
             date_dict[key_]['m_n'] = m_n
             date_dict[key_]['n_m_n'] = n_m_n
@@ -3166,9 +3167,10 @@ def search_avg(request):
 
     for key in sorted(date_dict):
         val = date_dict[key]
-        stat_search_history[0]['data'].append([key, val['t_n']])
-        stat_search_history[1]['data'].append([key, val['n_m_n']])
-        stat_search_history[2]['data'].append([key, val['m_n']])
+        num_users = User.objects.filter(date_joined__lte=val['day']).count()
+        stat_search_history[0]['data'].append([key, val['t_n'] / num_users])
+        stat_search_history[1]['data'].append([key, val['n_m_n'] / num_users])
+        stat_search_history[2]['data'].append([key, val['m_n'] / num_users])
 
     return HttpResponse(json.dumps(stat_search_history))
 
