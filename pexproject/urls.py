@@ -27,6 +27,7 @@ urlpatterns = [
     
     url(r'^login', login, name='login'),
     url(r'^google4fcc5c6791037930$', lambda r: HttpResponse("google-site-verification: google4fcc5c6791037930.html")),
+    url(r'^2915653.html$', lambda r: HttpResponse("")),
     
     url(r'^subscribe', subscribe, name='subscribe'),
     url(r'^blog', blog, name='blog'),

@@ -2928,8 +2928,11 @@ def admin_logout(request):
 
 @admin_only
 def Admin(request):
-    air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic', 'alaska']    
-    stat_num_search = _airline_info(request.user, 3650, 'maincabin', 'all airports', 'all airports')
+    air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 
+                 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 
+                 'Virgin Australia', 'virgin_atlantic', 'alaska']    
+    stat_num_search = _airline_info(request.user, 3650, 'maincabin', 
+                                    'all airports', 'all airports')
 
     pop_searches = _popular_search(3650)
     user_search_history = get_search_history()
@@ -2949,7 +2952,8 @@ def Admin(request):
 def get_search_history():
     result = []
     for user in User.objects.all().order_by('username'):
-        searches = Searchkey.objects.filter(user_ids__contains=','+str(user.user_id)+',').order_by('-scrapetime')
+        searches = Searchkey.objects.filter(user_ids__contains=','+str(user.user_id)+',') \
+                                    .order_by('-scrapetime')
         if not searches:
             continue
         searches = [(search.source+' -> '+search.destination, search.scrapetime.strftime('%Y-%m-%d %H:%M:%S')) for search in searches]
@@ -3007,7 +3011,9 @@ def _airline_info(user, period, fare_class, _from, _to):
     stat_num_search = []
 
     try:
-        air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic', 'alaska']
+        air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 
+                     'etihad', 'jetblue', 's7', 'united', 'Virgin America', 
+                     'Virgin Australia', 'virgin_atlantic', 'alaska']
         start_time = datetime.datetime.now() - timedelta(days=period)
 
         searches = Searchkey.objects.filter(scrapetime__gte=start_time)
@@ -3043,7 +3049,10 @@ def popular_search(request):
 
 def _popular_search(period):        
     start_time = datetime.datetime.now() - timedelta(days=period)
-    pop_searches = Searchkey.objects.filter(scrapetime__gte=start_time).values('source', 'destination').annotate(dcount=Count('*')).order_by('-dcount')[:10]
+    pop_searches = Searchkey.objects.filter(scrapetime__gte=start_time) \
+                                    .values('source', 'destination') \
+                                    .annotate(dcount=Count('*')) \
+                                    .order_by('-dcount')[:10]
     return [{'source':item['source'], 'destination':item['destination'], 'dcount':item['dcount']} for item in pop_searches]
 
 
@@ -3051,6 +3060,29 @@ def _popular_search(period):
 def search_history(request):    
     _from = request.POST.get('_from')
     _to = request.POST.get('_to') 
+
+    searches = Searchkey.objects.filter(scrapetime__range=(_from, _to))
+    date_dict = {}
+
+    for search in searches:
+        key_ = int(time.mktime(search.scrapetime.date().timetuple()) * 1000)
+        user_ids = search.user_ids.split(',')
+        m_ids = [item for item in user_ids if item]
+
+        t_n = len(user_ids) - 1     # total number of searches
+        m_n = len(m_ids)            # number of searches by members
+        n_m_n = t_n - m_n           # number of searches by non-members
+
+        if key_ in date_dict:
+            date_dict[key_]['t_n'] += t_n
+            date_dict[key_]['m_n'] += m_n
+            date_dict[key_]['n_m_n'] += n_m_n
+        else:
+            date_dict[key_] = {}
+            date_dict[key_]['t_n'] = t_n
+            date_dict[key_]['m_n'] = m_n
+            date_dict[key_]['n_m_n'] = n_m_n
+
 
     stat_search_history = [
         {
@@ -3133,7 +3165,10 @@ def price_history_period(request):
 
 
 def _price_history_period(user, _from, _to, airline, r_from, r_to, aggregation, period):    
-    searchkeys = Searchkey.objects.filter(traveldate=_from, source=r_from, destination=r_to).order_by('scrapetime')
+    searchkeys = Searchkey.objects.filter(traveldate=_from, 
+                                          source=r_from, 
+                                          destination=r_to) \
+                                  .order_by('scrapetime')
     if user.level != 3:
         searchkeys = searchkeys.filter(user_ids__contains=','+str(user.user_id)+',')
 
@@ -3153,7 +3188,9 @@ def _price_history_period(user, _from, _to, airline, r_from, r_to, aggregation, 
     traveldate = None
     for searchkey in r_searchkeys:
         label = time.mktime(searchkey.scrapetime.timetuple()) * 1000
-        flights = Flightdata.objects.filter(searchkeyid=searchkey.searchid, datasource=airline).exclude(origin='flag')
+        flights = Flightdata_b.objects.filter(searchkeyid=searchkey.searchid, 
+                                              datasource=airline) \
+                                      .exclude(origin='flag')
         reducer = getattr(aggregator, aggregation)
 
         for key, val in FLIGHT_CLASS.items():
@@ -3190,7 +3227,10 @@ def _price_history_num(user, _from, _to, airline, r_from, r_to, aggregation):
     ticks = []
 
     try:
-        searchkeys = Searchkey.objects.filter(traveldate=_from, source=r_from, destination=r_to).order_by('scrapetime')
+        searchkeys = Searchkey.objects.filter(traveldate=_from, 
+                                              source=r_from, 
+                                              destination=r_to) \
+                                      .order_by('scrapetime')
         if user.level != 3:
             searchkeys = searchkeys.filter(user_ids__contains=','+str(user.user_id)+',')
 
