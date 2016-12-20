@@ -319,7 +319,7 @@ search_avg = function() {
         $.plot("#id_search_avg_chart", data, {
             series: {
                 lines: { show: true },
-                points: { show: true }
+                // points: { show: true }
             },            
             grid: { hoverable: true, clickable: true },            
             yaxis: {
