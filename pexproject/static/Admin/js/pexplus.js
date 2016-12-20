@@ -123,6 +123,7 @@ $(document).ready(function(){
     $('#id_user_signup_from').val(get_formatted_date(start_date));
     $('#id_user_signup_to').val(get_formatted_date(new Date()));
     user_signup_activity();
+    search_activity();
 });
 
 get_formatted_date = function(_date) {
@@ -435,4 +436,17 @@ _price_history = function(data) {
             mode: "time"
         }
     });      
+}
+
+
+search_activity = function() {
+    var mode = $('#id_user_search_activity').val();
+    $('.page-loader').show();    
+
+    $.post('/stats/search_activity/', 
+        {'mode': mode}
+    ).success(function(data) {
+        $('.page-loader').fadeOut();
+        $('#panel_user_search_activity').html(data);
+    });
 }

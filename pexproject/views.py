@@ -2949,7 +2949,17 @@ def Admin(request):
     })
 
 
+@csrf_exempt
 def get_search_history():
+    def compare_most_recent(item1, item2):
+        date1 = datetime.datetime.strptime(item1[1][0][1], "%Y-%m-%d %H:%M:%S")
+        date2 = datetime.datetime.strptime(item2[1][0][1], "%Y-%m-%d %H:%M:%S")
+        return (date1 - date2).total_seconds()
+
+    def compare_most_searches(item1, item2):
+        return len(item1[1]) - len(item2[1])
+
+    mode = request.POST.get('mode')
     result = []
     for user in User.objects.all().order_by('username'):
         searches = Searchkey.objects.filter(user_ids__contains=','+str(user.user_id)+',') \
@@ -2959,13 +2969,17 @@ def get_search_history():
         searches = [(search.source+' -> '+search.destination, search.scrapetime.strftime('%Y-%m-%d %H:%M:%S')) for search in searches]
         result.append([user.username, searches])
 
-    print result
+    if mode == 'most-recent':
+        result = sorted(result, key=lambda x: -compare_most_recent(x))
+    elif mode == 'most-searches':
+        result = sorted(result, key=lambda x: -compare_most_searches(x))
+
     # for Non-Members
     searches = Searchkey.objects.exclude(user_ids__regex=r'[0-9]+').order_by('-scrapetime')[:100]        
     searches = [(search.source+' -> '+search.destination, search.scrapetime.strftime('%Y-%m-%d %H:%M:%S')) for search in searches]
     result.append(['Non-Member', searches])
 
-    return result
+    return render(request, 'Admin/search_activity.html', { 'user_search_history': result })
 
 
 def get_search_country():
