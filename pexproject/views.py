@@ -2935,7 +2935,6 @@ def Admin(request):
                                     'all airports', 'all airports')
 
     pop_searches = _popular_search(3650)
-    user_search_history = get_search_history()
     search_on_country = get_search_country()
 
     return render(request, 'Admin/dashboard.html', {
@@ -2944,13 +2943,12 @@ def Admin(request):
         'air_lines': air_lines,
         'num_users': len(list(User.objects.all())),
         'total_searches': len(list(Searchkey.objects.all())) * 3,
-        'user_search_history':user_search_history,
         'search_on_country':search_on_country,
     })
 
 
 @csrf_exempt
-def get_search_history():
+def get_search_history(request):
     def compare_most_recent(item1, item2):
         date1 = datetime.datetime.strptime(item1[1][0][1], "%Y-%m-%d %H:%M:%S")
         date2 = datetime.datetime.strptime(item2[1][0][1], "%Y-%m-%d %H:%M:%S")
