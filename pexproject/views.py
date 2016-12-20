@@ -2968,9 +2968,9 @@ def get_search_history(request):
         result.append([user.username, searches])
 
     if mode == 'most-recent':
-        result = sorted(result, key=lambda x: -compare_most_recent(x))
+        result = sorted(result, cmp=compare_most_recent)
     elif mode == 'most-searches':
-        result = sorted(result, key=lambda x: -compare_most_searches(x))
+        result = sorted(result, cmp=compare_most_searches)
 
     # for Non-Members
     searches = Searchkey.objects.exclude(user_ids__regex=r'[0-9]+').order_by('-scrapetime')[:100]        
