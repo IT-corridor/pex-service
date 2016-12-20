@@ -2959,6 +2959,7 @@ def get_search_history():
         searches = [(search.source+' -> '+search.destination, search.scrapetime.strftime('%Y-%m-%d %H:%M:%S')) for search in searches]
         result.append([user.username, searches])
 
+    print result
     # for Non-Members
     searches = Searchkey.objects.exclude(user_ids__regex=r'[0-9]+').order_by('-scrapetime')[:100]        
     searches = [(search.source+' -> '+search.destination, search.scrapetime.strftime('%Y-%m-%d %H:%M:%S')) for search in searches]
