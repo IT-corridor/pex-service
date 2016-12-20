@@ -316,7 +316,7 @@ search_avg = function() {
                 var x = item.datapoint[0].toFixed(2),
                     y = item.datapoint[1].toFixed(2);
                 var date = new Date(item.datapoint[0]);
-                x = date.toString("MMM dd"); // "Dec 20"
+                x = date.toString().slice(4, 15); // "Dec 20"
                 $(".flot-tooltip").html(item.series.label + " : " + y + " on " + x).css({top: item.pageY+5, left: item.pageX+5}).show();
             }
             else {
