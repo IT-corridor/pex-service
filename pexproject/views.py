@@ -3122,6 +3122,58 @@ def search_history(request):
 
 
 @csrf_exempt
+def search_avg(request):    
+    _from = request.POST.get('_from')
+    _to = request.POST.get('_to') 
+
+    searches = Searchkey.objects.filter(scrapetime__range=(_from, _to))
+    date_dict = {}
+
+    for search in searches:
+        key_ = int(time.mktime(search.scrapetime.date().timetuple()) * 1000)
+        user_ids = search.user_ids.split(',')
+        m_ids = [item for item in user_ids if item]
+
+        t_n = len(user_ids) - 1     # total number of searches
+        m_n = len(m_ids)            # number of searches by members
+        n_m_n = t_n - m_n           # number of searches by non-members
+
+        if key_ in date_dict:
+            date_dict[key_]['t_n'] += t_n
+            date_dict[key_]['m_n'] += m_n
+            date_dict[key_]['n_m_n'] += n_m_n
+        else:
+            date_dict[key_] = {}
+            date_dict[key_]['t_n'] = t_n
+            date_dict[key_]['m_n'] = m_n
+            date_dict[key_]['n_m_n'] = n_m_n
+
+
+    stat_search_history = [
+        {
+            'label': "Total",
+            'data': []
+        },        
+        {
+            'label': "Non-member",
+            'data': []
+        },
+        {
+            'label': "Member",
+            'data': []
+        }
+    ]
+
+    for key in sorted(date_dict):
+        val = date_dict[key]
+        stat_search_history[0]['data'].append([key, val['t_n']])
+        stat_search_history[1]['data'].append([key, val['n_m_n']])
+        stat_search_history[2]['data'].append([key, val['m_n']])
+
+    return HttpResponse(json.dumps(stat_search_history))
+
+
+@csrf_exempt
 def price_history(request):    
     _from = request.POST.get('_from')
     _to = request.POST.get('_to') 

@@ -39,6 +39,26 @@ $(function() {
         }
     });    
     // --------------------------------------------------------------------- // 
+    $('#id_search_avg_from').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        dateFormat: "yy-mm-dd",
+        onClose: function(selectedDate) {
+            $("#id_search_avg_to").datepicker("option", "minDate", selectedDate);
+            search_avg();
+        }
+    });
+
+    $('#id_search_avg_to').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        dateFormat: "yy-mm-dd",
+        onClose: function(selectedDate) {
+            $("#id_search_avg_from").datepicker("option", "maxDate", selectedDate);
+            search_avg();
+        }
+    });        
+    // --------------------------------------------------------------------- // 
     $('#id_price_history_from_period').datepicker({
         changeMonth: true,
         changeYear: true,
@@ -249,6 +269,36 @@ search_history = function() {
             yaxis: {
                 tickFormatter: function (val, axis) {
                     return Math.ceil(val) + " ";
+                },    
+            },
+            xaxis: {
+                mode: "time"
+            }
+        });  
+    });
+}
+
+
+search_avg = function() {
+    var _from = $('#id_search_avg_from').val();
+    var _to = $('#id_search_avg_to').val();
+
+    if (_from == '' || _to == '')
+        return false;
+    
+    $('.page-loader').show();    
+
+    $.post('/stats/search_avg/', 
+        {'_from':_from, '_to':_to}
+    ).success(function(data) {
+        $('.page-loader').fadeOut();
+        data = JSON.parse(data);
+
+        $.plot("#id_search_avg_chart", data, {
+            yaxis: {
+                tickFormatter: function (val, axis) {
+                    // return Math.ceil(val) + " ";
+                    return val;
                 },    
             },
             xaxis: {

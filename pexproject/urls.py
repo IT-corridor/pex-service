@@ -101,6 +101,7 @@ urlpatterns = [
     url(r'^stats/popular_search/$', popular_search, name='popular_search'),
     url(r'^stats/price_history/$', price_history, name='price_history'),
     url(r'^stats/search_history/$', search_history, name='search_history'),
+    url(r'^stats/search_avg/$', search_avg, name='search_avg'),
     url(r'^stats/search_activity/$', get_search_history, name='search_activity'),    
     url(r'^stats/price_history_period/$', price_history_period, name='price_history_period'),
     url(r'^stats/price_history_num/$', price_history_num, name='price_history_num'),
