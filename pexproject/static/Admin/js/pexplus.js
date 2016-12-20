@@ -298,7 +298,7 @@ search_avg = function() {
             yaxis: {
                 tickFormatter: function (val, axis) {
                     // return Math.ceil(val) + " ";
-                    return val;
+                    return parseFloat(Math.round(val * 100) / 100).toFixed(2);
                 },    
             },
             xaxis: {
