@@ -3073,6 +3073,9 @@ def _popular_search(period):
 def search_history(request):    
     _from = request.POST.get('_from')
     _to = request.POST.get('_to') 
+    _to = datetime.datetime.strptime(_to, "%Y-%m-%d")
+    _to = (_to + timedelta(days=1)).date()
+    _to = _to.strftime("%Y-%m-%d")
 
     searches = Searchkey.objects.filter(scrapetime__range=(_from, _to))
     date_dict = {}
@@ -3125,6 +3128,9 @@ def search_history(request):
 def search_avg(request):    
     _from = request.POST.get('_from')
     _to = request.POST.get('_to') 
+    _to = datetime.datetime.strptime(_to, "%Y-%m-%d")
+    _to = (_to + timedelta(days=1)).date()
+    _to = _to.strftime("%Y-%m-%d")
 
     searches = Searchkey.objects.filter(scrapetime__range=(_from, _to))
     date_dict = {}
