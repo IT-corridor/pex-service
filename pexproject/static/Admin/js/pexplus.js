@@ -266,6 +266,12 @@ search_history = function() {
         data = JSON.parse(data);
 
         $.plot("#id_search_history_chart", data, {
+            series: {
+                lines: { show: true },
+                // points: { show: true }
+            },            
+            grid: { hoverable: true, clickable: true },            
+
             yaxis: {
                 tickFormatter: function (val, axis) {
                     return Math.ceil(val) + " ";
@@ -275,6 +281,22 @@ search_history = function() {
                 mode: "time"
             }
         });  
+
+        $("#id_search_history_chart").bind("plothover", function (event, pos, item) {
+            if (item) {
+                var x = item.datapoint[0].toFixed(2),
+                    y = item.datapoint[1];
+                var date = new Date(item.datapoint[0]);
+                x = date.toString().slice(4, 15); // "Dec 20"
+                $(".flot-tooltip").html(item.series.label + " : " + y + " on " + x).css({top: item.pageY+5, left: item.pageX+5}).show();
+            }
+            else {
+                $(".flot-tooltip").hide();
+            }
+        });
+        
+        $("<div class='flot-tooltip' class='chart-tooltip'></div>").appendTo("body");
+
     });
 }
 
