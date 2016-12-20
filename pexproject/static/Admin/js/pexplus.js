@@ -19,6 +19,26 @@ $(function() {
         }
     });    
     // --------------------------------------------------------------------- // 
+    $('#id_search_history_from').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        dateFormat: "yy-mm-dd",
+        onClose: function(selectedDate) {
+            $("#id_search_history_to").datepicker("option", "minDate", selectedDate);
+            search_history();
+        }
+    });
+
+    $('#id_search_history_to').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        dateFormat: "yy-mm-dd",
+        onClose: function(selectedDate) {
+            $("#id_search_history_from").datepicker("option", "maxDate", selectedDate);
+            search_history();
+        }
+    });    
+    // --------------------------------------------------------------------- // 
     $('#id_price_history_from_period').datepicker({
         changeMonth: true,
         changeYear: true,
@@ -97,8 +117,6 @@ $(function() {
 
 $(document).ready(function(){    
     _update_line_info(stat_num_search);
-    _price_history(stat_price_history);
-    _price_history_period(stat_price_history_period);
     _price_history_num([[],[]]);
     var start_date = new Date();
     start_date.setMonth(start_date.getMonth()-1);
@@ -166,7 +184,7 @@ user_signup_activity = function() {
 }
 
 _update_line_info = function(data) {
-    var airlines = [['SU', 'Aeroflot'], ['CA', 'Air China'], ['AA', 'American'], ['DL', 'Delta'], ['EY', 'Etihad'], ['B6', 'JetBlue'], ['S7', 'S7'], ['UA', 'United'], ['VX', 'Virgin America'], ['VA', 'virgin australia'],['VS', 'Virgin Atlantic']];
+    var airlines = [['SU', 'Aeroflot'], ['CA', 'Air China'], ['AA', 'American'], ['DL', 'Delta'], ['EY', 'Etihad'], ['B6', 'JetBlue'], ['S7', 'S7'], ['UA', 'United'], ['VX', 'Virgin America'], ['DJ', 'virgin australia'],['VS', 'Virgin Atlantic']];
 
     var idx = 1;
     if ($(window).width() < 768) 
@@ -208,6 +226,34 @@ update_line_info = function(obj) {
         stat_num_search = JSON.parse(data);
         _update_line_info(stat_num_search);
         $('.page-loader').fadeOut();
+    });
+}
+
+search_history = function() {
+    var _from = $('#id_search_history_from').val();
+    var _to = $('#id_search_history_to').val();
+
+    if (_from == '' || _to == '')
+        return false;
+    
+    $('.page-loader').show();    
+
+    $.post('/stats/search_history/', 
+        {'_from':_from, '_to':_to}
+    ).success(function(data) {
+        $('.page-loader').fadeOut();
+        data = JSON.parse(data);
+
+        $.plot("#id_search_history_chart", data, {
+            yaxis: {
+                tickFormatter: function (val, axis) {
+                    return Math.ceil(val) + " ";
+                },    
+            },
+            xaxis: {
+                mode: "time"
+            }
+        });  
     });
 }
 
@@ -364,7 +410,7 @@ _price_history = function(data) {
         ++i;
     });
 
-    // console.log(JSON.stringify(data[0]));
+    console.log(JSON.stringify(data[0]));
     $.plot("#id_price_history_chart", data[0], {
         yaxis: {
             tickFormatter: function (val, axis) {

@@ -27,6 +27,7 @@ urlpatterns = [
     
     url(r'^login', login, name='login'),
     url(r'^google4fcc5c6791037930$', lambda r: HttpResponse("google-site-verification: google4fcc5c6791037930.html")),
+    url(r'^2915653.html$', lambda r: HttpResponse("")),
     
     url(r'^subscribe', subscribe, name='subscribe'),
     url(r'^blog', blog, name='blog'),
@@ -99,6 +100,7 @@ urlpatterns = [
     url(r'^stats/airline_info/$', airline_info, name='airline_info'),
     url(r'^stats/popular_search/$', popular_search, name='popular_search'),
     url(r'^stats/price_history/$', price_history, name='price_history'),
+    url(r'^stats/search_history/$', search_history, name='search_history'),
     url(r'^stats/price_history_period/$', price_history_period, name='price_history_period'),
     url(r'^stats/price_history_num/$', price_history_num, name='price_history_num'),
     url(r'^stats/signup_activity/$', signup_activity, name='signup_activity'),

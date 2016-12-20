@@ -764,15 +764,21 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
             obj = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, scrapetime__gte=time1)
             returnobj = Searchkey.objects.filter(source=destination1, destination=origin, traveldate=searchdate1, scrapetime__gte=time1)
 
+            user_id = str(request.session.get('userid', ''))+','
             if returnobj:
                 returnobj = returnobj[0]
-                if request.session.get('userid'):
-                    returnobj.user_ids = returnobj.user_ids+str(request.session.get('userid'))+','
-                    returnobj.save()
+                returnobj.user_ids = returnobj.user_ids + user_id
+                returnobj.save()
                 returnkey = returnobj.searchid
             else:
-                user_id = ','+str(request.session.get('userid', ''))+','
-                searchdata = Searchkey(source=destination1, destination=origin, destination_city=etihadorigin,traveldate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid, user_ids=user_id)
+                searchdata = Searchkey( source=destination1, 
+                                        destination=origin, 
+                                        destination_city=etihadorigin,
+                                        traveldate=dt1, 
+                                        scrapetime=time, 
+                                        origin_airport_id=orgnid, 
+                                        destination_airport_id=destid, 
+                                        user_ids=','+user_id)
                 searchdata.save()
                 returnkey = searchdata.searchid
                 if is_scrape_jetblue == 1:
@@ -815,20 +821,37 @@ def _search(returndate, orgnid, destid, depart, searchtype, cabin, request):
                     
             '''-------------------------------------'''
         else:
-            obj = Searchkey.objects.filter(source=origin, destination=destination1, traveldate=searchdate, scrapetime__gte=time1)
+            obj = Searchkey.objects.filter(source=origin, 
+                                           destination=destination1, 
+                                           traveldate=searchdate, 
+                                           scrapetime__gte=time1)
 
+        user_id = str(request.session.get('userid', ''))+','
         if obj:           
             obj = obj[0]
-            if request.session.get('userid'):
-                obj.user_ids = obj.user_ids+str(request.session.get('userid'))+','
-                obj.save()
+            obj.user_ids = obj.user_ids+user_id
+            obj.save()
             searchkeyid = obj.searchid
         else:
-            user_id = ','+str(request.session.get('userid', ''))+','
             if dt1:
-                searchdata = Searchkey(source=origin, destination=destination1,destination_city=etihaddest, traveldate=dt, returndate=dt1, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid, user_ids=user_id) 
+                searchdata = Searchkey(source=origin, 
+                                       destination=destination1,
+                                       destination_city=etihaddest, 
+                                       traveldate=dt, 
+                                       returndate=dt1, 
+                                       scrapetime=time, 
+                                       origin_airport_id=orgnid, 
+                                       destination_airport_id=destid, 
+                                       user_ids=','+user_id) 
             else:
-                searchdata = Searchkey(source=origin, destination=destination1,destination_city=etihaddest, traveldate=dt, scrapetime=time, origin_airport_id=orgnid, destination_airport_id=destid, user_ids=user_id)
+                searchdata = Searchkey(source=origin, 
+                                       destination=destination1,
+                                       destination_city=etihaddest, 
+                                       traveldate=dt, 
+                                       scrapetime=time, 
+                                       origin_airport_id=orgnid, 
+                                       destination_airport_id=destid, 
+                                       user_ids=','+user_id)
             searchdata.save()
             searchkeyid = searchdata.searchid 
             cursor = connection.cursor()
@@ -2905,11 +2928,13 @@ def admin_logout(request):
 
 @admin_only
 def Admin(request):
-    air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic', 'alaska']    
-    stat_num_search = _airline_info(request.user, 3650, 'maincabin', 'all airports', 'all airports')
+    air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 
+                 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 
+                 'Virgin Australia', 'virgin_atlantic', 'alaska']    
+    stat_num_search = _airline_info(request.user, 3650, 'maincabin', 
+                                    'all airports', 'all airports')
 
     pop_searches = _popular_search(3650)
-    stat_price_history = _price_history(request.user, '2016-04-05', '2026-04-05', 'aeroflot', 'New York (JFK)', 'Moscow (MOW)', 'Avg') 
     user_search_history = get_search_history()
     search_on_country = get_search_country()
 
@@ -2921,15 +2946,14 @@ def Admin(request):
         'total_searches': len(list(Searchkey.objects.all())) * 3,
         'user_search_history':user_search_history,
         'search_on_country':search_on_country,
-        'stat_price_history': stat_price_history,
-        'stat_price_history_period': [[], []],
     })
 
 
 def get_search_history():
     result = []
     for user in User.objects.all().order_by('username'):
-        searches = Searchkey.objects.filter(user_ids__contains=','+str(user.user_id)+',').order_by('-scrapetime')
+        searches = Searchkey.objects.filter(user_ids__contains=','+str(user.user_id)+',') \
+                                    .order_by('-scrapetime')
         if not searches:
             continue
         searches = [(search.source+' -> '+search.destination, search.scrapetime.strftime('%Y-%m-%d %H:%M:%S')) for search in searches]
@@ -2987,7 +3011,9 @@ def _airline_info(user, period, fare_class, _from, _to):
     stat_num_search = []
 
     try:
-        air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic', 'alaska']
+        air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 
+                     'etihad', 'jetblue', 's7', 'united', 'Virgin America', 
+                     'Virgin Australia', 'virgin_atlantic', 'alaska']
         start_time = datetime.datetime.now() - timedelta(days=period)
 
         searches = Searchkey.objects.filter(scrapetime__gte=start_time)
@@ -3023,8 +3049,56 @@ def popular_search(request):
 
 def _popular_search(period):        
     start_time = datetime.datetime.now() - timedelta(days=period)
-    pop_searches = Searchkey.objects.filter(scrapetime__gte=start_time).values('source', 'destination').annotate(dcount=Count('*')).order_by('-dcount')[:10]
+    pop_searches = Searchkey.objects.filter(scrapetime__gte=start_time) \
+                                    .values('source', 'destination') \
+                                    .annotate(dcount=Count('*')) \
+                                    .order_by('-dcount')[:10]
     return [{'source':item['source'], 'destination':item['destination'], 'dcount':item['dcount']} for item in pop_searches]
+
+
+@csrf_exempt
+def search_history(request):    
+    _from = request.POST.get('_from')
+    _to = request.POST.get('_to') 
+
+    searches = Searchkey.objects.filter(scrapetime__range=(_from, _to))
+    date_dict = {}
+
+    for search in searches:
+        key_ = int(time.mktime(search.scrapetime.date().timetuple()) * 1000)
+        user_ids = search.user_ids.split(',')
+        m_ids = [item for item in user_ids if item]
+
+        t_n = len(user_ids) - 1     # total number of searches
+        m_n = len(m_ids)            # number of searches by members
+        n_m_n = t_n - m_n           # number of searches by non-members
+
+        if key_ in date_dict:
+            date_dict[key_]['t_n'] += t_n
+            date_dict[key_]['m_n'] += m_n
+            date_dict[key_]['n_m_n'] += n_m_n
+        else:
+            date_dict[key_] = {}
+            date_dict[key_]['t_n'] = t_n
+            date_dict[key_]['m_n'] = m_n
+            date_dict[key_]['n_m_n'] = n_m_n
+
+
+    stat_search_history = [
+        {
+            'label': "Total",
+            'data': [[568015200000.0, 483994], [599637600000.0, 479060], [631173600000.0, 457648], [662709600000.0, 401949], [694245600000.0, 424705], [725868000000, 402375], [757404000000, 377867], [788940000000, 357382], [820476000000, 337946]]
+        },        
+        {
+            'label': "Non-member",
+            'data': [[568015200000, 218000], [599637600000, 203000], [694245600000, 422500], [725868000000, 37600], [757404000000, 36600], [788940000000, 21700], [820476000000, 19200]]
+        },
+        {
+            'label': "Member",
+            'data': [[568015200000, 162982], [599637600000, 62027], [631173600000, 601696], [694245600000, 168560], [725868000000, 56393], [757404000000, 54579], [788940000000, 50818], [820476000000, 50554]]
+        }
+    ]
+    return HttpResponse(json.dumps(stat_search_history))
 
 
 @csrf_exempt
@@ -3042,7 +3116,13 @@ def price_history(request):
 
 @csrf_exempt
 def _price_history(user, _from, _to, airline, r_from, r_to, aggregation):    
-    searchkeys = Searchkey.objects.filter(traveldate__range=(_from, _to), source=r_from, destination=r_to).values('traveldate').annotate(Min('searchid'), Min('scrapetime')).order_by('traveldate')
+    searchkeys = Searchkey.objects.filter(traveldate__range=(_from, _to), 
+                                          source=r_from, 
+                                          destination=r_to) \
+                                  .values('traveldate') \
+                                  .annotate(Min('searchid'), Min('scrapetime')) \
+                                  .order_by('traveldate')
+
     if user.level != 3:
         searchkeys = searchkeys.filter(user_ids__contains=','+str(user.user_id)+',')
 
@@ -3051,7 +3131,8 @@ def _price_history(user, _from, _to, airline, r_from, r_to, aggregation):
 
     for searchkey in searchkeys:
         label = time.mktime(searchkey['traveldate'].timetuple()) * 1000
-        flights = Flightdata.objects.filter(searchkeyid=searchkey['searchid__min'], datasource=airline)
+        flights = Flightdata_b.objects.filter(searchkeyid=searchkey['searchid__min'], 
+                                              datasource=airline)
         reducer = getattr(aggregator, aggregation)
         for key, val in FLIGHT_CLASS.items():
             field = val[0]
@@ -3084,7 +3165,10 @@ def price_history_period(request):
 
 
 def _price_history_period(user, _from, _to, airline, r_from, r_to, aggregation, period):    
-    searchkeys = Searchkey.objects.filter(traveldate=_from, source=r_from, destination=r_to).order_by('scrapetime')
+    searchkeys = Searchkey.objects.filter(traveldate=_from, 
+                                          source=r_from, 
+                                          destination=r_to) \
+                                  .order_by('scrapetime')
     if user.level != 3:
         searchkeys = searchkeys.filter(user_ids__contains=','+str(user.user_id)+',')
 
@@ -3104,7 +3188,9 @@ def _price_history_period(user, _from, _to, airline, r_from, r_to, aggregation, 
     traveldate = None
     for searchkey in r_searchkeys:
         label = time.mktime(searchkey.scrapetime.timetuple()) * 1000
-        flights = Flightdata.objects.filter(searchkeyid=searchkey.searchid, datasource=airline).exclude(origin='flag')
+        flights = Flightdata_b.objects.filter(searchkeyid=searchkey.searchid, 
+                                              datasource=airline) \
+                                      .exclude(origin='flag')
         reducer = getattr(aggregator, aggregation)
 
         for key, val in FLIGHT_CLASS.items():
@@ -3141,7 +3227,10 @@ def _price_history_num(user, _from, _to, airline, r_from, r_to, aggregation):
     ticks = []
 
     try:
-        searchkeys = Searchkey.objects.filter(traveldate=_from, source=r_from, destination=r_to).order_by('scrapetime')
+        searchkeys = Searchkey.objects.filter(traveldate=_from, 
+                                              source=r_from, 
+                                              destination=r_to) \
+                                      .order_by('scrapetime')
         if user.level != 3:
             searchkeys = searchkeys.filter(user_ids__contains=','+str(user.user_id)+',')
 
