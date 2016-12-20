@@ -295,6 +295,11 @@ search_avg = function() {
         data = JSON.parse(data);
 
         $.plot("#id_search_avg_chart", data, {
+            series: {
+                lines: { show: true },
+                points: { show: true }
+            },            
+            grid: { hoverable: true, clickable: true },            
             yaxis: {
                 tickFormatter: function (val, axis) {
                     // return Math.ceil(val) + " ";
@@ -310,7 +315,9 @@ search_avg = function() {
             if (item) {
                 var x = item.datapoint[0].toFixed(2),
                     y = item.datapoint[1].toFixed(2);
-                $(".flot-tooltip").html(item.series.label + " of " + x + " = " + y).css({top: item.pageY+5, left: item.pageX+5}).show();
+                var date = new Date(item.datapoint[0]);
+                x = date.toString("MMM dd"); // "Dec 20"
+                $(".flot-tooltip").html(item.series.label + " : " + y + " on " + x).css({top: item.pageY+5, left: item.pageX+5}).show();
             }
             else {
                 $(".flot-tooltip").hide();
@@ -318,7 +325,7 @@ search_avg = function() {
         });
         
         $("<div class='flot-tooltip' class='chart-tooltip'></div>").appendTo("body");
-        
+
     });
 }
 
