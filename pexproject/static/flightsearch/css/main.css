@@ -2895,9 +2895,6 @@ display: table-cell;
         margin-top: -20px;
     }
 
-    .ads-banner-logo img {
-        display: block;
-    }
 }
 @media (max-height: 1024px) {
 
@@ -2919,6 +2916,9 @@ display: table-cell;
     .vbb_btn {
         margin: 5px 0;
     }
+    .ads-banner-logo img {
+        display: none;
+    }    
 }
 /*_-------------------------- tabs --------------*/
 
