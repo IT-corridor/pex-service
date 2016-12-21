@@ -5,7 +5,34 @@
 }
 </style>
 <div class="col-md-12 col-xs-12 centr-info">
-    <img src="{% static 'flightsearch/img/ad11.jpg' %}" style="margin-top:5px;margin-bottom:5px;width:100%; max-height: 150px;" alt="Responsive image" class="img-responsive">
+    <center>
+        <h4>
+            <strong style="line-height: 27px;">Want An Email When The Price Tanks or<br>When There's New Flight Options</strong>
+            <br><small>Price Alert Description</small>
+        </h4>
+    </center>
+    <div role="tabpanel" class="tab-pane active">
+        <p id="subs_msg"></p>
+        <form class="modelform ads-banner-form">
+            {% csrf_token %}
+            <div class="form-group text-center col-md-2">
+                <span type="submit" class="btn btn-info" onclick="mail_subscribe('ads-banner-form');">Subscribe</span>
+            </div>
+
+            <div class="form-group col-md-8">
+                <input type="email" class="subscription_email form-control" placeholder="Email">
+                <div class="checkbox">
+                    <label><input type="checkbox" class="pexdeals"> Sign me up for PEX+ deals and updates</label>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" class="signup"> Sign me up for a free PEX+ account to get more free searches</label>
+                </div>
+            </div>
+            <div class="col-md-2 text-center ads-banner-logo">
+                <img src="/static/flightsearch/img/logoMain.png" style="max-width: 100%; margin-bottom: 10px;">
+            </div>
+        </form>
+    </div>
 </div>
 {% if data %}
 <input type="hidden" id="datafound"> {% for row in data %}

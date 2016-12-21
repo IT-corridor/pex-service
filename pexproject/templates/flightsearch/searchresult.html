@@ -1892,17 +1892,17 @@
                         <div class="tab-content">
                             <div role="tabpanel" class="tab-pane active">
                                 <p id="subs_msg"></p>
-                                <form class="modelform">
+                                <form class="modelform loading-subscribe-form">
                                     {% csrf_token %}
                                     <div class="form-group">
-                                        <input type="email" id="subscription_email" class="form-control" placeholder="Email" name="username" required>
+                                        <input type="email" class="subscription_email form-control" placeholder="Email">
                                     </div>
                                     <div class="checkbox">
                                         <label>
-                                            <input type="checkbox" id="pexdeals" name="pexdeals" value="1"> Email me news and deals from PEX+</label>
+                                            <input type="checkbox" class="pexdeals"> Email me news and deals from PEX+</label>
                                     </div>
                                     <div class="form-group text-center">
-                                        <span type="submit" class="btn btn-info" id="subscribe">Subscribe</span>
+                                        <span type="submit" class="btn btn-info" onclick="mail_subscribe('loading-subscribe-form');">Subscribe</span>
                                     </div>
                                     <hr>
                                 </form>

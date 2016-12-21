@@ -338,9 +338,6 @@ function redirecttosearchpage(searchid, returnkey, searchtype) {
         multicity = "&multicity=" + encodeURI(multikey);
     }
     if (searchid != '') {
-        console.log("before redirect");
-        console.log(new Date());
-
         $('#searchid').val(searchid);
         var location = "/getsearchresult?keyid=" + encodeURI(searchid) + "&cabin=" + encodeURI(cabintypeval) + "&passenger=" + encodeURI($('#passenger').val()) + multicity;
         if (returnkey != '') {
