@@ -2892,9 +2892,12 @@ display: table-cell;
     }
 
     .ads-banner-logo {
-        margin-top: -30px;
+        margin-top: -20px;
     }
 
+    .ads-banner-logo img {
+        display: block;
+    }
 }
 @media (max-height: 1024px) {
 

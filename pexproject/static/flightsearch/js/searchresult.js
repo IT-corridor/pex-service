@@ -980,7 +980,7 @@ function mail_subscribe(parent_form) {
         }
     } else {
         $('.'+parent_form+' .subscription_email').focus();
-        alert("please enter your valid email");
+        alert("Please enter your valid email");
     }
 }
 
