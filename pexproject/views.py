@@ -1751,12 +1751,13 @@ def flightAlert(request):
 
 
 def useralert(request):
-    context = {}
+
     if 'action' in request.GET and request.GET.get('action') == 'delete' and 'alertid' in request.GET:
         alertid = request.GET['alertid']
         UserAlert.objects.get(pk=alertid).delete()
         
     if request.POST and  'userid' in request.session:
+        next_ = request.POST.get('next', '/flightAlert?')
         currentDate = datetime.datetime.now().date()
         preDate = currentDate - timedelta(days=1)
         message = ''
@@ -1795,8 +1796,8 @@ def useralert(request):
             message = "Flight price alert has been updated successfully"
         else:
             message = "You have successfully created a Flight price alert"
-        try:
-            alertuser.save()
+        # try:
+        alertuser.save()
             
             '''
             html_content = ''
@@ -1805,9 +1806,9 @@ def useralert(request):
             resp = customfunction.sendMail('PEX+',email,email_sub,emailbody,html_content)
            
             '''
-        except:
-            message = "Something went wrong, Please try again"
-        return HttpResponseRedirect('/flightAlert?status='+message)
+        # except:
+        #     message = "Something went wrong, Please try again"
+        return HttpResponseRedirect('{}&status={}'.format(next_, message))
     return HttpResponseRedirect(reverse('flightAlert'))
 
 

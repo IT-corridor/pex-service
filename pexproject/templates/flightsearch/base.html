@@ -307,6 +307,7 @@
                         <form action="useralert" method="post" class="modelform">
                             {% csrf_token %}
                             <input type="hidden" id="alertid" name="alertid">
+                            <input type="hidden" value="{{request.get_full_path}}" name="next">
                             <div class="col-xs-12 nopadding">
                                 <div class="container nopadding trip-custome">
                                     <div class="col-sm-12 col-xs-12 nopadding">
