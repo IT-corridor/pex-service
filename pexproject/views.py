@@ -302,12 +302,13 @@ def signup(request):
     first_name = request.POST.get('first_name', '')
     last_name = request.POST.get('last_name', '')
     pexdeals = request.POST.get('pexdeals', 0)
-    
+    next_ = request.POST.get('next', '/index?')
+
     user = User.objects.filter(username=email)
 
     if len(user) > 0:
         msg = "Email is already registered"
-        return HttpResponseRedirect('/index?signup_msg='+msg)
+        return HttpResponseRedirect('{}&signup_msg={}'.format(next_,msg))
 
     pwd_hash = hashlib.md5(password).hexdigest()
 
@@ -336,7 +337,7 @@ def signup(request):
         except:
             print "Something wrong: signup-sendmail @@@"
 
-        return HttpResponseRedirect('/index?welcome_msg='+msg)
+        return HttpResponseRedirect('{}&welcome_msg={}'.format(next_, msg))
 
 
 def manageAccount(request):

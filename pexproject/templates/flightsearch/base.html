@@ -230,7 +230,8 @@
 
                                                 <a href="{% url 'social:begin' 'facebook' %}" class="pexdeal"><span class="social-login facebook">Facebook</span></a> 
                                                 <a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}" class="pexdeal"><span class="social-login google">Google+</span></a>
-                                            </div>                                  
+                                            </div>    
+                                            <input type="hidden" value="{{request.get_full_path}}" name="next">                              
                                         </form>
                                     </div>
                                     <div role="tabpanel" class="tab-pane" id="login">
