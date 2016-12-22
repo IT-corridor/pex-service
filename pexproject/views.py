@@ -1797,6 +1797,7 @@ def useralert(request):
         else:
             message = "You have successfully created a Flight price alert"
         # try:
+        print model_to_dict(alertuser), '@@@@@@@'
         alertuser.save()
             
             # '''
