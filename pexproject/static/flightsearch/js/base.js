@@ -18,7 +18,89 @@ $(function(){
         $('#forgot_password_form').hide();
         setTimeout(function() {$('#forgetpassword').modal('hide');}, 5000);
     }
+
+    /* for flight alert dialog */
+    $("#alt_from").autocomplete({
+        open: function(event, ui) {
+            $('.ui-autocomplete').off('menufocus hover mouseover');
+            $('#alt_fromid').val('');
+        },
+        autoFocus: true,
+        source: "/get_airport/",
+        minLength: 2,
+        appendTo: ".modelform",
+        select: function(event, ui) {
+            $('#alt_fromid').val(ui.item.id);
+        },
+    });
+
+    $("#alt_to").autocomplete({
+        open: function(event, ui) {
+            $('.ui-autocomplete').off('menufocus hover mouseover');
+            $('label[class=error]').remove();
+            $('#alt_to').css('border-color', '');
+            $('#alt_toid').val('');
+        },
+
+        autoFocus: true,
+        source: "/get_airport/",
+        minLength: 2,
+        appendTo: ".modelform",
+        select: function(event, ui) {
+            $('#alt_toid').val(ui.item.id);
+        },
+    });
+
+    $('#alt_depart').datepicker({
+            dateFormat: 'yy-mm-dd',
+            minDate: 0,
+            onSelect: function() {
+                setTimeout(function function_name(argument) {
+                    $('#alt_return').focus();
+                }, 200);
+
+            },
+            onClose: function(selectedDate) {
+                // Set the minDate of 'to' as the selectedDate of 'from'
+                if (selectedDate != '') {
+                    $("#alt_return").datepicker("option", "minDate", selectedDate);
+                } else {
+                    $("#alt_return").datepicker("option", "minDate", 0);
+                }
+            }
+        }
+
+    );
+    $('#alt_return').datepicker({
+        dateFormat: 'yy-mm-dd',
+        minDate: 0,
+    });    
+    /* ----------------------- */
+
 });
+
+/* for flight alert dialog */
+$("#oneWay").click(function() {
+    if ($("#oneWay").prop('checked') == true) {
+        $("#returndatediv").hide();
+        $('#alt_return').val('');
+    } else {
+
+        $("#returndatediv").show();
+    }
+
+});
+
+$("#roundTrip").click(function() {
+    if ($("#roundTrip").prop('checked') == true) {
+        $("#returndatediv").show();
+    } else {
+        $("#returndatediv").hide();
+        $('#alt_return').val('');
+    }
+
+});
+/* ----------------------- */
 
 $('#forgot_password').click(function(){
     $('#forgetpassword').modal('show');
