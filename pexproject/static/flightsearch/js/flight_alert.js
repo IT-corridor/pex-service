@@ -48,7 +48,7 @@ $(function() {
         autoFocus: true,
         source: "/get_airport/",
         minLength: 2,
-        appendTo: ".modelform",
+        // appendTo: ".modelform",
         select: function(event, ui) {
             $('#alt_fromid').val(ui.item.id);
         },
