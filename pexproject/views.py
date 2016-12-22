@@ -1799,13 +1799,13 @@ def useralert(request):
         # try:
         alertuser.save()
             
-            '''
-            html_content = ''
-            email_sub = "PEX+ miles alert"
-            emailbody = "Hello <b>"+email+"</b>,<br><br> you have successfully created a PEX+ flight miles alert.<br><br>Thanks,<br><b> PEX+ Team"
-            resp = customfunction.sendMail('PEX+',email,email_sub,emailbody,html_content)
+            # '''
+            # html_content = ''
+            # email_sub = "PEX+ miles alert"
+            # emailbody = "Hello <b>"+email+"</b>,<br><br> you have successfully created a PEX+ flight miles alert.<br><br>Thanks,<br><b> PEX+ Team"
+            # resp = customfunction.sendMail('PEX+',email,email_sub,emailbody,html_content)
            
-            '''
+            # '''
         # except:
         #     message = "Something went wrong, Please try again"
         return HttpResponseRedirect('{}&status={}'.format(next_, message))
