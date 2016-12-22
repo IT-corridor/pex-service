@@ -2892,7 +2892,7 @@ display: table-cell;
     }
 
     .ads-banner-logo {
-        margin-top: -20px;
+        margin-top: -45px;
     }
 
 }
@@ -2916,9 +2916,11 @@ display: table-cell;
     .vbb_btn {
         margin: 5px 0;
     }
+
     .ads-banner-logo img {
         display: none;
     }    
+
 }
 /*_-------------------------- tabs --------------*/
 

@@ -198,10 +198,9 @@
                                 <!-- Tab panes -->
                                 <div class="tab-content">
                                     <div role="tabpanel" class="tab-pane active" id="signup">
+                                                                                
+                                        <div class="show-msg">{{request.GET.signup_msg}}</div>
                                         
-                                        {%if 'signup_msg' in request.GET %}
-                                            <span class="show-msg">{{request.GET.signup_msg}}</span>
-                                        {%endif%}
                                         <form action="/signup" method="post" class="modelform">
                                             {% csrf_token %}
                                             <div class="form-group">

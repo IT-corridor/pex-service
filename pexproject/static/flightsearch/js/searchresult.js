@@ -943,7 +943,7 @@ function isprocess() {
 }
 
 function mail_subscribe(parent_form) {
-    var is_signup = $('.'+parent_form+' .signup').is(':checked');
+    var is_signup = $('.'+parent_form+' .signup').length;
     var is_subscribe = $('.'+parent_form+' .pexdeals').is(':checked');
     
     var subscription_email = $('.'+parent_form+' .subscription_email').val();
@@ -971,10 +971,10 @@ function mail_subscribe(parent_form) {
             $('#logintab').removeClass('active');
             $('#signup').addClass('active');
             $('#signuptab').addClass('active');       
-            
+            $('#signup .show-msg').html('We just need a few more detail to get these alerts to you.');            
             $('#id-email-on-signup').val(subscription_email);
             $('#id-password-on-signup').val('');
-            $('#id-pexdeals-on-signup').attr('checked', is_subscribe);
+            $('#id-pexdeals-on-signup').attr('checked', true);
 
             $('#login-modal').modal();
         }
