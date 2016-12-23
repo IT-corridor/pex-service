@@ -26,11 +26,11 @@ $(function(){
                 $('#alt_to').val($('#to').val());
                 $('#alt_fromid').val($('#fromid').val());
                 $('#alt_toid').val($('#toid').val());
-                $('#alt_depart').val($('#departuredate').val());
+                $('#alt_depart').val(reformat_date($('#departuredate').val()));
 
                 if (request_returnkey != '') {
                     $("#returndatediv").show();
-                    $('#alt_return').val($('#from').val());
+                    $('#alt_return').val(reformat_date($('#return').val()));
                     $('#roundTrip').attr('checked', 'checked');
                 } else {
                     $('#oneWay').attr('checked', 'checked');
@@ -39,7 +39,6 @@ $(function(){
 
                 $('#flight-model-alert').modal();                
             }
-
         }
 
         setTimeout(function() {$('#forgetpassword').modal('hide');}, 5000);
@@ -134,6 +133,14 @@ $(function(){
 });
 
 /* for flight alert dialog */
+function reformat_date(str_date) {
+    var year_ = str_date.substring(6, 10);
+    var day_ = str_date.substring(3, 5);
+    var month_ = str_date.substring(0, 2);
+
+    return year_+"-"+month_+"-"+day_;
+}
+
 $("#oneWay").click(function() {
     if ($("#oneWay").prop('checked') == true) {
         $("#returndatediv").hide();
