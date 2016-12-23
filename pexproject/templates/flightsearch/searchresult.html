@@ -1892,7 +1892,7 @@
                         <div class="tab-content">
                             <div role="tabpanel" class="tab-pane active">
                                 <p id="subs_msg"></p>
-                                <form class="modelform loading-subscribe-form">
+                                <form class="modelform loading-subscribe-form" onsubmit="mail_subscribe(event, 'loading-subscribe-form');">
                                     {% csrf_token %}
                                     <div class="form-group">
                                         <input type="email" class="subscription_email form-control" placeholder="Email">
@@ -1902,7 +1902,7 @@
                                             <input type="checkbox" class="pexdeals"> Email me news and deals from PEX+</label>
                                     </div>
                                     <div class="form-group text-center">
-                                        <span type="submit" class="btn btn-info" onclick="mail_subscribe('loading-subscribe-form');">Subscribe</span>
+                                        <button type="submit" class="btn btn-info">Subscribe</button>
                                     </div>
                                     <hr>
                                 </form>
