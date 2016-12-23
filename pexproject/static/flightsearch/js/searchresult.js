@@ -960,7 +960,7 @@ function mail_subscribe(parent_form) {
                         $('#subs_msg').append(resp);
                         setTimeout(function() {
                             $('#subs_msg').fadeOut();
-                        }, 8000);
+                        }, 5000);
                     }
                 });
             } else {
@@ -979,8 +979,14 @@ function mail_subscribe(parent_form) {
             $('#login-modal').modal();
         }
     } else {
+        $('#subs_msg').empty();
+        $('#subs_msg').append(resp);
+        
+        setTimeout(function() {
+            $('#subs_msg').fadeOut();
+        }, 5000);
+
         $('.'+parent_form+' .subscription_email').focus();
-        alert("Please enter your valid email");
     }
 }
 
