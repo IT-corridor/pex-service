@@ -980,7 +980,7 @@ function mail_subscribe(parent_form) {
         }
     } else {
         $('#subs_msg').empty();
-        $('#subs_msg').append(resp);
+        $('#subs_msg').append("Please enter your valid email");
         
         setTimeout(function() {
             $('#subs_msg').fadeOut();
