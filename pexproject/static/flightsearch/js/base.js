@@ -27,7 +27,16 @@ $(function(){
                 $('#alt_fromid').val($('#fromid').val());
                 $('#alt_toid').val($('#toid').val());
                 $('#alt_depart').val($('#departuredate').val());
-                // $('#alt_return').val($('#from').val());
+
+                if (request_returnkey != '') {
+                    $("#returndatediv").show();
+                    $('#alt_return').val($('#from').val());
+                    $('#roundTrip').attr('checked', 'checked');
+                } else {
+                    $('#oneWay').attr('checked', 'checked');
+                    $("#returndatediv").hide();
+                }
+
                 $('#flight-model-alert').modal();                
             }
 
