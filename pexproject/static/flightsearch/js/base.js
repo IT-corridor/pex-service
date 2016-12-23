@@ -16,6 +16,10 @@ $(function(){
     if(welcome_msg != ''){
         $('#forgetpassword').modal('show');
         $('#forgot_password_form').hide();
+
+        // prepopulate results
+
+        $('#flight-model-alert').modal();
         setTimeout(function() {$('#forgetpassword').modal('hide');}, 5000);
     }
 
@@ -75,6 +79,34 @@ $(function(){
         dateFormat: 'yy-mm-dd',
         minDate: 0,
     });    
+
+    $('.fa_add').on('click', function() {
+        fa_total = fa_total_passenger();
+        if (fa_total < 6) {
+            var $qty = $(this).closest('p').find('.qty');
+            var currentVal = parseInt($qty.val());
+            if (!isNaN(currentVal)) {
+                $qty.val(currentVal + 1);
+            }
+            fa_travelinfo();
+        }
+    });
+    $('.fa_minus').on('click', function() {
+        fa_total = fa_total_passenger();
+        if (fa_total > 0) {
+            var $qty = $(this).closest('p').find('.qty');
+            var currentVal = parseInt($qty.val());
+            if (!isNaN(currentVal) && currentVal > 0) {
+                $qty.val(currentVal - 1);
+            }
+
+            fa_travelinfo();
+        }
+    });
+
+    $('#fa_passenger').val('1');
+    $(".alert-warning").hide();
+
     /* ----------------------- */
 
 });
@@ -100,6 +132,74 @@ $("#roundTrip").click(function() {
     }
 
 });
+
+var fa_total;
+
+$("#fa_cabintab").focus(function() {
+    $(".travelers-holder").addClass('open');
+    return false;
+});
+$("#fa_cabintab").click(function() {
+    $(".travelers-holder").addClass('open');
+    return false;
+});
+
+$(".form_val").focus(function() {
+    if (!$(this).hasClass("cabin_type")) {
+        $(".travelers-holder").removeClass('open');
+    }
+});
+
+$('#fa_apply_traveler').click(function() {
+    $(".travelers-holder").removeClass('open');
+});
+
+//@@increase decrease on buttom click
+$('#fa_cabintype').on('change', function() {
+    fa_travelinfo();
+});
+
+//@@@Cabin select@@@@
+function fa_travelinfo() {
+    fa_total = fa_total_passenger();
+
+    $('#fa_passenger').val(fa_total);
+    var text;
+    if (fa_total == 1) {
+        text = "traveler";
+    } else {
+        text = "travelers";
+    }
+    var selectedcabin = $("#fa_cabintype option:selected").text();
+    var html = "<span id='fa_travelar'>" + fa_total + " " + text + ", " + selectedcabin + "</span>";
+    $('#fa_travelar').replaceWith(html);
+    if (fa_total == 0) {
+        var msg = '';
+        $('#submitid').prop('disabled', true);
+        $(".alert-warning").empty();
+        msg = "You must select atleast one traveler";
+        $(".alert-warning").append(msg);
+        $(".alert-warning").show();
+    } else {
+        $('#submitid').prop('disabled', false);
+        $(".alert-warning").hide();
+    }
+}
+//@@@Total Passenger@@@@
+function fa_total_passenger() {
+    var sum = 0;
+    $('.numberHolder').each(function() {
+        sum += parseFloat($(this).val());
+    });
+    return sum;
+};
+
+//@@not close on click dropdown
+
+$('.dropdown-menu .down-menu-block').click(function(e) {
+    e.stopPropagation();
+});
+
 /* ----------------------- */
 
 $('#forgot_password').click(function(){
