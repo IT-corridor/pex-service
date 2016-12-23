@@ -13,7 +13,7 @@
         <p id="subs_msg" style="color: red;"></p>
     </center>
     <div role="tabpanel" class="tab-pane active">
-        <form class="modelform ads-banner-form{{pageno}}">
+        <form class="modelform ads-banner-form{{pageno}}" onsubmit="mail_subscribe(event, 'ads-banner-form{{pageno}}');">
             {% csrf_token %}
             <div class="col-sm-2 text-center ads-banner-logo">
                 <img src="/static/flightsearch/img/logoMain.png" style="max-width: 100%; margin-bottom: 10px;">
@@ -24,7 +24,7 @@
                 <input type="hidden" class="signup">
             </div>
             <div class="form-group text-center col-sm-2">
-                <span type="submit" class="btn btn-info" onclick="mail_subscribe('ads-banner-form{{pageno}}');">Subscribe</span>
+                <input type="submit" class="btn btn-info">Subscribe</input>
             </div>
         </form>
     </div>

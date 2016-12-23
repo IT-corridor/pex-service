@@ -942,7 +942,9 @@ function isprocess() {
     });
 }
 
-function mail_subscribe(parent_form) {
+function mail_subscribe(event, parent_form) {
+    event.preventDefault();
+    
     var is_signup = $('.'+parent_form+' .signup').length;
     var is_subscribe = $('.'+parent_form+' .pexdeals').is(':checked');
     
@@ -971,7 +973,7 @@ function mail_subscribe(parent_form) {
             $('#logintab').removeClass('active');
             $('#signup').addClass('active');
             $('#signuptab').addClass('active');       
-            $('#signup .show-msg').html('We just need a few more detail to get these alerts to you.');            
+            $('#signup .show-msg').html('We just need a few more details to get these alerts to you.');            
             $('#id-email-on-signup').val(subscription_email);
             $('#id-password-on-signup').val('');
             $('#id-pexdeals-on-signup').attr('checked', true);
@@ -981,7 +983,7 @@ function mail_subscribe(parent_form) {
     } else {
         $('#subs_msg').empty();
         $('#subs_msg').append("Please enter your valid email");
-        
+
         setTimeout(function() {
             $('#subs_msg').fadeOut();
         }, 5000);
