@@ -1808,7 +1808,7 @@ def useralert(request):
             '''
         except:
             message = "Something went wrong, Please try again"
-        return HttpResponseRedirect('{}&status={}'.format(next_, message))
+        return HttpResponseRedirect('{}&welcome_msg={}'.format(next_, message))
     return HttpResponseRedirect(reverse('flightAlert'))
 
 

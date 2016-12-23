@@ -18,8 +18,21 @@ $(function(){
         $('#forgot_password_form').hide();
 
         // prepopulate results
+        if (welcome_msg.indexOf('registered') != -1) {
+            if (typeof get_full_path_ === 'undefined') {
+                console.log('Not in flight search page');
+            } else {
+                $('#alt_from').val($('#from').val());
+                $('#alt_to').val($('#to').val());
+                $('#alt_fromid').val($('#fromid').val());
+                $('#alt_toid').val($('#toid').val());
+                $('#alt_depart').val($('#departuredate').val());
+                // $('#alt_return').val($('#from').val());
+                $('#flight-model-alert').modal();                
+            }
 
-        $('#flight-model-alert').modal();
+        }
+
         setTimeout(function() {$('#forgetpassword').modal('hide');}, 5000);
     }
 
