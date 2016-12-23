@@ -302,7 +302,7 @@ def signup(request):
     first_name = request.POST.get('first_name', '')
     last_name = request.POST.get('last_name', '')
     pexdeals = request.POST.get('pexdeals', 0)
-    next_ = request.POST.get('next', '/index?')
+    next_ = request.POST.get('next', '/index?').replace('signup_msg', 'signupmsg')
 
     user = User.objects.filter(username=email)
 
