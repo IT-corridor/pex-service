@@ -22,26 +22,29 @@ $(function(){
             if (typeof get_full_path_ === 'undefined') {
                 console.log('Not in flight search page');
             } else {
-                $('#alt_from').val($('#from').val());
-                $('#alt_to').val($('#to').val());
-                $('#alt_fromid').val($('#fromid').val());
-                $('#alt_toid').val($('#toid').val());
-                $('#alt_depart').val(reformat_date($('#departuredate').val()));
-
-                if (request_returnkey != '') {
-                    $("#returndatediv").show();
-                    $('#alt_return').val(reformat_date($('#return').val()));
-                    $('#roundTrip').attr('checked', 'checked');
-                } else {
-                    $('#oneWay').attr('checked', 'checked');
-                    $("#returndatediv").hide();
-                }
-
-                $('#flight-model-alert').modal();                
+                fa_show = "1";            
             }
         }
-
+        
         setTimeout(function() {$('#forgetpassword').modal('hide');}, 5000);
+    }
+
+    if (fa_show != '') {
+        $('#alt_from').val($('#from').val());
+        $('#alt_to').val($('#to').val());
+        $('#alt_fromid').val($('#fromid').val());
+        $('#alt_toid').val($('#toid').val());
+        $('#alt_depart').val(reformat_date($('#departuredate').val()));
+
+        if (request_returnkey != '') {
+            $("#returndatediv").show();
+            $('#alt_return').val(reformat_date($('#return').val()));
+            $('#roundTrip').attr('checked', 'checked');
+        } else {
+            $('#oneWay').attr('checked', 'checked');
+            $("#returndatediv").hide();
+        }
+        $('#flight-model-alert').modal();    
     }
 
     /* for flight alert dialog */

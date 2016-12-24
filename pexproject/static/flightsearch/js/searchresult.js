@@ -973,6 +973,7 @@ function mail_subscribe(event, parent_form) {
             $('#logintab').removeClass('active');
             $('#signup').addClass('active');
             $('#signuptab').addClass('active');       
+            $('#signup .show-msg').css('font-size', '16px');
             $('#signup .show-msg').html('We just need a few more details to get these alerts to you.');            
             $('#id-email-on-signup').val(subscription_email);
             $('#id-password-on-signup').val('');

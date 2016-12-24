@@ -429,6 +429,8 @@ def login(request):
         request.session['username'] = username
         request.session['userid'] = user.user_id
         request.session['level'] = user.level
+        if 'getsearchresult' in currentpath:
+            currentpath = currentpath + "?fa=1"
 
         return HttpResponseRedirect(currentpath)
     else:
