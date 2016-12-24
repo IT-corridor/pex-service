@@ -1759,7 +1759,7 @@ def useralert(request):
         UserAlert.objects.get(pk=alertid).delete()
         
     if request.POST and  'userid' in request.session:
-        next_ = request.POST.get('next', '/flightAlert?')
+        next_ = request.POST.get('next', '/flightAlert?').replace('&fa=1', '')
         currentDate = datetime.datetime.now().date()
         preDate = currentDate - timedelta(days=1)
         message = ''
