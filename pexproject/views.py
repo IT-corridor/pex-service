@@ -1642,6 +1642,20 @@ def getsearchresult(request):
                 print len(mainlist), ':AFter filter #@#@#@#@#'
             mainlist = mainlist[offset:offset+limit]
 
+            # get flight links
+            flight_links = {}
+            for item in FlightHotelLink.objects.filter(ah_type='airline'):
+                flight_links[item.airline] = [item.award_link, item.dollar_link]
+
+            mainlist_ = []
+            for item in mainlist:
+                item_ = model_to_dict(item)
+                item_['award_link'] = flight_links.get(item.datasource, ['javascript:void(0)', 'javascript:void(0)'])[0]
+                item_['dollar_link'] = flight_links.get(item.datasource, ['javascript:void(0)', 'javascript:void(0)'])[1]
+                mainlist_.append(item_)
+
+            mainlist = mainlist_
+
         progress_value = '' 
         if 'progress_value' in request.POST:
             progress_value = request.REQUEST['progress_value']
