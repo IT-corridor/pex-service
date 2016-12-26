@@ -88,9 +88,9 @@ urlpatterns = [
     url(r'^Admin/flight_link/new/$', flight_link_update, name='flight_link_new'),
     url(r'^Admin/flight_link/(?P<id>\d+)/$', flight_link_update, name='flight_link_update'),
 
-    # url(r'^Admin/hotel_link/$', hotel_link, name='hotel_link'),
-    # url(r'^Admin/hotel_link/new/$', hotel_link_update, name='hotel_link_new'),
-    # url(r'^Admin/hotel_link/(?P<id>\d+)/$', hotel_link_update, name='hotel_link_update'),
+    url(r'^Admin/hotel_link/$', hotel_link, name='hotel_link'),
+    url(r'^Admin/hotel_link/new/$', hotel_link_update, name='hotel_link_new'),
+    url(r'^Admin/hotel_link/(?P<id>\d+)/$', hotel_link_update, name='hotel_link_update'),
 
     url(r'^Admin/customer/$', customer_list, name='customer_list'),
     url(r'^Admin/customer/new/$', customer_update, name='customer_new'),

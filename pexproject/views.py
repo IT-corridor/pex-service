@@ -2848,7 +2848,7 @@ def flight_link_update(request, id=None):
         pre_airline = flight_link.airline
     else:
         flight_link = FlightHotelLink()
-        airline_ = FlightHotelLink.objects.all().values_list('airline', flat=True)
+        airline_ = FlightHotelLink.objects.filter(ah_type='airline').values_list('airline', flat=True)
         pre_airline = [item for item in AIR_LINES if item not in airline_]
 
     if request.method == 'GET':
@@ -2865,6 +2865,38 @@ def flight_link_update(request, id=None):
 
     return render(request, 'Admin/flight_link_form.html', 
                  {'form':form, 'pre_airline': pre_airline})
+
+
+@admin_only
+def hotel_link(request):
+    hotel_links = FlightHotelLink.objects.filter(ah_type='hotel')
+    return render(request, 'Admin/hotel_link_list.html', {'hotel_links': hotel_links})
+
+
+@admin_only
+def hotel_link_update(request, id=None):
+    if id:
+        hotel_link = FlightHotelLink.objects.get(id=id)
+        pre_hotel = hotel_link.airline
+    else:
+        hotel_link = FlightHotelLink()
+        hotel_ = FlightHotelLink.objects.filter(ah_type='hotel').values_list('airline', flat=True)
+        pre_hotel = [item for item in HOTEL_CHAINS.keys() if item not in hotel_]
+
+    if request.method == 'GET':
+        form = FlightHotelLinkForm(initial=model_to_dict(hotel_link))
+    else:
+        form = FlightHotelLinkForm(request.POST)
+        if form.is_valid():
+            hotel_link.ah_type = 'hotel'
+            hotel_link.award_link = form.cleaned_data['award_link']
+            hotel_link.dollar_link = form.cleaned_data['dollar_link']
+            hotel_link.airline = form.cleaned_data['airline']
+            hotel_link.save()
+            return HttpResponseRedirect('/Admin/hotel_link/')
+
+    return render(request, 'Admin/hotel_link_form.html', 
+                 {'form':form, 'pre_hotel': pre_hotel})
 
 
 @admin_only
