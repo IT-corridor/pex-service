@@ -23,7 +23,7 @@
                         <div class="fg-line">
                             {% if form.airline.value %}
                             <input type="hidden" name="airline" value="{{form.airline.value}}">
-                            <input type="text" class="form-control input-sm" readonly value="{{ pre_airline }}">
+                            <input type="text" class="form-control input-sm" readonly value="{{ pre_hotel }}">
                             {% else %}
                             <select class="selectpicker" name="airline">
                                 {% for item in pre_hotel %} 
