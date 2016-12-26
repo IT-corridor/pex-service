@@ -240,7 +240,7 @@
         {% for hotel in hotels %}
         <div class="row" style="margin-top: 15px;">
             <div class="col-sm-3 col-xs-7">
-                <a href="{{ hotel.url }}" style="text-decoration: none;" target="_blank">
+                <a href="{{ hotel.award_link }}" style="text-decoration: none;" target="_blank">
                 <div class="price-range">
                     <p class="title">Book With Points</p>
                     {% if hotel.points_rate %}
@@ -250,7 +250,7 @@
                     {% endif %}
                 </div></a>
                 <div style="margin-left: 62px;"><b> OR </b></div>
-                <a href="{{ hotel.url }}" style="text-decoration: none;" target="_blank">
+                <a href="{{ hotel.dollar_link }}" style="text-decoration: none;" target="_blank">
                 <div class="price-range">
                     <p class="title">Book With Dollars</p>
                     {% if hotel.cash_rate != 1000000 %}

@@ -2130,12 +2130,19 @@ def _search_hotel(place, checkin, checkout, filters):
     }
     # __debug('filters: %s\n' % str(filters))
 
+    # get hotel links
+    hotel_links = {}
+    for item in FlightHotelLink.objects.filter(ah_type='hotel'):
+        hotel_links[item.airline] = [item.award_link, item.dollar_link]
+
     r_db_hotels = []
     for item in db_hotels:
         amenities = HotelAmenity.objects.filter(hotel=item)
         amenities = [am.amenity for am in amenities]
         _item = model_to_dict(item)
         _item['amenity'] = amenities
+        _item['award_link'] = hotel_links.get(item.chain, ['', ''])[0]
+        _item['dollar_link'] = hotel_links.get(item.chain, ['', ''])[1]
         r_db_hotels.append(_item)
 
     return ['', r_db_hotels, price_matrix, filters]
