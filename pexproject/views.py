@@ -302,12 +302,13 @@ def signup(request):
     first_name = request.POST.get('first_name', '')
     last_name = request.POST.get('last_name', '')
     pexdeals = request.POST.get('pexdeals', 0)
-    
+    next_ = request.POST.get('next', '/index?').replace('signup_msg', 'signupmsg')
+
     user = User.objects.filter(username=email)
 
     if len(user) > 0:
         msg = "Email is already registered"
-        return HttpResponseRedirect('/index?signup_msg='+msg)
+        return HttpResponseRedirect('{}&signup_msg={}'.format(next_,msg))
 
     pwd_hash = hashlib.md5(password).hexdigest()
 
@@ -336,7 +337,7 @@ def signup(request):
         except:
             print "Something wrong: signup-sendmail @@@"
 
-        return HttpResponseRedirect('/index?welcome_msg='+msg)
+        return HttpResponseRedirect('{}&welcome_msg={}'.format(next_, msg))
 
 
 def manageAccount(request):
@@ -428,6 +429,8 @@ def login(request):
         request.session['username'] = username
         request.session['userid'] = user.user_id
         request.session['level'] = user.level
+        if 'getsearchresult' in currentpath:
+            currentpath = currentpath + "&fa=1"
 
         return HttpResponseRedirect(currentpath)
     else:
@@ -1682,7 +1685,7 @@ def getsearchresult(request):
             title = multiSearchTitle
             
         if request.is_ajax():
-            return render_to_response('flightsearch/search.html', {'action':action,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value, 'multisearch':multisearch, 'data':mainlist, 'multicity':multicity, 'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages}, context_instance=RequestContext(request))
+            return render_to_response('flightsearch/search.html', {'action':action,'pricesources':pricesources, 'pricematrix':pricematrix,'progress_value':progress_value, 'multisearch':multisearch, 'data':mainlist, 'multicity':multicity, 'recordlen':range(recordlen),'minprice':minprice, 'tax':tax, 'timedata':timeinfo, 'returndata':returnkey, 'search':searchdata, 'selectedrow':selectedrow, 'filterkey':filterkey, 'passenger':passenger, 'returndate':returndate, 'deltareturn':returndelta, 'unitedreturn':returnunited, 'deltatax':deltatax, 'unitedtax':unitedtax, 'unitedminval':unitedminval, 'deltaminval':deltaminval, 'deltacabin_name':deltacabin_name, 'unitedcabin_name':unitedcabin_name,'adimages':adimages, 'pageno': pageno}, context_instance=RequestContext(request))
 
         if 'userid' in request.session and  'actionfor' not in request.POST:
             _, flight = get_reward_config(request)
@@ -1750,12 +1753,13 @@ def flightAlert(request):
 
 
 def useralert(request):
-    context = {}
+
     if 'action' in request.GET and request.GET.get('action') == 'delete' and 'alertid' in request.GET:
         alertid = request.GET['alertid']
         UserAlert.objects.get(pk=alertid).delete()
         
     if request.POST and  'userid' in request.session:
+        next_ = request.POST.get('next', '/flightAlert?').replace('&fa=1', '')
         currentDate = datetime.datetime.now().date()
         preDate = currentDate - timedelta(days=1)
         message = ''
@@ -1806,7 +1810,7 @@ def useralert(request):
             '''
         except:
             message = "Something went wrong, Please try again"
-        return HttpResponseRedirect('/flightAlert?status='+message)
+        return HttpResponseRedirect('{}&welcome_msg={}'.format(next_, message))
     return HttpResponseRedirect(reverse('flightAlert'))
 
 
@@ -2935,7 +2939,6 @@ def Admin(request):
                                     'all airports', 'all airports')
 
     pop_searches = _popular_search(3650)
-    user_search_history = get_search_history()
     search_on_country = get_search_country()
 
     return render(request, 'Admin/dashboard.html', {
@@ -2944,12 +2947,21 @@ def Admin(request):
         'air_lines': air_lines,
         'num_users': len(list(User.objects.all())),
         'total_searches': len(list(Searchkey.objects.all())) * 3,
-        'user_search_history':user_search_history,
         'search_on_country':search_on_country,
     })
 
 
-def get_search_history():
+@csrf_exempt
+def get_search_history(request):
+    def compare_most_recent(item1, item2):
+        date1 = datetime.datetime.strptime(item1[1][0][1], "%Y-%m-%d %H:%M:%S")
+        date2 = datetime.datetime.strptime(item2[1][0][1], "%Y-%m-%d %H:%M:%S")
+        return int((date2 - date1).total_seconds())
+
+    def compare_most_searches(item1, item2):
+        return len(item2[1]) - len(item1[1])
+
+    mode = request.POST.get('mode')
     result = []
     for user in User.objects.all().order_by('username'):
         searches = Searchkey.objects.filter(user_ids__contains=','+str(user.user_id)+',') \
@@ -2959,12 +2971,17 @@ def get_search_history():
         searches = [(search.source+' -> '+search.destination, search.scrapetime.strftime('%Y-%m-%d %H:%M:%S')) for search in searches]
         result.append([user.username, searches])
 
+    if mode == 'most-recent':
+        result = sorted(result, cmp=compare_most_recent)
+    elif mode == 'most-searches':
+        result = sorted(result, cmp=compare_most_searches)
+
     # for Non-Members
     searches = Searchkey.objects.exclude(user_ids__regex=r'[0-9]+').order_by('-scrapetime')[:100]        
     searches = [(search.source+' -> '+search.destination, search.scrapetime.strftime('%Y-%m-%d %H:%M:%S')) for search in searches]
     result.append(['Non-Member', searches])
 
-    return result
+    return render(request, 'Admin/search_activity.html', { 'user_search_history': result })
 
 
 def get_search_country():
@@ -3060,12 +3077,18 @@ def _popular_search(period):
 def search_history(request):    
     _from = request.POST.get('_from')
     _to = request.POST.get('_to') 
+    _to = datetime.datetime.strptime(_to, "%Y-%m-%d")
+    _to = (_to + timedelta(days=1)).date()
+    _to = _to.strftime("%Y-%m-%d")
 
     searches = Searchkey.objects.filter(scrapetime__range=(_from, _to))
     date_dict = {}
 
     for search in searches:
         key_ = int(time.mktime(search.scrapetime.date().timetuple()) * 1000)
+        if not search.user_ids:
+            continue
+
         user_ids = search.user_ids.split(',')
         m_ids = [item for item in user_ids if item]
 
@@ -3099,10 +3122,71 @@ def search_history(request):
         }
     ]
 
-    for key, val in date_dict:
+    for key in sorted(date_dict):
+        val = date_dict[key]
         stat_search_history[0]['data'].append([key, val['t_n']])
         stat_search_history[1]['data'].append([key, val['n_m_n']])
         stat_search_history[2]['data'].append([key, val['m_n']])
+
+    return HttpResponse(json.dumps(stat_search_history))
+
+
+@csrf_exempt
+def search_avg(request):    
+    _from = request.POST.get('_from')
+    _to = request.POST.get('_to') 
+    _to = datetime.datetime.strptime(_to, "%Y-%m-%d")
+    _to = (_to + timedelta(days=1)).date()
+    _to = _to.strftime("%Y-%m-%d")
+
+    searches = Searchkey.objects.filter(scrapetime__range=(_from, _to))
+    date_dict = {}
+
+    for search in searches:
+        key_ = int(time.mktime(search.scrapetime.date().timetuple()) * 1000)
+        if not search.user_ids:
+            continue
+        
+        user_ids = search.user_ids.split(',')
+        m_ids = [item for item in user_ids if item]
+
+        t_n = len(user_ids) - 1     # total number of searches
+        m_n = len(m_ids)            # number of searches by members
+        n_m_n = t_n - m_n           # number of searches by non-members
+
+        if key_ in date_dict:
+            date_dict[key_]['t_n'] += t_n
+            date_dict[key_]['m_n'] += m_n
+            date_dict[key_]['n_m_n'] += n_m_n
+        else:
+            date_dict[key_] = {}
+            date_dict[key_]['day'] = search.scrapetime.date()
+            date_dict[key_]['t_n'] = t_n
+            date_dict[key_]['m_n'] = m_n
+            date_dict[key_]['n_m_n'] = n_m_n
+
+
+    stat_search_history = [
+        {
+            'label': "Total",
+            'data': []
+        },        
+        {
+            'label': "Non-member",
+            'data': []
+        },
+        {
+            'label': "Member",
+            'data': []
+        }
+    ]
+
+    for key in sorted(date_dict):
+        val = date_dict[key]
+        num_users = User.objects.filter(date_joined__lte=val['day']).count()
+        stat_search_history[0]['data'].append([key, val['t_n']*1.0 / num_users])
+        stat_search_history[1]['data'].append([key, val['n_m_n']*1.0 / num_users])
+        stat_search_history[2]['data'].append([key, val['m_n']*1.0 / num_users])
 
     return HttpResponse(json.dumps(stat_search_history))
 

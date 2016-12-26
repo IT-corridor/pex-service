@@ -174,6 +174,35 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
+                    <h2>Average Number of Searches</h2>
+                </div>
+                
+                <div class="card-body card-padding">
+                    <div class="row">
+                        <div class="col-sm-4 m-b-25">
+                            <span class="f-500 m-b-15 c-black">Period</span>
+                            <div class="input-group form-group">
+                                <span class="input-group-addon"><i class="zmdi zmdi-calendar"></i></span>
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control" placeholder="From" id="id_search_avg_from">
+                                </div>
+                                <span class="input-group-addon"><i class="zmdi zmdi-calendar"></i></span>
+                                <div class="dtp-container fg-line">
+                                    <input type='text' class="form-control" placeholder="To" id="id_search_avg_to">
+                                </div>
+                            </div>
+                        </div>                                    
+                    </div>                    
+
+                    <div id="id_search_avg_chart" style="height: 300px;" class="m-b-25">
+                        <div>Choose the period to get graphs</div>
+                    </div>
+                </div>
+            </div>
+        </div>        
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
                     <h2>Price History</h2>
                     
                     <ul class="actions">
@@ -577,56 +606,18 @@
                 <div class="card-header">
                     <h2>User Search History</h2>
                     
-                    <ul class="actions">
-                        <li class="dropdown action-show">
-                            <a href="" data-toggle="dropdown">
-                                <i class="zmdi zmdi-more-vert"></i>
-                            </a>
-            
-                            <div class="dropdown-menu pull-right">
-                                <p class="p-20">
-                                    You can put anything here
-                                </p>
-                            </div>
-                        </li>
-                    </ul>
+                    <div class="col-sm-4 m-b-25 actions">
+                        <select class="selectpicker" onchange="search_activity();" id="id_user_search_activity">
+                            <option value="alpha">Alphabetical</option>
+                            <option value="most-recent">Most Recent</option>
+                            <option value="most-searches">Most Searches</option>
+                        </select>
+                    </div>                    
                 </div>
                 
                 <div class="card-body card-padding-sm">
-                    <div class="panel-group" role="tablist" aria-multiselectable="true">
-                        {% for entry in user_search_history %}
-                        <div class="panel panel-collapse">
-                            <div class="panel-heading" role="tab" id="heading-{{forloop.counter}}">
-                                <h4 class="panel-title">
-                                    <a  class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse-{{forloop.counter}}" aria-expanded="false" aria-controls="collapse-{{forloop.counter}}">
-                                        {{ entry.0 }}
-                                    </a>
-                                </h4>
-                            </div>
-                            <div id="collapse-{{forloop.counter}}" class="collapse" role="tabpanel" aria-labelledby="heading-{{forloop.counter}}">
-                                <div class="panel-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-striped">
-                                            <thead>
-                                                <tr>
-                                                    <th>Search Route</th>
-                                                    <th>Time</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id='id_pop_search_table_body'>
-                                                {% for item in entry.1 %}
-                                                <tr>
-                                                    <td>{{ item.0 }}</td>
-                                                    <td>{{ item.1 }}</td>
-                                                </tr>
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
+                    <div class="panel-group" role="tablist" aria-multiselectable="true" id="panel_user_search_activity">
+
                     </div>
                 </div>
             </div>

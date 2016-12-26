@@ -942,31 +942,56 @@ function isprocess() {
     });
 }
 
-$('#subscribe').click(function() {
-    var is_checked = '';
-    var subscription_email = $('#subscription_email').val();
+function mail_subscribe(event, parent_form) {
+    event.preventDefault();
+    
+    var is_signup = $('.'+parent_form+' .signup').length;
+    var is_subscribe = $('.'+parent_form+' .pexdeals').is(':checked');
+    
+    var subscription_email = $('.'+parent_form+' .subscription_email').val();
     if (subscription_email != '') {
-        if ($('#pexdeals').is(':checked')) {
-            $.ajax({
-                type: "POST",
-                dataType: "text",
-                url: "/mailchimp/",
-                data: "email=" + encodeURI(subscription_email) + "&csrfmiddlewaretoken=" + csrf_token,
-                success: function(resp) {
-                    $('#subs_msg').empty();
-                    $('#subs_msg').append(resp);
-                    setTimeout(function() {
-                        $('#subs_msg').fadeOut();
-                    }, 8000);
-                }
-            });
+        if (!is_signup) {
+            if (is_subscribe) {
+                $.ajax({
+                    type: "POST",
+                    dataType: "text",
+                    url: "/mailchimp/",
+                    data: "email=" + encodeURI(subscription_email) + "&csrfmiddlewaretoken=" + csrf_token,
+                    success: function(resp) {
+                        $('#subs_msg').empty();
+                        $('#subs_msg').append(resp);
+                        setTimeout(function() {
+                            $('#subs_msg').fadeOut();
+                        }, 5000);
+                    }
+                });
+            } else {
+                alert("please click on news and deals from PEX+");
+            }            
         } else {
-            alert("please click on news and deals from PEX+");
+            $('#login').removeClass('active');
+            $('#logintab').removeClass('active');
+            $('#signup').addClass('active');
+            $('#signuptab').addClass('active');       
+            $('#signup .show-msg').css('font-size', '16px');
+            $('#signup .show-msg').html('We just need a few more details to get these alerts to you.');            
+            $('#id-email-on-signup').val(subscription_email);
+            $('#id-password-on-signup').val('');
+            $('#id-pexdeals-on-signup').attr('checked', true);
+
+            $('#login-modal').modal();
         }
     } else {
-        alert("please enter your valid email");
+        $('#subs_msg').empty();
+        $('#subs_msg').append("Please enter your valid email");
+
+        setTimeout(function() {
+            $('#subs_msg').fadeOut();
+        }, 5000);
+
+        $('.'+parent_form+' .subscription_email').focus();
     }
-});
+}
 
 var CSRF_TOKEN = csrf_token;
 var triptype = '';

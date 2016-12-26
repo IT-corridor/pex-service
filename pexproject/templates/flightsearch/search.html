@@ -5,7 +5,29 @@
 }
 </style>
 <div class="col-md-12 col-xs-12 centr-info">
-    <img src="{% static 'flightsearch/img/ad11.jpg' %}" style="margin-top:5px;margin-bottom:5px;width:100%; max-height: 150px;" alt="Responsive image" class="img-responsive">
+    <center>
+        <h4>
+            <strong style="line-height: 27px;">Want An Email When The Price Tanks or<br>When There's New Flight Availability?</strong>
+            <br><small>Type in your email below:</small>
+        </h4>
+        <p id="subs_msg" style="color: red;"></p>
+    </center>
+    <div role="tabpanel" class="tab-pane active">
+        <form class="modelform ads-banner-form{{pageno}}" onsubmit="mail_subscribe(event, 'ads-banner-form{{pageno}}');">
+            {% csrf_token %}
+            <div class="col-sm-2 text-center ads-banner-logo">
+                <img src="/static/flightsearch/img/logoMain.png" style="max-width: 100%; margin-bottom: 10px;">
+            </div>
+
+            <div class="form-group col-sm-8">
+                <input type="email" class="subscription_email form-control" placeholder="Email">
+                <input type="hidden" class="signup">
+            </div>
+            <div class="form-group text-center col-sm-2">
+                <button type="submit" class="btn btn-info">Subscribe</button>
+            </div>
+        </form>
+    </div>
 </div>
 {% if data %}
 <input type="hidden" id="datafound"> {% for row in data %}

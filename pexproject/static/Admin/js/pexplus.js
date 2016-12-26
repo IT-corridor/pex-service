@@ -39,6 +39,26 @@ $(function() {
         }
     });    
     // --------------------------------------------------------------------- // 
+    $('#id_search_avg_from').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        dateFormat: "yy-mm-dd",
+        onClose: function(selectedDate) {
+            $("#id_search_avg_to").datepicker("option", "minDate", selectedDate);
+            search_avg();
+        }
+    });
+
+    $('#id_search_avg_to').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        dateFormat: "yy-mm-dd",
+        onClose: function(selectedDate) {
+            $("#id_search_avg_from").datepicker("option", "maxDate", selectedDate);
+            search_avg();
+        }
+    });        
+    // --------------------------------------------------------------------- // 
     $('#id_price_history_from_period').datepicker({
         changeMonth: true,
         changeYear: true,
@@ -123,6 +143,7 @@ $(document).ready(function(){
     $('#id_user_signup_from').val(get_formatted_date(start_date));
     $('#id_user_signup_to').val(get_formatted_date(new Date()));
     user_signup_activity();
+    search_activity();
 });
 
 get_formatted_date = function(_date) {
@@ -245,6 +266,12 @@ search_history = function() {
         data = JSON.parse(data);
 
         $.plot("#id_search_history_chart", data, {
+            series: {
+                lines: { show: true },
+                // points: { show: true }
+            },            
+            grid: { hoverable: true, clickable: true },            
+
             yaxis: {
                 tickFormatter: function (val, axis) {
                     return Math.ceil(val) + " ";
@@ -254,6 +281,73 @@ search_history = function() {
                 mode: "time"
             }
         });  
+
+        $("#id_search_history_chart").bind("plothover", function (event, pos, item) {
+            if (item) {
+                var x = item.datapoint[0].toFixed(2),
+                    y = item.datapoint[1];
+                var date = new Date(item.datapoint[0]);
+                x = date.toString().slice(4, 15); // "Dec 20"
+                $(".flot-tooltip").html(item.series.label + " : " + y + " on " + x).css({top: item.pageY+5, left: item.pageX+5}).show();
+            }
+            else {
+                $(".flot-tooltip").hide();
+            }
+        });
+        
+        $("<div class='flot-tooltip' class='chart-tooltip'></div>").appendTo("body");
+
+    });
+}
+
+
+search_avg = function() {
+    var _from = $('#id_search_avg_from').val();
+    var _to = $('#id_search_avg_to').val();
+
+    if (_from == '' || _to == '')
+        return false;
+    
+    $('.page-loader').show();    
+
+    $.post('/stats/search_avg/', 
+        {'_from':_from, '_to':_to}
+    ).success(function(data) {
+        $('.page-loader').fadeOut();
+        data = JSON.parse(data);
+
+        $.plot("#id_search_avg_chart", data, {
+            series: {
+                lines: { show: true },
+                // points: { show: true }
+            },            
+            grid: { hoverable: true, clickable: true },            
+            yaxis: {
+                tickFormatter: function (val, axis) {
+                    // return Math.ceil(val) + " ";
+                    return parseFloat(Math.round(val * 100) / 100).toFixed(2);
+                },    
+            },
+            xaxis: {
+                mode: "time"
+            }
+        });  
+
+        $("#id_search_avg_chart").bind("plothover", function (event, pos, item) {
+            if (item) {
+                var x = item.datapoint[0].toFixed(2),
+                    y = item.datapoint[1].toFixed(2);
+                var date = new Date(item.datapoint[0]);
+                x = date.toString().slice(4, 15); // "Dec 20"
+                $(".flot-tooltip").html(item.series.label + " : " + y + " on " + x).css({top: item.pageY+5, left: item.pageX+5}).show();
+            }
+            else {
+                $(".flot-tooltip").hide();
+            }
+        });
+        
+        $("<div class='flot-tooltip' class='chart-tooltip'></div>").appendTo("body");
+
     });
 }
 
@@ -435,4 +529,17 @@ _price_history = function(data) {
             mode: "time"
         }
     });      
+}
+
+
+search_activity = function() {
+    var mode = $('#id_user_search_activity').val();
+    $('.page-loader').show();    
+
+    $.post('/stats/search_activity/', 
+        {'mode': mode}
+    ).success(function(data) {
+        $('.page-loader').fadeOut();
+        $('#panel_user_search_activity').html(data);
+    });
 }
