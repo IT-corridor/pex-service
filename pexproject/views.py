@@ -2849,7 +2849,7 @@ def flight_link_update(request, id=None):
     else:
         flight_link = FlightHotelLink()
         airline_ = FlightHotelLink.objects.all().values_list('airline', flat=True)
-        pre_airline = [item for item in AIR_LINES if item not in airline_
+        pre_airline = [item for item in AIR_LINES if item not in airline_]
 
     if request.method == 'GET':
         form = FlightHotelLinkForm(initial=model_to_dict(flight_link))
