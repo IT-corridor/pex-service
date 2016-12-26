@@ -17,6 +17,11 @@ HOTEL_CHAINS = {
 }
 
 
+AIR_LINES = ['aeroflot', 'airchina', 'american airlines', 'delta', 
+             'etihad', 'jetblue', 's7', 'united', 'Virgin America', 
+             'Virgin Australia', 'virgin_atlantic', 'alaska']    
+
+
 HOTEL_AMENITIES =  {
     "VR Game Amenity": {
         "Pokemon Go":  [
@@ -594,3 +599,11 @@ class SearchLimit(models.Model):
 class UserConfig(models.Model):
     owner = models.ForeignKey(User)
     reward_config = models.CharField(max_length='150', default='')
+
+
+class FlightHotelLink(models.Model):
+    type_ = models.CharField(max_length=10)
+    airline = models.CharField(max_length=30)
+    award_link = models.CharField(max_length=250)
+    dollar_link = models.CharField(max_length=250,null=True, blank=True)
+
