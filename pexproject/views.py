@@ -2141,8 +2141,8 @@ def _search_hotel(place, checkin, checkout, filters):
         amenities = [am.amenity for am in amenities]
         _item = model_to_dict(item)
         _item['amenity'] = amenities
-        _item['award_link'] = hotel_links.get(item.chain, ['', ''])[0]
-        _item['dollar_link'] = hotel_links.get(item.chain, ['', ''])[1]
+        _item['award_link'] = hotel_links.get(item.chain, ['javascript:void(0)', 'javascript:void(0)'])[0]
+        _item['dollar_link'] = hotel_links.get(item.chain, ['javascript:void(0)', 'javascript:void(0)'])[1]
         r_db_hotels.append(_item)
 
     return ['', r_db_hotels, price_matrix, filters]
