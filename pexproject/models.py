@@ -602,7 +602,7 @@ class UserConfig(models.Model):
 
 
 class FlightHotelLink(models.Model):
-    type_ = models.CharField(max_length=10)
+    ah_type = models.CharField(max_length=10)
     airline = models.CharField(max_length=30)
     award_link = models.CharField(max_length=250)
     dollar_link = models.CharField(max_length=250,null=True, blank=True)

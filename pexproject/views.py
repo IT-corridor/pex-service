@@ -2837,7 +2837,7 @@ def blog_list_delete(request, id):
 
 @admin_only
 def flight_link(request):
-    flight_links = FlightHotelLink.objects.filter(type_='airline')
+    flight_links = FlightHotelLink.objects.filter(ah_type='airline')
     return render(request, 'Admin/flight_link_list.html', {'flight_links': flight_links})
 
 
@@ -2856,7 +2856,7 @@ def flight_link_update(request, id=None):
     else:
         form = FlightHotelLinkForm(request.POST)
         if form.is_valid():
-            flight_link.type_ = 'airline'
+            flight_link.ah_type = 'airline'
             flight_link.award_link = form.cleaned_data['award_link']
             flight_link.dollar_link = form.cleaned_data['dollar_link']
             flight_link.airline = form.cleaned_data['airline']

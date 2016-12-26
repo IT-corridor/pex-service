@@ -37,7 +37,7 @@ class BlogForm(ModelForm):
 class FlightHotelLinkForm(ModelForm):
     class Meta:
         model = FlightHotelLink
-        exclude = ['type_']
+        exclude = ['ah_type']
 
 
 class EmailTemplateForm(ModelForm):
