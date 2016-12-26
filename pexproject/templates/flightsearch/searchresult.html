@@ -561,21 +561,27 @@
                                         <div class="col-xs-12 nopadding text-center">
                                             {% if request.GET.cabin  ==  'maincabin' %}
                                             <div class="col-xs-12 nopadding na-ra">
+                                                <a href="{{ selectedrow.award_link }}" style="text-decoration: none;" target="_blank">
                                                 <p class="flight-rate">
                                                     {{selectedrow.maincabin|intcomma}} Miles + <span>${{selectedrow.maintax|floatformat:2}}</span>
                                                 </p>
+                                                </a>
                                             </div>
                                             <h5 class="econom">{{selectedrow.cabintype1}}</h5> {% endif %} {% if request.GET.cabin  ==  'firstclass' %}
                                             <div class="col-xs-12 nopadding na-ra">
+                                                <a href="{{ selectedrow.award_link }}" style="text-decoration: none;" target="_blank">
                                                 <p class="flight-rate">
                                                     {{selectedrow.firstclass|intcomma}} Miles + <span>${{selectedrow.firsttax|floatformat:2}}</span>
                                                 </p>
+                                                </a>
                                             </div>
                                             <h5 class="econom"> {{selectedrow.cabintype2}} </h5> {% endif %} {% if request.GET.cabin  ==  'business' %}
                                             <div class="col-xs-12 nopadding na-ra">
+                                                <a href="{{ selectedrow.award_link }}" style="text-decoration: none;" target="_blank">
                                                 <p class="flight-rate">
                                                     {{selectedrow.business|intcomma}} Miles + <span>${{selectedrow.businesstax|floatformat:2}}</span>
                                                 </p>
+                                                </a>
                                             </div>
                                             <h5 class="econom"> {{selectedrow.cabintype3}} </h5> {% endif %}
                                         </div>
@@ -585,23 +591,29 @@
                                             {% if request.GET.cabin  ==  'maincabin' %}
                                             <div class="col-xs-12 nopadding na-ra text-right">
                                                 <h5 class="econo pull-left nopl nomt"> {{selectedrow.cabintype1}} </h5>
+                                                <a href="{{ selectedrow.award_link }}" style="text-decoration: none;" target="_blank">
                                                 <p class="flight-rate pull-right">
                                                     {{selectedrow.maincabin|intcomma}} Miles + <span>${{selectedrow.maintax|floatformat:2}}</span>
                                                 </p>
+                                                </a>
                                             </div>
                                             {% endif %} {% if request.GET.cabin  ==  'firstclass' %}
                                             <div class="col-xs-6 nopadding na-ra text-right">
                                                 <h5 class="econo pull-left nopl nomt"> {{selectedrow.cabintype2}} </h5>
+                                                <a href="{{ selectedrow.award_link }}" style="text-decoration: none;" target="_blank">
                                                 <p class="flight-rate pull-right">
                                                     {{selectedrow.firstclass|intcomma}} Miles + <span>${{selectedrow.firsttax|floatformat:2}}</span>
                                                 </p>
+                                                </a>
                                             </div>
                                             {% endif %} {% if request.GET.cabin  ==  'business' %}
                                             <div class="col-xs-6 nopadding na-ra text-right">
                                                 <h5 class="econo pull-left nopl nomt"> {{selectedrow.cabintype3}} </h5>
+                                                <a href="{{ selectedrow.award_link }}" style="text-decoration: none;" target="_blank">
                                                 <p class="flight-rate pull-right">
                                                     {{selectedrow.business|intcomma}} Miles + <span>${{selectedrow.businesstax|floatformat:2}}</span>
                                                 </p>
+                                                </a>
                                             </div>
                                             {% endif %}
                                         </div>
@@ -813,9 +825,11 @@
                                         <div class="col-xs-12 nopadding xs-margin-25px">
                                             <!-- new code  -->
                                             <div class="col-xs-12 nopadding mvb10px na-ra" itemscope itemtype="http://schema.org/FlightReservation">
+                                                <a href="{{ row.award_link }}" style="text-decoration: none;" target="_blank">
                                                 <p class="flight-rate" itemprop="totalPrice">
                                                     {{row.finalprice|intcomma}} Miles +<span>${{row.totaltaxes|floatformat:2}}</span>
                                                 </p>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -899,9 +913,11 @@
                                                     {% endif %}
                                                     {% endif %} </h5>
                                                     <div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
+                                                        <a href="{{ row.award_link }}" style="text-decoration: none;" target="_blank">
                                                         <p class="flight-rate" itemprop="totalPrice">
                                                             {{row.finalprice|intcomma}} Miles +<span>${{row.totaltaxes|floatformat:2}}</span>
                                                         </p>
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -936,9 +952,11 @@
                                             {% endif %}
                                             {% endif %} </h5>
                                             <div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
+                                                <a href="{{ row.award_link }}" style="text-decoration: none;" target="_blank">
                                                 <p class="flight-rate" itemprop="totalPrice">
                                                     {{row.finalprice|intcomma}} Miles +<span>${{row.totaltaxes|floatformat:2}}</span>
                                                 </p>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -998,9 +1016,11 @@
                                                     {% endif %}
                                                     {% endif %} </h5>
                                                     <div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
+                                                        <a href="{{ row.award_link }}" style="text-decoration: none;" target="_blank">
                                                         <p class="flight-rate" itemprop="totalPrice">
                                                             {{row.finalprice|intcomma}} Miles +<span>${{row.totaltaxes|floatformat:2}}</span>
                                                         </p>
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1091,9 +1111,11 @@
                                             {% endif %}
                                             {% endif %} </h5>
                                             <div class="right-data-responsive" itemscope itemtype="http://schema.org/FlightReservation">
+                                                <a href="{{ row.award_link }}" style="text-decoration: none;" target="_blank">
                                                 <p class="flight-rate" itemprop="totalPrice">
                                                     {{row.finalprice|intcomma}} Miles +<span>${{row.totaltaxes|floatformat:2}}</span>
                                                 </p>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
