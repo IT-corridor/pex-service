@@ -220,7 +220,7 @@ function fa_travelinfo() {
 //@@@Total Passenger@@@@
 function fa_total_passenger() {
     var sum = 0;
-    $('.numberHolder').each(function() {
+    $('.fa_numberHolder').each(function() {
         sum += parseFloat($(this).val());
     });
     return sum;
