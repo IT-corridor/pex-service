@@ -209,7 +209,7 @@ function fa_travelinfo() {
         var msg = '';
         $('#submitid').prop('disabled', true);
         $(".alert-warning").empty();
-        msg = "You must select atleast one traveler";
+        msg = "You must select at least one traveler";
         $(".alert-warning").append(msg);
         $(".alert-warning").show();
     } else {
