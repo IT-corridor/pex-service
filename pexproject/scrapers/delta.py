@@ -192,8 +192,16 @@ def delta(orgn, dest, searchdate, searchkey):
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "submitAdvanced")))
         result = driver.execute_script(""" return localStorage.getItem('deltaData'); """)
         deltaObj = json.loads(result)
+        a_file = open('1.json', 'w')
+        a_file.write(json.dumps(deltaObj, indent=4))
+        # a_file.write(result.encode('utf8'))
         # print deltaObj, '@@@@@@'
+        # return
         searchResult = json.loads(deltaObj['jsonobj'])
+        # a_file = open('2.json', 'w')
+        # a_file.write(json.dumps(searchResult, indent=4))
+        # return
+
         cabinhead = "<tr>"+deltaObj['cabinTypes']+"</tr>"
         soup = BeautifulSoup(cabinhead,"xml")
         tds = soup.findAll("td")
@@ -203,6 +211,7 @@ def delta(orgn, dest, searchdate, searchkey):
             pricecol = soup.findAll("label",{"class":"tblHeadBigtext"})
         flightData = searchResult["itineraries"]
     except:
+        # raise
         storeFlag(searchkey,stime)
         return searchkey
     
@@ -329,8 +338,6 @@ def delta(orgn, dest, searchdate, searchkey):
                 taxFloat = totalFareDetails[j]['totalPriceRight']
                 if taxFloat == '' or taxFloat == None:
                     taxFloat = 0
-        #print "taxint",taxInt
-        #print "taxfloat",taxFloat
                 tax = float(taxInt)+float(taxFloat)
                 currencyCode = totalFareDetails[j]['currencyCode']
                 if currencyCode and currencyCode != 'USD': 
@@ -390,7 +397,13 @@ def delta(orgn, dest, searchdate, searchkey):
         arivalTime = arivalTime1.strftime('%H:%M')
         departTime1 = (datetime.datetime.strptime(departTime, '%I:%M%p'))
         departTime = departTime1.strftime('%H:%M')
-        values_string.append((flightNo, str(searchkey), stime, stoppage, "test", SourceCOde, destinationCode, departTime, arivalTime, tripDuration, str(ecofare), str(echoTax), str(bussfare), str(busstax), str(firstFare), str(firsttax), cabintype1, cabintype2, cabintype3, "delta", departdetailtext, ariveDetailtext, flightDetailtext, operatorDetailtext,ecofareClass,bussFareClass,firstFareClass,eco_fare_code,bus_fare_code,first_fare_code))
+
+        if len(pricecol) > 1 and 'Delta Comfort+' in pricecol[1].text:
+            bussFareClass = bussFareClass.replace('Business', 'Economy')
+            values_string.append((flightNo, str(searchkey), stime, stoppage, "test", SourceCOde, destinationCode, departTime, arivalTime, tripDuration, str(ecofare), str(echoTax), '0', '0', str(firstFare), str(firsttax), cabintype1, cabintype2, cabintype3, "delta", departdetailtext, ariveDetailtext, flightDetailtext, operatorDetailtext,ecofareClass,'',firstFareClass,eco_fare_code,'',first_fare_code))
+            values_string.append((flightNo, str(searchkey), stime, stoppage, "test", SourceCOde, destinationCode, departTime, arivalTime, tripDuration, str(bussfare), str(busstax), '0', '0', '0', '0', cabintype1, cabintype2, cabintype3, "delta", departdetailtext, ariveDetailtext, flightDetailtext, operatorDetailtext,bussFareClass,'','',bus_fare_code,'',''))
+        else:
+            values_string.append((flightNo, str(searchkey), stime, stoppage, "test", SourceCOde, destinationCode, departTime, arivalTime, tripDuration, str(ecofare), str(echoTax), str(bussfare), str(busstax), str(firstFare), str(firsttax), cabintype1, cabintype2, cabintype3, "delta", departdetailtext, ariveDetailtext, flightDetailtext, operatorDetailtext,ecofareClass,bussFareClass,firstFareClass,eco_fare_code,bus_fare_code,first_fare_code))
         if len(values_string) > 50:
             if not DEV_LOCAL:
                 cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code,eco_fare_code,business_fare_code,first_fare_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", values_string)

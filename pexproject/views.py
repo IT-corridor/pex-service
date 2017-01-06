@@ -1213,10 +1213,7 @@ def get_flight_pricematrix(request):
         maxPriceMile = temp
 
         return JsonResponse([minPriceMile, maxPriceMile, fare_code_Array], safe=False)
-
-
-    price_matrix = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic', 'alaska']
-    price_matrix = {item: [None, None, None] for item in price_matrix}
+    price_matrix = {item: [None, None, None] for item in AIR_LINES}
 
     if pricematrix:
         for item in pricematrix:
@@ -1607,7 +1604,7 @@ def getsearchresult(request):
                 returnfare = "p2." + cabinclass
                 departfare = "p1." + cabinclass
                 totaltax = "p1."+taxes+"+p2."+taxes
-                record = Flightdata.objects.raw("select p1.*,CONCAT(p1.rowid,'_',p2.rowid) as newid,p2.origin as origin1,p2.rowid as rowid1, p2.stoppage as stoppage1,p2.flighno as flighno1, p2.cabintype1 as cabintype11,p2.cabintype2 as cabintype21,p2.cabintype3 as cabintype31, p2.destination as destination1, p2.departure as departure1, p2.arival as arival1, p2.duration as duration1, p2.maincabin as maincabin1, p2.maintax as maintax1, p2.firsttax as firsttax1, p2.businesstax as businesstax1,p2.departdetails as departdetails1,p2.arivedetails as arivedetails1, p2.planedetails as planedetails1,p2.operatedby as operatedby1," + totalfare + " as finalprice,  "+totaltax+" as totaltaxes from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ='" + returnkeyid1 + "' and " + returnfare + " > '0'  where  p1.searchkeyid = '" + searchkey + "' and " + departfare + " > 0 and " + querylist + " order by finalprice ,totaltaxes, departure, p2.departure ASC")
+                record = Flightdata.objects.raw("select p1.*,CONCAT(p1.rowid,'_',p2.rowid) as newid,p2.origin as origin1,p2.rowid as rowid1, p2.stoppage as stoppage1,p2.flighno as flighno1, p2.cabintype1 as cabintype11,p2.cabintype2 as cabintype21,p2.cabintype3 as cabintype31, p2.destination as destination1, p2.departure as departure1, p2.arival as arival1, p2.duration as duration1, p2.maincabin as maincabin1, p2.maintax as maintax1, p2.firsttax as firsttax1, p2.businesstax as businesstax1,p2.departdetails as departdetails1,p2.arivedetails as arivedetails1, p2.planedetails as planedetails1,p2.operatedby as operatedby1," + totalfare + " as finalprice,  "+totaltax+" as totaltaxes, 1 as award_link, 1 as dollar_link from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ='" + returnkeyid1 + "' and " + returnfare + " > '0'  where  p1.searchkeyid = '" + searchkey + "' and " + departfare + " > 0 and " + querylist + " order by finalprice ,totaltaxes, departure, p2.departure ASC")
                 
             else:
                 if 'minPriceMile' in request.POST:
@@ -1621,7 +1618,7 @@ def getsearchresult(request):
                 cabintype = " and " + cabinclass + " > 0"
                 querylist = querylist+cabintype
                 # print '$$$(class filtered): ', querylist
-                record = Flightdata.objects.raw("select p1.*,p1.maintax as maintax1, p1.firsttax as firsttax1, p1.businesstax as businesstax1,p1.rowid as newid ,case when datasource = 'delta' then " + deltaorderprice + "  else " + unitedorderprice + " end as finalprice, "+taxes+" as totaltaxes from pexproject_flightdata as p1 where " + querylist + " order by finalprice ," + taxes + ",departure ASC")
+                record = Flightdata.objects.raw("select p1.*,p1.maintax as maintax1, p1.firsttax as firsttax1, p1.businesstax as businesstax1,p1.rowid as newid ,case when datasource = 'delta' then " + deltaorderprice + "  else " + unitedorderprice + " end as finalprice, "+taxes+" as totaltaxes, 1 as award_link, 1 as dollar_link  from pexproject_flightdata as p1 where " + querylist + " order by finalprice ," + taxes + ",departure ASC")
                 # print '$$$ (synthesis): ', "select p1.*,p1.maintax as maintax1, p1.firsttax as firsttax1, p1.businesstax as businesstax1,p1.rowid as newid ,case when datasource = 'delta' then " + deltaorderprice + "  else " + unitedorderprice + " end as finalprice, "+taxes+" as totaltaxes from pexproject_flightdata as p1 where " + querylist + " order by finalprice ," + taxes + ",departure ASC LIMIT " + str(limit) + " OFFSET " + str(offset)
             mainlist = list(record)
             # filter aircraft
@@ -1644,6 +1641,15 @@ def getsearchresult(request):
                 mainlist = mainlist_
                 print len(mainlist), ':AFter filter #@#@#@#@#'
             mainlist = mainlist[offset:offset+limit]
+
+            # get flight links
+            flight_links = {}
+            for item in FlightHotelLink.objects.filter(ah_type='airline'):
+                flight_links[item.airline] = [item.award_link, item.dollar_link]
+
+            for item in mainlist:
+                item.award_link = flight_links.get(item.datasource, ['javascript:void(0)', 'javascript:void(0)'])[0]
+                item.dollar_link = flight_links.get(item.datasource, ['javascript:void(0)', 'javascript:void(0)'])[1]
 
         progress_value = '' 
         if 'progress_value' in request.POST:
@@ -2133,12 +2139,19 @@ def _search_hotel(place, checkin, checkout, filters):
     }
     # __debug('filters: %s\n' % str(filters))
 
+    # get hotel links
+    hotel_links = {}
+    for item in FlightHotelLink.objects.filter(ah_type='hotel'):
+        hotel_links[item.airline] = [item.award_link, item.dollar_link]
+
     r_db_hotels = []
     for item in db_hotels:
         amenities = HotelAmenity.objects.filter(hotel=item)
         amenities = [am.amenity for am in amenities]
         _item = model_to_dict(item)
         _item['amenity'] = amenities
+        _item['award_link'] = hotel_links.get(item.chain, ['javascript:void(0)', 'javascript:void(0)'])[0]
+        _item['dollar_link'] = hotel_links.get(item.chain, ['javascript:void(0)', 'javascript:void(0)'])[1]
         r_db_hotels.append(_item)
 
     return ['', r_db_hotels, price_matrix, filters]
@@ -2325,7 +2338,7 @@ def check_validity_flight_params(request):
     flight_class = params.get('class')
     mile_low = params.get('mile_low') or '1'
     mile_high = params.get('mile_high') or '10000000'
-    airlines = params.get('airlines') or ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic', 'alaska']
+    airlines = params.get('airlines') or AIR_LINES
     airlines.append('valid_line')
     airlines = [item.encode('ascii', 'ignore') for item in airlines]
 
@@ -2839,6 +2852,70 @@ def blog_list_delete(request, id):
 
 
 @admin_only
+def flight_link(request):
+    flight_links = FlightHotelLink.objects.filter(ah_type='airline')
+    return render(request, 'Admin/flight_link_list.html', {'flight_links': flight_links})
+
+
+@admin_only
+def flight_link_update(request, id=None):
+    if id:
+        flight_link = FlightHotelLink.objects.get(id=id)
+        pre_airline = flight_link.airline
+    else:
+        flight_link = FlightHotelLink()
+        airline_ = FlightHotelLink.objects.filter(ah_type='airline').values_list('airline', flat=True)
+        pre_airline = [item for item in AIR_LINES if item not in airline_]
+
+    if request.method == 'GET':
+        form = FlightHotelLinkForm(initial=model_to_dict(flight_link))
+    else:
+        form = FlightHotelLinkForm(request.POST)
+        if form.is_valid():
+            flight_link.ah_type = 'airline'
+            flight_link.award_link = form.cleaned_data['award_link']
+            flight_link.dollar_link = form.cleaned_data['dollar_link']
+            flight_link.airline = form.cleaned_data['airline']
+            flight_link.save()
+            return HttpResponseRedirect('/Admin/flight_link/')
+
+    return render(request, 'Admin/flight_link_form.html', 
+                 {'form':form, 'pre_airline': pre_airline})
+
+
+@admin_only
+def hotel_link(request):
+    hotel_links = FlightHotelLink.objects.filter(ah_type='hotel')
+    return render(request, 'Admin/hotel_link_list.html', {'hotel_links': hotel_links})
+
+
+@admin_only
+def hotel_link_update(request, id=None):
+    if id:
+        hotel_link = FlightHotelLink.objects.get(id=id)
+        pre_hotel = hotel_link.airline
+    else:
+        hotel_link = FlightHotelLink()
+        hotel_ = FlightHotelLink.objects.filter(ah_type='hotel').values_list('airline', flat=True)
+        pre_hotel = [item for item in HOTEL_CHAINS.keys() if item not in hotel_]
+
+    if request.method == 'GET':
+        form = FlightHotelLinkForm(initial=model_to_dict(hotel_link))
+    else:
+        form = FlightHotelLinkForm(request.POST)
+        if form.is_valid():
+            hotel_link.ah_type = 'hotel'
+            hotel_link.award_link = form.cleaned_data['award_link']
+            hotel_link.dollar_link = form.cleaned_data['dollar_link']
+            hotel_link.airline = form.cleaned_data['airline']
+            hotel_link.save()
+            return HttpResponseRedirect('/Admin/hotel_link/')
+
+    return render(request, 'Admin/hotel_link_form.html', 
+                 {'form':form, 'pre_hotel': pre_hotel})
+
+
+@admin_only
 def token(request):
     tokens = Token.objects.all()
     return render(request, 'Admin/token.html', {'tokens': tokens})
@@ -2932,9 +3009,6 @@ def admin_logout(request):
 
 @admin_only
 def Admin(request):
-    air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 
-                 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 
-                 'Virgin Australia', 'virgin_atlantic', 'alaska']    
     stat_num_search = _airline_info(request.user, 3650, 'maincabin', 
                                     'all airports', 'all airports')
 
@@ -2944,7 +3018,7 @@ def Admin(request):
     return render(request, 'Admin/dashboard.html', {
         'stat_num_search': stat_num_search,
         'pop_searches': pop_searches,
-        'air_lines': air_lines,
+        'air_lines': AIR_LINES,
         'num_users': len(list(User.objects.all())),
         'total_searches': len(list(Searchkey.objects.all())) * 3,
         'search_on_country':search_on_country,
@@ -3028,9 +3102,6 @@ def _airline_info(user, period, fare_class, _from, _to):
     stat_num_search = []
 
     try:
-        air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 
-                     'etihad', 'jetblue', 's7', 'united', 'Virgin America', 
-                     'Virgin Australia', 'virgin_atlantic', 'alaska']
         start_time = datetime.datetime.now() - timedelta(days=period)
 
         searches = Searchkey.objects.filter(scrapetime__gte=start_time)
@@ -3044,7 +3115,7 @@ def _airline_info(user, period, fare_class, _from, _to):
             searches = searches.filter(source=_from)
 
         searches = [item.searchid for item in searches]
-        for air_line in air_lines:
+        for air_line in AIR_LINES:
             kwargs = {
                 '{0}__gt'.format(fare_class):0,
                 'datasource': air_line,
@@ -3376,7 +3447,7 @@ def signup_activity(request):
 
 @customer_only
 def customer(request):    
-    air_lines = ['aeroflot', 'airchina', 'american airlines', 'delta', 'etihad', 'jetblue', 's7', 'united', 'Virgin America', 'Virgin Australia', 'virgin_atlantic', 'alaska']
+    air_lines = AIR_LINES
     stat_num_search = _airline_info(request.user, 3650, 'maincabin', 'all airports', 'all airports')
     stat_price_history = _price_history(request.user, '2016-04-05', '2026-04-05', 'aeroflot', 'New York (JFK)', 'Moscow (MOW)', 'Avg') 
     user_search_history = get_customer_search_history(user_id=request.user.user_id)
