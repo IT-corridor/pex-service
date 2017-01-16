@@ -9,23 +9,23 @@ import time
 import _strptime
 import re
 import json
-# import pdb
-import codecs
+import pdb
 from selenium.webdriver.common.proxy import *
 from datetime import date
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from pyvirtualdisplay import Display
 
 DEV_LOCAL = False
+# DEV_LOCAL = True
 
 if not DEV_LOCAL:
     import customfunction
 
-
 def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag):
-    # sys.stdout=codecs.getwriter('utf-8')(sys.stdout)
     if not DEV_LOCAL:
         db = customfunction.dbconnection()
         cursor = db.cursor()
@@ -40,19 +40,21 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
     else:
         cabinType = "B"
     
-    url = "https://www.virginaustralia.com/au/en/bookings/flights/make-a-booking/?bookingType=flights&passthru=0&trip_type=0&origin="+from_airport+"&destination="+to_airport+"&travel_class="+cabinType+"&adults=1&children=0&infants=0&date_flexible=0&use_points=1&showPromoCode=1&date_start_day="+str(dateday)+"&date_start_month="+str(datemonth) #+"&date_end_day="+str(dateday)+"&date_end_month="+str(datemonth)
-    
-    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
-    driver.set_window_size(1120, 1080)  
+    url = "http://www.virginaustralia.com/au/en/bookings/flights/make-a-booking/?bookingType=flights&passthru=0&trip_type=0&origin="+from_airport+"&destination="+to_airport+"&travel_class="+cabinType+"&adults=1&children=0&infants=0&date_flexible=0&use_points=1&showPromoCode=1&date_start_day="+str(dateday)+"&date_start_month="+str(datemonth) #+"&date_end_day="+str(dateday)+"&date_end_month="+str(datemonth)
+    display = Display(visible=0, size=(800, 600))
+    display.start()
+    driver = webdriver.Chrome()
     
     def storeFlag(searchid,stime,isflag):
         if isflag:   
             if not DEV_LOCAL:
                 cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "Virgin Australia", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
                 db.commit()
+        display.stop()
         driver.quit()
     try:
         driver.get(url)
+        # print driver.page_source
         submitbtn = WebDriverWait(driver,5).until(
                     lambda driver :driver.find_element_by_xpath("//*[contains(text(), 'Find Flights')]"))
         driver.execute_script("arguments[0].click();", submitbtn)
@@ -76,11 +78,12 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
     except:
         print "data found"
     try:
+        # driver.save_screenshot('/root/out_enter.png');
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "dtcontainer-0")))
         html_page = driver.page_source
-        soup = BeautifulSoup(html_page,"lxml")
+        soup = BeautifulSoup(html_page,"xml")
         templatedata = soup.find('script', text=re.compile('var templateData = '))
-        time.sleep(1)
+        # time.sleep(1)
         json_text = re.search(r'^\s*var templateData = \s*({.*?})\s*;\s*$',templatedata.string, flags=re.DOTALL | re.MULTILINE).group(1)
         jsonData = json.loads(json_text)
         tempdata = jsonData["rootElement"]["children"][1]["children"][0]["children"][7]["model"]
@@ -91,6 +94,7 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
     try:
         operatordiv = soup.findAll(True, {'class': re.compile(r'\operating-carrier-wrapper\b')})
        
+        # print operatordiv, '@@@@@@@@@2'
         operatorArray = []
         for div in operatordiv:
             #print "========================================================================"
@@ -140,13 +144,20 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
                 fareClassCode.append(bookingCode1)
                 segOrigin = segments[counter]["departureCode"]
                 segDepartDate = segments[counter]["departureDate"]
-                airport_ = customfunction.get_airport_detail(segOrigin) or segOrigin
+                if DEV_LOCAL:
+                    airport_ = segOrigin
+                else:
+                    airport_ = customfunction.get_airport_detail(segOrigin) or segOrigin
+
                 segDetailFormat = segDepartDate[:-3]+" | from "+airport_
                 originDetails.append(segDetailFormat)
                 
                 segDest = segments[counter]["arrivalCode"]
                 segArive = segments[counter]["arrivalDate"]
-                airport_ = customfunction.get_airport_detail(segDest) or segDest
+                if DEV_LOCAL:
+                    airport_ = segDest
+                else:
+                    airport_ = customfunction.get_airport_detail(segDest) or segDest
                 destdetailFormat = segArive[:-3]+" | at "+airport_
                 destDetails.append(destdetailFormat)
                 if len(operatorArray) >= operatorcounter:
@@ -185,7 +196,10 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
                 fltMinuteTimeHour = fltMinuteTime/60
                 fltMinuteTime = fltMinuteTime % 60
                 fltTimeFormat = str(fltMinuteTimeHour)+"h "+str(fltMinuteTime)+"m"
-                fltFormat = flightNo+" | "+customfunction.AIRCRAFTS[aircraftType[f]]+" ("+fltTimeFormat+")"
+                if DEV_LOCAL:
+                    fltFormat = flightNo+" | "+aircraftType[f]+" ("+fltTimeFormat+")"
+                else:    
+                    fltFormat = flightNo+" | "+customfunction.AIRCRAFTS[aircraftType[f]]+" ("+fltTimeFormat+")"
                 flightsDetails.append(fltFormat)
             originDetailString = '@'.join(originDetails)
             arivedetailtext = '@'.join(destDetails)
@@ -236,23 +250,28 @@ def virginAustralia(from_airport,to_airport,searchdate,searchid,cabinName,isflag
                         if not DEV_LOCAL:
                             cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code,eco_fare_code,business_fare_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
                             db.commit()
-                        print value_string
+                        else:
+                            print value_string
                         value_string=[]
         if len(value_string) > 0:
             if not DEV_LOCAL:
                 cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code,eco_fare_code,business_fare_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", value_string)
                 db.commit()
-            # print value_string
+            else:
+                print value_string
         if isflag:   
             if not DEV_LOCAL:
                 cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "Virgin Australia", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
                 db.commit()
+        display.stop()
         driver.quit()
     except:
+        raise
         if isflag:   
             if not DEV_LOCAL:
                 cursor.execute ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", ("flag", str(searchid), stime, "flag", "test", "flag", "flag", "flag", "0","0", "0","0", "0", "0", "flag", "flag", "flag", "Virgin Australia", "flag", "flag", "flag", "flag", "flag", "flag", "flag"))
                 db.commit()
+        display.stop()
         driver.quit()
     return searchid
 
