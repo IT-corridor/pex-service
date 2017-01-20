@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import os, sys
 import selenium
 import datetime
@@ -12,15 +13,12 @@ from selenium import webdriver
 from selenium.webdriver.common.proxy import *
 from datetime import date
 
-DEBUG = False
-DEBUG = True
 DEV_LOCAL = False
-# DEV_LOCAL = True
+DEV_LOCAL = True
 
 if DEV_LOCAL:
     import pdb
-
-if not DEV_LOCAL:
+else:
     import customfunction
 
 
@@ -56,7 +54,7 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
     else:
         url = "http://www.virgin-atlantic.com/us/en/book-your-travel/book-your-flight/flight-search-results.html?departure="+origin+"&arrival="+dest+"&adult=1&departureDate="+str(date)+"&search_type=redeemMiles&classType=10&classTypeReturn=10&bookingPanelLocation=BookYourFlight&isreturn=no"
 
-    # print url, '@@@@@@@@@@@@@22'    
+    print url, '@@@@@@@@@@@@@22'    
 
     driver.get(url)
     time.sleep(2)
@@ -86,6 +84,7 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
                     trbody = tbody.findAll("tr",{"class":"indirectRoute "})
         except:
             return keyid
+            
         for row in trbody:
             econo = 0
             econotax = 0
@@ -342,7 +341,8 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
             if not DEV_LOCAL:
                 cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);",value_string )
                 db.commit()
-            # print value_string
+            else:
+                print value_string
         #driver.quit()
             
     tbody = soup.findAll("tbody",{"class":"flightStatusTbody"})
@@ -361,7 +361,6 @@ def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
 
 
 if __name__=='__main__':
-    virgin_atlantic(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5],sys.argv[6])
-    # if DEV_LOCAL:
-    #     pdb.set_trace()    
-    # virgin_atlantic('LON', 'LAX', '10/18/2016', '', '1231', '')
+    # virgin_atlantic(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5],sys.argv[6])
+    pdb.set_trace()    
+    virgin_atlantic('LON', 'LAX', '2/18/2017', '', '1231', '')
