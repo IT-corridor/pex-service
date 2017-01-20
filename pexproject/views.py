@@ -452,7 +452,7 @@ def forgotPassword(request):
     msg =''  
     if request.POST:
         user_email =  request.POST['email']
-        randomcode = randint(100000000000,999999999999)
+        randomcode = random.randint(100000000000,999999999999)
         usercode =  base64.b64encode(str(randomcode))
         if 'userid' in request.session:
             user = User.objects.get(pk = request.session['userid'])
