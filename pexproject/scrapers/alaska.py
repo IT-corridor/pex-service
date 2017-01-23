@@ -110,7 +110,7 @@ def alaska(ocity_code, dcity_code, searchdate, searchkey):
         return searchkey
 
     try:
-        # driver.save_screenshot('/root/out_enter.png');
+        driver.save_screenshot('/root/out_enter.png');
         WebDriverWait(driver, 25).until(EC.presence_of_element_located((By.ID, "ContinueButton")))
 
         html_page = driver.page_source
