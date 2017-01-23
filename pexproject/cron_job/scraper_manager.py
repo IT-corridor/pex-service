@@ -24,7 +24,7 @@ for proc in psutil.process_iter():
             """ for long-running processes """
             # elapsed time in seconds
             duration = int((current_time - pinfo['create_time']))
-            if duration > 60 * 3:
+            if duration > 60 * 1.7:
                 kill_children(proc)
 
     except psutil.NoSuchProcess:
