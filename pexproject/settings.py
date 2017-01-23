@@ -39,7 +39,7 @@ WALLET_TOKEN = config['WALLET_TOKEN']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['pexportal.com']
+ALLOWED_HOSTS = ['pexportal.com', '74.208.77.141']
 
 # Application definition
 

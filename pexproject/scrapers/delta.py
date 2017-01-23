@@ -211,7 +211,7 @@ def delta(orgn, dest, searchdate, searchkey):
             pricecol = soup.findAll("label",{"class":"tblHeadBigtext"})
         flightData = searchResult["itineraries"]
     except:
-        raise
+        # raise
         storeFlag(searchkey,stime)
         return searchkey
     
