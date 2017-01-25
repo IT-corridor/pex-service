@@ -1003,8 +1003,7 @@ def _check_data(departkey, returnkey, cabin, allkey, checkdata=False):
         if returnkey:   # for round trip
             returnfare = "p2." + cabin
             departfare = "p1." + cabin           
-            if checkdata:     
-                isdatastored = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and "+returnfare+" > 0 where p1.searchkeyid="+str(departkey)+" and "+departfare+" > 0")
+            checkdata = checkdata & Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and "+returnfare+" > 0 where p1.searchkeyid="+str(departkey)+" and "+departfare+" > 0").exists()
                              
             flags = Flightdata.objects.filter(searchkeyid__in=[departkey, returnkey], origin='flag').count()
             iscomplete = 'completed' if flags >= customfunction.flag * 2 else ''
@@ -1015,7 +1014,7 @@ def _check_data(departkey, returnkey, cabin, allkey, checkdata=False):
             flags = Flightdata.objects.filter(searchkeyid=departkey, origin='flag').count()
             iscomplete = 'completed' if flags >= customfunction.flag else ''
 
-    if checkdata and isdatastored:
+    if checkdata:
         scrape_status = "stored"
 
     print "\tflagcheck", flags
