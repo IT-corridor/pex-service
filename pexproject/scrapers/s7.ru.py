@@ -26,7 +26,7 @@ specialties = {
 }
 
 def get_city_s7_code(citycode=None):
-    file_path = '../data/location.json' if DEV_LOCAL else '/var/www/html/python/pex/pexproject/pexproject/data/location.json'
+    file_path = '../data/location.json' if DEV_LOCAL else '/var/www/html/pexplus/pexproject/data/location.json'
     json_text = open(file_path, 'r')
     jsonData = json.loads(json_text.read())
     for item in jsonData:
