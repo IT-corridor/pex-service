@@ -972,7 +972,7 @@ def checkData(request):
         allkey = request.POST.get('multicity')
         recordkey = request.POST.get('keyid')
         returnkey = request.POST.get('returnkey')
-        checkdata = request.POST.get('checkdata')
+        checkdata = request.POST.get('checkdata') == 'true'
         
         results = _check_data(recordkey, returnkey, cabin, allkey, checkdata)
         return JsonResponse(results, safe=False)
