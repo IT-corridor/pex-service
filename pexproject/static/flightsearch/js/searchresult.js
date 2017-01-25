@@ -1,6 +1,7 @@
 $('#nodata-msg').empty();
 var data_status = false;
 var datalist = data0;
+var checkdata = true;
 
 var aircraft = aircraft_.replace(/&quot;/g, '');
 aircraft = aircraft.replace('[', '');
@@ -885,7 +886,6 @@ function redirecttosearchpage(scraperStatus) {
 }
 
 var dataCheckCount = 0;
-var timeCount = 0;
 var isDataComplete = '';
 var multicity = '';
 var multicity1 = multicity_;
@@ -907,35 +907,26 @@ function isprocess() {
     $.ajax({
         type: "POST",
         url: "/checkData/",
-        data: "keyid=" + encodeURI(searchid) + "&csrfmiddlewaretoken=" + csrf_token + "&cabin=" + cabin_ + temp + multicity,
+        data: "keyid=" + encodeURI(searchid) + "&csrfmiddlewaretoken=" + csrf_token + "&cabin=" + cabin_ + temp + multicity+"&checkdata=" + checkdata,
         success: function(data) {
             callrunning = false;
 
-            if (data[0] == 'onprocess')
-                timeCount = parseInt(timeCount) + 1;
+            if ((checkdata == false && dataCheckCount % 3 == 0) || (checkdata == true && data[0] == 'stored')) 
+                redirecttosearchpage('onprocess');
+
+            if (data[0] == 'stored')
+                checkdata = false;  // data stored
 
             if (timecompleted && data[1] != 'completed')
                 isprocess();
 
-            if (data[1] == 'key_expired') {
-                clearInterval(refreshIntervalId);
-                $('changebtnid').click();
-
-                setSearchData();
-            }
-
             if (data[1] == 'completed' || dataCheckCount > 30) {
                 clearInterval(refreshIntervalId);
-                // console.log(aircraft);
-                // console.log("Post checkdata");
-                // console.log(aircraft_);
                 search_finished = true;
                 redirecttosearchpage('complete');
                 get_post_search_data();
                 getflexData();
-            } else if (data[0] != 'onprocess' && dataCheckCount % 3 == 0) {
-                redirecttosearchpage('onprocess');
-            }
+            } 
 
             dataCheckCount++;
         },

@@ -972,16 +972,19 @@ def checkData(request):
         allkey = request.POST.get('multicity')
         recordkey = request.POST.get('keyid')
         returnkey = request.POST.get('returnkey')
+        checkdata = request.POST.get('checkdata')
         
-        results = _check_data(recordkey, returnkey, cabin, allkey)
+        results = _check_data(recordkey, returnkey, cabin, allkey, checkdata)
         return JsonResponse(results, safe=False)
     
 
-def _check_data(departkey, returnkey, cabin, allkey):
+def _check_data(departkey, returnkey, cabin, allkey, checkdata=False):
     '''
     check and return the current status for the search
     '''
     sss = datetime.datetime.now()
+    scrape_status = "onprocess"
+    isdatastored = None
 
     if allkey:  # multi city
         multiple_key = allkey.split(',')
@@ -999,27 +1002,27 @@ def _check_data(departkey, returnkey, cabin, allkey):
     else:   
         if returnkey:   # for round trip
             returnfare = "p2." + cabin
-            departfare = "p1." + cabin                
-            isdatastored = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and "+returnfare+" > 0 where p1.searchkeyid="+str(departkey)+" and "+departfare+" > 0")
+            departfare = "p1." + cabin           
+            if checkdata:     
+                isdatastored = Flightdata.objects.raw("select p1.* from pexproject_flightdata p1 inner join pexproject_flightdata p2 on p1.datasource = p2.datasource and p2.searchkeyid ="+str(returnkey)+" and "+returnfare+" > 0 where p1.searchkeyid="+str(departkey)+" and "+departfare+" > 0")
                              
             flags = Flightdata.objects.filter(searchkeyid__in=[departkey, returnkey], origin='flag').count()
             iscomplete = 'completed' if flags >= customfunction.flag * 2 else ''
         else:           # for oneway
-            isdatastored = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(departkey)+" and "+cabin+"> 0")
+            if checkdata:
+                isdatastored = Flightdata.objects.raw("select * from pexproject_flightdata where searchkeyid="+str(departkey)+" and "+cabin+"> 0")
             
-            flags = Flightdata.objects.filter(searchkeyid__in=[departkey], origin='flag').count()
+            flags = Flightdata.objects.filter(searchkeyid=departkey, origin='flag').count()
             iscomplete = 'completed' if flags >= customfunction.flag else ''
 
-    if len(list(isdatastored)) > 0:
-        data1 = "stored"
-    else:
-        data1 = "onprocess"
+    if checkdata and isdatastored:
+        scrape_status = "stored"
 
-    print "flagcheck", flags
-    print "customfunction flag", customfunction.flag
+    print "\tflagcheck", flags
+    print "\tcustomfunction flag", customfunction.flag
     print '\t#### checkdata time elapsed: {}'.format(datetime.datetime.now()-sss)
 
-    return [data1, iscomplete]
+    return [scrape_status, iscomplete]
 
 
 def getFlexResult(request):
