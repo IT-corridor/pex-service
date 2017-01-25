@@ -171,7 +171,7 @@ def parse_flight(flight, ibe_conversation, driver, log_file, db, searchkey, sear
         cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code,eco_fare_code,business_fare_code,first_fare_code) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", flightinfo)
         db.commit()
 
-    log_file.write(str(flightinfo)+'\n')
+    # log_file.write(str(flightinfo)+'\n')
 
 def get_miles_tax(node, ibe_conversation, driver):
     mile = node.find_all("span", {"data-qa": "amount"})
