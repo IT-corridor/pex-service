@@ -288,4 +288,5 @@ def jetblue(from_airport,to_airport,searchdate,searchid):
 
 if __name__=='__main__':
     jetblue(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
+    print '\t@@@@ jetblue finished'
     # jetblue('sfo', 'nyc', '12/29/2016', 234234)

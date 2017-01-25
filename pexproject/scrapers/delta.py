@@ -425,4 +425,5 @@ def delta(orgn, dest, searchdate, searchkey):
             
 if __name__=='__main__':
     delta(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[5])
+    print '\t@@@@ delta finished'
     # delta('ewr', 'msp', '12/29/2016', '213141231')        

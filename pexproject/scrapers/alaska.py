@@ -217,7 +217,7 @@ def alaska(ocity_code, dcity_code, searchdate, searchkey):
         storeFlag(searchkey,stime)
 
     driver.quit()              
-    print '###### time elapsed: {}'.format(datetime.datetime.now()-sss)
+    print '\t#### alaska time elapsed: {}'.format(datetime.datetime.now()-sss)
     return searchkey    
 
 def get_clean_string(string):
@@ -228,6 +228,7 @@ def get_neat_string(string):
 
 if __name__=='__main__':
     alaska(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+    print '\t@@@@ alaska finished'
     # pdb.set_trace()        
     # alaska('sfo', 'lax', '12/27/16', '265801')
     # alaska('lax', 'kef', '7/24/17', '265801')

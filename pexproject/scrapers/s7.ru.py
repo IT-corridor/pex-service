@@ -192,5 +192,6 @@ def get_miles_tax(node, ibe_conversation, driver):
 if __name__=='__main__':
     # pdb.set_trace()
     s7ru(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+    print '\t@@@@ s7 finished'
     # s7ru('pek', 'mow', '2016-10-24', '265801')
     # s7ru('JFK', 'MOW', '2016-07-18', '265801')

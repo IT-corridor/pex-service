@@ -338,4 +338,5 @@ def etihad(source, destcode, searchdate, searchkey,scabin):
     
 if __name__=='__main__':
     etihad(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5])
+    print '\t@@@@ etihad finished'
 

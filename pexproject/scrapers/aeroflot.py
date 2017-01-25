@@ -272,5 +272,6 @@ def aeroflot(ocity_code, dcity_code, searchdate, searchkey):
 
 if __name__=='__main__':
     aeroflot(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+    print '\t@@@@ aeroflot finished'
     # aeroflot('MOW', 'BJS', '2016-06-25', '265801')
     # aeroflot('IAD', 'BER', '2016-08-04', '5500')

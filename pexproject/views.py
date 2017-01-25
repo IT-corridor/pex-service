@@ -1026,7 +1026,7 @@ def _check_data(recordkey, returnkey, cabin, allkey):
         data1 = "onprocess"
     print "flagcheck",len(list(flagcheck))
     print "customfunction flag", customfunction.flag
-    print '###### time elapsed: {}'.format(datetime.datetime.now()-sss)
+    print '\t#### checkdata time elapsed: {}'.format(datetime.datetime.now()-sss)
     if len(list(flagcheck)) >= customfunction.flag:
         iscomplete = "completed"
 

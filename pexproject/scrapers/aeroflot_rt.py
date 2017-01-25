@@ -271,5 +271,6 @@ def get_tax(cookies, brandedInOutMappings):
  
 if __name__=='__main__':
     aeroflot(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6])
+    print '\t@@@@ alaska finished'
     # aeroflot('MOW', 'NYC', '2016-06-25', '265801', '2016-07-20')
     # aeroflot('PEK', 'MOW', '2016-06-30', '265801', '2016-07-27')
