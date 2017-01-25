@@ -700,7 +700,7 @@ def get_ids(request):
     return id from ip and cookie and user_id if signed in
     """
     user_id = int(request.session['userid']) if 'userid' in request.session else -1
-    cookie_id = get_client_ip(request) + '-' + request.COOKIES['_ga']
+    cookie_id = get_client_ip(request) + '-' + request.COOKIES.get('_ga', '')
     return cookie_id, user_id
 
 
@@ -981,6 +981,7 @@ def _check_data(recordkey, returnkey, cabin, allkey):
     '''
     check and return the current status for the search
     '''
+    sss = datetime.datetime.now()
     iscomplete =''
     isdatastored = ''
     flagcheck = ''
@@ -1025,6 +1026,7 @@ def _check_data(recordkey, returnkey, cabin, allkey):
         data1 = "onprocess"
     print "flagcheck",len(list(flagcheck))
     print "customfunction flag", customfunction.flag
+    print '###### time elapsed: {}'.format(datetime.datetime.now()-sss)
     if len(list(flagcheck)) >= customfunction.flag:
         iscomplete = "completed"
 
