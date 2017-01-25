@@ -12,7 +12,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 
 DEV_LOCAL = False
-# DEV_LOCAL = True
+DEV_LOCAL = True
 
 if not DEV_LOCAL:
     import customfunction
@@ -55,7 +55,7 @@ def get_miles_taxes(tds):
 
 
 def alaska(ocity_code, dcity_code, searchdate, searchkey):
-    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
+    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any','--load-images=false'])
     driver.set_window_size(1120, 1080)  
 
     # driver = webdriver.Firefox()
