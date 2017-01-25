@@ -55,6 +55,7 @@ def get_miles_taxes(tds):
 
 
 def alaska(ocity_code, dcity_code, searchdate, searchkey):
+    sss = datetime.datetime.now()
     driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any','--load-images=false'])
     driver.set_window_size(1120, 1080)  
 
@@ -216,6 +217,7 @@ def alaska(ocity_code, dcity_code, searchdate, searchkey):
         storeFlag(searchkey,stime)
 
     driver.quit()              
+    print '###### time elapsed: {}'.format(datetime.datetime.now()-sss)
     return searchkey    
 
 def get_clean_string(string):
