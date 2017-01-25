@@ -1015,7 +1015,7 @@ def _check_data(departkey, returnkey, cabin, allkey):
     else:
         data1 = "onprocess"
 
-    print "flagcheck",len(list(flagcheck))
+    print "flagcheck",len(list(flags))
     print "customfunction flag", customfunction.flag
     print '\t#### checkdata time elapsed: {}'.format(datetime.datetime.now()-sss)
 
