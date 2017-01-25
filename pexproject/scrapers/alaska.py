@@ -204,7 +204,7 @@ def alaska(ocity_code, dcity_code, searchdate, searchkey):
                 print (flightno[0], str(searchkey), stime, stoppage, "test", flight['orig'], flight['dest'], departure_t[0], arrival_t[-1], total_duration, main_mile, main_tax, business_mile, business_tax, first_mile, first_tax,"Economy", "Business", "First", "alaska", departinfo, arrivalinfo, planeinfo, operatedby,'','','','','','')
 
     except Exception, e:
-        raise               
+        # raise               
         print 'Something is wrong'
 
 
