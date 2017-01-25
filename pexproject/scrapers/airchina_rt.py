@@ -77,7 +77,7 @@ def get_mile_tax(log_file, cookies, flight_to_info, flight_from_info, cabin):
     return str(mile), str(tax)
 
 def airchina(ocity_code, dcity_code, searchdate, searchkey, returndate, returnkey):
-    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
+    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any','--load-images=false'])
     driver.set_window_size(1120, 1080)  
 
     url = SEARCH_URL % (ocity_code, dcity_code, searchdate, returndate)

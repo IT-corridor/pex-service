@@ -25,7 +25,7 @@ def flex_delta(src,dest,date,searchkey,cabin):
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     try:
         url = "http://www.delta.com/air-shopping/calendar.action"
-        driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
+        driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any','--load-images=false'])
         driver.set_window_size(1120, 1080)  
         driver.get(url)
         flexClass = ''

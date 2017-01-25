@@ -36,7 +36,7 @@ def get_city_s7_code(citycode=None):
     return 'None'
 
 def s7ru(ocity_code, dcity_code, searchdate, searchkey):
-    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
+    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any','--load-images=false'])
     driver.set_window_size(1120, 1080)  
     url = 'http://travelwith.s7.ru/selectExactDateSearchFlights.action?TA=1&CUR=USD&FLC=1&RDMPTN=true&FSC1=1&DD1=%s&DA1=%s&DP1=%s&AA1=%s&AP1=%s&LAN=en' % (searchdate, ocity_code, get_city_s7_code(ocity_code), dcity_code, get_city_s7_code(dcity_code))
 

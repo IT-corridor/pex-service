@@ -22,7 +22,7 @@ def flex_blue(origin,dest,date,searchkey):
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     url = "http://www.jetblue.com/bestfarefinder/CalendarData.aspx?month="+month+"+"+str(year)+"&type=POINTS&direction=outbound&tripType=RT&origin="+origin+"&destination="+dest+"&adult=1&child=0&infant=0"
     ret_url = "http://www.jetblue.com/bestfarefinder/CalendarData.aspx?month="+month+"+"+str(year)+"&type=POINTS&direction=inbound&tripType=RT&origin="+origin+"&destination="+dest+"&adult=1&child=0&infant=0"
-    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
+    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any','--load-images=false'])
     driver.set_window_size(1120, 1080)  
     driver.get(url)
 
