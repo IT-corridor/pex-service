@@ -929,6 +929,7 @@ function isprocess() {
             if (data[1] == 'completed' || dataCheckCount > 30) {
                 clearInterval(refreshIntervalId);
                 search_finished = true;
+                callable_seachresult = true;
                 redirecttosearchpage('complete');
                 get_post_search_data();
                 getflexData();
