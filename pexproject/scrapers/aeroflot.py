@@ -60,7 +60,10 @@ def find_flight_id(flight, flight_type_code):
     return node['id'].replace('flight_both_', '') if node else None
 
 def aeroflot(ocity_code, dcity_code, searchdate, searchkey):
-    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any','--load-images=false'])
+    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true',
+                                               '--ssl-protocol=any',
+                                               '--load-images=false'],
+                                 service_log_path='/tmp/ghostdriver.log')
     driver.set_window_size(1120, 1080)  
     url = URL % (ocity_code, dcity_code, searchdate)
     
