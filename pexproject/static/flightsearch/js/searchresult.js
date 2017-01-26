@@ -2,6 +2,7 @@ $('#nodata-msg').empty();
 var data_status = false;
 var datalist = data0;
 var checkdata = true;
+var callable_seachresult = true;
 
 var aircraft = aircraft_.replace(/&quot;/g, '');
 aircraft = aircraft.replace('[', '');
@@ -843,11 +844,16 @@ function updateTime() {
 }
 
 function redirecttosearchpage(scraperStatus) {
+    if (!callable_seachresult)
+        return;
+    callable_seachresult = false;
+
     $.ajax({
         url: dataurls,
         type: 'POST',
         data: "csrfmiddlewaretoken=" + csrf_token + "&depaturemin=" + depaturemin + "&depaturemax=" + depaturemax + "&airlines=" + airline + "&aircraft=" + aircraft + "&stoppage=" + stoppage + row_val + "&scraperStatus=" + scraperStatus,
         success: function(html) {
+            callable_seachresult = true;
             $('.filters-holder').addClass('xs-filters-holder-ht');
             if (!detail_clicked) {
                 $("#content1").empty();
