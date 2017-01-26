@@ -33,7 +33,11 @@ def delta(orgn, dest, searchdate, searchkey):
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     sys.stdout=codecs.getwriter('utf-8')(sys.stdout)
 
-    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any','--load-images=false'])
+    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true',
+                                               '--ssl-protocol=any',
+                                               '--load-images=false'],
+                                 service_log_path='/tmp/ghostdriver.log')
+
     driver.set_window_size(1120, 1080)  
     # driver = webdriver.Firefox()
 

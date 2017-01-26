@@ -30,7 +30,11 @@ def get_delta_price(orgn, dest, searchdate, returndate=None, passenger=1):
     It takes about 23 seconds for oneway, 37 for roundtrip
     """
     url = "http://www.delta.com/"   
-    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any','--load-images=false'])
+    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true',
+                                               '--ssl-protocol=any',
+                                               '--load-images=false'],
+                                 service_log_path='/tmp/ghostdriver.log')
+
     driver.set_window_size(1120, 1080)  
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
 

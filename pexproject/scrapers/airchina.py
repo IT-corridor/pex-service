@@ -60,7 +60,11 @@ def get_tax(log_file, cookies, index, cabin):
 
 
 def airchina(ocity_code, dcity_code, searchdate, searchkey):
-    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any','--load-images=false'])
+    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true',
+                                               '--ssl-protocol=any',
+                                               '--load-images=false'],
+                                 service_log_path='/tmp/ghostdriver.log')
+
     driver.set_window_size(1120, 1080)  
 
     url = SEARCH_URL % (ocity_code, dcity_code, searchdate)

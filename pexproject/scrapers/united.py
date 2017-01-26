@@ -37,7 +37,11 @@ def united(origin, destination, searchdate, searchkey):
         cursor = db.cursor()
 
     url = "https://www.united.com/ual/en/us/flight-search/book-a-flight/results/awd?f=" + origin + "&t=" + destination + "&d=" + date + "&tt=1&at=1&sc=7&px=1&taxng=1&idx=1"
-    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any','--load-images=false'])
+    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true',
+                                               '--ssl-protocol=any',
+                                               '--load-images=false'],
+                                 service_log_path='/tmp/ghostdriver.log')
+
     driver.set_window_size(1120, 1080)  
 
     try:
