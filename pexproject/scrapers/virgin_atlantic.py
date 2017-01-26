@@ -35,7 +35,7 @@ def storeFlag(searchkey,stime):
     
 
 def virgin_atlantic(origin, dest, searchdate,returndate, searchkey,returnkey):
-    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
+    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any','--load-images=false'])
     driver.set_window_size(1120, 1080)
     # sys.stdout=codecs.getwriter('utf-8')(sys.stdout)
     currentdatetime = datetime.datetime.now()

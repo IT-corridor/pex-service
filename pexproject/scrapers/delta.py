@@ -33,7 +33,7 @@ def delta(orgn, dest, searchdate, searchkey):
     stime = currentdatetime.strftime('%Y-%m-%d %H:%M:%S')
     sys.stdout=codecs.getwriter('utf-8')(sys.stdout)
 
-    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
+    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any','--load-images=false'])
     driver.set_window_size(1120, 1080)  
     # driver = webdriver.Firefox()
 
@@ -425,4 +425,5 @@ def delta(orgn, dest, searchdate, searchkey):
             
 if __name__=='__main__':
     delta(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[5])
+    print '\t@@@@ delta finished'
     # delta('ewr', 'msp', '12/29/2016', '213141231')        

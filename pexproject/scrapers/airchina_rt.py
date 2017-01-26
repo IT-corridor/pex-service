@@ -77,7 +77,7 @@ def get_mile_tax(log_file, cookies, flight_to_info, flight_from_info, cabin):
     return str(mile), str(tax)
 
 def airchina(ocity_code, dcity_code, searchdate, searchkey, returndate, returnkey):
-    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
+    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any','--load-images=false'])
     driver.set_window_size(1120, 1080)  
 
     url = SEARCH_URL % (ocity_code, dcity_code, searchdate, returndate)
@@ -219,5 +219,6 @@ def get_neat_string(string):
 
 if __name__=='__main__':
     airchina(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6])
+    print '\t@@@@ airchina finished'
     # airchina('PEK', 'LAX', '2016-06-28', 265801, '2016-08-09')
     # airchina('JFK', 'MOW', '2016-07-18', '265801')

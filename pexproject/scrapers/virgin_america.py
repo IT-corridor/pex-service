@@ -231,4 +231,5 @@ def virginAmerica(from_airport,to_airport,searchdate,searchid, passenger=1):
 
 if __name__=='__main__':
     virginAmerica(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
+    print '\t@@@@ virgin america finished'
     # virginAmerica('hnl','lax','12/27/2016',321321)

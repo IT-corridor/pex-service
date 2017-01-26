@@ -55,7 +55,8 @@ def get_miles_taxes(tds):
 
 
 def alaska(ocity_code, dcity_code, searchdate, searchkey):
-    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
+    sss = datetime.datetime.now()
+    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any','--load-images=false'],service_log_path='/tmp/ghostdriver.log')
     driver.set_window_size(1120, 1080)  
 
     # driver = webdriver.Firefox()
@@ -204,7 +205,7 @@ def alaska(ocity_code, dcity_code, searchdate, searchkey):
                 print (flightno[0], str(searchkey), stime, stoppage, "test", flight['orig'], flight['dest'], departure_t[0], arrival_t[-1], total_duration, main_mile, main_tax, business_mile, business_tax, first_mile, first_tax,"Economy", "Business", "First", "alaska", departinfo, arrivalinfo, planeinfo, operatedby,'','','','','','')
 
     except Exception, e:
-        raise               
+        # raise               
         print 'Something is wrong'
 
 
@@ -216,6 +217,7 @@ def alaska(ocity_code, dcity_code, searchdate, searchkey):
         storeFlag(searchkey,stime)
 
     driver.quit()              
+    print '\t#### alaska time elapsed: {}'.format(datetime.datetime.now()-sss)
     return searchkey    
 
 def get_clean_string(string):
@@ -226,6 +228,7 @@ def get_neat_string(string):
 
 if __name__=='__main__':
     alaska(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+    print '\t@@@@ alaska finished'
     # pdb.set_trace()        
     # alaska('sfo', 'lax', '12/27/16', '265801')
     # alaska('lax', 'kef', '7/24/17', '265801')

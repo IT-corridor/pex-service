@@ -37,7 +37,7 @@ def united(origin, destination, searchdate, searchkey):
         cursor = db.cursor()
 
     url = "https://www.united.com/ual/en/us/flight-search/book-a-flight/results/awd?f=" + origin + "&t=" + destination + "&d=" + date + "&tt=1&at=1&sc=7&px=1&taxng=1&idx=1"
-    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
+    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any','--load-images=false'])
     driver.set_window_size(1120, 1080)  
 
     try:
@@ -463,4 +463,5 @@ def united(origin, destination, searchdate, searchkey):
 if __name__=='__main__':
     # print "in united"
     united(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
+    print '\t@@@@ united finished'
     # united('las','iad','12/21/2016',1111)

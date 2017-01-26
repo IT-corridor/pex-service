@@ -26,7 +26,7 @@ specialties = {
 }
 
 def get_city_s7_code(citycode=None):
-    file_path = '../data/location.json' if DEV_LOCAL else '/var/www/html/python/pex/pexproject/pexproject/data/location.json'
+    file_path = '../data/location.json' if DEV_LOCAL else '/var/www/html/pexplus/pexproject/data/location.json'
     json_text = open(file_path, 'r')
     jsonData = json.loads(json_text.read())
     for item in jsonData:
@@ -36,7 +36,7 @@ def get_city_s7_code(citycode=None):
     return 'None'
 
 def s7ru(ocity_code, dcity_code, searchdate, searchkey):
-    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any'])
+    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true','--ssl-protocol=any','--load-images=false'])
     driver.set_window_size(1120, 1080)  
     url = 'http://travelwith.s7.ru/selectExactDateSearchFlights.action?TA=1&CUR=USD&FLC=1&RDMPTN=true&FSC1=1&DD1=%s&DA1=%s&DP1=%s&AA1=%s&AP1=%s&LAN=en' % (searchdate, ocity_code, get_city_s7_code(ocity_code), dcity_code, get_city_s7_code(dcity_code))
 
@@ -171,7 +171,7 @@ def parse_flight(flight, ibe_conversation, driver, log_file, db, searchkey, sear
         cursor.executemany ("INSERT INTO pexproject_flightdata (flighno,searchkeyid,scrapetime,stoppage,stoppage_station,origin,destination,departure,arival,duration,maincabin,maintax,firstclass,firsttax,business,businesstax,cabintype1,cabintype2,cabintype3,datasource,departdetails,arivedetails,planedetails,operatedby,economy_code,business_code,first_code,eco_fare_code,business_fare_code,first_fare_code) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", flightinfo)
         db.commit()
 
-    log_file.write(str(flightinfo)+'\n')
+    # log_file.write(str(flightinfo)+'\n')
 
 def get_miles_tax(node, ibe_conversation, driver):
     mile = node.find_all("span", {"data-qa": "amount"})
@@ -192,5 +192,6 @@ def get_miles_tax(node, ibe_conversation, driver):
 if __name__=='__main__':
     # pdb.set_trace()
     s7ru(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+    print '\t@@@@ s7 finished'
     # s7ru('pek', 'mow', '2016-10-24', '265801')
     # s7ru('JFK', 'MOW', '2016-07-18', '265801')
